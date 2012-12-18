@@ -51,6 +51,59 @@
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
+               <images>
+                       <hd>
+                               <name>sda.img</name>
+                               <size>1900</size>
+                               <partitions>
+                                       <primary>
+                                               <part>1</part>
+                                               <size>remain</size>
+                                               <label>rfs</label>
+                                               <parttype>linux</parttype>
+                                       </primary>
+                               </partitions>
+                       </hd>
+                       <hd>
+                               <name>sdb.img</name>
+                               <size>400</size>
+                               <partitions>
+                                       <primary>
+                                               <part>1</part>
+                                               <size>remain</size>
+                                               <label>config</label>
+                                               <parttype>linux</parttype>
+                                       </primary>
+                               </partitions>
+                       </hd>
+               </images>
+               <fstab>
+                       <bylabel>
+                               <label>rfs</label>
+                               <mountpoint>/</mountpoint>
+                               <fs>
+                                       <type>ext4</type>
+                                       <tune2fs>-i 0</tune2fs>
+                               </fs>
+                       </bylabel>
+                       <bylabel>
+                               <label>config</label>
+                               <mountpoint>/mnt/config</mountpoint>
+                               <fs>
+                                       <type>ext4</type>
+                                       <tune2fs>-i 0</tune2fs>
+                               </fs>
+                               <options>ro</options>
+                       </bylabel>
+                       <bydev>
+                               <source>none</source>
+                               <mountpoint>/sys/kernel/debug</mountpoint>
+                               <fs>
+                                       <type>debugfs</type>
+                               </fs>
+                       </bydev>
+               </fstab>
+
 		<package>
 			<tar>
 				<name>nfsroot.tar.gz</name>
