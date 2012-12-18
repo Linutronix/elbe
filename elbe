@@ -84,6 +84,9 @@ elif sys.argv[1] == "initrdpack":
 elif sys.argv[1] == "setcdrom":
     from elbepack.setcdrom import run_command
     run_command( sys.argv[2:] )
+elif sys.argv[1] == "hdimg":
+    from elbepack.hdimg import run_command
+    run_command( sys.argv[2:] )
 else:
     usage()
     sys.exit(20)
