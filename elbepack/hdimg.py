@@ -25,8 +25,7 @@ class fstabentry(object):
 	    if t=='':
 		return depth
 	    depth += 0
-	
-	    
+
 
 def run_command( argv ):
 
@@ -34,6 +33,10 @@ def run_command( argv ):
     oparser.add_option( "--directory", dest="dir",
                         help="mount the loop file here",
                         metavar="FILE" )
+    oparser.add_option( "--umount", action="store_true", dest="umount",
+                        default=False,
+			help="Just umount the specified partitions" )
+
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
@@ -69,6 +72,14 @@ def run_command( argv ):
 
 	fslabel[fs.text("label")] = fstabentry(fs)
 
+    fslist = fslabel.values()
+    fslist.sort( key = lambda x: x.mountdepth() )
+
+    if opt.umount:
+	fslist.reverse()
+	for i in fslist:
+	    print 'umount "%s"' % (opt.dir + i.mountpoint)
+	sys.exit(0)
 
     for hd in tgt.node("images"):
 	if not hd.tag == "hd":
@@ -109,9 +120,6 @@ def run_command( argv ):
 	    current_sector += sz
 
 	disk.commit()
-
-    fslist = fslabel.values()
-    fslist.sort( key = lambda x: x.mountdepth() )
 
     for i in fslist:
 	print 'mkdir -p "%s"' % ( opt.dir + i.mountpoint )
