@@ -4,7 +4,7 @@ import os
 import sys
 import shutil
 
-from elbepack.treeutils import etree
+from treeutils import etree
 from optparse import OptionParser
 
 import parted
