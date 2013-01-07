@@ -260,6 +260,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt ):
     os.chmod( create_fname, 0755 )
 
     copy_pyfile( "dump.py", directory, "opt/elbe/dump.py" )
+    copy_pyfile( "hdimg.py", directory, "opt/elbe/hdimg.py" )
     copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
 
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )

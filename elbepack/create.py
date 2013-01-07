@@ -213,3 +213,6 @@ def run_command( argv ):
 
     shutil.copyfile( os.path.join( pack_dir, "dump.py" ),
        os.path.join(out_path, "dump.py" ) )
+
+    shutil.copyfile( os.path.join( pack_dir, "hdimg.py" ),
+       os.path.join(out_path, "hdimg.py" ) )
