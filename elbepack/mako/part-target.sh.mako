@@ -18,61 +18,35 @@
 ##
 #!/bin/sh
 
-MOUNTCNT=0
-
 echo ""
 echo "create target images"
 echo "--------------------"
 echo ""
 echo "================================================================"
 
-<% 
-interpreter = prj.text("buildimage/interpreter", default=defs, key="interpreter")
-if interpreter == "kvm":
-  fdisk_name = "fdisk"
-elif interpreter == "qemu-system-ppc":
-  fdisk_name = "ddisk"
-else:
-  fdisk_name = "fdisk"
-%>
-
 mkdir -v -p /tmp-mnt
 
-# create and loopback mount hd disk images
-% if tgt.has("images"):
-%  for hd in tgt.node("images"):
-%   if hd.has("partitions"):
-<% 
-    s=int(hd.text("size"))
-    c=(s*1000*1024)/(16*63*512)
-%>
-dd if=/dev/zero of=/mnt/${hd.text("name")} count=${c} bs=516096c
-${fdisk_name} -H 16 -S 63 /mnt/${hd.text("name")} ${"<<"}EOF
-%    for part in hd.node("partitions"):
-n
-p
-${part.text("part")}
 
-%     if part.text("size")=="remain":
+echo "================================================================"
+echo ""
 
-%     else:
-+${part.text("size")}
-%     endif
-%    endfor
-w
-EOF
+python /opt/elbe/hdimg.py --directory /tmp-mnt /opt/elbe/source.xml
 
-%    for part in hd.node("partitions"):
-# TODO use size of last partition to calc new offset
-losetup -o32256 /dev/loop$MOUNTCNT
-# TODO get mountpoint from fstab
-mount -o loop /dev/loop$MOUNTCNT /tmp-mnt/${hd.text("name")}${part.text("part")}
-MOUNTCOUNT=$MOUNTCNT+1
-%    endfor
-# TODO copy files, install grub
-%   endif
-%  endfor
-% endif
+echo ""
+echo "================================================================"
+
+cp -av /target/* /tmp-mnt
+
+echo "================================================================"
+echo ""
+
+python /opt/elbe/hdimg.py --directory /tmp-mnt --umount /opt/elbe/source.xml
+
+echo ""
+echo "ubi stuff"
+echo "---------"
+echo ""
+echo "================================================================"
 
 % for tab in tgt:
 % if tab.has("bylabel"):
