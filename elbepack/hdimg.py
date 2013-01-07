@@ -6,6 +6,7 @@ import shutil
 
 from treeutils import etree
 from optparse import OptionParser
+from subprocess import Popen, PIPE, STDOUT
 
 import parted
 
@@ -133,7 +134,7 @@ def run_command( argv ):
     if opt.umount:
 	fslist.reverse()
 	for i in fslist:
-	    outf.do_commandi( 'umount "%s"' % (opt.dir + i.mountpoint) )
+	    outf.do_command( 'umount "%s"' % (opt.dir + i.mountpoint) )
 	sys.exit(0)
 
     for hd in tgt.node("images"):
