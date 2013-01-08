@@ -1087,6 +1087,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="bootable" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             Whether this partition is marked bootable.
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 

@@ -9,6 +9,7 @@ from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
 import parted
+import _ped
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):
@@ -163,6 +164,9 @@ def run_command( argv ):
 	    ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
 	    cons = parted.Constraint(exactGeom=g)
 	    disk.addPartition(ppart, cons)
+
+	    if part.has("bootable"):
+		ppart.setFlag(_ped.PARTITION_BOOT)
 
 	    entry = fslabel[part.text("label")]
 	    entry.offset = current_sector*512
