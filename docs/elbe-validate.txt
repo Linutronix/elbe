@@ -1,0 +1,39 @@
+elbe-validate(1)
+================
+
+NAME
+----
+elbe-validate - validate xml file.
+
+SYNOPSIS
+--------
+[verse]
+'elbe validate' <xmlfile>
+
+
+DESCRIPTION
+-----------
+This command validates the xmlfile provided, and prints out errors.
+
+
+OPTIONS
+-------
+<xmlfile>::
+	The xml file to validate.
+
+
+
+EXAMPLES
+--------
+
+* Validate 'mysqueeze.xml'
++
+------------
+$ elbe validate mysqueeze.xml 
+------------
+
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite

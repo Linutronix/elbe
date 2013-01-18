@@ -1,0 +1,11 @@
+<xml>
+  <preseed>
+    <conf owner="exim4-config" key="exim4/dc_eximconfig_configtype" type="select" value="no configuration at this time"/>
+    <conf owner="exim4-config" key="exim4/no_config" type="boolean" value="true"/>
+    <conf owner="exim4-config" key="exim4/dc_postmaster " type="string" value=""/>
+
+    <conf owner="samba-common" key="samba-common/workgroup " type="string" value="WORKGROUP"/>
+
+    <conf owner="proftpd-basic" key="shared/proftpd/inetd_or_standalone" type="select" value="standalone"/>
+  </preseed>
+</xml>

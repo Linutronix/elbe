@@ -1,0 +1,778 @@
+﻿Embedded Linux Build Environment (elbe)
+=======================================
+
+Debian based system to generate root-filesystems for embedded devices.
+
+
+General Notes
+-------------
+
+Generally root-filesystem creation faces the following requirements:
+
+- Creation of root-filesystem for a specific architecture.
+- Generation of a development environment for the specific architecture.
+
+Trying to solve this via cross-compilation of the required packages,
+we face the following problems:
+
+- Many packages are not designed and tested for cross-compilation.
+- Big projects consume a significant amount of time to cross compile.
+- Dependencies are not resolved automatically. The developer is required to
+  manually find out which package versions of dependencies are required.
+- Changes and patches to the packages need to be updated for newer versions.
+  This process makes an update a very time consuming process.
+- One must make sure that the same toolchain is used in the development
+  environment and in the root-filesystem.
+
+Elbe takes a different approach for solving these problems:
+
+- Standard packages are not self compiled.
+  Elbe uses the Debian distributions binary packages.
+- Own applications are not cross compiled.
+  They are built natively on the target architecture in a virtual machine or
+  emulator (qemu-system-* or kvm is supported at the moment).
+- The root-filesystem is a subset of of the Debian system on the virtual
+  development machine. This implicitly ensures, that the same toolchain is used
+  on the development machine and on the target.
+- Updating, adding or removing a package is done via Debians package-management
+  (apt) which also resolves package dependencies.
+
+
+Installation
+------------
+
+Elbe is shipped as Debian package. This package will pull in the necessary
+dependencies.
+
+Configure `/etc/apt/sources.list.d` appropriately:
+
+-----------------------------------------------------------------------------------
+echo 'deb http://debian.linutronix.de/elbe squeeze main' >> /etc/apt/sources.list
+-----------------------------------------------------------------------------------
+
+and install elbe using the following command:
+
+--------------------------------------------
+aptitude install elbe
+--------------------------------------------
+
+
+
+Overview
+--------
+
+The Elbe system consists of the program `elbe` which is implemented
+in Python. Similar to git, it can be called with several sub commands.
+For example:
+
+---------------------------------------------------
+elbe <command>
+elbe create --directory /scratch/example example.xml
+elbe chg_archive example.xml archive.tar.bz2
+---------------------------------------------------
+
+An Elbe project consists of an xml file that describes the project.
+
+The 'elbe create' command generates a project directory, which contains the
+virtual hard disk image and a 'Makefile' to create a buildimage and the
+root-filesystem.
+
+During this process, 'elbe create' will search the package repos mentioned in
+the xml files mirror section for the kinitrd package, that includes the
+debian-installer. You can use the packages provided by Linutronix from
+http://debian.linutronix.de/elbe by adding this url to the mirror section.
+
+After 'elbe create' has generated the project directory, change to the
+project directory and run 'make'.
+
+
+This will start the root-filesystem generation process:
+
+- The initrd of the debian-installer is modified by elbe, so that it doesn't ask
+  questions during installation.
+- The target image generation is hooked into the install process
+- An emulator starts the installation process
+- A copy of the buildimage (installed by the debian-installer) is used as
+  target image. (There is a set of different modes for this copy)
+- fine-tuning commands are applied to this copy.
+- The archive is unpacked into the copy.
+- According to what is specified in the xml file. The copy is then baked into a
+  tar archive or filesystem image.
+
+This diagram illustrates the complete process:
+
+image:elbe-process.png[width=800]
+
+The following steps are executed inside the emulator:
+
+image:emu-process.png[width=800]
+
+Example XML Files
+~~~~~~~~~~~~~~~~~
+
+A root-filesystem-project is described with a xml file.
+
+Elbe ships with a set of example xml files.
+
+The following xml file describes a simple system in the default full copy mode.
+The root filesystem is essentially identical to the build system and it will
+be saved as `nfsroot.tar.gz`
+
+.arm-example.xml
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	created="2009-05-20T08:50:56" revision="5"
+	xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>ARMexample</name>
+		<version>08.15</version>
+		<mirror>
+			<primary_host>debian.tu-bs.de</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>http://debian.linutronix.de/elbe squeeze main</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth />
+		<suite>squeeze</suite>
+		<buildimage>
+			<arch>armel</arch>
+			<size>20G</size>
+			<mem>256</mem>
+			<interpreter>qemu-system-arm</interpreter>
+			<kinitrd>testrd</kinitrd>
+			<console>ttyAMA0,115200n1</console>
+			<machine>versatilepb</machine>
+			<NIC>
+				<model>smc91c111</model>
+				<MAC>de:ad:be:ef:be:05</MAC>
+			</NIC>
+			<portforwarding>
+				<forward>
+					<proto>tcp</proto>
+					<buildenv>22</buildenv>
+					<host>5022</host>
+				</forward>
+			</portforwarding>
+			<pkg-list>
+			</pkg-list>
+		</buildimage>
+	</project>
+	<target>
+		<hostname>myARM</hostname>
+		<domain>tec.linutronix.de</domain>
+		<passwd>foo</passwd>
+		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>nfsroot.tar.gz</name>
+			</tar>
+		</package>
+		<finetuning>
+		</finetuning>
+		<pkg-list>
+			<pkg>build-essential</pkg>
+			<pkg>bash</pkg>
+			<pkg>less</pkg>
+			<pkg>git</pkg>
+			<pkg>debhelper</pkg>
+			<pkg>nfs-common</pkg>
+			<pkg>openssh-server</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To generate the project directory from the xml file the following command is
+used:
+
+-----------------------------------------------------
+elbe create --directory /home/user/example example.xml
+-----------------------------------------------------
+
+The project-directory must not exist before calling this command.
+It will contain several scripts, files and a Makefile, which controls the
+creation of the root-filesystem.
+
+Creation of the build system
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now change to the project directory and run
+
+-----------------------------------------------
+make
+-----------------------------------------------
+
+This will start the debian-installer in the virtual machine, which will install
+the build system according to the xml file description. It also generates the
+archive `nfsroot.tar.gz` with a copy of the buildimage.
+
+.Note
+*******************************************************
+This takes a while.
+*******************************************************
+
+Working inside the virtual machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After successful installation, the virtual machine can be started:
+
+-------------------------------------------
+make run
+-------------------------------------------
+
+or without a graphical terminal:
+
+-------------------------------------------
+make run-con
+-------------------------------------------
+
+Changing the subset that is extracted as the root filesystem
+------------------------------------------------------------
+
+Elbe has several methods to select the subset that is packaged as the
+root-filesystem.
+
+- The finetuning section allows to remove, copy or move files before the
+  archive will be extracted and the target image is generated.
+- The 'norecommend' tag.
+- The initial copy has several modes, which allow to extract very small subsets.
+- The embedded archive.
+
+
+Finetuning
+~~~~~~~~~~
+
+The finetuning section allows to copy, move and delete files in the target
+root-filesystem. Additionally it is possible to run commands. Here is an
+example finetuning section:
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  <finetuning>
+    <rm>/usr/share/doc</rm>
+    <mv path="/var">/var_ro</mv>
+    <cp path=/copy/me>/my/name/on/target</mv>
+  </finetuning>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Note
+*******************************************************
+The copy, mv, and rm commands operate on full directories.
+*******************************************************
+
+.Advanced Copy
+*******************************************************
+To copy files from the buildimage into the target image, the
+`<command>` tag can be used. The current directory is /target.
+
+For example to copy `/etc/passwd` from the buildenvironment into the target,
+the following command can be used:
+
+`<command>cp /etc/passwd etc/ </command>`
+*******************************************************
+
+Useful directories to trim with finetuning
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section provides some useful directories that can be safely removed
+to get a smaller target image.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<finetuning>
+	<rm>/usr/share/doc</rm>				<1>
+	<rm>var/cache/apt/archives/*</rm>		<2>
+	<rm>var/cache/apt/pkgcache.bin</rm>
+	<rm>var/cache/apt/srcpkgcache.bin</rm>
+	<rm>var/lib/apt/lists/*_Release</rm>
+	<rm>var/lib/apt/lists/*_Packages</rm>
+	<rm>var/lib/apt/lists/*_Sources</rm>
+
+	<rm>boot</rm>					<3>
+
+	<rm>lib/modules/2.6.32-5-versatile/</rm>	<4>
+	<rm>var/cache/man/*</rm>			<5>
+	<rm>opt/elbe</rm>				<6>
+	<rm>var/cache/debconf/*</rm>			<7>
+</finetuning>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> The doc files are not necessary on an embedded target.
+<2> The apt cache can be downloaded again if necessary.
+<3> The boot directory contains the kernel used for the VM.
+    On embedded targets the kernel is normally loaded by the bootloader.
+<4> The kernel modules for the standard Debian kernel.
+<5> The man page cache
+<6> The full copy mode will also copy elbe onto the root-filesystem.
+<7> debconf cache is also not necessary
+
+Archive
+~~~~~~~
+
+It's also possible to include an archive into the xml file, that is unpacked
+into the target root-filesystem after the finetuning step.
+This archive must be a bzip2 compressed tar (.tar.bz2) and the following
+command can be used to embed the archive into the xml file:
+
+-------------------------------------------
+elbe chg_archive <xmlfile> archive.tar.bz2
+-------------------------------------------
+
+This feature is useful to place custom configuration-files into the final image.
+
+
+Slimming the root filesystem with the different modes
+-----------------------------------------------------
+
+The copying process has several modes. The mode is configured in the 'target'
+tag. It needs to be the tag before 'finetuning'.
+
+The following commented example illustrates where the mode is configured.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  <target>
+    <hostname>example</hostname>
+    <domain>example.com</domain>
+    <passwd>foo</passwd>
+    <package>
+	    <tar>nfsroot.tar.gz</tar>
+    </package>
+
+    <diet />        <1>
+
+    <norecommend /> <2>
+
+    <finetuning \>
+    <pkg-list>
+	    <pkg>bash</pkg>
+    </pkg-list>
+
+  </target>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> The mode is configured at this place, leaving it out, enables the default
+    mode.
+
+<2> 'norecommend' should be placed here.
+
+norecommend
+~~~~~~~~~~~
+
+'norecommend' disables installation of recommended packages. This is a frequent
+cause for big root-filesystems. Installed programs will still work, but some
+functionality requiring external programs might be disabled.
+
+.Note
+*******************************************************
+This is not strictly a mode as described in the following paragraphs.
+It can be combined with any of them, and the following modes are mutually
+exclusive.
+*******************************************************
+
+
+default
+~~~~~~~
+
+The default mode generates a full copy of the build image.
+This mode is the easiest to use, but its not possible to generate images
+which have the Debian package management removed.
+
+
+setsel
+~~~~~~
+
+The setsel mode can be used to generate images which only contain 'dpkg',
+and offers a more fine-grained control on which packages are installed.
+
+The recommended usage is as follows:
+
+- Generate an image in the default mode.
+- Run the image and use aptitude to purge unwanted packages.
+- Maybe even use dpkg to remove apt and aptitude.
+- Then generate the list of selected Packages using
+  `dpkg --get-selections > selections.list`
+- Transfer this file to the host System.
+- Use `elbe setsel <xmlfile> selections.list`
+  to import the pkg-list into the xml file.
+- Rebuild using setsel mode.
+
+.How it works
+*******************************************************
+The setsel mode works by feeding the pkg list to `dpkg --set-selections` in
+the target image copy. It has the advantage that there is no need to cope with
+some unregistered configuration files.
+*******************************************************
+
+diet
+~~~~
+
+Diet Mode only copies the files that are referenced in the Package management.
+It resolves the dependencies so that one does not need to reference library
+packages.
+
+.But
+*******************************************************
+Some packages rely on files generated in the post-inst scripts, which are not
+tracked by the package management. Work is in progress to execute the post-inst
+scripts in the target copy, but there are still some problems with
+corner-cases, when dependencies of these scripts get removed in the
+'finetuning'.
+
+These Errors are hard to find. And slow down development of an RFS.
+Diet Mode is intended to build small root-filesystems. E.g. to
+add some packages, like openssh-server, to a busybox based system.
+
+Do not use this for normal filesystems.
+
+This also holds for the 'tighten' mode.
+*******************************************************
+
+tighten
+~~~~~~~
+
+Tighten mode only extracts the files referenced by the packages in 'pkg-list'.
+No dependencies are resolved.
+This mode is intended for compatibility with old xml files, do not use in
+new elbe projects.
+
+CDROM Functionality
+-------------------
+
+Elbe creates a CDROM iso image with all the installed packages.
+It is created in the build directory, and its filename is +install.iso+
+This can also serve as an installation source.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    <mirror>
+	    <cdrom>/home/user/elbe-example/install.iso</cdrom>
+    </mirror>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install Reports
+---------------
+
+The build process also creates a report file in asciidoc format:
++elbe-report.txt+  can be converted to html using the following command:
+
+--------------------------------------------
+asciidoc elbe-report.txt
+--------------------------------------------
+
+This report lists all files in the root-file-system, including the origin
+Debian package.
+
+Validation
+----------
+
+After a build the +source.xml+ file includes informations about all
+installed packages and versions. If this information is already present in
+a file used with +elbe create+ the installed package versions and md5 hashes
+are validated and a report is printed and saved to +validation.txt+. This
+file is also in asciidoc format.
+
+XML Reference
+-------------
+
+This section is a step by step explanation of the ARM example.
+
+The xml file starts with the following header, which should always be the same:
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     created="2009-05-20T08:50:56" revision="5"
+     xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After this header follows the project description.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	<project>
+		<name>ARMexample</name>
+		<version>08.15</version>
+		<mirror>
+			<primary_host>debian.tu-bs.de</primary_host>	<1>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>					<2>
+				<url>
+					<binary>http://debian.linutronix.de/elbe squeeze main</binary>
+				</url>
+			</url-list>
+
+		</mirror>
+		<noauth /> 						<3>
+		<suite>squeeze</suite>					<4>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> The 'mirror' tag contains
+    'primary_host', 'primary_path' and 'primary_proto'.
+    It describes the Debian mirror used.
+
+<2> The 'url-list' can contain additional package sources.
+
+<3> The 'noauth' tag can be used to disable authentication if custom
+    unsigned packages are supposed to be installed.
+
+<4> The suite selects the distribution codename used from the primary mirror.
+
+
+.Note
+************************************************
+the 'project' tag isn't closed yet.
+************************************************
+
+The following section describes the virtual machine in which the
+debian-installer is exectued and custom packages can be build.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		<buildimage>
+			<arch>armel</arch>				<1>
+			<size>20G</size>				<2>
+			<mem>256</mem>					<3>
+			<interpreter>qemu-system-arm</interpreter>	<4>
+			<kinitrd>testrd</kinitrd>			<5>
+			<console>ttyAMA0,115200n1</console>		<6>
+			<machine>versatilepb</machine>			<7>
+			<NIC>
+				<model>smc91c111</model>
+				<MAC>de:ad:be:ef:be:05</MAC>
+			</NIC>
+			<portforwarding>				<8>
+				<forward>
+					<proto>tcp</proto>
+					<buildenv>22</buildenv>
+					<host>5022</host>
+				</forward>
+			</portforwarding>
+			<pkg-list>					<9>
+				<pkg>buildd</pkg>
+			</pkg-list>
+		</buildimage>
+	</project>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> 'arch' is the Debian architecture of the target.
+
+<2> 'size' is the size of the hard-disk image.
+
+<3> 'mem' controls the amount of RAM that is allocated to the virtual machine.
+
+<4> The 'interpreter' is either 'qemu-system-<arch>' or 'qemu-kvm'.
+    Usage of kvm is usually only possible, when the target is 'x86'.
+
+<5> The name of the kinitrd package.
+    All package sources mentioned in the xml file are scanned for this package.
+    It provides the debian-installer kernel and initrd. This package is not
+    hosted on official Debian mirrors. So it makes sense additional add the
+    <noauth/> tag to the <mirror> section.
+
+<6> The 'console' line needs special attention because it is different on
+    different emulation targets.
+
+<7> The 'machine' tag contains the '-machine' parameter, that is provided to
+    qemu.
+
+<8> 'portforwarding' of network server ports from the virtual machine to the
+    host. This example forwards the ssh port to port 5022 on the host.
+
+<9> This is the list of packages that are only installed to the buildimage.
+     (The packages listed in the target sections pkg-list are installed to
+     the target image and the buildimage.) It can be used for example to
+     install the debian build server into the buildenvironment.
+
+.Note
+**********************************************************
+Only change the sizes of hard-disk and RAM if that is necessary.
+
+The undescribed values are correctly configured in the example files. It is
+very uncertain that you need to change them.
+
+There are example files for arm, powerpc and x86.
+**********************************************************
+
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	<target>
+		<hostname>myARM</hostname>			<1>
+		<domain>tec.linutronix.de</domain>		<2>
+		<passwd>foo</passwd>				<3>
+		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>nfsroot.tar.gz</name>	<4>
+			</tar>
+		</package>
+		<finetuning>					<5>
+		</finetuning>
+		<pkg-list>					<6>
+			<pkg>build-essential</pkg>
+			<pkg>bash</pkg>
+			<pkg>less</pkg>
+			<pkg>git</pkg>
+			<pkg>debhelper</pkg>
+			<pkg>nfs-common</pkg>
+			<pkg>openssh-server</pkg>
+		</pkg-list>
+	</target>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> The hostname
+
+<2> and domainname
+
+<3> This is the root password of the machine.
+
+<4> This describes, that the resulting rootfilesystem, shall be generated as
+    'nfsroot.tar.gz'
+
+<5> finetuning section can be empty. If you need finetuning it can be defined
+    here. The format of this tag is explained above.
+
+<6> The package list resides here.
+
+
+Building ubi images
+~~~~~~~~~~~~~~~~~~~
+
+Elbe also has the ability to generate ubi images, including different
+partitions and mountpoints. Lets look at an example 'target' section.
+
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<target>
+	<hostname>myARM</hostname>
+	<domain>tec.linutronix.de</domain>
+	<passwd>foo</passwd>
+	<console>ttyS0,115200</console>
+
+	<images>
+		<mtd>
+			<name>linux.img</name>			<1>
+			<nr>0</nr>
+			<size>60MB</size>
+			<ubivg>
+				<label>nand</label>
+				<miniosize>2048</miniosize>	<2>
+				<maxlogicaleraseblockcount>1533</maxlogicaleraseblockcount>
+				<logicaleraseblocksize>126976</logicaleraseblocksize>
+				<physicaleraseblocksize>128KiB</physicaleraseblocksize>
+				<ubi>				<3>
+					<type>static</type>
+					<label>kernel</label>
+					<id>0</id>
+					<size>4MiB</size>
+					<binary>/boot/vmlinuz-2.6.33.9-rt31</binary>
+				</ubi>
+				<ubi>
+					<type>dynamic</type>
+					<label>rfs</label>
+					<id>1</id>
+					<size>26MiB</size>
+				</ubi>
+				<ubi>
+					<type>dynamic</type>
+					<label>data</label>
+					<id>2</id>
+					<size>30MiB</size>
+				</ubi>
+			</ubivg>
+		</mtd>
+	</images>
+
+	<fstab>							<4>
+		<bylabel>					<5>
+			<label>data</label>
+			<mountpoint>/opt</mountpoint>
+			<fs>
+				<type>ubifs</type>
+				<mkfs>-x lzo</mkfs>
+			</fs>
+			<options>rw</options>
+		</bylabel>
+		<bylabel>
+			<label>rfs</label>
+			<mountpoint>/</mountpoint>
+			<fs>
+				<type>ubifs</type>
+				<mkfs>-x lzo</mkfs>
+			</fs>
+			<options>ro</options>
+		</bylabel>
+		<bydev>						<6>
+			<source>proc</source>
+			<mountpoint>/proc</mountpoint>
+			<fs>
+				<type>proc</type>
+			</fs>
+		</bydev>
+		<bydev>
+			<source>sysfs</source>
+			<mountpoint>/sys</mountpoint>
+			<fs>
+				<type>sysfs</type>
+			</fs>
+		</bydev>
+		<bydev>
+			<source>tmpfs</source>
+			<mountpoint>/tmp</mountpoint>
+			<fs>
+				<type>tmpfs</type>
+			</fs>
+			<options>size=2M</options>
+		</bydev>
+		<bydev>
+			<source>tmpfs</source>
+			<mountpoint>/var/log</mountpoint>
+			<fs>
+				<type>tmpfs</type>
+			</fs>
+			<options>size=4M</options>
+		</bydev>
+		<bydev>
+			<source>tmpfs</source>
+			<mountpoint>/var/run</mountpoint>
+			<fs>
+				<type>tmpfs</type>
+			</fs>
+			<options>size=2M</options>
+		</bydev>
+	</fstab>
+
+	<finetuning>
+	</finetuning>
+	<pkg-list>
+		<pkg>dash</pkg>
+	</pkg-list>
+</target>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> This specifies an mtd image with 60MB size whose filename is linux.img
+
+<2> Parameters for the ubi tools, describing the NAND geometry.
+
+<3> Specification of ubi volumes.
+
+<4> specifies the fstab, so that everything can be copied to the right image.
+
+<5> Normal partition entries are by label.
+
+<6> The target /etc/fstab file is created with the entries defined in this section.
+    Entries for '/proc', '/sys' etc. can be generated with 'bydev' nodes.
+
+A complete reference that is automatically generated from the schema file is
+also available.
+

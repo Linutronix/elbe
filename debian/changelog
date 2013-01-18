@@ -1,0 +1,100 @@
+elbe (0.4.2) unstable; urgency=low
+
+  * further documentation improvements
+  * add licence informations
+  * add p7zip-full dependency
+  * convert tab to spaces
+  * be more verbose on xml syntax errors
+  * fix powerpc bootloader installations
+  * improve in program help
+  * update man-pages
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 11 Jan 2013 16:42:07 +0100
+
+elbe (0.4.1) unstable; urgency=low
+
+  * improve documentation
+  * introduce 'elbe show' command to get RFS descriptions
+  * generate documentation of example xml files
+  * fix minor bugs and issues (make run-con, ..)
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 10 Dec 2012 10:52:12 +0100
+
+elbe (0.4.0) unstable; urgency=low
+
+  * kernels and initrds are now downloaded from repos
+  * improved error messages
+  * building a cdrom from cdrom build is now fixed
+
+ -- Torben Hohn <torbenh@linutronix.de>  Mon, 26 Nov 2012 12:02:42 +0100
+
+elbe (0.3.1) unstable; urgency=low
+
+  * improve elbe-report.txt
+  * add setsel mode to xml schema
+  * fix the pinning values
+  * fix validation in installerbased build
+  * fix several bugs in cdrom feature
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 19 Oct 2012 17:17:26 +0200
+
+elbe (0.3.0) unstable; urgency=low
+
+  * Switch to new format
+  * add more docs
+  * adds CDROM support
+  * adds elbe-report.txt
+  * adds validation support
+
+ -- Torben Hohn <torbenh@linutronix.de>  Wed, 10 Oct 2012 13:47:26 +0200
+
+elbe (0.2.5) unstable; urgency=low
+
+  * fix partition label support
+
+ --  <torbenh@lxhb.hb.de>  Tue, 27 Sep 2011 17:20:02 +0200
+
+elbe (0.2.4) unstable; urgency=low
+
+  * fix grublegacy support
+
+ --  <torbenh@lxhb.hb.de>  Fri, 23 Sep 2011 16:06:20 +0200
+
+elbe (0.2.3) unstable; urgency=low
+
+  * add diet mode
+  * add SSH_PORT and SMP option to Makefile
+  * fix enbase implementation of dl_kernel and chg_archive
+  * fix install for empty DEST_DIR
+
+ --  <torbenh@lxhb.hb.de>  Fri, 23 Sep 2011 11:52:17 +0200
+
+elbe (0.2.2) unstable; urgency=low
+
+  * fix the problem with purges being executed too late
+  * add <command> tag to finetuning section
+
+ --  <torbenh@lxhb.hb.de>  Fri, 26 Aug 2011 13:50:30 +0200
+
+elbe (0.2.1) unstable; urgency=low
+
+  * fix grub problems
+  * fix target partitioning problems
+  * add norecommend feature
+
+ --  <torbenh@lxhb.hb.de>  Thu, 25 Aug 2011 20:43:10 +0200
+
+elbe (0.2) unstable; urgency=low
+
+  * Add man pages
+  * elbe porcelain
+  * many new features
+
+ --  <torbenh@lxhb.hb.de>  Tue, 16 Aug 2011 20:38:56 +0200
+
+elbe (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Torben Hohn <torbenh@linutronix.de>  Mon, 01 Aug 2011 15:21:14 +0200
+

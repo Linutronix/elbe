@@ -1,0 +1,68 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="5" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+        <project>
+                <name>i386example</name>
+                <version>6</version>
+		<description>
+			lightweight example
+			after 'make run-con' you can login the system from another terminal with
+			'ssh root@localhost -p 5022'
+		</description>
+                <mirror>
+                        <primary_host>debian.tu-bs.de</primary_host>
+                        <primary_path>/debian</primary_path>
+                        <primary_proto>http</primary_proto>
+                        <url-list>
+				<url>
+					<binary> http://debian.linutronix.de/elbe squeeze main</binary>
+				</url>
+			</url-list>
+                </mirror>
+                <suite>squeeze</suite>
+                <buildimage>
+                        <arch>i386</arch>
+                        <size>20G</size>
+                        <mem>1024</mem>
+                        <interpreter>kvm</interpreter>
+			<kinitrd>testrd</kinitrd>
+                        <console>ttyS0,115200n1</console>
+                        <machine>pc</machine>
+                        <NIC>
+                                <model>virtio</model>
+                                <MAC>de:ad:be:ef:be:05</MAC>
+                        </NIC>
+                        <portforwarding>
+                                <forward>
+                                        <proto>tcp</proto>
+                                        <buildenv>22</buildenv>
+                                        <host>5022</host>
+                                </forward>
+                        </portforwarding>
+                </buildimage>
+        </project>
+        <target>
+                <hostname>i386ex</hostname>
+                <domain>domain</domain>
+                <passwd>foo</passwd>
+                <console>ttyS0,115200</console>
+                <package>
+                        <tar>
+                                <name>rootfs.tar.gz</name>
+                        </tar>
+                </package>
+                <norecommend />
+                <finetuning>
+                        <rm>/var/cache/apt/archives/*.deb</rm>
+                        <rm>/repo</rm>
+                        <rm>/boot</rm>
+                </finetuning>
+                <pkg-list>
+                        <pkg>openssh-client</pkg>
+                        <pkg>openssh-server</pkg>
+                        <pkg>bash</pkg>
+                        <pkg>vim-nox</pkg>
+                        <pkg>less</pkg>
+			<pkg>icecc</pkg>
+                </pkg-list>
+        </target>
+</ns0:RootFileSystem>
+

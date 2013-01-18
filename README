@@ -1,0 +1,43 @@
+ELBE
+====
+
+http://elbe-rfs.org
+
+ELBE is the 'E.mbedded L.inux B.uild E.nvironment'.
+It can be used to build embedded Linux Rootfilesystems.
+
+ELBE runs on Debian Linux Host Systems.
+
+Crash Course
+------------
+1. use a Elbe XML file (e.g. from /usr/share/doc/elbe/examples or
+   examples/ in the elbe source tree)
+
+2. run "./elbe create ./examples/i386-example.xml".
+   This command creates the build directory in the current working directory.
+
+3. go into the working directory "cd build", run "make" and wait.
+
+4. run 'make run-con' to boot the ELBE Buildenvironment in qemu/kvm.
+   A stripped down and readonly target rootfilesystem is available within
+     'nfsroot.tar.gz'
+
+For further informations read ABOUT, INSTALL docs/elbe-overview.txt
+
+Report bugs or any other feedback
+---------------------------------
+There is no bugtracking system at the moment.
+Please report bugs or success stories to <elbe-devel@linutronix.de>.
+
+Development
+-----------
+There is a 'TODO' file that describes the next development steps.
+The project is hosted on github: https://github.com/linutronix/elbe
+If you are intrested in joining the elbe-devel team please send an email to
+<elbe-devel@linutronix.de>.
+
+Port it to other systems
+------------------------
+It is possible to port it to other systems, but it has a dependency to
+python-apt. So either this dependency needs to be eliminated, or python-apt
+needs to be available on the target platform.

@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+#
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (C) 2013  Linutronix GmbH
+#
+# This file is part of ELBE.
+#
+# ELBE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ELBE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+
+def usage():
+    print 'elbe needs a subcommand: e.g. \'elbe create\'. \n\
+    Available subcommands are: \n\
+        * create\n\
+        * show\n\
+        * chg_archive\n\
+        * get_archive\n\
+        * validate\n\
+        * diff\n\
+        * pkgdiff\n\
+        * dump\n\
+        * check_updates\n\
+        * setsel\n\
+        * xsdtoasciidoc\n\
+        * buildchroot\n\
+        * initrdpack\n\
+        * setcdrom'
+
+if (len(sys.argv) < 2) or sys.argv[1][0]=="-":
+    usage()
+    sys.exit(20)
+
+if sys.argv[1] == "create":
+    from elbepack.create import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "show":
+    from elbepack.show import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "chg_archive":
+    from elbepack.chg_archive import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "get_archive":
+    from elbepack.get_archive import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "validate":
+    from elbepack.validate import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "diff":
+    from elbepack.diff import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "pkgdiff":
+    from elbepack.pkgdiff import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "dump":
+    from elbepack.dump import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "check_updates":
+    from elbepack.check_updates import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "setsel":
+    from elbepack.setsel import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "xsdtoasciidoc":
+    from elbepack.xsdtoasciidoc import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "buildchroot":
+    from elbepack.buildchroot import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "initrdpack":
+    from elbepack.initrdpack import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "setcdrom":
+    from elbepack.setcdrom import run_command
+    run_command( sys.argv[2:] )
+else:
+    usage()
+    sys.exit(20)

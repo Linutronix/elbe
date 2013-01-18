@@ -1,0 +1,1419 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:rfs="https://www.linutronix.de/projects/Elbe"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+        targetNamespace="https://www.linutronix.de/projects/Elbe"
+        elementFormDefault="unqualified"
+        attributeFormDefault="unqualified">
+
+  <element name="RootFileSystem" type="rfs:RootFileSystemType">
+    <annotation>
+      <documentation>
+        describes one elbe project. An elbe project contains the creation of a
+        build environemt and the definition of a elbe target rootfilesystem.
+      </documentation>
+    </annotation>
+   </element>
+
+  <complexType name="RootFileSystemType">
+    <annotation>
+      <documentation>
+      includes all subelements to define the elbe project
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="project" type="rfs:project">
+        <annotation>
+          <documentation>
+            Configurations that are used for creating the buildenvironment and
+            the target rootfilesystem. e.g. the definition of the used debian
+            mirrors.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="target" type="rfs:target">
+        <annotation>
+          <documentation>
+            Configurations that are used to create the target rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="archive" type="base64Binary" minOccurs="0">
+        <annotation>
+          <documentation>
+            tar.bz2 file that contains configuration files for the target
+            rootfilesystem. To alter this node use 'elbe chg_archive' and
+            to get the content of this node 'elbe get_archive'.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="fullpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            install the given packages into the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="sources_list" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt sources list.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="apt_prefs" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt preferences list
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attribute name="created" type="dateTime">
+      <annotation>
+        <documentation>
+          timestamp of creation of the xml file
+        </documentation>
+      </annotation>
+    </attribute>
+    <attribute name="revision" type="rfs:revisionNr" use="required">
+      <annotation>
+        <documentation>
+          revision of the xml file (needs to match revision of the schema)
+        </documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+
+  <simpleType name="revisionNr">
+    <annotation>
+      <documentation>
+      is used to decide if your elbe version is compatible
+      with the given xml file
+      </documentation>
+    </annotation>
+    <restriction base="integer">
+      <minInclusive value="5" />
+      <maxInclusive value="5" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="url">
+    <annotation>
+      <documentation>
+      links to one additional debian mirror
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="binary" type="string">
+        <annotation>
+          <documentation>
+            e.g. "http://myhost/debian /" or "http://debian.org/debian main"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="source" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            e.g. "http://myhost/sources /" or "http://debian.org/debian main"
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="url-list">
+    <annotation>
+      <documentation>
+      links to additional debian mirrors
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="url" type="rfs:url" minOccurs="0" maxOccurs="10">
+        <annotation>
+          <documentation>
+            describes an additional debian mirror
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="mirror">
+    <annotation>
+      <documentation>
+      specify main and additional debian mirrors
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="primary_host" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            IP address or hostname of the primary debian mirror
+            e.g. "debian.org" without a protocol or any slash
+          </documentation>
+        </annotation>
+      </element>
+      <element name="primary_path" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            base path to the debian mirror on the given host
+            e.g. "/debian"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="primary_proto" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            protocol to access the primary debian mirror
+            e.g. "http" or "ftp"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="primary_proxy" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            proxy to access the debian mirror
+            e.g. "http://me:mypass@myproxy:8080"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="cdrom" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            iso image of a cdrom/dvd with debian packages.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="url-list" type="rfs:url-list" minOccurs="0">
+        <annotation>
+          <documentation>
+            additional debian repositories, e.g. for own debian packages
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="project">
+    <annotation>
+      <documentation>
+        describes elbe project settings that apply to the creation of the target
+        rootfilesystem and include the definition of the build environment
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string">
+        <annotation>
+          <documentation>
+            name of the project this rootfilesystem is associated with
+          </documentation>
+        </annotation>
+      </element>
+      <element name="version" type="string">
+        <annotation>
+          <documentation>
+            version of the rootfilesystem definition
+          </documentation>
+        </annotation>
+      </element>
+      <element name="description" type="string">
+        <annotation>
+          <documentation>
+            human readable description of the project
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mirror" type="rfs:mirror">
+        <annotation>
+          <documentation>
+            used debian mirrors
+          </documentation>
+        </annotation>
+      </element>
+      <element name="noauth" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            allow installation of unsigned debian packages
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preference" type="rfs:preference" minOccurs="0">
+        <annotation>
+          <documentation>
+            used for pinning of all packages
+            TODO: example??
+          </documentation>
+        </annotation>
+      </element>
+      <element name="suite" type="string">
+        <annotation>
+          <documentation>
+            name of the debian suite that should be used to generate the
+            buildenvironment and the rootfilesystem.
+            e.g. "lenny", "squeeze", "sid", ..
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildimage" type="rfs:buildimage">
+        <annotation>
+          <documentation>
+            reference to the buildimage which is used to generate the
+            rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preseed" type="rfs:preseed" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Custom preseeding Values for apt
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="preference">
+    <annotation>
+      <documentation>
+        describes a global pinning of debian packages
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+	<attribute name="pin" type="string" use="required">
+          <annotation>
+            <documentation>
+              TODO: format???
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="buildimage">
+    <annotation>
+      <documentation>
+        definition of the build environment
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="arch" type="string">
+        <annotation>
+          <documentation>
+            architecture of the target system. e.g. "amd64", "armel", "ppc", ..
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="string">
+        <annotation>
+          <documentation>
+            size of the virtual harddisk used to run the build environment
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mem" type="rfs:memory">
+        <annotation>
+          <documentation>
+            amount of memory mapped into the virtual build environment
+          </documentation>
+        </annotation>
+      </element>
+      <element name="interpreter" type="string">
+        <annotation>
+          <documentation>
+            virtual machine interpreter, e.g. "kvm", "qemu-system-arm", ...
+          </documentation>
+        </annotation>
+      </element>
+      <element name="kinitrd" type="string">
+        <annotation>
+          <documentation>
+	    pkg name of the initrd/kernel package.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="console" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            serial console of the virtual machine, e.g. "ttyAMA0,115200n1"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="machine" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            virtual platform to host the build environment,
+            e.g. "versatilepb"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="NIC" type="rfs:NIC">
+        <annotation>
+          <documentation>
+            network interface emulation
+          </documentation>
+        </annotation>
+      </element>
+      <element name="portforwarding" type="rfs:portforwarding" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            network ports of the buildenvironment that are forwarded to the
+            host machine
+          </documentation>
+        </annotation>
+      </element>
+      <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            additional packages that are only installed into the
+            build environment; not into the target root filesystem.
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <simpleType name="memory">
+     <annotation>
+       <documentation>
+         at least 128 MB of memory are needed to run the debian-installer
+       </documentation>
+     </annotation>
+    <restriction base="integer">
+      <minInclusive value="128" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="NIC">
+     <annotation>
+       <documentation>
+         describes a virtual network interface
+       </documentation>
+     </annotation>
+    <sequence>
+      <element name="model" type="string">
+        <annotation>
+          <documentation>
+            hardware emulation of the network interface; e.g. "e1000"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="MAC" type="string">
+        <annotation>
+          <documentation>
+             mac address of the virtual network interface
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <simpleType name="fw_proto">
+    <annotation>
+      <documentation>
+         only tcp and udp are allowed protocols for forwarding
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="tcp" />
+      <enumeration value="udp" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="forward">
+    <annotation>
+      <documentation>
+         forward a network port from the build environment to the host machine
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="proto" type="rfs:fw_proto" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            network protocol to forward either "udp" or "tcp"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv" type="integer" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            port on the buildenvironment, e.g. "22" for ssh
+          </documentation>
+        </annotation>
+      </element>
+      <element name="host" type="integer" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            port on the host machine, e.g. "10022"
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="portforwarding" >
+    <annotation>
+      <documentation>
+         forward network ports from the build environment to the host machine
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="forward" type="rfs:forward" minOccurs="1" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            describes a single port forward
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="target">
+    <annotation>
+      <documentation>
+         configuration of the target rootfilesystem
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="hostname" type="string">
+        <annotation>
+          <documentation>
+            hostname of the system
+          </documentation>
+        </annotation>
+      </element>
+      <element name="domain" type="string">
+        <annotation>
+          <documentation>
+            domainname of the network the target system is part of
+          </documentation>
+        </annotation>
+      </element>
+      <element name="passwd" type="string">
+        <annotation>
+          <documentation>
+            root password
+          </documentation>
+        </annotation>
+      </element>
+      <element name="console" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            serial console for getty
+          </documentation>
+        </annotation>
+      </element>
+      <element name="package" type="rfs:package" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            package rootfilesystem as a tarball or cpio image
+          </documentation>
+        </annotation>
+      </element>
+      <element name="images" type="rfs:images" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            generate (flashable) images of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="fstab" type="rfs:fstab" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            specify which resources should be mounted
+          </documentation>
+        </annotation>
+      </element>
+      <element name="tighten" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            don't install any dependencies; just the content of the given debian
+            packages
+          </documentation>
+        </annotation>
+      </element>
+      <element name="diet" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            use reverse dependencies of the given debian packages to determine
+            the rootfilesystem content; this is useful to get rid of dpkg/apt.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="setsel" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+	    Elbe uses +dpkg --set-selections+ to install packages in the target.
+	    The rootfs still needs dpkg, and all dependencies need to be specified in
+	    the pkg-list. The target will contain all postinst generated scripts.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="norecommend" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            Turn off the installation of recommended Packages.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="finetuning" type="rfs:finetuning" minOccurs="0">
+        <annotation>
+          <documentation>
+            apply the given commands to the target rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="pkg-list" type="rfs:pkg-list">
+        <annotation>
+          <documentation>
+            install the given packages into the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <simpleType name="ubi_type">
+    <annotation>
+      <documentation>
+        a ubi volume can be either static or dynamic
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="static" />
+      <enumeration value="dynamic" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="ubi_size">
+    <annotation>
+      <documentation>
+        size pattern as needed by ubinize
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value="(\d+MiB)" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="ubi">
+    <annotation>
+      <documentation>
+        describes a ubi volume
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="type" type="rfs:ubi_type" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            type of the ubi volume; either "static" or "dynamic"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            human readable name of the ubi volume (also used for mount by label)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="id" type="integer" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            id of the ubi volume
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="rfs:ubi_size" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the ubi volume
+          </documentation>
+        </annotation>
+      </element>
+      <element name="binary" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            path and filename of a binary image which will be used as a source
+            for this volume; this can be used for example to store the linux
+            kernel in a static ubi volume
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="ubivg">
+    <annotation>
+      <documentation>
+        container for all ubi volumes of a mtd device
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             human readable name; used to generate filename for the flashable
+             image file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="miniosize" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             flash parameter minimal i/o size
+          </documentation>
+        </annotation>
+      </element>
+      <element name="maxlogicaleraseblockcount" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             flash parameter maximum logical erase block count
+          </documentation>
+        </annotation>
+      </element>
+      <element name="logicaleraseblocksize" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             flash parameter logical erase block size
+          </documentation>
+        </annotation>
+      </element>
+      <element name="physicaleraseblocksize" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             flash parameter physical erase block size
+          </documentation>
+        </annotation>
+      </element>
+      <element name="subpagesize" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+             flash parameter subpagesize
+          </documentation>
+        </annotation>
+      </element>
+      <sequence>
+        <element name="ubi" type="rfs:ubi" minOccurs="1" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+               list of ubi volumes
+            </documentation>
+          </annotation>
+        </element>
+      </sequence>
+    </sequence>
+  </complexType>
+
+  <simpleType name="mtd_size">
+    <annotation>
+      <documentation>
+         size pattern for mtd
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value="(\d+MB)" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="mtd">
+    <annotation>
+      <documentation>
+         describes a mtd device
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             human readable name of the mtd device
+          </documentation>
+        </annotation>
+      </element>
+      <element name="nr" type="integer" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             number of the mtd device
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="rfs:mtd_size" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+             size of the mtd device
+          </documentation>
+        </annotation>
+      </element>
+      <element name="binary" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            path and filename of a binary image which will be used as a source
+            for this mtd device; this can be used for example to store the
+            bootloader in the beginning of the flash (mtd0)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="ubivg" type="rfs:ubivg" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+             if the mtd will be used to store ubi volumes, this container is
+             used to define them
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="hd">
+    <annotation>
+      <documentation>
+         describes a harddisk
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            human readable name of the harddisk, this will be used as name for
+            the image file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="integer" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the harddisk in megabyte
+          </documentation>
+        </annotation>
+      </element>
+      <element name="partitions" type="rfs:partitions" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            list of partitions of this harddisk
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="images">
+    <annotation>
+      <documentation>
+         container for all storage devices of the target
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="mtd" type="rfs:mtd" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            container for all mtd devices of the target
+          </documentation>
+        </annotation>
+      </element>
+      <element name="hd" type="rfs:hd" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            container for all harddisks of the target
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="fs">
+    <annotation>
+      <documentation>
+         description of a linux filesystem
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="type" type="rfs:fs_type" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            filesystemtype, e.g. "ext3", "ubifs", ...
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mkfs" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            options passed to the mkfs command
+          </documentation>
+        </annotation>
+      </element>
+      <element name="tune2fs" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            options passed to the tune2fs command
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="bylabel">
+    <annotation>
+      <documentation>
+         mount storage by the label of the partition or volume
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            label of the partition/volume to mount
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mountpoint" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            path in the rootfilesystem where the partition/volume is mounted
+          </documentation>
+        </annotation>
+      </element>
+      <element name="fs" type="rfs:fs" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            filesystem of the partition/volume to mount
+          </documentation>
+        </annotation>
+      </element>
+      <element name="options" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            options passed to the mount command
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="bydev">
+    <annotation>
+      <documentation>
+         mount virtual filesystems or other storage devices device-node
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="source" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            either a device-node or "none" for virtual filesystems
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mountpoint" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            path in the rootfilesystem where the device or virtual filesystem
+            is mounted
+          </documentation>
+        </annotation>
+      </element>
+      <element name="fs" type="rfs:fs" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            filesystem of the device or the virtual filesystem name
+          </documentation>
+        </annotation>
+      </element>
+      <element name="options" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            options passed to the mount command
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="fstab">
+    <annotation>
+      <documentation>
+         container for mounts
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="bylabel" type="rfs:bylabel" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            describes a mount by a volume or partition label
+          </documentation>
+        </annotation>
+      </element>
+      <element name="bydev" type="rfs:bydev" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            describes a mount based on a device node or a mount of a virtual
+            filesystem like debugfs or tmpfs
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="package">
+    <annotation>
+      <documentation>
+         list of packages, each contains the hole rootfilesystem
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="tar" type="rfs:tar" minOccurs="0">
+        <annotation>
+          <documentation>
+             tar package of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="cpio" type="rfs:cpio" minOccurs="0">
+        <annotation>
+          <documentation>
+             cpio package of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="tar">
+    <annotation>
+      <documentation>
+         describes a tar package
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             filename of the tar package
+          </documentation>
+        </annotation>
+      </element>
+      <element name="options" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             options passed to the tar command
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="cpio">
+    <annotation>
+      <documentation>
+         describes a cpio package
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             filename of the cpio package 
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="partitions">
+    <annotation>
+      <documentation>
+         container for all partitions of a harddisk
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="primary" type="rfs:primary_part" minOccurs="1" maxOccurs="4">
+        <annotation>
+          <documentation>
+             container of all primary partitions of a harddisk
+          </documentation>
+        </annotation>
+      </element>
+      <element name="logical" type="string" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+             container of all logical partitions of a harddisk
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="primary_part">
+    <annotation>
+      <documentation>
+         describes a primary partition of a harddisk
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="part" type="rfs:part_nr">
+        <annotation>
+          <documentation>
+             partition number
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="rfs:part_size">
+        <annotation>
+          <documentation>
+             size of the partition
+          </documentation>
+        </annotation>
+      </element>
+      <element name="label" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             human readable label of the partition used for mount by label and
+             as filename for the flashable image
+          </documentation>
+        </annotation>
+      </element>
+      <element name="parttype" type="rfs:part_type" minOccurs="0">
+        <annotation>
+          <documentation>
+             type of the partition, e.g. "swap" or "linux"
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <simpleType name="part_size">
+    <annotation>
+      <documentation>
+         format of the partition size
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value="(\d+[kMG]?|remain)" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="part_nr">
+    <annotation>
+      <documentation>
+         allow maximum 4 primary partitions
+      </documentation>
+    </annotation>
+    <restriction base="integer">
+      <minInclusive value="1" />
+      <maxInclusive value="4" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="part_type">
+    <annotation>
+      <documentation>
+         list of supported partition types
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="linux" />
+      <enumeration value="swap" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="fs_type">
+    <annotation>
+      <documentation>
+         list of supported filesystems
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="ext2" />
+      <enumeration value="ext3" />
+      <enumeration value="ext4" />
+      <enumeration value="xfs" />
+      <enumeration value="ubifs" />
+      <enumeration value="tmpfs" />
+      <enumeration value="debugfs" />
+      <enumeration value="configfs" />
+      <enumeration value="proc" />
+      <enumeration value="sysfs" />
+    </restriction>
+  </simpleType>
+
+  <complexType name="finetuning">
+    <annotation>
+      <documentation>
+         container for finetuning commands; these commands are executed in the
+         root of the target filesystem after the target filesystem was created
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+  </complexType>
+
+  <group name="action">
+    <annotation>
+      <documentation>
+        definition of finetuning commands
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="rm" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            remove a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mkdir" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="purge" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            purge a debian package out of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="command" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
+
+  <complexType name="cpmv">
+    <annotation>
+      <documentation>
+        describes a copy or move of an element in the rootfilesystem
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+	<attribute name="path" type="string" use="required" />    
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="git_src">
+    <annotation>
+      <documentation>
+        describes a git location of a debian source package
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="url" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            url of the git repository, e.g. "git://myhost/myrepo.git"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="tag" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            reference to a tag in the git tree
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="svn_src">
+    <annotation>
+      <documentation>
+        describes a svn location of a debian source package
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="url" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            url of the svn repository, e.g. "svn://myhost/myrepo/tags/my_tag"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="rev" type="integer" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            svn revision which should be checked out
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="pkg">
+    <annotation>
+      <documentation>
+        describes a debian binary package
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="pin" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined version of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="version" type="string" use="optional">
+          <annotation>
+            <documentation>
+              version of the package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="auto" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              installed automatically as a dependency
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="md5" type="string" use="optional">
+          <annotation>
+            <documentation>
+              md5 sum of the package.
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="pkg-list">
+    <annotation>
+      <documentation>
+        container of debian packages
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="git-src" type="rfs:git_src" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a git tree hosting a debian source package. The tree
+            will be cloned into the build environment and 'dpkg-buildpackage'
+            will be called. The resulting debian package will be installed into
+            the target rootfilesystem. Take care that all build dependencies
+            needs to be listed inside 'buildenv'/'pkg-list' at the moment.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="svn-src" type="rfs:svn_src" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a svn repository hosting a debian source package. The 
+            repository will be checked out into the build environment and
+            'dpkg-buildpackage' will be called. The resulting debian package
+            will be installed into the target rootfilesystem. Take care that
+            all build dependencies needs to be listed inside
+            'buildenv'/'pkg-list' at the moment.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="pkg" type="rfs:pkg" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a binary debian package which will be installed from
+            the given mirrors into the target rootfilesystem.
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="fullpkg-list">
+    <annotation>
+      <documentation>
+        List of packages to be validated against the installed list.
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="pkg" type="rfs:pkg" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            Reference to a binary debian package which is supposed to be installed.
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="conf">
+    <annotation>
+      <documentation>
+        describes a preseeding entry
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="owner" type="string" use="required">
+          <annotation>
+            <documentation>
+              owner package of the config entry
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="key" type="string" use="required">
+          <annotation>
+            <documentation>
+              key name of the entry
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="type" type="string" use="required">
+          <annotation>
+            <documentation>
+              type of the config entry
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="value" type="string" use="required">
+          <annotation>
+            <documentation>
+              value of the config entry
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="preseed">
+    <annotation>
+      <documentation>
+        container of config entries
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="conf" type="rfs:conf" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            A config entry
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+</schema>

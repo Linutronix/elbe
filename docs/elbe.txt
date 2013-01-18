@@ -1,0 +1,61 @@
+elbe(1)
+=======
+
+NAME
+----
+elbe - Embedded Linux Build Environment
+
+
+SYNOPSIS
+--------
+[verse]
+'elbe' <command> [<args>]
+
+
+DESCRIPTION
+-----------
+Elbe is a system to build Rootfilesystems from XML description files.
+It also includes tools to modify xml files.
+
+The '<command>' is a name of an Elbe command (see below).
+
+
+Elbe COMMANDS
+-------------
+
+linkgit:elbe-create[1]::
+        create a build directory and insert project files.
+
+linkgit:elbe-chg_archive[1]::
+        insert a new config archive (.tbz) into a XML file.
+
+linkgit:elbe-get_archive[1]::
+        extract a config archive (.tbz) from a XML file.
+
+linkgit:elbe-setcdrom[1]::
+        set an iso image as local debian mirror.
+
+linkgit:elbe-setsel[1]::
+        update the packagelist from the output of dpkg-getselections.
+
+linkgit:elbe-show[1]::
+        show a textual information about the given XML file.
+
+linkgit:elbe-xsdtoasciidoc[1]::
+        create an asciidoc documentation from an annotated XML Schema file (xsd)
+
+
+Authors
+-------
+elbe was first implemented as dbsfed by Benedikt Spranger <bene@linutronix.de>.
+This version is an new implementation in python from Torben Hohn <torbenh@linutronix.de>.
+
+
+SEE ALSO
+--------
+linkgit:elbe[1]
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite

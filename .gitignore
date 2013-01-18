@@ -1,0 +1,8 @@
+*.pyc
+build
+docs/*.1
+docs/*.html
+docs/*.png
+docs/elbe-examples.txt
+debian
+docs/elbe-schema-reference.txt
