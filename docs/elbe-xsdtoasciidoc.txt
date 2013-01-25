@@ -11,7 +11,7 @@ Schema file (xsd).
 SYNOPSIS
 --------
 [verse]
-'elbe xsdtoasciidoc' <xmlfile>
+'elbe xsdtoasciidoc' [options] <xmlfile>
 
 
 DESCRIPTION
@@ -24,6 +24,8 @@ annotations in the xsd file.
 
 OPTIONS
 -------
+
+--output=FILE  specify output filename
 
 <xsdfile>::
 	The xsdfile to be used.
