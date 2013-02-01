@@ -51,11 +51,11 @@ Components: main>main
 UDebComponents: main>main
 
 Name: mover
-Method: file:///mirrors/debian
+Method: file:///var/cache/apt/archives
+Suite: ./
 VerifyRelease: blindtrust
 #GetInRelease: no
-Components: main>main
-UDebComponents:
+Flat: main
 
 
 Name: ftp
@@ -67,11 +67,23 @@ UDebComponents: main>main
 
 EOF
 
-sed -i "s/APTSITES=.*$/APTSITES=*/" /etc/apt-move.conf
-apt-move update
+cd /var/cache/apt/archives
+rm -f Packages
+rm -f Packages.gz
+apt-ftparchive packages . > Packages
+gzip -9 Packages
+apt-ftparchive release . > Release
+
+cd /opt/elbe
+
+
 ln -s stable /mirrors/debian/dists/${prj.text("suite")}
 
 reprepro -b /opt/elbe/cdrom update
+
+rm -f /var/cache/apt/archives/Packages.gz
+rm -f /var/cache/apt/archives/Release
+
 
 mkdir -p /opt/elbe/cdrom/.disk
 echo main > /opt/elbe/cdrom/.disk/base_installable

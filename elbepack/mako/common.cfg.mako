@@ -119,7 +119,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 % endif
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string parted mtd-utils dpkg-dev mkisofs \
-dosfstools apt-rdepends python-apt rsync genisoimage apt-move reprepro \
+dosfstools apt-rdepends python-apt rsync genisoimage reprepro \
 % for n in pkgs:
 % if n.tag == "pkg":
   ${n.et.text} \

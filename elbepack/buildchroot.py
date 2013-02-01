@@ -364,7 +364,7 @@ def run_command( argv ):
 
         pkgs = xml.node("/target/pkg-list")
         pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-                   "python-apt", "rsync", "genisoimage", "apt-move", "reprepro"]
+                   "python-apt", "rsync", "genisoimage", "reprepro"]
 
         for p in pkgs:
             if p.tag == "pkg":
