@@ -1,6 +1,4 @@
 #!/usr/bin/make -f
 
-export DH_OPTIONS=--buildsystem=python_distutils
-
 %:
-	dh --with python2 $@
+	dh --buildsystem=python_distutils --with python2 $@
