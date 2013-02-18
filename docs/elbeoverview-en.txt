@@ -50,6 +50,18 @@ Configure `/etc/apt/sources.list.d` appropriately:
 echo 'deb http://debian.linutronix.de/elbe squeeze main' >> /etc/apt/sources.list
 -----------------------------------------------------------------------------------
 
+Optionally the public key for the repo can be installed:
+
+-----------------------------------------------------------------------------------
+wget http://debian.linutronix.de/elbe/elbe-repo.pub && apt-key add elbe-repo.pub
+-----------------------------------------------------------------------------------
+
+Update the package list:
+
+--------------------------------------------
+aptitude update
+--------------------------------------------
+
 and install elbe using the following command:
 
 --------------------------------------------

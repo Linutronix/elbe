@@ -22,7 +22,8 @@ Crash Course
    A stripped down and readonly target rootfilesystem is available within
      'nfsroot.tar.gz'
 
-For further informations read ABOUT, INSTALL docs/elbe-overview.txt
+For further informations read ABOUT, INSTALL docs/elbeoverview-en.txt
+Or get a nicer HTML documentation and run 'make' at the docs folder.
 
 Report bugs or any other feedback
 ---------------------------------
