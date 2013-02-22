@@ -1,0 +1,9 @@
+* introduce ChangeLog file
+* Added  reference to html documentation.(README) Added instructions to install public key of elbe repository.(elbeoverview-en.txt)
+* deb-buildpkg: fix for dh which ignores DH_OPTIONS
+* mkcdrom: stop using apt-move to build the cdrom. Fix non-free components
+* debian: switch from python-support to dh_python2
+* add make as debian dependency
+* Make sure xsdtoasciidoc.mako is packaged correctly
+* Add --output option to elbe-xsdtoasciidoc documentation
+* elbe v0.4.2
