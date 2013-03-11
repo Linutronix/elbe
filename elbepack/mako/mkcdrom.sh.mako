@@ -98,6 +98,7 @@ md5sum /opt/elbe/cdrom/source.xml > /opt/elbe/cdrom/source.md5
 ln -s . /opt/elbe/cdrom/debian
 
 genisoimage -o /opt/elbe/install.iso -R -J -joliet-long /opt/elbe/cdrom
+echo /opt/elbe/install.iso >> /opt/elbe/files-to-extract
 
 % if opt.buildsources:
 mkdir -p /opt/elbe/source
@@ -108,5 +109,6 @@ awk '{print "apt-get -d source "$1}' /opt/elbe/pkg-list.actual | sh
 cd /opt/elbe
 dpkg-scansources source /dev/null | gzip -9c > source/Sources.gz
 genisoimage -o /opt/elbe/source.iso -J -R source
+echo /opt/elbe/source.iso >> /opt/elbe/files-to-extract
 % endif
 

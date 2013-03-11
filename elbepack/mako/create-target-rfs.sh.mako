@@ -138,15 +138,18 @@ find /usr/share/doc -name copyright -exec \
 
 % if xml.has("target/package/tar"):
 tar cf /opt/elbe/target.tar -C /target .
+echo /opt/elbe/target.tar >> /opt/elbe/files-to-extract
 % endif
 
 % if xml.has("target/package/cpio"):
 cd /target
-find . -print | cpio -ov -H newc >/opt/elbe/target.cpio
+find . -print | cpio -ov -H newc >/opt/elbe/${xml.text("target/package/cpio/name")}
+echo /opt/elbe/${xml.text("target/package/cpio/name")} >> /opt/elbe/files-to-extract
 % endif
 
 % if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
 tar cf /opt/elbe/builds.tar -C /opt/elbe/builds .
+echo /opt/elbe/builds.tar >> /opt/elbe/files-to-extract
 % endif
 
 if [ -f build.txt ]; then
@@ -160,3 +163,14 @@ echo "================================================================" >> /opt/
 echo "" >> /opt/elbe/elbe-report.txt
 
 fi
+
+echo /opt/elbe/licence.txt >> /opt/elbe/files-to-extract
+echo /opt/elbe/elbe-report.txt >> /opt/elbe/files-to-extract
+echo /opt/elbe/source.xml >> /opt/elbe/files-to-extract
+echo /opt/elbe/validation.txt >> /opt/elbe/files-to-extract
+
+
+% if opt.debug:
+echo /var/log/syslog >> /opt/elbe/files-to-extract
+% endif
+

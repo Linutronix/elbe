@@ -230,51 +230,30 @@ run-con: stamp-feed-initial-image
 % endif
 	&& reset
 
-% if opt.debug:
-stamp-install-log: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/var/log/installer/syslog ./installer.log
-	touch stamp-install-log
-% endif
+files-to-extract: stamp-feed-initial-image
+	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/files-to-extract .
+	for f in `cat files-to-extract`; do 
+		e2cp  buildenv.img?offset=${loop_offset}:$f .
+	done
 
 % if xml.has("target/package/tar"):
-${xml.text("target/package/tar/name")}: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/target.tar ./target.tar
+${xml.text("target/package/tar/name")}: files-to-extract 
 	gzip target.tar
 	mv target.tar.gz ${xml.text("target/package/tar/name")}
 % endif
-% if xml.has("target/package/cpio"):
-${xml.text("target/package/cpio/name")}: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/target.cpio ${xml.text("target/package/cpio/name")}
-% endif
 
 % if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
-get-deb-pkgs: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/builds.tar .
+get-deb-pkgs: files-to-extract
 	mkdir -p deb-archive
 	tar xf builds.tar -C deb-archive
 % endif
 
-install.iso: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/install.iso .
-  
-elbe-report.txt: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/elbe-report.txt .
 
 % if xml.has("fullpkgs"):
-validation.txt: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/validation.txt .
+validation.txt: files-to-extract
 	cat validation.txt
 % endif
 
-source.xml: stamp-feed-initial-image
-	rm -f source.xml
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/source.xml .
-
-% if opt.buildsources:
-source.iso: stamp-feed-initial-image
-	rm -f source.iso
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/source.iso .
-% endif
 
 stamp-pack-build-image: stamp-feed-initial-image
 	bzip2 -9 buildenv.img
