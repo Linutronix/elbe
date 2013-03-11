@@ -174,3 +174,11 @@ echo /opt/elbe/validation.txt >> /opt/elbe/files-to-extract
 echo /var/log/syslog >> /opt/elbe/files-to-extract
 % endif
 
+
+% if xml.text("project/buildimage/arch") == "armel":
+	echo /boot/initrd.img-2.6.32-5-versatile >> /opt/elbe/files-to-extract
+	echo /boot/vmlinuz-2.6.32-5-versatile >> /opt/elbe/files-to-extract
+% elif xml.text("project/buildimage/arch") == "powerpc":
+	echo /boot/initrd.img-2.6.32-5-powerpc >> /opt/elbe/files-to-extract
+	echo /boot/vmlinux-2.6.32-5-powerpc >> /opt/elbe/files-to-extract
+% endif

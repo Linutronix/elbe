@@ -124,16 +124,6 @@ stamp-install-initial-image: stamp-create-buildenv-img
 	touch stamp-install-initial-image
 
 stamp-feed-initial-image: stamp-install-initial-image
-% if xml.text("project/buildimage/arch") == "armel":
-	mkdir -p boot
-	e2cp buildenv.img?offset=${loop_offset}:/boot/initrd.img-2.6.32-5-versatile boot
-	e2cp buildenv.img?offset=${loop_offset}:/boot/vmlinuz-2.6.32-5-versatile boot
-% elif xml.text("project/buildimage/arch") == "powerpc":
-	mkdir -p boot
-	e2cp buildenv.img?offset=${loop_offset}:/boot/initrd.img-2.6.32-5-powerpc boot
-	e2cp buildenv.img?offset=${loop_offset}:/boot/vmlinux-2.6.32-5-powerpc boot
-% endif
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/licence.txt .
 % if tgt.has("images"):
 %  for mtd in tgt.node("images"):
 %   if mtd.has("partitions"):
@@ -180,11 +170,11 @@ run: stamp-feed-initial-image
 % endif
 % if xml.text("project/buildimage/arch") == "armel" or xml.text("project/buildimage/arch") == "powerpc":
 % if prj.text("suite")=="squeeze":
-		-kernel boot/vmlinu* \
-		-initrd boot/initrd.img-* \
+		-kernel vmlinu* \
+		-initrd initrd.img-* \
 % else:
-		-kernel boot/vmlin* \
-		-initrd boot/initrd* \
+		-kernel vmlin* \
+		-initrd initrd* \
 % endif
 		-append 'root=/dev/${hd_name}' \
 % endif
@@ -214,11 +204,11 @@ run-con: stamp-feed-initial-image
 % endif
 % if xml.text("project/buildimage/arch") == "armel" or xml.text("project/buildimage/arch") == "powerpc":
 % if prj.text("suite")=="squeeze":
-		-kernel boot/vmlinu* \
-		-initrd boot/initrd.img-* \
+		-kernel vmlinu* \
+		-initrd initrd.img-* \
 % else:
-		-kernel boot/vmlin* \
-		-initrd boot/initrd* \
+		-kernel vmlin* \
+		-initrd initrd* \
 % endif
 		-append 'root=/dev/${hd_name}' \
 % endif
