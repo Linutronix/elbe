@@ -82,6 +82,7 @@ MOUNTCOUNT=$MOUNTCNT+1
 # no ubi/ubifs support available in d-i kernel
 mkdir -v -p /target${l.text("mountpoint")}
 echo "create ${l.text("label")}.ubifs from: /target${l.text("mountpoint")}"
+echo "/opt/elbe/${l.text("label")}.ubifs" >> /opt/elbe/files-to-extract
 mkfs.ubifs -r /target${l.text("mountpoint")} \
 	-o /opt/elbe/${l.text("label")}.ubifs \
 % for mtd in tgt.node("images"):
@@ -94,6 +95,9 @@ mkfs.ubifs -r /target${l.text("mountpoint")} \
 	-e ${ubivg.text("logicaleraseblocksize")} \
 	-c ${ubivg.text("maxlogicaleraseblockcount")} \
 % endif
+% endif
+% if vol.has("binary"):
+echo "${vol.text("binary")}" >> /opt/elbe/files-to-extract
 % endif
 % endfor
 % endfor
@@ -128,6 +132,7 @@ ubinize \
 	-p ${ubivg.text("physicaleraseblocksize")} \
 	-m ${ubivg.text("miniosize")} \
 	/opt/elbe/ubi.cfg
+echo "/opt/elbe/${mtd.text("name")}" >> /opt/elbe/files-to-extract
 %     endif
 %    endfor
 %   endif

@@ -124,32 +124,6 @@ stamp-install-initial-image: stamp-create-buildenv-img
 	touch stamp-install-initial-image
 
 stamp-feed-initial-image: stamp-install-initial-image
-% if tgt.has("images"):
-%  for mtd in tgt.node("images"):
-%   if mtd.has("partitions"):
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/${mtd.text("name")} .
-%   endif
-%   if mtd.has("binary"):
-	e2cp buildenv.img?offset=${loop_offset}:${mtd.text("binary")} ${mtd.text("name")}
-%   endif
-%   if mtd.has("ubivg"):
-%    for ubivg in mtd:
-%     if ubivg.has("physicaleraseblocksize"):
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/${mtd.text("name")} .
-%     endif
-%    endfor
-%    for vol in mtd.node("ubivg"):
-%     if vol.has("label"):
-%      if vol.has("binary"):
-	e2cp buildenv.img?offset=${loop_offset}:${vol.text("binary")} .
-%      else:
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/${vol.text("label")}.ubifs .
-%      endif
-%     endif
-%    endfor
-%   endif
-%  endfor
-% endif
 	touch stamp-feed-initial-image
 
 run: stamp-feed-initial-image
