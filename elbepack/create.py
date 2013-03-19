@@ -142,6 +142,13 @@ def run_command( argv ):
         print 'unable to create project directory: %s' % path
         sys.exit(30)
 
+    out_path = os.path.join(path,".elbe-in")
+    try:
+        os.makedirs(out_path)
+    except:
+        print 'unable to create subdirectory: %s' % out_path
+        sys.exit(30)
+
     d = {"opt": opt,
          "xml": xml,
          "prj": xml.node("/project"),
@@ -151,14 +158,14 @@ def run_command( argv ):
          "preseed": get_preseed(xml) }
 
     try:
-        copy_kinitrd(xml, path)
+        copy_kinitrd(xml, out_path)
     except:
         print "Failure to download kernel/initrd debian Package"
         print "Check your source URLs"
         sys.exit(20)
 
     if xml.has("archive"):
-        unbase( xml.text("/archive"), os.path.join(path,"archive.tar.bz2") )
+        unbase( xml.text("/archive"), os.path.join(out_path,"archive.tar.bz2") )
 
     templates = os.listdir( template_dir )
 
@@ -176,16 +183,19 @@ def run_command( argv ):
     for t in templates:
         print t
         o = t.replace( ".mako", "" )
-        write_template(os.path.join(path,o), os.path.join(template_dir, t), d )
+        if t == "Makefile.mako":
+            write_template(os.path.join(path,o), os.path.join(template_dir, t), d )
+        else:
+            write_template(os.path.join(out_path,o), os.path.join(template_dir, t), d )
 
         if t in make_executable:
-            os.chmod( os.path.join(path,o), 0755 )
+            os.chmod( os.path.join(out_path,o), 0755 )
 
     shutil.copyfile( args[0],
-       os.path.join(path, "source.xml" ) )
+       os.path.join(out_path, "source.xml" ) )
 
     shutil.copyfile( os.path.join( pack_dir, "treeutils.py" ),
-       os.path.join(path, "treeutils.py" ) )
+       os.path.join(out_path, "treeutils.py" ) )
 
     shutil.copyfile( os.path.join( pack_dir, "dump.py" ),
-       os.path.join(path, "dump.py" ) )
+       os.path.join(out_path, "dump.py" ) )

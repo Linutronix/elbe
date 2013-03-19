@@ -43,13 +43,13 @@ else:
   cdrom_type = "scsi"
   hd_name = "sda1"
 
-all_targets = ["stamp-feed-initial-image", "files-to-extract"]
+  all_targets = [".stamps/stamp-install-initial-image", ".elbe-gen/files-to-extract"]
 if xml.has("target/package/tar"):
   all_targets.append( tgt.text("package/tar/name") )
 if xml.has("target/package/cpio"):
   all_targets.append( tgt.text("package/cpio/name") )
 if opt.debug:
-  all_targets.append( "stamp-install-log" )
+  all_targets.append( ".stamps/stamp-install-log" )
 if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
   all_targets.append( "get-deb-pkgs" )
 if xml.has("fullpkgs"):
@@ -61,43 +61,45 @@ target_num = 1
 
 all: ${all_targets}
 
-initrd-preseeded.gz: *.cfg post-inst.sh create-target-rfs.sh pkg-list finetuning.sh changeroot-into-buildenv.sh cp-scipts-into-buildenv.sh
+.elbe-gen/initrd-preseeded.gz: .elbe-in/*
 	rm -rf tmp-tree
 	mkdir tmp-tree
-	cp *.cfg tmp-tree/
-	-cp preferences tmp-tree/
+	cp .elbe-in/*.cfg tmp-tree/
+	-cp .elbe-in/preferences tmp-tree/
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
-	cp 02pinning tmp-tree/usr/lib/post-base-installer.d
-	cp post-inst.sh tmp-tree/
-	cp create-target-rfs.sh tmp-tree/
-	cp cp-scipts-into-buildenv.sh tmp-tree/
-	cp changeroot-into-buildenv.sh tmp-tree/
-	cp pkg-list tmp-tree/
-	cp Release.bin Release.src tmp-tree/
-	cp part-target.sh tmp-tree/
-	cp print_licence.sh tmp-tree/
-	cp finetuning.sh tmp-tree/
-	cp purge.sh tmp-tree/
-	cp source.xml tmp-tree/
-	cp dump.py tmp-tree/
-	cp treeutils.py tmp-tree/
-	cp ubi.cfg tmp-tree/
-	cp fstab tmp-tree/
-	cp pkg-selections tmp-tree/
-	cp mkcdrom.sh tmp-tree/
+	cp .elbe-in/02pinning tmp-tree/usr/lib/post-base-installer.d
+	cp .elbe-in/post-inst.sh tmp-tree/
+	cp .elbe-in/create-target-rfs.sh tmp-tree/
+	cp .elbe-in/cp-scipts-into-buildenv.sh tmp-tree/
+	cp .elbe-in/changeroot-into-buildenv.sh tmp-tree/
+	cp .elbe-in/pkg-list tmp-tree/
+	cp .elbe-in/Release.bin Release.src tmp-tree/
+	cp .elbe-in/part-target.sh tmp-tree/
+	cp .elbe-in/print_licence.sh tmp-tree/
+	cp .elbe-in/finetuning.sh tmp-tree/
+	cp .elbe-in/purge.sh tmp-tree/
+	cp .elbe-in/source.xml tmp-tree/
+	cp .elbe-in/dump.py tmp-tree/
+	cp .elbe-in/treeutils.py tmp-tree/
+	cp .elbe-in/ubi.cfg tmp-tree/
+	cp .elbe-in/fstab tmp-tree/
+	cp .elbe-in/pkg-selections tmp-tree/
+	cp .elbe-in/mkcdrom.sh tmp-tree/
 % if xml.has("archive"):
-	cp archive.tar.bz2 tmp-tree/
+	cp .elbe-in/archive.tar.bz2 tmp-tree/
 % endif
-	gzip -cd initrd.gz >initrd-preseeded
-	cd tmp-tree && find . | cpio -H newc -o --append -F ../initrd-preseeded
-	gzip -9f initrd-preseeded
+	mkdir -p .elbe-gen
+	gzip -cd .elbe-in/initrd.gz >.elbe-gen/initrd-preseeded
+	cd tmp-tree && find . | cpio -H newc -o --append -F ../.elbe-gen/initrd-preseeded
+	gzip -9f .elbe-gen/initrd-preseeded
 	rm -rf tmp-tree
 
-stamp-create-buildenv-img buildenv.img: initrd-preseeded.gz
+.stamps/stamp-create-buildenv-img buildenv.img: .elbe-gen/initrd-preseeded.gz
 	qemu-img create -f raw buildenv.img $(IMGSIZE)
-	touch stamp-create-buildenv-img
+	mkdir -p .stamps
+	touch .stamps/stamp-create-buildenv-img
 
-stamp-install-initial-image: stamp-create-buildenv-img
+.stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
 	${prj.text("buildimage/interpreter")}  \
 		-M ${prj.text("buildimage/machine")} \
 % if opt.oldkvm:
@@ -108,8 +110,8 @@ stamp-install-initial-image: stamp-create-buildenv-img
 % if prj.has("mirror/cdrom"):
   -drive file=${prj.text("mirror/cdrom")},if=${cdrom_type},media=cdrom,bus=1,unit=1 \
 % endif
-		-kernel vmlinuz \
-		-initrd initrd-preseeded.gz \
+		-kernel .elbe-in/vmlinuz \
+		-initrd .elbe-gen/initrd-preseeded.gz \
 		-append 'root=/dev/${hd_name} debconf_priority=critical console=${prj.text("buildimage/console")} DEBIAN_FRONTEND=newt' \
 		-no-reboot \
 % if not opt.debug:
@@ -119,12 +121,10 @@ stamp-install-initial-image: stamp-create-buildenv-img
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
 		-usb && reset
-	touch stamp-install-initial-image
+	mkdir -p .stamps
+	touch .stamps/stamp-install-initial-image
 
-stamp-feed-initial-image: stamp-install-initial-image
-	touch stamp-feed-initial-image
-
-run: stamp-feed-initial-image
+run: .elbe-gen/files-to-extract
 	${prj.text("buildimage/interpreter")}  \
 		-M ${prj.text("buildimage/machine")} \
 % if opt.oldkvm:
@@ -157,7 +157,7 @@ run: stamp-feed-initial-image
 % endfor
 % endif
 	&& reset
-run-con: stamp-feed-initial-image
+run-con: .elbe-gen/files-to-extract
 	${prj.text("buildimage/interpreter")}  \
 		-M ${prj.text("buildimage/machine")} \
 % if opt.oldkvm:
@@ -192,35 +192,37 @@ run-con: stamp-feed-initial-image
 % endif
 	&& reset
 
-files-to-extract: stamp-feed-initial-image
-	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/files-to-extract .
-	for f in `cat files-to-extract`; do e2cp  buildenv.img?offset=${loop_offset}:$$f . ; done
+.elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
+	mkdir -p .elbe-gen
+	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/files-to-extract .elbe-gen/
+	for f in `cat .elbe-gen/files-to-extract`; do e2cp  buildenv.img?offset=${loop_offset}:$$f . ; done
 
 % if xml.has("target/package/tar"):
-${xml.text("target/package/tar/name")}: files-to-extract 
+  ${xml.text("target/package/tar/name")}: ./elbe-gen/files-to-extract 
 	gzip target.tar
 	mv target.tar.gz ${xml.text("target/package/tar/name")}
 % endif
 
 % if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
-get-deb-pkgs: files-to-extract
+get-deb-pkgs: ./elbe-gen/files-to-extract
 	mkdir -p deb-archive
 	tar xf builds.tar -C deb-archive
 % endif
 
 
 % if xml.has("fullpkgs"):
-validation.txt: files-to-extract
+validation.txt: .elbe-gen/files-to-extract
 	cat validation.txt
 % endif
 
 
-stamp-pack-build-image: stamp-feed-initial-image
+.stamps/stamp-pack-build-image: .stamps/stamp-install-initial-image
 	bzip2 -9 buildenv.img
-	touch stamp-pack-build-image
+	mkdir -p .stamps
+	touch .stamps/stamp-pack-build-image
 
 clean:
-	rm -f stamp* buildenv.img initrd-preseeded.gz
+	rm -f .stamps/stamp* buildenv.img initrd-preseeded.gz
 
 distclean: clean
 	rm -rf tmp-mount tmp-target
