@@ -73,7 +73,7 @@ all: ${all_targets}
 	cp .elbe-in/cp-scipts-into-buildenv.sh tmp-tree/
 	cp .elbe-in/changeroot-into-buildenv.sh tmp-tree/
 	cp .elbe-in/pkg-list tmp-tree/
-	cp .elbe-in/Release.bin Release.src tmp-tree/
+	cp .elbe-in/Release.bin .elbe-in/Release.src tmp-tree/
 	cp .elbe-in/part-target.sh tmp-tree/
 	cp .elbe-in/print_licence.sh tmp-tree/
 	cp .elbe-in/finetuning.sh tmp-tree/
