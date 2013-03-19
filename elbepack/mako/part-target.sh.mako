@@ -79,7 +79,7 @@ MOUNTCOUNT=$MOUNTCNT+1
 % if l.has("label"):
 
 % if l.text("fs/type") == "ubifs":
-# no ubi/ubifs support available in d-i kernel
+# create ubifs images according to fstab
 mkdir -v -p /target${l.text("mountpoint")}
 echo "create ${l.text("label")}.ubifs from: /target${l.text("mountpoint")}"
 echo "/opt/elbe/${l.text("label")}.ubifs" >> /opt/elbe/files-to-extract
