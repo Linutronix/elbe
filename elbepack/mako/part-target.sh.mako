@@ -93,7 +93,7 @@ mkfs.ubifs -r /target${l.text("mountpoint")} \
 % if vol.text("label") == l.text("label"):
 	-m ${ubivg.text("miniosize")} \
 	-e ${ubivg.text("logicaleraseblocksize")} \
-	-c ${ubivg.text("maxlogicaleraseblockcount")} \
+	-c ${ubivg.text("maxlogicaleraseblockcount")}
 % endif
 % endif
 % if vol.has("binary"):
