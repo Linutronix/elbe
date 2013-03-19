@@ -114,16 +114,18 @@ mv -v /target${l.text("mountpoint")}/* /tmp/mkfsdone${l.text("mountpoint")}/
 # move files back
 mv -v /tmp/mkfsdone/* /target/
 
+% if tgt.has("images"):
 # add binaries like kernel / uboot to files to extract list
-% for mtd in tgt.node("images"):
-	% if mtd.has("ubivg"):
-		% for vol in ubivg:
-			% if vol.has("binary"):
+	% for mtd in tgt.node("images"):
+		% if mtd.has("ubivg"):
+			% for vol in ubivg:
+				% if vol.has("binary"):
 echo "${vol.text("binary")}" >> /opt/elbe/files-to-extract
-			% endif
-		% endfor
-	% endif
-% endfor
+				% endif
+			% endfor
+		% endif
+	% endfor
+% endif
 
 cd /opt/elbe
 
