@@ -96,15 +96,11 @@ mkfs.ubifs -r /target${l.text("mountpoint")} \
 	-c ${ubivg.text("maxlogicaleraseblockcount")}
 % endif
 % endif
-% if vol.has("binary"):
-echo "${vol.text("binary")}" >> /opt/elbe/files-to-extract
-% endif
 % endfor
 % endfor
 % endif
 % endfor
 % endif
-
 
 # move files away that they are not included in other images
 mkdir -v -p /tmp/mkfsdone${l.text("mountpoint")}
@@ -114,8 +110,21 @@ mv -v /target${l.text("mountpoint")}/* /tmp/mkfsdone${l.text("mountpoint")}/
 % endfor
 % endif
 % endfor
+
 # move files back
 mv -v /tmp/mkfsdone/* /target/
+
+# add binaries like kernel / uboot to files to extract list
+% for mtd in tgt.node("images"):
+	% if mtd.has("ubivg"):
+		% for vol in ubivg:
+			% if vol.has("binary"):
+echo "${vol.text("binary")}" >> /opt/elbe/files-to-extract
+			% endif
+		% endfor
+	% endif
+% endfor
+
 cd /opt/elbe
 
 % if tgt.has("images"):
