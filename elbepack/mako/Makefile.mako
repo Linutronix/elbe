@@ -43,7 +43,7 @@ else:
   cdrom_type = "scsi"
   hd_name = "sda1"
 
-all_targets = ["stamp-feed-initial-image", "install.iso", "elbe-report.txt", "source.xml"]
+all_targets = ["stamp-feed-initial-image", "files-to-extract"]
 if xml.has("target/package/tar"):
   all_targets.append( tgt.text("package/tar/name") )
 if xml.has("target/package/cpio"):
@@ -54,8 +54,6 @@ if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
   all_targets.append( "get-deb-pkgs" )
 if xml.has("fullpkgs"):
   all_targets.append( "validation.txt" )
-if opt.buildsources:
-  all_targets.append( "source.iso" )
 all_targets = string.join( all_targets )
 
 target_num = 1
