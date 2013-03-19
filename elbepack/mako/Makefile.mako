@@ -196,9 +196,7 @@ run-con: stamp-feed-initial-image
 
 files-to-extract: stamp-feed-initial-image
 	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/files-to-extract .
-	for f in `cat files-to-extract`; do 
-		e2cp  buildenv.img?offset=${loop_offset}:$f .
-	done
+	for f in `cat files-to-extract`; do e2cp  buildenv.img?offset=${loop_offset}:$$f . ; done
 
 % if xml.has("target/package/tar"):
 ${xml.text("target/package/tar/name")}: files-to-extract 
