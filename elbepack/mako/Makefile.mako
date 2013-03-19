@@ -198,7 +198,7 @@ run-con: .elbe-gen/files-to-extract
 	for f in `cat .elbe-gen/files-to-extract`; do e2cp  buildenv.img?offset=${loop_offset}:$$f . ; done
 
 % if xml.has("target/package/tar"):
-  ${xml.text("target/package/tar/name")}: ./elbe-gen/files-to-extract 
+${xml.text("target/package/tar/name")}: .elbe-gen/files-to-extract
 	gzip target.tar
 	mv target.tar.gz ${xml.text("target/package/tar/name")}
 % endif
