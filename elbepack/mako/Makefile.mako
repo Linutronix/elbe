@@ -140,7 +140,6 @@ run: .elbe-gen/files-to-extract
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=${hd_type},media=cdrom,bus=1,unit=1 \
 % endif
-% if xml.text("project/buildimage/arch") == "armel" or xml.text("project/buildimage/arch") == "powerpc":
 % if prj.text("suite")=="squeeze":
 		-kernel vmlinu* \
 		-initrd initrd.img-* \
@@ -149,7 +148,6 @@ run: .elbe-gen/files-to-extract
 		-initrd initrd* \
 % endif
 		-append 'root=/dev/${hd_name}' \
-% endif
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
@@ -174,7 +172,6 @@ run-con: .elbe-gen/files-to-extract
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=${hd_type},media=cdrom,bus=1,unit=1 \
 % endif
-% if xml.text("project/buildimage/arch") == "armel" or xml.text("project/buildimage/arch") == "powerpc":
 % if prj.text("suite")=="squeeze":
 		-kernel vmlinu* \
 		-initrd initrd.img-* \
@@ -183,7 +180,6 @@ run-con: .elbe-gen/files-to-extract
 		-initrd initrd* \
 % endif
 		-append 'root=/dev/${hd_name}' \
-% endif
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
