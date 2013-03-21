@@ -56,9 +56,9 @@ def get_initrd_pkg( xml ):
 
     return initrdname
 
-def get_initrd_uri( xml ):
+def get_initrd_uri( xml, defs ):
 
-    arch  = xml.text("project/buildimage/arch")
+    arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
     suite = xml.text("project/suite")
 
     name  = xml.text("project/name")
@@ -86,9 +86,9 @@ def get_initrd_uri( xml ):
 
 
 
-def copy_kinitrd( xml, target_dir ):
+def copy_kinitrd( xml, target_dir, defs ):
     prj = xml.node("/project")
-    uri = get_initrd_uri(xml)
+    uri = get_initrd_uri(xml, defs)
 
     tmpdir = mkdtemp()
 

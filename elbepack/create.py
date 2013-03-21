@@ -30,6 +30,7 @@ import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd
+from elbepack.xmldefaults import ElbeDefaults
 
 from optparse import OptionParser
 
@@ -104,6 +105,9 @@ def run_command( argv ):
                         help="Write Makefile into specified directory",
                         metavar="FILE" )
 
+    oparser.add_option( "--buildtype", dest="buildtype",
+                        help="Override the buildtype" )
+
     oparser.add_option( "--build-source", action="store_true",
                         dest="buildsources", default=False,
                         help="Build source cdrom" )
@@ -131,6 +135,15 @@ def run_command( argv ):
         print "Unable to open xml File. Bailing out"
         sys.exit(20)
 
+    if opt.buildtype:
+        buildtype = opt.buildtype
+    elif xml.has( "project/buildtype" ):
+        buildtype = xml.text( "/project/buildtype" )
+    else:
+        buildtype = "nodefaults"
+
+    defs = ElbeDefaults( buildtype )
+
     if not opt.dir:
         path = "./build"
     else:
@@ -155,6 +168,7 @@ def run_command( argv ):
          "tgt": xml.node("/target"),
          "pkgs": xml.node("/target/pkg-list"),
          "fine": xml.node("/finetuning"),
+         "defs": defs,
          "preseed": get_preseed(xml) }
 
     try:
