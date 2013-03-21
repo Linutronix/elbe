@@ -223,6 +223,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="buildtype" type="string">
+        <annotation>
+          <documentation>
+            Default buildtype like armel, ppc, and in the future armel-virtio
+          </documentation>
+        </annotation>
+      </element>
       <element name="mirror" type="rfs:mirror">
         <annotation>
           <documentation>
@@ -298,28 +305,28 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="arch" type="string">
+      <element name="arch" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             architecture of the target system. e.g. "amd64", "armel", "ppc", ..
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="string">
+      <element name="size" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             size of the virtual harddisk used to run the build environment
           </documentation>
         </annotation>
       </element>
-      <element name="mem" type="rfs:memory">
+      <element name="mem" type="rfs:memory" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             amount of memory mapped into the virtual build environment
           </documentation>
         </annotation>
       </element>
-      <element name="interpreter" type="string">
+      <element name="interpreter" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             virtual machine interpreter, e.g. "kvm", "qemu-system-arm", ...
@@ -348,7 +355,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="NIC" type="rfs:NIC">
+      <element name="NIC" type="rfs:NIC" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             network interface emulation
@@ -392,14 +399,14 @@
        </documentation>
      </annotation>
     <sequence>
-      <element name="model" type="string">
+      <element name="model" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             hardware emulation of the network interface; e.g. "e1000"
           </documentation>
         </annotation>
       </element>
-      <element name="MAC" type="string">
+      <element name="MAC" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
              mac address of the virtual network interface
