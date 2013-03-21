@@ -16,25 +16,31 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
-IMGSIZE=${prj.text("buildimage/size")}
-MEMSIZE=${prj.text("buildimage/mem")}
+IMGSIZE=${prj.text("buildimage/size", default=defs, key="size")}
+MEMSIZE=${prj.text("buildimage/mem", default=defs, key="mem")}
 SMP?=1
 
 <% 
 import string
 
-if prj.text("suite")=="squeeze" and prj.text("buildimage/interpreter") == "qemu-system-ppc":
+interpreter = prj.text("buildimage/interpreter", default=defs, key="interpreter")
+machine	    = prj.text("buildimage/machine", default=defs, key="machine")
+nicmodel    = prj.text("buildimage/NIC/model",default=defs, key="nicmodel")
+nicmac	    = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
+console	    = prj.text("buildimage/console", default=defs, key="console")
+
+if prj.text("suite")=="squeeze" and interpreter == "qemu-system-ppc":
   loop_offset = 32768 
 elif prj.text("suite")=="squeeze":
   loop_offset = 2048*512
 else:
   loop_offset = 32256
 
-if prj.text("buildimage/interpreter") == "kvm":
+if interpreter == "kvm":
   hd_type = "virtio"
   cdrom_type = "scsi"
   hd_name = "vda1"
-elif prj.text("buildimage/interpreter") == "qemu-system-ppc":
+elif interpreter == "qemu-system-ppc":
   hd_type = "ide"
   cdrom_type = "ide"
   hd_name = "hdc2"
@@ -43,7 +49,8 @@ else:
   cdrom_type = "scsi"
   hd_name = "sda1"
 
-  all_targets = [".stamps/stamp-install-initial-image", ".elbe-gen/files-to-extract"]
+all_targets = [".stamps/stamp-install-initial-image", ".elbe-gen/files-to-extract"]
+
 if xml.has("target/package/tar"):
   all_targets.append( tgt.text("package/tar/name") )
 if xml.has("target/package/cpio"):
@@ -57,6 +64,9 @@ if xml.has("fullpkgs"):
 all_targets = string.join( all_targets )
 
 target_num = 1
+
+
+
 %>
 
 all: ${all_targets}
@@ -100,8 +110,8 @@ all: ${all_targets}
 	touch .stamps/stamp-create-buildenv-img
 
 .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
-	${prj.text("buildimage/interpreter")}  \
-		-M ${prj.text("buildimage/machine")} \
+	${interpreter}  \
+		-M ${machine} \
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
@@ -112,12 +122,12 @@ all: ${all_targets}
 % endif
 		-kernel .elbe-in/vmlinuz \
 		-initrd .elbe-gen/initrd-preseeded.gz \
-		-append 'root=/dev/${hd_name} debconf_priority=critical console=${prj.text("buildimage/console")} DEBIAN_FRONTEND=newt' \
+		-append 'root=/dev/${hd_name} debconf_priority=critical console=${console} DEBIAN_FRONTEND=newt' \
 		-no-reboot \
 % if not opt.debug:
 		-nographic \
 % endif
-		-net nic,vlan=1,model=${prj.text("buildimage/NIC/model")},macaddr="${prj.text('buildimage/NIC/MAC')}" \
+		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
 		-usb && reset
@@ -125,15 +135,15 @@ all: ${all_targets}
 	touch .stamps/stamp-install-initial-image
 
 run: .elbe-vm/vmkernel .elbe-vm/vminitrd
-	${prj.text("buildimage/interpreter")}  \
-		-M ${prj.text("buildimage/machine")} \
+	${interpreter}  \
+		-M ${machine} \
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
 		-drive file=buildenv.img,if=${hd_type},bus=1,unit=0 \
 % endif
 		-no-reboot \
-		-net nic,vlan=1,model=${prj.text("buildimage/NIC/model")},macaddr="${prj.text('buildimage/NIC/MAC')}" \
+		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
 		-usb \
@@ -157,15 +167,15 @@ run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 	&& reset
 
 run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
-	${prj.text("buildimage/interpreter")}  \
-		-M ${prj.text("buildimage/machine")} \
+	${interpreter}  \
+		-M ${machine} \
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
 		-drive file=buildenv.img,if=${hd_type},bus=1,unit=0 \
 % endif
 		-no-reboot \
-		-net nic,vlan=1,model=${prj.text("buildimage/NIC/model")},macaddr="${prj.text('buildimage/NIC/MAC')}" \
+		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
 		-usb \

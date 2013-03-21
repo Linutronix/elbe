@@ -174,10 +174,10 @@ echo /opt/elbe/validation.txt >> /opt/elbe/files-to-extract
 echo /var/log/syslog >> /opt/elbe/files-to-extract
 % endif
 
-% if xml.text("project/buildimage/arch") == "armel":
+% if xml.text("project/buildimage/arch", default=defs, key="arch") == "armel":
 cp -L /boot/vmlinuz /opt/elbe/vmkernel
 cp -L /boot/initrd.img /opt/elbe/vminitrd
-% elif xml.text("project/buildimage/arch") == "powerpc":
+% elif xml.text("project/buildimage/arch", default=defs, key="arch") == "powerpc":
 cp -L /boot/vmlinux /opt/elbe/vmkernel
 cp -L /boot/initrd.img /opt/elbe/vminitrd
 % else:

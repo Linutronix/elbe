@@ -41,7 +41,7 @@ Label: Debian-All
 Suite: stable
 Codename: ${prj.text("suite")}
 Version: 6.0
-Architectures: ${prj.text("buildimage/arch")}
+Architectures: ${prj.text("buildimage/arch", default=defs, key="arch")}
 Components: main added
 UDebComponents: main
 Description: Debian SQ

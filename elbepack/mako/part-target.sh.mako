@@ -27,9 +27,10 @@ echo ""
 echo "================================================================"
 
 <% 
-if prj.text("buildimage/interpreter") == "kvm":
+interpreter = prj.text("buildimage/interpreter", default=defs, key="interpreter")
+if interpreter == "kvm":
   fdisk_name = "fdisk"
-elif prj.text("buildimage/interpreter") == "qemu-system-ppc":
+elif interpreter == "qemu-system-ppc":
   fdisk_name = "ddisk"
 else:
   fdisk_name = "fdisk"

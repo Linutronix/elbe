@@ -17,9 +17,10 @@
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 <% 
-if prj.text("buildimage/interpreter") == "kvm":
+interpreter = prj.text("buildimage/interpreter", default=defs, key="interpreter")
+if interpreter == "kvm":
   hd_name = "/dev/vda"
-elif prj.text("buildimage/interpreter") == "qemu-system-ppc":
+elif interpreter == "qemu-system-ppc":
   hd_name = "/dev/hdc"
 else:
   hd_name = "/dev/sda"
@@ -56,7 +57,7 @@ d-i partman-basicfilesystems/no_swap boolean false
 d-i base-installer/install-recommends boolean false
 % endif
 
-% if prj.text("buildimage/arch") == "powerpc":
+% if prj.text("buildimage/arch", default=defs, key="arch") == "powerpc":
 d-i grub-installer/skip boolean true
 d-i yaboot-installer/skip boolean true
 nobootloader	nobootloader/confirmation_common	note	true
