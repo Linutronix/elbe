@@ -6,6 +6,7 @@
 			creates an nfsroot for arm based systems
 			adds icecc support to the buildimage for better compile performance
 		</description>
+		<buildtype>armel</buildtype>
 		<mirror>
 			<primary_host>debian.tu-bs.de</primary_host>
 			<primary_path>/debian</primary_path>
@@ -21,17 +22,7 @@
 		<noauth />
 		<suite>squeeze</suite>
 		<buildimage>
-			<arch>armel</arch>
-			<size>20G</size>
-			<mem>256</mem>
-			<interpreter>qemu-system-arm</interpreter>
 			<kinitrd>testrd</kinitrd>
-			<console>ttyAMA0,115200n1</console>
-			<machine>versatilepb</machine>
-			<NIC>
-				<model>smc91c111</model>
-				<MAC>de:ad:be:ef:be:05</MAC>
-			</NIC>
 			<portforwarding>
 				<forward>
 					<proto>tcp</proto>
