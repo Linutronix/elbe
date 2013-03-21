@@ -36,7 +36,11 @@ class ebase(object):
         if (el is None) and not args.has_key("default"):
             raise Exception( "Cant find path %s" % path )
         elif (el is None) and args.has_key("default"):
-            return args["default"]
+            default = args["default"]
+            if type(default) == str:
+                return default
+            else:
+                return default[ args["key"] ]
         else:
             return el.text
 
