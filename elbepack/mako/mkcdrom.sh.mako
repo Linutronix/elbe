@@ -23,6 +23,18 @@ apt-get -d -y install ${prj.text("buildimage/kinitrd")}
 
 mkdir -p /opt/elbe/cdrom/conf
 
+
+# Sort debootstrap packages from normal packages
+
+mkdir -p /opt/elbe/debootstrap
+
+% if prj.has("mirror/primary_host"):
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+
+# Move kinitrd to debootstrap also.
+mv /var/cache/apt/archives/${prj.text("buildimage/kinitrd")}*.deb /opt/elbe/debootstrap
+% endif
+
 cat > /opt/elbe/cdrom/conf/distributions <<EOF
 Origin: Debian
 Label: Debian-All
@@ -30,13 +42,13 @@ Suite: stable
 Codename: ${prj.text("suite")}
 Version: 6.0
 Architectures: ${prj.text("buildimage/arch")}
-Components: main
+Components: main added
 UDebComponents: main
 Description: Debian SQ
 % if prj.has("mirror/cdrom"):
 Update: cdrom mover
 % else:
-Update: ftp mover
+Update: ftp mover added
 % endif
 Contents: udebs
 
@@ -47,23 +59,32 @@ Name: cdrom
 Method: file:///mnt/debian
 VerifyRelease: blindtrust
 #GetInRelease: no
-Components: main>main
+Components: main>main added>added
 UDebComponents: main>main
 
 Name: mover
-Method: file:///var/cache/apt/archives
+Method: file:///opt/elbe/debootstrap
 Suite: ./
 VerifyRelease: blindtrust
 #GetInRelease: no
 Flat: main
 
+Name: added
+Method: file:///var/cache/apt/archives
+Suite: ./
+VerifyRelease: blindtrust
+#GetInRelease: no
+Flat: added
 
+
+% if prj.has("mirror/primary_host"):
 Name: ftp
-Method: http://ftp.de.debian.org/debian
+Method: ${prj.text("mirror/primary_proto")}://${prj.text("mirror/primary_host")}/${prj.text("mirror/primary_path")}
 VerifyRelease: blindtrust
 #GetInRelease: no
 Components:
 UDebComponents: main>main
+% endif
 
 EOF
 
@@ -74,10 +95,14 @@ apt-ftparchive packages . > Packages
 gzip -9 Packages
 apt-ftparchive release . > Release
 
+cd /opt/elbe/debootstrap
+rm -f Packages
+rm -f Packages.gz
+apt-ftparchive packages . > Packages
+gzip -9 Packages
+apt-ftparchive release . > Release
 cd /opt/elbe
 
-
-ln -s stable /mirrors/debian/dists/${prj.text("suite")}
 
 reprepro -b /opt/elbe/cdrom update
 
