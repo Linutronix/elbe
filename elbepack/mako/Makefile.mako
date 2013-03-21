@@ -124,7 +124,7 @@ all: ${all_targets}
 	mkdir -p .stamps
 	touch .stamps/stamp-install-initial-image
 
-run: .elbe-gen/files-to-extract
+run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 	${prj.text("buildimage/interpreter")}  \
 		-M ${prj.text("buildimage/machine")} \
 % if opt.oldkvm:
@@ -155,7 +155,8 @@ run: .elbe-gen/files-to-extract
 % endfor
 % endif
 	&& reset
-run-con: .elbe-gen/files-to-extract
+
+run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
 	${prj.text("buildimage/interpreter")}  \
 		-M ${prj.text("buildimage/machine")} \
 % if opt.oldkvm:
@@ -216,6 +217,14 @@ validation.txt: .elbe-gen/files-to-extract
 	bzip2 -9 buildenv.img
 	mkdir -p .stamps
 	touch .stamps/stamp-pack-build-image
+
+.elbe-vm/vmkernel: .stamps/stamp-install-initial-image
+	mkdir -p .elbe-vm
+	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/vmkernel .elbe-vm/
+
+.elbe-vm/vminitrd: .stamps/stamp-install-initial-image
+	mkdir -p .elbe-vm
+	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/vminitrd .elbe-vm/
 
 clean:
 	rm -f .stamps/stamp* buildenv.img initrd-preseeded.gz
