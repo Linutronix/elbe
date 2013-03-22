@@ -172,7 +172,7 @@ def run_command( argv ):
          "preseed": get_preseed(xml) }
 
     try:
-        copy_kinitrd(xml, out_path)
+        copy_kinitrd(xml, out_path, defs)
     except:
         print "Failure to download kernel/initrd debian Package"
         print "Check your source URLs"
