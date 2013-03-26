@@ -184,8 +184,8 @@ run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
 		-drive file=${prj.text("mirror/cdrom")},if=${hd_type},media=cdrom,bus=1,unit=1 \
 % endif
 % if prj.text("suite")=="squeeze":
-		-kernel vmlinu* \
-		-initrd initrd.img-* \
+		-kernel .elbe-vm/vmkernel \
+		-initrd .elbe-vm/vminitrd \
 % else:
 		-kernel vmlin* \
 		-initrd initrd* \
@@ -237,8 +237,7 @@ validation.txt: .elbe-gen/files-to-extract
 	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/vminitrd .elbe-vm/
 
 clean:
-	rm -f .stamps/stamp* buildenv.img initrd-preseeded.gz
+	rm -f .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
 
 distclean: clean
-	rm -rf tmp-mount tmp-target
-	rm -f *cfg initrd.gz pkg-list *.sh vmlinuz Makefile Release.bin  Release.src 02pinning preferences ubi.cfg fstab
+	echo clean
