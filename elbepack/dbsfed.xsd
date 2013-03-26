@@ -287,7 +287,7 @@
     </annotation>
     <simpleContent>
       <extension base="string">
-	<attribute name="pin" type="string" use="required">
+        <attribute name="pin" type="string" use="required">
           <annotation>
             <documentation>
               TODO: format???
@@ -336,7 +336,7 @@
       <element name="kinitrd" type="string">
         <annotation>
           <documentation>
-	    pkg name of the initrd/kernel package.
+            pkg name of the initrd/kernel package.
           </documentation>
         </annotation>
       </element>
@@ -551,9 +551,10 @@
       <element name="setsel" type="string" minOccurs="0">
         <annotation>
           <documentation>
-	    Elbe uses +dpkg --set-selections+ to install packages in the target.
-	    The rootfs still needs dpkg, and all dependencies need to be specified in
-	    the pkg-list. The target will contain all postinst generated scripts.
+            Elbe uses +dpkg --set-selections+ to install packages in the target.
+            The rootfs still needs dpkg, and all dependencies need to be
+            specified in the pkg-list.
+            The target will contain all postinst generated scripts.
           </documentation>
         </annotation>
       </element>
@@ -1216,7 +1217,7 @@
     </annotation>
     <simpleContent>
       <extension base="string">
-	<attribute name="path" type="string" use="required" />    
+        <attribute name="path" type="string" use="required" />    
       </extension>
     </simpleContent>
   </complexType>
