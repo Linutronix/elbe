@@ -29,7 +29,9 @@ mkdir -p /opt/elbe/cdrom/conf
 mkdir -p /opt/elbe/debootstrap
 
 % if prj.has("mirror/primary_host"):
-for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed
+    "s/.%3a//"`
+    /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
 
 # Move kinitrd to debootstrap also.
 mv /var/cache/apt/archives/${prj.text("buildimage/kinitrd")}*.deb /opt/elbe/debootstrap
