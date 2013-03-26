@@ -223,7 +223,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="buildtype" type="string">
+      <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Default buildtype like armel, ppc, and in the future armel-virtio
