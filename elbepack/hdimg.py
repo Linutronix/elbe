@@ -153,6 +153,8 @@ def run_command( argv ):
 	imag = parted.Device( hd.text("name") )
 	disk = parted.freshDisk(imag, "msdos" )
 
+        outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
+
 	current_sector = 63
 	for part in hd.node("partitions"):
 	    if part.text("size") == "remain":
