@@ -16,36 +16,53 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
+<%
+from elbepack.hdimg import fstabentry
+
+if tgt.has("fstab"):
+    fslabel = {}
+    for fs in tgt.node("fstab"):
+	if fs.tag != "bylabel":
+	    continue
+
+	fslabel[fs.text("label")] = fstabentry(fs)
+
+def get_mtdnum(label):
+	if not tgt.has("images"):
+		raise Exception( "No images tag in target" )
+
+	for i in tgt.node("images"):
+		if i.tag != "mtd":
+			continue
+
+		if not i.has("ubivg"):
+			continue
+
+		for v in i.node("ubivg"):
+			if v.tag != "ubi":
+				continue
+
+			if v.text("label") == label:
+				return i.text("nr")
+
+	raise Exception( "No ubi volume with label " + label + " found" )
+
+def get_devicelabel( node ):
+	if node.text("fs/type") == "ubifs":
+		return "ubi" + get_mtdnum(node.text("label")) + ":" + node.text("label")
+	else:
+		return "LABEL=" + node.text("label")
+
+
+%>
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
-% for tab in tgt:
-	% if tab.has("bydev"):
-		% for d in tab:
-			% if d.has("source"):
-				% if d.has("options"):
-${d.text("source")}	${d.text("mountpoint")}	${d.text("fs/type")}	${d.text("options")}	0	0
-				% else:
-${d.text("source")}	${d.text("mountpoint")}	${d.text("fs/type")}	defaults	0	0
-				% endif
-			% endif
-		% endfor
-	% endif
-	% if tab.has("bylabel"):
-		% for l in tab:
-			% if l.has("label"):
-				% for mtd in tgt.node("images"):
-					% if mtd.has("ubivg"):
-						% for ubivg in mtd:
-							% for vol in ubivg:
-								% if vol.has("label"):
-									% if vol.text("label") == l.text("label"):
-ubi${mtd.text("nr")}:${l.text("label")}	${l.text("mountpoint")}	${l.text("fs/type")}	defaults	0	0
-									% endif
-								% endif
-							% endfor
-						% endfor
-					% endif
-				% endfor
-			% endif
-		% endfor
-	% endif
-% endfor
+% if tgt.has("fstab"):
+	% for d in tgt.node("fstab"):
+		% if d.tag == "bydev":
+${d.text("source")}	${d.text("mountpoint")}	${d.text("fs/type")}	${d.text("options", default="defaults")}	0	0
+		% endif
+		% if d.tag == "bylabel":
+${get_devicelabel(d)}	${d.text("mountpoint")}	${d.text("fs/type")}	defaults	0	0
+		% endif
+	% endfor
+% endif
