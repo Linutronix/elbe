@@ -80,6 +80,98 @@ class fstabentry(object):
 		return depth
 	    depth += 0
 
+def mkfs_mtd( outf, mtd, fslabel ):
+
+    if not mtd.has("ubivg"):
+        return
+
+    ubivg = mtd.node("ubivg")
+    for v in ubivg:
+
+        label = v.text("label")
+
+        if not fslabel.has_key(label):
+            continue
+
+        outf.do_command( "mkfs.ubifs -r /opt/elbe/filesystems/%s -o /opt/elbe/%s.ubifs -m %s -e %s -c %s" % (
+            label, label,
+            ubivg.text("miniosize"),
+            ubivg.text("logicaleraseblocksize"),
+            ubivg.text("maxlogicaleraseblockcount") ) )
+
+def build_image_mtd( outf, mtd, fslabel ):
+
+    if not mtd.has("ubivg"):
+        return
+
+    ubivg = mtd.node("ubivg")
+
+    if ubivg.has("subpagesize"):
+        subp = "-s " + ubivg.text("subpagesize")
+    else:
+        subp = ""
+
+    outf.do_command( "ubinize %s -o %s -p %s -m %s /opt/elbe/ubi.cfg" % (
+        subp,
+        mtd.text("name"),
+        ubivg.text("physicaleraseblocksize"),
+        ubivg.text("miniosize") ) )
+
+    outf.do_command( "echo /opt/elbe/%s >> /opt/elbe/files-to-extract" % mtd.text("name") )
+
+
+
+
+def do_image_hd( outf, hd, fslabel ):
+
+	if not hd.has("partitions"):
+	    return
+
+	s=int(hd.text("size"))
+	c=(s*1000*1024)/(16*63*512)
+
+	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=516096' % (hd.text("name"), c) )
+	imag = parted.Device( hd.text("name") )
+	disk = parted.freshDisk(imag, "msdos" )
+
+        outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
+
+	current_sector = 63
+	for part in hd.node("partitions"):
+	    if part.text("size") == "remain":
+		sz = (c*16*63) - current_sector;
+	    else:
+		sz = int(part.text("size"))
+
+	    g = parted.Geometry (device=imag,start=current_sector,length=sz)
+	    ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
+	    cons = parted.Constraint(exactGeom=g)
+	    disk.addPartition(ppart, cons)
+
+	    if part.has("bootable"):
+		ppart.setFlag(_ped.PARTITION_BOOT)
+
+            if not fslabel.has_key(part.text("label")):
+                current_sector += sz
+                continue
+
+	    entry = fslabel[part.text("label")]
+	    entry.offset = current_sector*512
+	    entry.size   = sz * 512
+	    entry.filename = hd.text("name")
+
+	    outf.do_command( 'losetup -o%d --sizelimit %d /dev/loop0 "%s"' % (entry.offset, entry.size,entry.filename) )
+	    outf.do_command( 'mkfs.%s /dev/loop0' % ( entry.fstype ) )
+
+            outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
+            outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ) )
+            outf.do_command( 'umount /dev/loop0' )
+	    outf.do_command( 'losetup -d /dev/loop0' )
+
+	    current_sector += sz
+
+	disk.commit()
+
 
 def run_command( argv ):
 
@@ -122,6 +214,7 @@ def run_command( argv ):
     outf = asccidoclog()
     outf.h2( "Formatting Disks" )
 
+    # Build a dictonary of mount points
     fslabel = {}
     for fs in tgt.node("fstab"):
 	if fs.tag != "bylabel":
@@ -129,67 +222,37 @@ def run_command( argv ):
 
 	fslabel[fs.text("label")] = fstabentry(fs)
 
+    # Build a sorted list of mountpoints
     fslist = fslabel.values()
     fslist.sort( key = lambda x: x.mountdepth() )
 
-    if opt.umount:
-	fslist.reverse()
+    # now move all mountpoints into own directories
+    # begin from deepest mountpoints
+
+    outf.do_command( 'mkdir -p /opt/elbe/filesystems' )
+
+    for l in reversed(fslist):
+        outf.do_command( 'mkdir -p "%s"' % os.path.join( '/opt/elbe/filesystems', l.label ) )
+        outf.do_command( 'mv "%s"/* "%s"' % ( '/target' + l.mountpoint, os.path.join( '/opt/elbe/filesystems', l.label ) ) )
+
+    try:
+	# Now iterate over all images and create filesystems and partitions
+	for i in tgt.node("images"):
+	    if i.tag == "hd":
+		do_image_hd( outf, i, fslabel )
+
+	    if i.tag == "mtd":
+		mkfs_mtd( outf, i, fslabel )
+    finally:
+	# Put back the filesystems into /target
+	# most shallow fs first...
 	for i in fslist:
-	    outf.do_command( 'umount "%s"' % (opt.dir + i.mountpoint) )
-	sys.exit(0)
+	    outf.do_command( 'mv "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', i.label ), '/target' + i.mountpoint ) )
 
-    for hd in tgt.node("images"):
-	if not hd.tag == "hd":
-	    continue
-
-	if not hd.has("partitions"):
-	    continue
-
-	print hd.tag
-	s=int(hd.text("size"))
-	c=(s*1000*1024)/(16*63*512)
-
-	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=516096' % (hd.text("name"), c) )
-	imag = parted.Device( hd.text("name") )
-	disk = parted.freshDisk(imag, "msdos" )
-
-        outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
-
-	current_sector = 63
-	for part in hd.node("partitions"):
-	    if part.text("size") == "remain":
-		sz = (c*16*63) - current_sector;
-	    else:
-		sz = int(part.text("size"))
-
-	    g = parted.Geometry (device=imag,start=current_sector,length=sz)
-	    ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
-	    cons = parted.Constraint(exactGeom=g)
-	    disk.addPartition(ppart, cons)
-
-	    if part.has("bootable"):
-		ppart.setFlag(_ped.PARTITION_BOOT)
-
-            if not fslabel.has_key(part.text("label")):
-                current_sector += sz
-                continue
-
-	    entry = fslabel[part.text("label")]
-	    entry.offset = current_sector*512
-	    entry.size   = sz * 512
-	    entry.filename = hd.text("name")
-
-	    outf.do_command( 'losetup -o%d --sizelimit %d /dev/loop0 "%s"' % (entry.offset, entry.size,entry.filename) )
-	    outf.do_command( 'mkfs.%s /dev/loop0' % ( entry.fstype ) )
-	    outf.do_command( 'losetup -d /dev/loop0' )
-
-	    current_sector += sz
-
-	disk.commit()
-
-    for i in fslist:
-	outf.do_command( 'mkdir -p "%s"' % ( opt.dir + i.mountpoint ) )
-	outf.do_command( 'mount -o loop,offset=%d,sizelimit=%d "%s" "%s"' % (i.offset, i.size, i.filename, opt.dir + i.mountpoint) )
+    # Files are now moved back. ubinize needs files in place, so we run it now.
+    for i in tgt.node("images"):
+	if i.tag == "mtd":
+	    build_image_mtd( outf, i, fslabel )
 
 
 if __name__ == "__main__":
