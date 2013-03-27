@@ -69,6 +69,7 @@ class fstabentry(object):
 	self.mountpoint = entry.text("mountpoint")
 	if entry.has("fs"):
 	    self.fstype = entry.text("fs/type")
+            self.mkfsopt = entry.text("fs/mkfs", default="")
 
     def mountdepth(self):
 	h = self.mountpoint
@@ -79,6 +80,23 @@ class fstabentry(object):
 	    if t=='':
 		return depth
 	    depth += 0
+
+
+    def get_label_opt(self):
+        if self.fstype == "ext4":
+            return "-L " + self.label
+        if self.fstype == "ext2":
+            return "-L " + self.label
+        if self.fstype == "ext3":
+            return "-L " + self.label
+        if self.fstype == "vfat":
+            return "-n " + self.label
+        if self.fstype == "xfs":
+            return "-L " + self.label
+        if self.fstype == "btrfs":
+            return "-L " + self.label
+
+        return ""
 
 def mkfs_mtd( outf, mtd, fslabel ):
 
@@ -93,11 +111,12 @@ def mkfs_mtd( outf, mtd, fslabel ):
         if not fslabel.has_key(label):
             continue
 
-        outf.do_command( "mkfs.ubifs -r /opt/elbe/filesystems/%s -o /opt/elbe/%s.ubifs -m %s -e %s -c %s" % (
+        outf.do_command( "mkfs.ubifs -r /opt/elbe/filesystems/%s -o /opt/elbe/%s.ubifs -m %s -e %s -c %s %s" % (
             label, label,
             ubivg.text("miniosize"),
             ubivg.text("logicaleraseblocksize"),
-            ubivg.text("maxlogicaleraseblockcount") ) )
+            ubivg.text("maxlogicaleraseblockcount"),
+            fslabel[label].mkfsopt ) )
 
 def build_image_mtd( outf, mtd, fslabel ):
 
@@ -161,7 +180,7 @@ def do_image_hd( outf, hd, fslabel ):
 	    entry.filename = hd.text("name")
 
 	    outf.do_command( 'losetup -o%d --sizelimit %d /dev/loop0 "%s"' % (entry.offset, entry.size,entry.filename) )
-	    outf.do_command( 'mkfs.%s /dev/loop0' % ( entry.fstype ) )
+	    outf.do_command( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
             outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
             outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ) )
