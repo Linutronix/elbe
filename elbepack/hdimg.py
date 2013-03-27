@@ -168,6 +168,10 @@ def run_command( argv ):
 	    if part.has("bootable"):
 		ppart.setFlag(_ped.PARTITION_BOOT)
 
+            if not fslabel.has_key(part.text("label")):
+                current_sector += sz
+                continue
+
 	    entry = fslabel[part.text("label")]
 	    entry.offset = current_sector*512
 	    entry.size   = sz * 512
