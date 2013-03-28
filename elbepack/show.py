@@ -77,9 +77,8 @@ def run_command( argv ):
         args[0],
         xml.text("/project/name"),
         xml.text("/project/version"))
-    print 'Debian suite: %s/%s' % (
-        xml.text("/project/suite"),
-        xml.text("/buildimage/arch"))
+    print 'Debian suite: %s' % (
+        xml.text("/project/suite"))
     for s in xml.text("/project/description").splitlines():
         print '%s' % s.strip()
     if opt.verbose:
