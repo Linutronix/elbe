@@ -105,6 +105,8 @@ def mkfs_mtd( outf, mtd, fslabel ):
 
     ubivg = mtd.node("ubivg")
     for v in ubivg:
+        if not v.tag == "ubi":
+            continue
 
         label = v.text("label")
 
