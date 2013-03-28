@@ -39,7 +39,7 @@ python /opt/elbe/hdimg.py --directory /tmp-mnt /opt/elbe/source.xml
 # add binaries like kernel / uboot to files to extract list
 	% for mtd in tgt.node("images"):
 		% if mtd.has("ubivg"):
-			% for vol in ubivg:
+			% for vol in mtd.node("ubivg"):
 				% if vol.has("binary"):
 echo "${vol.text("binary")}" >> /opt/elbe/files-to-extract
 				% endif
