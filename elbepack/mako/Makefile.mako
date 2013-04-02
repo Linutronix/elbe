@@ -242,7 +242,7 @@ validation.txt: .elbe-gen/files-to-extract
 	e2cp buildenv.img?offset=${loop_offset}:/opt/elbe/vminitrd .elbe-vm/
 
 clean:
-	rm -f .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
+	rm -fr .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
 
 distclean: clean
 	echo clean
