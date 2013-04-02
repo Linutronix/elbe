@@ -29,7 +29,8 @@ else:
   
 %>
 
-d-i keyboard-configuration/layoutcode	string	us
+d-i keyboard-configuration/layoutcode string us
+d-i keyboard-configuration/xkb-keymap select us
 
 d-i netcfg/get_hostname string ${tgt.text("hostname")}
 d-i netcfg/get_domain string ${tgt.text("domain")}
