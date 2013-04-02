@@ -57,6 +57,8 @@
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
 			<pkg>vim-nox</pkg>
+			<pkg>icecc</pkg>
+			<pkg>icebaked-amd64-4.4</pkg>
 			<pkg>git</pkg>
 		</pkg-list>
 	</target>
