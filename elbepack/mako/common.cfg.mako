@@ -20,7 +20,7 @@
 interpreter = prj.text("buildimage/interpreter", default=defs, key="interpreter")
 if interpreter == "kvm":
   hd_name = "/dev/vda"
-if interpreter == "qemu-system-virtio":
+if interpreter == "qemu-system-arm-virtio":
   hd_name = "/dev/vda"
 elif interpreter == "qemu-system-ppc":
   hd_name = "/dev/hdc"
