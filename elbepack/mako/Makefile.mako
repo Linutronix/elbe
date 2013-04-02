@@ -31,12 +31,16 @@ console	    = prj.text("buildimage/console", default=defs, key="console")
 
 if prj.text("suite")=="squeeze" and interpreter == "qemu-system-ppc":
   loop_offset = 32768 
-elif prj.text("suite")=="squeeze":
-  loop_offset = 2048*512
-else:
+elif prj.text("suite")=="lenny":
   loop_offset = 32256
+else:
+  loop_offset = 2048*512
 
 if interpreter == "kvm":
+  hd_type = "virtio"
+  cdrom_type = "scsi"
+  hd_name = "vda1"
+if interpreter == "qemu-system-arm-virtio":
   hd_type = "virtio"
   cdrom_type = "scsi"
   hd_name = "vda1"

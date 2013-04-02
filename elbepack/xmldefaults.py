@@ -13,6 +13,15 @@ armel_defaults = {
         "nicmodel":     "smc91c111"
 }
 
+armel_virtio_defaults = {
+        "arch":         "armel",
+        "size":         "20G",
+        "mem":          "256",
+        "interpreter":  "qemu-system-arm-virtio",
+        "console":      "ttyAMA0,115200n1",
+        "machine":      "versatilepb",
+        "nicmodel":     "smc91c111"
+}
 
 ppc_defaults = { 
         "arch":         "ppc",
@@ -44,7 +53,7 @@ i386_defaults = {
         "nicmodel":     "virtio"
 }
 
-defaults = { "armel": armel_defaults, "ppc": ppc_defaults, "amd64": amd64_defaults, "i386": i386_defaults, "nodefaults": {}  }
+defaults = { "armel": armel_defaults, "armel-virtio": armel_virtio_defaults, "ppc": ppc_defaults, "amd64": amd64_defaults, "i386": i386_defaults, "nodefaults": {}  }
 
 xml_field_path = {
         "arch":         "project/buildimage/arch",
