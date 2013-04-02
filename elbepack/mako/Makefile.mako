@@ -155,13 +155,8 @@ run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=${hd_type},media=cdrom,bus=1,unit=1 \
 % endif
-% if prj.text("suite")=="squeeze":
-		-kernel vmlinu* \
-		-initrd initrd.img-* \
-% else:
-		-kernel vmlin* \
-		-initrd initrd* \
-% endif
+		-kernel .elbe-vm/vmkernel \
+		-initrd .elbe-vm/vminitrd \
 		-append 'root=/dev/${hd_name}' \
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
@@ -188,13 +183,8 @@ run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=${hd_type},media=cdrom,bus=1,unit=1 \
 % endif
-% if prj.text("suite")=="squeeze":
 		-kernel .elbe-vm/vmkernel \
 		-initrd .elbe-vm/vminitrd \
-% else:
-		-kernel vmlin* \
-		-initrd initrd* \
-% endif
 		-append 'root=/dev/${hd_name}' \
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
