@@ -28,6 +28,9 @@ else:
   hd_name = "/dev/sda"
   
 %>
+
+d-i keyboard-configuration/layoutcode	string	us
+
 d-i netcfg/get_hostname string ${tgt.text("hostname")}
 d-i netcfg/get_domain string ${tgt.text("domain")}
 popularity-contest popularity-contest/participate boolean false
