@@ -1149,6 +1149,7 @@
       <enumeration value="configfs" />
       <enumeration value="proc" />
       <enumeration value="sysfs" />
+      <enumeration value="vfat" />
     </restriction>
   </simpleType>
 
