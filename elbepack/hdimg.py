@@ -259,7 +259,9 @@ def run_command( argv ):
 
     for l in reversed(fslist):
         outf.do_command( 'mkdir -p "%s"' % os.path.join( '/opt/elbe/filesystems', l.label ) )
-        outf.do_command( 'mv "%s"/* "%s"' % ( '/target' + l.mountpoint, os.path.join( '/opt/elbe/filesystems', l.label ) ) )
+        outf.do_command( 'mkdir -p "%s"' % '/target' + l.mountpoint )
+        if len(os.listdir( '/target' + l.mountpoint )) > 0:
+            outf.do_command( 'mv "%s"/* "%s"' % ( '/target' + l.mountpoint, os.path.join( '/opt/elbe/filesystems', l.label ) ) )
 
     try:
 	# Now iterate over all images and create filesystems and partitions
@@ -273,7 +275,8 @@ def run_command( argv ):
 	# Put back the filesystems into /target
 	# most shallow fs first...
 	for i in fslist:
-	    outf.do_command( 'mv "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', i.label ), '/target' + i.mountpoint ) )
+            if len(os.listdir(os.path.join( '/opt/elbe/filesystems', i.label ))) > 0:
+                outf.do_command( 'mv "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', i.label ), '/target' + i.mountpoint ) )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in tgt.node("images"):
