@@ -51,7 +51,13 @@ class asccidoclog(object):
 	self.printo( "------------------------------------------------------------------------------" )
 	self.printo()
 
-    def do_command(self, cmd):
+    def do_command(self, cmd, **args):
+
+        if args.has_key("allow_fail"):
+            allow_fail = args["allow_fail"]
+        else:
+            allow_fail = False
+
 	self.printo( "running cmd +%s+" % cmd )
 	self.verbatim_start()
 	p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
@@ -59,9 +65,11 @@ class asccidoclog(object):
 	self.print_raw( output )
 	self.verbatim_end()
 
+
 	if p.returncode != 0:
 	    self.printo( "Command failed with errorcode %d" % p.returncode )
-	    raise commanderror(cmd, p.returncode)
+            if not allow_fail:
+                raise commanderror(cmd, p.returncode)
 
 class fstabentry(object):
     def __init__(self, entry):
