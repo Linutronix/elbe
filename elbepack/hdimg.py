@@ -200,9 +200,6 @@ def run_command( argv ):
     oparser.add_option( "--directory", dest="dir",
                         help="mount the loop file here",
                         metavar="FILE" )
-    oparser.add_option( "--umount", action="store_true", dest="umount",
-                        default=False,
-			help="Just umount the specified partitions" )
 
     (opt,args) = oparser.parse_args(argv)
 
