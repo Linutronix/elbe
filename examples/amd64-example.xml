@@ -7,6 +7,7 @@
 			after 'make run-con' you can login the system from another terminal with
 			'ssh root@localhost -p 5022'
 		</description>
+		<buildtype>amd64</buildtype>
 		<mirror>
 			<primary_host>debian.tu-bs.de</primary_host>
 			<primary_path>/debian</primary_path>
@@ -26,17 +27,7 @@
 		<noauth/>
 		<suite>squeeze</suite>
 		<buildimage>
-			<arch>amd64</arch>
-			<size>20G</size>
-			<mem>1024</mem>
-			<interpreter>kvm</interpreter>
 			<kinitrd>testrd</kinitrd>
-			<console>ttyS0,115200n1</console>
-			<machine>pc</machine>
-			<NIC>
-				<model>virtio</model>
-				<MAC>de:ad:be:ef:be:05</MAC>
-			</NIC>
 			<portforwarding>
 				<forward>
 					<proto>tcp</proto>
