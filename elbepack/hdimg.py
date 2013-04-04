@@ -193,7 +193,7 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    outf.do_command( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
             outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
-            outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ) )
+            outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ), allow_fail=True )
             outf.do_command( 'umount /dev/loop0' )
 	    outf.do_command( 'losetup -d /dev/loop0' )
 
