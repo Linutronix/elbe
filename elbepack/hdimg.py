@@ -143,7 +143,7 @@ def build_image_mtd( outf, mtd, fslabel ):
 
 
 
-def do_image_hd( outf, hd, fslabel ):
+def do_image_hd( outf, hd, fslabel, opt ):
 
 	if not hd.has("partitions"):
 	    return
@@ -260,7 +260,7 @@ def run_command( argv ):
 	# Now iterate over all images and create filesystems and partitions
 	for i in tgt.node("images"):
 	    if i.tag == "hd":
-		do_image_hd( outf, i, fslabel )
+		do_image_hd( outf, i, fslabel, opt )
 
 	    if i.tag == "mtd":
 		mkfs_mtd( outf, i, fslabel )
