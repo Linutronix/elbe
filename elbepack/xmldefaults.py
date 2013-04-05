@@ -5,8 +5,8 @@ import sys
 
 armel_defaults = { 
         "arch":         "armel",
-        "size":         "20G", 
-        "mem":          "256", 
+        "size":         "20G",
+        "mem":          "256",
         "interpreter":  "qemu-system-arm",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb",
