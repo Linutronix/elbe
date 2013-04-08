@@ -140,6 +140,8 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	<project>
 		<name>ARMexample</name>
 		<version>08.15</version>
+		<description>full featured debian system</description>
+		<buildtype>armel</buildtype>
 		<mirror>
 			<primary_host>debian.tu-bs.de</primary_host>
 			<primary_path>/debian</primary_path>
@@ -153,26 +155,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		<noauth />
 		<suite>squeeze</suite>
 		<buildimage>
-			<arch>armel</arch>
-			<size>20G</size>
-			<mem>256</mem>
-			<interpreter>qemu-system-arm</interpreter>
 			<kinitrd>testrd</kinitrd>
-			<console>ttyAMA0,115200n1</console>
-			<machine>versatilepb</machine>
-			<NIC>
-				<model>smc91c111</model>
-				<MAC>de:ad:be:ef:be:05</MAC>
-			</NIC>
-			<portforwarding>
-				<forward>
-					<proto>tcp</proto>
-					<buildenv>22</buildenv>
-					<host>5022</host>
-				</forward>
-			</portforwarding>
-			<pkg-list>
-			</pkg-list>
 		</buildimage>
 	</project>
 	<target>
@@ -188,12 +171,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		<finetuning>
 		</finetuning>
 		<pkg-list>
-			<pkg>build-essential</pkg>
 			<pkg>bash</pkg>
-			<pkg>less</pkg>
-			<pkg>git</pkg>
-			<pkg>debhelper</pkg>
-			<pkg>nfs-common</pkg>
 			<pkg>openssh-server</pkg>
 		</pkg-list>
 	</target>
@@ -575,14 +553,16 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	</project>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-<1> 'arch' is the Debian architecture of the target.
+<1> 'arch' is the Debian architecture of the target. (optional)
 
-<2> 'size' is the size of the hard-disk image.
+<2> 'size' is the size of the hard-disk image. (optional)
 
 <3> 'mem' controls the amount of RAM that is allocated to the virtual machine.
+		(optional)
 
 <4> The 'interpreter' is either 'qemu-system-<arch>' or 'qemu-kvm'.
     Usage of kvm is usually only possible, when the target is 'x86'.
+		(optional)
 
 <5> The name of the kinitrd package.
     All package sources mentioned in the xml file are scanned for this package.
@@ -592,26 +572,30 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <6> The 'console' line needs special attention because it is different on
     different emulation targets.
+		(optional)
 
 <7> The 'machine' tag contains the '-machine' parameter, that is provided to
     qemu.
+		(optional)
 
 <8> 'portforwarding' of network server ports from the virtual machine to the
     host. This example forwards the ssh port to port 5022 on the host.
+		(optional)
 
 <9> This is the list of packages that are only installed to the buildimage.
      (The packages listed in the target sections pkg-list are installed to
      the target image and the buildimage.) It can be used for example to
      install the debian build server into the buildenvironment.
+		(optional)
 
 .Note
 **********************************************************
-Only change the sizes of hard-disk and RAM if that is necessary.
+The optional parameters are normaly set to defaults by the buildtype tag.
+The tags can be used for advanced use of elbe; to override the defaults.
 
-The undescribed values are correctly configured in the example files. It is
-very uncertain that you need to change them.
-
-There are example files for arm, powerpc and x86.
+If the optional parameters are not set, the buildtype can even be overridden
+by the flag --buildtype at 'elbe create' to build the same configuration for
+a different architecture
 **********************************************************
 
 
@@ -784,6 +768,79 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <6> The target /etc/fstab file is created with the entries defined in this section.
     Entries for '/proc', '/sys' etc. can be generated with 'bydev' nodes.
+
+
+Building harddisk / sdcard images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Elbe also has the ability to generate ubi images, including different
+partitions and mountpoints. Lets look at an example 'target' section.
+
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	<images>
+		<hd>
+			<name>sda.img</name> (1)
+			<size>1900</size>    (2)
+			<partitions>         (3)
+				<primary>
+					<part>1</part>
+					<size>remain</size>
+					<label>rfs</label>     (4)
+					<parttype>linux</parttype>
+				</primary>
+			</partitions>
+		</hd>
+		<hd>
+			<name>sdb.img</name> (1)
+			<size>400</size>     (2)
+			<partitions>         (3)
+				<primary>
+					<part>1</part>
+					<size>remain</size>
+					<label>config</label>   (4)
+					<parttype>linux</parttype>
+				</primary>
+			</partitions>
+		</hd>
+	</images>
+	<fstab>                     (5)
+		<bylabel>
+			<label>rfs</label>  (4)
+			<mountpoint>/</mountpoint>
+			<fs>
+				<type>ext4</type>
+			</fs>
+		</bylabel>
+		<bylabel>
+			<label>config</label> (4)
+			<mountpoint>/mnt/config</mountpoint>
+			<fs>
+				<type>ext4</type>
+			</fs>
+			<options>ro</options>
+		</bylabel>
+		<bydev>
+			<source>none</source>
+			<mountpoint>/sys/kernel/debug</mountpoint>
+			<fs>
+				<type>debug</type>
+			</fs>
+		</bydev>
+	</fstab>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> this specifies an hd image
+
+<2> size of a hd image
+
+<3> Specification of ubi volumes.
+
+<4> labels are used to assign mountpoints to partitions
+
+<5> The target /etc/fstab file is created with the entries defined in this section.
+    Entries for '/proc', '/sys' etc. can be generated with 'bydev' nodes.
+
 
 A complete reference that is automatically generated from the schema file is
 also available.
