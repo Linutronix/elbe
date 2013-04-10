@@ -27,6 +27,7 @@ elif interpreter == "qemu-system-ppc":
 else:
   hd_name = "/dev/sda"
   
+arch = prj.text("buildimage/arch", default=defs, key="arch")
 %>
 
 d-i keyboard-configuration/layoutcode string us
@@ -63,7 +64,7 @@ d-i partman-basicfilesystems/no_swap boolean false
 d-i base-installer/install-recommends boolean false
 % endif
 
-% if prj.text("buildimage/arch", default=defs, key="arch") == "powerpc":
+% if arch == "powerpc":
 d-i grub-installer/skip boolean true
 d-i yaboot-installer/skip boolean true
 nobootloader	nobootloader/confirmation_common	note	true
@@ -134,3 +135,7 @@ dosfstools apt-rdepends python-apt rsync genisoimage reprepro python-parted \
 % endfor
 
 
+% if arch == "armhf":
+bootstrap-base	base-installer/kernel/image	select	none
+bootstrap-base	base-installer/kernel/skip-install	boolean	true
+% endif
