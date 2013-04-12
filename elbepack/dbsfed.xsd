@@ -788,10 +788,10 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="integer" minOccurs="1" maxOccurs="1">
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
-            size of the harddisk in megabyte
+            size of the harddisk
           </documentation>
         </annotation>
       </element>
@@ -1104,7 +1104,7 @@
       </documentation>
     </annotation>
     <restriction base="string">
-      <pattern value="(\d+[kMG]?|remain)" />
+      <pattern value="(\d+(k|M|G|kB|MB|GB|kiB|MiB|GiB)?|remain)" />
     </restriction>
   </simpleType>
 

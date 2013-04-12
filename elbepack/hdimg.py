@@ -3,6 +3,7 @@
 import os
 import sys
 import shutil
+import string
 
 from treeutils import etree
 from optparse import OptionParser
@@ -149,6 +150,39 @@ def build_image_mtd( outf, mtd, fslabel ):
     outf.do_command( "echo /opt/elbe/%s >> /opt/elbe/files-to-extract" % mtd.text("name") )
 
 
+def size_to_int( size ):
+    if size[-1] in string.digits:
+        return int(size)
+
+    if size.endswith( "M" ):
+        unit = 1000*1000
+        s = size[:-1]
+    elif size.endswith( "MiB" ):
+        unit = 1024*1024
+        s = size[:-3]
+    elif size.endswith( "MB" ):
+        unit = 1000*1000
+        s = size[:-2]
+    if size.endswith( "G" ):
+        unit = 1000*1000*1000
+        s = size[:-1]
+    elif size.endswith( "GiB" ):
+        unit = 1024*1024*1024
+        s = size[:-3]
+    elif size.endswith( "GB" ):
+        unit = 1000*1000*1000
+        s = size[:-2]
+    if size.endswith( "k" ):
+        unit = 1000
+        s = size[:-1]
+    elif size.endswith( "kiB" ):
+        unit = 1024
+        s = size[:-3]
+    elif size.endswith( "kB" ):
+        unit = 1000
+        s = size[:-2]
+
+    return int(s) * unit
 
 
 def do_image_hd( outf, hd, fslabel, opt ):
@@ -156,21 +190,25 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	if not hd.has("partitions"):
 	    return
 
-	s=int(hd.text("size"))
-	c=(s*1000*1024)/(16*63*512)
+        sector_size = 512
+	s=size_to_int(hd.text("size"))
+	size_in_sectors = s / sector_size
 
-	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=516096' % (hd.text("name"), c) )
+	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=%d' % (hd.text("name"), size_in_sectors, sector_size) )
 	imag = parted.Device( hd.text("name") )
-	disk = parted.freshDisk(imag, "msdos" )
+        if hd.has("gpt"):
+            disk = parted.freshDisk(imag, "gpt" )
+        else:
+            disk = parted.freshDisk(imag, "msdos" )
 
         outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
 
-	current_sector = 63
+	current_sector = 2048
 	for part in hd.node("partitions"):
 	    if part.text("size") == "remain":
-		sz = (c*16*63) - current_sector;
+		sz = size_in_sectors - current_sector;
 	    else:
-		sz = int(part.text("size"))
+		sz = size_to_int(part.text("size"))/sector_size
 
 	    g = parted.Geometry (device=imag,start=current_sector,length=sz)
 	    ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
@@ -185,8 +223,8 @@ def do_image_hd( outf, hd, fslabel, opt ):
                 continue
 
 	    entry = fslabel[part.text("label")]
-	    entry.offset = current_sector*512
-	    entry.size   = sz * 512
+	    entry.offset = current_sector*sector_size
+	    entry.size   = sz * sector_size
 	    entry.filename = hd.text("name")
 
 	    outf.do_command( 'losetup -o%d --sizelimit %d /dev/loop0 "%s"' % (entry.offset, entry.size,entry.filename) )
