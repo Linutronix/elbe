@@ -107,6 +107,9 @@ class fstabentry(object):
 
         return ""
 
+    def losetup( self, outf, loopdev ):
+        outf.do_command( 'losetup -o%d --sizelimit %d /dev/%s "%s"' % (self.offset, self.size, loopdev, self.filename) )
+
 def mkfs_mtd( outf, mtd, fslabel ):
 
     if not mtd.has("ubivg"):
@@ -185,10 +188,71 @@ def size_to_int( size ):
     return int(s) * unit
 
 
+class grubinstaller( object ):
+    def __init__( self, outf ):
+        self.outf = outf
+        self.root = None
+        self.boot = None
+
+    def set_boot_entry( self, entry ):
+        print "setting boot entry"
+        self.boot = entry
+
+    def set_root_entry( self, entry ):
+        self.root = entry
+
+    def install( self, opt ):
+        if not self.root:
+            return
+
+        self.outf.do_command( 'cp -a /dev/loop0 /dev/poop0' )
+        self.outf.do_command( 'cp -a /dev/loop1 /dev/poop1' )
+        self.outf.do_command( 'cp -a /dev/loop2 /dev/poop2' )
+
+        self.outf.do_command( 'losetup /dev/poop0 "%s"' % self.root.filename )
+        self.root.losetup( self.outf, "poop1" )
+        self.outf.do_command( 'mount /dev/poop1 %s' % opt.dir )
+
+        if self.boot:
+            self.boot.losetup( self.outf, "poop2" )
+            self.outf.do_command( 'mount /dev/poop2 %s' % (os.path.join( opt.dir, "boot" ) ) )
+
+        devmap = open( os.path.join( opt.dir, "boot/grub/device.map" ), "w" )
+        devmap.write( "(hd0) /dev/poop0\n" )
+        devmap.write( "(hd0,%s) /dev/poop1\n" % self.root.number )
+        if self.boot:
+            devmap.write( "(hd0,%s) /dev/poop2\n" % self.boot.number )
+
+        devmap.close()
+
+
+        self.outf.do_command( "mount --bind /dev %s" % os.path.join( opt.dir, "dev" ) )
+        self.outf.do_command( "mount --bind /proc %s" % os.path.join( opt.dir, "proc" ) )
+        self.outf.do_command( "mount --bind /sys %s" % os.path.join( opt.dir, "sys" ) )
+        self.outf.do_command( "chroot %s  update-grub2"  % opt.dir )
+
+        self.outf.do_command( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (opt.dir,opt.dir))
+
+        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "dev" ) )
+        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "proc" ) )
+        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "sys" ) )
+
+        self.outf.do_command( "losetup -d /dev/poop0" )
+
+        if self.boot:
+            self.outf.do_command( 'umount /dev/poop2' )
+            self.outf.do_command( 'losetup -d /dev/poop2' )
+
+        self.outf.do_command( 'umount /dev/poop1' )
+        self.outf.do_command( 'losetup -d /dev/poop1' )
+
 def do_image_hd( outf, hd, fslabel, opt ):
 
 	if not hd.has("partitions"):
 	    return
+
+        # Init to 0 because we increment before using it
+        partition_number = 0
 
         sector_size = 512
 	s=size_to_int(hd.text("size"))
@@ -203,9 +267,13 @@ def do_image_hd( outf, hd, fslabel, opt ):
 
         outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
 
+        grub = grubinstaller( outf )
+
 	current_sector = 2048
 	for part in hd.node("partitions"):
-	    if part.text("size") == "remain":
+	    if part.text("size") == "remain" and hd.has("gpt"):
+		sz = size_in_sectors - 35 - current_sector;
+	    elif part.text("size") == "remain":
 		sz = size_in_sectors - current_sector;
 	    else:
 		sz = size_to_int(part.text("size"))/sector_size
@@ -218,6 +286,11 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    if part.has("bootable"):
 		ppart.setFlag(_ped.PARTITION_BOOT)
 
+	    if part.has("biosgrub"):
+		ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
+
+            partition_number += 1
+
             if not fslabel.has_key(part.text("label")):
                 current_sector += sz
                 continue
@@ -226,8 +299,18 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    entry.offset = current_sector*sector_size
 	    entry.size   = sz * sector_size
 	    entry.filename = hd.text("name")
+            if hd.has("gpt"):
+                entry.number = "gpt%d" % partition_number
+            else:
+                entry.number = "msdos%d" % partition_number
 
-	    outf.do_command( 'losetup -o%d --sizelimit %d /dev/loop0 "%s"' % (entry.offset, entry.size,entry.filename) )
+
+            if entry.mountpoint == "/":
+                grub.set_root_entry( entry )
+            elif entry.mountpoint == "/boot":
+                grub.set_boot_entry( entry )
+
+            entry.losetup( outf, "loop0" )
 	    outf.do_command( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
             outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
@@ -238,6 +321,8 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    current_sector += sz
 
 	disk.commit()
+
+        grub.install( opt )
 
 
 def run_command( argv ):
