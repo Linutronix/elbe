@@ -795,6 +795,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="gpt" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Whether this harddisk is formatted with a GPT Label.
+          </documentation>
+        </annotation>
+      </element>
       <element name="partitions" type="rfs:partitions" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1091,6 +1098,13 @@
         <annotation>
           <documentation>
              Whether this partition is marked bootable.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="biosgrub" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             Whether this partition is marked as biosgrub partition.
           </documentation>
         </annotation>
       </element>
