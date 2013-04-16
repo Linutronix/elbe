@@ -260,7 +260,7 @@ def do_image_hd( outf, hd, fslabel, opt ):
 
 	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=%d' % (hd.text("name"), size_in_sectors, sector_size) )
 	imag = parted.Device( hd.text("name") )
-        if hd.has("gpt"):
+        if hd.tag == "gpthd":
             disk = parted.freshDisk(imag, "gpt" )
         else:
             disk = parted.freshDisk(imag, "msdos" )
@@ -271,7 +271,7 @@ def do_image_hd( outf, hd, fslabel, opt ):
 
 	current_sector = 2048
 	for part in hd.node("partitions"):
-	    if part.text("size") == "remain" and hd.has("gpt"):
+	    if part.text("size") == "remain" and hd.tag == "gpthd":
 		sz = size_in_sectors - 35 - current_sector;
 	    elif part.text("size") == "remain":
 		sz = size_in_sectors - current_sector;
@@ -299,7 +299,7 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    entry.offset = current_sector*sector_size
 	    entry.size   = sz * sector_size
 	    entry.filename = hd.text("name")
-            if hd.has("gpt"):
+            if hd.tag == "gpthd":
                 entry.number = "gpt%d" % partition_number
             else:
                 entry.number = "msdos%d" % partition_number
@@ -389,7 +389,10 @@ def run_command( argv ):
     try:
 	# Now iterate over all images and create filesystems and partitions
 	for i in tgt.node("images"):
-	    if i.tag == "hd":
+	    if i.tag == "msdoshd":
+		do_image_hd( outf, i, fslabel, opt )
+
+	    if i.tag == "gpthd":
 		do_image_hd( outf, i, fslabel, opt )
 
 	    if i.tag == "mtd":
