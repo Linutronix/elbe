@@ -248,9 +248,6 @@ class grubinstaller( object ):
 
 def do_image_hd( outf, hd, fslabel, opt ):
 
-	if not hd.has("partitions"):
-	    return
-
         # Init to 0 because we increment before using it
         partition_number = 0
 
@@ -270,7 +267,11 @@ def do_image_hd( outf, hd, fslabel, opt ):
         grub = grubinstaller( outf )
 
 	current_sector = 2048
-	for part in hd.node("partitions"):
+	for part in hd:
+
+            if part.tag != "partition":
+                continue
+
 	    if part.text("size") == "remain" and hd.tag == "gpthd":
 		sz = size_in_sectors - 35 - current_sector;
 	    elif part.text("size") == "remain":
