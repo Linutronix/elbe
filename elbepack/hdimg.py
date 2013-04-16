@@ -323,7 +323,8 @@ def do_image_hd( outf, hd, fslabel, opt ):
 
 	disk.commit()
 
-        grub.install( opt )
+        if hd.has( "grub-install" ):
+            grub.install( opt )
 
 
 def run_command( argv ):
