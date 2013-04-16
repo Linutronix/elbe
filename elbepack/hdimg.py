@@ -10,6 +10,7 @@ from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
 import parted
+from  parted import filesystem
 import _ped
 
 class commanderror(Exception):
@@ -246,6 +247,10 @@ class grubinstaller( object ):
         self.outf.do_command( 'umount /dev/poop1' )
         self.outf.do_command( 'losetup -d /dev/poop1' )
 
+class simple_fstype(object):
+    def __init__(self, type):
+        self.type = type
+
 def do_image_hd( outf, hd, fslabel, opt ):
 
         # Init to 0 because we increment before using it
@@ -279,8 +284,14 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	    else:
 		sz = size_to_int(part.text("size"))/sector_size
 
-	    g = parted.Geometry (device=imag,start=current_sector,length=sz)
-	    ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
+            g = parted.Geometry (device=imag,start=current_sector,length=sz)
+            if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
+                fs = simple_fstype("fat32")
+                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
+		ppart.setFlag(_ped.PARTITION_LBA)
+            else:
+                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
+
 	    cons = parted.Constraint(exactGeom=g)
 	    disk.addPartition(ppart, cons)
 
