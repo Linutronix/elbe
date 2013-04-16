@@ -48,30 +48,24 @@
 			</tar>
 		</package>
                <images>
-                       <hd>
+                       <msdoshd>
                                <name>sda.img</name>
-                               <size>1900</size>
-                               <partitions>
-                                       <primary>
-                                               <part>1</part>
-                                               <size>remain</size>
-                                               <label>rfs</label>
-                                               <parttype>linux</parttype>
-                                       </primary>
-                               </partitions>
-                       </hd>
-                       <hd>
+                               <size>1900MiB</size>
+                               <partition>
+				       <size>remain</size>
+				       <label>rfs</label>
+				       <parttype>linux</parttype>
+                               </partition>
+                       </msdoshd>
+                       <msdoshd>
                                <name>sdb.img</name>
-                               <size>400</size>
-                               <partitions>
-                                       <primary>
-                                               <part>1</part>
-                                               <size>remain</size>
-                                               <label>config</label>
-                                               <parttype>linux</parttype>
-                                       </primary>
-                               </partitions>
-                       </hd>
+                               <size>400MiB</size>
+                               <partition>
+				       <size>remain</size>
+				       <label>config</label>
+				       <parttype>linux</parttype>
+                               </partition>
+                       </msdoshd>
                </images>
                <fstab>
                        <bylabel>
