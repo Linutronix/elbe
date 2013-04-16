@@ -773,7 +773,7 @@
     </sequence>
   </complexType>
 
-  <complexType name="hd">
+  <complexType name="gpthd">
     <annotation>
       <documentation>
          describes a harddisk
@@ -795,17 +795,58 @@
           </documentation>
         </annotation>
       </element>
-      <element name="gpt" type="string" minOccurs="0" maxOccurs="1">
+      <element name="grub-install" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Whether this harddisk is formatted with a GPT Label.
+            human readable name of the harddisk, this will be used as name for
+            the image file
           </documentation>
         </annotation>
       </element>
-      <element name="partitions" type="rfs:partitions" minOccurs="0" maxOccurs="1">
+      <element name="partition" type="rfs:partition" minOccurs="0" maxOccurs="128">
         <annotation>
           <documentation>
-            list of partitions of this harddisk
+            Partition Entries of this harddisk
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="msdoshd">
+    <annotation>
+      <documentation>
+         describes a harddisk
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            human readable name of the harddisk, this will be used as name for
+            the image file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the harddisk
+          </documentation>
+        </annotation>
+      </element>
+      <element name="grub-install" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            human readable name of the harddisk, this will be used as name for
+            the image file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="partition" type="rfs:partition" minOccurs="0" maxOccurs="4">
+        <annotation>
+          <documentation>
+            Partition Entries of this harddisk (max: 4)
           </documentation>
         </annotation>
       </element>
@@ -826,10 +867,17 @@
           </documentation>
         </annotation>
       </element>
-      <element name="hd" type="rfs:hd" minOccurs="0" maxOccurs="unbounded">
+      <element name="msdoshd" type="rfs:msdoshd" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
-            container for all harddisks of the target
+            container for Harddisks with msdos Partitionlabel.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="gpthd" type="rfs:gpthd" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            container for Harddisks with GPT Partitionlabel
           </documentation>
         </annotation>
       </element>
@@ -1034,44 +1082,13 @@
     </sequence>
   </complexType>
 
-  <complexType name="partitions">
-    <annotation>
-      <documentation>
-         container for all partitions of a harddisk
-      </documentation>
-    </annotation>
-    <sequence>
-      <element name="primary" type="rfs:primary_part" minOccurs="1" maxOccurs="4">
-        <annotation>
-          <documentation>
-             container of all primary partitions of a harddisk
-          </documentation>
-        </annotation>
-      </element>
-      <element name="logical" type="string" minOccurs="0" maxOccurs="unbounded">
-        <annotation>
-          <documentation>
-             container of all logical partitions of a harddisk
-          </documentation>
-        </annotation>
-      </element>
-    </sequence>
-  </complexType>
-
-  <complexType name="primary_part">
+  <complexType name="partition">
     <annotation>
       <documentation>
          describes a primary partition of a harddisk
       </documentation>
     </annotation>
     <sequence>
-      <element name="part" type="rfs:part_nr">
-        <annotation>
-          <documentation>
-             partition number
-          </documentation>
-        </annotation>
-      </element>
       <element name="size" type="rfs:part_size">
         <annotation>
           <documentation>
