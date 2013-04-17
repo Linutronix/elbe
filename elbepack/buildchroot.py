@@ -89,17 +89,25 @@ class asccidoclog(object):
         self.printo( "------------------------------------------------------------------------------" )
         self.printo()
 
-    def do_command(self, cmd):
-        self.printo( "running cmd +%s+" % cmd )
-        self.verbatim_start()
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
-        output, stderr = p.communicate()
-        self.print_raw( output )
-        self.verbatim_end()
+    def do_command(self, cmd, **args):
 
-        if p.returncode != 0:
-            self.printo( "Command failed with errorcode %d" % p.returncode )
-            raise commanderror(cmd, p.returncode)
+        if args.has_key("allow_fail"):
+            allow_fail = args["allow_fail"]
+        else:
+            allow_fail = False
+
+	self.printo( "running cmd +%s+" % cmd )
+	self.verbatim_start()
+	p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
+	output, stderr = p.communicate()
+	self.print_raw( output )
+	self.verbatim_end()
+
+
+	if p.returncode != 0:
+	    self.printo( "Command failed with errorcode %d" % p.returncode )
+            if not allow_fail:
+                raise commanderror(cmd, p.returncode)
 
 
 def check_full_pkgs(pkgs, errorname):
@@ -179,9 +187,9 @@ def umount_stuff( outf, directory ):
     except:
         pass
 
-def do_chroot( outf, directory, cmd ):
+def do_chroot( outf, directory, cmd, **args ):
     chcmd = "chroot %s %s" % (directory, cmd)
-    outf.do_command( chcmd )
+    outf.do_command( chcmd, **args )
 
 # Some more helpers
 def template(fname, d):
@@ -217,7 +225,7 @@ def get_preseed( xml ):
 
         preseed[k] = v
 
-    if not xml.has("/project/preseed"):
+    if not xml.has("./project/preseed"):
         return preseed
 
     for c in xml.node("/project/preseed"):
@@ -265,6 +273,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     copy_pyfile( "dump.py", directory, "opt/elbe/dump.py" )
     copy_pyfile( "hdimg.py", directory, "opt/elbe/hdimg.py" )
     copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
+    copy_pyfile( "adjustpkgs.py", directory, "opt/elbe/adjustpkgs.py" )
 
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
     os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
@@ -372,18 +381,13 @@ def run_command( argv ):
         slist += "deb copy:///mnt %s main\n" % (suite)
         #slist += "deb-src file:///mnt %s main\n" % (suite)
 
+    if prj.has("mirror/primary_proxy"):
+        os.environ["http_proxy"] = prj.text("mirror/primary_proxy")
+
     try:
         if prj.node("mirror/url-list"):
             for n in prj.node("mirror/url-list"):
                 slist += "deb %s\n" % n.text("binary").strip()
-
-        pkgs = xml.node("/target/pkg-list")
-        pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-                   "python-apt", "rsync", "genisoimage", "reprepro", "python-parted"]
-
-        for p in pkgs:
-            if p.tag == "pkg":
-                pkglist.append( p.et.text )
 
         serial_con, serial_baud = tgt.text( "console" ).split(',')
 
@@ -403,9 +407,8 @@ def run_command( argv ):
     os.environ["DEBIAN_FRONTEND"]="noninteractive"
 
     try:
-        do_chroot( outf, chroot, "apt-get update" )
         do_chroot( outf, chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
-        do_chroot( outf, chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
+        do_chroot( outf, chroot, "python /opt/elbe/adjustpkgs.py -o /opt/elbe/bla.log /opt/elbe/source.xml" )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
@@ -421,6 +424,10 @@ def run_command( argv ):
             os.system( 'umount "%s"' % os.path.join(chroot, "mnt") )
         umount_stuff( outf, chroot )
 
+    extract = open( os.path.join(chroot, "opt/elbe/files-to-extract"), "r" )
+    for fname in extract.readlines():
+        outf.do_command( 'cp "%s" "%s"' % (chroot+fname.strip(), opt.target) ) 
+    extract.close()
 
 if __name__ == "__main__":
     run_command( sys.argv[1:] )
