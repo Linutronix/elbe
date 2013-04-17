@@ -243,6 +243,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
          "fine": xml.node("/finetuning"),
          "preseed": get_preseed(xml),
          "defs": defs,
+         "buildchroot": True,
          "opt": opt }
 
     prefs_fname = os.path.join( directory, "etc/apt/preferences" )

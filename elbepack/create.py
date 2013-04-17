@@ -169,6 +169,7 @@ def run_command( argv ):
          "pkgs": xml.node("/target/pkg-list"),
          "fine": xml.node("/finetuning"),
          "defs": defs,
+         "buildchroot": False,
          "preseed": get_preseed(xml) }
 
     try:
