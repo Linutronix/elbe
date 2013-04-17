@@ -33,6 +33,7 @@ from mako import exceptions
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
+from elbepack.xmldefaults import ElbeDefaults
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):
@@ -228,7 +229,7 @@ def get_preseed( xml ):
     return preseed
 
 
-def seed_files( outf, directory, slist, xml, xml_fname, opt ):
+def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     policy = os.path.join( directory, "usr/sbin/policy-rc.d" )
     write_file(policy, 0755, "#!/bin/sh\nexit 101\n")
 
@@ -241,6 +242,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt ):
          "pkgs": xml.node("/target/pkg-list"),
          "fine": xml.node("/finetuning"),
          "preseed": get_preseed(xml),
+         "defs": defs,
          "opt": opt }
 
     prefs_fname = os.path.join( directory, "etc/apt/preferences" )
@@ -303,6 +305,12 @@ def run_command( argv ):
     oparser.add_option( "--build-sources", action="store_true",
                         dest="buildsources", default=False,
                         help="Build Source CD" )
+    oparser.add_option( "--debug", action="store_true", dest="debug",
+                        default=False,
+                        help="Enable various features to debug the build" )
+    oparser.add_option( "--buildtype", dest="buildtype",
+                        help="Override the buildtype" )
+
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
@@ -323,6 +331,15 @@ def run_command( argv ):
         return 0
     if not opt.target:
         return 0
+
+    if opt.buildtype:
+        buildtype = opt.buildtype
+    elif xml.has( "project/buildtype" ):
+        buildtype = xml.text( "/project/buildtype" )
+    else:
+        buildtype = "nodefaults"
+
+    defs = ElbeDefaults( buildtype )
 
     chroot = os.path.join(opt.target, "chroot")
     os.system( 'mkdir -p "%s"' % chroot )
@@ -361,7 +378,7 @@ def run_command( argv ):
 
         pkgs = xml.node("/target/pkg-list")
         pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-                   "python-apt", "rsync", "genisoimage", "reprepro"]
+                   "python-apt", "rsync", "genisoimage", "reprepro", "python-parted"]
 
         for p in pkgs:
             if p.tag == "pkg":
@@ -371,7 +388,7 @@ def run_command( argv ):
 
         if not opt.skip_debootstrap:
             debootstrap( outf, chroot, mirror, suite )
-        seed_files( outf, chroot, slist, xml, args[0], opt )
+        seed_files( outf, chroot, slist, xml, args[0], opt, defs )
 
     finally:
         if prj.has("mirror/cdrom"):
@@ -391,7 +408,7 @@ def run_command( argv ):
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domainname")) )
+        do_chroot( outf, chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domain")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
         do_chroot( outf, chroot, "rm /usr/sbin/policy-rc.d" )
         do_chroot( outf, chroot, "/opt/elbe/create-target-rfs.sh" )
