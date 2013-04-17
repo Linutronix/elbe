@@ -19,7 +19,7 @@
 #!/bin/sh
 
 # Download the kinitrd into /var/cache/apt
-apt-get -d -y install ${prj.text("buildimage/kinitrd")}
+apt-get -d -y --force-yes install ${prj.text("buildimage/kinitrd")}
 
 mkdir -p /opt/elbe/cdrom/conf
 
@@ -29,9 +29,13 @@ mkdir -p /opt/elbe/cdrom/conf
 mkdir -p /opt/elbe/debootstrap
 
 % if prj.has("mirror/primary_host"):
-for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed
-    "s/.%3a//"`
-    /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+# This Fails if its split into multiple lines
+# Please leave it a single line.
+% if prj.text("suite") == "wheezy":
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').rstrip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+% else:
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+% endif
 
 # Move kinitrd to debootstrap also.
 mv /var/cache/apt/archives/${prj.text("buildimage/kinitrd")}*.deb /opt/elbe/debootstrap
