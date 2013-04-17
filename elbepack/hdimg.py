@@ -206,46 +206,49 @@ class grubinstaller( object ):
         if not self.root:
             return
 
-        self.outf.do_command( 'cp -a /dev/loop0 /dev/poop0' )
-        self.outf.do_command( 'cp -a /dev/loop1 /dev/poop1' )
-        self.outf.do_command( 'cp -a /dev/loop2 /dev/poop2' )
+        try:
+            self.outf.do_command( 'cp -a /dev/loop0 /dev/poop0' )
+            self.outf.do_command( 'cp -a /dev/loop1 /dev/poop1' )
+            self.outf.do_command( 'cp -a /dev/loop2 /dev/poop2' )
 
-        self.outf.do_command( 'losetup /dev/poop0 "%s"' % self.root.filename )
-        self.root.losetup( self.outf, "poop1" )
-        self.outf.do_command( 'mount /dev/poop1 %s' % opt.dir )
+            self.outf.do_command( 'losetup /dev/poop0 "%s"' % self.root.filename )
+            self.root.losetup( self.outf, "poop1" )
+            self.outf.do_command( 'mount /dev/poop1 %s' % opt.dir )
 
-        if self.boot:
-            self.boot.losetup( self.outf, "poop2" )
-            self.outf.do_command( 'mount /dev/poop2 %s' % (os.path.join( opt.dir, "boot" ) ) )
+            if self.boot:
+                self.boot.losetup( self.outf, "poop2" )
+                self.outf.do_command( 'mount /dev/poop2 %s' % (os.path.join( opt.dir, "boot" ) ) )
 
-        devmap = open( os.path.join( opt.dir, "boot/grub/device.map" ), "w" )
-        devmap.write( "(hd0) /dev/poop0\n" )
-        devmap.write( "(hd0,%s) /dev/poop1\n" % self.root.number )
-        if self.boot:
-            devmap.write( "(hd0,%s) /dev/poop2\n" % self.boot.number )
+            devmap = open( os.path.join( opt.dir, "boot/grub/device.map" ), "w" )
+            devmap.write( "(hd0) /dev/poop0\n" )
+            devmap.write( "(hd0,%s) /dev/poop1\n" % self.root.number )
+            if self.boot:
+                devmap.write( "(hd0,%s) /dev/poop2\n" % self.boot.number )
 
-        devmap.close()
+            devmap.close()
 
 
-        self.outf.do_command( "mount --bind /dev %s" % os.path.join( opt.dir, "dev" ) )
-        self.outf.do_command( "mount --bind /proc %s" % os.path.join( opt.dir, "proc" ) )
-        self.outf.do_command( "mount --bind /sys %s" % os.path.join( opt.dir, "sys" ) )
-        self.outf.do_command( "chroot %s  update-grub2"  % opt.dir )
+            self.outf.do_command( "mount --bind /dev %s" % os.path.join( opt.dir, "dev" ) )
+            self.outf.do_command( "mount --bind /proc %s" % os.path.join( opt.dir, "proc" ) )
+            self.outf.do_command( "mount --bind /sys %s" % os.path.join( opt.dir, "sys" ) )
 
-        self.outf.do_command( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (opt.dir,opt.dir))
+            self.outf.do_command( "chroot %s  update-grub2"  % opt.dir )
 
-        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "dev" ) )
-        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "proc" ) )
-        self.outf.do_command( "umount %s" % os.path.join( opt.dir, "sys" ) )
+            self.outf.do_command( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (opt.dir,opt.dir))
 
-        self.outf.do_command( "losetup -d /dev/poop0" )
+        finally:
+            self.outf.do_command( "umount %s" % os.path.join( opt.dir, "dev" ), allow_fail=True )
+            self.outf.do_command( "umount %s" % os.path.join( opt.dir, "proc" ), allow_fail=True )
+            self.outf.do_command( "umount %s" % os.path.join( opt.dir, "sys" ), allow_fail=True )
 
-        if self.boot:
-            self.outf.do_command( 'umount /dev/poop2' )
-            self.outf.do_command( 'losetup -d /dev/poop2' )
+            self.outf.do_command( "losetup -d /dev/poop0", allow_fail=True )
 
-        self.outf.do_command( 'umount /dev/poop1' )
-        self.outf.do_command( 'losetup -d /dev/poop1' )
+            if self.boot:
+                self.outf.do_command( 'umount /dev/poop2', allow_fail=True )
+                self.outf.do_command( 'losetup -d /dev/poop2', allow_fail=True )
+
+            self.outf.do_command( 'umount /dev/poop1', allow_fail=True )
+            self.outf.do_command( 'losetup -d /dev/poop1', allow_fail=True )
 
 class simple_fstype(object):
     def __init__(self, type):
