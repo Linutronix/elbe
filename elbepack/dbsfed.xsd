@@ -1085,7 +1085,7 @@
   <complexType name="partition">
     <annotation>
       <documentation>
-         describes a primary partition of a harddisk
+         describes a partition of a harddisk
       </documentation>
     </annotation>
     <sequence>
@@ -1101,13 +1101,6 @@
           <documentation>
              human readable label of the partition used for mount by label and
              as filename for the flashable image
-          </documentation>
-        </annotation>
-      </element>
-      <element name="parttype" type="rfs:part_type" minOccurs="0">
-        <annotation>
-          <documentation>
-             type of the partition, e.g. "swap" or "linux"
           </documentation>
         </annotation>
       </element>
