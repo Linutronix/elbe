@@ -35,7 +35,7 @@ sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1.conffiles@' /opt/elbe/allpkg-list | sh 
 
 % else:
 cd /
-ls -A1 / | grep -v target | grep -v proc | grep -v sys | xargs find >> /opt/elbe/filelist
+ls -A1 / | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v "^opt/elbe" >> /opt/elbe/filelist
 cd -
 % endif
 
