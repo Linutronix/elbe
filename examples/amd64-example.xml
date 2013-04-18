@@ -1,4 +1,4 @@
-<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="5" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
 		<name>AMD64 Example</name>
 		<version>6</version>
@@ -9,7 +9,7 @@
 		</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>debian.tu-bs.de</primary_host>
+			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
@@ -51,10 +51,10 @@
                        <msdoshd>
                                <name>sda.img</name>
                                <size>1900MiB</size>
+			       <grub-install/>
                                <partition>
 				       <size>remain</size>
 				       <label>rfs</label>
-				       <parttype>linux</parttype>
                                </partition>
                        </msdoshd>
                        <msdoshd>
@@ -63,7 +63,6 @@
                                <partition>
 				       <size>remain</size>
 				       <label>config</label>
-				       <parttype>linux</parttype>
                                </partition>
                        </msdoshd>
                </images>

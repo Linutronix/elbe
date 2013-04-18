@@ -1,4 +1,4 @@
-<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="5" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
         <project>
                 <name>i386example</name>
                 <version>6</version>
@@ -7,6 +7,7 @@
 			after 'make run-con' you can login the system from another terminal with
 			'ssh root@localhost -p 5022'
 		</description>
+		<buildtype>i386</buildtype>
                 <mirror>
                         <primary_host>debian.tu-bs.de</primary_host>
                         <primary_path>/debian</primary_path>
@@ -19,17 +20,7 @@
                 </mirror>
                 <suite>squeeze</suite>
                 <buildimage>
-                        <arch>i386</arch>
-                        <size>20G</size>
-                        <mem>1024</mem>
-                        <interpreter>kvm</interpreter>
 			<kinitrd>testrd</kinitrd>
-                        <console>ttyS0,115200n1</console>
-                        <machine>pc</machine>
-                        <NIC>
-                                <model>virtio</model>
-                                <MAC>de:ad:be:ef:be:05</MAC>
-                        </NIC>
                         <portforwarding>
                                 <forward>
                                         <proto>tcp</proto>

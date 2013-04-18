@@ -1,4 +1,4 @@
-<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="5" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
 		<name>ARMexample</name>
 		<version>08.15</version>
@@ -6,8 +6,9 @@
 			creates an UBI based target system without debian package management
 			tools for version control and package build are added to the buildimage
 		</description>
+		<buildtype>armel</buildtype>
 		<mirror>
-			<primary_host>debian.tu-bs.de</primary_host>
+			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			
@@ -20,17 +21,7 @@
 		<noauth />
 		<suite>squeeze</suite>
 		<buildimage>
-			<arch>armel</arch>
-			<size>20G</size>
-			<mem>256</mem>
-			<interpreter>qemu-system-arm</interpreter>
 			<kinitrd>testrd</kinitrd>
-			<console>ttyAMA0,115200n1</console>
-			<machine>versatilepb</machine>
-			<NIC>
-				<model>smc91c111</model>
-				<MAC>de:ad:be:ef:be:05</MAC>
-			</NIC>
 			<portforwarding>
 				<forward>
 					<proto>tcp</proto>
