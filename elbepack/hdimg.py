@@ -265,7 +265,7 @@ def do_image_hd( outf, hd, fslabel, opt ):
 
         outf.do_command( 'rm "%s"' % hd.text("name"), allow_fail=True )
         f = open( hd.text("name"), "wb" )
-        f.trucate( size_in_sectors * sector_size )
+        f.truncate( size_in_sectors * sector_size )
         f.close()
 
 	imag = parted.Device( hd.text("name") )
