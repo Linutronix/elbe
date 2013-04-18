@@ -92,8 +92,8 @@
       </documentation>
     </annotation>
     <restriction base="integer">
-      <minInclusive value="5" />
-      <maxInclusive value="5" />
+      <minInclusive value="6" />
+      <maxInclusive value="6" />
     </restriction>
   </simpleType>
 
