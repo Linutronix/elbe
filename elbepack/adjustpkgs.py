@@ -128,7 +128,7 @@ def run_command( argv ):
             if p.is_auto_removable:
                 p.mark_delete( purge=True )
 
-    cache.commit(apt.progress.text.AcquireProgress(),
+    cache.commit(apt.progress.base.AcquireProgress(),
                  apt.progress.base.InstallProgress())
 
 if __name__ == "__main__":
