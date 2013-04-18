@@ -353,6 +353,8 @@ def run_command( argv ):
                         help="Enable various features to debug the build" )
     oparser.add_option( "--buildtype", dest="buildtype",
                         help="Override the buildtype" )
+    oparser.add_option( "--proxy", dest="proxy",
+                        help="Override the http proxy" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -415,7 +417,9 @@ def run_command( argv ):
         slist += "deb copy:///mnt %s main\n" % (suite)
         #slist += "deb-src file:///mnt %s main\n" % (suite)
 
-    if prj.has("mirror/primary_proxy"):
+    if opt.proxy:
+        os.environ["http_proxy"] = opt.proxy
+    elif prj.has("mirror/primary_proxy"):
         os.environ["http_proxy"] = prj.text("mirror/primary_proxy")
 
     os.environ["LANG"] = "C"

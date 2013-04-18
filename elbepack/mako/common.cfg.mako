@@ -103,7 +103,7 @@ d-i mirror/country            string manual
 d-i mirror/http/hostname string ${prj.text("mirror/primary_host")}
 d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
 d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
-d-i mirror/http/proxy string ${prj.text("mirror/primary_proxy", default="")}
+d-i mirror/http/proxy string ${http_proxy}
 d-i mirror/protocol string ${prj.text("mirror/primary_proto")}
 %endif
 

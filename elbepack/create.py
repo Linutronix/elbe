@@ -112,6 +112,9 @@ def run_command( argv ):
                         dest="buildsources", default=False,
                         help="Build source cdrom" )
 
+    oparser.add_option( "--proxy", dest="proxy",
+                        help="Override the http Proxy" )
+
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) == 0:
@@ -142,6 +145,13 @@ def run_command( argv ):
     else:
         buildtype = "nodefaults"
 
+    if opt.proxy:
+        http_proxy = opt.proxy
+    elif xml.has("project/mirror/primary_proxy"):
+        http_proxy = xml.text("project/mirror/primary_proxy")
+    else:
+        http_proxy = ""
+
     defs = ElbeDefaults( buildtype )
 
     if not opt.dir:
@@ -169,6 +179,7 @@ def run_command( argv ):
          "pkgs": xml.node("/target/pkg-list"),
          "fine": xml.node("/finetuning"),
          "defs": defs,
+         "http_proxy": http_proxy,
          "buildchroot": False,
          "preseed": get_preseed(xml) }
 
