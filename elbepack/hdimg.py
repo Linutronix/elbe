@@ -263,7 +263,11 @@ def do_image_hd( outf, hd, fslabel, opt ):
 	s=size_to_int(hd.text("size"))
 	size_in_sectors = s / sector_size
 
-	outf.do_command( 'dd if=/dev/zero of="%s" count=%d bs=%d' % (hd.text("name"), size_in_sectors, sector_size) )
+        outf.do_command( 'rm "%s"' % hd.text("name"), allow_fail=True )
+        f = open( hd.text("name"), "wb" )
+        f.trucate( size_in_sectors * sector_size )
+        f.close()
+
 	imag = parted.Device( hd.text("name") )
         if hd.tag == "gpthd":
             disk = parted.freshDisk(imag, "gpt" )
