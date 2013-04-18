@@ -1,3 +1,18 @@
+elbe (0.5) unstable; urgency=low
+
+  * Support for Debian Wheezy
+  * Small fixes for armhf
+  * Improved Harddisk Image support
+  * GPT Partitionlabel
+  * Grub install support
+  * buildchroot fixes
+  * buildchroot can also build architacture defferent from host
+  * changes to xml format for hd images
+  * Bump of the xml schema version.
+  * Many values in xml file are now optional, and deduced from buildtype.
+
+ -- Torben Hohn <torbenh@linutronix.de>  Thu, 18 Apr 2013 12:20:05 +0200
+
 elbe (0.4.3) unstable; urgency=low
 
   * documentation improvements
