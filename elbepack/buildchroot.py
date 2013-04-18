@@ -109,6 +109,27 @@ class asccidoclog(object):
             if not allow_fail:
                 raise commanderror(cmd, p.returncode)
 
+    def get_command_out(self, cmd, **args):
+
+        if args.has_key("allow_fail"):
+            allow_fail = args["allow_fail"]
+        else:
+            allow_fail = False
+
+	self.printo( "getting output from cmd +%s+" % cmd )
+	self.verbatim_start()
+	p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
+	output, stderr = p.communicate()
+	self.print_raw( stderr )
+	self.verbatim_end()
+
+
+	if p.returncode != 0:
+	    self.printo( "Command failed with errorcode %d" % p.returncode )
+            if not allow_fail:
+                raise commanderror(cmd, p.returncode)
+
+        return output
 
 def check_full_pkgs(pkgs, errorname):
     elog = asccidoclog(errorname)
@@ -148,13 +169,25 @@ def check_full_pkgs(pkgs, errorname):
     if errors == 0:
         elog.printo( "No Errors found" )
 
-def debootstrap( outf, directory, mirror, suite ):
+def debootstrap( outf, directory, mirror, suite, target_arch, defs ):
 
-    debootstrap_cmd = 'debootstrap "%s" "%s" "%s"' % (suite, directory, mirror)
+    current_arch = outf.get_command_out( "dpkg --print-architecture" )
+    current_arch = current_arch.strip()
+
+    print current_arch, target_arch
 
     outf.h2( "debootstrap log" )
 
-    outf.do_command( debootstrap_cmd )
+    if current_arch == target_arch:
+        debootstrap_cmd = 'debootstrap "%s" "%s" "%s"' % (suite, directory, mirror)
+        outf.do_command( debootstrap_cmd )
+    else:
+        debootstrap_cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (target_arch, suite, directory, mirror)
+        outf.do_command( debootstrap_cmd )
+        outf.do_command( 'cp /usr/bin/%s %s' % (defs["userinterpr"], os.path.join(directory, "usr/bin" )) )
+        do_chroot( outf, directory, '/debootstrap/debootstrap --second-stage' )
+        do_chroot( outf, directory, 'dpkg --configure -a' )
+
 
 def mount_stuff( outf, directory ):
     outf.h2( "mounting proc/sys/dev" )
@@ -364,6 +397,7 @@ def run_command( argv ):
     outf.printo( "report timestamp: "+datetime.datetime.now().strftime("%Y%m%d-%H%M%S") )
 
     suite = prj.text("suite")
+    target_arch = prj.text("buildimage/arch", default=defs, key="arch")
 
     slist = ""
     mirror = "Error"
@@ -384,6 +418,12 @@ def run_command( argv ):
     if prj.has("mirror/primary_proxy"):
         os.environ["http_proxy"] = prj.text("mirror/primary_proxy")
 
+    os.environ["LANG"] = "C"
+    os.environ["LANGUAGE"] = "C"
+    os.environ["LC_ALL"] = "C"
+    os.environ["DEBIAN_FRONTEND"]="noninteractive"
+    os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
+
     try:
         if prj.node("mirror/url-list"):
             for n in prj.node("mirror/url-list"):
@@ -392,7 +432,7 @@ def run_command( argv ):
         serial_con, serial_baud = tgt.text( "console" ).split(',')
 
         if not opt.skip_debootstrap:
-            debootstrap( outf, chroot, mirror, suite )
+            debootstrap( outf, chroot, mirror, suite, target_arch, defs )
         seed_files( outf, chroot, slist, xml, args[0], opt, defs )
 
     finally:
@@ -403,11 +443,14 @@ def run_command( argv ):
     if prj.has("mirror/cdrom"):
         os.system( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
 
-    os.environ["LANG"] = "C"
-    os.environ["DEBIAN_FRONTEND"]="noninteractive"
+    pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
+               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted"]
 
     try:
+        do_chroot( outf, chroot, "apt-get update" )
         do_chroot( outf, chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
+        if not opt.skip_debootstrap:
+            do_chroot( outf, chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
         do_chroot( outf, chroot, "python /opt/elbe/adjustpkgs.py -o /opt/elbe/bla.log /opt/elbe/source.xml" )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )

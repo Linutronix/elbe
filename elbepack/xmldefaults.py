@@ -8,6 +8,7 @@ armel_defaults = {
         "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
+        "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb",
         "nicmodel":     "smc91c111"
@@ -18,6 +19,7 @@ armel_virtio_defaults = {
         "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm-virtio",
+        "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb",
         "nicmodel":     "smc91c111"
@@ -28,6 +30,7 @@ armhf_defaults = {
         "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
+        "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb -cpu cortex-a9",
         "nicmodel":     "smc91c111"
@@ -38,6 +41,7 @@ armhf_virtio_defaults = {
         "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm-virtio",
+        "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb -cpu cortex-a9",
         "nicmodel":     "virtio"
@@ -48,6 +52,7 @@ ppc_defaults = {
         "size":         "20G", 
         "mem":          "256", 
         "interpreter":  "qemu-system-ppc",
+        "userinterpr":  "qemu-ppc-static",
         "console":      "ttyPZ0,115200n1",
         "machine":      "mac99",
         "nicmodel":     "rtl8139"
