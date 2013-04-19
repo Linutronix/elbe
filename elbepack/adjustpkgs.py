@@ -100,9 +100,13 @@ def run_command( argv ):
     pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
                "python-apt", "rsync", "genisoimage", "reprepro", "python-parted", "grub-pc"]
 
+    if xml.has("./project/buildimage/pkg-list"):
+        build_pkglist = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
+    else:
+        build_pkglist = []
     with cache.actiongroup():
 
-        want_pkgs = [p.et.text for p in pkgs] + pkglist
+        want_pkgs = [p.et.text for p in pkgs] + pkglist + build_pkglist
 
         for p in cache:
             if not p.is_installed:
