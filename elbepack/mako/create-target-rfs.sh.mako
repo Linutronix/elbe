@@ -71,6 +71,17 @@ fi
 % endif
 % endfor
 
+
+% if prj.has("buildimage/pkg-list"):
+apt-get install -y --force-yes \
+% for n in prj.node("buildimage/pkg-list"):
+% if n.tag == "pkg":
+      ${n.et.text} \
+% endif
+% endfor
+% endif
+
+
 % for svn in tgt.node("pkg-list"):
 % if svn.tag == "svn-src":
 svn checkout ${svn.text("url")} \

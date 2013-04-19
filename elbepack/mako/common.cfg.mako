@@ -132,11 +132,5 @@ dosfstools apt-rdepends python-apt rsync genisoimage reprepro python-parted \
   ${n.et.text} \
 % endif
 % endfor
-% if prj.has("buildimage/pkg-list"):
-% for n in prj.node("buildimage/pkg-list"):
-% if n.tag == "pkg":
-      ${n.et.text} \
-% endif
-% endfor
-% endif
+
 
