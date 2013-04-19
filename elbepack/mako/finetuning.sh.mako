@@ -19,6 +19,9 @@
 #!/bin/bash
 
 cd /target
+unset -v $(set | sed -e 's/=.*//g' | egrep -v '^(BASH*|HO*|IFS|PATH*|PWD|EUID|PPID|UID|SHELL*|TERM*)')
+. /etc/profile
+
 
 % if fine:
 % for n in fine:
