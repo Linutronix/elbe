@@ -39,6 +39,15 @@ cd /target
   % if n.tag == "command":
     ${n.et.text}
   % endif
+  % if n.tag == "purge":
+    mount -o bind /proc /target/proc
+    mount -o bind /sys /target/sys
+
+    chroot /target dpkg --purge ${n.et.text}
+
+    umount /target/proc
+    umount /target/sys
+  % endif
 % endfor
 % endif
 

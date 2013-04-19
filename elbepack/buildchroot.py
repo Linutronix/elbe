@@ -266,10 +266,6 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt ):
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
     os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
 
-    create_fname = os.path.join( directory, "opt/elbe/purge.sh" )
-    write_template( create_fname, "purge.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
     create_fname = os.path.join( directory, "opt/elbe/part-target.sh" )
     write_template( create_fname, "part-target.sh.mako", d )
     os.chmod( create_fname, 0755 )

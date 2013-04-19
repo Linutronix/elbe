@@ -91,7 +91,6 @@ all: ${all_targets}
 	cp .elbe-in/part-target.sh tmp-tree/
 	cp .elbe-in/print_licence.sh tmp-tree/
 	cp .elbe-in/finetuning.sh tmp-tree/
-	cp .elbe-in/purge.sh tmp-tree/
 	cp .elbe-in/source.xml tmp-tree/
 	cp .elbe-in/dump.py tmp-tree/
 	cp .elbe-in/hdimg.py tmp-tree/

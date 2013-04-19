@@ -191,7 +191,6 @@ def run_command( argv ):
                         "part-target.sh.mako",
                         "post-inst.sh.mako",
                         "print_licence.sh.mako",
-                        "purge.sh.mako",
                         "mkcdrom.sh.mako" ]
 
     for t in templates:

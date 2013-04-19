@@ -22,10 +22,6 @@ rm -rf /target
 mkdir -p /target
 rm -f /opt/elbe/filelist
 
-# purge packages if nessesary
-/opt/elbe/purge.sh
-
-
 
 # create filelists describing the content of the target rfs
 % if tgt.has("tighten"):
@@ -107,10 +103,6 @@ else
 fi
 % endif
 % endfor
-
-
-# purge packages if nessesary
-/opt/elbe/purge.sh
 
 
 # create target rfs
