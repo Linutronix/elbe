@@ -20,15 +20,17 @@ import os
 import sys
 import elbepack
 from lxml import etree
+from lxml.etree import XMLParser,parse
 from optparse import OptionParser
 
 def validate_xml(fname):
     schema_file = os.path.join( elbepack.__path__[0], "dbsfed.xsd" )
+    parser = XMLParser(huge_tree=True)
     schema_tree = etree.parse(schema_file)
     schema = etree.XMLSchema(schema_tree)
 
     try:
-        xml=etree.parse(fname)
+        xml = parse(fname,parser=parser)
 
         if schema.validate(xml):
             return True
