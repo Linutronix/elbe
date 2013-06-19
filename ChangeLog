@@ -1,3 +1,102 @@
+* Patch huge_tree xml file
+* Add repobuilder preliminary description
+* adjustpkgs: include the buildenv pkglist in the list to consider.
+* test: add test skripts which run all example skripts through a double build
+* add proxy option to create and buildchroot which overrides the used proxy
+* hdimg: fix typo in new sparsefile creator
+* adjustpkgs: use the base Progress classes, because text fails on wheezy
+* examples: fixup examples for schema version 6
+* changelog: Bump version to 0.5 and add Changeslist
+* debian control: add qemu-user-static to dependencies for buildchroot cross
+* xsd: Bump required schema version
+* hdimg: dont use dd to create hdimg. We now create a sparse file in python.
+* buildchroot: add support for qemu-user-static cross debootstrap
+* buildchroot: fixes and improved incremental behaviour
+* hdimg: improve failure in grub-installer to not leave mounted and looped stuff
+* create-target-rfs: do not include /opt/elbe into /target
+* mkdcdrom: fix multiple failures in the debootstrap pkg separation
+* create-target-rfs: dont try to copy the kernel in buildchroot
+* buildchroot: change buildchroot code to support the buildtype modifications
+* xsd: remove parttype from schema, we dont evaluate it anyways.
+* hdimg: set partition type to windows when creating a vfat partition
+* examples: fixup amd64-example.xml for new partitions syntax
+* xsd: schema changes for the hd -> gpthd and msdoshd move
+* hdimg: make grub install conditional on <grub-install/> tag
+* hdimg: change hd -> gpthd and msdoshd step 2 of 2
+* hdimg: change hd -> msdoshd and gpthd step 1 of 2
+* xsd: schema change for the latest hdimg additions
+* hdimg: add grub support and fix gpt support
+* hdimg: add parser for Unitprefix to partition sizes, calc sectors proper
+* armhf: preseed so that the installer doesnt install kernel by itself
+* armhf: add support for location of vmlinuz and initrd.img link on armhf
+* xmldefaults: add armhf buildtypes
+* fix added whitespace
+* finetuning: unset lots of envvars in finetuning, which confuse apt-get
+* finetuning: remove purge.sh and include the purge calls into finetuning.sh
+* create: move buildimage pkg-list installation behind filelist generation
+* add python-parted debian dependency
+* update elbe-overview to match current sourcecode
+* hdimg: fix conditions when a mount point doesnt exist, or is empty
+* examples: cleanup amd64-example for buildtype
+* hdimg: allow the cp into the image to fail
+* hdimg: add allow_fail option to do_command()
+* hdimg: strip umount option
+* hdimg: pass opt into do_image_hd()
+* xsd: add vfat to list of possible filesystems
+* Revert "remove non-existing packages, because wheezy debootstrap fails then."
+* mako/common.cfg: fixup the wheezy keyboard selection
+* remove non-existing packages, because wheezy debootstrap fails then.
+* mako/common.cfg: add us keyboard config preseed for wheezy
+* mako/common.cfg: fix typo in qemu-system-arm-virtio compare. now use vda
+* mako/Makefile: fix kernel and initrd now for real
+* make clean: add -r because we delete some directories here
+* examples: add arm wheezy example
+* wheezy: first step towards wheezy and virtio support
+* show: remove arch printout
+* hdimg: only consider <ubi> tags as ubi vols
+* fix error in part-targets.sh.mako
+* hdimg: fixup mkfs options passing, and set the correct filesystem labels
+* hdimg: merge the ubi code into hdimg, and drop the mako implementation
+* hdimg: add hdimg to files-to-extract
+* hdimg: dont fail when a partition does not have an fstab entry
+* simplify UBI fstab generation
+* hdimg: add bootable flag to enable making partitions bootable
+* hdimg: multiple fixes
+* examples: fix order of package tag vs. the images
+* hdimg: switch part-target.sh.mako to use the hdimg.py command
+* hdimg: add asciidoclog and really execute the commands now
+* hdimg: copy hdimg.py into /opt/elbe so that its available during build
+* hdimg: add --umount option to allow scripts to cleanup afterwards
+* hdimg: make this ready for execution inside chroot
+* examples: add some hd stuff to amd64-example for testing.
+* hdimg: add first version of hdimg command
+* fix Makefile.mako - use new paths
+* dont break on old xml files - make buildtype optional
+* fix indent
+* fix mkcdrom, use default stuff for arch
+* fix fallout from the rebase
+* change arm-example for new xmldefaults stuff.
+* xsd: update schema for now optional parameters, seeded via xml defaults
+* evaluate xmldefaults in mako templates, where they apply
+* add new xmldefaults architecture to distinguish buildtypes
+* treeutils: add support for default dicts to ebase.text()
+* make treeutils.ebase.text() throw an exception, if a value can not be read
+* mkcdrom: sort the packages used to debootstrap into specific repo component
+* Hide kernel to run the buildenv in .elbe-vm
+* always boot the vm with -kernel and -initrd option
+* fix copy Release.src
+* fix target/package/tar/name dependency
+* Cleanup the elbe build directory
+* dont fail if xml files doesnt have <images> tag
+* adjust makefile targets which are gone due to files-to-extract logic
+* fix files-to-extract logic failing to do its thing
+* part-target.sh: improve coment
+* part-target: fix bug in file extraction
+* part-target: remove escape of newline
+* use files-to-extract for UBI images
+* step 2/3 of files-to extract patches (kernel and initrd)
+* step 1/3 for files-to-extract support
+* v0.4.3
 * introduce ChangeLog file
 * Added  reference to html documentation.(README) Added instructions to install public key of elbe repository.(elbeoverview-en.txt)
 * deb-buildpkg: fix for dh which ignores DH_OPTIONS
