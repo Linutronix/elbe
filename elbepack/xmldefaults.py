@@ -48,7 +48,7 @@ armhf_virtio_defaults = {
 }
 
 ppc_defaults = { 
-        "arch":         "ppc",
+        "arch":         "powerpc",
         "size":         "20G", 
         "mem":          "256", 
         "interpreter":  "qemu-system-ppc",
