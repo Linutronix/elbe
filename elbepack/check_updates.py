@@ -51,7 +51,7 @@ def run_command( argv ):
 
     xml = etree( args[0] )
 
-    arch  = xml.text("project/buildimage/arch")
+    arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
     suite = xml.text("project/suite")
 
     name  = xml.text("project/name")
