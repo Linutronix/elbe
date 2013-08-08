@@ -121,6 +121,9 @@ def mkfs_mtd( outf, mtd, fslabel ):
         if not v.tag == "ubi":
             continue
 
+        if v.has("empty"):
+            continue
+
         label = v.text("label")
 
         if not fslabel.has_key(label):

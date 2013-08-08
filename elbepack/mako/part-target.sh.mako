@@ -18,6 +18,9 @@
 ##
 #!/bin/sh
 
+# used by ubi.cfg for ubi volumes tagged as empty
+echo EMPTY > /tmp/empty
+
 echo ""
 echo "create target images"
 echo "--------------------"

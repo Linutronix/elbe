@@ -24,10 +24,14 @@
 % if vol.has("label"):
 [${vol.text("label")}]
 mode=ubi
+% if not vol.has("empty"):
 % if vol.has("binary"):
 image=${vol.text("binary")}
 % else:
 image=/opt/elbe/${vol.text("label")}.ubifs
+% endif
+% else:
+image=/tmp/empty
 % endif
 vol_type=${vol.text("type")}
 vol_id=${vol.text("id")}

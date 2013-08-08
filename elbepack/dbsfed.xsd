@@ -649,6 +649,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="empty" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+           if binary is used or a label was given that is also available in
+           the fstab this tag can be used to force the creation of an empty
+           ubi volume.
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
