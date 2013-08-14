@@ -69,7 +69,7 @@ fi
 
 
 % if prj.has("buildimage/pkg-list"):
-apt-get install -y --force-yes \
+DEBCONF_REDIR= apt-get install -y --force-yes \
 % for n in prj.node("buildimage/pkg-list"):
 % if n.tag == "pkg":
       ${n.et.text} \
