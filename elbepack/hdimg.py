@@ -124,8 +124,11 @@ def mkfs_mtd( outf, mtd, fslabel ):
         if v.has("empty"):
             continue
 
-        label = v.text("label")
+        if v.has("binary"):
+            outf.do_command( "echo %s >> /opt/elbe/files-to-extract" % v.text("binary") )
+            continue
 
+        label = v.text("label")
         if not fslabel.has_key(label):
             continue
 
@@ -135,6 +138,8 @@ def mkfs_mtd( outf, mtd, fslabel ):
             ubivg.text("logicaleraseblocksize"),
             ubivg.text("maxlogicaleraseblockcount"),
             fslabel[label].mkfsopt ) )
+
+        outf.do_command( "echo /opt/elbe/%s.ubifs >> /opt/elbe/files-to-extract" % label )
 
 def build_image_mtd( outf, mtd, fslabel ):
 
