@@ -95,7 +95,7 @@ all: ${all_targets}
 	cp .elbe-in/dump.py tmp-tree/
 	cp .elbe-in/hdimg.py tmp-tree/
 	cp .elbe-in/treeutils.py tmp-tree/
-	cp .elbe-in/ubi.cfg tmp-tree/
+	cp .elbe-in/ubi.sh tmp-tree/
 	cp .elbe-in/fstab tmp-tree/
 	cp .elbe-in/pkg-selections tmp-tree/
 	cp .elbe-in/mkcdrom.sh tmp-tree/

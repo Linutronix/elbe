@@ -153,11 +153,12 @@ def build_image_mtd( outf, mtd, fslabel ):
     else:
         subp = ""
 
-    outf.do_command( "ubinize %s -o %s -p %s -m %s /opt/elbe/ubi.cfg" % (
+    outf.do_command( "ubinize %s -o %s -p %s -m %s %s" % (
         subp,
         mtd.text("name"),
         ubivg.text("physicaleraseblocksize"),
-        ubivg.text("miniosize") ) )
+        ubivg.text("miniosize")
+        "/opt/elbe/" + mtd.text("name") + "_" + ubivg.text("label") + ".cfg" ) )
 
     outf.do_command( "echo /opt/elbe/%s >> /opt/elbe/files-to-extract" % mtd.text("name") )
 

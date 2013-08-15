@@ -16,33 +16,33 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
+#!/bin/sh
+
 % if tgt.has("images"):
 
 % for mtd in tgt.node("images"):
 % if mtd.has("ubivg"):
 % for vol in mtd.node("ubivg"):
 % if vol.has("label"):
-[${vol.text("label")}]
-mode=ubi
+echo [${vol.text("label")}] >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
+echo mode=ubi >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % if not vol.has("empty"):
 % if vol.has("binary"):
-image=${vol.text("binary")}
+echo image=${vol.text("binary")} >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % else:
-image=/opt/elbe/${vol.text("label")}.ubifs
+echo image=/opt/elbe/${vol.text("label")}.ubifs >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % endif
 % else:
-image=/tmp/empty
+echo image=/tmp/empty >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % endif
-vol_type=${vol.text("type")}
-vol_id=${vol.text("id")}
-vol_name=${vol.text("label")}
+echo vol_type=${vol.text("type")} >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
+echo vol_id=${vol.text("id")} >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
+echo vol_name=${vol.text("label")} >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % if vol.text("size") != "remain":
-vol_size=${vol.text("size")}
+echo vol_size=${vol.text("size")} >> ${mtd.text("name")}_${mtd.node("ubivg").text("label")}.cfg
 % endif
-
-% endif
-% endfor
 % endif
 % endfor
-
+% endif
+% endfor
 % endif

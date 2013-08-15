@@ -18,7 +18,7 @@
 ##
 #!/bin/sh
 
-# used by ubi.cfg for ubi volumes tagged as empty
+# used by ubinize for ubi volumes tagged as empty
 echo EMPTY > /tmp/empty
 
 echo ""
@@ -28,7 +28,7 @@ echo ""
 echo "================================================================"
 
 cd /opt/elbe
-
+sh ./ubi.sh
 mkdir -v -p /tmp-mnt
 
 
