@@ -56,7 +56,7 @@ else
 	cd ..
 	rm -rf git-src
 	dpkg -i --force-all *.deb  >> build.txt 2>&1
-	apt-get install -f >> build.txt 2>&1
+	DEBCONF_REDIR= apt-get install -f >> build.txt 2>&1
 	DEBS=`ls -1 *.deb | grep -v "\-dev"`
 	for DEB in $DEBS; do
 		dpkg --contents $DEB | awk '{ print $6 }' | \
@@ -93,7 +93,7 @@ else
 	cd ..
 	rm -rf svn-src
 	dpkg -i --force-all *.deb >> build.txt 2>&1
-	apt-get install -f >> build.txt 2>&1
+	DEBCONF_REDIR= apt-get install -f >> build.txt 2>&1
 	DEBS=`ls -1 *.deb | grep -v "\-dev"`
 	for DEB in $DEBS; do
 		dpkg --contents $DEB | awk '{ print $6 }' | \
