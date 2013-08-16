@@ -19,7 +19,7 @@
 #!/bin/sh
 
 # Download the kinitrd into /var/cache/apt
-DEBCONF_REDIR= apt-get -d -y --force-yes install ${prj.text("buildimage/kinitrd")}
+DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get -d -y --force-yes install ${prj.text("buildimage/kinitrd")}
 
 mkdir -p /opt/elbe/cdrom/conf
 
