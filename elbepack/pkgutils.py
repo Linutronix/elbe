@@ -23,9 +23,15 @@ import os
 
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack import virtapt
 
 from tempfile import mkdtemp
+
+try:
+	from elbepack import virtapt
+except:
+	print "WARNING: python-apt not available"
+	import urllib2
+
 
 def get_sources_list( xml ):
 
@@ -56,6 +62,23 @@ def get_initrd_pkg( xml ):
 
     return initrdname
 
+def get_url ( xml, arch, suite, target_pkg, mirror ):
+        packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
+          (mirror, suite, arch))
+
+        packages = packages.readlines()
+        packages = filter( lambda x: x.startswith( "Filename" ), packages )
+        packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
+
+        try:
+            tmp = packages.pop()
+            urla = tmp.split()
+            url = "%s/%s" % (mirror, urla[1])
+        except:
+            url = ""
+
+        return url
+
 def get_initrd_uri( xml, defs ):
 
     arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
@@ -66,23 +89,37 @@ def get_initrd_uri( xml, defs ):
 
     target_pkg = get_initrd_pkg(xml)
 
-    v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
-    d = virtapt.apt_pkg.DepCache(v.cache)
+    try:
+        v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
+        d = virtapt.apt_pkg.DepCache(v.cache)
 
-    pkg = v.cache[target_pkg]
+        pkg = v.cache[target_pkg]
 
-    c=d.get_candidate_ver(pkg)
-    x=v.source.find_index(c.file_list[0][0])
+        c=d.get_candidate_ver(pkg)
+        x=v.source.find_index(c.file_list[0][0])
 
-    r=virtapt.apt_pkg.PackageRecords(v.cache)
-    r.lookup(c.file_list[0])
-    uri = x.archive_uri(r.filename)
+        r=virtapt.apt_pkg.PackageRecords(v.cache)
+        r.lookup(c.file_list[0])
+        uri = x.archive_uri(r.filename)
+        return uri
+    except:
+        url = "%s://%s/%s" % (xml.text("project/mirror/primary_proto"),
+          xml.text("project/mirror/primary_host"),
+          xml.text("project/mirror/primary_path") )
+        pkg = get_url ( xml, arch, suite, target_pkg, url )
 
+        if pkg:
+            return pkg
 
+        for n in xml.node("project/mirror/url-list"):
+            url = n.text("binary")
+            urla = url.split()
+            pkg = get_url ( xml, arch, suite, target_pkg, urla[0] )
 
+            if pkg:
+                return pkg
 
-
-    return uri
+    return ""
 
 
 
@@ -94,8 +131,13 @@ def copy_kinitrd( xml, target_dir, defs ):
 
     if uri.startswith("file://"):
         os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
-    else:
+    elif uri.startswith("http://"):
         os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+    elif uri.startswith("ftp://"):
+        os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+    else:
+        raise Exception ('no kinitrd package available')
+
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
     if prj.has("mirror/cdrom"):
