@@ -227,3 +227,6 @@ def run_command( argv ):
 
     shutil.copyfile( os.path.join( pack_dir, "hdimg.py" ),
        os.path.join(out_path, "hdimg.py" ) )
+
+    shutil.copyfile( os.path.join( pack_dir, "fstab.py" ),
+       os.path.join(out_path, "fstab.py" ) )

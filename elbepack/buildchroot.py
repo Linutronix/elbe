@@ -305,6 +305,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
 
     copy_pyfile( "dump.py", directory, "opt/elbe/dump.py" )
     copy_pyfile( "hdimg.py", directory, "opt/elbe/hdimg.py" )
+    copy_pyfile( "fstab.py", directory, "opt/elbe/fstab.py" )
     copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
     copy_pyfile( "adjustpkgs.py", directory, "opt/elbe/adjustpkgs.py" )
 

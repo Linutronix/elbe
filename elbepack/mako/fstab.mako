@@ -17,7 +17,8 @@
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
 <%
-from elbepack.hdimg import fstabentry
+
+from elbepack.fstab import fstabentry
 
 if tgt.has("fstab"):
     fslabel = {}
