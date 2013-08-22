@@ -1,3 +1,13 @@
+elbe (0.5.2) unstable; urgency=low
+
+  * add compatibility code if python-apt is not availabe
+      this enables elbe for platforms != debian/ubuntu
+  * fix deadlock if buildenv pkg-list was used
+  * add support for multiple mtd/ubivg images
+  * fix some issues related to xmldefaults
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 22 Aug 2013 09:57:15 +0200
+
 elbe (0.5.1) unstable; urgency=low
 
   * fix proxy in buildchroot

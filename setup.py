@@ -35,7 +35,7 @@ class my_install(install):
         print output
 
 setup(name='elbe',
-      version='0.5.1',
+      version='0.5.2',
       description='RootFS builder',
       author='Torben Hohn',
       author_email='torbenh@linutronix.de',

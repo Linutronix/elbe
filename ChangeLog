@@ -1,3 +1,21 @@
+* add more verbose warning if python-apt is not available
+* split out fstabentry code into a seperate module
+* don't depend on python-apt
+* add DEBCONF_REDIR env var to apt-get install
+* add DEBCONF_REDIR= to apt-get install call in mkcdrom
+* add DEBCONF_REDIR= to all apt-get install calls
+* make ubinize command better readable
+* add a second ubi volume group / mtd device to the arm-complex-example
+* support multiple ubi volume groups in one or more mtd partitions
+* copy all ubi volumes out of the buildenv
+* unset DEBCONF_REDIR in preseed
+* add empty tag for ubi volumes
+* examples: Exchange debian.tu-bs.de with ftp.de.debian.org
+* fix check_updates to work with just buildtype
+* Merge remote-tracking branch 'origin/devel/torbenh/ppc-fix'
+* xmldefaults: Fix Debian arch ppc -> powerpc in buildtype
+* v0.5.1
+* add beaglebone example
 * Patch huge_tree xml file
 * Add repobuilder preliminary description
 * adjustpkgs: include the buildenv pkglist in the list to consider.
