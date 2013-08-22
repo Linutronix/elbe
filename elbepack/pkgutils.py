@@ -29,7 +29,10 @@ from tempfile import mkdtemp
 try:
 	from elbepack import virtapt
 except:
-	print "WARNING: python-apt not available"
+	print "WARNING - python-apt not available: if there are multiple versions of"
+	print " kinitrd packages on the mirror(s) elbe selects the first package it"
+	print " has found. There is no guarantee that the latest package is used."
+	print " To ensure this, the python-apt package needs to be installed."
 	import urllib2
 
 
