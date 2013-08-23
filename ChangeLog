@@ -1,3 +1,4 @@
+* v0.5.2
 * add more verbose warning if python-apt is not available
 * split out fstabentry code into a seperate module
 * don't depend on python-apt
