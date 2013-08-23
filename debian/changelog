@@ -1,3 +1,9 @@
+elbe (0.5.2-wheezy) wheezy; urgency=low
+
+  * build version for wheezy distribution
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 23 Aug 2013 10:56:12 +0200
+
 elbe (0.5.2-squeeze) squeeze; urgency=low
 
   * build version for squeeze distribution
