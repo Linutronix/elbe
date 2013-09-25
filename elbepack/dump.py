@@ -318,6 +318,12 @@ def run_command( argv ):
             outf.printo( "|%s|%s|%s" % (p.name, p.installed.version, orig) )
     outf.table()
 
+
+    outf.h2( "archive extract 1st" )
+    if opt.archive:
+        outf.print_raw( do_command( 'tar xvfj "%s" -C "%s"' % (opt.archive, opt.target) ) )
+
+
     outf.h2( "finetuning log" )
     outf.verbatim_start()
 
