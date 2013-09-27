@@ -21,6 +21,7 @@
 from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
+from sets import Set
 import datetime
 import apt
 import sys
@@ -363,9 +364,12 @@ def run_command( argv ):
     outf.h2( "fileslist" )
     outf.table()
 
+    tgt_pkg_list = Set()
+
     for fpath, realpath in walk_files(opt.target):
         if index.has_key(fpath):
             pkg = index[fpath]
+            tgt_pkg_list.add(pkg)
         else:
             pkg = "postinst generated"
 
@@ -395,6 +399,21 @@ def run_command( argv ):
             outf.printo( "|+%s+|%s" % (fpath,pkg) )
     outf.table()
 
+    outf.h2( "Target Package List" )
+    outf.table()
+    cache = apt.Cache(memonly=True)
+    if xml.has("target/pkgversionlist"):
+        os.remove('/target/etc/elbe_pkglist')
+        f = open('/target/etc/elbe_pkglist', 'w')
+    for pkg in tgt_pkg_list:
+        p = cache[pkg]
+        outf.printo( "|%s|%s|%s|%s" % (p.name, p.installed.version, p.is_auto_installed, p.installed.md5) )
+        if xml.has("target/pkgversionlist"):
+            f.write ("%s %s %s\n" % (p.name, p.installed.version, p.installed.md5))
+    outf.table()
+
+    if xml.has("target/pkgversionlist"):
+        f.close ()
 
 if __name__ == "__main__":
     run_command( sys.argv[1:] )

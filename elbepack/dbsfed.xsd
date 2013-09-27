@@ -370,6 +370,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="pkgversionlist" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            create /etc/elbe_pkglist on the target RFS. It includes all packages
+            that include files that are used in the target. The list also
+            contains the versions of the used packages.
+          </documentation>
+        </annotation>
+      </element>
       <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
