@@ -318,11 +318,18 @@ def run_command( argv ):
             outf.printo( "|%s|%s|%s" % (p.name, p.installed.version, orig) )
     outf.table()
 
+    # archive extraction is done before and after finetuning the first
+    # extraction is needed that the files can be used (copied/moved to the
+    # buildenv in finetuning
+    # the second extraction is done to ensure that files from the archive
+    # can't be modified/removed in finetuning
 
-    outf.h2( "archive extract 1st" )
+    outf.h2( "archive extract before finetuning" )
+
     if opt.archive:
+        outf.verbatim_start()
         outf.print_raw( do_command( 'tar xvfj "%s" -C "%s"' % (opt.archive, opt.target) ) )
-
+        outf.verbatim_end()
 
     outf.h2( "finetuning log" )
     outf.verbatim_start()
@@ -337,7 +344,7 @@ def run_command( argv ):
 
     outf.verbatim_end()
 
-    outf.h2( "archive extract" )
+    outf.h2( "archive extract after finetuning" )
 
     outf.verbatim_start()
 
