@@ -31,6 +31,7 @@ from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd
 from elbepack.xmldefaults import ElbeDefaults
+from elbepack.version import elbe_version
 
 from optparse import OptionParser
 
@@ -172,7 +173,8 @@ def run_command( argv ):
         print 'unable to create subdirectory: %s' % out_path
         sys.exit(30)
 
-    d = {"opt": opt,
+    d = {"elbe_version": elbe_version,
+         "opt": opt,
          "xml": xml,
          "prj": xml.node("/project"),
          "tgt": xml.node("/target"),

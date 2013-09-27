@@ -6,6 +6,8 @@ import os
 from distutils.core import setup
 from distutils.command.install import install
 
+from elbepack.version import elbe_version
+
 def abspath(path):
     """A method to determine absolute path
 for a relative path inside project's directory."""
@@ -35,7 +37,7 @@ class my_install(install):
         print output
 
 setup(name='elbe',
-      version='0.5.2',
+      version=elbe_version,
       description='RootFS builder',
       author='Torben Hohn',
       author_email='torbenh@linutronix.de',

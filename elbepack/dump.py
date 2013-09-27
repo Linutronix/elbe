@@ -26,6 +26,7 @@ import apt
 import sys
 import os
 
+from version import elbe_version
 
 def get_fileindex():
 
@@ -282,6 +283,9 @@ def run_command( argv ):
     except:
         print "no /etc/apt/preferences on system"
         prefs = ""
+
+    buildv = xml.ensure_child( 'elbe_version' )
+    buildv.set_text(elbe_version)
 
     xml.write( args[0] )
 

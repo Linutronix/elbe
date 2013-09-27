@@ -20,8 +20,11 @@
 
 import sys
 
+from elbepack.version import elbe_version
+
 def usage():
-    print 'elbe needs a subcommand: e.g. \'elbe create\'. \n\
+    print 'elbe v' + elbe_version
+    print 'need a subcommand: e.g. \'elbe create\'. \n\
     Available subcommands are: \n\
         * create\n\
         * show\n\
@@ -38,7 +41,7 @@ def usage():
         * initrdpack\n\
         * setcdrom'
 
-if (len(sys.argv) < 2) or sys.argv[1][0]=="-":
+if (len(sys.argv) < 2):
     usage()
     sys.exit(20)
 
@@ -87,6 +90,9 @@ elif sys.argv[1] == "setcdrom":
 elif sys.argv[1] == "hdimg":
     from elbepack.hdimg import run_command
     run_command( sys.argv[2:] )
+elif sys.argv[1] == "--version":
+    print 'elbe v' + elbe_version
+    sys.exit(0)
 else:
     usage()
     sys.exit(20)

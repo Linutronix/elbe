@@ -34,6 +34,7 @@ import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
+from elbepack.version import elbe_version
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):
@@ -277,7 +278,8 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     sources = os.path.join( directory, "etc/apt/sources.list" )
     write_file(sources, 0644, slist)
 
-    d = {"xml": xml,
+    d = {"elbe_version": elbe_version,
+         "xml": xml,
          "prj": xml.node("/project"),
          "tgt": xml.node("/target"),
          "pkgs": xml.node("/target/pkg-list"),
