@@ -1,3 +1,9 @@
+elbe (0.5.3-wheezy) wheezy; urgency=low
+
+  * 5.3 wheezy build
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:37:47 +0200
+
 elbe (0.5.3-squeeze) squeeze; urgency=low
 
   * target package list support
