@@ -1,3 +1,11 @@
+elbe (0.5.3-squeeze) squeeze; urgency=low
+
+  * target package list support
+  * version support (elbe --version, version info in report and target)
+  * extract archive before and after finetuning
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:17:19 +0200
+
 elbe (0.5.2-wheezy) wheezy; urgency=low
 
   * build version for wheezy distribution
