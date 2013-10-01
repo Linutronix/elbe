@@ -21,7 +21,7 @@
 ELBEFILES="/passwd.cfg /preseed.cfg /common.cfg /custom-preseed.cfg /pkg-list \
 		/finetuning.sh /post-inst.sh /Release.bin \
 		/create-target-rfs.sh /Release.src /part-target.sh  \
-		/preferences /ubi.sh /dump.py /treeutils.py /source.xml \
+		/preferences /ubi.sh /dump.py /version.py /treeutils.py /source.xml \
 		/pkg-selections /print_licence.sh /fstab /mkcdrom.sh /hdimg.py /fstab.py"
 
 %if xml.has("archive"):

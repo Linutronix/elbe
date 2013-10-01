@@ -224,6 +224,9 @@ def run_command( argv ):
     shutil.copyfile( os.path.join( pack_dir, "treeutils.py" ),
        os.path.join(out_path, "treeutils.py" ) )
 
+    shutil.copyfile( os.path.join( pack_dir, "version.py" ),
+       os.path.join(out_path, "version.py" ) )
+
     shutil.copyfile( os.path.join( pack_dir, "dump.py" ),
        os.path.join(out_path, "dump.py" ) )
 
