@@ -1,3 +1,8 @@
+* log crashes and other output of dump.py
+* BUGFIX: add version.py into buildenv
+* Increase APT cache on demand
+* v0.5.3-wheezy
+* v0.5.3-squeeze
 * add target pkg list support
 * export version of elbe to the generated rfs
 * add a comment, why the archive is extracted 2 times
