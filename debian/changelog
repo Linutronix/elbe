@@ -1,3 +1,9 @@
+elbe (0.5.4-wheezy) wheezy; urgency=low
+
+  * wheezy build
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:24:13 +0200
+
 elbe (0.5.4-squeeze) squeeze; urgency=low
 
   * BUGFIX dump.py crashed because of missing version.py on target
