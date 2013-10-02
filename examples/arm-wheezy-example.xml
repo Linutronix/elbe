@@ -4,7 +4,6 @@
 		<version>08.15</version>
 		<description>
 			creates an nfsroot for arm based systems
-			adds icecc support to the buildimage for better compile performance
 		</description>
 		<buildtype>armel</buildtype>
 		<mirror>
@@ -14,7 +13,7 @@
 			<url-list>
 				<url>
 					<binary>
-						http://192.168.0.1/custom/elbe wheezy main
+						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 				</url>
 			</url-list>
@@ -45,10 +44,6 @@
 
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
-			<command>echo 'export PATH=/usr/lib/icecc/bin:$PATH' &gt; /etc/profile.d/10icecc.sh</command>
-			<command>echo "export ICECC_VERSION=x86_64:/usr/share/icecream-envs/icebaked-amd64-gcc-4.4-arm-linux-gnueabi.tar.gz" &gt;&gt; /etc/profile.d/10icecc.sh</command>
-			<command>echo 'export PATH=/usr/lib/icecc/bin:$PATH' &gt; /target/etc/profile.d/10icecc.sh</command>
-			<command>echo "export ICECC_VERSION=x86_64:/usr/share/icecream-envs/icebaked-amd64-gcc-4.4-arm-linux-gnueabi.tar.gz" &gt;&gt; /target/etc/profile.d/10icecc.sh</command>
 		</finetuning>
 		<pkg-list>
 			<pkg>build-essential</pkg>
@@ -58,7 +53,6 @@
 			<pkg>bash</pkg>
 			<pkg>vim-nox</pkg>
 			<pkg>icecc</pkg>
-			<pkg>icebaked-amd64-4.4</pkg>
 			<pkg>git</pkg>
 		</pkg-list>
 	</target>
