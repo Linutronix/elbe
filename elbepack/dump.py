@@ -168,15 +168,16 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, kinitrd):
 
     for name in [p.et.text for p in pkgs] + [kinitrd]:
 
-        if not name in cache:
-            elog.printo( "- package %s does not exist" % name )
+        nomulti_name = name.split(":")[0]
+        if not nomulti_name in cache:
+            elog.printo( "- package %s does not exist" % nomulti_name )
             errors += 1
             continue
 
-        cp = cache[name]
+        cp = cache[nomulti_name]
 
-        if not cp.installed and name != kinitrd:
-            elog.printo( "- package %s is not installed" % name )
+        if not cp.installed and nomulti_name != kinitrd:
+            elog.printo( "- package %s is not installed" % nomulti_name )
             errors += 1
             continue
 
