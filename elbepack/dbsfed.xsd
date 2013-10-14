@@ -67,6 +67,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="elbe_version" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Elbe Version that was used in the last build of this file.
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
     <attribute name="created" type="dateTime">
       <annotation>
