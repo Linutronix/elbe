@@ -63,7 +63,7 @@ def get_devicelabel( node ):
 ${d.text("source")}	${d.text("mountpoint")}	${d.text("fs/type")}	${d.text("options", default="defaults")}	0	0
 		% endif
 		% if d.tag == "bylabel":
-${get_devicelabel(d)}	${d.text("mountpoint")}	${d.text("fs/type")}	defaults	0	0
+${get_devicelabel(d)}	${d.text("mountpoint")}	${d.text("fs/type")}	${d.text("options", default="defaults")}	0	0
 		% endif
 	% endfor
 % endif
