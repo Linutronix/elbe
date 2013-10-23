@@ -58,6 +58,9 @@ def get_sources_list( xml ):
            if n.has("binary"):
              tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
              slist += "deb %s\n" % tmp.strip()
+           if n.has("source"):
+             tmp = n.text("source").replace("LOCALMACHINE", "localhost")
+             slist += "deb-src %s\n" % tmp.strip()
 
     return slist
 
