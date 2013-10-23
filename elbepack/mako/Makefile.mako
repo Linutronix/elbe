@@ -80,6 +80,9 @@ all: ${all_targets}
 	mkdir tmp-tree
 	cp .elbe-in/*.cfg tmp-tree/
 	-cp .elbe-in/preferences tmp-tree/
+	-cp .elbe-in/apt.conf tmp-tree/
+	mkdir -p tmp-tree/etc/apt
+	-cp .elbe-in/apt.conf tmp-tree/etc/apt
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/02pinning tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/post-inst.sh tmp-tree/

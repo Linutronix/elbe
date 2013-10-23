@@ -19,4 +19,5 @@
 #! /bin/sh
 
 [ -e /preferences ] && cp /preferences /target/etc/apt
+[ -e /apt.conf ] && cp /apt.conf /target/etc/apt
 exit 0

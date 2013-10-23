@@ -22,7 +22,8 @@ ELBEFILES="/passwd.cfg /preseed.cfg /common.cfg /custom-preseed.cfg /pkg-list \
 		/finetuning.sh /post-inst.sh /Release.bin \
 		/create-target-rfs.sh /Release.src /part-target.sh  \
 		/preferences /ubi.sh /dump.py /version.py /treeutils.py /source.xml \
-		/pkg-selections /print_licence.sh /fstab /mkcdrom.sh /hdimg.py /fstab.py"
+		/pkg-selections /print_licence.sh /fstab /mkcdrom.sh /hdimg.py /fstab.py \
+		/apt.conf"
 
 %if xml.has("archive"):
 ELBEFILES="$ELBEFILES /archive.tar.bz2"
