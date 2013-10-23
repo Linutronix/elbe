@@ -1,3 +1,15 @@
+* disallow the use of localhost inside the url-list
+* add source repositories the virtapt cache
+* if a proxy is configured; 10.0.2.2 should be ignored
+* enable local debian repositories for use with elbe
+* mkcdrom: fix wheezy cdrom generation
+* dump: make pkg validation ignore multiarch postfixes in pkg names
+* xsd: Add elbe_version to dbsfed.xsd
+* Change kernel and initrd location for armhf
+* set mount options for <bydev> mounts
+* remove local debian mirror from arm-wheezy example
+* v0.5.4-wheezy
+* v0.5.4-squeeze
 * log crashes and other output of dump.py
 * BUGFIX: add version.py into buildenv
 * Increase APT cache on demand

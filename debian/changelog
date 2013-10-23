@@ -1,3 +1,14 @@
+elbe (0.5.5-squeeze) squeeze; urgency=low
+
+  * enable mount options for bydev mounts
+  * fix kernel location on armhf systems
+  * add elbe_version to xml schema
+  * fix cdrom generation on wheezy based systems
+  * enable use of local debian repositories
+  * ignore 10.0.2.2 (localmachine) if proxy is used
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:20:47 +0200
+
 elbe (0.5.4-wheezy) wheezy; urgency=low
 
   * wheezy build
