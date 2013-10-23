@@ -55,7 +55,9 @@ def get_sources_list( xml ):
 
     if prj.node("mirror/url-list"):
         for n in prj.node("mirror/url-list"):
-            slist += "deb %s\n" % n.text("binary").strip()
+           if n.has("binary"):
+             tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
+             slist += "deb %s\n" % tmp.strip()
 
     return slist
 
@@ -117,7 +119,8 @@ def get_initrd_uri( xml, defs ):
         for n in xml.node("project/mirror/url-list"):
             url = n.text("binary")
             urla = url.split()
-            pkg = get_url ( xml, arch, suite, target_pkg, urla[0] )
+            pkg = get_url ( xml, arch, suite, target_pkg,
+              urla[0].replace("BUILDHOST", "localhost") )
 
             if pkg:
                 return pkg

@@ -434,7 +434,12 @@ def run_command( argv ):
     try:
         if prj.node("mirror/url-list"):
             for n in prj.node("mirror/url-list"):
-                slist += "deb %s\n" % n.text("binary").strip()
+                if n.has("binary"):
+                  tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
+                  slist += "deb %s\n" % tmp.strip()
+                if n.has("source"):
+                  tmp = n.text("source").replace("LOCALMACHINE", "localhost")
+                  slist += "deb-src %s\n" % tmp.strip()
 
         serial_con, serial_baud = tgt.text( "console" ).split(',')
 

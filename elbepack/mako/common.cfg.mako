@@ -110,7 +110,8 @@ d-i mirror/protocol string ${prj.text("mirror/primary_proto")}
 <% i=0 %>
 % if prj.node("mirror/url-list"):
 % for n in prj.node("mirror/url-list"):
-d-i apt-setup/local${i}/repository string ${n.text("binary").strip()}
+<% tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2") %>
+d-i apt-setup/local${i}/repository string ${tmp.strip()}
 d-i apt-setup/local${i}/comment string local server
 d-i apt-setup/local${i}/source boolean false
 #d-i apt-setup/local${i}/key string http://local.server/key
