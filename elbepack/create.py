@@ -155,6 +155,17 @@ def run_command( argv ):
 
     defs = ElbeDefaults( buildtype )
 
+    if xml.node("/project/mirror/url-list"):
+        for n in xml.node("/project/mirror/url-list"):
+           if n.has("binary"):
+             if n.text("binary").find("localhost") != -1:
+               print "localhost is not allowed as url - use LOCALMACHINE to refer to your system."
+               sys.exit(40)
+           if n.has("source"):
+             if n.text("source").find("localhost") != -1:
+               print "localhost is not allowed as url - use LOCALMACHINE to refer to your system."
+               sys.exit(40)
+
     if not opt.dir:
         path = "./build"
     else:
