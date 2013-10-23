@@ -1,3 +1,9 @@
+elbe (0.5.5-wheezy) wheezy; urgency=low
+
+  * wheezy build
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:26:27 +0200
+
 elbe (0.5.5-squeeze) squeeze; urgency=low
 
   * enable mount options for bydev mounts
