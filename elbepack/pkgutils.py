@@ -72,7 +72,7 @@ def get_initrd_pkg( xml ):
 
 def get_url ( xml, arch, suite, target_pkg, mirror ):
         packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
-          (mirror, suite, arch))
+          (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
 
         packages = packages.readlines()
         packages = filter( lambda x: x.startswith( "Filename" ), packages )
@@ -81,7 +81,7 @@ def get_url ( xml, arch, suite, target_pkg, mirror ):
         try:
             tmp = packages.pop()
             urla = tmp.split()
-            url = "%s/%s" % (mirror, urla[1])
+            url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
         except:
             url = ""
 
