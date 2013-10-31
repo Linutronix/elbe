@@ -4,5 +4,11 @@ docs/*.1
 docs/*.html
 docs/*.png
 docs/elbe-examples.txt
-debian
 docs/elbe-schema-reference.txt
+debian/.control.swp
+debian/elbe.debhelper.log
+debian/elbe.postinst.debhelper
+debian/elbe.prerm.debhelper
+debian/elbe.substvars
+debian/elbe
+debian/files
