@@ -1196,6 +1196,7 @@
       <enumeration value="tmpfs" />
       <enumeration value="debugfs" />
       <enumeration value="configfs" />
+      <enumeration value="devpts" />
       <enumeration value="proc" />
       <enumeration value="sysfs" />
       <enumeration value="vfat" />
