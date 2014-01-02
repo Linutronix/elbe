@@ -100,7 +100,7 @@ d-i partman-auto/disk string ${hd_name}
 %if prj.has("mirror/primary_host"):
 d-i apt-setup/use_mirror      boolean true
 d-i mirror/country            string manual
-d-i mirror/http/hostname string ${prj.text("mirror/primary_host")}
+d-i mirror/http/hostname string ${prj.text("mirror/primary_host").replace("LOCALMACHINE", "10.0.2.2")}
 d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
 d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
 d-i mirror/http/proxy string ${http_proxy}

@@ -25,6 +25,7 @@ from elbepack import virtapt
 from optparse import OptionParser
 from datetime import datetime
 from elbepack.validate import validate_xml
+from elbepack.xmldefaults import ElbeDefaults
 import apt_pkg
 
 def run_command( argv ):
@@ -50,6 +51,13 @@ def run_command( argv ):
     print "checking %s" % args[0]
 
     xml = etree( args[0] )
+
+    if xml.has( "project/buildtype" ):
+        buildtype = xml.text( "/project/buildtype" )
+    else:
+        buildtype = "nodefaults"
+
+    defs = ElbeDefaults( buildtype )
 
     arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
     suite = xml.text("project/suite")
