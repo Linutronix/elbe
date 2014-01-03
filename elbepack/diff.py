@@ -100,7 +100,7 @@ def walk_fixed( gen_path, fix_path, exclude ):
 
 def run_command( argv ):
 
-    oparser = OptionParser(usage="usage: %prog diff [options] <xmlfile> <xmlfile>")
+    oparser = OptionParser(usage="usage: %prog diff [options] <dir1> <dir2>")
     oparser.add_option( "--exclude", action="append", dest="exclude",
                         help="Paths to exclude" )
     (opt,args) = oparser.parse_args(argv)
