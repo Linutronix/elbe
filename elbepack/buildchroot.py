@@ -310,6 +310,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     copy_pyfile( "fstab.py", directory, "opt/elbe/fstab.py" )
     copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
     copy_pyfile( "adjustpkgs.py", directory, "opt/elbe/adjustpkgs.py" )
+    copy_pyfile( "version.py", directory, "opt/elbe/version.py" )
 
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
     os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
