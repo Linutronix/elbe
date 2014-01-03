@@ -64,7 +64,7 @@ def run_command( argv ):
 
     name  = xml.text("project/name")
 
-    apt_sources = xml.text("sources_list")
+    apt_sources = xml.text("sources_list").replace("10.0.2.2", "localhost")
     apt_prefs   = xml.text("apt_prefs")
 
     fullp = xml.node("fullpkgs")
