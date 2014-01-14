@@ -1,11 +1,13 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>ARMexample</name>
-		<version>08.15</version>
+		<name>x86 hdimage example</name>
+		<version>6</version>
 		<description>
-			creates an nfsroot for arm based systems
+			lightweight example
+			after 'make run-con' you can login the system from another terminal with
+			'ssh root@localhost -p 5022'
 		</description>
-		<buildtype>armel</buildtype>
+		<buildtype>amd64</buildtype>
 		<mirror>
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
@@ -15,10 +17,13 @@
 					<binary>
 						http://debian.linutronix.de/elbe wheezy main
 					</binary>
+					<source>
+						http://debian.linutronix.de/elbe wheezy main
+					</source>
 				</url>
 			</url-list>
 		</mirror>
-		<noauth />
+		<noauth/>
 		<suite>wheezy</suite>
 		<buildimage>
 			<kinitrd>elbe-bootstrap</kinitrd>
@@ -32,7 +37,7 @@
 		</buildimage>
 	</project>
 	<target>
-		<hostname>myARM</hostname>
+		<hostname>lxvm</hostname>
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
@@ -41,19 +46,60 @@
 				<name>nfsroot.tar.gz</name>
 			</tar>
 		</package>
-
+		<images>
+			<msdoshd>
+				<name>sda.img</name>
+				<size>1900MiB</size>
+				<grub-install/>
+				<partition>
+								<size>remain</size>
+								<label>rfs</label>
+				</partition>
+			</msdoshd>
+			<msdoshd>
+				<name>sdb.img</name>
+				<size>400MiB</size>
+				<partition>
+								<size>remain</size>
+								<label>config</label>
+				</partition>
+			</msdoshd>
+		</images>
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bylabel>
+				<label>config</label>
+				<mountpoint>/mnt/config</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+				<options>ro</options>
+			</bylabel>
+			<bydev>
+				<source>none</source>
+				<mountpoint>/sys/kernel/debug</mountpoint>
+				<fs>
+					<type>debugfs</type>
+				</fs>
+			</bydev>
+		</fstab>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
-			<pkg>build-essential</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
 			<pkg>vim-nox</pkg>
-			<pkg>icecc</pkg>
-			<pkg>git</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>

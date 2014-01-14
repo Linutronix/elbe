@@ -14,14 +14,14 @@
 			
 			<url-list>
 				<url>
-					<binary>http://debian.linutronix.de/elbe squeeze main</binary>
+					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
 				</url>
 			</url-list>
 		</mirror>
 		<noauth />
-		<suite>squeeze</suite>
+		<suite>wheezy</suite>
 		<buildimage>
-			<kinitrd>testrd</kinitrd>
+			<kinitrd>elbe-bootstrap</kinitrd>
 			<portforwarding>
 				<forward>
 					<proto>tcp</proto>
@@ -50,7 +50,6 @@
 				<name>nfsroot.tar.gz</name>
 			</tar>
 		</package>
-
 		<images>
 			<mtd>
 				<name>full.img</name>
