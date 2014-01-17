@@ -1,0 +1,86 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>elbe desktop</name>
+		<version>6</version>
+		<description>
+			can be used for elbe trainigs or starting experiments
+			with elbe within a virtual machine.
+			use this command to generate a vmware image:
+			qemu-img convert -O vmdk elbe.img elbe.vmdk
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe wheezy main
+					</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth/>
+		<suite>wheezy</suite>
+		<buildimage>
+			<kinitrd>elbe-bootstrap</kinitrd>
+		</buildimage>
+	</project>
+	<target>
+		<hostname>elbe-test</hostname>
+		<domain>tec.linutronix.de</domain>
+		<passwd>elbe</passwd>
+		<console>ttyS0,115200</console>
+               <images>
+                       <msdoshd>
+                               <name>elbe.img</name>
+                               <size>8000MiB</size>
+			       <grub-install/>
+                               <partition>
+				       <size>remain</size>
+				       <label>rfs</label>
+                               </partition>
+                       </msdoshd>
+               </images>
+               <fstab>
+                       <bylabel>
+                               <label>rfs</label>
+                               <mountpoint>/</mountpoint>
+                               <fs>
+                                       <type>ext4</type>
+                                       <tune2fs>-i 0</tune2fs>
+                               </fs>
+                       </bylabel>
+                       <bydev>
+                               <source>none</source>
+                               <mountpoint>/sys/kernel/debug</mountpoint>
+                               <fs>
+                                       <type>debugfs</type>
+                               </fs>
+                       </bydev>
+               </fstab>
+
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<command>adduser --disabled-password --gecos "" elbe</command>
+			<command>passwd elbe -d</command>
+			<command>chroot . adduser --disabled-password --gecos "" elbe</command>
+			<command>chroot . passwd elbe -d</command>
+		</finetuning>
+		<pkg-list>
+			<pkg>openssh-client</pkg>
+			<pkg>openssh-server</pkg>
+			<pkg>less</pkg>
+			<pkg>bash</pkg>
+			<pkg>vim-nox</pkg>
+			<pkg>apache2</pkg>
+			<pkg>elbe</pkg>
+			<pkg>nfs-kernel-server</pkg>
+			<pkg>elbe</pkg>
+			<pkg>task-gnome-desktop</pkg>
+			<pkg>gdm3</pkg>
+			<pkg>reprepro</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
