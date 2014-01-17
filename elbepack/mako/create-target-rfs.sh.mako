@@ -32,6 +32,8 @@ sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1.conffiles@' /opt/elbe/pkg-list | sh >> 
 apt-rdepends `cat /opt/elbe/pkg-list` | grep -v "^ " | uniq >/opt/elbe/allpkg-list
 sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist
 sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist
+sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1:${xml.text("project/buildimage/arch", default=defs, key="arch")}.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist
+sed 's@^\(.*\)@cat /var/lib/dpkg/info/\1:${xml.text("project/buildimage/arch", default=defs, key="arch")}.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist
 
 % else:
 cd /
