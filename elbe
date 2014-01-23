@@ -39,7 +39,9 @@ def usage():
         * xsdtoasciidoc\n\
         * buildchroot\n\
         * initrdpack\n\
-        * setcdrom'
+        * setcdrom\n\
+        * sign\n\
+        * remove_sign\n'
 
 if (len(sys.argv) < 2):
     usage()
@@ -89,6 +91,12 @@ elif sys.argv[1] == "setcdrom":
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "hdimg":
     from elbepack.hdimg import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "sign":
+    from elbepack.sign import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "remove_sign":
+    from elbepack.remove_sign import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "--version":
     print 'elbe v' + elbe_version
