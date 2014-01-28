@@ -8,3 +8,4 @@
 ./usr/lib/python2.*/*-packages/elbepack/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/default-preseed.xml
 ./usr/lib/python2.*/*-packages/elbepack/version.py
+./usr/lib/python2.*/*-packages/elbepack/validate.py
