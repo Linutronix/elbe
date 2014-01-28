@@ -1,3 +1,11 @@
+elbe (0.6.0-wheezy) wheezy; urgency=low
+
+  * reworked debian packaging
+  * bugfixes
+  * sign feature
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 28 Jan 2014 15:50:40 +0100
+
 elbe (0.5.5-wheezy) wheezy; urgency=low
 
   * wheezy build
