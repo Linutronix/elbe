@@ -8,7 +8,7 @@ Homepage: http://elbe-rfs.org
 
 Package: elbe
 Architecture: all
-Depends: qemu-utils, qemu-system, qemu-user-static, e2tools, python-mako, python(>= 2.6.6-3~), python-lxml, python-apt, p7zip-full, make, python-parted
+Depends: qemu-utils, qemu-system, qemu-user-static, e2tools, python-mako, python(>= 2.6.6-3~), python-lxml, python-apt, p7zip-full, make, python-parted, python-pyme
 Recommends: qemu-kvm
 Description: RootFS build system.
  Elbe is a flexible Root Filesystem builder.
