@@ -1,0 +1,11 @@
+./usr/lib/python2.*/*-packages/elbepack/mako/*
+./usr/lib/python2.*/*-packages/elbepack/initrdpack.py
+./usr/lib/python2.*/*-packages/elbepack/sign.py
+./usr/lib/python2.*/*-packages/elbepack/xsdtoasciidoc.mako
+./usr/lib/python2.*/*-packages/elbepack/xsdtoasciidoc.py
+./usr/lib/python2.*/*-packages/elbepack/create.py
+./usr/lib/python2.*/*-packages/elbepack/check_updates.py
+./usr/lib/python2.*/*-packages/elbepack/setcdrom.py
+./usr/lib/python2.*/*-packages/elbepack/show.py
+./usr/lib/python2.*/*-packages/elbepack/diff.py
+

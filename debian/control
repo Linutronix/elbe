@@ -1,15 +1,32 @@
 Source: elbe
 Section: misc
 Priority: optional
-Maintainer: Torben Hohn <torbenh@linutronix.de>
+Maintainer: Manuel Traut <manut@linutronix.de>
 Build-Depends: cdbs (>= 0.4.89), debhelper (>= 7), python (>= 2.6.6-3~), python-mako, python-lxml, dia, asciidoc, xmlto, source-highlight
 Standards-Version: 3.7.3
 Homepage: http://elbe-rfs.org
 
-Package: elbe
+Package: elbe-doc
 Architecture: all
-Depends: qemu-utils, qemu-system, qemu-user-static, e2tools, python-mako, python(>= 2.6.6-3~), python-lxml, python-apt, p7zip-full, make, python-parted, python-pyme
-Recommends: qemu-kvm
-Description: RootFS build system.
+Description: RootFS build system documentation.
  Elbe is a flexible Root Filesystem builder.
 
+Package: elbe-common
+Architecture: all
+Depends: python (>= 2.6.6-3~), python-lxml, python-apt, python-pyme
+Description: RootFS build system common files.
+ Elbe is a flexible Root Filesystem builder.
+
+Package: elbe-daemon
+Architecture: all
+Depends: elbe-common, python-parted
+Recommends: elbe-doc
+Description: RootFS build system daemon.
+ Elbe is a flexible Root Filesystem builder.
+
+Package: elbe
+Architecture: all
+Depends: elbe-common, qemu-utils, qemu-system, qemu-user-static, e2tools, python-mako, p7zip-full, make
+Recommends: qemu-kvm, elbe-doc
+Description: RootFS build system.
+ Elbe is a flexible Root Filesystem builder.

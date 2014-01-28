@@ -231,18 +231,3 @@ def run_command( argv ):
 
     shutil.copyfile( args[0],
        os.path.join(out_path, "source.xml" ) )
-
-    shutil.copyfile( os.path.join( pack_dir, "treeutils.py" ),
-       os.path.join(out_path, "treeutils.py" ) )
-
-    shutil.copyfile( os.path.join( pack_dir, "version.py" ),
-       os.path.join(out_path, "version.py" ) )
-
-    shutil.copyfile( os.path.join( pack_dir, "dump.py" ),
-       os.path.join(out_path, "dump.py" ) )
-
-    shutil.copyfile( os.path.join( pack_dir, "hdimg.py" ),
-       os.path.join(out_path, "hdimg.py" ) )
-
-    shutil.copyfile( os.path.join( pack_dir, "fstab.py" ),
-       os.path.join(out_path, "fstab.py" ) )

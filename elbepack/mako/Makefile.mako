@@ -95,11 +95,6 @@ all: ${all_targets}
 	cp .elbe-in/print_licence.sh tmp-tree/
 	cp .elbe-in/finetuning.sh tmp-tree/
 	cp .elbe-in/source.xml tmp-tree/
-	cp .elbe-in/dump.py tmp-tree/
-	cp .elbe-in/version.py tmp-tree/
-	cp .elbe-in/hdimg.py tmp-tree/
-	cp .elbe-in/fstab.py tmp-tree/
-	cp .elbe-in/treeutils.py tmp-tree/
 	cp .elbe-in/ubi.sh tmp-tree/
 	cp .elbe-in/fstab tmp-tree/
 	cp .elbe-in/pkg-selections tmp-tree/

@@ -35,4 +35,4 @@ mkdir -v -p /tmp-mnt
 echo "================================================================"
 echo ""
 
-python /opt/elbe/hdimg.py --directory /tmp-mnt /opt/elbe/source.xml
+elbe hdimg --directory /tmp-mnt /opt/elbe/source.xml
