@@ -305,9 +305,6 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     write_template( create_fname, "create-target-rfs.sh.mako", d )
     os.chmod( create_fname, 0755 )
 
-    copy_pyfile( "dump.py", directory, "opt/elbe/dump.py" )
-    copy_pyfile( "hdimg.py", directory, "opt/elbe/hdimg.py" )
-    copy_pyfile( "fstab.py", directory, "opt/elbe/fstab.py" )
     copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
     copy_pyfile( "adjustpkgs.py", directory, "opt/elbe/adjustpkgs.py" )
     copy_pyfile( "version.py", directory, "opt/elbe/version.py" )
@@ -456,8 +453,10 @@ def run_command( argv ):
     if prj.has("mirror/cdrom"):
         os.system( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
 
+    # sync this with adjustpkgs.py's own list or it will remove packages.
     pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted"]
+               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted",
+               "elbe-daemon"]
 
     try:
         do_chroot( outf, chroot, "apt-get update" )

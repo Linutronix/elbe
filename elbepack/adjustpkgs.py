@@ -98,7 +98,8 @@ def run_command( argv ):
     errors = 0
 
     pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted", "grub-pc"]
+               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted",
+               "grub-pc", "elbe-daemon"]
 
     if xml.has("./project/buildimage/pkg-list"):
         build_pkglist = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
