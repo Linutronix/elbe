@@ -453,7 +453,10 @@ def run_command( argv ):
     if prj.has("mirror/cdrom"):
         os.system( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
 
-    pkglist = ["elbe-daemon"]
+    # sync this with adjustpkgs.py's own list or it will remove packages.
+    pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
+               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted",
+               "elbe-daemon"]
 
     try:
         do_chroot( outf, chroot, "apt-get update" )
