@@ -15,19 +15,15 @@
 			<url-list>
 				<url>
 					<binary>
-						http://ftp-stud.hs-esslingen.de/debian-backports/ squeeze-backports main
-					</binary>
-					</url> <url>
-					<binary>
-						http://debian.linutronix.de/elbe squeeze main
+						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 				</url>
 			</url-list>
 		</mirror>
 		<noauth/>
-		<suite>squeeze</suite>
+		<suite>wheezy</suite>
 		<buildimage>
-			<kinitrd>testrd</kinitrd>
+			<kinitrd>elbe-bootstrap</kinitrd>
 			<portforwarding>
 				<forward>
 					<proto>tcp</proto>
@@ -47,52 +43,34 @@
 				<name>nfsroot.tar.gz</name>
 			</tar>
 		</package>
-               <images>
-                       <msdoshd>
-                               <name>sda.img</name>
-                               <size>1900MiB</size>
-			       <grub-install/>
-                               <partition>
-				       <size>remain</size>
-				       <label>rfs</label>
-                               </partition>
-                       </msdoshd>
-                       <msdoshd>
-                               <name>sdb.img</name>
-                               <size>400MiB</size>
-                               <partition>
-				       <size>remain</size>
-				       <label>config</label>
-                               </partition>
-                       </msdoshd>
-               </images>
-               <fstab>
-                       <bylabel>
-                               <label>rfs</label>
-                               <mountpoint>/</mountpoint>
-                               <fs>
-                                       <type>ext4</type>
-                                       <tune2fs>-i 0</tune2fs>
-                               </fs>
-                       </bylabel>
-                       <bylabel>
-                               <label>config</label>
-                               <mountpoint>/mnt/config</mountpoint>
-                               <fs>
-                                       <type>ext4</type>
-                                       <tune2fs>-i 0</tune2fs>
-                               </fs>
-                               <options>ro</options>
-                       </bylabel>
-                       <bydev>
-                               <source>none</source>
-                               <mountpoint>/sys/kernel/debug</mountpoint>
-                               <fs>
-                                       <type>debugfs</type>
-                               </fs>
-                       </bydev>
-               </fstab>
-
+		<images>
+			<msdoshd>
+				<name>sda.img</name>
+				<size>1900MiB</size>
+				<grub-install/>
+				<partition>
+					<size>remain</size>
+					<label>rfs</label>
+				</partition>
+			</msdoshd>
+		</images>
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bydev>
+				<source>none</source>
+				<mountpoint>/sys/kernel/debug</mountpoint>
+				<fs>
+					<type>debugfs</type>
+				</fs>
+			</bydev>
+		</fstab>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
@@ -102,7 +80,6 @@
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
 			<pkg>vim-nox</pkg>
-			<pkg>icecc</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
