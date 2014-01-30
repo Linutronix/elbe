@@ -408,7 +408,7 @@ def run_command( argv ):
     slist = ""
     mirror = "Error"
     if prj.has("mirror/primary_host"):
-        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host"), prj.text("mirror/primary_path") )
+        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host"), prj.text("mirror/primary_path").lstrip("/"))
         slist += "deb %s %s main\n" % (mirror, suite)
         slist += "deb-src %s %s main\n" % (mirror, suite)
 
