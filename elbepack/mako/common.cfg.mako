@@ -127,9 +127,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 %  endif
 % endif
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string parted mtd-utils dpkg-dev mkisofs \
-dosfstools apt-rdepends python-apt rsync genisoimage reprepro python-parted \
-elbe-daemon \
+d-i pkgsel/include string elbe-daemon \
 % for n in pkgs:
 % if n.tag == "pkg":
   ${n.et.text} \

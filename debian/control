@@ -31,7 +31,16 @@ Description: RootFS build system common files.
 Package: elbe-daemon
 Architecture: all
 Depends: elbe-common,
-  python-parted
+  python-parted,
+  mtd-utils,
+  dpkg-dev,
+  mkisofs,
+  dosfstools,
+  apt-rdepends,
+  python-apt,
+  rsync,
+  genisoimage,
+  reprepro
 Recommends: elbe-doc
 Description: RootFS build system daemon.
  Elbe is a flexible Root Filesystem builder.
