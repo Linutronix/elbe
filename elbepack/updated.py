@@ -236,11 +236,13 @@ def run_command( argv ):
                                 # ... url for status report
 
     # get update path
-    config = ConfigParser.RawConfigParser()
-    config.read('/etc/default/elbe-updated.conf')
+    # config = ConfigParser.RawConfigParser()
+    # config.read('/etc/default/elbe-updated.conf')
 
-    update_dir = config.get('elbe_updated', 'file_path')
-    port = config.get('elbe_soap', 'port')
+    # update_dir = config.get('elbe_updated', 'file_path')
+    # port = config.get('elbe_soap', 'port')
+    update_dir = "/tmp/elbe"
+    port = 1234
 
     if not os.path.isdir(update_dir):
         # copy source xml
