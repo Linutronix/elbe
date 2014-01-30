@@ -1,0 +1,3 @@
+./usr/lib/python2.*/*-packages/elbepack/expect.py
+./usr/lib/python2.*/*-packages/elbepack/exceptions.py
+./usr/lib/python2.*/*-packages/elbepack/updated.py

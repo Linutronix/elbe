@@ -40,6 +40,7 @@ def usage():
         * buildchroot\n\
         * initrdpack\n\
         * setcdrom\n\
+        * updated\n\
         * sign\n\
         * remove_sign\n'
 
@@ -88,6 +89,9 @@ elif sys.argv[1] == "initrdpack":
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "setcdrom":
     from elbepack.setcdrom import run_command
+    run_command( sys.argv[2:] )
+elif sys.argv[1] == "updated":
+    from elbepack.updated import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "hdimg":
     from elbepack.hdimg import run_command
