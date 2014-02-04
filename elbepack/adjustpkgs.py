@@ -128,6 +128,13 @@ def run_command( argv ):
 
             cp.mark_install()
 
+        cache.commit(apt.progress.base.AcquireProgress(),
+                     apt.progress.base.InstallProgress())
+
+
+        cache.update()
+        cache.open(None)
+
         for p in cache:
             if not p.is_installed:
                 continue
