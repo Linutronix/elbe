@@ -151,7 +151,7 @@ def run_command( argv ):
 
     pkglist = ["elbe-daemon"]
 
-    if xml.has("/target/images/msdoshd/grub-install"):
+    if xml.has("target/images/msdoshd/grub-install"):
         pkglist = ["elbe-daemon", "grub-pc"]
 
     if xml.has("./project/buildimage/pkg-list"):
