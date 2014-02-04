@@ -49,6 +49,7 @@ Description: RootFS build system buildchroot version.
 Package: elbe-daemon
 Architecture: all
 Depends: elbe-buildchroot,
+  elbe-adjustpkg,
   python-parted,
   mtd-utils,
   dpkg-dev,
