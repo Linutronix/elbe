@@ -241,13 +241,6 @@ def write_template( outname, fname, d ):
     outfile.write( template( os.path.join(template_dir, fname), d ) )
     outfile.close()
 
-def copy_pyfile( src, directory, dst ):
-    pack_dir = elbepack.__path__[0]
-    dst_fname = os.path.join( directory, dst )
-    src_fname = os.path.join( pack_dir, src )
-    os.system( "cp %s %s" % (src_fname, dst_fname) )
-
-
 def get_preseed( xml ):
     pack_dir = elbepack.__path__[0]
     def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
@@ -304,10 +297,6 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     create_fname = os.path.join( directory, "opt/elbe/create-target-rfs.sh" )
     write_template( create_fname, "create-target-rfs.sh.mako", d )
     os.chmod( create_fname, 0755 )
-
-    copy_pyfile( "treeutils.py", directory, "opt/elbe/treeutils.py" )
-    copy_pyfile( "adjustpkgs.py", directory, "opt/elbe/adjustpkgs.py" )
-    copy_pyfile( "version.py", directory, "opt/elbe/version.py" )
 
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
     os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
@@ -463,7 +452,7 @@ def run_command( argv ):
         do_chroot( outf, chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
         if not opt.skip_debootstrap:
             do_chroot( outf, chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
-        do_chroot( outf, chroot, "python /opt/elbe/adjustpkgs.py -o /opt/elbe/bla.log /opt/elbe/source.xml" )
+        do_chroot( outf, chroot, "elbe adjustpkgs -o /opt/elbe/adjust.log /opt/elbe/source.xml" )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
