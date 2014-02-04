@@ -41,72 +41,6 @@ ls -A1 / | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v "^
 cd -
 % endif
 
-# build and install packages from version control systems
-cd /tmp
-mkdir -v -p /opt/elbe/builds >> build.txt 2>&1
-% for git in tgt.node("pkg-list"):
-% if git.tag == "git-src":
-git clone ${git.text("url")} git-src >> build.txt 2>&1
-if [ "$?" -ne "0" ]; then
-	echo 'git repo ${git.text("url")} unreachable' >> build.txt 2>&1
-else
-	cd git-src
-% if git.has("tag"):
-	git checkout -b build-tag ${git.text("tag")} >> build.txt 2>&1
-% endif
-	dpkg-buildpackage >> build.txt 2>&1
-	cd ..
-	rm -rf git-src
-	dpkg -i --force-all *.deb  >> build.txt 2>&1
-	DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get install -f >> build.txt 2>&1
-	DEBS=`ls -1 *.deb | grep -v "\-dev"`
-	for DEB in $DEBS; do
-		dpkg --contents $DEB | awk '{ print $6 }' | \
-			sed s/^\.// >> /opt/elbe/filelist
-	done;
-	mv -v *.deb *.dsc *.changes *.tar.gz /opt/elbe/builds >> build.txt 2>&1
-fi
-% endif
-% endfor
-
-
-% if prj.has("buildimage/pkg-list"):
-DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get install -y --force-yes \
-% for n in prj.node("buildimage/pkg-list"):
-% if n.tag == "pkg":
-      ${n.et.text} \
-% endif
-% endfor
-% endif
-
-
-% for svn in tgt.node("pkg-list"):
-% if svn.tag == "svn-src":
-svn checkout ${svn.text("url")} \
-% if svn.has("rev"):
- -r${svn.text("rev")} \
-% endif
-svn-src >> build.txt 2>&1
-if [ "$?" -ne "0" ]; then
-	echo 'svn repository ${svn.text("url")} unreachable' >> build.txt 2>&1
-else
-	cd svn-src
-	dpkg-buildpackage >> build.txt 2>&1
-	cd ..
-	rm -rf svn-src
-	dpkg -i --force-all *.deb >> build.txt 2>&1
-	DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get install -f >> build.txt 2>&1
-	DEBS=`ls -1 *.deb | grep -v "\-dev"`
-	for DEB in $DEBS; do
-		dpkg --contents $DEB | awk '{ print $6 }' | \
-			sed s/^\.// >> /opt/elbe/filelist
-	done;
-	mv -v *.deb *.dsc *.changes *.tar.gz /opt/elbe/builds >> build.txt 2>&1
-fi
-% endif
-% endfor
-
-
 # create target rfs
 cd /
 rsync -a --files-from=/opt/elbe/filelist / /target
@@ -159,21 +93,6 @@ find . -print | cpio -ov -H newc >/opt/elbe/${xml.text("target/package/cpio/name
 echo /opt/elbe/${xml.text("target/package/cpio/name")} >> /opt/elbe/files-to-extract
 % endif
 
-% if xml.has("target/pkg-list/git-src") or xml.has("target/pkg-list/svn-src"):
-tar cf /opt/elbe/builds.tar -C /opt/elbe/builds .
-echo /opt/elbe/builds.tar >> /opt/elbe/files-to-extract
-% endif
-
-if [ -f build.txt ]; then
-echo "" >> /opt/elbe/elbe-report.txt
-echo "package builds from version control systems" >> /opt/elbe/elbe-report.txt
-echo "-------------------------------------------" >> /opt/elbe/elbe-report.txt
-echo "" >> /opt/elbe/elbe-report.txt
-echo "================================================================" >> /opt/elbe/elbe-report.txt
-cat build.txt >> /opt/elbe/elbe-report.txt
-echo "================================================================" >> /opt/elbe/elbe-report.txt
-fi
-
 echo "" >> /opt/elbe/elbe-report.txt
 echo "" >> /opt/elbe/elbe-report.txt
 echo "output of dump.py" >> /opt/elbe/elbe-report.txt
@@ -188,7 +107,6 @@ echo /opt/elbe/licence.txt >> /opt/elbe/files-to-extract
 echo /opt/elbe/elbe-report.txt >> /opt/elbe/files-to-extract
 echo /opt/elbe/source.xml >> /opt/elbe/files-to-extract
 echo /opt/elbe/validation.txt >> /opt/elbe/files-to-extract
-
 
 % if opt.debug:
 echo /var/log/syslog >> /opt/elbe/files-to-extract
@@ -206,4 +124,3 @@ cp -L /vmlinuz /opt/elbe/vmkernel
 cp -L /initrd.img /opt/elbe/vminitrd
 %  endif
 % endif
-
