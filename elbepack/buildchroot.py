@@ -294,10 +294,6 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     create_fname = os.path.join( directory, "opt/elbe/pkg-list" )
     write_template( create_fname, "pkg-list.mako", d )
 
-    create_fname = os.path.join( directory, "opt/elbe/create-target-rfs.sh" )
-    write_template( create_fname, "create-target-rfs.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
     dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
     os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
 
@@ -461,7 +457,7 @@ def run_command( argv ):
         do_chroot( outf, chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domain")) )
         do_chroot( outf, chroot, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
         do_chroot( outf, chroot, "rm /usr/sbin/policy-rc.d" )
-        do_chroot( outf, chroot, "/opt/elbe/create-target-rfs.sh" )
+        do_chroot( outf, chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
         if not opt.skip_cdrom:
             do_chroot( outf, chroot, "/opt/elbe/mkcdrom.sh" )
 

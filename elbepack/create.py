@@ -193,7 +193,6 @@ def run_command( argv ):
          "fine": xml.node("/finetuning"),
          "defs": defs,
          "http_proxy": http_proxy,
-         "buildchroot": False,
          "preseed": get_preseed(xml) }
 
     try:
@@ -212,7 +211,6 @@ def run_command( argv ):
                         "finetuning.sh.mako",
                         "changeroot-into-buildenv.sh.mako",
                         "cp-scipts-into-buildenv.sh.mako",
-                        "create-target-rfs.sh.mako",
                         "part-target.sh.mako",
                         "post-inst.sh.mako",
                         "print_licence.sh.mako",

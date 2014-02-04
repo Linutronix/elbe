@@ -86,7 +86,6 @@ all: ${all_targets}
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/02pinning tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/post-inst.sh tmp-tree/
-	cp .elbe-in/create-target-rfs.sh tmp-tree/
 	cp .elbe-in/cp-scipts-into-buildenv.sh tmp-tree/
 	cp .elbe-in/changeroot-into-buildenv.sh tmp-tree/
 	cp .elbe-in/pkg-list tmp-tree/

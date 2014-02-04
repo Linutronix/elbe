@@ -20,7 +20,7 @@
 
 ELBEFILES="/passwd.cfg /preseed.cfg /common.cfg /custom-preseed.cfg /pkg-list \
 		/finetuning.sh /post-inst.sh /Release.bin \
-		/create-target-rfs.sh /Release.src /part-target.sh  \
+		/Release.src /part-target.sh  \
 		/preferences /ubi.sh /source.xml \
 		/pkg-selections /print_licence.sh /fstab /mkcdrom.sh \
 		/apt.conf"

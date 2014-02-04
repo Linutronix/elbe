@@ -223,7 +223,7 @@ class FileServices(ServiceBase):
 #        shutil.copy('/opt/elbe/source.xml', dst_path)
 #        shutil.copy(path,'/opt/elbe/source.xml')
 
-        os.system('/opt/elbe/create-target-rfs.sh')
+        os.system('elbe create-target-rfs -t /target -b /opt/elbe/source.xml ')
 
 
 

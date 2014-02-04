@@ -27,7 +27,7 @@ mount -o bind /sys /buildenv/sys
 mkdir -p /buildenv/proc
 mount -o bind /proc /buildenv/proc
 
-chroot /buildenv /opt/elbe/create-target-rfs.sh
+elbe create-target-rfs -t /target -b /opt/elbe/source.xml
 
 % if prj.has("mirror/cdrom"):
 mount -o bind /cdrom /buildenv/mnt
