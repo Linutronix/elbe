@@ -28,9 +28,16 @@ Depends: python (>= 2.6.6-3~),
 Description: RootFS build system common files.
  Elbe is a flexible Root Filesystem builder.
 
+Package: elbe-adjustpkg
+Architecture: all
+Depends: elbe-common
+Description: RootFS build system package adjustment.
+ Elbe is a flexible Root Filesystem builder.
+
 Package: elbe-daemon
 Architecture: all
 Depends: elbe-common,
+  elbe-adjustpkg,
   python-parted,
   mtd-utils,
   dpkg-dev,
@@ -72,7 +79,8 @@ Description: RootFS build system.
 
 Package: elbe-updated
 Architecture: all
-Depends: python-pexpect(>= 2.4-1),
+Depends: elbe-adjustpkg,
+  python-pexpect(>= 2.4-1),
   python-werkzeug (>= 0.8.3+dfsg-1),
   libxslt1.1 (>= 1.1.26-14.1),
   python-spyne (>= 2.9.3-1~inverse),
