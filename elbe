@@ -103,7 +103,7 @@ elif sys.argv[1] == "remove_sign":
     from elbepack.remove_sign import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "adjustpkgs":
-    from elbepack.remove_sign import run_command
+    from elbepack.adjustpkgs import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "--version":
     print 'elbe v' + elbe_version
