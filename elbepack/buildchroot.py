@@ -367,6 +367,8 @@ def run_command( argv ):
     if not opt.target:
         return 0
 
+    opt.target = os.path.abspath(opt.target)
+
     if opt.buildtype:
         buildtype = opt.buildtype
     elif xml.has( "project/buildtype" ):
