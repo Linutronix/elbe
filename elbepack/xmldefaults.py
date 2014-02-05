@@ -3,7 +3,7 @@ import random
 import string
 import sys
 
-armel_defaults = { 
+armel_defaults = {
         "arch":         "armel",
         "size":         "20G",
         "mem":          "256",
@@ -47,10 +47,10 @@ armhf_virtio_defaults = {
         "nicmodel":     "virtio"
 }
 
-ppc_defaults = { 
+ppc_defaults = {
         "arch":         "powerpc",
-        "size":         "20G", 
-        "mem":          "256", 
+        "size":         "20G",
+        "mem":          "256",
         "interpreter":  "qemu-system-ppc",
         "userinterpr":  "qemu-ppc-static",
         "console":      "ttyPZ0,115200n1",
@@ -58,20 +58,20 @@ ppc_defaults = {
         "nicmodel":     "rtl8139"
 }
 
-amd64_defaults = { 
+amd64_defaults = {
         "arch":         "amd64",
-        "size":         "20G", 
-        "mem":          "1024", 
+        "size":         "20G",
+        "mem":          "1024",
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
         "machine":      "pc",
         "nicmodel":     "virtio"
 }
 
-i386_defaults = { 
+i386_defaults = {
         "arch":         "i386",
-        "size":         "20G", 
-        "mem":          "1024", 
+        "size":         "20G",
+        "mem":          "1024",
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
         "machine":      "pc",
@@ -89,8 +89,8 @@ defaults = { "armel": armel_defaults,
 
 xml_field_path = {
         "arch":         "project/buildimage/arch",
-        "size":         "project/buildimage/size", 
-        "mem":          "project/buildimage/mem", 
+        "size":         "project/buildimage/size",
+        "mem":          "project/buildimage/mem",
         "interpreter":  "project/buildimage/interpreter",
         "console":      "project/buildimage/console",
         "machine":      "project/buildimage/machine",
@@ -128,11 +128,3 @@ class ElbeDefaults(object):
                 print "The location in the xml is here:"
                 print xml_field_path[key]
                 sys.exit(20)
-
-
-
-
-
-
-
-
