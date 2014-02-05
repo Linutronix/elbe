@@ -52,7 +52,7 @@ def run_command(argv):
 
     if not opt.target:
         print "Missing target (-t)"
-        #sys.exit(1)
+        sys.exit(1)
 
     if not validate_xml(args[0]):
         print "xml validation failed. Bailing out"
