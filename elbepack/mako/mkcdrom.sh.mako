@@ -32,9 +32,9 @@ mkdir -p /opt/elbe/debootstrap
 # This Fails if its split into multiple lines
 # Please leave it a single line.
 % if prj.text("suite") == "wheezy":
-for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host").replace("LOCALMACHINE","10.0.2.2")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
 % else:
-for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
+for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%3a//"` /var/lib/apt/lists/${prj.text("mirror/primary_host").replace("LOCALMACHINE","10.0.2.2")}_${prj.text("mirror/primary_path").replace('/','_').strip('_')}_dists_${prj.text("suite")}_main_binary-${prj.text("buildimage/arch", default=defs, key="arch")}_Packages > /dev/null ; then mv $p /opt/elbe/debootstrap; fi; done
 % endif
 
 # Move kinitrd to debootstrap also.
@@ -85,7 +85,7 @@ Flat: added
 
 % if prj.has("mirror/primary_host"):
 Name: ftp
-Method: ${prj.text("mirror/primary_proto")}://${prj.text("mirror/primary_host")}/${prj.text("mirror/primary_path")}
+Method: ${prj.text("mirror/primary_proto")}://${prj.text("mirror/primary_host").replace("LOCALMACHINE","10.0.2.2")}/${prj.text("mirror/primary_path")}
 VerifyRelease: blindtrust
 #GetInRelease: no
 Components:
