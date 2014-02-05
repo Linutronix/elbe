@@ -28,8 +28,6 @@ from tempfile import mkdtemp
 class VirtApt:
         def __init__ (self, name, arch, suite, sources, prefs):
 
-                print arch
-
                 self.projectpath = mkdtemp()
                 self.initialize_dirs ()
 
