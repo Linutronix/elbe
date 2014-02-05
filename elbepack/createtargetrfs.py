@@ -132,19 +132,14 @@ def run_command(argv):
 
     remove_noerr("/opt/elbe/dump.log")
 
+    cmdline = "elbe dump --name \"%s\" --output /opt/elbe/elbe-report.txt" %(prj.text("name"))
+    cmdline += " --validation /opt/elbe/validation.txt --target /%s" %(target)
+    cmdline += " --finetuning /opt/elbe/finetuning.sh"
+    cmdline += " --kinitrd \"%s\" /opt/elbe/source.xml" %(prj.text("buildimage/kinitrd"))
     if xml.has("archive"):
-        os.system("elbe dump --name \"%s\" --output /opt/elbe/elbe-report.txt "
-            "--validation /opt/elbe/validation.txt --target /%s "
-            "--finetuning /opt/elbe/finetuning.sh --archive /opt/elbe/archive.tar.bz2 "
-            "--kinitrd \"%s\" /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1" %
-            (prj.text("name"), target, prj.text("buildimage/kinitrd")))
-
-    else:
-        os.system("elbe dump --name \"%s\" --output /opt/elbe/elbe-report.txt "
-            "--validation /opt/elbe/validation.txt --target /%s "
-            "--finetuning /opt/elbe/finetuning.sh --kinitrd \"%s\" /opt/elbe/source.xml "
-            ">> /opt/elbe/dump.log 2>&1" % (prj.text("name"), target,
-                prj.text("buildimage/kinitrd")))
+        cmdline += " --archive /opt/elbe/archive.tar.bz2"
+    cmdline += " >> /opt/elbe/dump.log 2>&1"
+    os.system(cmdline)
 
     f = file("/opt/elbe/licence.txt", "w+")
     for dir in os.listdir("/usr/share/doc/"):
