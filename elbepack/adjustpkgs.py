@@ -150,6 +150,8 @@ def run_command( argv ):
     # TODO: install buildimage packages after target image generation
     #         and remove theme before target image generation
     #         we need to introduce additional arguments for this
+    #       in default copy mode chroot to the target and remove elbe-daemon
+    #         and its dependencies (if it is not in  target/pkg-list.
     buildenv_pkgs = []
     if xml.has("./project/buildimage/pkg-list"):
         buildenv_pkgs = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
