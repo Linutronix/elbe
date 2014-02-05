@@ -301,10 +301,6 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     write_template( create_fname, "part-target.sh.mako", d )
     os.chmod( create_fname, 0755 )
 
-    create_fname = os.path.join( directory, "opt/elbe/print_licence.sh" )
-    write_template( create_fname, "print_licence.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
     create_fname = os.path.join( directory, "opt/elbe/finetuning.sh" )
     write_template( create_fname, "finetuning.sh.mako", d )
     os.chmod( create_fname, 0755 )
