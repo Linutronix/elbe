@@ -38,6 +38,14 @@ def remove_noerr(name):
     except:
         pass
 
+def cat_file(inf, outf):
+     try:
+         f = open(inf)
+         outf.write(f.read())
+         f.close()
+     except IOError:
+         pass
+
 def run_command(argv):
 
     oparser = OptionParser(usage="usage: %prog create-target-rfs [options] <xmlfile>")
@@ -82,26 +90,36 @@ def run_command(argv):
 
     shutil.rmtree(target, True)
     os.makedirs(target)
-    remove_noerr("/opt/elbe/filelist")
 
     # create filelists describing the content of the target rfs
     do_rsync = True
+    filelist = open("/opt/elbe/filelist", "w+")
     if tgt.has("tighten"):
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.list@' /opt/elbe/pkg-list | sh >> /opt/elbe/filelist")
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.conffiles@' /opt/elbe/pkg-list | sh >> /opt/elbe/filelist")
+        f = open("/opt/elbe/pkg-list")
+        for line in f:
+            line = line.rstrip("\n");
+            cat_file("/var/lib/dpkg/info/%s.list" %(line), filelist)
+            cat_file("/var/lib/dpkg/info/%s.conffiles" %(line), filelist)
+        f.close()
 
     elif tgt.has("diet"):
 
         arch = xml.text("project/buildimage/arch", default=defs, key="arch")
         os.system("apt-rdepends `cat /opt/elbe/pkg-list` | grep -v \"^ \" | uniq >/opt/elbe/allpkg-list")
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist")
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist")
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1:%s.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist" %
-                arch)
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1:%s.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist" %
-                arch)
+        f = open("/opt/elbe/allpkg-list")
+        for line in f:
+            line = line.rstrip("\n");
+
+            cat_file("/var/lib/dpkg/info/%s.list" %(line), filelist)
+            cat_file("/var/lib/dpkg/info/%s.conffiles" %(line), filelist)
+
+            cat_file("/var/lib/dpkg/info/%s:%s.list" %(line), filelist, arch)
+            cat_file("/var/lib/dpkg/info/%s:%s.conffiles" %(line), filelist, arch)
+        f.close()
+        os.remove("/opt/elbe/allpkg-list")
     else:
         os.system("ls -A1 / | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v \"^opt/elbe\" >> /opt/elbe/filelist")
+    filelist.close()
 
     # create target rfs
     os.chdir("/")
