@@ -87,7 +87,7 @@ def run_command(argv):
         os.system("apt-rdepends `cat /opt/elbe/pkg-list` | grep -v \"^ \" | uniq >/opt/elbe/allpkg-list")
         os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist")
         os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist")
-        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1:%s .list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist" %
+        os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1:%s.list@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist" %
                 arch)
         os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1:%s.conffiles@' /opt/elbe/allpkg-list | sh >> /opt/elbe/filelist" %
                 arch)
