@@ -12,3 +12,16 @@ debian/elbe.prerm.debhelper
 debian/elbe.substvars
 debian/elbe
 debian/files
+debian/*.log
+debian/*.debhelper
+debian/*.substvars
+debian/elbe-buildchroot/
+debian/elbe-common/
+debian/elbe-daemon/
+debian/elbe-doc/
+debian/elbe-guid/
+debian/elbe-adjustpkg/
+debian/elbe-updated/
+debian/tmp/
+dist/
+elbe.egg-info/

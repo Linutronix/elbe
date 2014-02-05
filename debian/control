@@ -34,10 +34,21 @@ Depends: elbe-common
 Description: RootFS build system package adjustment.
  Elbe is a flexible Root Filesystem builder.
 
-Package: elbe-daemon
+Package: elbe-buildchroot
 Architecture: all
 Depends: elbe-common,
   elbe-adjustpkg,
+  python-parted,
+  python-mako,
+  debootstrap,
+  elbe
+Recommends: elbe-doc
+Description: RootFS build system buildchroot version.
+ Elbe is a flexible Root Filesystem builder.
+
+Package: elbe-daemon
+Architecture: all
+Depends: elbe-buildchroot,
   python-parted,
   mtd-utils,
   dpkg-dev,
@@ -49,17 +60,6 @@ Depends: elbe-common,
   reprepro
 Recommends: elbe-doc
 Description: RootFS build system daemon.
- Elbe is a flexible Root Filesystem builder.
-
-Package: elbe-buildchroot
-Architecture: all
-Depends: elbe-common,
-  python-parted,
-  python-mako,
-  debootstrap,
-  elbe
-Recommends: elbe-doc
-Description: RootFS build system buildchroot version.
  Elbe is a flexible Root Filesystem builder.
 
 Package: elbe
