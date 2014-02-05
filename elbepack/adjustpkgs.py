@@ -167,7 +167,7 @@ def run_command( argv ):
                 continue
             if p.essential or p.is_auto_installed or (p.name in want_pkgs) or p.installed.priority == "important" or p.installed.priority == "required":
                 continue
-            p.mark_auto()
+            p.mark_delete( auto_fix=False, purge=True )
 
         for name in want_pkgs:
 
