@@ -1,0 +1,19 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<buildtype>armel</buildtype>
+		<mirror>
+			<primary_host>LOCALMACHINE</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://LOCALMACHINE/elbe wheezy main
+					</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth/>
+		<suite>wheezy</suite>
+	</project>
+</ns0:RootFileSystem>

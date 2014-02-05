@@ -27,6 +27,7 @@ def usage():
     print 'need a subcommand: e.g. \'elbe create\'. \n\
     Available subcommands are: \n\
         * create\n\
+        * init\n\
         * show\n\
         * chg_archive\n\
         * get_archive\n\
@@ -50,6 +51,9 @@ if (len(sys.argv) < 2):
 
 if sys.argv[1] == "create":
     from elbepack.create import run_command
+    run_command( sys.argv[2:] )
+if sys.argv[1] == "init":
+    from elbepack.init import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "show":
     from elbepack.show import run_command

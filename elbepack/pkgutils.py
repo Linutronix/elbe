@@ -36,7 +36,7 @@ except:
 	import urllib2
 
 
-def get_sources_list( xml ):
+def get_sources_list( xml, defs ):
 
     prj = xml.node("/project")
     suite = prj.text("suite")
@@ -49,7 +49,7 @@ def get_sources_list( xml ):
 
     if prj.has("mirror/cdrom"):
         tmpdir = mkdtemp()
-        kinitrd = prj.text("buildimage/kinitrd")
+        kinitrd = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
         os.system( '7z x -o%s "%s" pool/main/%s/%s dists' % (tmpdir, prj.text("mirror/cdrom"), kinitrd[0], kinitrd) )
         slist += "deb file://%s %s main\n" % (tmpdir,suite)
 
@@ -64,9 +64,9 @@ def get_sources_list( xml ):
 
     return slist
 
-def get_initrd_pkg( xml ):
+def get_initrd_pkg( xml, defs ):
     prj = xml.node("/project")
-    initrdname = prj.text("buildimage/kinitrd")
+    initrdname = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
 
     return initrdname
 
@@ -87,15 +87,15 @@ def get_url ( xml, arch, suite, target_pkg, mirror ):
 
         return url
 
-def get_initrd_uri( xml, defs ):
-
-    arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
+def get_initrd_uri( xml, defs, arch ):
+    if arch == "default":
+        arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
     suite = xml.text("project/suite")
 
-    name  = xml.text("project/name")
-    apt_sources = get_sources_list(xml)
+    name  = xml.text("project/name", default=defs, key="name")
+    apt_sources = get_sources_list(xml, defs)
 
-    target_pkg = get_initrd_pkg(xml)
+    target_pkg = get_initrd_pkg(xml, defs)
 
     try:
         v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
@@ -132,9 +132,9 @@ def get_initrd_uri( xml, defs ):
 
 
 
-def copy_kinitrd( xml, target_dir, defs ):
+def copy_kinitrd( xml, target_dir, defs, arch="default" ):
     prj = xml.node("/project")
-    uri = get_initrd_uri(xml, defs)
+    uri = get_initrd_uri(xml, defs, arch)
 
     tmpdir = mkdtemp()
 
