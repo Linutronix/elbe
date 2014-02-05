@@ -41,6 +41,8 @@ Depends: elbe-common,
   python-parted,
   python-mako,
   debootstrap,
+  binfmt-support,
+  qemu-user-static,
   elbe
 Recommends: elbe-doc
 Description: RootFS build system buildchroot version.
