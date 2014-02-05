@@ -140,58 +140,19 @@ def run_command( argv ):
 
 
     xml = etree( args[0] )
+    xml_pkglist = xml.node("/target/pkg-list")
+    xml_pkgs = [p.et.text for p in xml_pkglist]
 
-    pkgs = xml.node("/target/pkg-list")
-
-    cache = apt.Cache()
-    cache.update()
-    cache.open(None)
-
-    errors = 0
-
-    pkglist = ["elbe-daemon"]
-
+    mandatory_pkgs = ["elbe-daemon"]
     if xml.has("target/images/msdoshd/grub-install"):
-        pkglist = ["elbe-daemon", "grub-pc"]
+        mandatory_pkgs = ["elbe-daemon", "grub-pc"]
 
+    # TODO: install buildimage packages after target image generation
+    #         and remove theme before target image generation
+    #         we need to introduce additional arguments for this
+    buildenv_pkgs = []
     if xml.has("./project/buildimage/pkg-list"):
-        build_pkglist = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
-    else:
-        build_pkglist = []
-    with cache.actiongroup():
-
-        want_pkgs = [p.et.text for p in pkgs] + pkglist + build_pkglist
-
-        for p in cache:
-            if not p.is_installed:
-                continue
-            if p.essential or p.is_auto_installed or (p.name in want_pkgs) or p.installed.priority == "important" or p.installed.priority == "required":
-                continue
-            p.mark_delete( auto_fix=False, purge=True )
-
-        for name in want_pkgs:
-
-            if not name in cache:
-                outf.printo( "- package %s does not exist" % name )
-                errors += 1
-                continue
-
-            cp = cache[name]
-
-            cp.mark_install()
-
-        cache.commit(apt.progress.base.AcquireProgress(),
-                     apt.progress.base.InstallProgress())
-
-
-        cache.update()
-        cache.open(None)
-
-        for p in cache:
-            if not p.is_installed:
-                continue
-            if p.is_auto_removable:
-                p.mark_delete( purge=True )
+        buildenv_pkgs = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
 
     adj = adjpkg(opt.output, opt.name)
     return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
