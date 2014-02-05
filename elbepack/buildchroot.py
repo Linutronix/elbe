@@ -394,7 +394,7 @@ def run_command( argv ):
     slist = ""
     mirror = "Error"
     if prj.has("mirror/primary_host"):
-        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host"), prj.text("mirror/primary_path").lstrip("/"))
+        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host").replace("LOCALMACHINE", "10.0.2.2"), prj.text("mirror/primary_path").lstrip("/"))
         slist += "deb %s %s main\n" % (mirror, suite)
         slist += "deb-src %s %s main\n" % (mirror, suite)
 
@@ -422,10 +422,10 @@ def run_command( argv ):
         if prj.node("mirror/url-list"):
             for n in prj.node("mirror/url-list"):
                 if n.has("binary"):
-                  tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
+                  tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2")
                   slist += "deb %s\n" % tmp.strip()
                 if n.has("source"):
-                  tmp = n.text("source").replace("LOCALMACHINE", "localhost")
+                  tmp = n.text("source").replace("LOCALMACHINE", "10.0.2.2")
                   slist += "deb-src %s\n" % tmp.strip()
 
         serial_con, serial_baud = tgt.text( "console" ).split(',')
