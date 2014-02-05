@@ -62,6 +62,64 @@ class asccidoclog(object):
         self.printo( "------------------------------------------------------------------------------" )
         self.printo()
 
+class adjpkg(object):
+    def __init__(self, logfile, name):
+
+        self.outf = asccidoclog(logfile)
+
+        if name:
+            self.outf.h1( "ELBE Report for Project "+name )
+        else:
+            self.outf.h1( "ELBE Report" )
+
+    def set_pkgs(self, pkglist):
+
+        cache = apt.Cache()
+        cache.update()
+        cache.open(None)
+
+        errors = 0
+
+        with cache.actiongroup():
+
+            for p in cache:
+                if not p.is_installed:
+                    continue
+                if p.essential or p.is_auto_installed or (p.name in pkglist) or p.installed.priority == "important" or p.installed.priority == "required":
+                    continue
+                print "MARK REMOVE %s" % p.name
+                p.mark_delete( auto_fix=False, purge=True )
+
+            for name in pkglist:
+
+                if not name in cache:
+                    self.outf.printo( "- package %s does not exist" % name )
+                    errors += 1
+                    continue
+
+                cp = cache[name]
+
+                cp.mark_install()
+                print "MARK INSTALL %s" % cp.name
+
+            cache.commit(apt.progress.base.AcquireProgress(),
+                         apt.progress.base.InstallProgress())
+
+
+            cache.update()
+            cache.open(None)
+
+            for p in cache:
+                if not p.is_installed:
+                    continue
+                if p.is_auto_removable:
+                    p.mark_delete( purge=True )
+                    print "MARKED AS AUTOREMOVE %s" % p.name
+
+        cache.commit(apt.progress.base.AcquireProgress(),
+                     apt.progress.base.InstallProgress())
+
+        return errors
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog adjustpkgs [options] <xmlfile>")
@@ -80,69 +138,24 @@ def run_command( argv ):
     if not opt.output:
         return 0
 
-    outf = asccidoclog(opt.output)
-
-    if opt.name:
-        outf.h1( "ELBE Report for Project "+opt.name )
-    else:
-        outf.h1( "ELBE Report" )
 
     xml = etree( args[0] )
+    xml_pkglist = xml.node("/target/pkg-list")
+    xml_pkgs = [p.et.text for p in xml_pkglist]
 
-    pkgs = xml.node("/target/pkg-list")
-
-    cache = apt.Cache()
-    cache.update()
-    cache.open(None)
-
-    errors = 0
-
-    pkglist = ["elbe-daemon"]
-
+    mandatory_pkgs = ["elbe-daemon"]
     if xml.has("target/images/msdoshd/grub-install"):
-        pkglist = ["elbe-daemon", "grub-pc"]
+        mandatory_pkgs = ["elbe-daemon", "grub-pc"]
 
+    # TODO: install buildimage packages after target image generation
+    #         and remove theme before target image generation
+    #         we need to introduce additional arguments for this
+    buildenv_pkgs = []
     if xml.has("./project/buildimage/pkg-list"):
-        build_pkglist = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
-    else:
-        build_pkglist = []
-    with cache.actiongroup():
+        buildenv_pkgs = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
 
-        want_pkgs = [p.et.text for p in pkgs] + pkglist + build_pkglist
-
-        for p in cache:
-            if not p.is_installed:
-                continue
-            if p.essential or p.is_auto_installed or (p.name in want_pkgs) or p.installed.priority == "important" or p.installed.priority == "required":
-                continue
-            p.mark_delete( auto_fix=False, purge=True )
-
-        for name in want_pkgs:
-
-            if not name in cache:
-                outf.printo( "- package %s does not exist" % name )
-                errors += 1
-                continue
-
-            cp = cache[name]
-
-            cp.mark_install()
-
-        cache.commit(apt.progress.base.AcquireProgress(),
-                     apt.progress.base.InstallProgress())
-
-
-        cache.update()
-        cache.open(None)
-
-        for p in cache:
-            if not p.is_installed:
-                continue
-            if p.is_auto_removable:
-                p.mark_delete( purge=True )
-
-    cache.commit(apt.progress.base.AcquireProgress(),
-                 apt.progress.base.InstallProgress())
+    adj = adjpkg(opt.output, opt.name)
+    return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
 
 if __name__ == "__main__":
     run_command( sys.argv[1:] )
