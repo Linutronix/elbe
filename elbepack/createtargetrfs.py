@@ -85,6 +85,7 @@ def run_command(argv):
     remove_noerr("/opt/elbe/filelist")
 
     # create filelists describing the content of the target rfs
+    do_rsync = True
     if tgt.has("tighten"):
         os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.list@' /opt/elbe/pkg-list | sh >> /opt/elbe/filelist")
         os.system("sed 's@^\(.*\)@cat /var/lib/dpkg/info/\\1.conffiles@' /opt/elbe/pkg-list | sh >> /opt/elbe/filelist")
@@ -104,21 +105,22 @@ def run_command(argv):
 
     # create target rfs
     os.chdir("/")
-    os.system("rsync -a --files-from=/opt/elbe/filelist / /target")
+    if do_rsync:
+        os.system("rsync -a --files-from=/opt/elbe/filelist / %s" %(target))
 
     os.makedirs("%s/proc" %(target))
     os.makedirs("%s/sys" %(target))
 
     if tgt.has("setsel"):
-        os.system("mount -o bind /proc /target/proc")
-        os.system("mount -o bind /sys /target/sys")
+        os.system("mount -o bind /proc /%s/proc" %(target))
+        os.system("mount -o bind /sys /%s/sys" %(target))
 
-        os.system("chroot /target dpkg --clear-selections")
-        os.system("chroot /target dpkg --set-selections </opt/elbe/pkg-selections")
-        os.system("chroot /target dpkg --purge -a")
+        os.system("chroot /%s dpkg --clear-selections" %(target))
+        os.system("chroot /%s dpkg --set-selections </opt/elbe/pkg-selections" %(target))
+        os.system("chroot /%s dpkg --purge -a" %(target))
 
-        os.system("umount /target/proc")
-        os.system("umount /target/sys")
+        os.system("umount /%s/proc" %(target))
+        os.system("umount /%s/sys" %(target))
 
     remove_noerr("/etc/elbe_version")
 
@@ -132,16 +134,16 @@ def run_command(argv):
 
     if xml.has("archive"):
         os.system("elbe dump --name \"%s\" --output /opt/elbe/elbe-report.txt "
-            "--validation /opt/elbe/validation.txt --target /target "
+            "--validation /opt/elbe/validation.txt --target /%s "
             "--finetuning /opt/elbe/finetuning.sh --archive /opt/elbe/archive.tar.bz2 "
             "--kinitrd \"%s\" /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1" %
-            (prj.text("name"), prj.text("buildimage/kinitrd")))
+            (prj.text("name"), target, prj.text("buildimage/kinitrd")))
 
     else:
         os.system("elbe dump --name \"%s\" --output /opt/elbe/elbe-report.txt "
-            "--validation /opt/elbe/validation.txt --target /target "
+            "--validation /opt/elbe/validation.txt --target /%s "
             "--finetuning /opt/elbe/finetuning.sh --kinitrd \"%s\" /opt/elbe/source.xml "
-            ">> /opt/elbe/dump.log 2>&1" % (prj.text("name"),
+            ">> /opt/elbe/dump.log 2>&1" % (prj.text("name"), target,
                 prj.text("buildimage/kinitrd")))
 
     f = file("/opt/elbe/licence.txt", "w+")
@@ -169,12 +171,12 @@ def run_command(argv):
     os.system("/opt/elbe/part-target.sh >> /opt/elbe/elbe-report.txt 2>&1")
 
     if xml.has("target/package/tar"):
-        os.system("tar cf /opt/elbe/target.tar -C /target .")
+        os.system("tar cf /opt/elbe/target.tar -C /%s ." %(target))
         os.system("echo /opt/elbe/target.tar >> /opt/elbe/files-to-extract")
 
     if xml.has("target/package/cpio"):
         cpio_name = xml.text("target/package/cpio/name")
-        os.chdir("/target")
+        os.chdir(target)
         os.system("find . -print | cpio -ov -H newc >/opt/elbe/%s" % cpio_name)
         os.system("echo /opt/elbe/%s >> /opt/elbe/files-to-extract" % cpio_name)
         os.chdir("/")
