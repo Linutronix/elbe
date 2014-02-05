@@ -30,7 +30,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="target" type="rfs:target">
+      <element name="target" type="rfs:target" minOccurs="0">
         <annotation>
           <documentation>
             Configurations that are used to create the target rootfilesystem
@@ -209,21 +209,21 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string">
+      <element name="name" type="string" minOccurs="0">
         <annotation>
           <documentation>
             name of the project this rootfilesystem is associated with
           </documentation>
         </annotation>
       </element>
-      <element name="version" type="string">
+      <element name="version" type="string" minOccurs="0">
         <annotation>
           <documentation>
             version of the rootfilesystem definition
           </documentation>
         </annotation>
       </element>
-      <element name="description" type="string">
+      <element name="description" type="string" minOccurs="0">
         <annotation>
           <documentation>
             human readable description of the project
@@ -268,7 +268,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="buildimage" type="rfs:buildimage">
+      <element name="buildimage" type="rfs:buildimage" minOccurs="0">
         <annotation>
           <documentation>
             reference to the buildimage which is used to generate the

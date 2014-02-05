@@ -19,7 +19,7 @@
 #!/bin/sh
 
 # Download the kinitrd into /var/cache/apt
-DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get -d -y --force-yes install ${prj.text("buildimage/kinitrd")}
+DEBCONF_REDIR= DEBIAN_HAS_FRONTEND= apt-get -d -y --force-yes install ${prj.text("buildimage/kinitrd", default=defs, key="kinitrd")}
 
 mkdir -p /opt/elbe/cdrom/conf
 
@@ -38,7 +38,7 @@ for p in `ls /var/cache/apt/archives/*.deb`; do if grep `basename $p | sed "s/.%
 % endif
 
 # Move kinitrd to debootstrap also.
-mv /var/cache/apt/archives/${prj.text("buildimage/kinitrd")}*.deb /opt/elbe/debootstrap
+mv /var/cache/apt/archives/${prj.text("buildimage/kinitrd", default=defs, key="kinitrd")}*.deb /opt/elbe/debootstrap
 % endif
 
 cat > /opt/elbe/cdrom/conf/distributions <<EOF

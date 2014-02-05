@@ -62,7 +62,7 @@ def run_command( argv ):
     arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
     suite = xml.text("project/suite")
 
-    name  = xml.text("project/name")
+    name  = xml.text("project/name", default=defs, key="name")
 
     apt_sources = xml.text("sources_list").replace("10.0.2.2", "localhost")
     apt_prefs   = xml.text("apt_prefs")

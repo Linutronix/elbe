@@ -135,9 +135,9 @@ echo `date` >> /etc/elbe_version
 rm -f /opt/elbe/dump.log
 
 % if xml.has("archive"):
-elbe dump --name "${prj.text("name")}" --output /opt/elbe/elbe-report.txt --validation /opt/elbe/validation.txt --target /target --finetuning /opt/elbe/finetuning.sh --archive /opt/elbe/archive.tar.bz2 --kinitrd ${prj.text("buildimage/kinitrd")} /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1
+elbe dump --name "${prj.text("name")}" --output /opt/elbe/elbe-report.txt --validation /opt/elbe/validation.txt --target /target --finetuning /opt/elbe/finetuning.sh --archive /opt/elbe/archive.tar.bz2 --kinitrd ${prj.text("buildimage/kinitrd", default=defs, key="kinitrd")} /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1
 % else:
-elbe dump --name "${prj.text("name")}" --output /opt/elbe/elbe-report.txt --validation /opt/elbe/validation.txt --target /target --finetuning /opt/elbe/finetuning.sh --kinitrd ${prj.text("buildimage/kinitrd")} /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1
+elbe dump --name "${prj.text("name")}" --output /opt/elbe/elbe-report.txt --validation /opt/elbe/validation.txt --target /target --finetuning /opt/elbe/finetuning.sh --kinitrd ${prj.text("buildimage/kinitrd", default=defs, key="kinitrd")} /opt/elbe/source.xml  >> /opt/elbe/dump.log 2>&1
 % endif
 
 rm -rf /opt/elbe/licence.txt

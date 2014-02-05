@@ -78,6 +78,11 @@ i386_defaults = {
         "nicmodel":     "virtio"
 }
 
+archindep_defaults = {
+        "kinitrd":      "elbe-bootstrap",
+        "name":         "elbe-buildenv"
+}
+
 defaults = { "armel": armel_defaults,
              "armel-virtio": armel_virtio_defaults,
              "armhf": armhf_defaults,
@@ -94,7 +99,9 @@ xml_field_path = {
         "interpreter":  "project/buildimage/interpreter",
         "console":      "project/buildimage/console",
         "machine":      "project/buildimage/machine",
-        "nicmodel":     "project/buildimage/NIC/model"
+        "nicmodel":     "project/buildimage/NIC/model",
+        "kinitrd":      "project/buildimage/kinitrd",
+        "name":         "project/name"
 }
 
 def get_random_mac():
@@ -119,9 +126,14 @@ class ElbeDefaults(object):
                 self.defaults = defaults[build_type]
                 self.defaults["nicmac"] = get_random_mac()
 
+                self.generic_defaults = archindep_defaults
+
         def __getitem__( self, key ):
                 if self.defaults.has_key( key ):
                         return self.defaults[key]
+                if self.generic_defaults.has_key( key ):
+                        return self.generic_defaults[key]
+
 
                 print "No Default value has been Provided"
                 print "Either use a valid buildtype, or provide the field in the xml File."
