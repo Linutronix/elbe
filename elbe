@@ -56,6 +56,8 @@ if sys.argv[1] == "init":
     from elbepack.init import run_command
 elif sys.argv[1] == "create-target-rfs":
     from elbepack.createtargetrfs import run_command
+elif sys.argv[1] == "init":
+    from elbepack.init import run_command
     run_command( sys.argv[2:] )
 elif sys.argv[1] == "show":
     from elbepack.show import run_command
