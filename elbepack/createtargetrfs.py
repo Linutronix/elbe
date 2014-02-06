@@ -23,6 +23,7 @@ import sys
 import os
 import time
 import shutil
+import subprocess
 from optparse import OptionParser
 from treeutils import etree
 
@@ -38,13 +39,15 @@ def remove_noerr(name):
     except:
         pass
 
-def cat_file(inf, outf):
-     try:
-         f = open(inf)
-         outf.write(f.read())
-         f.close()
-     except IOError:
-         pass
+def cat_file(inf):
+    content = []
+    try:
+        f = open(inf)
+        content = f.readlines();
+        f.close()
+    except IOError:
+        pass
+    return content
 
 def run_command(argv):
 
@@ -96,8 +99,6 @@ def run_command(argv):
     os.chdir(rootdir)
 
     # create filelists describing the content of the target rfs
-    do_rsync = True
-    filelist = open("opt/elbe/filelist", "w+")
     if tgt.has("tighten") or tgt.has("diet"):
         if tgt.has("tighten"):
             f = open("opt/elbe/pkg-list")
@@ -108,25 +109,43 @@ def run_command(argv):
             os.system("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
             f = open("opt/elbe/allpkg-list")
 
+        file_list = []
         for line in f:
             line = line.rstrip("\n");
 
-            cat_file("var/lib/dpkg/info/%s.list" %(line), filelist)
-            cat_file("var/lib/dpkg/info/%s.conffiles" %(line), filelist)
+            file_list += cat_file("var/lib/dpkg/info/%s.list" %(line))
+            file_list += cat_file("var/lib/dpkg/info/%s.conffiles" %(line))
 
-            cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch), filelist)
-            cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch), filelist)
+            file_list += cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch))
+            file_list += cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch))
         f.close()
 
         if tgt.has("diet"):
             os.remove("opt/elbe/allpkg-list")
-    else:
-        os.system("ls -A1 | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v \"^opt/elbe\" >> opt/elbe/filelist")
-    filelist.close()
 
-    # create target rfs
-    if do_rsync:
+        file_list = list(sorted(set(file_list)))
+        for f in file_list:
+            f = f.rstrip("\n");
+            if os.path.isdir(f) and not os.path.islink(f):
+                dest_dir = target + f
+                if not os.path.isdir(dest_dir):
+                        os.makedirs(dest_dir)
+                st = os.stat(f)
+                os.chown(dest_dir, st.st_uid, st.st_gid)
+            else:
+                subprocess.call(["cp", "-a", "--reflink=auto", f, target + f])
+        # update utime which will change after a file has been copied into
+        # the directory
+        for f in file_list:
+            f = f.rstrip("\n");
+            if os.path.isdir(f) and not os.path.islink(f):
+                dest_dir = target + f
+                shutil.copystat(f, dest_dir)
+    else:
+        remove_noerr("opt/elbe/filelist")
+        os.system("ls -A1 | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v \"^opt/elbe\" >> opt/elbe/filelist")
         os.system("rsync -a --files-from=opt/elbe/filelist . %s" %(target))
+        remove_noerr("opt/elbe/filelist")
 
     try:
         os.makedirs("%s/proc" %(target))
