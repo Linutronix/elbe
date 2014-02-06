@@ -118,12 +118,3 @@ def run_command( argv ):
             os.system( "%s UPDATE %s" % (opt.script, args[0]) )
     else:
         print "No Updates available"
-
-
-
-
-
-
-
-
-
