@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import glob
 
 from distutils.core import setup
 from distutils.command.install import install
@@ -46,6 +47,5 @@ setup(name='elbe',
       package_data = {'elbepack': ["mako/*.mako", "dbsfed.xsd", "default-preseed.xml", "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
       cmdclass={"install": my_install},
-      data_files=[('/usr/share/doc/elbe/examples',['examples/arm-example.xml', 'examples/arm-complex-example.xml', 'examples/amd64-example.xml', 'examples/i386-example.xml'])]
+      data_files= [('/usr/share/doc/elbe/examples', glob.glob("examples/*xml"))],
 )
-
