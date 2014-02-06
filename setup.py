@@ -47,5 +47,5 @@ setup(name='elbe',
       package_data = {'elbepack': ["mako/*.mako", "dbsfed.xsd", "default-preseed.xml", "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
       cmdclass={"install": my_install},
-      data_files= [('/usr/share/doc/elbe/examples', glob.glob("examples/*xml"))],
+      data_files= [('/usr/share/doc/elbe-doc/examples', glob.glob("examples/*xml"))],
 )
