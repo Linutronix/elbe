@@ -62,7 +62,7 @@ def run_command( argv ):
                         default=False,
                         help="Skip cd generation" )
 
-    oparser.add_option( "--directory", dest="dir",
+    oparser.add_option( "--directory", dest="directory",
                         help="Working directory (default is build)",
                         metavar="FILE" )
 
@@ -76,7 +76,13 @@ def run_command( argv ):
     oparser.add_option( "--buildtype", dest="buildtype",
                         help="Override the buildtype" )
 
+    oparser.add_option( "--debug", dest="debug",
+                        action="store_true", default=False,
+           help="start qemu in graphical mode to enable console switch" )
+
     (opt,args) = oparser.parse_args(argv)
+
+    print opt.directory
 
     if len(args) == 0:
         print "no filename specified"
@@ -109,10 +115,10 @@ def run_command( argv ):
     elif xml.has("project/mirror/primary_proxy"):
         http_proxy = xml.text("project/mirror/primary_proxy")
 
-    if not opt.dir:
+    if not opt.directory:
         path = "./build"
     else:
-        path = opt.dir
+        path = opt.directory
 
     try:
         os.makedirs(path)
