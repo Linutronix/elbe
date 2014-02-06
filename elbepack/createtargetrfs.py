@@ -142,10 +142,25 @@ def run_command(argv):
                 dest_dir = target + f
                 shutil.copystat(f, dest_dir)
     else:
-        remove_noerr("opt/elbe/filelist")
-        os.system("ls -A1 | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v \"^opt/elbe\" >> opt/elbe/filelist")
-        os.system("rsync -a --files-from=opt/elbe/filelist . %s" %(target))
-        remove_noerr("opt/elbe/filelist")
+        # first copy most diretories
+        for f in os.listdir(rootdir):
+            if f == "target":
+                continue
+            elif f == "proc":
+                 continue
+            elif f == "sys":
+                continue
+            elif f == "opt":
+                continue
+
+            subprocess.call(["cp", "-a", "--reflink=auto", f, target])
+        # and now complete opt but skip opt/elbe
+        os.mkdir(target + "/opt")
+        for f in os.listdir(rootdir + "/opt"):
+            if f == "elbe":
+                continue
+            subprocess.call(["cp", "-a", "--reflink=auto", f, target + "opt"])
+        shutil.copystat(rootdir + "/opt", target + "/opt")
 
     try:
         os.makedirs("%s/proc" %(target))
