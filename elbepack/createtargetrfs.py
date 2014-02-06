@@ -129,8 +129,14 @@ def run_command(argv):
     if do_rsync:
         os.system("rsync -a --files-from=opt/elbe/filelist . %s" %(target))
 
-    os.makedirs("%s/proc" %(target))
-    os.makedirs("%s/sys" %(target))
+    try:
+        os.makedirs("%s/proc" %(target))
+    except:
+        pass
+    try:
+        os.makedirs("%s/sys" %(target))
+    except:
+        pass
 
     if tgt.has("setsel"):
         os.system("mount -o bind proc %s/proc" %(target))
