@@ -73,10 +73,8 @@ def run_command( argv ):
         print "Unable to open xml File. Bailing out"
         sys.exit(20)
 
-    print '== %s ==' %(
-        args[0],
-    print 'Debian suite: %s' % (
-        xml.text("/project/suite"))
+    print '== %s ==' %(args[0])
+    print 'Debian suite: %s' % (xml.text("/project/suite"))
     for s in xml.text("/project/description").splitlines():
         print '%s' % s.strip()
     if opt.verbose:
