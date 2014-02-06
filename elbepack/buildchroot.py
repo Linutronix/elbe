@@ -205,6 +205,10 @@ def mount_stuff( outf, directory ):
 def umount_stuff( outf, directory ):
     outf.h2( "unmounting proc/sys/dev" )
     try:
+        outf.do_command( "umount %s/proc/sys/fs/binfmt_misc" % directory )
+    except:
+        pass
+    try:
         outf.do_command( "umount %s/proc" % directory )
     except:
         pass
