@@ -98,22 +98,16 @@ def run_command(argv):
     # create filelists describing the content of the target rfs
     do_rsync = True
     filelist = open("opt/elbe/filelist", "w+")
-    if tgt.has("tighten"):
-        f = open("opt/elbe/pkg-list")
-        for line in f:
-            line = line.rstrip("\n");
-            cat_file("var/lib/dpkg/info/%s.list" %(line), filelist)
-            cat_file("var/lib/dpkg/info/%s.conffiles" %(line), filelist)
+    if tgt.has("tighten") or tgt.has("diet"):
+        if tgt.has("tighten"):
+            f = open("opt/elbe/pkg-list")
 
-            cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch), filelist)
-            cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch), filelist)
-        f.close()
+        elif tgt.has("diet"):
 
-    elif tgt.has("diet"):
+            arch = xml.text("project/buildimage/arch", default=defs, key="arch")
+            os.system("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
+            f = open("opt/elbe/allpkg-list")
 
-        arch = xml.text("project/buildimage/arch", default=defs, key="arch")
-        os.system("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
-        f = open("opt/elbe/allpkg-list")
         for line in f:
             line = line.rstrip("\n");
 
@@ -123,7 +117,9 @@ def run_command(argv):
             cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch), filelist)
             cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch), filelist)
         f.close()
-        os.remove("opt/elbe/allpkg-list")
+
+        if tgt.has("diet"):
+            os.remove("opt/elbe/allpkg-list")
     else:
         os.system("ls -A1 | grep -v target | grep -v proc | grep -v sys | xargs find | grep -v \"^opt/elbe\" >> opt/elbe/filelist")
     filelist.close()
