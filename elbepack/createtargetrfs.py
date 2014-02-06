@@ -104,6 +104,9 @@ def run_command(argv):
             line = line.rstrip("\n");
             cat_file("var/lib/dpkg/info/%s.list" %(line), filelist)
             cat_file("var/lib/dpkg/info/%s.conffiles" %(line), filelist)
+
+            cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch), filelist)
+            cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch), filelist)
         f.close()
 
     elif tgt.has("diet"):
