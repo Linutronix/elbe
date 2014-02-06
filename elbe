@@ -45,78 +45,66 @@ def usage():
         * sign\n\
         * remove_sign\n'
 
+def run_command(argv):
+    usage()
+    sys.exit(20)
+
 if (len(sys.argv) < 2):
     usage()
     sys.exit(20)
 
 if sys.argv[1] == "create":
     from elbepack.create import run_command
-    run_command( sys.argv[2:] )
-if sys.argv[1] == "init":
-    from elbepack.init import run_command
 elif sys.argv[1] == "create-target-rfs":
     from elbepack.createtargetrfs import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "init":
     from elbepack.init import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "show":
     from elbepack.show import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "chg_archive":
     from elbepack.chg_archive import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "get_archive":
     from elbepack.get_archive import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "validate":
     from elbepack.validate import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "diff":
     from elbepack.diff import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "pkgdiff":
     from elbepack.pkgdiff import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "dump":
     from elbepack.dump import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "check_updates":
     from elbepack.check_updates import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "setsel":
     from elbepack.setsel import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "xsdtoasciidoc":
     from elbepack.xsdtoasciidoc import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "buildchroot":
     from elbepack.buildchroot import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "initrdpack":
     from elbepack.initrdpack import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "setcdrom":
     from elbepack.setcdrom import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "updated":
     from elbepack.updated import run_command
+<<<<<<< HEAD
     run_command( sys.argv[2:] )
+=======
+elif sys.argv[1] == "webguid":
+    from elbepack.webguid import run_command
+elif sys.argv[1] == "webguid_init":
+    from elbepack.webguid_init import run_command
+>>>>>>> 3cbd902... elbe: dann run_command once
 elif sys.argv[1] == "hdimg":
     from elbepack.hdimg import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "sign":
     from elbepack.sign import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "remove_sign":
     from elbepack.remove_sign import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "adjustpkgs":
     from elbepack.adjustpkgs import run_command
-    run_command( sys.argv[2:] )
 elif sys.argv[1] == "--version":
     print 'elbe v' + elbe_version
     sys.exit(0)
-else:
-    usage()
-    sys.exit(20)
+
+run_command( sys.argv[2:] )
