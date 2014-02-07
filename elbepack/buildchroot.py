@@ -21,7 +21,6 @@
 from asciidoclog import ASCIIDocLog
 from treeutils import etree
 from optparse import OptionParser
-from subprocess import Popen, PIPE, STDOUT
 import datetime
 import apt
 import sys
@@ -36,14 +35,6 @@ from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
-
-class commanderror(Exception):
-    def __init__(self, cmd, returncode):
-        self.returncode = returncode
-        self.cmd = cmd
-
-    def __repr__(self):
-        return "Error: %d returned from Command %s" % (self.returncode, self.cmd)
 
 def read_file( fname ):
     f = file( fname, "r" )

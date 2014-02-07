@@ -19,6 +19,16 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from subprocess import Popen, PIPE, STDOUT
+
+class commanderror(Exception):
+    def __init__(self, cmd, returncode):
+        self.returncode = returncode
+        self.cmd = cmd
+
+    def __repr__(self):
+        return "Error: %d returned from Command %s" % (
+                                             self.returncode, self.cmd)
 
 class ASCIIDocLog (object):
     def __init__(self, fname):
