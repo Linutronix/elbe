@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 class ASCIIDocLog (object):
     def __init__(self, fname):
         if os.path.isfile(fname):
