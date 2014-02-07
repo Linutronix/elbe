@@ -126,23 +126,24 @@ class RFS:
 
                 self.enter_chroot ()
 
-                apt_pkg.config.set ("APT::Install-Recommends",
-                    install_recommends)
-
-                apt_pkg.config.set ("APT::Architecture", self.arch)
-                apt_pkg.config.set ("Dir", self.rfs_dir)
-                apt_pkg.config.set ("APT::Cache-Limit", "0")
-                apt_pkg.config.set ("APT::Cache-Start", "32505856")
-                apt_pkg.config.set ("APT::Cache-Grow", "2097152")
-                apt_pkg.config.set ("Dir::State", "state")
-                apt_pkg.config.set ("Dir::State::status", "status")
-                apt_pkg.config.set ("Dir::Cache", "cache")
-                apt_pkg.config.set ("Dir::Etc", "etc/apt")
-                apt_pkg.config.set ("Dir::Log", "log")
                 noauth = "0"
                 if project.has("noauth"):
                         noauth = "1"
                 apt_pkg.config.set ("APT::Get::AllowUnauthenticated", noauth)
+
+                apt_pkg.config.set ("APT::Install-Recommends",
+                    install_recommends)
+
+                apt_pkg.config.set ("APT::Architecture", self.arch)
+                apt_pkg.config.set ("Dir", "/")
+                apt_pkg.config.set ("APT::Cache-Limit", "0")
+                apt_pkg.config.set ("APT::Cache-Start", "32505856")
+                apt_pkg.config.set ("APT::Cache-Grow", "2097152")
+                apt_pkg.config.set ("Dir::State", "state")
+                apt_pkg.config.set ("Dir::State::status", "/var/lib/dpkg/status")
+                apt_pkg.config.set ("Dir::Cache", "cache")
+                apt_pkg.config.set ("Dir::Etc", "etc/apt")
+                apt_pkg.config.set ("Dir::Log", "log")
 
                 apt_pkg.init_system()
 
@@ -152,28 +153,6 @@ class RFS:
 
                 self.leave_chroot ()
 
-                try:
-                        self.cache.update(self,self.source)
-                except:
-                        pass
-
-                # TODO don't knwo why we need the following code,
-                #        but also no idea why wheezy is invalid ..
-                #
-                # Traceback (most recent call last):
-                #   File "<input>", line 1, in <module>
-                #   File "elbepack/rfs.py", line 127, in __init__
-                #     self.cache = apt_pkg.Cache ()
-                # SystemError: E:The value 'wheezy' is invalid for
-                #    APT::Default-Release as such a
-                # release is not available in the sources
-
-                #apt_pkg.config.set ("APT::Default-Release", self.suite)
-                #self.cache = apt_pkg.Cache ()
-                #try:
-                #    self.cache.update(self,self.source)
-                #except:
-                #    pass
 
         def __del__(self):
 
@@ -192,6 +171,15 @@ class RFS:
                 os.close (self.cwd)
 
 
+        def get_pkg_list(self):
+                self.enter_chroot ()
+                pl = ""
+                for p in self.cache.packages:
+                    if p.current_state == apt_pkg.CURSTATE_INSTALLED:
+                        pl += p.name + ", "
+                self.leave_chroot ()
+
+                return pl
 
         def umount (self):
                 try:
