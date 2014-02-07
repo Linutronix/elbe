@@ -107,22 +107,22 @@ def debootstrap( outf, directory, mirror, suite, target_arch, defs ):
 
     if current_arch == target_arch:
         debootstrap_cmd = 'debootstrap "%s" "%s" "%s"' % (suite, directory, mirror)
-        outf.do_command( debootstrap_cmd )
+        outf.do( debootstrap_cmd )
     else:
         debootstrap_cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (target_arch, suite, directory, mirror)
-        outf.do_command( debootstrap_cmd )
-        outf.do_command( 'cp /usr/bin/%s %s' % (defs["userinterpr"], os.path.join(directory, "usr/bin" )) )
-        do_chroot( outf, directory, '/debootstrap/debootstrap --second-stage' )
-        do_chroot( outf, directory, 'dpkg --configure -a' )
+        outf.do( debootstrap_cmd )
+        outf.do( 'cp /usr/bin/%s %s' % (defs["userinterpr"], os.path.join(directory, "usr/bin" )) )
+        outf.chroot( directory, '/debootstrap/debootstrap --second-stage' )
+        outf.chroot( directory, 'dpkg --configure -a' )
 
 
 def mount_stuff( outf, directory ):
     outf.h2( "mounting proc/sys/dev" )
     try:
-        outf.do_command( "mount -t proc none %s/proc" % directory )
-        outf.do_command( "mount -t sysfs none %s/sys" % directory )
-        outf.do_command( "mount -o bind /dev %s/dev" % directory )
-        outf.do_command( "mount -o bind /dev/pts %s/dev/pts" % directory )
+        outf.do( "mount -t proc none %s/proc" % directory )
+        outf.do( "mount -t sysfs none %s/sys" % directory )
+        outf.do( "mount -o bind /dev %s/dev" % directory )
+        outf.do( "mount -o bind /dev/pts %s/dev/pts" % directory )
     except:
         umount_stuff( outf, directory )
         raise
@@ -131,29 +131,25 @@ def mount_stuff( outf, directory ):
 def umount_stuff( outf, directory ):
     outf.h2( "unmounting proc/sys/dev" )
     try:
-        outf.do_command( "umount %s/proc/sys/fs/binfmt_misc" % directory )
+        outf.do( "umount %s/proc/sys/fs/binfmt_misc" % directory )
     except:
         pass
     try:
-        outf.do_command( "umount %s/proc" % directory )
+        outf.do( "umount %s/proc" % directory )
     except:
         pass
     try:
-        outf.do_command( "umount %s/sys" % directory )
+        outf.do( "umount %s/sys" % directory )
     except:
         pass
     try:
-        outf.do_command( "umount %s/dev/pts" % directory )
+        outf.do( "umount %s/dev/pts" % directory )
     except:
         pass
     try:
-        outf.do_command( "umount %s/dev" % directory )
+        outf.do( "umount %s/dev" % directory )
     except:
         pass
-
-def do_chroot( outf, directory, cmd, **args ):
-    chcmd = "chroot %s %s" % (directory, cmd)
-    outf.do_command( chcmd, **args )
 
 # Some more helpers
 def template(fname, d):
@@ -216,7 +212,7 @@ def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
     write_template( prefs_fname, "preferences.mako", d )
 
     optelbe_fname = os.path.join( directory, "opt/elbe/" )
-    os.system( "mkdir -vp "+optelbe_fname )
+    outf.do( "mkdir -vp "+optelbe_fname )
 
     create_fname = os.path.join( directory, "opt/elbe/custom-preseed.cfg" )
     write_template( create_fname, "custom-preseed.cfg.mako", d )
@@ -325,8 +321,8 @@ def run_command( argv ):
     if prj.has("mirror/cdrom"):
         cdrompath = os.path.join( opt.target, "cdrom" )
         mirror = "file://%s/debian" % cdrompath
-        os.system( 'mkdir -p "%s"' % cdrompath )
-        os.system( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), cdrompath ) )
+        outf.do( 'mkdir -p "%s"' % cdrompath )
+        outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), cdrompath ) )
 
         slist += "deb copy:///mnt %s main\n" % (suite)
         #slist += "deb-src file:///mnt %s main\n" % (suite)
@@ -360,11 +356,11 @@ def run_command( argv ):
 
     finally:
         if prj.has("mirror/cdrom"):
-            os.system( 'umount "%s"' % cdrompath )
+            outf.do( 'umount "%s"' % cdrompath )
 
     mount_stuff( outf, chroot )
     if prj.has("mirror/cdrom"):
-        os.system( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
+        outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
 
     # sync this with adjustpkgs.py's own list or it will remove packages.
     pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
@@ -372,29 +368,29 @@ def run_command( argv ):
                "elbe-daemon"]
 
     try:
-        do_chroot( outf, chroot, "apt-get update" )
-        do_chroot( outf, chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
+        outf.chroot( chroot, "apt-get update" )
+        outf.chroot( chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
         if not opt.skip_debootstrap:
-            do_chroot( outf, chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
-        do_chroot( outf, chroot, "elbe adjustpkgs -o /opt/elbe/adjust.log /opt/elbe/source.xml" )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domain")) )
-        do_chroot( outf, chroot, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
-        do_chroot( outf, chroot, "rm /usr/sbin/policy-rc.d" )
-        do_chroot( outf, chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
+            outf.chroot( chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
+        outf.chroot( chroot, "elbe adjustpkgs -o /opt/elbe/adjust.log /opt/elbe/source.xml" )
+        outf.chroot( chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
+        outf.chroot( chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
+        outf.chroot( chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
+        outf.chroot( chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domain")) )
+        outf.chroot( chroot, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
+        outf.chroot( chroot, "rm /usr/sbin/policy-rc.d" )
+        outf.chroot( chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
         if not opt.skip_cdrom:
-            do_chroot( outf, chroot, "/opt/elbe/mkcdrom.sh" )
+            outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
 
     finally:
         if prj.has("mirror/cdrom"):
-            os.system( 'umount "%s"' % os.path.join(chroot, "mnt") )
+            outf.do( 'umount "%s"' % os.path.join(chroot, "mnt") )
         umount_stuff( outf, chroot )
 
     extract = open( os.path.join(chroot, "opt/elbe/files-to-extract"), "r" )
     for fname in extract.readlines():
-        outf.do_command( 'cp "%s" "%s"' % (chroot+fname.strip(), opt.target) ) 
+        outf.do( 'cp "%s" "%s"' % (chroot+fname.strip(), opt.target) ) 
     extract.close()
 
 if __name__ == "__main__":

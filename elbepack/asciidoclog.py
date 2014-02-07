@@ -52,7 +52,7 @@ class ASCIIDocLog (object):
         self.printo( "------------------------------------------------------------------------------" )
         self.printo()
 
-    def do_command(self, cmd, **args):
+    def do(self, cmd, **args):
 
         if args.has_key("allow_fail"):
             allow_fail = args["allow_fail"]
@@ -70,6 +70,10 @@ class ASCIIDocLog (object):
            self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
                 raise commanderror(cmd, p.returncode)
+
+    def chroot(self, directory, cmd, **args):
+        chcmd = "chroot %s %s" % (directory, cmd)
+        self.do( chcmd, **args )
 
     def get_command_out(self, cmd, **args):
 
