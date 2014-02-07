@@ -21,6 +21,9 @@
 from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
+
+from elbepack.asciidoclog import ASCIIDocLog
+
 import datetime
 import apt
 import apt.progress
@@ -28,44 +31,10 @@ import apt.progress
 import sys
 import os
 
-class asccidoclog(object):
-    def __init__(self, fname):
-        if os.path.isfile(fname):
-            os.unlink(fname)
-        self.fp = file(fname, "w")
-
-    def printo(self, text=""):
-        self.fp.write(text+"\n")
-
-    def print_raw(self, text):
-        self.fp.write(text)
-
-    def h1(self, text):
-        self.printo()
-        self.printo(text)
-        self.printo("="*len(text))
-        self.printo()
-
-    def h2(self, text):
-        self.printo()
-        self.printo(text)
-        self.printo("-"*len(text))
-        self.printo()
-
-    def table(self):
-        self.printo( "|=====================================" )
-
-    def verbatim_start(self):
-        self.printo( "------------------------------------------------------------------------------" )
-
-    def verbatim_end(self):
-        self.printo( "------------------------------------------------------------------------------" )
-        self.printo()
-
 class adjpkg(object):
     def __init__(self, logfile, name):
 
-        self.outf = asccidoclog(logfile)
+        self.outf = ASCIIDocLog (logfile)
 
         if name:
             self.outf.h1( "ELBE Report for Project "+name )
