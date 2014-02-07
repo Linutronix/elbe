@@ -68,7 +68,7 @@ class ASCIIDocLog (object):
 
         if p.returncode != 0:
            self.printo( "Command failed with errorcode %d" % p.returncode )
-            if not allow_fail:
+           if not allow_fail:
                 raise commanderror(cmd, p.returncode)
 
     def chroot(self, directory, cmd, **args):
@@ -82,17 +82,17 @@ class ASCIIDocLog (object):
         else:
             allow_fail = False
 
-       self.printo( "getting output from cmd +%s+" % cmd )
-       self.verbatim_start()
-       p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
-       output, stderr = p.communicate()
-       self.print_raw( stderr )
-       self.verbatim_end()
+        self.printo( "getting output from cmd +%s+" % cmd )
+        self.verbatim_start()
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
+        output, stderr = p.communicate()
+        self.print_raw( stderr )
+        self.verbatim_end()
 
 
-       if p.returncode != 0:
-           self.printo( "Command failed with errorcode %d" % p.returncode )
+        if p.returncode != 0:
+            self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
-                raise commanderror(cmd, p.returncode)
+                 raise commanderror(cmd, p.returncode)
 
         return output
