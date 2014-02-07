@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from asciidoclog import ASCIIDocLog
 from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
@@ -56,84 +57,9 @@ def write_file( fname, mode, cont ):
     f.close()
     os.chmod( fname, mode )
 
-class asccidoclog(object):
-    def __init__(self, fname):
-        if os.path.isfile(fname):
-            os.unlink(fname)
-        self.fp = file(fname, "w")
-
-    def printo(self, text=""):
-        self.fp.write(text+"\n")
-
-    def print_raw(self, text):
-        self.fp.write(text)
-
-    def h1(self, text):
-        self.printo()
-        self.printo(text)
-        self.printo("="*len(text))
-        self.printo()
-
-    def h2(self, text):
-        self.printo()
-        self.printo(text)
-        self.printo("-"*len(text))
-        self.printo()
-
-    def table(self):
-        self.printo( "|=====================================" )
-
-    def verbatim_start(self):
-        self.printo( "------------------------------------------------------------------------------" )
-
-    def verbatim_end(self):
-        self.printo( "------------------------------------------------------------------------------" )
-        self.printo()
-
-    def do_command(self, cmd, **args):
-
-        if args.has_key("allow_fail"):
-            allow_fail = args["allow_fail"]
-        else:
-            allow_fail = False
-
-	self.printo( "running cmd +%s+" % cmd )
-	self.verbatim_start()
-	p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
-	output, stderr = p.communicate()
-	self.print_raw( output )
-	self.verbatim_end()
-
-
-	if p.returncode != 0:
-	    self.printo( "Command failed with errorcode %d" % p.returncode )
-            if not allow_fail:
-                raise commanderror(cmd, p.returncode)
-
-    def get_command_out(self, cmd, **args):
-
-        if args.has_key("allow_fail"):
-            allow_fail = args["allow_fail"]
-        else:
-            allow_fail = False
-
-	self.printo( "getting output from cmd +%s+" % cmd )
-	self.verbatim_start()
-	p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
-	output, stderr = p.communicate()
-	self.print_raw( stderr )
-	self.verbatim_end()
-
-
-	if p.returncode != 0:
-	    self.printo( "Command failed with errorcode %d" % p.returncode )
-            if not allow_fail:
-                raise commanderror(cmd, p.returncode)
-
-        return output
 
 def check_full_pkgs(pkgs, errorname):
-    elog = asccidoclog(errorname)
+    elog = ASCIIDocLog(errorname)
 
     elog.h1("ELBE Package validation")
 
@@ -377,7 +303,7 @@ def run_command( argv ):
     chroot = os.path.join(opt.target, "chroot")
     os.system( 'mkdir -p "%s"' % chroot )
 
-    outf = asccidoclog(opt.output)
+    outf = ASCIIDocLog(opt.output)
 
     if opt.name:
         outf.h1( "ELBE Report for Project "+opt.name )
