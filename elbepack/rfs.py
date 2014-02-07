@@ -99,6 +99,7 @@ class RFS:
                 self.defs = defs
                 self.log = log
                 self.rfs_dir = path
+                self.cwd = os.open ("/", os.O_RDONLY)
 
                 self.suite = project.text ("suite")
 
@@ -123,6 +124,8 @@ class RFS:
                 self.initialize_dirs ()
                 # TODO: self.create_apt_prefs (prefs)
 
+                self.enter_chroot ()
+
                 apt_pkg.config.set ("APT::Install-Recommends",
                     install_recommends)
 
@@ -146,6 +149,9 @@ class RFS:
                 self.source = apt_pkg.SourceList ()
                 self.source.read_main_list()
                 self.cache = apt_pkg.Cache ()
+
+                self.leave_chroot ()
+
                 try:
                         self.cache.update(self,self.source)
                 except:
@@ -182,6 +188,52 @@ class RFS:
                 if self.project.has ("mirror/cdrom"):
                         cdrompath = os.path.join( self.rfs_path, "cdrom" )
                         self.log.do ('umount "%s"' % cdrompath)
+
+                os.close (self.cwd)
+
+
+
+        def umount (self):
+                try:
+                    self.log.do("umount %s/proc/sys/fs/binfmt_misc" % (
+                                self.rfs_dir))
+                except:
+                    pass
+                try:
+                    self.log.do("umount %s/proc" % self.rfs_dir)
+                except:
+                    pass
+                try:
+                    self.log.do("umount %s/sys" % self.rfs_dir)
+                except:
+                    pass
+                try:
+                    self.log.do("umount %s/dev/pts" % self.rfs_dir)
+                except:
+                    pass
+                try:
+                    self.log.do("umount %s/dev" % self.rfs_dir)
+                except:
+                    pass
+
+
+        def enter_chroot (self):
+                try:
+                    self.log.do("mount -t proc none %s/proc" % self.rfs_dir)
+                    self.log.do("mount -t sysfs none %s/sys" % self.rfs_dir)
+                    self.log.do("mount -o bind /dev %s/dev" % self.rfs_dir)
+                    self.log.do("mount -o bind /dev/pts %s/dev/pts" % (
+                                self.rfs_dir))
+                except:
+                    self.umount ()
+                    raise
+
+                os.chroot(self.rfs_dir)
+
+        def leave_chroot (self):
+                os.fchdir (self.cwd)
+                os.chroot(".")
+                self.umount ()
 
         def write_version (self):
 
