@@ -175,6 +175,12 @@ class RFS:
                 os.close (self.cwd)
 
 
+        def commit_changes(self, commit=True):
+            if not self.virtual and commit:
+                self.depcache.commit (apt.progress.base.AcquireProgress(),
+                                      apt.progress.base.InstallProgress())
+
+
         def get_pkg_list(self):
                 self.enter_chroot ()
                 pl = ""
@@ -185,6 +191,22 @@ class RFS:
                 self.leave_chroot ()
                 return pl
 
+
+        def add_pkgs(self, pkgs, commit=True):
+                self.enter_chroot ()
+
+                p_list = pkgs.split(",")
+                for pkg in p_list:
+                    if pkg.strip() != "":
+                        p = self.cache[pkg.strip()]
+                        print p.name
+                        self.depcache.mark_install (p)
+
+                self.commit_changes (commit)
+                self.leave_chroot ()
+
+
+        def remove_pkgs(self, pkgs, commit=True):
         def umount (self):
                 try:
                     self.log.do("umount %s/proc/sys/fs/binfmt_misc" % (
