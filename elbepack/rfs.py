@@ -202,6 +202,31 @@ class RFS:
                 os.close (self.cwd)
 
 
+        def verify_with_xml(self):
+            for x_pkg in self.full_pkg_list:
+                name = x_pkg.et.text
+                vers = x_pkg.et.get ('version')
+                auto = x_pkg.et.get ('auto')
+
+                if not name in self.cache.packages:
+                    if auto == 'false':
+                        print name, "doesn't exist in cache, but is used by XML"
+                    else:
+                        print name, "is no longer required"
+
+                    continue
+
+                cached_p = self.cache[name]
+
+                if self.depcache.marked_install (cached_p):
+                    new_p = self.depcache.get_candidate_ver (self.cache[name])
+                    if new_p.ver_str != vers:
+                        print name, "version missmatch cache: %s  xml: %s" % (
+                              new_p.ver_str, vers)
+                else:
+                    print name, "is specified in XML but not in cache"
+
+
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
                 self.depcache.commit (apt.progress.base.AcquireProgress(),
