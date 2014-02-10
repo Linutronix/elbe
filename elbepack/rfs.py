@@ -181,6 +181,23 @@ class RFS:
                                       apt.progress.base.InstallProgress())
 
 
+        def upgrade_rfs(self, commit=True):
+                self.enter_chroot ()
+
+                for p in self.cache.packages:
+                    cached_p = self.depcache.get_candidate_ver (p.name)
+                    if cached_p:
+                        if cached_p.ver_str != p.ver_str:
+                            print "upgr. %s to version %s" % (cached_p.name,
+                                                              cached_p.ver_str)
+                            self.depcache.mark_install (cached_p)
+                    else:
+                        print "%s is no longer available in apt" % (p.name)
+
+                self.commit_changes (commit)
+                self.leave_chroot ()
+
+
         def get_pkg_list(self):
                 self.enter_chroot ()
                 pl = ""
