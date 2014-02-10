@@ -376,8 +376,9 @@ class RFS:
                 self.umount ()
 
                 self.in_chroot = 0
-        def write_version (self):
 
+
+        def write_version (self):
                 f = file(os.path.join(self.rfs_dir, "etc/elbe_version"), "w+")
 
                 f.write("%s %s\n" % (self.project.text("name"),
