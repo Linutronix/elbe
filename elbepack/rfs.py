@@ -96,6 +96,7 @@ class RFS:
         def __init__ (self, project, target, defs, log,
                       path="virtual", install_recommends="0"):
 
+                self.in_chroot = 0
                 self.project = project
                 self.target = target
                 self.defs = defs
@@ -126,8 +127,8 @@ class RFS:
                 self.initialize_dirs ()
                 # TODO: self.create_apt_prefs (prefs)
 
-                self.enter_chroot ()
 
+                self.enter_chroot (skip_cache_upd=True)
                 noauth = "0"
                 if project.has("noauth"):
                         noauth = "1"
@@ -153,7 +154,8 @@ class RFS:
                 self.source.read_main_list()
                 self.cache = apt_pkg.Cache ()
 
-                self.leave_chroot ()
+                if not self.virtual:
+                    self.leave_chroot ()
 
 
         def __del__(self):
@@ -179,8 +181,8 @@ class RFS:
                 for p in self.cache.packages:
                     if p.current_state == apt_pkg.CURSTATE_INSTALLED:
                         pl += p.name + ", "
-                self.leave_chroot ()
 
+                self.leave_chroot ()
                 return pl
 
         def umount (self):
@@ -207,7 +209,24 @@ class RFS:
                     pass
 
 
-        def enter_chroot (self):
+        def update_cache(self):
+                try:
+                    self.cache.update (apt.progress.base.AcquireProgress(),
+                                       self.source, 1000)
+                except:
+                    pass
+
+
+        def enter_chroot (self, skip_cache_upd=False):
+                if self.virtual:
+                    if not skip_cache_upd:
+                        self.update_cache ()
+                    return
+
+                if self.in_chroot:
+                    self.in_chroot += 1
+                    return
+
                 try:
                     self.log.do("mount -t proc none %s/proc" % self.rfs_dir)
                     self.log.do("mount -t sysfs none %s/sys" % self.rfs_dir)
@@ -220,11 +239,28 @@ class RFS:
 
                 os.chroot(self.rfs_dir)
 
+                if not skip_cache_upd:
+                    self.update_cache ()
+
+                os.environ["LANG"] = "C"
+                os.environ["LANGUAGE"] = "C"
+                os.environ["LC_ALL"] = "C"
+
+                self.in_chroot = 1
+
         def leave_chroot (self):
+                if self.virtual:
+                    return
+
+                if self.in_chroot > 1:
+                    self.in_chroot -= 1
+                    return
+
                 os.fchdir (self.cwd)
                 os.chroot(".")
                 self.umount ()
 
+                self.in_chroot = 0
         def write_version (self):
 
                 f = file(os.path.join(self.rfs_dir, "etc/elbe_version"), "w+")
