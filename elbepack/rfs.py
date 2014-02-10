@@ -207,6 +207,18 @@ class RFS:
 
 
         def remove_pkgs(self, pkgs, commit=True):
+                self.enter_chroot ()
+
+                p_list = pkgs.split(",")
+                for pkg in p_list:
+                    p = self.cache[pkg.strip()]
+                    print p.name
+                    self.depcache.mark_delete (p, True)
+
+                self.commit_changes (commit)
+                self.leave_chroot ()
+
+
         def umount (self):
                 try:
                     self.log.do("umount %s/proc/sys/fs/binfmt_misc" % (
