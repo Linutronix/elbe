@@ -219,6 +219,18 @@ class RFS:
                 self.leave_chroot ()
 
 
+        def autoremove_pkgs(self, commit=True):
+                self.enter_chroot ()
+
+                for p in self.cache.packages:
+                    if self.depcache.is_garbage(p):
+                        print p.name
+                        self.depcache.mark_delete (p, True)
+
+                self.commit_changes (commit)
+                self.leave_chroot ()
+
+
         def umount (self):
                 try:
                     self.log.do("umount %s/proc/sys/fs/binfmt_misc" % (
