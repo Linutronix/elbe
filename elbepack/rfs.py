@@ -94,15 +94,21 @@ def create_apt_sources_list (project, rfs_path, log):
 
 class RFS:
         def __init__ (self, project, target, defs, log,
-                      path="virtual", install_recommends="0"):
+                      path="virtual", full_pkg_list=None,
+                      install_recommends="0"):
 
                 self.in_chroot = 0
                 self.project = project
                 self.target = target
+                self.full_pkg_list = full_pkg_list
                 self.defs = defs
                 self.log = log
                 self.rfs_dir = path
                 self.cwd = os.open ("/", os.O_RDONLY)
+
+                self.pkg_list = None
+                if target.has ("pkg-list"):
+                    self.pkg_list = target.node ("pkg-list")
 
                 self.suite = project.text ("suite")
 
@@ -112,12 +118,14 @@ class RFS:
                 self.host_arch = log.get_command_out(
                   "dpkg --print-architecture").strip ()
 
+                print "host: %s target: %s" % (self.host_arch, self.arch)
+
                 self.primary_mirror = get_primary_mirror (project)
 
                 self.virtual = False
                 if path == "virtual":
                         self.virtual = True
-                        self.rfs_dir = mkdtemp()
+                        self.rfs_dir = mkdtemp ()
                 # TODO think about reinitialization if elbe_version differs
                 elif not os.path.isfile(self.rfs_dir + "/etc/elbe_version"):
                         self.debootstrap ()
@@ -129,33 +137,52 @@ class RFS:
 
 
                 self.enter_chroot (skip_cache_upd=True)
-                noauth = "0"
-                if project.has("noauth"):
-                        noauth = "1"
-                apt_pkg.config.set ("APT::Get::AllowUnauthenticated", noauth)
+                # noauth = "0"
+                # if project.has("noauth"):
+                #         noauth = "1"
+                # apt_pkg.config.set ("APT::Get::AllowUnauthenticated", noauth)
 
-                apt_pkg.config.set ("APT::Install-Recommends",
-                    install_recommends)
+                # apt_pkg.config.set ("APT::Install-Recommends",
+                #     install_recommends)
+
+                if self.virtual:
+                    apt_pkg.config.set ("Dir", self.rfs_dir)
+                    apt_pkg.config.set ("Dir::State", "state")
+                    apt_pkg.config.set ("Dir::State::status", "status")
+                    apt_pkg.config.set ("Dir::Cache", "cache")
+                    apt_pkg.config.set ("Dir::Etc", "etc/apt")
+                    apt_pkg.config.set ("Dir::Log", "log")
 
                 apt_pkg.config.set ("APT::Architecture", self.arch)
-                apt_pkg.config.set ("Dir", "/")
                 apt_pkg.config.set ("APT::Cache-Limit", "0")
                 apt_pkg.config.set ("APT::Cache-Start", "32505856")
                 apt_pkg.config.set ("APT::Cache-Grow", "2097152")
-                apt_pkg.config.set ("Dir::State", "state")
-                apt_pkg.config.set ("Dir::State::status", "/var/lib/dpkg/status")
-                apt_pkg.config.set ("Dir::Cache", "cache")
-                apt_pkg.config.set ("Dir::Etc", "etc/apt")
-                apt_pkg.config.set ("Dir::Log", "log")
 
                 apt_pkg.init_system()
 
                 self.source = apt_pkg.SourceList ()
                 self.source.read_main_list()
                 self.cache = apt_pkg.Cache ()
+                self.depcache = apt_pkg.DepCache (self.cache)
 
                 if not self.virtual:
+                    pkgs = ""
+                    for p in self.pkg_list:
+                        if p.et.text not in self.cache.packages:
+                             pkgs += p.et.text + ", "
+                    self.add_pkgs (pkgs)
                     self.leave_chroot ()
+
+                    return
+
+                for p in self.full_pkg_list:
+                    if p.et.get('auto') != "true":
+                        if p.et.text in self.cache:
+                            self.depcache.mark_install (
+                                                 self.cache[p.et.text])
+                        else:
+                            print p.et.text, "not available at mirrors"
+                            # TODO throw exception
 
 
         def __del__(self):
