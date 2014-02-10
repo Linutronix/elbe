@@ -27,6 +27,7 @@ from elbepack.version import elbe_version
 
 from tempfile import mkdtemp
 
+
 def mkdir_p (newdir, mode=0777):
         """works the way a good mkdir -p would...
                 - already exists, silently complete
@@ -43,6 +44,7 @@ def mkdir_p (newdir, mode=0777):
                 """ mode is not set correctly """
                 os.system ("chmod 777 "+newdir)
 
+
 def touch_file (file):
         if os.path.exists (file):
                 os.utime (file, None)
@@ -50,8 +52,8 @@ def touch_file (file):
                 file = open (file,"w")
                 file.close ()
 
-def get_primary_mirror (project):
 
+def get_primary_mirror (project):
         if project.has("mirror/primary_host"):
                 m = project.node("mirror")
 
@@ -64,8 +66,8 @@ def get_primary_mirror (project):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
-def create_apt_sources_list (project, rfs_path, log):
 
+def create_apt_sources_list (project, rfs_path, log):
         if not project.has("mirror") and not project.has("mirror/cdrom"):
                 return "# no mirrors configured"
 
@@ -235,8 +237,8 @@ class RFS:
 
                 f.close()
 
-        def debootstrap (self):
 
+        def debootstrap (self):
                 if self.project.has("mirror/primary_proxy"):
                         os.environ["http_proxy"] = self.project.text(
                                                      "mirror/primary_proxy")
@@ -283,6 +285,7 @@ class RFS:
                 #print "updating in progress", obj
                 return True
 
+
         def initialize_dirs (self):
                 mkdir_p (self.rfs_dir + "/cache/archives/partial")
                 mkdir_p (self.rfs_dir + "/etc/apt/preferences.d")
@@ -302,6 +305,7 @@ class RFS:
                 sl_file = open (sources_list, "w")
                 sl_file.write (mirror)
                 sl_file.close ()
+
 
         def create_apt_prefs (self, prefs):
                 filename = self.rfs_dir + "/etc/apt/preferences"
