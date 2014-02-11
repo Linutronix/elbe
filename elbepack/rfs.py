@@ -92,6 +92,97 @@ def create_apt_sources_list (project, rfs_path, log):
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
 
+class ElbeInstallProgress ():
+
+        def __init__ (self):
+                self.write ("init")
+
+        def write (self, line):
+                print line
+
+        def start_update (self):
+                self.write ("start update")
+
+        def finish_update (self):
+                self.write ("finish update")
+
+        def error (self, pkg, errormsg):
+                self.write ("Error: " + errormsg)
+
+        def conffile (self, current, new):
+                self.write ("conffile question")
+
+        def status_change (self, pkg, percent, status):
+                self.write ("status change " + str(percent) + "%")
+
+        def processing (self, pkg, stage):
+                self.write ("processing")
+
+        def run (self, obj):
+                self.write ("run")
+                try:
+                    f = os.pipe ()
+                    s = os.fdopen (f, "w")
+                    obj.do_install (s.fileno)
+                except e:
+                    self.write ("run failed: " + str (e))
+                return 0
+
+class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
+
+        def __init__ (self):
+                apt.progress.base.AcquireProgress.__init__ (self)
+                self._id = long(1)
+
+        def write (self, line):
+                print line
+
+        def start (self):
+                apt.progress.base.AcquireProgress.start(self)
+                self.write ("start")
+
+
+        def ims_hit(self, item):
+                apt.progress.base.AcquireProgress.ims_hit(self, item)
+                line = 'Hit ' + item.description
+                if item.owner.filesize:
+                    line += ' [%sB]' % apt_pkg.size_to_str(item.owner.filesize)
+                self.write (line)
+
+
+        def fail(self, item):
+                apt.progress.base.AcquireProgress.fail(self, item)
+                if item.owner.status == item.owner.STAT_DONE:
+                        self.write ("Ign " + item.description)
+                else:
+                        self.write ("Err " + item.description + " " +
+                                    item.owner.error_text)
+
+
+        def fetch(self, item):
+                apt.progress.base.AcquireProgress.fetch(self, item)
+                if item.owner.complete:
+                    return
+                item.owner.id = self._id
+                self._id += 1
+                line = "Get:" + item.owner.id + " " + item.description
+                if item.owner.filesize:
+                    line += (" [%sB]" % apt_pkg.size_to_str(
+                                                        item.owner.filesize))
+
+                self._write(line)
+
+
+        def pulse (self, owner):
+                apt.progress.base.AcquireProgress.pulse(self, owner)
+                self.write ("pulse")
+                return true
+
+
+        def stop (self):
+                apt.progress.base.AcquireProgress.stop(self)
+                self.write ("stop")
+
 class RFS:
         def __init__ (self, xml, defs, log, path="virtual",
                       install_recommends="0"):
@@ -248,9 +339,11 @@ class RFS:
 
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
-                self.depcache.commit (apt.progress.base.AcquireProgress(),
-                                      apt.progress.base.InstallProgress())
-
+                self.enter_chroot()
+                ret = self.depcache.commit (ElbeAcquireProgress(),
+                                            ElbeInstallProgress())
+                self.leave_chroot()
+                return ret
 
         def upgrade_rfs(self, commit=True):
                 self.enter_chroot ()
@@ -345,7 +438,7 @@ class RFS:
 
         def update_cache(self):
                 try:
-                    self.cache.update (apt.progress.base.AcquireProgress(),
+                    self.cache.update (ElbeAcquireProgress(),
                                        self.source, 1000)
                 except:
                     pass
