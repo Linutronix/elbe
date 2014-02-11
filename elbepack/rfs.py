@@ -309,8 +309,8 @@ class RFS:
 
                 cached_p = self.cache[name]
 
-                if self.depcache.marked_install (cached_p):
-                    new_p = self.depcache.get_candidate_ver (self.cache[name])
+                if cached_p.current_ver:
+                    new_p = self.depcache.get_candidate_ver (cached_p)
                     if new_p.ver_str != vers:
                         print name, "version missmatch cache: %s  xml: %s" % (
                               new_p.ver_str, vers)
