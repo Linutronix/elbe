@@ -93,26 +93,26 @@ def create_apt_sources_list (project, rfs_path, log):
 
 
 class RFS:
-        def __init__ (self, project, target, defs, log,
-                      path="virtual", full_pkg_list=None,
+        def __init__ (self, xml, defs, log, path="virtual",
                       install_recommends="0"):
 
                 self.in_chroot = 0
-                self.project = project
-                self.target = target
-                self.full_pkg_list = full_pkg_list
+                self.xml = xml
+                self.project = xml.node ("/project")
+                self.target = xml.node ("/target")
+                self.full_pkg_list = xml.node ("/fullpkgs")
                 self.defs = defs
                 self.log = log
                 self.rfs_dir = path
                 self.cwd = os.open ("/", os.O_RDONLY)
 
                 self.pkg_list = None
-                if target.has ("pkg-list"):
-                    self.pkg_list = target.node ("pkg-list")
+                if self.target.has ("pkg-list"):
+                    self.pkg_list = self.target.node ("pkg-list")
 
-                self.suite = project.text ("suite")
+                self.suite = self.project.text ("suite")
 
-                self.arch = project.text(
+                self.arch = self.project.text(
                    "buildimage/arch", default=defs, key="arch")
 
                 self.host_arch = log.get_command_out(
@@ -120,7 +120,7 @@ class RFS:
 
                 print "host: %s target: %s" % (self.host_arch, self.arch)
 
-                self.primary_mirror = get_primary_mirror (project)
+                self.primary_mirror = get_primary_mirror (self.project)
 
                 self.virtual = False
                 if path == "virtual":
@@ -226,6 +226,25 @@ class RFS:
                 else:
                     print name, "is specified in XML but not in cache"
 
+
+        def dump_xml(self, filename):
+            if self.xml.has ("fullpkgs"):
+                self.xml.node ("fullpkgs").clear ()
+            fpkg = self.xml.ensure_child ("fullpkgs")
+
+            for p in self.cache.packages:
+                if p.current_ver:
+                    pak = fpkg.append ("pkg")
+                    pak.set_text (p.name)
+                    pak.et.tail = '\n'
+                    pak.et.set ("version", p.current_ver.ver_str)
+                    pak.et.set ("md5", str (p.current_ver.hash))
+                    if self.depcache.is_auto_installed (p):
+                        pak.et.set ("auto", "true")
+                    else:
+                        pak.et.set ("auto", "false")
+
+            self.xml.write (filename)
 
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
