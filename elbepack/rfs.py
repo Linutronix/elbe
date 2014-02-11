@@ -379,9 +379,12 @@ class RFS:
                 p_list = pkgs.split(",")
                 for pkg in p_list:
                     if pkg.strip() != "":
-                        p = self.cache[pkg.strip()]
-                        print p.name
-                        self.depcache.mark_install (p)
+                        try:
+                            p = self.cache[pkg.strip()]
+                            print p.name
+                            self.depcache.mark_install (p)
+                        except:
+                            print pkg.strip(), "not found in cache"
 
                 self.commit_changes (commit)
                 self.leave_chroot ()
