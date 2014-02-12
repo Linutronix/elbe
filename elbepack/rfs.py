@@ -101,7 +101,6 @@ def create_apt_sources_list (project, rfs_path, log):
 class ElbeInstallProgress (apt.progress.base.InstallProgress):
 
         def __init__ (self):
-                self.write ("init")
                 apt.progress.base.InstallProgress.__init__ (self)
 
         def write (self, line):
@@ -109,55 +108,28 @@ class ElbeInstallProgress (apt.progress.base.InstallProgress):
 
         def start_update (self):
                 self.write ("start update")
-                return apt.progress.base.InstallProgress.start_update (self)
 
         def finish_update (self):
                 self.write ("finish update")
-                return apt.progress.base.InstallProgress.finish_update (self)
 
         def error (self, pkg, errormsg):
                 self.write ("Error: " + errormsg)
-                return apt.progress.base.InstallProgress.error (
-                                                           self, pkg, errormsg)
 
         def conffile (self, current, new):
                 self.write ("conffile question")
-                return apt.progress.base.InstallProgress.conffile (
-                                                            self, current, new)
 
         def status_change (self, pkg, percent, status):
                 self.write ("status change " + str(percent) + "%")
-                return apt.progress.base.InstallProgress.status_change (
-                                                    self, pkg, percent, status)
 
         def processing (self, pkg, stage):
                 self.write ("processing")
-                return apt.progress.base.InstallProgress.processing (
-                                                              self, pkg, stage)
 
-        def run (self, obj):
-                self.write ("run start")
-                ret = apt.progress.base.InstallProgress.run (self, obj)
-                self.write ("run done")
-                return ret
-                #try:
-                #    f = os.open ("install.log", "w")
-                #    obj.do_install (f.fileno)
-                #except e:
-                #    self.write ("run failed: " + str (e))
-                #return 0
+        def fork(self):
+                retval = os.fork()
+                if (retval):
+                    self.child_pid = retval
+                return retval
 
-        def update_interface (self):
-                self.write ("update interface")
-                return apt.progress.base.InstallProgress.update_interface (self)
-
-        def fork (self):
-                self.write ("myfork")
-                return apt.progress.base.InstallProgress.wait_child (self)
-
-        def wait_child (self):
-                self.write ("wait child")
-                return apt.progress.base.InstallProgress.wait_child (self)
 
 
 class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
@@ -169,13 +141,8 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
         def write (self, line):
                 print line
 
-        def start (self):
-                apt.progress.base.AcquireProgress.start(self)
-                self.write ("start")
-
 
         def ims_hit(self, item):
-                apt.progress.base.AcquireProgress.ims_hit(self, item)
                 line = 'Hit ' + item.description
                 if item.owner.filesize:
                     line += ' [%sB]' % apt_pkg.size_to_str(item.owner.filesize)
@@ -183,7 +150,6 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
 
 
         def fail(self, item):
-                apt.progress.base.AcquireProgress.fail(self, item)
                 if item.owner.status == item.owner.STAT_DONE:
                         self.write ("Ign " + item.description)
                 else:
@@ -192,7 +158,6 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
 
 
         def fetch(self, item):
-                apt.progress.base.AcquireProgress.fetch(self, item)
                 if item.owner.complete:
                     return
                 item.owner.id = self._id
@@ -211,7 +176,6 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
 
 
         def stop (self):
-                apt.progress.base.AcquireProgress.stop(self)
                 self.write ("stop")
 
 class RFS:
@@ -372,10 +336,10 @@ class RFS:
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
                 self.enter_chroot()
-                ret = self.depcache.commit (apt.progress.base.AcquireProgress(),
-                                            apt.progress.base.InstallProgress())
-                #ret = self.depcache.commit (ElbeAcquireProgress(),
-                #                            ElbeInstallProgress())
+                #ret = self.depcache.commit (apt.progress.base.AcquireProgress(),
+                #                            apt.progress.base.InstallProgress())
+                ret = self.depcache.commit (ElbeAcquireProgress(),
+                                            ElbeInstallProgress())
                 self.leave_chroot()
                 return ret
 
