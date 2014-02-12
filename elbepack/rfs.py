@@ -366,8 +366,10 @@ class RFS:
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
                 self.enter_chroot()
-                ret = self.depcache.commit (ElbeAcquireProgress(),
-                                            ElbeInstallProgress())
+                ret = self.depcache.commit (apt.progress.base.AcquireProgress(),
+                                            apt.progress.base.InstallProgress())
+                #ret = self.depcache.commit (ElbeAcquireProgress(),
+                #                            ElbeInstallProgress())
                 self.leave_chroot()
                 return ret
 
