@@ -503,6 +503,9 @@ class RFS:
                     self.umount ()
                     raise
 
+                policy = os.path.join( self.rfs_dir, "usr/sbin/policy-rc.d" )
+                write_file(policy, 0755, "#!/bin/sh\nexit 101\n")
+
                 os.chroot(self.rfs_dir)
 
                 if not skip_cache_upd:
@@ -526,6 +529,9 @@ class RFS:
                 os.fchdir (self.cwd)
                 os.chroot(".")
                 self.umount ()
+
+                self.log.do ("rm %s" % os.path.join (self.rfs_dir,
+                                                     "usr/sbin/policy-rc.d"))
 
                 self.in_chroot = 0
 
