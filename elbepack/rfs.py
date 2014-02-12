@@ -337,6 +337,7 @@ class RFS:
 
             self.xml.write (filename)
 
+
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
                 self.enter_chroot()
@@ -344,6 +345,7 @@ class RFS:
                                             ElbeInstallProgress())
                 self.leave_chroot()
                 return ret
+
 
         def upgrade_rfs(self, commit=True):
                 self.enter_chroot ()
@@ -447,6 +449,7 @@ class RFS:
                     pass
 
 
+        # TODO conert this to be a 'with' statement
         def enter_chroot (self, skip_cache_upd=False):
                 if self.virtual:
                     if not skip_cache_upd:
@@ -477,6 +480,7 @@ class RFS:
                 os.environ["LC_ALL"] = "C"
 
                 self.in_chroot = 1
+
 
         def leave_chroot (self):
                 if self.virtual:
@@ -540,17 +544,6 @@ class RFS:
                 self.log.chroot (self.rfs_dir, 'dpkg --configure -a')
 
                 self.write_version ()
-
-
-        def start (self):
-                pass
-
-        def stop (self):
-                pass
-
-        def pulse (self, obj):
-                #print "updating in progress", obj
-                return True
 
 
         def initialize_dirs (self):
