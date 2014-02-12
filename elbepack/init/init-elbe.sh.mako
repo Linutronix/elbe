@@ -38,22 +38,24 @@ mount -o bind /sys /buildenv/sys
 mkdir -p /buildenv/proc
 mount -o bind /proc /buildenv/proc
 
+% if xml.has('target'):
 chroot /buildenv elbe buildchroot \
-% if opt.skip_validation:
+%  if opt.skip_validation:
   --skip-validation \
-% endif
-% if opt.skip_cds:
+%  endif
+%  if opt.skip_cds:
   --skip-cdrom \
-% endif
-% if opt.buildsources:
+%  endif
+%  if opt.buildsources:
   --build-sources \
-% endif
-% if opt.buildtype:
+%  endif
+%  if opt.buildtype:
   --buildtype=${buildtype} \
-% endif
+%  endif
   -t /opt/elbe/build \
   -o /opt/elbe/elbe-report.log \
   /opt/elbe/source.xml
+% endif
 
 umount /buildenv/proc /buildenv/sys /buildenv/dev
 
