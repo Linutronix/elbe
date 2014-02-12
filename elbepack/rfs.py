@@ -92,41 +92,67 @@ def create_apt_sources_list (project, rfs_path, log):
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
 
-class ElbeInstallProgress ():
+class ElbeInstallProgress (apt.progress.base.InstallProgress):
 
         def __init__ (self):
                 self.write ("init")
+                apt.progress.base.InstallProgress.__init__ (self)
 
         def write (self, line):
                 print line
 
         def start_update (self):
                 self.write ("start update")
+                return apt.progress.base.InstallProgress.start_update (self)
 
         def finish_update (self):
                 self.write ("finish update")
+                return apt.progress.base.InstallProgress.finish_update (self)
 
         def error (self, pkg, errormsg):
                 self.write ("Error: " + errormsg)
+                return apt.progress.base.InstallProgress.error (
+                                                           self, pkg, errormsg)
 
         def conffile (self, current, new):
                 self.write ("conffile question")
+                return apt.progress.base.InstallProgress.conffile (
+                                                            self, current, new)
 
         def status_change (self, pkg, percent, status):
                 self.write ("status change " + str(percent) + "%")
+                return apt.progress.base.InstallProgress.status_change (
+                                                    self, pkg, percent, status)
 
         def processing (self, pkg, stage):
                 self.write ("processing")
+                return apt.progress.base.InstallProgress.processing (
+                                                              self, pkg, stage)
 
         def run (self, obj):
-                self.write ("run")
-                try:
-                    f = os.pipe ()
-                    s = os.fdopen (f, "w")
-                    obj.do_install (s.fileno)
-                except e:
-                    self.write ("run failed: " + str (e))
-                return 0
+                self.write ("run start")
+                ret = apt.progress.base.InstallProgress.run (self, obj)
+                self.write ("run done")
+                return ret
+                #try:
+                #    f = os.open ("install.log", "w")
+                #    obj.do_install (f.fileno)
+                #except e:
+                #    self.write ("run failed: " + str (e))
+                #return 0
+
+        def update_interface (self):
+                self.write ("update interface")
+                return apt.progress.base.InstallProgress.update_interface (self)
+
+        def fork (self):
+                self.write ("myfork")
+                return apt.progress.base.InstallProgress.wait_child (self)
+
+        def wait_child (self):
+                self.write ("wait child")
+                return apt.progress.base.InstallProgress.wait_child (self)
+
 
 class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
 
