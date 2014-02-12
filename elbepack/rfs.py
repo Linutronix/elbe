@@ -196,7 +196,7 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
                     line += (" [%sB]" % apt_pkg.size_to_str(
                                                         item.owner.filesize))
 
-                self._write(line)
+                self.write(line)
 
 
         def pulse (self, owner):
