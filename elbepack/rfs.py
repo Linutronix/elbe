@@ -200,9 +200,8 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
 
 
         def pulse (self, owner):
-                apt.progress.base.AcquireProgress.pulse(self, owner)
-                self.write ("pulse")
-                return true
+                #self.write ("pulse")
+                return apt.progress.base.AcquireProgress.pulse(self, owner)
 
 
         def stop (self):
