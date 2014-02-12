@@ -27,6 +27,12 @@ from elbepack.version import elbe_version
 
 from tempfile import mkdtemp
 
+def write_file( fname, mode, cont ):
+        f = file( fname, "w" )
+        f.write(cont)
+        f.close()
+        os.chmod( fname, mode )
+
 
 def mkdir_p (newdir, mode=0777):
         """works the way a good mkdir -p would...
@@ -589,9 +595,7 @@ class RFS:
                 if os.path.exists (sources_list):
                         os.remove (sources_list)
 
-                sl_file = open (sources_list, "w")
-                sl_file.write (mirror)
-                sl_file.close ()
+                write_file (sources_list, 644, mirror)
 
 
         def create_apt_prefs (self, prefs):
