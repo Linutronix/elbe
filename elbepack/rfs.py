@@ -191,7 +191,7 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
                     return
                 item.owner.id = self._id
                 self._id += 1
-                line = "Get:" + item.owner.id + " " + item.description
+                line = "Get:" + str (item.owner.id) + " " + item.description
                 if item.owner.filesize:
                     line += (" [%sB]" % apt_pkg.size_to_str(
                                                         item.owner.filesize))
