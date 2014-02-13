@@ -10,4 +10,5 @@
 ./usr/lib/python2.*/*-packages/elbepack/version.py
 ./usr/lib/python2.*/*-packages/elbepack/validate.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/createtargetrfs.py
+./usr/lib/python2.*/*-packages/elbepack/commands/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/asciidoclog.py
