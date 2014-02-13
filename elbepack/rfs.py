@@ -318,6 +318,10 @@ class RFS:
 
                 ret = self.depcache.commit (ElbeAcquireProgress(),
                                             ElbeInstallProgress())
+                self.cache = apt_pkg.Cache ()
+
+                self.depcache = apt_pkg.DepCache (self.cache)
+
                 self.leave_chroot()
                 return ret
 
