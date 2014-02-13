@@ -103,27 +103,6 @@ class ElbeInstallProgress (apt.progress.base.InstallProgress):
         def __init__ (self):
                 apt.progress.base.InstallProgress.__init__ (self)
 
-        def write (self, line):
-                print line
-
-        def start_update (self):
-                self.write ("start update")
-
-        def finish_update (self):
-                self.write ("finish update")
-
-        def error (self, pkg, errormsg):
-                self.write ("Error: " + errormsg)
-
-        def conffile (self, current, new):
-                self.write ("conffile question")
-
-        def status_change (self, pkg, percent, status):
-                self.write ("status change " + str(percent) + "%")
-
-        def processing (self, pkg, stage):
-                self.write ("processing")
-
         def fork(self):
                 retval = os.fork()
                 if (retval):
@@ -336,8 +315,7 @@ class RFS:
         def commit_changes(self, commit=True):
             if not self.virtual and commit:
                 self.enter_chroot()
-                #ret = self.depcache.commit (apt.progress.base.AcquireProgress(),
-                #                            apt.progress.base.InstallProgress())
+
                 ret = self.depcache.commit (ElbeAcquireProgress(),
                                             ElbeInstallProgress())
                 self.leave_chroot()
