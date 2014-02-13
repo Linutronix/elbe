@@ -25,7 +25,6 @@ import time
 import shutil
 import subprocess
 from optparse import OptionParser
-from treeutils import etree
 
 import elbepack
 from elbepack.treeutils import etree
