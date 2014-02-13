@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 from sets import Set
@@ -27,7 +26,8 @@ import apt
 import sys
 import os
 
-from version import elbe_version
+from elbepack.treeutils import etree
+from elbepack.version import elbe_version
 
 def get_fileindex():
 
