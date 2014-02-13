@@ -16,39 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
-import elbepack
-from lxml import etree
-from lxml.etree import XMLParser,parse
 from optparse import OptionParser
+from elbepack.validate import validate_xml
 
-def validate_xml(fname):
-    schema_file = os.path.join( elbepack.__path__[0], "dbsfed.xsd" )
-    parser = XMLParser(huge_tree=True)
-    schema_tree = etree.parse(schema_file)
-    schema = etree.XMLSchema(schema_tree)
-
-    try:
-        xml = parse(fname,parser=parser)
-
-        if schema.validate(xml):
-            return True
-    except etree.XMLSyntaxError:
-        print "XML Parse error"
-        print str(sys.exc_info()[1])
-        return False
-    except:
-        print "Unknown Exception during validation"
-        print sys.exc_info()[1]
-        return False
-
-    # We have an error... lets print the log.
-
-    for err in schema.error_log:
-        print "%s:%d error %s" % (err.filename, err.line, err.message)
-
-    return False
 
 def run_command( argv ):
     oparser = OptionParser( usage="usage: %prog validate <xmlfile>")
