@@ -23,7 +23,6 @@ import sys
 import shutil
 import string
 
-from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
@@ -32,6 +31,8 @@ from fstab import fstabentry
 import parted
 from  parted import filesystem
 import _ped
+
+from elbepack.treeutils import etree
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):

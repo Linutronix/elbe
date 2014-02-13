@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from treeutils import etree
 from optparse import OptionParser
 import datetime
 import apt
@@ -30,6 +29,7 @@ from mako.template import Template
 from mako import exceptions
 
 import elbepack
+from elbepack.treeutils import etree
 
 from tempfile import mkdtemp
 

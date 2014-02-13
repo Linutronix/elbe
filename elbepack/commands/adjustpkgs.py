@@ -18,11 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from treeutils import etree
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
 from elbepack.asciidoclog import ASCIIDocLog
+from elbepack.treeutils import etree
 
 import datetime
 import apt

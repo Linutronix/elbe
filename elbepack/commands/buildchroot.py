@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from asciidoclog import ASCIIDocLog
-from treeutils import etree
 from optparse import OptionParser
 import datetime
 import apt
@@ -35,6 +33,7 @@ from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
+from elbepack.asciidoclog import ASCIIDocLog
 
 def read_file( fname ):
     f = file( fname, "r" )
