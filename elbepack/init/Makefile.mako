@@ -122,8 +122,8 @@ run-con:
 
 .elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
 	mkdir -p .elbe-gen
-	e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/files-to-extract .elbe-gen/
-	for f in `cat .elbe-gen/files-to-extract`; do e2cp  buildenv.img?offset=$(LOOP_OFFSET):$$f . ; done
+	e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/build/chroot/opt/elbe/files-to-extract .elbe-gen/
+	for f in `cat .elbe-gen/files-to-extract`; do e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/build/$$f . ; done
 
 % if xml.has("target/package/tar"):
 ${xml.text("target/package/tar/name")}: .elbe-gen/files-to-extract
