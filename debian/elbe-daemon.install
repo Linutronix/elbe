@@ -1,2 +1,2 @@
-./usr/lib/python2.*/*-packages/elbepack/dump.py
-./usr/lib/python2.*/*-packages/elbepack/hdimg.py
+./usr/lib/python2.*/*-packages/elbepack/commands/dump.py
+./usr/lib/python2.*/*-packages/elbepack/commands/hdimg.py

@@ -9,5 +9,5 @@
 ./usr/lib/python2.*/*-packages/elbepack/default-preseed.xml
 ./usr/lib/python2.*/*-packages/elbepack/version.py
 ./usr/lib/python2.*/*-packages/elbepack/validate.py
-./usr/lib/python2.*/*-packages/elbepack/createtargetrfs.py
+./usr/lib/python2.*/*-packages/elbepack/commands/createtargetrfs.py
 ./usr/lib/python2.*/*-packages/elbepack/asciidoclog.py
