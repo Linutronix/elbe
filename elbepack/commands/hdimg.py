@@ -26,12 +26,11 @@ import string
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
-from fstab import fstabentry
-
 import parted
 from  parted import filesystem
 import _ped
 
+from elbepack.fstab import fstabentry
 from elbepack.treeutils import etree
 
 class commanderror(Exception):
