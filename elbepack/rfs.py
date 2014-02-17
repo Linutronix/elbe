@@ -18,14 +18,16 @@
 
 import apt
 import apt_pkg
+import cPickle
 import os
 import stat
 import sys
 import time
 
-from elbepack.version import elbe_version
-
 from tempfile import mkdtemp
+from tempfile import mktemp
+
+from elbepack.version import elbe_version
 
 def write_file( fname, mode, cont ):
         f = file( fname, "w" )
@@ -157,19 +159,154 @@ class ElbeAcquireProgress (apt.progress.base.AcquireProgress):
         def stop (self):
                 self.write ("stop")
 
+class ChrootData:
+    return_code = None
+    exception_type = None
+    exception = None
+    def __init__ (self, rfs):
+        self.rfs = rfs
+
+class ChrootHandler:
+    def __init__ (self, rfs):
+        self.store = mktemp ()
+        self.data = ChrootData (rfs)
+    def save (self):
+        fd = open (self.store, "w")
+        print 'save:', self.data.rfs.depcache.apt_dep, self.store
+        cPickle.dump (self.data, fd, cPickle.HIGHEST_PROTOCOL)
+        fd.close ()
+    def load (self):
+        fd = open (self.store, "r")
+        print 'load:', self.data.rfs.depcache.apt_dep, self.store
+        self.data = cPickle.load (fd)
+        fd.close ()
+
+class ChrootReturn (Exception):
+    def __init__ (self, data):
+        self.rfs = data.rfs
+        self.code = data.return_code
+        self.exception_type = data.exception_type
+        self.exception = data.exception
+
+class InChroot:
+    def __init__ (self, rfs, log):
+        self.rfs = rfs
+        self.log = log
+
+    def enter_chroot (self):
+        try:
+            self.log.do ("mount -t proc none %s/proc" % self.rfs.path)
+            self.log.do ("mount -t sysfs none %s/sys" % self.rfs.path)
+            self.log.do ("mount -o bind /dev %s/dev" % self.rfs.path)
+            self.log.do ("mount -o bind /dev/pts %s/dev/pts" % self.rfs.path)
+        except:
+            self.umount ()
+            raise
+
+        policy = os.path.join (self.rfs.path, "usr/sbin/policy-rc.d")
+        write_file (policy, 0755, "#!/bin/sh\nexit 101\n")
+
+        os.chroot(self.rfs.path)
+
+        os.environ["LANG"] = "C"
+        os.environ["LANGUAGE"] = "C"
+        os.environ["LC_ALL"] = "C"
+
+    def __enter__ (self):
+        self.handler = ChrootHandler (self.rfs)
+        pid = os.fork ()
+        if (pid):
+            os.waitpid (pid, 0)
+            self.handler.load ()
+            raise ChrootReturn (self.handler.data)
+        try:
+            self.enter_chroot ()
+        except:
+            self.handler.data.exception_type = sys.exc_info () [0]
+            self.handler.data.exception = sys.exc_info () [1]
+            self.handler.save ()
+            return None
+
+        return self.handler.data
+
+    def umount (self):
+        try:
+            self.log.do("umount %s/proc/sys/fs/binfmt_misc" % self.rfs.path)
+        except:
+            pass
+        try:
+            self.log.do("umount %s/proc" % self.rfs.path)
+        except:
+            pass
+        try:
+            self.log.do("umount %s/sys" % self.rfs.path)
+        except:
+            pass
+        try:
+            self.log.do("umount %s/dev/pts" % self.rfs.path)
+        except:
+            pass
+        try:
+            self.log.do("umount %s/dev" % self.rfs.path)
+        except:
+            pass
+
+    def leave_chroot (self):
+        os.fchdir (self.rfs.cwd)
+        os.chroot (".")
+        self.umount ()
+
+        self.log.do ("rm -f %s" % os.path.join (self.rfs.path,
+                                             "usr/sbin/policy-rc.d"))
+
+
+    def __exit__(self, type, value, traceback):
+        if traceback:
+            self.handler.data.exception_type = type
+            self.handler.data.exception = value
+        self.leave_chroot ()
+        self.handler.save ()
+        sys.exit ()
+
+# This is a workaround, the DepCache behaviour during pickle.load ()
+#
+# >>> dc = cPickle.load (fd)
+# Reading package lists... Done
+# Building dependency tree
+# Reading state information... Done
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: Required argument 'cache' (pos 1) not found
+#
+class ElbeDepCache:
+        apt_dep = None
+        def __init__ (self, cache, real_init=False):
+            if (real_init):
+                print 'real_init'
+                apt_dep = apt_pkg.DepCache.__init__ (cache)
+
 class RFS:
+        depcache = None
+        cache = None
+        source = None
+
+        def __init__ (self, path, arch):
+                self.path = path
+                self.arch = arch
+                self.cwd = os.open ("/", os.O_RDONLY)
+        def __delete__ (self):
+                os.close (self.cwd)
+
+class BuildEnv (RFS):
         def __init__ (self, xml, defs, log, path="virtual",
                       install_recommends="0"):
 
-                self.in_chroot = 0
                 self.xml = xml
                 self.project = xml.node ("/project")
                 self.target = xml.node ("/target")
                 self.full_pkg_list = xml.node ("/fullpkgs")
                 self.defs = defs
                 self.log = log
-                self.rfs_dir = path
-                self.cwd = os.open ("/", os.O_RDONLY)
 
                 self.pkg_list = None
                 if self.target.has ("pkg-list"):
@@ -177,22 +314,20 @@ class RFS:
 
                 self.suite = self.project.text ("suite")
 
-                self.arch = self.project.text(
-                   "buildimage/arch", default=defs, key="arch")
-
                 self.host_arch = log.get_command_out(
                   "dpkg --print-architecture").strip ()
 
-                print "host: %s target: %s" % (self.host_arch, self.arch)
+                arch = self.project.text(
+                   "buildimage/arch", default=defs, key="arch")
+
+                print "host: %s target: %s" % (self.host_arch, arch)
+                self.rfs = RFS (path, arch)
+
 
                 self.primary_mirror = get_primary_mirror (self.project)
 
-                self.virtual = False
-                if path == "virtual":
-                        self.virtual = True
-                        self.rfs_dir = mkdtemp ()
                 # TODO think about reinitialization if elbe_version differs
-                elif not os.path.isfile(self.rfs_dir + "/etc/elbe_version"):
+                if not os.path.isfile(self.rfs.path + "/etc/elbe_version"):
                         self.debootstrap ()
                 else:
                         print 'work on existing rfs'
@@ -201,70 +336,69 @@ class RFS:
                 # TODO: self.create_apt_prefs (prefs)
 
 
-                self.enter_chroot (skip_cache_upd=True)
-                # noauth = "0"
-                # if project.has("noauth"):
-                #         noauth = "1"
-                # apt_pkg.config.set ("APT::Get::AllowUnauthenticated", noauth)
+                try:
+                    with InChroot (self.rfs, self.log) as handle:
+                        # noauth = "0"
+                        # if project.has("noauth"):
+                        #         noauth = "1"
+                        # apt_pkg.config.set ("APT::Get::AllowUnauthenticated",
+                        #                     noauth)
+                        # apt_pkg.config.set ("APT::Install-Recommends",
+                        #                     install_recommends)
 
-                # apt_pkg.config.set ("APT::Install-Recommends",
-                #     install_recommends)
+                        apt_pkg.config.set ("APT::Cache-Limit", "0")
+                        apt_pkg.config.set ("APT::Cache-Start", "32505856")
+                        apt_pkg.config.set ("APT::Cache-Grow", "2097152")
 
-                if self.virtual:
-                    apt_pkg.config.set ("Dir", self.rfs_dir)
-                    apt_pkg.config.set ("Dir::State", "state")
-                    apt_pkg.config.set ("Dir::State::status", "status")
-                    apt_pkg.config.set ("Dir::Cache", "cache")
-                    apt_pkg.config.set ("Dir::Etc", "etc/apt")
-                    apt_pkg.config.set ("Dir::Log", "log")
+                        apt_pkg.config.set ("APT::Architecture",
+                                            handle.rfs.arch)
 
-                apt_pkg.config.set ("APT::Architecture", self.arch)
-                apt_pkg.config.set ("APT::Cache-Limit", "0")
-                apt_pkg.config.set ("APT::Cache-Start", "32505856")
-                apt_pkg.config.set ("APT::Cache-Grow", "2097152")
+                        apt_pkg.init_system()
 
-                apt_pkg.init_system()
+                        handle.rfs.source = apt_pkg.SourceList ()
+                        handle.rfs.source.read_main_list()
+                        handle.rfs.cache = apt_pkg.Cache ()
+                        handle.rfs.depcache = ElbeDepCache (handle.rfs.cache,
+                                                            real_init=True)
 
-                self.source = apt_pkg.SourceList ()
-                self.source.read_main_list()
-                self.cache = apt_pkg.Cache ()
-                self.depcache = apt_pkg.DepCache (self.cache)
+                        print handle.rfs.cache
+                except ChrootReturn as ret:
+                    self.rfs = ret.rfs
+                    if ret.exception_type:
+                        print ('exception occured: ',
+                               ret.exception_type, ret.exception)
+                        raise ret
 
-                if not self.virtual:
-                    pkgs = ""
-                    for p in self.pkg_list:
-                        if p.et.text not in self.cache.packages:
-                             pkgs += p.et.text + ", "
-                    self.add_pkgs (pkgs)
-                    self.leave_chroot ()
+                pkgs = ""
+                for p in self.pkg_list:
+                    if p.et.text not in self.rfs.cache.packages:
+                         pkgs += p.et.text + ", "
 
-                    return
+                self.add_pkgs (pkgs)
+                self.commit ()
 
-                for p in self.full_pkg_list:
-                    if p.et.get('auto') != "true":
-                        if p.et.text in self.cache:
-                            self.depcache.mark_install (
-                                                 self.cache[p.et.text])
-                        else:
-                            print p.et.text, "not available at mirrors"
-                            # TODO throw exception
+                # TODO split code out to enable installation of specified
+                #      versions into real systems (udpated)
+                #for p in self.full_pkg_list:
+                #    if p.et.get('auto') != "true":
+                #        if p.et.text in self.rfs.cache:
+                #            self.rfs.depcache.mark_install (
+                #                                 self.rfs.cache[p.et.text])
+                #        else:
+                #            print p.et.text, "not available at mirrors"
+                #            # TODO throw exception
 
 
         def __del__(self):
 
-                if self.virtual:
-                        os.system( 'rm -rf "%s"' % self.rfs_dir )
-
-                elif self.host_arch != self.arch:
+                if self.host_arch != self.rfs.arch:
                         self.log.do( 'rm -f %s' %
-                           os.path.join(self.rfs_dir,
+                           os.path.join(self.rfs.path,
                                         "usr/bin"+self.defs["userinterpr"] ))
 
                 if self.project.has ("mirror/cdrom"):
-                        cdrompath = os.path.join( self.rfs_path, "cdrom" )
+                        cdrompath = os.path.join( self.rfs.path, "cdrom" )
                         self.log.do ('umount "%s"' % cdrompath)
-
-                os.close (self.cwd)
 
 
         def verify_with_xml(self):
@@ -273,7 +407,7 @@ class RFS:
                 vers = x_pkg.et.get ('version')
                 auto = x_pkg.et.get ('auto')
 
-                if not name in self.cache.packages:
+                if not name in self.rfs.cache.packages:
                     if auto == 'false':
                         print name, "doesn't exist in cache, but is used by XML"
                     else:
@@ -281,10 +415,10 @@ class RFS:
 
                     continue
 
-                cached_p = self.cache[name]
+                cached_p = self.rfs.cache[name]
 
                 if cached_p.current_ver:
-                    new_p = self.depcache.get_candidate_ver (cached_p)
+                    new_p = self.rfs.depcache.get_candidate_ver (cached_p)
                     if new_p.ver_str != vers:
                         print name, "version missmatch cache: %s  xml: %s" % (
                               new_p.ver_str, vers)
@@ -297,14 +431,14 @@ class RFS:
                 self.xml.node ("fullpkgs").clear ()
             fpkg = self.xml.ensure_child ("fullpkgs")
 
-            for p in self.cache.packages:
+            for p in self.rfs.cache.packages:
                 if p.current_ver:
                     pak = fpkg.append ("pkg")
                     pak.set_text (p.name)
                     pak.et.tail = '\n'
                     pak.et.set ("version", p.current_ver.ver_str)
                     pak.et.set ("md5", str (p.current_ver.hash))
-                    if self.depcache.is_auto_installed (p):
+                    if self.rfs.depcache.is_auto_installed (p):
                         pak.et.set ("auto", "true")
                     else:
                         pak.et.set ("auto", "false")
@@ -312,186 +446,145 @@ class RFS:
             self.xml.write (filename)
 
 
-        def commit_changes(self, commit=True):
-            if not self.virtual and commit:
-                self.enter_chroot()
+        def commit (self):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+                    handle.return_code = handle.rfs.depcache.apt_dep.commit (
+                                                    ElbeAcquireProgress(),
+                                                    ElbeInstallProgress())
+                    # cache needs to be reopened,
+                    # else commited changes cannot be seen in the cache
+                    handle.rfs.cache = apt_pkg.Cache ()
+                    handle.rfs.depcache = ElbeDepCache (handle.rfs.cache, True)
 
-                ret = self.depcache.commit (ElbeAcquireProgress(),
-                                            ElbeInstallProgress())
-                self.cache = apt_pkg.Cache ()
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                rc = ret.code
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
-                self.depcache = apt_pkg.DepCache (self.cache)
-
-                self.leave_chroot()
-                return ret
-
-
-        def upgrade_rfs(self, commit=True):
-                self.enter_chroot ()
-
-                for p in self.cache.packages:
-                    cached_p = self.depcache.get_candidate_ver (p.name)
-                    if cached_p:
-                        if cached_p.ver_str != p.ver_str:
-                            print "upgr. %s to version %s" % (cached_p.name,
-                                                              cached_p.ver_str)
-                            self.depcache.mark_install (cached_p)
-                    else:
-                        print "%s is no longer available in apt" % (p.name)
-
-                self.commit_changes (commit)
-                self.leave_chroot ()
+            return rc
 
 
-        def get_pkg_list(self):
-                self.enter_chroot ()
-                pl = ""
-                for p in self.cache.packages:
-                    if p.current_state == apt_pkg.CURSTATE_INSTALLED:
-                        pl += p.name + ", "
+        def upgrade (self):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+                    handle.return_code = []
+                    for p in handle.rfs.cache.packages:
+                        cached_p = handle.rfs.depcache.get_candidate_ver (p.name)
+                        if cached_p:
+                            if cached_p.ver_str != p.ver_str:
+                                print "upgr. %s to version %s" % (cached_p.name,
+                                                                  cached_p.ver_str)
+                                handle.rfs.depcache.mark_install (cached_p)
+                                handle.return_code.append (cached_p)
+                        else:
+                            print "%s is no longer available in apt" % (p.name)
 
-                self.leave_chroot ()
-                return pl
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                rc = ret.code
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
+            return rc
 
-        def add_pkgs(self, pkgs, commit=True):
-                self.enter_chroot ()
+        def get_pkg_list (self):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+                    handle.return_code = []
+                    for p in self.rfs.cache.packages:
+                        if p.current_state == apt_pkg.CURSTATE_INSTALLED:
+                            handle.return_code.append (p)
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                rc = ret.code
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
-                p_list = pkgs.split(",")
-                for pkg in p_list:
-                    if pkg.strip() != "":
-                        try:
-                            p = self.cache[pkg.strip()]
-                            print p.name
-                            self.depcache.mark_install (p)
-                        except:
-                            print pkg.strip(), "not found in cache"
-
-                self.commit_changes (commit)
-                self.leave_chroot ()
-
-
-        def remove_pkgs(self, pkgs, commit=True):
-                self.enter_chroot ()
-
-                p_list = pkgs.split(",")
-                for pkg in p_list:
-                    p = self.cache[pkg.strip()]
-                    print p.name
-                    self.depcache.mark_delete (p, True)
-
-                self.commit_changes (commit)
-                self.leave_chroot ()
-
-
-        def autoremove_pkgs(self, commit=True):
-                self.enter_chroot ()
-
-                for p in self.cache.packages:
-                    if self.depcache.is_garbage(p):
-                        print p.name
-                        self.depcache.mark_delete (p, True)
-
-                self.commit_changes (commit)
-                self.leave_chroot ()
+            return rc
 
 
-        def umount (self):
-                try:
-                    self.log.do("umount %s/proc/sys/fs/binfmt_misc" % (
-                                self.rfs_dir))
-                except:
-                    pass
-                try:
-                    self.log.do("umount %s/proc" % self.rfs_dir)
-                except:
-                    pass
-                try:
-                    self.log.do("umount %s/sys" % self.rfs_dir)
-                except:
-                    pass
-                try:
-                    self.log.do("umount %s/dev/pts" % self.rfs_dir)
-                except:
-                    pass
-                try:
-                    self.log.do("umount %s/dev" % self.rfs_dir)
-                except:
-                    pass
+        def add_pkgs (self, pkgs):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+
+                    p_list = pkgs.split(",")
+                    for pkg in p_list:
+                        if pkg.strip() != "":
+                            try:
+                                p = handle.rfs.cache[pkg.strip()]
+                                print "INSTALL", p.name
+                                handle.rfs.depcache.mark_install (p)
+                            except:
+                                print pkg.strip(), "not found in cache"
+
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
 
-        def update_cache(self):
-                try:
-                    self.cache.update (ElbeAcquireProgress(),
-                                       self.source, 1000)
-                except:
-                    pass
+        def remove_pkgs (self, pkgs):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+
+                    p_list = pkgs.split(",")
+                    for pkg in p_list:
+                        p = handle.rfs.cache[pkg.strip()]
+                        print "REMOVE", p.name
+                        handle.rfs.depcache.mark_delete (p, True)
+
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
 
-        # TODO conert this to be a 'with' statement
-        def enter_chroot (self, skip_cache_upd=False):
-                if self.virtual:
-                    if not skip_cache_upd:
-                        self.update_cache ()
-                    return
+        def autoremove_pkgs (self):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
 
-                if self.in_chroot:
-                    self.in_chroot += 1
-                    return
+                    for p in handle.rfs.cache.packages:
+                        if handle.rfs.depcache.is_garbage(p):
+                            print "AUTOREMOVE", p.name
+                            handle.rfs.depcache.mark_delete (p, True)
 
-                try:
-                    self.log.do("mount -t proc none %s/proc" % self.rfs_dir)
-                    self.log.do("mount -t sysfs none %s/sys" % self.rfs_dir)
-                    self.log.do("mount -o bind /dev %s/dev" % self.rfs_dir)
-                    self.log.do("mount -o bind /dev/pts %s/dev/pts" % (
-                                self.rfs_dir))
-                except:
-                    self.umount ()
-                    raise
-
-                policy = os.path.join( self.rfs_dir, "usr/sbin/policy-rc.d" )
-                write_file(policy, 0755, "#!/bin/sh\nexit 101\n")
-
-                os.chroot(self.rfs_dir)
-
-                if not skip_cache_upd:
-                    self.update_cache ()
-
-                os.environ["LANG"] = "C"
-                os.environ["LANGUAGE"] = "C"
-                os.environ["LC_ALL"] = "C"
-
-                self.in_chroot = 1
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
 
-        def leave_chroot (self):
-                if self.virtual:
-                    return
+        def update_cache (self):
+            try:
+                with InChroot (self.rfs, self.log) as handle:
+                    handle.rfs.cache.update (ElbeAcquireProgress(),
+                                             handle.rfs.source, 1000)
 
-                if self.in_chroot > 1:
-                    self.in_chroot -= 1
-                    return
+                    # cache needs to be reopened,
+                    # else commited changes cannot be seen in the cache
+                    handle.rfs.cache = apt_pkg.Cache ()
+                    handle.rfs.depcache = apt_pkg.DepCache (handle.rfs.cache)
 
-                os.fchdir (self.cwd)
-                os.chroot(".")
-                self.umount ()
-
-                self.log.do ("rm %s" % os.path.join (self.rfs_dir,
-                                                     "usr/sbin/policy-rc.d"))
-
-                self.in_chroot = 0
-
-
-        def write_version (self):
-                f = file(os.path.join(self.rfs_dir, "etc/elbe_version"), "w+")
-
-                f.write("%s %s\n" % (self.project.text("name"),
-                                   self.project.text("version")))
-
-                f.write("this RFS was generated by elbe %s\n" % (elbe_version))
-                f.write(time.strftime("%c"))
-
-                f.close()
+            except ChrootReturn as ret:
+                self.rfs = ret.rfs
+                if ret.exception_type:
+                    print ('exception occured: ',
+                           ret.exception_type, ret.exception)
+                    raise ret
 
 
         def debootstrap (self):
@@ -507,42 +600,54 @@ class RFS:
 
                 self.log.h2( "debootstrap log" )
 
-                if self.host_arch == self.arch:
+                if self.host_arch == self.rfs.arch:
                     cmd = 'debootstrap "%s" "%s" "%s"' % (
-                                self.suite, self.rfs_dir, self.primary_mirror)
+                                self.suite, self.rfs.path, self.primary_mirror)
 
                     self.log.do( cmd )
 
                     return
 
                 cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
-                    self.arch, self.suite, self.rfs_dir, self.primary_mirror)
+                    self.rfs.arch, self.suite, self.rfs.path, self.primary_mirror)
 
                 self.log.do (cmd)
 
                 self.log.do ('cp /usr/bin/%s %s' % (self.defs["userinterpr"],
-                    os.path.join(self.rfs_dir, "usr/bin" )) )
+                    os.path.join(self.rfs.path, "usr/bin" )) )
 
-                self.log.chroot (self.rfs_dir,
+                self.log.chroot (self.rfs.path,
                                  '/debootstrap/debootstrap --second-stage')
 
-                self.log.chroot (self.rfs_dir, 'dpkg --configure -a')
+                self.log.chroot (self.rfs.path, 'dpkg --configure -a')
 
                 self.write_version ()
 
 
+        def write_version (self):
+                f = file(os.path.join(self.rfs.path, "etc/elbe_version"), "w+")
+
+                f.write("%s %s\n" % (self.project.text("name"),
+                                   self.project.text("version")))
+
+                f.write("this RFS was generated by elbe %s\n" % (elbe_version))
+                f.write(time.strftime("%c"))
+
+                f.close()
+
+
         def initialize_dirs (self):
-                mkdir_p (self.rfs_dir + "/cache/archives/partial")
-                mkdir_p (self.rfs_dir + "/etc/apt/preferences.d")
-                mkdir_p (self.rfs_dir + "/db")
-                mkdir_p (self.rfs_dir + "/log")
-                mkdir_p (self.rfs_dir + "/state/lists/partial")
-                touch_file (self.rfs_dir + "/state/status")
+                mkdir_p (self.rfs.path + "/cache/archives/partial")
+                mkdir_p (self.rfs.path + "/etc/apt/preferences.d")
+                mkdir_p (self.rfs.path + "/db")
+                mkdir_p (self.rfs.path + "/log")
+                mkdir_p (self.rfs.path + "/state/lists/partial")
+                touch_file (self.rfs.path + "/state/status")
 
                 mirror = create_apt_sources_list (
-                                self.project, self.rfs_dir, self.log)
+                                self.project, self.rfs.path, self.log)
 
-                sources_list = self.rfs_dir + "/etc/apt/sources.list"
+                sources_list = self.rfs.path + "/etc/apt/sources.list"
 
                 if os.path.exists (sources_list):
                         os.remove (sources_list)
@@ -551,7 +656,7 @@ class RFS:
 
 
         def create_apt_prefs (self, prefs):
-                filename = self.rfs_dir + "/etc/apt/preferences"
+                filename = self.rfs.path + "/etc/apt/preferences"
 
                 if os.path.exists (filename):
                         os.remove (filename)
