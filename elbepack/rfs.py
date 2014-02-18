@@ -193,25 +193,6 @@ class InChroot:
         self.rfs = rfs
         self.log = log
 
-    def enter_chroot (self):
-        try:
-            self.log.do ("mount -t proc none %s/proc" % self.rfs.path)
-            self.log.do ("mount -t sysfs none %s/sys" % self.rfs.path)
-            self.log.do ("mount -o bind /dev %s/dev" % self.rfs.path)
-            self.log.do ("mount -o bind /dev/pts %s/dev/pts" % self.rfs.path)
-        except:
-            self.umount ()
-            raise
-
-        policy = os.path.join (self.rfs.path, "usr/sbin/policy-rc.d")
-        write_file (policy, 0755, "#!/bin/sh\nexit 101\n")
-
-        os.chroot(self.rfs.path)
-
-        os.environ["LANG"] = "C"
-        os.environ["LANGUAGE"] = "C"
-        os.environ["LC_ALL"] = "C"
-
     def __enter__ (self):
         self.handler = ChrootHandler (self.rfs)
         pid = os.fork ()
@@ -220,7 +201,7 @@ class InChroot:
             self.handler.load ()
             raise ChrootReturn (self.handler.data)
         try:
-            self.enter_chroot ()
+            self.rfs.enter_chroot (self.log)
         except:
             self.handler.data.exception_type = sys.exc_info () [0]
             self.handler.data.exception = sys.exc_info () [1]
@@ -229,42 +210,12 @@ class InChroot:
 
         return self.handler.data
 
-    def umount (self):
-        try:
-            self.log.do("umount %s/proc/sys/fs/binfmt_misc" % self.rfs.path)
-        except:
-            pass
-        try:
-            self.log.do("umount %s/proc" % self.rfs.path)
-        except:
-            pass
-        try:
-            self.log.do("umount %s/sys" % self.rfs.path)
-        except:
-            pass
-        try:
-            self.log.do("umount %s/dev/pts" % self.rfs.path)
-        except:
-            pass
-        try:
-            self.log.do("umount %s/dev" % self.rfs.path)
-        except:
-            pass
-
-    def leave_chroot (self):
-        os.fchdir (self.rfs.cwd)
-        os.chroot (".")
-        self.umount ()
-
-        self.log.do ("rm -f %s" % os.path.join (self.rfs.path,
-                                             "usr/sbin/policy-rc.d"))
-
 
     def __exit__(self, type, value, traceback):
         if traceback:
             self.handler.data.exception_type = type
             self.handler.data.exception = value
-        self.leave_chroot ()
+        self.rfs.leave_chroot (self.log)
         self.handler.save ()
         sys.exit ()
 
@@ -399,6 +350,55 @@ class BuildEnv (RFS):
                 if self.project.has ("mirror/cdrom"):
                         cdrompath = os.path.join( self.rfs.path, "cdrom" )
                         self.log.do ('umount "%s"' % cdrompath)
+
+        def enter_chroot (self, log):
+            try:
+                log.do ("mount -t proc none %s/proc" % self.path)
+                log.do ("mount -t sysfs none %s/sys" % self.path)
+                log.do ("mount -o bind /dev %s/dev" % self.path)
+                log.do ("mount -o bind /dev/pts %s/dev/pts" % self.path)
+            except:
+                self.umount ()
+                raise
+
+            policy = os.path.join (self.path, "usr/sbin/policy-rc.d")
+            write_file (policy, 0755, "#!/bin/sh\nexit 101\n")
+
+            os.chroot(self.path)
+
+            os.environ["LANG"] = "C"
+            os.environ["LANGUAGE"] = "C"
+            os.environ["LC_ALL"] = "C"
+
+        def umount (self, log):
+            try:
+                log.do("umount %s/proc/sys/fs/binfmt_misc" % self.path)
+            except:
+                pass
+            try:
+                log.do("umount %s/proc" % self.path)
+            except:
+                pass
+            try:
+                log.do("umount %s/sys" % self.path)
+            except:
+                pass
+            try:
+                log.do("umount %s/dev/pts" % self.path)
+            except:
+                pass
+            try:
+                log.do("umount %s/dev" % self.path)
+            except:
+                pass
+
+        def leave_chroot (self, log):
+            os.fchdir (self.cwd)
+            os.chroot (".")
+            self.umount ()
+
+            log.do ("rm -f %s" % os.path.join (self.path,
+                                                 "usr/sbin/policy-rc.d"))
 
 
         def verify_with_xml(self):
