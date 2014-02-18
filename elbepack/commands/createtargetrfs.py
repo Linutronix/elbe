@@ -33,10 +33,10 @@ from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 
 from elbepack.elbexml import ElbeXML
-from elbepack.filesystem import Filesystem
+from elbepack.filesystem import BuildImgFs, TargetFs
 
-from elbepack.filesystem import extract_target, dump_elbeversion, do_elbe_dump
-from elbepack.filesystem import create_licenses, part_target, extract_some_files
+from elbepack.filesystem import extract_target
+from elbepack.filesystem import extract_some_files
 
 def run_command(argv):
 
@@ -71,16 +71,20 @@ def run_command(argv):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    rootfs = Filesystem(opt.rootdir)
-    targetfs = Filesystem(opt.target, clean=True)
+    rootfs = BuildImgFs(opt.rootdir)
+    targetfs = TargetFs(opt.target)
 
     os.chdir(rootfs.fname(''))
 
-    extract_target( rootfs, xml, dst )
-    dump_elbeversion(xml, dst)
-    do_elbe_dump(xml, dst)
-    create_licenses(rootfs, dst)
-    part_target(xml,dst)
+    extract_target( rootfs, xml, targetfs )
+    targetfs.dump_elbeversion(xml)
+    targetfs.do_elbe_dump(xml)
+
+    f = targetfs.open("opt/elbe/licence.txt", "w+")
+    rootfs.write_licenses(f)
+    f.close()
+
+    targetfs.part_target(xml)
     extract_some_files(xml, opt.debug, opt.buildchroot)
 
 if __name__ == "__main__":
