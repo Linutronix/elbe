@@ -31,6 +31,8 @@ from elbepack.version import elbe_version
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.filesystem import BuildImgFs
 
+from multiprocessing import Pipe
+
 # XXX mount the cdrom image 
 #                    cdrompath = os.path.join( rfs_path, "cdrom" )
 #                    log.do( 'mkdir -p "%s"' % cdrompath )
