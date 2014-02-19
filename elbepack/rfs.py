@@ -227,19 +227,18 @@ class BuildEnv (RFS):
 
                         apt_pkg.init_system()
 
-                        handle.rfs.source = apt_pkg.SourceList ()
-                        handle.rfs.source.read_main_list()
-                        handle.rfs.cache = apt_pkg.Cache ()
-                        handle.rfs.depcache = ElbeDepCache (handle.rfs.cache,
-                                                            real_init=True)
+                        sl = apt_pkg.SourceList ()
+                        sl.read_main_list()
+                        ca = apt_pkg.Cache()
+                        dc = ElbeDepCache (handle.rfs.cache, real_init=True)
 
-                        print handle.rfs.cache
+                        handle.send( ChrootReturn( (sl,ca,dc) ) )
+
+                        print ca
                 except ChrootReturn as ret:
-                    self.rfs = ret.rfs
-                    if ret.exception_type:
-                        print ('exception occured: ',
-                               ret.exception_type, ret.exception)
-                        raise ret
+                    self.rfs.source = ret.value[0]
+                    self.rfs.cache = ret.value[1]
+                    self.rfs.depcache = ret.value[2]
 
                 pkgs = ""
                 for p in self.pkg_list:
