@@ -213,17 +213,18 @@ class ChRootFilesystem(Filesystem):
         Filesystem.__init__(self,path,clean)
 
     def enter_chroot (self, log):
+        self.cwd = os.open ("/", os.O_RDONLY)
         try:
             log.do ("mount -t proc none %s/proc" % self.path)
             log.do ("mount -t sysfs none %s/sys" % self.path)
             log.do ("mount -o bind /dev %s/dev" % self.path)
             log.do ("mount -o bind /dev/pts %s/dev/pts" % self.path)
         except:
-            self.umount ()
+            self.umount (log)
             raise
 
-        policy = os.path.join (self.path, "usr/sbin/policy-rc.d")
-        write_file (policy, 0755, "#!/bin/sh\nexit 101\n")
+        self.write_file ("usr/sbin/policy-rc.d",
+                0755, "#!/bin/sh\nexit 101\n")
 
         os.chroot(self.path)
 
@@ -241,7 +242,7 @@ class ChRootFilesystem(Filesystem):
     def leave_chroot (self, log):
         os.fchdir (self.cwd)
         os.chroot (".")
-        self.umount ()
+        self.umount (log)
 
         log.do ("rm -f %s" % os.path.join (self.path,
                                              "usr/sbin/policy-rc.d"))
