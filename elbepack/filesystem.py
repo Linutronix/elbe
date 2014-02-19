@@ -207,7 +207,7 @@ def extract_target( src, xml, dst ):
         os.system("umount %s" %(dst.fname('proc')))
 
 class ChRootFilesystem(Filesystem):
-    def __init__(self, path,clean):
+    def __init__(self, path,clean=False):
         Filesystem.__init__(self,path,clean)
 
     def enter_chroot (self, log):
