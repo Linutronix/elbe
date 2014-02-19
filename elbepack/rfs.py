@@ -157,26 +157,11 @@ class BuildEnv (RFS):
             os.environ["LC_ALL"] = "C"
 
         def umount (self, log):
-            try:
-                log.do("umount %s/proc/sys/fs/binfmt_misc" % self.path)
-            except:
-                pass
-            try:
-                log.do("umount %s/proc" % self.path)
-            except:
-                pass
-            try:
-                log.do("umount %s/sys" % self.path)
-            except:
-                pass
-            try:
-                log.do("umount %s/dev/pts" % self.path)
-            except:
-                pass
-            try:
-                log.do("umount %s/dev" % self.path)
-            except:
-                pass
+                log.do("umount %s/proc/sys/fs/binfmt_misc" % self.path, allow_fail=True)
+                log.do("umount %s/proc" % self.path, allow_fail=True)
+                log.do("umount %s/sys" % self.path, allow_fail=True)
+                log.do("umount %s/dev/pts" % self.path, allow_fail=True)
+                log.do("umount %s/dev" % self.path, allow_fail=True)
 
         def leave_chroot (self, log):
             os.fchdir (self.cwd)
