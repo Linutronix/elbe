@@ -131,12 +131,17 @@ class BuildEnv (RFS):
 
         def __del__(self):
 
-                if self.host_arch != self.rfs.arch:
+                host_arch = self.log.get_command_out(
+                  "dpkg --print-architecture").strip ()
+
+                arch = self.xml.text("project/buildimage/arch", key="arch")
+
+                if host_arch != arch:
                         self.log.do( 'rm -f %s' %
                            os.path.join(self.rfs.path,
-                                        "usr/bin"+self.defs["userinterpr"] ))
+                                        "usr/bin"+self.xml.defs["userinterpr"] ))
 
-                if self.project.has ("mirror/cdrom"):
+                if self.xml.prj.has ("mirror/cdrom"):
                         cdrompath = os.path.join( self.rfs.path, "cdrom" )
                         self.log.do ('umount "%s"' % cdrompath)
 
