@@ -30,38 +30,6 @@ from tempfile import mktemp
 from elbepack.version import elbe_version
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 
-def write_file( fname, mode, cont ):
-        f = file( fname, "w" )
-        f.write(cont)
-        f.close()
-        os.chmod( fname, mode )
-
-
-def mkdir_p (newdir, mode=0777):
-        """works the way a good mkdir -p would...
-                - already exists, silently complete
-                - regular file in the way, raise an exception
-                - parent directory(ies) does not exist, make them as well
-        """
-        if os.path.isdir (newdir):
-                pass
-        elif os.path.isfile (newdir):
-                raise OSError ("a file with the same name as the desired " \
-                               "dir, '%s', already exists." % newdir)
-        else:
-                os.makedirs (newdir, mode)
-                """ mode is not set correctly """
-                os.system ("chmod 777 "+newdir)
-
-
-def touch_file (file):
-        if os.path.exists (file):
-                os.utime (file, None)
-        else:
-                file = open (file,"w")
-                file.close ()
-
-
 def get_primary_mirror (project):
         if project.has("mirror/primary_host"):
                 m = project.node("mirror")

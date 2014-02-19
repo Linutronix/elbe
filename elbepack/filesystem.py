@@ -43,6 +43,12 @@ class Filesystem(object):
     def islink(self, path):
         return os.path.islink( self.fname(path) )
 
+    def isfile(self, path):
+        return os.path.isfile( self.fname(path) )
+
+    def exists(self, path):
+        return os.path.exists( self.fname(path) )
+
     def mkdir(self, path):
         os.makedirs( self.fname(path) )
 
@@ -52,7 +58,13 @@ class Filesystem(object):
     def chown(self, path, uid, gid):
         os.chown( self.fname(path), uid, gid )
 
-    def cat_file(inf):
+    def chmod(self, path, mode):
+        os.chmod( self.fname(path), mode )
+
+    def utime(self, path, times=None):
+        os.utime( self.fname(path), times )
+
+    def cat_file(self,inf):
         content = []
         try:
             f = self.open(inf)
@@ -69,13 +81,40 @@ class Filesystem(object):
             if not noerr:
                 raise
 
-
     def listdir(self, path='', ignore=[], skiplinks=False):
         retval = [os.path.join(self.path, path, x) for x in os.listdir( self.fname(path) ) if not x in ignore]
         if skiplinks:
             retval = filter(lambda x: (not os.path.islink(x)) and os.path.isdir(x), retval)
 
         return retval
+
+    def write_file( self, path, mode, cont ):
+            f = self.open( path, "w" )
+            f.write(cont)
+            f.close()
+            self.chmod( path, mode )
+
+    def mkdir_p (self, newdir, mode=0777):
+            """works the way a good mkdir -p would...
+                    - already exists, silently complete
+                    - regular file in the way, raise an exception
+                    - parent directory(ies) does not exist, make them as well
+            """
+            if self.isdir (newdir):
+                    pass
+            elif self.isfile (newdir):
+                    raise OSError ("a file with the same name as the desired " \
+                                   "dir, '%s', already exists. in RFS %s" % (newdir, self.path))
+            else:
+                    self.mkdir (newdir)
+                    self.chmod (newdir,mode)
+
+    def touch_file (self,fname):
+            if self.exists (fname):
+                    self.utime(fname)
+            else:
+                    fp = self.open(fname,"w")
+                    fp.close ()
 
 def copy_filelist( src, filelist, dst ):
     for f in file_list:
