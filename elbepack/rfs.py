@@ -163,16 +163,16 @@ class BuildEnv (RFS):
 
                 self.log.h2( "debootstrap log" )
 
-                if self.host_arch == arch:
+                if host_arch == arch:
                     cmd = 'debootstrap "%s" "%s" "%s"' % (
-                                self.suite, self.rfs.path, self.primary_mirror)
+                                suite, self.rfs.path, primary_mirror)
 
                     self.log.do( cmd )
 
                     return
 
                 cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
-                    self.rfs.arch, self.suite, self.rfs.path, self.primary_mirror)
+                    arch, suite, self.rfs.path, primary_mirror)
 
                 self.log.do (cmd)
 
