@@ -206,9 +206,47 @@ def extract_target( src, xml, dst ):
         os.system("umount %s" %(dst.fname('sys')))
         os.system("umount %s" %(dst.fname('proc')))
 
-class TargetFs(Filesystem):
+class ChRootFilesystem(Filesystem):
+    def __init__(self, path,clean):
+        Filesystem.__init__(self,path,clean)
+
+    def enter_chroot (self, log):
+        try:
+            log.do ("mount -t proc none %s/proc" % self.path)
+            log.do ("mount -t sysfs none %s/sys" % self.path)
+            log.do ("mount -o bind /dev %s/dev" % self.path)
+            log.do ("mount -o bind /dev/pts %s/dev/pts" % self.path)
+        except:
+            self.umount ()
+            raise
+
+        policy = os.path.join (self.path, "usr/sbin/policy-rc.d")
+        write_file (policy, 0755, "#!/bin/sh\nexit 101\n")
+
+        os.chroot(self.path)
+
+        os.environ["LANG"] = "C"
+        os.environ["LANGUAGE"] = "C"
+        os.environ["LC_ALL"] = "C"
+
+    def umount (self, log):
+        log.do("umount %s/proc/sys/fs/binfmt_misc" % self.path, allow_fail=True)
+        log.do("umount %s/proc" % self.path, allow_fail=True)
+        log.do("umount %s/sys" % self.path, allow_fail=True)
+        log.do("umount %s/dev/pts" % self.path, allow_fail=True)
+        log.do("umount %s/dev" % self.path, allow_fail=True)
+
+    def leave_chroot (self, log):
+        os.fchdir (self.cwd)
+        os.chroot (".")
+        self.umount ()
+
+        log.do ("rm -f %s" % os.path.join (self.path,
+                                             "usr/sbin/policy-rc.d"))
+
+class TargetFs(ChRootFilesystem):
     def __init__(self, path):
-        Filesystem.__init__(self,path,clean=True)
+        ChRootFilesystem.__init__(self,path,clean=True)
 
     def do_elbe_dump(self, xml):
         self.remove("opt/elbe/dump.log", noerr=True)
@@ -239,9 +277,9 @@ class TargetFs(Filesystem):
             os.system("echo /opt/elbe/%s >> opt/elbe/files-to-extract" % cpio_name)
             os.chdir(oldwd)
 
-class BuildImgFs(Filesystem):
+class BuildImgFs(ChRootFilesystem):
     def __init__(self, path):
-        Filesystem.__init__(self,path)
+        ChRootFilesystem.__init__(self,path)
 
     def write_licenses(self,f):
         for dir in self.listdir("usr/share/doc/", skiplinks=True):
