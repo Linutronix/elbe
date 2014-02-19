@@ -25,8 +25,7 @@ from elbepack.version import elbe_version
 
 class ValidationError(Exception):
     def __init__(self):
-	self.returncode = returncode
-	self.cmd = cmd
+        pass
 
     def __repr__(self):
 	return "Elbe XML Validation Error"
