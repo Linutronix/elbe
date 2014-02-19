@@ -187,7 +187,7 @@ class BuildEnv (RFS):
                 self.rfs.dump_elbeversion (self.xml)
 
 
-        def initialize_dirs (self):
+        def virtapt_init_dirs(self):
                 mkdir_p (self.rfs.path + "/cache/archives/partial")
                 mkdir_p (self.rfs.path + "/etc/apt/preferences.d")
                 mkdir_p (self.rfs.path + "/db")
@@ -195,15 +195,13 @@ class BuildEnv (RFS):
                 mkdir_p (self.rfs.path + "/state/lists/partial")
                 touch_file (self.rfs.path + "/state/status")
 
-                mirror = create_apt_sources_list (
-                                self.project, self.rfs.path, self.log)
+        def initialize_dirs (self):
+                mirror = self.xml.create_apt_sources_list ()
 
-                sources_list = self.rfs.path + "/etc/apt/sources.list"
+                if self.rfs.exists("etc/apt/sources.list"):
+                    self.rfs.remove("etc/apt/sources.list")
 
-                if os.path.exists (sources_list):
-                        os.remove (sources_list)
-
-                write_file (sources_list, 644, mirror)
+                self.rfs.write_file ("etc/apt/sources.list", 644, mirror)
 
 
         def create_apt_prefs (self, prefs):
