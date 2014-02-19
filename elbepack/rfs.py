@@ -169,6 +169,7 @@ class BuildEnv (RFS):
                                 suite, self.rfs.path, primary_mirror)
 
                     self.log.do( cmd )
+                    self.rfs.dump_elbeversion (self.xml)
 
                     return
 
