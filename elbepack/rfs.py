@@ -106,36 +106,16 @@ class RFS:
                 os.close (self.cwd)
 
 class BuildEnv (RFS):
-        def __init__ (self, xml, defs, log, path="virtual",
-                      install_recommends="0"):
+        def __init__ (self, xml, log, path ):
 
                 self.xml = xml
-                self.project = xml.node ("/project")
-                self.target = xml.node ("/target")
-                self.full_pkg_list = xml.node ("/fullpkgs")
-                self.defs = defs
                 self.log = log
 
-                self.pkg_list = None
-                if self.target.has ("pkg-list"):
-                    self.pkg_list = self.target.node ("pkg-list")
+                self.rfs = BuildImgFs( path )
 
-                self.suite = self.project.text ("suite")
-
-                self.host_arch = log.get_command_out(
-                  "dpkg --print-architecture").strip ()
-
-                arch = self.project.text(
-                   "buildimage/arch", default=defs, key="arch")
-
-                print "host: %s target: %s" % (self.host_arch, arch)
-                self.rfs = RFS (path, arch)
-
-
-                self.primary_mirror = get_primary_mirror (self.project)
 
                 # TODO think about reinitialization if elbe_version differs
-                if not os.path.isfile(self.rfs.path + "/etc/elbe_version"):
+                if not self.rfs.isfile( "etc/elbe_version" ):
                         self.debootstrap ()
                 else:
                         print 'work on existing rfs'
@@ -144,56 +124,6 @@ class BuildEnv (RFS):
                 # TODO: self.create_apt_prefs (prefs)
 
 
-                try:
-                    with InChroot (self.rfs, self.log) as handle:
-                        # noauth = "0"
-                        # if project.has("noauth"):
-                        #         noauth = "1"
-                        # apt_pkg.config.set ("APT::Get::AllowUnauthenticated",
-                        #                     noauth)
-                        # apt_pkg.config.set ("APT::Install-Recommends",
-                        #                     install_recommends)
-
-                        apt_pkg.config.set ("APT::Cache-Limit", "0")
-                        apt_pkg.config.set ("APT::Cache-Start", "32505856")
-                        apt_pkg.config.set ("APT::Cache-Grow", "2097152")
-
-                        apt_pkg.config.set ("APT::Architecture",
-                                            handle.rfs.arch)
-
-                        apt_pkg.init_system()
-
-                        sl = apt_pkg.SourceList ()
-                        sl.read_main_list()
-                        ca = apt_pkg.Cache()
-                        dc = ElbeDepCache (handle.rfs.cache, real_init=True)
-
-                        handle.send( ChrootReturn( (sl,ca,dc) ) )
-
-                        print ca
-                except ChrootReturn as ret:
-                    self.rfs.source = ret.value[0]
-                    self.rfs.cache = ret.value[1]
-                    self.rfs.depcache = ret.value[2]
-
-                pkgs = ""
-                for p in self.pkg_list:
-                    if p.et.text not in self.rfs.cache.packages:
-                         pkgs += p.et.text + ", "
-
-                self.add_pkgs (pkgs)
-                self.commit ()
-
-                # TODO split code out to enable installation of specified
-                #      versions into real systems (udpated)
-                #for p in self.full_pkg_list:
-                #    if p.et.get('auto') != "true":
-                #        if p.et.text in self.rfs.cache:
-                #            self.rfs.depcache.mark_install (
-                #                                 self.rfs.cache[p.et.text])
-                #        else:
-                #            print p.et.text, "not available at mirrors"
-                #            # TODO throw exception
 
 
         def __del__(self):
@@ -256,6 +186,141 @@ class BuildEnv (RFS):
             log.do ("rm -f %s" % os.path.join (self.path,
                                                  "usr/sbin/policy-rc.d"))
 
+
+
+        def debootstrap (self):
+
+                suite = self.xml.prj.text ("suite")
+
+                host_arch = self.log.get_command_out(
+                  "dpkg --print-architecture").strip ()
+
+                arch = self.xml.text("project/buildimage/arch", key="arch")
+
+                print "host: %s target: %s" % (self.host_arch, arch)
+
+                primary_mirror = self.xml.get_primary_mirror()
+                if self.project.has("mirror/primary_proxy"):
+                        os.environ["http_proxy"] = self.project.text(
+                                                     "mirror/primary_proxy")
+
+                os.environ["LANG"] = "C"
+                os.environ["LANGUAGE"] = "C"
+                os.environ["LC_ALL"] = "C"
+                os.environ["DEBIAN_FRONTEND"]="noninteractive"
+                os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
+
+                self.log.h2( "debootstrap log" )
+
+                if self.host_arch == arch:
+                    cmd = 'debootstrap "%s" "%s" "%s"' % (
+                                self.suite, self.rfs.path, self.primary_mirror)
+
+                    self.log.do( cmd )
+
+                    return
+
+                cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
+                    self.rfs.arch, self.suite, self.rfs.path, self.primary_mirror)
+
+                self.log.do (cmd)
+
+                self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
+                    self.rfs.fname( "usr/bin" )) )
+
+                self.log.chroot (self.rfs.path,
+                                 '/debootstrap/debootstrap --second-stage')
+
+                self.log.chroot (self.rfs.path, 'dpkg --configure -a')
+
+                self.rfs.dump_elbeversion (self.xml)
+
+
+        def initialize_dirs (self):
+                mkdir_p (self.rfs.path + "/cache/archives/partial")
+                mkdir_p (self.rfs.path + "/etc/apt/preferences.d")
+                mkdir_p (self.rfs.path + "/db")
+                mkdir_p (self.rfs.path + "/log")
+                mkdir_p (self.rfs.path + "/state/lists/partial")
+                touch_file (self.rfs.path + "/state/status")
+
+                mirror = create_apt_sources_list (
+                                self.project, self.rfs.path, self.log)
+
+                sources_list = self.rfs.path + "/etc/apt/sources.list"
+
+                if os.path.exists (sources_list):
+                        os.remove (sources_list)
+
+                write_file (sources_list, 644, mirror)
+
+
+        def create_apt_prefs (self, prefs):
+                filename = self.rfs.path + "/etc/apt/preferences"
+
+                if os.path.exists (filename):
+                        os.remove (filename)
+
+                file = open (filename,"w")
+                file.write (prefs)
+                file.close ()
+
+
+
+class PkgStuff(BuildEnv):
+        def __init__ (self, xml, log, path ):
+                BuildEnv.__init__(self, xml, log, path)
+
+                try:
+                    with InChroot (self.rfs, self.log) as handle:
+                        # noauth = "0"
+                        # if project.has("noauth"):
+                        #         noauth = "1"
+                        # apt_pkg.config.set ("APT::Get::AllowUnauthenticated",
+                        #                     noauth)
+                        # apt_pkg.config.set ("APT::Install-Recommends",
+                        #                     install_recommends)
+
+                        apt_pkg.config.set ("APT::Cache-Limit", "0")
+                        apt_pkg.config.set ("APT::Cache-Start", "32505856")
+                        apt_pkg.config.set ("APT::Cache-Grow", "2097152")
+
+                        apt_pkg.config.set ("APT::Architecture",
+                                            handle.rfs.arch)
+
+                        apt_pkg.init_system()
+
+                        sl = apt_pkg.SourceList ()
+                        sl.read_main_list()
+                        ca = apt_pkg.Cache()
+                        dc = ElbeDepCache (handle.rfs.cache, real_init=True)
+
+                        handle.send( ChrootReturn( (sl,ca,dc) ) )
+
+                        print ca
+                except ChrootReturn as ret:
+                    self.rfs.source = ret.value[0]
+                    self.rfs.cache = ret.value[1]
+                    self.rfs.depcache = ret.value[2]
+
+                pkgs = ""
+                for p in self.pkg_list:
+                    if p.et.text not in self.rfs.cache.packages:
+                         pkgs += p.et.text + ", "
+
+                self.add_pkgs (pkgs)
+                self.commit ()
+
+                # TODO split code out to enable installation of specified
+                #      versions into real systems (udpated)
+                #for p in self.full_pkg_list:
+                #    if p.et.get('auto') != "true":
+                #        if p.et.text in self.rfs.cache:
+                #            self.rfs.depcache.mark_install (
+                #                                 self.rfs.cache[p.et.text])
+                #        else:
+                #            print p.et.text, "not available at mirrors"
+                #            # TODO throw exception
 
         def verify_with_xml(self):
             for x_pkg in self.full_pkg_list:
@@ -442,81 +507,3 @@ class BuildEnv (RFS):
                            ret.exception_type, ret.exception)
                     raise ret
 
-
-        def debootstrap (self):
-                if self.project.has("mirror/primary_proxy"):
-                        os.environ["http_proxy"] = self.project.text(
-                                                     "mirror/primary_proxy")
-
-                os.environ["LANG"] = "C"
-                os.environ["LANGUAGE"] = "C"
-                os.environ["LC_ALL"] = "C"
-                os.environ["DEBIAN_FRONTEND"]="noninteractive"
-                os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
-
-                self.log.h2( "debootstrap log" )
-
-                if self.host_arch == self.rfs.arch:
-                    cmd = 'debootstrap "%s" "%s" "%s"' % (
-                                self.suite, self.rfs.path, self.primary_mirror)
-
-                    self.log.do( cmd )
-
-                    return
-
-                cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
-                    self.rfs.arch, self.suite, self.rfs.path, self.primary_mirror)
-
-                self.log.do (cmd)
-
-                self.log.do ('cp /usr/bin/%s %s' % (self.defs["userinterpr"],
-                    os.path.join(self.rfs.path, "usr/bin" )) )
-
-                self.log.chroot (self.rfs.path,
-                                 '/debootstrap/debootstrap --second-stage')
-
-                self.log.chroot (self.rfs.path, 'dpkg --configure -a')
-
-                self.write_version ()
-
-
-        def write_version (self):
-                f = file(os.path.join(self.rfs.path, "etc/elbe_version"), "w+")
-
-                f.write("%s %s\n" % (self.project.text("name"),
-                                   self.project.text("version")))
-
-                f.write("this RFS was generated by elbe %s\n" % (elbe_version))
-                f.write(time.strftime("%c"))
-
-                f.close()
-
-
-        def initialize_dirs (self):
-                mkdir_p (self.rfs.path + "/cache/archives/partial")
-                mkdir_p (self.rfs.path + "/etc/apt/preferences.d")
-                mkdir_p (self.rfs.path + "/db")
-                mkdir_p (self.rfs.path + "/log")
-                mkdir_p (self.rfs.path + "/state/lists/partial")
-                touch_file (self.rfs.path + "/state/status")
-
-                mirror = create_apt_sources_list (
-                                self.project, self.rfs.path, self.log)
-
-                sources_list = self.rfs.path + "/etc/apt/sources.list"
-
-                if os.path.exists (sources_list):
-                        os.remove (sources_list)
-
-                write_file (sources_list, 644, mirror)
-
-
-        def create_apt_prefs (self, prefs):
-                filename = self.rfs.path + "/etc/apt/preferences"
-
-                if os.path.exists (filename):
-                        os.remove (filename)
-
-                file = open (filename,"w")
-                file.write (prefs)
-                file.close ()
