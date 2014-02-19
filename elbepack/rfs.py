@@ -29,6 +29,7 @@ from tempfile import mktemp
 
 from elbepack.version import elbe_version
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
+from elbepack.filesystem import BuildImgFs
 
 # XXX mount the cdrom image 
 #                    cdrompath = os.path.join( rfs_path, "cdrom" )
