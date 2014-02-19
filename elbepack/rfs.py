@@ -101,65 +101,43 @@ def create_apt_sources_list (project, rfs_path, log):
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
 
+class ChrootReturn(Exception):
+    def __init__(self, val):
+        self.val = val
 
-class ChrootData:
-    return_code = None
-    exception_type = None
-    exception = None
-    def __init__ (self, rfs):
-        self.rfs = rfs
-
-class ChrootHandler:
-    def __init__ (self, rfs):
-        self.store = mktemp ()
-        self.data = ChrootData (rfs)
-    def save (self):
-        fd = open (self.store, "w")
-        print 'save:', self.data.rfs.depcache.apt_dep, self.store
-        cPickle.dump (self.data, fd, cPickle.HIGHEST_PROTOCOL)
-        fd.close ()
-    def load (self):
-        fd = open (self.store, "r")
-        print 'load:', self.data.rfs.depcache.apt_dep, self.store
-        self.data = cPickle.load (fd)
-        fd.close ()
-
-class ChrootReturn (Exception):
-    def __init__ (self, data):
-        self.rfs = data.rfs
-        self.code = data.return_code
-        self.exception_type = data.exception_type
-        self.exception = data.exception
-
-class InChroot:
-    def __init__ (self, rfs, log):
+class InChroot(object):
+    def __init__ (self, rfs, log, callback=None):
         self.rfs = rfs
         self.log = log
+        self.callback = None
 
     def __enter__ (self):
-        self.handler = ChrootHandler (self.rfs)
+        self.pipe1, self.pipe2 = Pipe()
         pid = os.fork ()
         if (pid):
-            os.waitpid (pid, 0)
-            self.handler.load ()
-            raise ChrootReturn (self.handler.data)
+            while True:
+                x = self.pipe1.recv()
+                if isinstance(x,Exception):
+                    os.waitpid (pid, 0)
+                    raise x
+                elif self.callback:
+                    self.callback(x)
         try:
             self.rfs.enter_chroot (self.log)
         except:
-            self.handler.data.exception_type = sys.exc_info () [0]
-            self.handler.data.exception = sys.exc_info () [1]
-            self.handler.save ()
+            self.pipe2.send(sys.exc_info () [1] )
             return None
 
-        return self.handler.data
+        return self.pipe2
 
 
     def __exit__(self, type, value, traceback):
         if traceback:
-            self.handler.data.exception_type = type
-            self.handler.data.exception = value
+            self.pipe2.send(value)
+        else:
+            self.pipe2.send(ChrootReturn(None))
+
         self.rfs.leave_chroot (self.log)
-        self.handler.save ()
         sys.exit ()
 
 # This is a workaround, the DepCache behaviour during pickle.load ()
