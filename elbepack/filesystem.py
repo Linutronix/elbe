@@ -34,8 +34,8 @@ class Filesystem(object):
     def fname(self, path):
         return os.path.join( self.path, path )
 
-    def open(self, path):
-        return open( self.fname(path) )
+    def open(self, path, mode="r"):
+        return open( self.fname(path), mode )
 
     def isdir(self, path):
         return os.path.isdir( self.fname(path) )
