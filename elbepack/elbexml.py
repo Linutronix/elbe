@@ -50,7 +50,7 @@ class ElbeXML(object):
 
     def text(self, txt, key=None):
         if key:
-            return self.xml.text(txt, default=defs, key=key)
+            return self.xml.text(txt, default=self.defs, key=key)
         else:
             return self.xml.text(txt)
 
