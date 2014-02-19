@@ -55,3 +55,37 @@ class ElbeXML(object):
         else:
             return self.xml.text(txt)
 
+    def get_primary_mirror (self, cdrompath):
+            if self.prj.has("mirror/primary_host"):
+                    m = self.prj.node("mirror")
+
+                    mirror = m.text("primary_proto") + "://"
+                    mirror +=m.text("primary_host")  + "/"
+                    mirror +=m.text("primary_path")
+
+            elif self.prj.has("mirror/cdrom"):
+                     mirror = "file://%s/debian" % cdrompath
+
+            return mirror.replace("LOCALMACHINE", "10.0.2.2")
+
+
+    # XXX: maybe add cdrom path param ?
+    def create_apt_sources_list (self):
+            if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
+                    return "# no mirrors configured"
+
+            if self.prj.has("mirror/primary_host"):
+                    mirror  = "deb " + self.get_primary_mirror (cdrompath)
+                    mirror += " " + self.prj.text("suite") + " main\n"
+
+                    for url in self.prj.node("mirror/url-list"):
+                          if url.has("binary"):
+                               mirror += "deb " + url.text("binary").strip() + "\n"
+                          if url.has("source"):
+                               mirror += "deb-src "+url.text("source").strip()+"\n"
+
+            if self.prj.has("mirror/cdrom"):
+                    mirror += "deb copy:///mnt %s main\n" % (project.text("suite"))
+
+            return mirror.replace("LOCALMACHINE", "10.0.2.2")
+

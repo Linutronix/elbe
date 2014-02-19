@@ -30,43 +30,11 @@ from tempfile import mktemp
 from elbepack.version import elbe_version
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 
-def get_primary_mirror (project):
-        if project.has("mirror/primary_host"):
-                m = project.node("mirror")
-
-                mirror = m.text("primary_proto") + "://"
-                mirror +=m.text("primary_host")  + "/"
-                mirror +=m.text("primary_path")
-
-        elif project.has("mirror/cdrom"):
-                 mirror = "file://%s/debian" % cdrompath
-
-        return mirror.replace("LOCALMACHINE", "10.0.2.2")
-
-
-def create_apt_sources_list (project, rfs_path, log):
-        if not project.has("mirror") and not project.has("mirror/cdrom"):
-                return "# no mirrors configured"
-
-        if project.has("mirror/primary_host"):
-                mirror  = "deb " + get_primary_mirror (project)
-                mirror += " " + project.text("suite") + " main\n"
-
-                for url in project.node("mirror/url-list"):
-                      if url.has("binary"):
-                           mirror += "deb " + url.text("binary").strip() + "\n"
-                      if url.has("source"):
-                           mirror += "deb-src "+url.text("source").strip()+"\n"
-
-        if project.has("mirror/cdrom"):
-                cdrompath = os.path.join( rfs_path, "cdrom" )
-                log.do( 'mkdir -p "%s"' % cdrompath )
-                log.do( 'mount -o loop "%s" "%s"'
-                   % (prj.text("mirror/cdrom"), cdrompath ) )
-
-                mirror += "deb copy:///mnt %s main\n" % (project.text("suite"))
-
-        return mirror.replace("LOCALMACHINE", "10.0.2.2")
+# XXX mount the cdrom image 
+#                    cdrompath = os.path.join( rfs_path, "cdrom" )
+#                    log.do( 'mkdir -p "%s"' % cdrompath )
+#                    log.do( 'mount -o loop "%s" "%s"'
+#                       % (prj.text("mirror/cdrom"), cdrompath ) )
 
 
 class ChrootReturn(Exception):
