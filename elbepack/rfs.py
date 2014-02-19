@@ -149,11 +149,11 @@ class BuildEnv (RFS):
 
                 arch = self.xml.text("project/buildimage/arch", key="arch")
 
-                print "host: %s target: %s" % (self.host_arch, arch)
+                print "host: %s target: %s" % (host_arch, arch)
 
-                primary_mirror = self.xml.get_primary_mirror()
-                if self.project.has("mirror/primary_proxy"):
-                        os.environ["http_proxy"] = self.project.text(
+                primary_mirror = self.xml.get_primary_mirror( self.rfs.fname('cdrom') )
+                if self.xml.prj.has("mirror/primary_proxy"):
+                        os.environ["http_proxy"] = self.xml.prj.text(
                                                      "mirror/primary_proxy")
 
                 os.environ["LANG"] = "C"
