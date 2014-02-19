@@ -23,6 +23,8 @@ import time
 import shutil
 import subprocess
 
+from elbepack.version import elbe_version
+
 class Filesystem(object):
     def __init__(self, path, clean=False):
         self.path = os.path.abspath(path)
