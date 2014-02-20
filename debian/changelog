@@ -1,10 +1,4 @@
-elbe (0.6.0-sid) unstable; urgency=medium
-
-  * sid build
-
- -- Manuel Traut <manut@linutronix.de>  Tue, 28 Jan 2014 16:01:55 +0100
-
-elbe (0.6.0-wheezy) wheezy; urgency=low
+elbe (0.6.0-wheezy) unstable; urgency=low
 
   * reworked debian packaging
   * bugfixes
