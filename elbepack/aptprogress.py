@@ -18,6 +18,7 @@
 
 from apt.progress.base import InstallProgress, AcquireProgress
 from apt_pkg import size_to_str
+import os
 
 class ElbeInstallProgress (InstallProgress):
 
