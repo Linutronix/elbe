@@ -145,6 +145,12 @@ class BuildEnv (RFS):
                         cdrompath = os.path.join( self.rfs.path, "cdrom" )
                         self.log.do ('umount "%s"' % cdrompath)
 
+        def __enter__(self):
+            self.rfs.mount(self.log)
+            return self
+
+        def __exit__(self, type, value, traceback):
+            self.rfs.umount(self.log)
 
 
         def debootstrap (self):
