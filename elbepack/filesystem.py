@@ -212,8 +212,7 @@ class ChRootFilesystem(Filesystem):
     def __init__(self, path,clean=False):
         Filesystem.__init__(self,path,clean)
 
-    def enter_chroot (self, log):
-        self.cwd = os.open ("/", os.O_RDONLY)
+    def mount(self, log):
         try:
             log.do ("mount -t proc none %s/proc" % self.path)
             log.do ("mount -t sysfs none %s/sys" % self.path)
@@ -225,6 +224,9 @@ class ChRootFilesystem(Filesystem):
 
         self.write_file ("usr/sbin/policy-rc.d",
                 0755, "#!/bin/sh\nexit 101\n")
+
+    def enter_chroot (self):
+        self.cwd = os.open ("/", os.O_RDONLY)
 
         os.chroot(self.path)
 
@@ -239,13 +241,9 @@ class ChRootFilesystem(Filesystem):
         log.do("umount %s/dev/pts" % self.path, allow_fail=True)
         log.do("umount %s/dev" % self.path, allow_fail=True)
 
-    def leave_chroot (self, log):
+    def leave_chroot (self):
         os.fchdir (self.cwd)
         os.chroot (".")
-        self.umount (log)
-
-        log.do ("rm -f %s" % os.path.join (self.path,
-                                             "usr/sbin/policy-rc.d"))
 
 class TargetFs(ChRootFilesystem):
     def __init__(self, path):
