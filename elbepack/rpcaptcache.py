@@ -23,17 +23,15 @@ from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.asciidoclog import ASCIIDocLog
 
 class InChRootObject(object):
-    def __init__(self, rfs, log):
+    def __init__(self, rfs):
         self.rfs = rfs
-        self.rfs.enter_chroot(log)
-        self.finalizer = Finalize(self,self.rfs.leave_chroot,args=(log,),exitpriority=10)
-
-
+        self.rfs.enter_chroot()
+        self.finalizer = Finalize(self,self.rfs.leave_chroot,exitpriority=10)
 
 class RPCAPTCache(InChRootObject):
     def __init__( self, rfs, logpath ):
-        log = ASCIIDocLog(logpath)
-        InChRootObject.__init__(self, rfs, log)
+        self.log = ASCIIDocLog(logpath)
+        InChRootObject.__init__(self, rfs)
         self.cache = Cache()
         self.cache.open()
 
@@ -76,14 +74,11 @@ class MyMan(BaseManager):
 
 MyMan.register( "RPCAPTCache", RPCAPTCache )
 
-
-def get_rpcaptcache( rfs, logpath ):
+def get_rpcaptcache(rfs, logpath):
     mm = MyMan()
     mm.start()
 
-    return mm.RPCAPTCache( rfs, logpath )
-
-
+    return mm.RPCAPTCache(rfs,logpath)
 
 
 
