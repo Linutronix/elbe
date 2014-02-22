@@ -54,6 +54,21 @@ class ElbeXML(object):
         else:
             return self.xml.text(txt)
 
+    def is_cross (self, host_arch):
+
+        target = self.text ("project/buildimage/arch", key="arch")
+
+        if (host_arch == target):
+            return False
+
+        if ((host_arch == "amd64") and (target == "i386")):
+            return False
+
+        if ((host_arch == "armhf") and (target == "armel")):
+            return False
+
+        return True
+
     def get_primary_mirror (self, cdrompath):
             if self.prj.has("mirror/primary_host"):
                     m = self.prj.node("mirror")
