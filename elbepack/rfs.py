@@ -115,7 +115,8 @@ class BuildEnv (RFS):
                 self.log = log
 
                 self.rfs = BuildImgFs( path )
-
+                self.host_arch = self.log.get_command_out(
+                                      "dpkg --print-architecture").strip ()
 
                 # TODO think about reinitialization if elbe_version differs
                 if not self.rfs.isfile( "etc/elbe_version" ):
@@ -131,12 +132,7 @@ class BuildEnv (RFS):
 
         def __del__(self):
 
-                host_arch = self.log.get_command_out(
-                  "dpkg --print-architecture").strip ()
-
-                arch = self.xml.text("project/buildimage/arch", key="arch")
-
-                if host_arch != arch:
+                if self.xml.is_cross (self.host_arch):
                         self.log.do( 'rm -f %s' %
                            os.path.join(self.rfs.path,
                                         "usr/bin"+self.xml.defs["userinterpr"] ))
@@ -157,14 +153,9 @@ class BuildEnv (RFS):
 
                 suite = self.xml.prj.text ("suite")
 
-                host_arch = self.log.get_command_out(
-                  "dpkg --print-architecture").strip ()
+                primary_mirror = self.xml.get_primary_mirror(
+                                                   self.rfs.fname('cdrom') )
 
-                arch = self.xml.text("project/buildimage/arch", key="arch")
-
-                print "host: %s target: %s" % (host_arch, arch)
-
-                primary_mirror = self.xml.get_primary_mirror( self.rfs.fname('cdrom') )
                 if self.xml.prj.has("mirror/primary_proxy"):
                         os.environ["http_proxy"] = self.xml.prj.text(
                                                      "mirror/primary_proxy")
@@ -177,7 +168,7 @@ class BuildEnv (RFS):
 
                 self.log.h2( "debootstrap log" )
 
-                if host_arch == arch:
+                if not self.xml.is_cross (self.host_arch):
                     cmd = 'debootstrap "%s" "%s" "%s"' % (
                                 suite, self.rfs.path, primary_mirror)
 
@@ -185,6 +176,8 @@ class BuildEnv (RFS):
                     self.rfs.dump_elbeversion (self.xml)
 
                     return
+
+                arch = self.xml.text ("project/buildimage/arch", key="arch")
 
                 cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
                     arch, suite, self.rfs.path, primary_mirror)
