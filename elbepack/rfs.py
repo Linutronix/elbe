@@ -135,7 +135,7 @@ class BuildEnv (RFS):
                 if self.xml.is_cross (self.host_arch):
                         self.log.do( 'rm -f %s' %
                            os.path.join(self.rfs.path,
-                                        "usr/bin"+self.xml.defs["userinterpr"] ))
+                                "usr/bin/"+self.xml.defs["userinterpr"] ))
 
                 if self.xml.prj.has ("mirror/cdrom"):
                         cdrompath = os.path.join( self.rfs.path, "cdrom" )
