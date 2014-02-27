@@ -24,12 +24,14 @@ import sys
 import gpgme
 
 class OverallStatus:
-    invalid = False
-    key_expired = False
-    sig_expired = False
-    key_revoked = False
-    key_missing = False
-    gpgme_error = False
+
+    def __init__(self):
+        self.invalid = False
+        self.key_expired = False
+        self.sig_expired = False
+        self.key_revoked = False
+        self.key_missing = False
+        self.gpgme_error = False
 
     def add(self, to_add):
         self.invalid = self.invalid or to_add.invalid
