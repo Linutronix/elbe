@@ -69,18 +69,20 @@ def pkgstate(pkg):
     else:
         return NOTINSTALLED
 
-def mappkg(pkg):
-    iv = pkg.installed and pkg.installed.version
-    cv = pkg.candidate and pkg.candidate.version
-    return (pkg.name, iv, cv, pkgstate(pkg))
+class APTPackage(object):
+    def __init__(self, pkg, cache=None):
+        if type(pkg) == str:
+            pkg = cache[pkg]
 
-def mappkgname(c, pkgname):
-    return mappkg( c[pkgname] )
+        self.name = pkg.name
+        self.installed_version = pkg.installed and pkg.installed.version
+        self.candidate_version = pkg.candidate and pkg.candidate.version
+        self.installed_md5 = pkg.installed and pkg.installed.md5
+        self.candidate_md5 = pkg.candidate and pkg.candidate.md5
+        self.state = pkgstate(pkg)
+        self.is_auto_installed = pkg.is_auto_installed
+        self.origin = pkg.installed and pkg.installed.origins[0].site
 
-def mappkg_hr(pkg):
-    iv = pkg.installed and pkg.installed.version
-    cv = pkg.candidate and pkg.candidate.version
-    return (pkg.name, iv, cv, statestring[pkgstate(pkg)])
+    def __repr__(self):
+        return "<APTPackage %s-%s state: %s>" % (self.name, self.installed_version, statestring[self.state])
 
-def mappkgname_hr(c, pkgname):
-    return mappkg_hr( c[pkgname] )

@@ -21,7 +21,7 @@ from apt import Cache
 from multiprocessing.managers import BaseManager
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.asciidoclog import ASCIIDocLog
-from elbepack.aptpkgutils import getalldeps, mappkg
+from elbepack.aptpkgutils import getalldeps, APTPackage
 
 class InChRootObject(object):
     def __init__(self, rfs):
@@ -42,7 +42,7 @@ class RPCAPTCache(InChRootObject):
         return ret
 
     def get_pkglist( self, section ):
-        ret = [ mappkg(p) for p in self.cache if p.section == section ]
+        ret = [ APTPackage(p) for p in self.cache if p.section == section ]
         return ret
 
     def mark_install( self, pkgname, version ):
@@ -67,7 +67,7 @@ class RPCAPTCache(InChRootObject):
 
     def get_dependencies(self, pkgname):
         deps = getalldeps( self.cache, pkgname )
-        return map( lambda x: mappkg( self.cache[x] ), deps )
+        return [APTPackage(p, cache=self.cache) for p in deps]
 
 
 
