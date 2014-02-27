@@ -82,7 +82,14 @@ class RPCAPTCache(InChRootObject):
 
         return index
 
+    def has_pkg( self, pkgname ):
+        return pkgname in self.cache
 
+    def is_installed( self, pkgname ):
+        return self.cache[pkgname].is_installed
+
+    def get_pkg( self, pkgname ):
+        return APTPackage( self.cache[pkgname] )
 
 class MyMan(BaseManager):
     pass
