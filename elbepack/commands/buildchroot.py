@@ -214,7 +214,7 @@ def run_command( argv ):
         cache = get_rpcaptcache( buildenv.rfs, "aptcache.log", xml.text("project/arch", key="arch" ) )
 
         # XXX: cache update currently fails because of GPG Key... and some file issue.
-        #cache.update()
+        cache.update()
 
         be_pkgs = buildenv.xml.get_buildenv_packages()
         ta_pkgs = buildenv.xml.get_target_packages()
