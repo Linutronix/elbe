@@ -86,6 +86,8 @@ class RPCAPTCache(InChRootObject):
         return pkgname in self.cache
 
     def is_installed( self, pkgname ):
+        if not pkgname in self.cache:
+            return False
         return self.cache[pkgname].is_installed
 
     def get_pkg( self, pkgname ):
