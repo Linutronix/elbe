@@ -123,22 +123,23 @@ class BuildEnv (RFS):
 
 
     def __del__(self):
-
-        if self.xml.is_cross (self.host_arch):
-            self.log.do( 'rm -f %s' %
-                    os.path.join(self.rfs.path,
-                        "usr/bin/"+self.xml.defs["userinterpr"] ))
-
         if self.xml.prj.has ("mirror/cdrom"):
             cdrompath = os.path.join( self.rfs.path, "cdrom" )
             self.log.do ('umount "%s"' % cdrompath)
 
     def __enter__(self):
+        if self.xml.is_cross (self.host_arch):
+            self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
+                self.rfs.fname( "usr/bin" )) )
         self.rfs.mount(self.log)
         return self
 
     def __exit__(self, type, value, traceback):
         self.rfs.umount(self.log)
+        if self.xml.is_cross (self.host_arch):
+            self.log.do( 'rm -f %s' %
+                    os.path.join(self.rfs.path,
+                        "usr/bin/"+self.xml.defs["userinterpr"] ))
 
 
     def debootstrap (self):
