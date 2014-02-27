@@ -53,7 +53,7 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
             ubivg.text("maxlogicaleraseblockcount"),
             fslabel[label].mkfsopt ) )
 
-def build_image_mtd( outf, mtd, fslabel, target ):
+def build_image_mtd( outf, mtd, target ):
 
     if not mtd.has("ubivg"):
         return
@@ -314,4 +314,4 @@ def do_hdimg(outf, xml, target, rfs):
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in xml.tgt.node("images"):
         if i.tag == "mtd":
-            build_image_mtd( outf, i, fslabel, target )
+            build_image_mtd( outf, i, target )
