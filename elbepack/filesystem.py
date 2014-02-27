@@ -220,16 +220,8 @@ def extract_target( src, xml, dst ):
         copy_filelist(src, file_list, dst)
     else:
         # first copy most diretories
-        for f in src.listdir(ignore=['target','proc','sys','opt']):
+        for f in src.listdir():
             subprocess.call(["cp", "-a", "--reflink=auto", f, dst.fname('')])
-
-        # and now complete opt but skip opt/elbe
-        dst.mkdir("opt")
-        for f in os.listdir("opt", ignore=['elbe']):
-            subprocess.call(["cp", "-a", "--reflink=auto", f, dst.fname('opt')])
-
-        shutil.copystat(src.fname('opt'), dst.fname('opt'))
-
 
     try:
         dst.makedirs("proc")
