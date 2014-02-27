@@ -23,6 +23,7 @@ from subprocess import Popen, PIPE, STDOUT
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):
+        Exception.__init__(self)
         self.returncode = returncode
         self.cmd = cmd
 

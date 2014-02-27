@@ -25,7 +25,7 @@ from tempfile import NamedTemporaryFile
 
 class ValidationError(Exception):
     def __init__(self):
-        pass
+        Exception.__init__(self)
 
     def __repr__(self):
         return "Elbe XML Validation Error"
