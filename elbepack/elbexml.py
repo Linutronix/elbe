@@ -22,6 +22,8 @@ from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 
+from base64 import standard_b64decode
+from tempfile import NamedTemporaryFile
 
 class ValidationError(Exception):
     def __init__(self):
@@ -54,6 +56,9 @@ class ElbeXML(object):
             return self.xml.text(txt, default=self.defs, key=key)
         else:
             return self.xml.text(txt)
+
+    def has(self, path):
+        return self.xml.has(path)
 
     def is_cross (self, host_arch):
 
@@ -103,4 +108,35 @@ class ElbeXML(object):
                     mirror += "deb copy:///mnt %s main\n" % (self.prj.text("suite"))
 
             return mirror.replace("LOCALMACHINE", "10.0.2.2")
+
+    def get_target_packages(self):
+        return [p.et.text for p in self.xml.node("/target/pkg-list")]
+
+    def get_buildenv_packages(self):
+        retval = []
+        if self.xml.has("./project/buildimage/pkg-list"):
+            retval = [p.et.text for p in self.xml.node("project/buildimage/pkg-list")]
+
+        return retval
+
+    def clear_full_pkglist( self ):
+        tree = self.xml.ensure_child( 'fullpkgs' )
+        tree.clear()
+
+    def append_full_pkg( self, aptpkg ):
+        tree = self.xml.ensure_child( 'fullpkgs' )
+        pak = tree.append( 'pkg' )
+        pak.set_text( aptpkg.name )
+        pak.et.tail = '\n'
+        pak.et.set( 'version', aptpkg.installed_version )
+        pak.et.set( 'md5', aptpkg.installed_md5 )
+        if aptpkg.is_auto_installed:
+            pak.et.set( 'auto', 'true' )
+        else:
+            pak.et.set( 'auto', 'false' )
+
+    def archive_tmpfile( self ):
+        fp = NamedTemporaryFile()
+        fp.write( standard_b64decode( self.text("archive") ) )
+        return fp
 
