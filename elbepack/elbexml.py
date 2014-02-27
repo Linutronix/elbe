@@ -32,9 +32,10 @@ class ValidationError(Exception):
 
 
 class ElbeXML(object):
-    def __init__(self, fname, buildtype=None):
-        if not validate_xml(fname):
-            raise ValidationError
+    def __init__(self, fname, buildtype=None, skip_validate=False):
+        if not skip_validate:
+            if not validate_xml(fname):
+                raise ValidationError
 
         self.xml = etree( fname )
         self.prj = self.xml.node("/project")
