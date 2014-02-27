@@ -339,34 +339,3 @@ class BuildImgFs(ChRootFilesystem):
             finally:
                 lic.close()
 
-
-
-def extract_some_files(xml, debug, buildchroot):
-    os.system("echo '' >> opt/elbe/elbe-report.txt")
-    os.system("echo '' >> opt/elbe/elbe-report.txt")
-    os.system("echo 'output of dump.py' >> opt/elbe/elbe-report.txt")
-    os.system("echo '-----------------' >> opt/elbe/elbe-report.txt")
-    os.system("cat /opt/elbe/dump.log   >> opt/elbe/elbe-report.txt")
-
-    os.system("echo '' >> opt/elbe/elbe-report.txt")
-    os.system("echo '' >> opt/elbe/elbe-report.txt")
-    os.system("echo built with elbe v%s >> opt/elbe/elbe-report.txt" % (elbe_version))
-
-    os.system("echo /opt/elbe/licence.txt >> opt/elbe/files-to-extract")
-    os.system("echo /opt/elbe/elbe-report.txt >> opt/elbe/files-to-extract")
-    os.system("echo /opt/elbe/source.xml >> opt/elbe/files-to-extract")
-    os.system("echo /opt/elbe/validation.txt >> opt/elbe/files-to-extract")
-
-    if debug:
-        os.system("echo /var/log/syslog >> opt/elbe/files-to-extract")
-
-    if not buildchroot:
-        if xml.text("project/buildimage/arch", key="arch") == "armel":
-            os.system("cp -L boot/vmlinuz opt/elbe/vmkernel")
-            os.system("cp -L boot/initrd.img opt/elbe/vminitrd")
-        elif xml.text("project/buildimage/arch", key="arch") == "powerpc":
-            os.system("cp -L boot/vmlinux opt/elbe/vmkernel")
-            os.system("cp -L boot/initrd.img /opt/elbe/vminitrd")
-        else:
-            os.system("cp -L vmlinuz opt/elbe/vmkernel")
-            os.system("cp -L initrd.img opt/elbe/vminitrd")
