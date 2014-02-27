@@ -303,7 +303,7 @@ class TargetFs(ChRootFilesystem):
         do_hdimg( log, xml, targetdir, self, skip_grub )
 
         if xml.has("target/package/tar"):
-            os.system("tar cf %s/target.tar -C %s ." %(targetdir,self.fname('')))
+            os.system("tar cfz %s/target.tar.gz -C %s ." %(targetdir,self.fname('')))
 
         if xml.has("target/package/cpio"):
             oldwd = os.getcwd()
