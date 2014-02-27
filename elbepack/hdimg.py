@@ -176,7 +176,7 @@ class simple_fstype(object):
     def __init__(self, type):
         self.type = type
 
-def do_image_hd( outf, hd, fslabel, target ):
+def do_image_hd( outf, hd, fslabel, target, skip_grub ):
 
     # Init to 0 because we increment before using it
     partition_number = 0
@@ -262,10 +262,10 @@ def do_image_hd( outf, hd, fslabel, target ):
 
     disk.commit()
 
-    if hd.has( "grub-install" ):
+    if hd.has( "grub-install" ) and not skip_grub:
         grub.install( target )
 
-def do_hdimg(outf, xml, target, rfs):
+def do_hdimg(outf, xml, target, rfs, skip_grub):
     # Build a dictonary of mount points
     fslabel = {}
     for fs in xml.tgt.node("fstab"):
@@ -297,10 +297,10 @@ def do_hdimg(outf, xml, target, rfs):
         # Now iterate over all images and create filesystems and partitions
         for i in xml.tgt.node("images"):
             if i.tag == "msdoshd":
-                do_image_hd( outf, i, fslabel, target )
+                do_image_hd( outf, i, fslabel, target, skip_grub )
 
             if i.tag == "gpthd":
-                do_image_hd( outf, i, fslabel, target )
+                do_image_hd( outf, i, fslabel, target, skip_grub )
 
             if i.tag == "mtd":
                 mkfs_mtd( outf, i, fslabel, rfs, target )
