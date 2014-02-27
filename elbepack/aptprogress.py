@@ -25,11 +25,11 @@ class ElbeInstallProgress (InstallProgress):
     def __init__ (self):
         InstallProgress.__init__ (self)
 
-        def fork(self):
-            retval = os.fork()
-            if (retval):
-                self.child_pid = retval
-            return retval
+    def fork(self):
+        retval = os.fork()
+        if (retval):
+            self.child_pid = retval
+        return retval
 
 
 
