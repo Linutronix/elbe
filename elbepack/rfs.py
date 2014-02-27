@@ -222,6 +222,21 @@ class BuildEnv (RFS):
                 file.write (prefs)
                 file.close ()
 
+        def seed_etc( self ):
+            passwd = self.xml.text("target/passwd")
+            self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (passwd, passwd) )
+
+            hostname = self.xml.text("target/hostname")
+            domain = self.xml.text("target/domain")
+
+            self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (hostname, hostname, domain) )
+            self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname )
+            self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (hostname, domain) )
+
+            serial_con, serial_baud = self.xml.text( "target/console" ).split(',')
+            self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
+
+
 
 
 class PkgStuff(BuildEnv):
