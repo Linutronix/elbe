@@ -34,6 +34,8 @@ class Filesystem(object):
             
 
     def fname(self, path):
+        if path.startswith('/'):
+            path = path[1:]
         return os.path.join( self.path, path )
 
     def open(self, path, mode="r"):
