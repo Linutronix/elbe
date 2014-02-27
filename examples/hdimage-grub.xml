@@ -95,6 +95,7 @@
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
+			<pkg>linux-image-amd64</pkg>
 			<pkg>grub-pc</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
