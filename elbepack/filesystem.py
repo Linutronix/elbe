@@ -149,7 +149,7 @@ class Filesystem(object):
             for f in filenames:
                 fpath = os.path.join( subpath, f )
                 realpath = os.path.join( dirpath, f )
-                yield fpath, realpath
+                yield "/" + fpath, realpath
 
     def mtime_snap(self, dirname='', exclude_dirs=[]):
         mtime_index = {}
