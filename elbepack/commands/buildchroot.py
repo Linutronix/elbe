@@ -211,7 +211,7 @@ def run_command( argv ):
     #if prj.has("mirror/cdrom"):
     #    outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
     with buildenv:
-        cache = get_rpcaptcache( buildenv.rfs, "aptcache.log" )
+        cache = get_rpcaptcache( buildenv.rfs, "aptcache.log", xml.text("project/arch", key="arch" ) )
 
         # XXX: cache update currently fails because of GPG Key... and some file issue.
         #cache.update()

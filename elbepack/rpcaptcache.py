@@ -17,6 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from multiprocessing.util import Finalize
+from apt_pkg import config
 from apt import Cache
 from multiprocessing.managers import BaseManager
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
@@ -30,9 +31,12 @@ class InChRootObject(object):
         self.finalizer = Finalize(self,self.rfs.leave_chroot,exitpriority=10)
 
 class RPCAPTCache(InChRootObject):
-    def __init__( self, rfs, logpath ):
+    def __init__( self, rfs, logpath, arch ):
         self.log = ASCIIDocLog(logpath)
         InChRootObject.__init__(self, rfs)
+        config.set ("APT::Architecture", arch)
+        config.set ("APT::Install-Recommends", "0")
+        config.set ("APT::Get::AllowUnauthenticated", "1")
         self.cache = Cache()
         self.cache.open()
 
@@ -98,11 +102,11 @@ class MyMan(BaseManager):
 
 MyMan.register( "RPCAPTCache", RPCAPTCache )
 
-def get_rpcaptcache(rfs, logpath):
+def get_rpcaptcache(rfs, logpath, arch):
     mm = MyMan()
     mm.start()
 
-    return mm.RPCAPTCache(rfs,logpath)
+    return mm.RPCAPTCache(rfs, logpath, arch)
 
 
 
