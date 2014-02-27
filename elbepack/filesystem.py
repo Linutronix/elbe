@@ -160,6 +160,7 @@ class Filesystem(object):
 
         return mtime_index
 
+    # XXX: dump_elbeversion is elbe specific, should not be in Filesystem
     def dump_elbeversion(self, xml):
         f = self.open("etc/elbe_version", "w+")
         f.write("%s %s" %(xml.prj.text("name"), xml.prj.text("version")))
