@@ -69,6 +69,18 @@ class RPCAPTCache(InChRootObject):
         deps = getalldeps( self.cache, pkgname )
         return [APTPackage(p, cache=self.cache) for p in deps]
 
+    def get_installed_pkgs( self ):
+        return [APTPackage(p) for p in self.cache if p.is_installed]
+
+    def get_fileindex( self ):
+        index = {}
+
+        for p in self.cache:
+            if p.is_installed:
+                for f in p.installed_files:
+                    index[f] = p.name
+
+        return index
 
 
 
