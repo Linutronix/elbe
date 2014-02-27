@@ -98,6 +98,12 @@ class Filesystem(object):
             f.close()
             self.chmod( path, mode )
 
+    def read_file( self, path ):
+        fp = self.open( path, "r" )
+        retval = fp.read()
+        fp.close()
+        return retval
+
     def mkdir_p (self, newdir, mode=0777):
             """works the way a good mkdir -p would...
                     - already exists, silently complete
@@ -119,6 +125,40 @@ class Filesystem(object):
             else:
                     fp = self.open(fname,"w")
                     fp.close ()
+
+    def walk_files(self, directory='', exclude_dirs=[]):
+        dirname = self.fname(directory)
+        if dirname=="/":
+            striplen = 0
+        else:
+            striplen = len(dirname)
+        for dirpath, dirnames, filenames in os.walk(dirname):
+            subpath = dirpath[striplen:]
+            if len(subpath) == 0:
+                subpath="/"
+
+            deldirs = []
+            for d in dirnames:
+                dpath = os.path.join( subpath, d )
+                if dpath in exclude_dirs:
+                    deldirs.append(d)
+
+            for d in deldirs:
+                dirnames.remove(d)
+
+            for f in filenames:
+                fpath = os.path.join( subpath, f )
+                realpath = os.path.join( dirpath, f )
+                yield fpath, realpath
+
+    def mtime_snap(self, dirname='', exclude_dirs=[]):
+        mtime_index = {}
+
+        for fpath, realpath in self.walk_files(dirname,exclude_dirs):
+            stat = os.lstat(realpath)
+            mtime_index[fpath] = stat.st_mtime
+
+        return mtime_index
 
     def dump_elbeversion(self, xml):
         f = self.open("etc/elbe_version", "w+")
