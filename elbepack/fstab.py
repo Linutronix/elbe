@@ -56,5 +56,5 @@ class fstabentry(object):
         return ""
 
     def losetup( self, outf, loopdev ):
-        outf.do_command( 'losetup -o%d --sizelimit %d /dev/%s "%s"' % (self.offset, self.size, loopdev, self.filename) )
+        outf.do( 'losetup -o%d --sizelimit %d /dev/%s "%s"' % (self.offset, self.size, loopdev, self.filename) )
 
