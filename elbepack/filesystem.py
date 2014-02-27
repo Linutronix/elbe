@@ -73,7 +73,7 @@ class Filesystem(object):
         content = []
         try:
             f = self.open(inf)
-            content = f.readlines();
+            content = f.readlines()
             f.close()
         except IOError:
             pass
@@ -172,7 +172,7 @@ class Filesystem(object):
 
 def copy_filelist( src, filelist, dst ):
     for f in filelist:
-        f = f.rstrip("\n");
+        f = f.rstrip("\n")
         if src.isdir(f) and not src.islink(f):
             if not dst.isdir(f):
                 dst.makedirs(f)
@@ -183,7 +183,7 @@ def copy_filelist( src, filelist, dst ):
     # update utime which will change after a file has been copied into
     # the directory
     for f in filelist:
-        f = f.rstrip("\n");
+        f = f.rstrip("\n")
         if src.isdir(f) and not src.islink(f):
             shutil.copystat(src.fname(f), dst.fname(f))
 
@@ -205,7 +205,7 @@ def extract_target( src, xml, dst ):
 
         file_list = []
         for line in f.readlines():
-            line = line.rstrip("\n");
+            line = line.rstrip("\n")
             file_list += src.cat_file("var/lib/dpkg/info/%s.list" %(line))
             file_list += src.cat_file("var/lib/dpkg/info/%s.conffiles" %(line))
 

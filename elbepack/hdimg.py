@@ -207,9 +207,9 @@ def do_image_hd( outf, hd, fslabel, target ):
             continue
 
         if part.text("size") == "remain" and hd.tag == "gpthd":
-            sz = size_in_sectors - 35 - current_sector;
+            sz = size_in_sectors - 35 - current_sector
         elif part.text("size") == "remain":
-            sz = size_in_sectors - current_sector;
+            sz = size_in_sectors - current_sector
         else:
             sz = size_to_int(part.text("size"))/sector_size
 
