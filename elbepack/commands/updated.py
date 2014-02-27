@@ -1,13 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
 import os
-import sys
-import uuid
-from elbepack.expect import spawn
-import pexpect
-import apt
-import ConfigParser
-import shutil
 import uuid
 
 # sys.path.append('./')
@@ -26,21 +19,14 @@ from spyne.model.primitive import Unicode
 from spyne.model.primitive import Mandatory
 from spyne.server.wsgi import WsgiApplication
 from spyne.protocol.soap import Soap11
-from spyne.model.binary import File
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from watchdog.events import PatternMatchingEventHandler
 
 
 from elbepack.treeutils import etree
-from elbepack import virtapt
 
-from optparse import OptionParser
-from datetime import datetime
-from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
-import apt_pkg
 
 BLOCK_SIZE = 8192
 
