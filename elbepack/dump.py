@@ -37,6 +37,73 @@ def dump_fullpkgs( xml, rfs, cache ):
     except:
         pass
    
+def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
+    elog = ASCIIDocLog(errorname)
+
+    elog.h1("ELBE Package validation")
+    elog.h2("Package List validation")
+
+    errors = 0
+
+    for name in [p.et.text for p in pkgs]:
+
+        nomulti_name = name.split(":")[0]
+        if not cache.has_pkg(nomulti_name):
+            elog.printo( "- package %s does not exist" % nomulti_name )
+            errors += 1
+            continue
+
+        if not cache.is_installed(nomulti_name):
+            elog.printo( "- package %s is not installed" % nomulti_name )
+            errors += 1
+            continue
+
+    if errors == 0:
+        elog.printo( "No Errors found" )
+
+    if not fullpkgs:
+        return
+
+    elog.h2("Full Packagelist validation")
+    errors = 0
+
+    pindex = {}
+    for p in fullpkgs:
+        name = p.et.text
+        ver  = p.et.get('version')
+        md5  = p.et.get('md5')
+
+        pindex[name] = p
+
+        if not cache.has_pkg(name):
+            elog.printo( "- package %s does not exist" % name )
+            errors += 1
+            continue
+
+        if not cache.is_installed(name):
+            elog.printo( "- package %s is not installed" % name )
+            errors += 1
+            continue
+
+        pkg = cache.get_pkg(name)
+
+        if pkg.installed_version != ver:
+            elog.printo( "- package %s version %s does not match installed version %s" % (name, ver,  pkg.installed_version) )
+            errors += 1
+            continue
+
+        if pkg.installed_md5 != md5:
+            elog.printo( "- package %s md5 %s does not match installed md5 %s" % (name, md5,  pkg.installed.md5) )
+            errors += 1
+
+    for cp in cache.get_installed_pkgs():
+        if not pindex.has_key(cp.name):
+            elog.printo( "additional package %s installed, that was not requested" % cp.name )
+            errors += 1
+
+    if errors == 0:
+        elog.printo( "No Errors found" )
+
 def do_finetuning(xml, rfs, log):
     log.printo( "finetuning not implemented" )
 
