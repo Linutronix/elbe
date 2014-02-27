@@ -227,7 +227,7 @@ def run_command( argv ):
 
         cache.commit()
 
-    buildenv.seed_etc()
+        buildenv.seed_etc()
 
     #outf.chroot( chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
 
