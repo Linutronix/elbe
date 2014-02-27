@@ -36,7 +36,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
-from elbepack.dump import elbe_report, dump_fullpkgs
+from elbepack.dump import elbe_report, dump_fullpkgs, check_full_pkgs
 
 def read_file( fname ):
     f = file( fname, "r" )
@@ -238,9 +238,21 @@ def run_command( argv ):
 
     extract_target( buildenv.rfs, xml, targetfs )
     targetfs.dump_elbeversion(xml)
-    #targetfs.do_elbe_dump(xml)
+
+    validation = os.path.join(opt.target, 'validation.txt')
+    pkgs = xml.xml.node("/target/pkg-list")
+    if xml.has("fullpkgs"):
+        check_full_pkgs(pkgs, xml.xml.node("/fullpkgs"), validation, cache)
+    else:
+        check_full_pkgs(pkgs, None, validation, cache)
+
     dump_fullpkgs(xml, buildenv.rfs, cache)
-    elbe_report( xml, buildenv.rfs, cache, os.path.join(opt.target, "elbe-report.txt") )
+
+    sourcexml = os.path.join(opt.target, 'source.xml')
+    xml.xml.write(sourcexml)
+
+    report = os.path.join(opt.target, "elbe-report.txt")
+    elbe_report( xml, buildenv.rfs, cache, report )
 
     f = open(os.path.join(opt.target,"licence.txt"), "w+")
     buildenv.rfs.write_licenses(f)
