@@ -263,6 +263,7 @@ class ChRootFilesystem(Filesystem):
     def enter_chroot (self):
         self.cwd = os.open ("/", os.O_RDONLY)
 
+        os.chdir(self.path)
         os.chroot(self.path)
 
         os.environ["LANG"] = "C"
