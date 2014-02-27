@@ -25,3 +25,4 @@ debian/elbe-updated/
 debian/tmp/
 dist/
 elbe.egg-info/
+tags
