@@ -35,6 +35,13 @@ from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.asciidoclog import ASCIIDocLog
 
+from elbepack.elbexml import ElbeXML
+from elbepack.rfs import BuildEnv
+from elbepack.rpcaptcache import get_rpcaptcache
+from elbepack.filesystem import TargetFs
+from elbepack.filesystem import extract_target
+from elbepack.dump import elbe_report, dump_fullpkgs
+
 def read_file( fname ):
     f = file( fname, "r" )
     d = f.read()
@@ -48,98 +55,6 @@ def write_file( fname, mode, cont ):
     os.chmod( fname, mode )
 
 
-def check_full_pkgs(pkgs, errorname):
-    elog = ASCIIDocLog(errorname)
-
-    elog.h1("ELBE Package validation")
-
-    errors = 0
-    cache = apt.cache.Cache( memonly=True )
-    pindex = {}
-    for p in pkgs:
-        name = p.et.text
-        ver  = p.et.get('version')
-        md5  = p.et.get('md5')
-
-        pindex[name] = p
-
-        cp = cache[name]
-
-        if not cp:
-            elog.printo( "- package %s not installed" % name )
-            errors += 1
-
-        if cp.installed.version != ver:
-            elog.printo( "- package %s version %s does not match installed version %s" % (name, ver,  cp.installed.version) )
-            errors += 1
-
-        if cp.installed.md5 != md5:
-            elog.printo( "- package %s md5 %s does not match installed md5 %s" % (name, md5,  cp.installed.md5) )
-            errors += 1
-
-    for cp in cache:
-        if cp.is_installed:
-            if not pindex.has_key(cp.name):
-                elog.printo( "additional package %s installed, that was not requested" % cp.name )
-                errors += 1
-
-    if errors == 0:
-        elog.printo( "No Errors found" )
-
-def debootstrap( outf, directory, mirror, suite, target_arch, defs ):
-
-    current_arch = outf.get_command_out( "dpkg --print-architecture" )
-    current_arch = current_arch.strip()
-
-    print current_arch, target_arch
-
-    outf.h2( "debootstrap log" )
-
-    if current_arch == target_arch:
-        debootstrap_cmd = 'debootstrap "%s" "%s" "%s"' % (suite, directory, mirror)
-        outf.do( debootstrap_cmd )
-    else:
-        debootstrap_cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (target_arch, suite, directory, mirror)
-        outf.do( debootstrap_cmd )
-        outf.do( 'cp /usr/bin/%s %s' % (defs["userinterpr"], os.path.join(directory, "usr/bin" )) )
-        outf.chroot( directory, '/debootstrap/debootstrap --second-stage' )
-        outf.chroot( directory, 'dpkg --configure -a' )
-
-
-def mount_stuff( outf, directory ):
-    outf.h2( "mounting proc/sys/dev" )
-    try:
-        outf.do( "mount -t proc none %s/proc" % directory )
-        outf.do( "mount -t sysfs none %s/sys" % directory )
-        outf.do( "mount -o bind /dev %s/dev" % directory )
-        outf.do( "mount -o bind /dev/pts %s/dev/pts" % directory )
-    except:
-        umount_stuff( outf, directory )
-        raise
-
-
-def umount_stuff( outf, directory ):
-    outf.h2( "unmounting proc/sys/dev" )
-    try:
-        outf.do( "umount %s/proc/sys/fs/binfmt_misc" % directory )
-    except:
-        pass
-    try:
-        outf.do( "umount %s/proc" % directory )
-    except:
-        pass
-    try:
-        outf.do( "umount %s/sys" % directory )
-    except:
-        pass
-    try:
-        outf.do( "umount %s/dev/pts" % directory )
-    except:
-        pass
-    try:
-        outf.do( "umount %s/dev" % directory )
-    except:
-        pass
 
 # Some more helpers
 def template(fname, d):
@@ -261,30 +176,25 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    if not opt.skip_validation:
-        if not validate_xml( args[0] ):
-            print "xml validation failed. Bailing out"
-            sys.exit(20)
-
-    xml = etree( args[0] )
-    prj = xml.node("/project")
-    tgt = xml.node("/target")
-
     if not opt.output:
-        return 0
+        print "No Log output"
+        sys.exit(20)
     if not opt.target:
-        return 0
+        print "No target specified"
+        sys.exit(20)
 
     opt.target = os.path.abspath(opt.target)
 
     if opt.buildtype:
         buildtype = opt.buildtype
-    elif xml.has( "project/buildtype" ):
-        buildtype = xml.text( "/project/buildtype" )
     else:
-        buildtype = "nodefaults"
+        buildtype = None
 
-    defs = ElbeDefaults( buildtype )
+    try:
+        xml = ElbeXML( args[0], buildtype=buildtype, skip_validate=opt.skip_validation )
+    except ValidationError:
+        print "xml validation failed. Bailing out"
+        sys.exit(20)
 
     chroot = os.path.join(opt.target, "chroot")
     os.system( 'mkdir -p "%s"' % chroot )
@@ -298,90 +208,50 @@ def run_command( argv ):
 
     outf.printo( "report timestamp: "+datetime.datetime.now().strftime("%Y%m%d-%H%M%S") )
 
-    suite = prj.text("suite")
-    target_arch = prj.text("buildimage/arch", default=defs, key="arch")
+    buildenv = BuildEnv(xml, outf, chroot)
 
-    slist = ""
-    mirror = "Error"
-    if prj.has("mirror/primary_host"):
-        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host").replace("LOCALMACHINE", "10.0.2.2"), prj.text("mirror/primary_path").lstrip("/"))
-        slist += "deb %s %s main\n" % (mirror, suite)
-        slist += "deb-src %s %s main\n" % (mirror, suite)
 
-    if prj.has("mirror/cdrom"):
-        cdrompath = os.path.join( opt.target, "cdrom" )
-        mirror = "file://%s/debian" % cdrompath
-        outf.do( 'mkdir -p "%s"' % cdrompath )
-        outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), cdrompath ) )
+    # XXX: need to add cdrom feature into buildenv
+    #if prj.has("mirror/cdrom"):
+    #    outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
+    with buildenv:
+        cache = get_rpcaptcache( buildenv.rfs, "aptcache.log" )
 
-        slist += "deb copy:///mnt %s main\n" % (suite)
-        #slist += "deb-src file:///mnt %s main\n" % (suite)
+        # XXX: cache update currently fails because of GPG Key... and some file issue.
+        #cache.update()
 
-    if opt.proxy:
-        os.environ["http_proxy"] = opt.proxy
-    elif prj.has("mirror/primary_proxy"):
-        os.environ["http_proxy"] = prj.text("mirror/primary_proxy")
+        be_pkgs = buildenv.xml.get_buildenv_packages()
+        ta_pkgs = buildenv.xml.get_target_packages()
 
-    os.environ["LANG"] = "C"
-    os.environ["LANGUAGE"] = "C"
-    os.environ["LC_ALL"] = "C"
-    os.environ["DEBIAN_FRONTEND"]="noninteractive"
-    os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
+        for p in be_pkgs + ta_pkgs:
+            try:
+                cache.mark_install( p, None )
+            except KeyError:
+                print "No Package " + p
 
-    try:
-        if prj.node("mirror/url-list"):
-            for n in prj.node("mirror/url-list"):
-                if n.has("binary"):
-                  tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2")
-                  slist += "deb %s\n" % tmp.strip()
-                if n.has("source"):
-                  tmp = n.text("source").replace("LOCALMACHINE", "10.0.2.2")
-                  slist += "deb-src %s\n" % tmp.strip()
+        cache.commit()
 
-        serial_con, serial_baud = tgt.text( "console" ).split(',')
+    buildenv.seed_etc()
 
-        if not opt.skip_debootstrap:
-            debootstrap( outf, chroot, mirror, suite, target_arch, defs )
-        seed_files( outf, chroot, slist, xml, args[0], opt, defs )
+    #outf.chroot( chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
 
-    finally:
-        if prj.has("mirror/cdrom"):
-            outf.do( 'umount "%s"' % cdrompath )
+    target = os.path.join(opt.target, "target")
+    targetfs = TargetFs(target)
 
-    mount_stuff( outf, chroot )
-    if prj.has("mirror/cdrom"):
-        outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
+    os.chdir(buildenv.rfs.fname(''))
 
-    # sync this with adjustpkgs.py's own list or it will remove packages.
-    pkglist = ["parted", "mtd-utils", "dpkg-dev", "dosfstools", "apt-rdepends",
-               "python-apt", "rsync", "genisoimage", "reprepro", "python-parted",
-               "elbe-daemon"]
+    extract_target( buildenv.rfs, xml, targetfs )
+    targetfs.dump_elbeversion(xml)
+    #targetfs.do_elbe_dump(xml)
+    dump_fullpkgs(xml, buildenv.rfs, cache)
+    elbe_report( xml, buildenv.rfs, cache, os.path.join(opt.target, "elbe-report.txt") )
 
-    try:
-        outf.chroot( chroot, "apt-get update" )
-        outf.chroot( chroot, """/bin/sh -c 'debconf-set-selections < /opt/elbe/custom-preseed.cfg'""" )
-        if not opt.skip_debootstrap:
-            outf.chroot( chroot, "apt-get install -y --force-yes " + string.join( pkglist ) )
-        outf.chroot( chroot, "elbe adjustpkgs -o /opt/elbe/adjust.log /opt/elbe/source.xml" )
-        outf.chroot( chroot, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (tgt.text("passwd"), tgt.text("passwd")) )
-        outf.chroot( chroot, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (tgt.text("hostname"), tgt.text("hostname"), tgt.text("domain")) )
-        outf.chroot( chroot, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % tgt.text("hostname") )
-        outf.chroot( chroot, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (tgt.text("hostname"), tgt.text("domain")) )
-        outf.chroot( chroot, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
-        outf.chroot( chroot, "rm /usr/sbin/policy-rc.d" )
-        outf.chroot( chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
-        if not opt.skip_cdrom:
-            outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
+    f = open(os.path.join(opt.target,"licence.txt"), "w+")
+    buildenv.rfs.write_licenses(f)
+    f.close()
 
-    finally:
-        if prj.has("mirror/cdrom"):
-            outf.do( 'umount "%s"' % os.path.join(chroot, "mnt") )
-        umount_stuff( outf, chroot )
+    targetfs.part_target(outf, xml, opt.target)
 
-    extract = open( os.path.join(chroot, "opt/elbe/files-to-extract"), "r" )
-    for fname in extract.readlines():
-        outf.do( 'cp "%s" "%s"' % (chroot+fname.strip(), opt.target) ) 
-    extract.close()
+    #if not opt.skip_cdrom:
+    #    outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
 
-if __name__ == "__main__":
-    run_command( sys.argv[1:] )
