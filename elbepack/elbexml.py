@@ -30,7 +30,7 @@ class ValidationError(Exception):
         pass
 
     def __repr__(self):
-	return "Elbe XML Validation Error"
+        return "Elbe XML Validation Error"
 
 
 class ElbeXML(object):
@@ -76,38 +76,38 @@ class ElbeXML(object):
         return True
 
     def get_primary_mirror (self, cdrompath):
-            if self.prj.has("mirror/primary_host"):
-                    m = self.prj.node("mirror")
+        if self.prj.has("mirror/primary_host"):
+            m = self.prj.node("mirror")
 
-                    mirror = m.text("primary_proto") + "://"
-                    mirror +=m.text("primary_host")  + "/"
-                    mirror +=m.text("primary_path")
+            mirror = m.text("primary_proto") + "://"
+            mirror +=m.text("primary_host")  + "/"
+            mirror +=m.text("primary_path")
 
-            elif self.prj.has("mirror/cdrom") and cdrompath:
-                     mirror = "file://%s/debian" % cdrompath
+        elif self.prj.has("mirror/cdrom") and cdrompath:
+            mirror = "file://%s/debian" % cdrompath
 
-            return mirror.replace("LOCALMACHINE", "10.0.2.2")
+        return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
 
     # XXX: maybe add cdrom path param ?
     def create_apt_sources_list (self):
-            if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
-                    return "# no mirrors configured"
+        if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
+            return "# no mirrors configured"
 
-            if self.prj.has("mirror/primary_host"):
-                    mirror  = "deb " + self.get_primary_mirror (None)
-                    mirror += " " + self.prj.text("suite") + " main\n"
+        if self.prj.has("mirror/primary_host"):
+            mirror  = "deb " + self.get_primary_mirror (None)
+            mirror += " " + self.prj.text("suite") + " main\n"
 
-                    for url in self.prj.node("mirror/url-list"):
-                          if url.has("binary"):
-                               mirror += "deb " + url.text("binary").strip() + "\n"
-                          if url.has("source"):
-                               mirror += "deb-src "+url.text("source").strip()+"\n"
+            for url in self.prj.node("mirror/url-list"):
+                if url.has("binary"):
+                    mirror += "deb " + url.text("binary").strip() + "\n"
+                if url.has("source"):
+                    mirror += "deb-src "+url.text("source").strip()+"\n"
 
-            if self.prj.has("mirror/cdrom"):
-                    mirror += "deb copy:///mnt %s main\n" % (self.prj.text("suite"))
+        if self.prj.has("mirror/cdrom"):
+            mirror += "deb copy:///mnt %s main\n" % (self.prj.text("suite"))
 
-            return mirror.replace("LOCALMACHINE", "10.0.2.2")
+        return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
     def get_target_packages(self):
         return [p.et.text for p in self.xml.node("/target/pkg-list")]

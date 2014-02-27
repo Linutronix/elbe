@@ -85,12 +85,12 @@ def run_command( argv ):
               xml.text("/project/mirror/primary_path"))
         print 'additional mirrors:'
         for url in xml.node("/project/mirror/url-list"):
-              if url.has("binary"):
-                        print '    deb %s' % url.text("binary").strip()
-              if url.has("source"):
-                        print '    deb-src %s' % url.text("source").strip()
+            if url.has("binary"):
+                print '    deb %s' % url.text("binary").strip()
+            if url.has("source"):
+                print '    deb-src %s' % url.text("source").strip()
         print 'packages:'
         for pkg in xml.node("/target/pkg-list"):
-              print '    %s' % pkg.et.text
+            print '    %s' % pkg.et.text
         print 'skip package validation: %s' % xml.has("project/noauth")
         print 'archive embedded?        %s' % xml.has("archive")

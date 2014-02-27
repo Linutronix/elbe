@@ -179,101 +179,101 @@ class simple_fstype(object):
 
 def do_image_hd( outf, hd, fslabel, target ):
 
-        # Init to 0 because we increment before using it
-        partition_number = 0
+    # Init to 0 because we increment before using it
+    partition_number = 0
 
-        sector_size = 512
-	s=size_to_int(hd.text("size"))
-	size_in_sectors = s / sector_size
+    sector_size = 512
+    s=size_to_int(hd.text("size"))
+    size_in_sectors = s / sector_size
 
-        imagename = os.path.join(target,hd.text("name"))
-        outf.do( 'rm "%s"' % imagename, allow_fail=True )
-        f = open( imagename, "wb" )
-        f.truncate( size_in_sectors * sector_size )
-        f.close()
+    imagename = os.path.join(target,hd.text("name"))
+    outf.do( 'rm "%s"' % imagename, allow_fail=True )
+    f = open( imagename, "wb" )
+    f.truncate( size_in_sectors * sector_size )
+    f.close()
 
-	imag = parted.Device( imagename )
-        if hd.tag == "gpthd":
-            disk = parted.freshDisk(imag, "gpt" )
+    imag = parted.Device( imagename )
+    if hd.tag == "gpthd":
+        disk = parted.freshDisk(imag, "gpt" )
+    else:
+        disk = parted.freshDisk(imag, "msdos" )
+
+    grub = grubinstaller( outf )
+
+    current_sector = 2048
+    for part in hd:
+
+        if part.tag != "partition":
+            continue
+
+        if part.text("size") == "remain" and hd.tag == "gpthd":
+            sz = size_in_sectors - 35 - current_sector;
+        elif part.text("size") == "remain":
+            sz = size_in_sectors - current_sector;
         else:
-            disk = parted.freshDisk(imag, "msdos" )
+            sz = size_to_int(part.text("size"))/sector_size
 
-        grub = grubinstaller( outf )
+        g = parted.Geometry (device=imag,start=current_sector,length=sz)
+        if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
+            fs = simple_fstype("fat32")
+            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
+            ppart.setFlag(_ped.PARTITION_LBA)
+        else:
+            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
 
-	current_sector = 2048
-	for part in hd:
+        cons = parted.Constraint(exactGeom=g)
+        disk.addPartition(ppart, cons)
 
-            if part.tag != "partition":
-                continue
+        if part.has("bootable"):
+            ppart.setFlag(_ped.PARTITION_BOOT)
 
-	    if part.text("size") == "remain" and hd.tag == "gpthd":
-		sz = size_in_sectors - 35 - current_sector;
-	    elif part.text("size") == "remain":
-		sz = size_in_sectors - current_sector;
-	    else:
-		sz = size_to_int(part.text("size"))/sector_size
+        if part.has("biosgrub"):
+            ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
 
-            g = parted.Geometry (device=imag,start=current_sector,length=sz)
-            if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
-                fs = simple_fstype("fat32")
-                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
-		ppart.setFlag(_ped.PARTITION_LBA)
-            else:
-                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
+        partition_number += 1
 
-	    cons = parted.Constraint(exactGeom=g)
-	    disk.addPartition(ppart, cons)
+        if not fslabel.has_key(part.text("label")):
+            current_sector += sz
+            continue
 
-	    if part.has("bootable"):
-		ppart.setFlag(_ped.PARTITION_BOOT)
-
-	    if part.has("biosgrub"):
-		ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
-
-            partition_number += 1
-
-            if not fslabel.has_key(part.text("label")):
-                current_sector += sz
-                continue
-
-	    entry = fslabel[part.text("label")]
-	    entry.offset = current_sector*sector_size
-	    entry.size   = sz * sector_size
-	    entry.filename = imagename 
-            if hd.tag == "gpthd":
-                entry.number = "gpt%d" % partition_number
-            else:
-                entry.number = "msdos%d" % partition_number
+        entry = fslabel[part.text("label")]
+        entry.offset = current_sector*sector_size
+        entry.size   = sz * sector_size
+        entry.filename = imagename 
+        if hd.tag == "gpthd":
+            entry.number = "gpt%d" % partition_number
+        else:
+            entry.number = "msdos%d" % partition_number
 
 
-            if entry.mountpoint == "/":
-                grub.set_root_entry( entry )
-            elif entry.mountpoint == "/boot":
-                grub.set_boot_entry( entry )
+        if entry.mountpoint == "/":
+            grub.set_root_entry( entry )
+        elif entry.mountpoint == "/boot":
+            grub.set_boot_entry( entry )
 
-            entry.losetup( outf, "loop0" )
-	    outf.do( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
+        entry.losetup( outf, "loop0" )
+        outf.do( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
-            outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
-            outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
-            outf.do( 'umount /dev/loop0' )
-	    outf.do( 'losetup -d /dev/loop0' )
+        outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
+        outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
+        outf.do( 'umount /dev/loop0' )
+        outf.do( 'losetup -d /dev/loop0' )
 
-	    current_sector += sz
+        current_sector += sz
 
-	disk.commit()
+    disk.commit()
 
-        if hd.has( "grub-install" ):
-            grub.install( target )
+    if hd.has( "grub-install" ):
+        grub.install( target )
 
 def do_hdimg(outf, xml, target, rfs):
     # Build a dictonary of mount points
     fslabel = {}
     for fs in xml.tgt.node("fstab"):
-	if fs.tag != "bylabel":
-	    continue
+        if fs.tag != "bylabel":
+            continue
 
-	fslabel[fs.text("label")] = fstabentry(fs)
+        fslabel[fs.text("label")] = fstabentry(fs)
 
     # Build a sorted list of mountpoints
     fslist = fslabel.values()
@@ -295,24 +295,24 @@ def do_hdimg(outf, xml, target, rfs):
             outf.do( 'mv "%s"/* "%s"' % ( rfs.fname(l.mountpoint), os.path.join( fspath, l.label ) ) )
 
     try:
-	# Now iterate over all images and create filesystems and partitions
-	for i in xml.tgt.node("images"):
-	    if i.tag == "msdoshd":
-		do_image_hd( outf, i, fslabel, target )
+        # Now iterate over all images and create filesystems and partitions
+        for i in xml.tgt.node("images"):
+            if i.tag == "msdoshd":
+                do_image_hd( outf, i, fslabel, target )
 
-	    if i.tag == "gpthd":
-		do_image_hd( outf, i, fslabel, target )
+            if i.tag == "gpthd":
+                do_image_hd( outf, i, fslabel, target )
 
-	    if i.tag == "mtd":
-		mkfs_mtd( outf, i, fslabel, rfs, target )
+            if i.tag == "mtd":
+                mkfs_mtd( outf, i, fslabel, rfs, target )
     finally:
-	# Put back the filesystems into /target
-	# most shallow fs first...
-	for i in fslist:
+        # Put back the filesystems into /target
+        # most shallow fs first...
+        for i in fslist:
             if len(os.listdir(os.path.join( fspath, i.label ))) > 0:
                 outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.label ), rfs.fname(i.mountpoint) ) )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in xml.tgt.node("images"):
-	if i.tag == "mtd":
-	    build_image_mtd( outf, i, fslabel, target )
+        if i.tag == "mtd":
+            build_image_mtd( outf, i, fslabel, target )

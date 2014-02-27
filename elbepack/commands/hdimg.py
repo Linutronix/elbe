@@ -35,43 +35,43 @@ from elbepack.treeutils import etree
 
 class commanderror(Exception):
     def __init__(self, cmd, returncode):
-	self.returncode = returncode
-	self.cmd = cmd
+        self.returncode = returncode
+        self.cmd = cmd
 
     def __repr__(self):
-	return "Error: %d returned from Command %s" % (self.returncode, self.cmd)
+        return "Error: %d returned from Command %s" % (self.returncode, self.cmd)
 
 class asccidoclog(object):
     def __init__(self):
-	self.fp = sys.stdout
+        self.fp = sys.stdout
 
     def printo(self, text=""):
-	self.fp.write(text+"\n")
+        self.fp.write(text+"\n")
 
     def print_raw(self, text):
-	self.fp.write(text)
+        self.fp.write(text)
 
     def h1(self, text):
-	self.printo()
-	self.printo(text)
-	self.printo("="*len(text))
-	self.printo()
+        self.printo()
+        self.printo(text)
+        self.printo("="*len(text))
+        self.printo()
 
     def h2(self, text):
-	self.printo()
-	self.printo(text)
-	self.printo("-"*len(text))
-	self.printo()
+        self.printo()
+        self.printo(text)
+        self.printo("-"*len(text))
+        self.printo()
 
     def table(self):
-	self.printo( "|=====================================" )
+        self.printo( "|=====================================" )
 
     def verbatim_start(self):
-	self.printo( "------------------------------------------------------------------------------" )
+        self.printo( "------------------------------------------------------------------------------" )
 
     def verbatim_end(self):
-	self.printo( "------------------------------------------------------------------------------" )
-	self.printo()
+        self.printo( "------------------------------------------------------------------------------" )
+        self.printo()
 
     def do_command(self, cmd, **args):
 
@@ -80,16 +80,16 @@ class asccidoclog(object):
         else:
             allow_fail = False
 
-	self.printo( "running cmd +%s+" % cmd )
-	self.verbatim_start()
-	p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
-	output, stderr = p.communicate()
-	self.print_raw( output )
-	self.verbatim_end()
+        self.printo( "running cmd +%s+" % cmd )
+        self.verbatim_start()
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
+        output, stderr = p.communicate()
+        self.print_raw( output )
+        self.verbatim_end()
 
 
-	if p.returncode != 0:
-	    self.printo( "Command failed with errorcode %d" % p.returncode )
+        if p.returncode != 0:
+            self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
                 raise commanderror(cmd, p.returncode)
 
@@ -248,93 +248,93 @@ class simple_fstype(object):
 
 def do_image_hd( outf, hd, fslabel, opt ):
 
-        # Init to 0 because we increment before using it
-        partition_number = 0
+    # Init to 0 because we increment before using it
+    partition_number = 0
 
-        sector_size = 512
-	s=size_to_int(hd.text("size"))
-	size_in_sectors = s / sector_size
+    sector_size = 512
+    s=size_to_int(hd.text("size"))
+    size_in_sectors = s / sector_size
 
-        outf.do_command( 'rm "%s"' % hd.text("name"), allow_fail=True )
-        f = open( hd.text("name"), "wb" )
-        f.truncate( size_in_sectors * sector_size )
-        f.close()
+    outf.do_command( 'rm "%s"' % hd.text("name"), allow_fail=True )
+    f = open( hd.text("name"), "wb" )
+    f.truncate( size_in_sectors * sector_size )
+    f.close()
 
-	imag = parted.Device( hd.text("name") )
-        if hd.tag == "gpthd":
-            disk = parted.freshDisk(imag, "gpt" )
+    imag = parted.Device( hd.text("name") )
+    if hd.tag == "gpthd":
+        disk = parted.freshDisk(imag, "gpt" )
+    else:
+        disk = parted.freshDisk(imag, "msdos" )
+
+    outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
+
+    grub = grubinstaller( outf )
+
+    current_sector = 2048
+    for part in hd:
+
+        if part.tag != "partition":
+            continue
+
+        if part.text("size") == "remain" and hd.tag == "gpthd":
+            sz = size_in_sectors - 35 - current_sector;
+        elif part.text("size") == "remain":
+            sz = size_in_sectors - current_sector;
         else:
-            disk = parted.freshDisk(imag, "msdos" )
+            sz = size_to_int(part.text("size"))/sector_size
 
-        outf.do_command( 'echo /opt/elbe/' + hd.text("name") + ' >> /opt/elbe/files-to-extract' )
+        g = parted.Geometry (device=imag,start=current_sector,length=sz)
+        if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
+            fs = simple_fstype("fat32")
+            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
+            ppart.setFlag(_ped.PARTITION_LBA)
+        else:
+            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
 
-        grub = grubinstaller( outf )
+        cons = parted.Constraint(exactGeom=g)
+        disk.addPartition(ppart, cons)
 
-	current_sector = 2048
-	for part in hd:
+        if part.has("bootable"):
+            ppart.setFlag(_ped.PARTITION_BOOT)
 
-            if part.tag != "partition":
-                continue
+        if part.has("biosgrub"):
+            ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
 
-	    if part.text("size") == "remain" and hd.tag == "gpthd":
-		sz = size_in_sectors - 35 - current_sector;
-	    elif part.text("size") == "remain":
-		sz = size_in_sectors - current_sector;
-	    else:
-		sz = size_to_int(part.text("size"))/sector_size
+        partition_number += 1
 
-            g = parted.Geometry (device=imag,start=current_sector,length=sz)
-            if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
-                fs = simple_fstype("fat32")
-                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
-		ppart.setFlag(_ped.PARTITION_LBA)
-            else:
-                ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
+        if not fslabel.has_key(part.text("label")):
+            current_sector += sz
+            continue
 
-	    cons = parted.Constraint(exactGeom=g)
-	    disk.addPartition(ppart, cons)
-
-	    if part.has("bootable"):
-		ppart.setFlag(_ped.PARTITION_BOOT)
-
-	    if part.has("biosgrub"):
-		ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
-
-            partition_number += 1
-
-            if not fslabel.has_key(part.text("label")):
-                current_sector += sz
-                continue
-
-	    entry = fslabel[part.text("label")]
-	    entry.offset = current_sector*sector_size
-	    entry.size   = sz * sector_size
-	    entry.filename = hd.text("name")
-            if hd.tag == "gpthd":
-                entry.number = "gpt%d" % partition_number
-            else:
-                entry.number = "msdos%d" % partition_number
+        entry = fslabel[part.text("label")]
+        entry.offset = current_sector*sector_size
+        entry.size   = sz * sector_size
+        entry.filename = hd.text("name")
+        if hd.tag == "gpthd":
+            entry.number = "gpt%d" % partition_number
+        else:
+            entry.number = "msdos%d" % partition_number
 
 
-            if entry.mountpoint == "/":
-                grub.set_root_entry( entry )
-            elif entry.mountpoint == "/boot":
-                grub.set_boot_entry( entry )
+        if entry.mountpoint == "/":
+            grub.set_root_entry( entry )
+        elif entry.mountpoint == "/boot":
+            grub.set_boot_entry( entry )
 
-            entry.losetup( outf, "loop0" )
-	    outf.do_command( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
+        entry.losetup( outf, "loop0" )
+        outf.do_command( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
-            outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
-            outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ), allow_fail=True )
-            outf.do_command( 'umount /dev/loop0' )
-	    outf.do_command( 'losetup -d /dev/loop0' )
+        outf.do_command( 'mount /dev/loop0 %s' % opt.dir )
+        outf.do_command( 'cp -a "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', entry.label ), opt.dir ), allow_fail=True )
+        outf.do_command( 'umount /dev/loop0' )
+        outf.do_command( 'losetup -d /dev/loop0' )
 
-	    current_sector += sz
+        current_sector += sz
 
-	disk.commit()
+    disk.commit()
 
-        if hd.has( "grub-install" ):
-            grub.install( opt )
+    if hd.has( "grub-install" ):
+        grub.install( opt )
 
 
 def run_command( argv ):
@@ -347,30 +347,30 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-	print "Wrong number of arguments"
-	oparser.print_help()
-	sys.exit(20)
+        print "Wrong number of arguments"
+        oparser.print_help()
+        sys.exit(20)
 
     if not opt.dir:
-	print "No mount directory specified!"
-	oparser.print_help()
-	sys.exit(20)
+        print "No mount directory specified!"
+        oparser.print_help()
+        sys.exit(20)
 
     try:
-	xml = etree( args[0] )
+        xml = etree( args[0] )
     except:
-	print "Error reading xml file!"
-	sys.exit(20)
+        print "Error reading xml file!"
+        sys.exit(20)
 
     tgt = xml.node("target")
 
     if not tgt.has("images"):
-	print "no images defined"
-	sys.exit(20)
+        print "no images defined"
+        sys.exit(20)
 
     if not tgt.has("fstab"):
-	print "no fstab defined"
-	sys.exit(20)
+        print "no fstab defined"
+        sys.exit(20)
 
     outf = asccidoclog()
     outf.h2( "Formatting Disks" )
@@ -378,10 +378,10 @@ def run_command( argv ):
     # Build a dictonary of mount points
     fslabel = {}
     for fs in tgt.node("fstab"):
-	if fs.tag != "bylabel":
-	    continue
+        if fs.tag != "bylabel":
+            continue
 
-	fslabel[fs.text("label")] = fstabentry(fs)
+        fslabel[fs.text("label")] = fstabentry(fs)
 
     # Build a sorted list of mountpoints
     fslist = fslabel.values()
@@ -399,27 +399,27 @@ def run_command( argv ):
             outf.do_command( 'mv "%s"/* "%s"' % ( '/target' + l.mountpoint, os.path.join( '/opt/elbe/filesystems', l.label ) ) )
 
     try:
-	# Now iterate over all images and create filesystems and partitions
-	for i in tgt.node("images"):
-	    if i.tag == "msdoshd":
-		do_image_hd( outf, i, fslabel, opt )
+        # Now iterate over all images and create filesystems and partitions
+        for i in tgt.node("images"):
+            if i.tag == "msdoshd":
+                do_image_hd( outf, i, fslabel, opt )
 
-	    if i.tag == "gpthd":
-		do_image_hd( outf, i, fslabel, opt )
+            if i.tag == "gpthd":
+                do_image_hd( outf, i, fslabel, opt )
 
-	    if i.tag == "mtd":
-		mkfs_mtd( outf, i, fslabel )
+            if i.tag == "mtd":
+                mkfs_mtd( outf, i, fslabel )
     finally:
-	# Put back the filesystems into /target
-	# most shallow fs first...
-	for i in fslist:
+        # Put back the filesystems into /target
+        # most shallow fs first...
+        for i in fslist:
             if len(os.listdir(os.path.join( '/opt/elbe/filesystems', i.label ))) > 0:
                 outf.do_command( 'mv "%s"/* "%s"' % ( os.path.join( '/opt/elbe/filesystems', i.label ), '/target' + i.mountpoint ) )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in tgt.node("images"):
-	if i.tag == "mtd":
-	    build_image_mtd( outf, i, fslabel )
+        if i.tag == "mtd":
+            build_image_mtd( outf, i, fslabel )
 
 
 if __name__ == "__main__":

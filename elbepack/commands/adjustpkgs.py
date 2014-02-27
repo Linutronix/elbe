@@ -100,9 +100,9 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-       print "Wrong number of arguments"
-       oparser.print_help()
-       sys.exit(20)
+        print "Wrong number of arguments"
+        oparser.print_help()
+        sys.exit(20)
 
     if not opt.output:
         return 0

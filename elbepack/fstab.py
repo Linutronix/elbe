@@ -23,21 +23,21 @@ from treeutils import etree
 
 class fstabentry(object):
     def __init__(self, entry):
-	self.label = entry.text("label")
-	self.mountpoint = entry.text("mountpoint")
-	if entry.has("fs"):
-	    self.fstype = entry.text("fs/type")
+        self.label = entry.text("label")
+        self.mountpoint = entry.text("mountpoint")
+        if entry.has("fs"):
+            self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
 
     def mountdepth(self):
-	h = self.mountpoint
-	depth = 0
+        h = self.mountpoint
+        depth = 0
 
-	while True:
-	    h, t = os.path.split(h) 
-	    if t=='':
-		return depth
-	    depth += 0
+        while True:
+            h, t = os.path.split(h) 
+            if t=='':
+                return depth
+            depth += 0
 
     def get_label_opt(self):
         if self.fstype == "ext4":

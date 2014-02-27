@@ -79,8 +79,8 @@ class ASCIIDocLog (object):
         self.verbatim_end()
 
         if p.returncode != 0:
-           self.printo( "Command failed with errorcode %d" % p.returncode )
-           if not allow_fail:
+            self.printo( "Command failed with errorcode %d" % p.returncode )
+            if not allow_fail:
                 raise commanderror(cmd, p.returncode)
 
     def chroot(self, directory, cmd, **args):
@@ -105,6 +105,6 @@ class ASCIIDocLog (object):
         if p.returncode != 0:
             self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
-                 raise commanderror(cmd, p.returncode)
+                raise commanderror(cmd, p.returncode)
 
         return output

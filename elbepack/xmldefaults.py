@@ -105,38 +105,38 @@ xml_field_path = {
 }
 
 def get_random_mac():
-        binaddr = [random.randint(0,256) for i in range(6) ]
-        binaddr[0] &= 0xfe
-        binaddr[0] |= 0x02
-        s = map( lambda x: "%02x" % x, binaddr )
+    binaddr = [random.randint(0,256) for i in range(6) ]
+    binaddr[0] &= 0xfe
+    binaddr[0] |= 0x02
+    s = map( lambda x: "%02x" % x, binaddr )
 
-        return string.join( s, ":" )
+    return string.join( s, ":" )
 
 
 class ElbeDefaults(object):
 
-        def __init__(self, build_type):
+    def __init__(self, build_type):
 
-                if not defaults.has_key(build_type):
-                        print "Please specify a valid buildtype."
-                        print "Valid buildtypes:"
-                        print defaults.keys()
-                        sys.exit(20)
+        if not defaults.has_key(build_type):
+            print "Please specify a valid buildtype."
+            print "Valid buildtypes:"
+            print defaults.keys()
+            sys.exit(20)
 
-                self.defaults = defaults[build_type]
-                self.defaults["nicmac"] = get_random_mac()
+        self.defaults = defaults[build_type]
+        self.defaults["nicmac"] = get_random_mac()
 
-                self.generic_defaults = archindep_defaults
+        self.generic_defaults = archindep_defaults
 
-        def __getitem__( self, key ):
-                if self.defaults.has_key( key ):
-                        return self.defaults[key]
-                if self.generic_defaults.has_key( key ):
-                        return self.generic_defaults[key]
+    def __getitem__( self, key ):
+        if self.defaults.has_key( key ):
+            return self.defaults[key]
+        if self.generic_defaults.has_key( key ):
+            return self.generic_defaults[key]
 
 
-                print "No Default value has been Provided"
-                print "Either use a valid buildtype, or provide the field in the xml File."
-                print "The location in the xml is here:"
-                print xml_field_path[key]
-                sys.exit(20)
+        print "No Default value has been Provided"
+        print "Either use a valid buildtype, or provide the field in the xml File."
+        print "The location in the xml is here:"
+        print xml_field_path[key]
+        sys.exit(20)

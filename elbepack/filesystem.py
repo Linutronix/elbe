@@ -94,10 +94,10 @@ class Filesystem(object):
         return retval
 
     def write_file( self, path, mode, cont ):
-            f = self.open( path, "w" )
-            f.write(cont)
-            f.close()
-            self.chmod( path, mode )
+        f = self.open( path, "w" )
+        f.write(cont)
+        f.close()
+        self.chmod( path, mode )
 
     def read_file( self, path ):
         fp = self.open( path, "r" )
@@ -106,26 +106,26 @@ class Filesystem(object):
         return retval
 
     def mkdir_p (self, newdir, mode=0777):
-            """works the way a good mkdir -p would...
-                    - already exists, silently complete
-                    - regular file in the way, raise an exception
-                    - parent directory(ies) does not exist, make them as well
-            """
-            if self.isdir (newdir):
-                    pass
-            elif self.isfile (newdir):
-                    raise OSError ("a file with the same name as the desired " \
-                                   "dir, '%s', already exists. in RFS %s" % (newdir, self.path))
-            else:
-                    self.mkdir (newdir)
-                    self.chmod (newdir,mode)
+        """works the way a good mkdir -p would...
+                - already exists, silently complete
+                - regular file in the way, raise an exception
+                - parent directory(ies) does not exist, make them as well
+        """
+        if self.isdir (newdir):
+            pass
+        elif self.isfile (newdir):
+            raise OSError ("a file with the same name as the desired " \
+                    "dir, '%s', already exists. in RFS %s" % (newdir, self.path))
+        else:
+            self.mkdir (newdir)
+            self.chmod (newdir,mode)
 
     def touch_file (self,fname):
-            if self.exists (fname):
-                    self.utime(fname)
-            else:
-                    fp = self.open(fname,"w")
-                    fp.close ()
+        if self.exists (fname):
+            self.utime(fname)
+        else:
+            fp = self.open(fname,"w")
+            fp.close ()
 
     def walk_files(self, directory='', exclude_dirs=[]):
         dirname = self.fname(directory)
@@ -175,7 +175,7 @@ def copy_filelist( src, filelist, dst ):
         f = f.rstrip("\n");
         if src.isdir(f) and not src.islink(f):
             if not dst.isdir(f):
-                    dst.makedirs(f)
+                dst.makedirs(f)
             st = src.stat(f)
             dst.chown(f, st.st_uid, st.st_gid)
         else:

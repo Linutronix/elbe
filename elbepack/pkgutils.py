@@ -27,13 +27,13 @@ from elbepack.validate import validate_xml
 from tempfile import mkdtemp
 
 try:
-	from elbepack import virtapt
+    from elbepack import virtapt
 except:
-	print "WARNING - python-apt not available: if there are multiple versions of"
-	print " kinitrd packages on the mirror(s) elbe selects the first package it"
-	print " has found. There is no guarantee that the latest package is used."
-	print " To ensure this, the python-apt package needs to be installed."
-	import urllib2
+    print "WARNING - python-apt not available: if there are multiple versions of"
+    print " kinitrd packages on the mirror(s) elbe selects the first package it"
+    print " has found. There is no guarantee that the latest package is used."
+    print " To ensure this, the python-apt package needs to be installed."
+    import urllib2
 
 
 def get_sources_list( xml, defs ):
@@ -55,12 +55,12 @@ def get_sources_list( xml, defs ):
 
     if prj.node("mirror/url-list"):
         for n in prj.node("mirror/url-list"):
-           if n.has("binary"):
-             tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
-             slist += "deb %s\n" % tmp.strip()
-           if n.has("source"):
-             tmp = n.text("source").replace("LOCALMACHINE", "localhost")
-             slist += "deb-src %s\n" % tmp.strip()
+            if n.has("binary"):
+                tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
+                slist += "deb %s\n" % tmp.strip()
+            if n.has("source"):
+                tmp = n.text("source").replace("LOCALMACHINE", "localhost")
+                slist += "deb-src %s\n" % tmp.strip()
 
     return slist
 
@@ -71,21 +71,21 @@ def get_initrd_pkg( xml, defs ):
     return initrdname
 
 def get_url ( xml, arch, suite, target_pkg, mirror ):
-        packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
-          (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
+    packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
+      (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
 
-        packages = packages.readlines()
-        packages = filter( lambda x: x.startswith( "Filename" ), packages )
-        packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
+    packages = packages.readlines()
+    packages = filter( lambda x: x.startswith( "Filename" ), packages )
+    packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
 
-        try:
-            tmp = packages.pop()
-            urla = tmp.split()
-            url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
-        except:
-            url = ""
+    try:
+        tmp = packages.pop()
+        urla = tmp.split()
+        url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
+    except:
+        url = ""
 
-        return url
+    return url
 
 def get_initrd_uri( xml, defs, arch ):
     if arch == "default":

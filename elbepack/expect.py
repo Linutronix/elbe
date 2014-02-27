@@ -33,7 +33,7 @@ def pushd(target_directory):
 def stop_child(child, elapsed):
     terminated = child.terminate()
     if not terminated:
-       terminated = child.terminate(True)
+        terminated = child.terminate(True)
     raise TappyrTaskTimeoutError(child, elapsed, terminated)
 
 def __spawn(cmd, args, watchdog, timeout, logger, env, exp, **kwargs):
