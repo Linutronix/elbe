@@ -95,6 +95,7 @@
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
+			<pkg>grub-pc</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
