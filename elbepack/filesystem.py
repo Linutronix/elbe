@@ -24,6 +24,7 @@ import shutil
 import subprocess
 
 from elbepack.version import elbe_version
+from elbepack.hdimg import do_hdimg
 
 class Filesystem(object):
     def __init__(self, path, clean=False):
@@ -296,21 +297,19 @@ class TargetFs(ChRootFilesystem):
         cmdline += " >> opt/elbe/dump.log 2>&1"
         os.system(cmdline)
 
-    def part_target(self, xml):
+    def part_target(self, log, xml, targetdir):
 
         # create target images and copy the rfs into them
-        os.system("opt/elbe/part-target.sh >> opt/elbe/elbe-report.txt 2>&1")
+        do_hdimg( log, xml, targetdir, self )
 
         if xml.has("target/package/tar"):
-            os.system("tar cf opt/elbe/target.tar -C %s ." %(self.fname('')))
-            os.system("echo /opt/elbe/target.tar >> opt/elbe/files-to-extract")
+            os.system("tar cf %s/target.tar -C %s ." %(targetdir,self.fname('')))
 
         if xml.has("target/package/cpio"):
             oldwd = os.getcwd()
             cpio_name = xml.text("target/package/cpio/name")
-            os.chdir(src.fname(''))
-            os.system("find . -print | cpio -ov -H newc >opt/elbe/%s" % cpio_name)
-            os.system("echo /opt/elbe/%s >> opt/elbe/files-to-extract" % cpio_name)
+            os.chdir(self.fname(''))
+            os.system("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
             os.chdir(oldwd)
 
 class BuildImgFs(ChRootFilesystem):
