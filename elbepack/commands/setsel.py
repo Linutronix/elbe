@@ -18,13 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
-import shutil
 
 
 from elbepack.treeutils import etree
-import urllib2
 from optparse import OptionParser
 
 def parse_selections( fname ):

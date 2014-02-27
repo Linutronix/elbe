@@ -17,9 +17,6 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
-
-from treeutils import etree
 
 class fstabentry(object):
     def __init__(self, entry):

@@ -23,10 +23,8 @@ from elbepack.treeutils import etree
 from elbepack import virtapt
 
 from optparse import OptionParser
-from datetime import datetime
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
-import apt_pkg
 
 def run_command( argv ):
 

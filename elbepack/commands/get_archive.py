@@ -20,7 +20,6 @@
 
 import os
 import sys
-import shutil
 
 
 from base64 import standard_b64decode

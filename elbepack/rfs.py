@@ -16,18 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import apt
 import apt_pkg
-import cPickle
 import os
-import stat
 import sys
-import time
 
-from tempfile import mkdtemp
-from tempfile import mktemp
-
-from elbepack.version import elbe_version
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.filesystem import BuildImgFs
 

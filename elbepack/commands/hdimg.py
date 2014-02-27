@@ -20,14 +20,12 @@
 
 import os
 import sys
-import shutil
 import string
 
 from optparse import OptionParser
 from subprocess import Popen, PIPE, STDOUT
 
 import parted
-from  parted import filesystem
 import _ped
 
 from elbepack.fstab import fstabentry

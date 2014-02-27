@@ -20,7 +20,6 @@ import os
 import string
 
 import parted
-from  parted import filesystem
 import _ped
 
 from elbepack.fstab import fstabentry

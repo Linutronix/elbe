@@ -24,7 +24,6 @@ import shutil
 
 from mako.template import Template
 from mako import exceptions
-from base64 import standard_b64decode, standard_b64encode
 
 import elbepack
 from elbepack.treeutils import etree

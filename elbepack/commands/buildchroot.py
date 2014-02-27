@@ -20,18 +20,14 @@
 
 from optparse import OptionParser
 import datetime
-import apt
 import sys
 import os
-import string
 
 from mako.template import Template
 from mako import exceptions
 
 import elbepack
 from elbepack.treeutils import etree
-from elbepack.validate import validate_xml
-from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.asciidoclog import ASCIIDocLog
 

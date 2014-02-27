@@ -16,11 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import apt
 import apt_pkg
 import os
-import stat
 
 from tempfile import mkdtemp
 

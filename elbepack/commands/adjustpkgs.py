@@ -19,17 +19,14 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from optparse import OptionParser
-from subprocess import Popen, PIPE, STDOUT
 
 from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.treeutils import etree
 
-import datetime
 import apt
 import apt.progress
 
 import sys
-import os
 
 class adjpkg(object):
     def __init__(self, logfile, name):

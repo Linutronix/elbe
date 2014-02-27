@@ -19,17 +19,9 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from optparse import OptionParser
-import datetime
-import apt
 import sys
 import os
 import string
-
-from mako.template import Template
-from mako import exceptions
-
-import elbepack
-from elbepack.treeutils import etree
 
 from tempfile import mkdtemp
 

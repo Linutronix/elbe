@@ -16,11 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
-from elbepack.version import elbe_version
 
 from base64 import standard_b64decode
 from tempfile import NamedTemporaryFile

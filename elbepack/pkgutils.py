@@ -18,11 +18,7 @@
 
 
 
-import sys
 import os
-
-from elbepack.treeutils import etree
-from elbepack.validate import validate_xml
 
 from tempfile import mkdtemp
 
