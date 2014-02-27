@@ -31,6 +31,9 @@ class eiter(object):
         return elem(self.it.next())
 
 class ebase(object):
+    def __init__(self, et):
+        self.et = et
+
     def text( self, path, **args ):
         el = self.et.find("./"+path)
         if (el is None) and not args.has_key("default"):
@@ -73,8 +76,7 @@ class ebase(object):
 
 class elem(ebase):
     def __init__( self, el ):
-        ebase.__init__( self )
-        self.et = el
+        ebase.__init__( self, el )
 
     def ensure_child( self, tag ):
         retval = self.et.find("./"+tag)
@@ -96,8 +98,7 @@ class elem(ebase):
 
 class etree(ebase):
     def  __init__( self, fname ):
-        ebase.__init__( self )
-        self.et = ElementTree( file=fname )
+        ebase.__init__( self, ElementTree( file=fname ) )
 
     def write( self, fname ):
         self.et.write(fname)
