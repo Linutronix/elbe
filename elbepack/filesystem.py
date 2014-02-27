@@ -127,7 +127,7 @@ class Filesystem(object):
 
 
 def copy_filelist( src, filelist, dst ):
-    for f in file_list:
+    for f in filelist:
         f = f.rstrip("\n");
         if src.isdir(f) and not src.islink(f):
             if not dst.isdir(f):
@@ -138,7 +138,7 @@ def copy_filelist( src, filelist, dst ):
             subprocess.call(["cp", "-a", "--reflink=auto", src.fname(f), dst.fname(f)])
     # update utime which will change after a file has been copied into
     # the directory
-    for f in file_list:
+    for f in filelist:
         f = f.rstrip("\n");
         if src.isdir(f) and not src.islink(f):
             shutil.copystat(src.fname(f), dst.fname(f))
