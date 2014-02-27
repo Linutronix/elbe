@@ -20,9 +20,7 @@
 # with has to have ultimate trust level, otherwise you'll only get
 # VALID (Untrusted)!
 
-import os
 import sys
-import elbepack
 import gpgme
 
 class OverallStatus:
