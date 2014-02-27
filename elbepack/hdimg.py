@@ -17,7 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import string
+from string import digits
 
 import parted
 import _ped
@@ -76,7 +76,7 @@ def build_image_mtd( outf, mtd, fslabel, target ):
 
 
 def size_to_int( size ):
-    if size[-1] in string.digits:
+    if size[-1] in digits:
         return int(size)
 
     if size.endswith( "M" ):
