@@ -297,10 +297,10 @@ class TargetFs(ChRootFilesystem):
         cmdline += " >> opt/elbe/dump.log 2>&1"
         os.system(cmdline)
 
-    def part_target(self, log, xml, targetdir):
+    def part_target(self, log, xml, targetdir, skip_grub):
 
         # create target images and copy the rfs into them
-        do_hdimg( log, xml, targetdir, self )
+        do_hdimg( log, xml, targetdir, self, skip_grub )
 
         if xml.has("target/package/tar"):
             os.system("tar cf %s/target.tar -C %s ." %(targetdir,self.fname('')))

@@ -258,7 +258,13 @@ def run_command( argv ):
     buildenv.rfs.write_licenses(f)
     f.close()
 
-    targetfs.part_target(outf, xml, opt.target)
+    if cache.is_installed('grub-pc'):
+        skip_grub = False
+    else:
+        print "package grub-pc is not installed, skipping grub"
+        skip_grub = True
+
+    targetfs.part_target(outf, xml, opt.target, skip_grub)
 
     #if not opt.skip_cdrom:
     #    outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
