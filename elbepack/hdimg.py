@@ -173,8 +173,8 @@ class grubinstaller( object ):
             self.outf.do( 'losetup -d /dev/poop1', allow_fail=True )
 
 class simple_fstype(object):
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, typ):
+        self.type = typ
 
 def do_image_hd( outf, hd, fslabel, target, skip_grub ):
 
