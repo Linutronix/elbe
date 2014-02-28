@@ -24,7 +24,7 @@ from tempfile import mkdtemp
 
 try:
     from elbepack import virtapt
-except:
+except ImportError:
     print "WARNING - python-apt not available: if there are multiple versions of"
     print " kinitrd packages on the mirror(s) elbe selects the first package it"
     print " has found. There is no guarantee that the latest package is used."
