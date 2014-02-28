@@ -97,6 +97,9 @@ class RPCAPTCache(InChRootObject):
     def get_pkg( self, pkgname ):
         return APTPackage( self.cache[pkgname] )
 
+    def compare_versions( self, ver1, ver2 ):
+        return apt_pkg.compare_versions( ver1, ver2 )
+
 class MyMan(BaseManager):
     pass
 
