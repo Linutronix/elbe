@@ -252,7 +252,7 @@ def run_command( argv ):
     xml.xml.write(sourcexml)
 
     report = os.path.join(opt.target, "elbe-report.txt")
-    elbe_report( xml, buildenv.rfs, cache, report )
+    elbe_report( xml, buildenv.rfs, cache, report, targetfs )
 
     f = open(os.path.join(opt.target,"licence.txt"), "w+")
     buildenv.rfs.write_licenses(f)

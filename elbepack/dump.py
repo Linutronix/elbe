@@ -18,6 +18,7 @@
 
 from elbepack.asciidoclog import ASCIIDocLog
 from datetime import datetime
+from elbepack.finetuning import do_finetuning
 
 def dump_fullpkgs( xml, rfs, cache ):
     xml.clear_full_pkglist()
@@ -104,10 +105,7 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     if errors == 0:
         elog.printo( "No Errors found" )
 
-def do_finetuning(xml, rfs, log):
-    log.printo( "finetuning not implemented" )
-
-def elbe_report( xml, rfs, cache, reportname ):
+def elbe_report( xml, rfs, cache, reportname, targetfs ):
     outf = ASCIIDocLog(reportname)
 
     outf.h1( "ELBE Report for Project " + xml.text("project/name") )
@@ -148,17 +146,17 @@ def elbe_report( xml, rfs, cache, reportname ):
 
     if xml.has("archive"):
         with xml.archive_tmpfile() as fp:
-            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, rfs.path) )
+            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path) )
 
     outf.h2( "finetuning log" )
     outf.verbatim_start()
 
     index = cache.get_fileindex()
-    mt_index = rfs.mtime_snap()
-    if xml.has("finetuning"):
-        do_finetuning(xml, rfs)
+    mt_index = targetfs.mtime_snap()
+    if xml.has("target/finetuning"):
+        do_finetuning(xml, outf, rfs, targetfs)
         #outf.print_raw( do_command( opt.finetuning ) )
-        mt_index_post_fine = rfs.mtime_snap()
+        mt_index_post_fine = targetfs.mtime_snap()
     else:
         mt_index_post_fine = mt_index
 
@@ -168,8 +166,8 @@ def elbe_report( xml, rfs, cache, reportname ):
 
     if xml.has("archive"):
         with xml.archive_tmpfile() as fp:
-            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, rfs.path) )
-        mt_index_post_arch = rfs.mtime_snap()
+            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path) )
+        mt_index_post_arch = targetfs.mtime_snap()
     else:
         mt_index_post_arch = mt_index_post_fine
 
@@ -178,7 +176,7 @@ def elbe_report( xml, rfs, cache, reportname ):
 
     tgt_pkg_list = set()
 
-    for fpath, realpath in rfs.walk_files():
+    for fpath, realpath in targetfs.walk_files():
         if index.has_key(fpath):
             pkg = index[fpath]
             tgt_pkg_list.add(pkg)
@@ -219,8 +217,8 @@ def elbe_report( xml, rfs, cache, reportname ):
         pkgindex[p.name] = p
 
     if xml.has("target/pkgversionlist"):
-        rfs.remove('etc/elbe_pkglist')
-        f = rfs.open('etc/elbe_pkglist', 'w')
+        targetfs.remove('etc/elbe_pkglist')
+        f = targetfs.open('etc/elbe_pkglist', 'w')
     for pkg in tgt_pkg_list:
         p = pkgindex[pkg]
         outf.printo( "|%s|%s|%s|%s" % (p.name, p.installed_version, p.is_auto_installed, p.installed_md5) )
