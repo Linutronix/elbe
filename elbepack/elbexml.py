@@ -58,6 +58,9 @@ class ElbeXML(object):
     def has(self, path):
         return self.xml.has(path)
 
+    def node(self, path):
+        return self.xml.node(path)
+
     def is_cross (self, host_arch):
 
         target = self.text ("project/buildimage/arch", key="arch")
