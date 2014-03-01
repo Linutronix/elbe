@@ -1,0 +1,34 @@
+# This Dockefile generate a image for the elbe buildsystem
+#
+# tested with elbe-v0.5.5-13-gad384e9
+
+# baseimage is ubuntu precise (LTS)
+FROM ubuntu:precise
+
+# ensure that we use only one source
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+
+# update
+RUN apt-get update -y
+
+# development base installation
+RUN apt-get install -y git build-essential openssh-server sudo \
+	               python-mako python-lxml python-apt wget qemu kvm qemu-system qemu-kvm-extras qemu-keymaps qemu-utils \
+		       qemu-utils qemu-system qemu-user-static e2tools python-mako python python-lxml python-apt p7zip-full make python-parted
+
+# clean up
+RUN apt-get clean
+
+# create elbe user
+RUN groupadd -g 1000 elbe
+RUN useradd -d /home/elbe -g 1000 -m -s /bin/bash -u 1000 elbe
+RUN echo "root:elbe" | chpasswd
+RUN echo "elbe:elbe" | chpasswd
+
+# sudo for elbe
+RUN echo "%elbe  ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/elbegrp
+RUN chmod 0440 /etc/sudoers.d/elbegrp
+
+# download git repository
+RUN su --login elbe -c "git clone https://github.com/Linutronix/elbe.git"
+
