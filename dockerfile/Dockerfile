@@ -5,19 +5,25 @@
 # baseimage is ubuntu precise (LTS)
 FROM ubuntu:precise
 
+# Maintainer
+MAINTAINER Silvio F. <silvio@port1024.net>
+
 # ensure that we use only one source
 RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
 
-# update
-RUN apt-get update -y
+# update and upgrade
+RUN apt-get update -y && apt-get upgrade -y
 
 # development base installation
-RUN apt-get install -y git build-essential openssh-server sudo \
+RUN apt-get install -y git build-essential openssh-server vim supervisor \
 	               python-mako python-lxml python-apt wget qemu kvm qemu-system qemu-kvm-extras qemu-keymaps qemu-utils \
 		       qemu-utils qemu-system qemu-user-static e2tools python-mako python python-lxml python-apt p7zip-full make python-parted
 
 # clean up
 RUN apt-get clean
+
+# additions
+ADD adds/supervisord.conf /etc/supervisord.conf
 
 # create elbe user
 RUN groupadd -g 1000 elbe
@@ -32,3 +38,7 @@ RUN chmod 0440 /etc/sudoers.d/elbegrp
 # download git repository
 RUN su --login elbe -c "git clone https://github.com/Linutronix/elbe.git"
 
+# ssh and startup configuration
+RUN mkdir -v /var/run/sshd
+CMD ["/usr/bin/supervisord", "-n"]
+EXPOSE 22
