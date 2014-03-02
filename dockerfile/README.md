@@ -1,16 +1,32 @@
 
-# Dockerfile for embedded linux build environment
+# Dockerfile for elbe
+
+[elbe][elb] is a debian based system to generate root-filesystems for embedded
+devices.
+
+[docker][doc] is an open-source project to easily create lightweight, portable,
+self-sufficient containers from any application.
+
+This is a Dockerfile to generate a elbe development environment for systems
+other than debian based.
+
+[doc]: https://www.docker.io "Docker Homepage"
+[elb]: http://elbe-rfs.org   "ELBE Homepage"
+
+## Depencies
+
+You need docker installed and a running docker service.
 
 ## Build image
 
-    cd dockerfile
-    docker build -t own-elbe-system ./Dockerfile
+    % cd dockerfile
+    % docker build -t own-elbe-system ./Dockerfile
 
 ## start
 
 Start a dettached docker session
 
-    docker run -d own-elbe-system
+    % docker run -d own-elbe-system
 
 You get a Container-ID like this one
 
@@ -20,10 +36,9 @@ You get a Container-ID like this one
 
 To connect to this container you get the ip with docker inspect.
 
-    docker inspect a242543d614f8c | grep IPAddress
+    % docker inspect a242543d614f8c | grep IPAddress
     "IPAddress": "172.17.0.2",
-
-    ssh root@172.17.0.2
+    % ssh root@172.17.0.2
 
 ## passwords
 
