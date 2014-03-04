@@ -11,6 +11,12 @@ MAINTAINER Silvio F. <silvio@port1024.net>
 # ensure that we use only one source
 RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
 
+# set debian/ubuntu config environment to noninteractive
+ENV DEBIAN_FRONTEND noninteractive
+
+# setup the initsystem
+RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
+
 # update and upgrade
 RUN apt-get update -y && apt-get upgrade -y
 
