@@ -17,7 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from multiprocessing.util import Finalize
-from apt_pkg import config
+from apt_pkg import config, version_compare
 from apt import Cache
 from multiprocessing.managers import BaseManager
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
@@ -98,7 +98,7 @@ class RPCAPTCache(InChRootObject):
         return APTPackage( self.cache[pkgname] )
 
     def compare_versions( self, ver1, ver2 ):
-        return apt_pkg.compare_versions( ver1, ver2 )
+        return version_compare( ver1, ver2 )
 
 class MyMan(BaseManager):
     pass
