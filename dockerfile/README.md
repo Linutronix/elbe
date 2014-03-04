@@ -20,7 +20,7 @@ You need docker installed and a running docker service.
 ## Build image
 
     % cd dockerfile
-    % docker build -t own-elbe-system ./Dockerfile
+    % docker build -t own-elbe-system .
 
 ## start
 
