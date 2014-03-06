@@ -83,6 +83,13 @@ class APTPackage(object):
         self.is_auto_installed = pkg.is_auto_installed
         self.origin = pkg.installed and pkg.installed.origins[0].site
 
+        if pkg.installed:
+            self.architecture = pkg.installed.architecture
+        elif pkg.candidate:
+            self.architecture = pkg.candidate.architecture
+        else:
+            self.architecture = None
+
     def __repr__(self):
         return "<APTPackage %s-%s state: %s>" % (self.name, self.installed_version, statestring[self.state])
 
