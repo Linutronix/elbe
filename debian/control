@@ -82,10 +82,6 @@ Description: RootFS build system.
 Package: elbe-updated
 Architecture: all
 Depends: elbe-adjustpkg,
-  python-pexpect(>= 2.4-1),
-  python-werkzeug (>= 0.8.3+dfsg-1),
-  libxslt1.1 (>= 1.1.26-14.1),
-  python-spyne (>= 2.9.3-1~inverse),
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1) ,
   python-watchdog (>= 0.5.4)
