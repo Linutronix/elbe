@@ -27,6 +27,7 @@ from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import BuildImgFs
 from elbepack.dump import dump_fullpkgs
 
+from elbepack.ziparchives import create_zip_archive
 from elbepack.repomanager import Repo
 
 def run_command( argv ):
@@ -150,4 +151,6 @@ def run_command( argv ):
     os.system( "cp %s %s" % (args[0], os.path.join( update, "base.xml" )) )
 
         
+    zipfilename = os.path.join( opt.target, "update.zip" )
 
+    create_zip_archive( zipfilename, update, "update" )
