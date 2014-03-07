@@ -25,6 +25,7 @@ import os
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import BuildImgFs
+from elbepack.dump import dump_fullpkgs
 
 
 def run_command( argv ):
@@ -68,6 +69,17 @@ def run_command( argv ):
 
     if not xml.has("fullpkgs"):
         print "Xml does not have fullpkgs list"
+        sys.exit(20)
+
+    sourcexml = os.path.join(opt.target, 'source.xml')
+    try:
+        sxml = ElbeXML( sourcexml, buildtype=buildtype, skip_validate=opt.skip_validation )
+    except ValidationError:
+        print "xml validation failed. Bailing out"
+        sys.exit(20)
+
+    if not sxml.has("fullpkgs"):
+        print "Source Xml does not have fullpkgs list"
         sys.exit(20)
 
     chroot = os.path.join(opt.target, "chroot")
@@ -149,7 +161,10 @@ def run_command( argv ):
 
     
 
+    dump_fullpkgs(sxml, buildrfs, cache)
 
+    sxml.xml.write( os.path.join( update, "new.xml" ) )
+    os.system( "cp %s %s" % (args[0], os.path.join( update, "base.xml" )) )
 
         
 
