@@ -84,5 +84,5 @@ Architecture: all
 Depends: elbe-adjustpkg,
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1) ,
-  python-watchdog (>= 0.5.4)
-Description:  Elbe web GUI for creating update packages
+  python-pyinotify
+Description:  Elbe deamon used on targets to apply updates
