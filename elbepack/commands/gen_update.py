@@ -27,6 +27,7 @@ from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import BuildImgFs
 from elbepack.dump import dump_fullpkgs
 
+from elbepack.repomanager import Repo
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog gen_update [options] <xmlfile>")
@@ -135,31 +136,13 @@ def run_command( argv ):
     os.system( 'mkdir -p %s' % update )
 
     repodir = os.path.join(update, "repo" )
-    repoconfdir = os.path.join( update, "repo/conf" )
 
-    os.system( 'mkdir -p %s' % repoconfdir )
+    repo = Repo( xml, repodir )
 
-    repoconf = os.path.join( repoconfdir, "distributions" )
-    fp = open(repoconf, "w")
-
-    fp.write( "Origin: update XXX\n" )
-    fp.write( "Label: update'\n" )
-    fp.write( "Suite: " + xml.text("project/suite") + "\n" )
-    fp.write( "Codename: " + xml.text("project/suite") + "\n" )
-    fp.write( "Version: 7.0\n" )
-    fp.write( "Architectures: " + arch + "\n" )
-    fp.write( "Components: main\n" )
-    fp.write( "Description: Update Repository XXX\n" )
-
-    fp.close()
-
-    
-    
     for fname in fnamelist:
         path = os.path.join( chroot, "var/cache/apt/archives", fname )
-        os.system( "reprepro --basedir " + repodir + " includedeb " + xml.text("project/suite") + " " + path ) 
+        repo.includedeb( path )
 
-    
 
     dump_fullpkgs(sxml, buildrfs, cache)
 
