@@ -107,8 +107,8 @@ def run_command( argv ):
 
         if comp == 0:
             print "package ok: " + name + "-" + ipkg.installed_version
-            print "package upgrade: " + pfname
-            fnamelist.append( pfname )
+            if opt.debug:
+                fnamelist.append( pfname )
             continue
 
         if comp > 0:
