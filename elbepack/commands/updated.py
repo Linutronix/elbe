@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import apt
 import apt_pkg
 import os
 import pyinotify
@@ -62,6 +63,8 @@ def mark_install (depcache, pkg, version, auto):
 def apply_update (xml):
 
     fpl = xml.node ("fullpkgs")
+
+    hl_cache = apt.cache.Cache ()
     cache = apt_pkg.Cache ()
     cache.update ()
     depcache = apt_pkg.DepCache (cache)
@@ -70,7 +73,8 @@ def apply_update (xml):
     #  mark the package for installation (with the specified version)
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
-    for pkg in cache:
+    for p in hl_cache:
+        pkg = cache [p.name]
         marked = False
         for fpi in fpl:
             if pkg.name == fpi.et.text:
