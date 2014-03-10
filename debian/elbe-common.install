@@ -1,4 +1,5 @@
 ./usr/bin/*
+./usr/lib/python2.*/*-packages/elbepack/aptprogress.py
 ./usr/lib/python2.*/*-packages/elbepack/treeutils.py
 ./usr/lib/python2.*/*-packages/elbepack/fstab.py
 ./usr/lib/python2.*/*-packages/elbepack/dbsfed.xsd

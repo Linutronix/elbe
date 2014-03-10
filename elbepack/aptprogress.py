@@ -25,6 +25,9 @@ class ElbeInstallProgress (InstallProgress):
     def __init__ (self):
         InstallProgress.__init__ (self)
 
+    def finishUpdate (self):
+        print "install progress finished"
+
     def fork(self):
         retval = os.fork()
         if (retval):
