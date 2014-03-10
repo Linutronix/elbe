@@ -42,9 +42,10 @@ status = UpdateStatus ()
 
 def update_sourceslist (xml, update_dir):
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
-    deb += " main"
+    deb += " main\n"
     fname = "/etc/apt/sources.list.d/"
     fname += xml.text ("/project/name") + "_" + xml.text ("/project/version")
+    fname += ".list"
 
     with open (fname, 'w') as f:
         f.write (deb)
