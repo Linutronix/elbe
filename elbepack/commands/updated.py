@@ -121,10 +121,7 @@ def update (upd_file):
         status.msg = "unzip %s: %s" % (prefix+dirname, filename)
 
         try:
-            if not os.path.exists (prefix+dirname):
-                os.makedirs (prefix+dirname)
-
-            upd_file_z.extract (i, prefix+dirname)
+            upd_file_z.extract (i, prefix)
         except OSError:
             status.msg = "extraction failed: %s" % sys.exc_info () [1]
             return
