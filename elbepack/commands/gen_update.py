@@ -132,6 +132,14 @@ def run_command( argv ):
         else:
             print "package downgrade: " + name + "-" + ipkg.installed_version
 
+    for p in instpkgs:
+        if p.name in xmlindex:
+            continue
+
+        print "package new installed " + p.name
+        pfname = p.name + '_' + p.installed_version.replace( ':', '%3a' ) + '_' + p.architecture + '.deb'
+        fnamelist.append( pfname )
+
 
     update = os.path.join(opt.target, "update")
     os.system( 'mkdir -p %s' % update )
