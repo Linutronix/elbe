@@ -103,8 +103,8 @@ def update (upd_file):
         status.msg = "update aborted (bad zip file: %s)" % upd_file
         return
 
-    if not "source.xml" in upd_file_z.namelist ():
-        status.msg = "update invalid (source.xml missing)"
+    if not "new.xml" in upd_file_z.namelist ():
+        status.msg = "update invalid (new.xml missing)"
         return
 
     upd_file_z.extract ("new.xml", "/tmp/")
