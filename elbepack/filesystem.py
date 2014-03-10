@@ -31,7 +31,6 @@ class Filesystem(object):
         if clean:
             shutil.rmtree(self.path, True)
             os.makedirs(self.path)
-            
 
     def fname(self, path):
         if path.startswith('/'):
