@@ -64,9 +64,12 @@ def apply_update (xml):
 
     fpl = xml.node ("fullpkgs")
 
+    sources = apt_pkg.SourceList ()
+    sources.read_main_list ()
+
     hl_cache = apt.cache.Cache ()
     cache = apt_pkg.Cache ()
-    cache.update ()
+    cache.update (ElbeAcquireProgress (), sources)
     depcache = apt_pkg.DepCache (cache)
 
     # go through package cache, if a package is in the fullpkg list of the XML
