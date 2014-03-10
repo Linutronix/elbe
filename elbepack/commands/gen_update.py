@@ -158,7 +158,7 @@ def run_command( argv ):
     sxml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (args[0], os.path.join( update, "base.xml" )) )
 
-        
-    zipfilename = os.path.join( opt.target, "update.zip" )
+    zipfilename = os.path.join( opt.target, "%s_%s.upd" %
+        (xml.text ("/project/name"), xml.text ("/project/version")) )
 
     create_zip_archive( zipfilename, update, "." )
