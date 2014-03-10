@@ -52,7 +52,7 @@ def update_sourceslist (xml, update_dir):
 
 def mark_install (depcache, pkg, version, auto):
     for v in pkg.version_list:
-        if v.ver_str == version:
+        if v.ver_str == str (version):
             depcache.set_candidate_ver (pkg, v)
             depcache.mark_install (pkg, False, not auto)
             return
