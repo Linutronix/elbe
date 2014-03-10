@@ -54,7 +54,7 @@ def mark_install (depcache, pkg, version, auto):
     for v in pkg.version_list:
         if v.ver_str == version:
             depcache.set_candidate_ver (pkg, v)
-            depcache.mark_install (pkg, auto_inst=False, from_user=not auto)
+            depcache.mark_install (pkg, False, not auto)
             return
 
     print pkg.name, version, "is not available in the cache"
@@ -80,7 +80,7 @@ def apply_update (xml):
                 marked = True
 
         if not marked:
-            depcache.mark_delete (pkg, purge=True)
+            depcache.mark_delete (pkg, True)
 
     depcache.commit (ElbeAcquireProgress (), ElbeInstallProgress ())
 
