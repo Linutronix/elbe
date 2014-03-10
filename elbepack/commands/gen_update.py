@@ -161,4 +161,4 @@ def run_command( argv ):
         
     zipfilename = os.path.join( opt.target, "update.zip" )
 
-    create_zip_archive( zipfilename, update, "update" )
+    create_zip_archive( zipfilename, update, "." )
