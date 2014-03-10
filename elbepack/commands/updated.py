@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import apt_pkg
 import os
 import pyinotify
 import signal
@@ -28,6 +29,7 @@ import threading
 from optparse import OptionParser
 from zipfile import (ZipFile, BadZipfile)
 
+from elbepack.aptprogress import (ElbeInstallProgress, ElbeAcquireProgress)
 from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
 
@@ -47,10 +49,39 @@ def update_sourceslist (xml, update_dir):
     with open (fname, 'w') as f:
         f.write (deb)
 
+def mark_install (depcache, pkg, version, auto):
+    for v in pkg.version_list:
+        if v.ver_str == version:
+            depcache.set_candidate_ver (pkg, v)
+            depcache.mark_install (pkg, auto_inst=False, from_user=not auto)
+            return
+
+    print pkg.name, version, "is not available in the cache"
+
 def apply_update (xml):
-    # TODO use python-apt (apt.Cache) and fullpkglist to install specified
-    #      packages and remove unmentioned packages that are currently installed
-    pass
+
+    fpl = xml.node ("fullpkgs")
+    cache = apt_pkg.Cache ()
+    cache.update ()
+    depcache = apt_pkg.DepCache (cache)
+
+    # go through package cache, if a package is in the fullpkg list of the XML
+    #  mark the package for installation (with the specified version)
+    #  if it is not mentioned in the fullpkg list purge the package out of the
+    #  system.
+    for pkg in cache:
+        marked = False
+        for fpi in fpl:
+            if pkg.name == fpi.et.text:
+                mark_install (depcache, pkg,
+                              fpi.et.get('version'),
+                              fpi.et.get('auto'))
+                marked = True
+
+        if not marked:
+            depcache.mark_delete (pkg, purge=True)
+
+    depcache.commit (ElbeAcquireProgress (), ElbeInstallProgress ())
 
 def update (upd_file):
 

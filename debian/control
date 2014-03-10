@@ -81,8 +81,9 @@ Description: RootFS build system.
 
 Package: elbe-updated
 Architecture: all
-Depends: elbe-adjustpkg,
+Depends: elbe-common,
   python-lxml (>= 2.3.2-1),
-  python-tz (>= 2012c-1) ,
-  python-pyinotify
+  python-tz (>= 2012c-1),
+  python-pyinotify,
+  python-apt
 Description:  Elbe deamon used on targets to apply updates
