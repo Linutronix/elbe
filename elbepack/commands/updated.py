@@ -23,11 +23,17 @@ import apt_pkg
 import os
 import pyinotify
 import signal
+import soaplib
 import sys
 import time
 import threading
 
 from optparse import OptionParser
+from soaplib.service import soapmethod
+from soaplib.wsgi_soap import SimpleWSGISoapApp
+from soaplib.serializers.primitive import String, Array
+from suds.client import Client
+from wsgiref.simple_server import make_server
 from zipfile import (ZipFile, BadZipfile)
 
 from elbepack.aptprogress import (ElbeInstallProgress, ElbeAcquireProgress)
@@ -35,11 +41,42 @@ from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
 
 class UpdateStatus:
-    msg = "waiting"
+    monitor = None
     observer = None
     stop = False
 
 status = UpdateStatus ()
+
+class UpdateService (SimpleWSGISoapApp):
+
+    @soapmethod (_returns=String)
+    def list_snapshots (self):
+        snapshots = ""
+        lists = os.listdir ("/etc/apt/sources.list.d")
+
+        for l in lists:
+            snapshots += l.split (".")[0] + ","
+
+        return snapshots
+
+    @soapmethod (String, _returns=String)
+    def apply_snapshot (self, version):
+        try:
+            xml = etree ("/opt/elbe/" + version + "/new.xml")
+        except:
+            return "version (%s) not found" % version
+
+        try:
+            apply_update (xml)
+        except:
+            return "apply snapshot failed"
+
+        return "snapshot applied"
+
+    @soapmethod (String)
+    def register_monitor (self, wsdl_url):
+        status.monitor = Client (wsdl_url)
+        status.monitor.service.msg ("connection established")
 
 def update_sourceslist (xml, update_dir):
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
@@ -101,16 +138,17 @@ def update (upd_file):
 
     global status
 
-    status.msg = "updating.. %s" % upd_file
+    status.monitor.service.msg ( "updating.. %s" % upd_file)
 
     try:
         upd_file_z = ZipFile (upd_file)
     except BadZipfile:
-        status.msg = "update aborted (bad zip file: %s)" % upd_file
+        status.monitor.service.msg ("update aborted (bad zip file: %s)" %
+                                    upd_file)
         return
 
     if not "new.xml" in upd_file_z.namelist ():
-        status.msg = "update invalid (new.xml missing)"
+        status.monitor.service.msg ("update invalid (new.xml missing)")
         return
 
     upd_file_z.extract ("new.xml", "/tmp/")
@@ -119,23 +157,24 @@ def update (upd_file):
     prefix = "/opt/elbe/" + xml.text ("/project/name")
     prefix += "_" + xml.text ("/project/version") + "/"
 
-    status.msg = "updating: " + prefix
+    status.monitor.service.msg ("updating: " + prefix)
 
     for i in upd_file_z.namelist ():
 
         (dirname, filename) = os.path.split (i)
-        status.msg = "unzip %s: %s" % (prefix+dirname, filename)
+        status.monitor.service.msg ("unzip %s: %s" % (prefix+dirname, filename))
 
         try:
             upd_file_z.extract (i, prefix)
         except OSError:
-            status.msg = "extraction failed: %s" % sys.exc_info () [1]
+            status.monitor.service.msg ("extraction failed: %s" %
+                                        sys.exc_info () [1])
             return
 
     update_sourceslist (xml, prefix + "repo")
     apply_update (xml)
 
-    status.msg = "update done: " + prefix
+    status.monitor.service.msg ("update done: " + prefix)
 
 def action_select (event):
     action = event.pathname.split ('.') [-1]
@@ -159,8 +198,8 @@ def shutdown (signum, fname):
 
 class ObserverThread (threading.Thread):
 
-    def __init__(self):
-                threading.Thread.__init__(self)
+    def __init__ (self):
+                threading.Thread.__init__ (self)
 
     def run (self):
 
@@ -203,6 +242,9 @@ def run_command (argv):
     obs = ObserverThread ()
     obs.start ()
 
+    server = make_server ('', 8088, UpdateService ())
+    server.serve_forever ()
+
     # TODO status report should be done by SOAP in the future.
     #      this is just a quick hack to use multithreading from the begining
     while 1:
@@ -210,8 +252,6 @@ def run_command (argv):
             time.sleep (1)
         except KeyboardInterrupt:
             status.stop = True
-
-        print status.msg
 
         if status.stop:
             print "shutdown"

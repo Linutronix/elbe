@@ -85,5 +85,7 @@ Depends: elbe-common,
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1),
   python-pyinotify,
-  python-apt
+  python-apt,
+  python-suds,
+  python-soaplib
 Description:  Elbe deamon used on targets to apply updates
