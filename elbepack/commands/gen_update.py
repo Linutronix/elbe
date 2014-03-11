@@ -126,7 +126,6 @@ def run_command( argv ):
             continue
 
         if comp > 0:
-            pfname = cache.get_filename( name )
             print "package upgrade: " + pfname
             fnamelist.append( pfname )
         else:
