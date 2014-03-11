@@ -22,11 +22,31 @@ import os
 
 class ElbeInstallProgress (InstallProgress):
 
-    def __init__ (self):
+    def __init__ (self, cb=None):
         InstallProgress.__init__ (self)
+        self.cb = cb
+
+    def write (self, line):
+        line = str (self.percent) + "% " + line
+        if self.cb:
+            self.cb.service.msg (line)
+        else:
+            print line
+
+    def processing (self, pkg, stage):
+        InstallProgress.processing (self, pkg, stage)
+        self.write ("processing: " + pkg + " - " + stage)
+
+    def dpkg_status_change (self, pkg, status):
+        InstallProgress.dpkg_status_change (self, pkg, status)
+        self.write (status)
+
+    def status_change (self, pkg, percent, status):
+        InstallProgress.status_change (self, pkg, percent, status)
+        self.write (status)
 
     def finishUpdate (self):
-        print "install progress finished"
+        self.write ("install progress finished")
 
     def fork(self):
         retval = os.fork()
@@ -35,15 +55,18 @@ class ElbeInstallProgress (InstallProgress):
         return retval
 
 
-
 class ElbeAcquireProgress (AcquireProgress):
 
-    def __init__ (self):
+    def __init__ (self, cb=None):
         AcquireProgress.__init__ (self)
         self._id = long(1)
+        self.cb = cb
 
     def write (self, line):
-        print line
+        if self.cb:
+            self.cb.service.msg (line)
+        else:
+            print line
 
 
     def ims_hit(self, item):
@@ -74,10 +97,4 @@ class ElbeAcquireProgress (AcquireProgress):
 
 
     def pulse (self, owner):
-        #self.write ("pulse")
         return True
-
-
-    def stop (self):
-        self.write ("stop")
-

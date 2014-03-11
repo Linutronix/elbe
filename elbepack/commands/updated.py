@@ -65,7 +65,6 @@ class UpdateService (SimpleWSGISoapApp):
             xml = etree ("/opt/elbe/" + version + "/new.xml")
         except:
             return "version (%s) not found" % version
-
         try:
             apply_update (xml)
         except:
@@ -106,7 +105,7 @@ def apply_update (xml):
 
     apt_pkg.init ()
     cache = apt_pkg.Cache ()
-    cache.update (ElbeAcquireProgress (), sources)
+    cache.update (ElbeAcquireProgress (cb=status.monitor), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
     # the changed index files."
@@ -132,7 +131,8 @@ def apply_update (xml):
         if not marked:
             depcache.mark_delete (pkg, True)
 
-    depcache.commit (ElbeAcquireProgress (), ElbeInstallProgress ())
+    depcache.commit (ElbeAcquireProgress (cb=status.monitor),
+                     ElbeInstallProgress (cb=status.monitor))
 
 def update (upd_file):
 
