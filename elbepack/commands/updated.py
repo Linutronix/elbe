@@ -67,10 +67,16 @@ def apply_update (xml):
     sources = apt_pkg.SourceList ()
     sources.read_main_list ()
 
-    hl_cache = apt.cache.Cache ()
+    apt_pkg.init ()
     cache = apt_pkg.Cache ()
     cache.update (ElbeAcquireProgress (), sources)
+    # quote from python-apt api doc: "A call to this method does not affect the
+    # current Cache object, instead a new one should be created in order to use
+    # the changed index files."
+    cache = apt_pkg.Cache ()
     depcache = apt_pkg.DepCache (cache)
+    hl_cache = apt.cache.Cache ()
+    hl_cache.update ()
 
     # go through package cache, if a package is in the fullpkg list of the XML
     #  mark the package for installation (with the specified version)
