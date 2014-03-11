@@ -26,3 +26,4 @@ debian/tmp/
 dist/
 elbe.egg-info/
 tags
+*.swp
