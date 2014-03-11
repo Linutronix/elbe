@@ -1,4 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
+# there are warnings raised by python-soaplib
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 import soaplib
 import sys
