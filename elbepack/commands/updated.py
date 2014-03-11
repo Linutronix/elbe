@@ -126,7 +126,7 @@ def update (upd_file):
             status.msg = "extraction failed: %s" % sys.exc_info () [1]
             return
 
-    update_sourceslist (xml, prefix+"/repo")
+    update_sourceslist (xml, prefix + "repo")
     apply_update (xml)
 
     status.msg = "update done: " + prefix
