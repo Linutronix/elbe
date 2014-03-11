@@ -34,6 +34,9 @@ class MonitorThread (threading.Thread):
 
 oparser = OptionParser (usage="usage: %prog [options]")
 
+oparser.add_option ("--debug", dest="debug",
+                    help="run in debug mode")
+
 oparser.add_option ("--target", dest="target",
                     help="ip or hostname of target")
 
@@ -47,6 +50,11 @@ oparser.add_option ("--monitorport", dest="monitorport",
                     help="port used for update monitor")
 
 (opt,args) = oparser.parse_args (sys.argv)
+
+if opt.debug:
+    import logging
+    logging.basicConfig (level=logging.INFO)
+    logging.getLogger ('suds.client').setLevel (logging.DEBUG)
 
 if not opt.target:
     target = "localhost"
