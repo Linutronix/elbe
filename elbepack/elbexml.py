@@ -139,5 +139,6 @@ class ElbeXML(object):
     def archive_tmpfile( self ):
         fp = NamedTemporaryFile()
         fp.write( standard_b64decode( self.text("archive") ) )
+        fp.file.flush()
         return fp
 
