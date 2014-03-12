@@ -24,6 +24,7 @@ Architecture: all
 Depends: python (>= 2.6.6-3~),
   python-lxml,
   python-apt,
+  python-gpgme,
   python-pyme
 Description: RootFS build system common files.
  Elbe is a flexible Root Filesystem builder.
@@ -87,6 +88,5 @@ Depends: elbe-common,
   python-pyinotify,
   python-apt,
   python-suds,
-  python-gpgme,
   python-soaplib
 Description:  Elbe deamon used on targets to apply updates
