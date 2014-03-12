@@ -283,6 +283,12 @@ def run_command (argv):
                         help="monitor dir (default is /opt/elbe/updates)",
                         metavar="FILE" )
 
+    oparser.add_option ("--host", dest="host", default="",
+                        help="listen host")
+
+    oparser.add_option ("--port", dest="port", default=8088,
+                        help="listen port")
+
     oparser.add_option ("--nosign", action="store_true", dest="nosign",
                         default=False,
                         help="accept none signed files")
@@ -308,7 +314,7 @@ def run_command (argv):
     obs_thread = ObserverThread ()
     obs_thread.start ()
 
-    status.soapserver = make_server ('', 8088, UpdateService ())
+    status.soapserver = make_server (opt.host, int (opt.port), UpdateService ())
     try:
         status.soapserver.serve_forever ()
     except:
