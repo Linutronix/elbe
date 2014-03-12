@@ -60,6 +60,33 @@ def build_image_mtd( outf, mtd, target ):
 
     ubivg = mtd.node("ubivg")
 
+    cfgfilename = "%s_%s.cfg" % (mtd.text("name"), mtd.node("ubivg").text("label"))
+    fp = open( os.path.join(target, cfgfilename ), "w" )
+
+    for vol in mtd.node("ubivg"):
+        if vol.has("label"):
+            fp.write( "[%s]\n" % vol.text("label") )
+            fp.write( "mode=ubi\n" )
+            if not vol.has("empty"):
+                if vol.has("binary"):
+                    fp.write( "image=%s\n" % vol.text("binary") )
+                else:
+                    fp.write( "image=%s.ubifs\n" % os.path.join(target, vol.text("label")) )
+            else:
+                empt = open("/tmp/empty", "w" )
+                empt.write("EMPTY")
+                empt.close()
+                fp.write( "image=/tmp/empty\n" )
+
+            fp.write( "vol_type=%s\n" % vol.text("type") )
+            fp.write( "vol_id=%s\n" % vol.text("id") )
+            fp.write( "vol_name=%s\n" % vol.text("label") )
+
+            if vol.text("size") != "remain":
+                fp.write( "vol_size=%d\n" % size_to_int( vol.text("size") )
+
+    fp.close()
+
     if ubivg.has("subpagesize"):
         subp = "-s " + ubivg.text("subpagesize")
     else:
