@@ -99,7 +99,7 @@ def mark_install (depcache, pkg, version, auto):
             depcache.mark_install (pkg, False, not auto)
             return
 
-    print pkg.name, version, "is not available in the cache"
+    log ("ERROR: " + pkg.name + version + " is not available in the cache")
 
 def apply_update (xml):
 
@@ -175,7 +175,7 @@ def update (upd_file):
 
     global status
 
-    log ( "updating.. %s" % upd_file)
+    log ( "updating.. " + upd_file)
 
     try:
         upd_file_z = ZipFile (upd_file)
@@ -193,12 +193,11 @@ def update (upd_file):
     prefix = "/opt/elbe/" + xml.text ("/project/name")
     prefix += "_" + xml.text ("/project/version") + "/"
 
-    log ("updating: " + prefix)
+    log ("preparing update: " + prefix)
 
     for i in upd_file_z.namelist ():
 
         (dirname, filename) = os.path.split (i)
-        log ("unzip %s: %s" % (prefix+dirname, filename))
 
         try:
             upd_file_z.extract (i, prefix)
