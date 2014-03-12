@@ -31,7 +31,7 @@ from elbepack.treeutils import etree
 from elbepack.version import elbe_version
 from elbepack.asciidoclog import ASCIIDocLog
 
-from elbepack.elbexml import ElbeXML
+from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
