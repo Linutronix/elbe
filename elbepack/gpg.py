@@ -50,47 +50,50 @@ class OverallStatus:
 
 def check_signature(ctx, sig):
     status = OverallStatus()
-    if sig.summary & gpgme.SIGSUM_KEY_MISSING == 0:
-        # there should be a key
-        key = ctx.get_key(sig.fpr)
-        print '%s <%s> (%s):' % (key.uids[0].name, key.uids[0].email, sig.fpr),
-        if sig.summary & gpgme.SIGSUM_VALID == gpgme.SIGSUM_VALID:
-            # signature fully valid and trusted
-            print 'VALID (Trusted)'
-        else:
-            # print detailed status in case it's not fully valid and trusted
-            if sig.summary == 0:
-                # Signature is valid, but the key is not ultimately trusted,
-                # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
-                print 'VALID (Untrusted).',
-            if sig.summary & gpgme.SIGSUM_SIG_EXPIRED == gpgme.SIGSUM_SIG_EXPIR
-                print 'SIGNATURE EXPIRED!',
-                status.sig_expired = True
-            if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIR
-                print 'KEY EXPIRED!',
-                status.key_expired = True
-            if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOK
-                print 'KEY REVOKED!',
-                status.key_revoked = True
-            if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
-                print 'INVALID SIGNATURE!',
-                status.invalid = True
-            if sig.summary & gpgme.SIGSUM_CRL_MISSING == gpgme.SIGSUM_CRL_MISSI
-                print 'CRL MISSING!',
-                status.gpgme_error = True
-            if sig.summary & gpgme.SIGSUM_CRL_TOO_OLD == gpgme.SIGSUM_CRL_TOO_O
-                print 'CRL TOO OLD!',
-                status.gpgme_error = True
-            if sig.summary & gpgme.SIGSUM_BAD_POLICY == gpgme.SIGSUM_BAD_POLICY
-                print 'UNMET POLICY REQUIREMENT!',
-                status.gpgme_error = True
-            if sig.summary & gpgme.SIGSUM_SYS_ERROR == gpgme.SIGSUM_SYS_ERROR:
-                print 'SYSTEM ERROR!',
-                status.gpgme_error = True
-            print
-    else:
+
+    if sig.summary & gpgme.SIGSUM_KEY_MISSING:
         print 'Signature with unknown key: %s' % sig.fpr
         status.key_missing = True
+        return status
+
+    # there should be a key
+    key = ctx.get_key(sig.fpr)
+    print '%s <%s> (%s):' % (key.uids[0].name, key.uids[0].email, sig.fpr),
+    if sig.summary & gpgme.SIGSUM_VALID == gpgme.SIGSUM_VALID:
+        # signature fully valid and trusted
+        print 'VALID (Trusted)'
+        return status
+
+    # print detailed status in case it's not fully valid and trusted
+    if sig.summary == 0:
+        # Signature is valid, but the key is not ultimately trusted,
+        # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
+        print 'VALID (Untrusted).',
+    if sig.summary & gpgme.SIGSUM_SIG_EXPIRED == gpgme.SIGSUM_SIG_EXPIRED:
+        print 'SIGNATURE EXPIRED!',
+        status.sig_expired = True
+    if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIRED:
+        print 'KEY EXPIRED!',
+        status.key_expired = True
+    if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKEK:
+        print 'KEY REVOKED!',
+        status.key_revoked = True
+    if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
+        print 'INVALID SIGNATURE!',
+        status.invalid = True
+    if sig.summary & gpgme.SIGSUM_CRL_MISSING == gpgme.SIGSUM_CRL_MISSING:
+        print 'CRL MISSING!',
+        status.gpgme_error = True
+    if sig.summary & gpgme.SIGSUM_CRL_TOO_OLD == gpgme.SIGSUM_CRL_TOO_OLD:
+        print 'CRL TOO OLD!',
+        status.gpgme_error = True
+    if sig.summary & gpgme.SIGSUM_BAD_POLICY == gpgme.SIGSUM_BAD_POLICY:
+        print 'UNMET POLICY REQUIREMENT!',
+        status.gpgme_error = True
+    if sig.summary & gpgme.SIGSUM_SYS_ERROR == gpgme.SIGSUM_SYS_ERROR:
+        print 'SYSTEM ERROR!',
+        status.gpgme_error = True
+
     return status
 
 
@@ -98,7 +101,8 @@ def unsign_file(fname):
     # check for .gpg extension and create an output filename without it
     if len(fname) <= 4 or fname[len(fname)-4:] != '.gpg':
         print 'The input file needs a .gpg extension'
-        sys.exit(20)
+        return None
+
     outfilename = fname[:len(fname)-4]
 
     ctx = gpgme.Context()
@@ -106,30 +110,37 @@ def unsign_file(fname):
 
     try:
         infile = open(fname, 'r')
-        try:
-            outfile = open(outfilename, 'w')
-            try:
-                # obtain signature and write unsigned file
-                sigs = ctx.verify(infile, None, outfile)
-                print 'Unsigned file written into file: %s' % outfilename
-
-                # print status of all signatures and check if all signatures ar
-                overall_status = OverallStatus()
-                print 'Signatures found:'
-                for sig in sigs:
-                    overall_status.add(check_signature(ctx, sig))
-
-                sys.exit(overall_status.to_exitcode())
-            except Exception as ex:
-                print 'Error checking the file %s: %s' % (fname, ex.message)
-                sys.exit(20)
-        except IOError as ex:
-            print 'Cannot open output file %s: %s' % (outfilename, ex.message)
-            sys.exit(20)
     except IOError as ex:
         print 'Cannot open the file to read from: %s' % ex.message
-        sys.exit(20)
+        return None
 
+    try:
+        outfile = open(outfilename, 'w')
+    except IOError as ex:
+        print 'Cannot open output file %s: %s' % (outfilename, ex.message)
+        infile.close ()
+        return None
+
+    try:
+        # obtain signature and write unsigned file
+        sigs = ctx.verify(infile, None, outfile)
+
+        # print status of all signatures and check if all signatures ar
+        overall_status = OverallStatus()
+        print 'Signatures found:'
+        for sig in sigs:
+            overall_status.add(check_signature(ctx, sig))
+
+        infile.close ()
+        outfile.close ()
+        return outfilename
+
+    except Exception as ex:
+        print 'Error checking the file %s: %s' % (fname, ex.message)
+        infile.close ()
+        outfile.close ()
+
+    return None
 
 def sign_file(fname, fingerprint):
     outfilename = fname + '.gpg'
