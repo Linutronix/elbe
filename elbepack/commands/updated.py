@@ -228,7 +228,7 @@ def action_select (fname):
     if action == "upd":
         update (fname)
     else:
-        log ("action_select: unhandled file: " + fname)
+        log ("unhandled file: " + fname)
 
 class FileMonitor (pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE (self, event):
@@ -246,9 +246,6 @@ class FileMonitor (pyinotify.ProcessEvent):
 
         elif status.nosign:
             action_select (event.pathname)
-
-        else:
-            log ("file ignored: " + event.pathname)
 
 def shutdown (signum, fname):
 
