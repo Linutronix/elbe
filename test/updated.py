@@ -42,7 +42,8 @@ def shutdown (monitor):
 
 oparser = OptionParser (usage="usage: %prog [options]")
 
-oparser.add_option ("--debug", dest="debug",
+oparser.add_option ("--debug", dest="debug", action="store_true",
+                    default=False,
                     help="run in debug mode")
 
 oparser.add_option ("--target", dest="target",
