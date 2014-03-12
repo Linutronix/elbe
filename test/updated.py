@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 import soaplib
 import sys
 import threading
+import time
 
 from optparse import OptionParser
 from soaplib.service import soapmethod
@@ -25,12 +26,19 @@ class MonitorThread (threading.Thread):
         threading.Thread.__init__ (self)
         self.host = host
         self.port = port
+        self.server = None
 
     def run (self):
         print "monitor ready %s:%s" % (self.host, self.port)
-        server = make_server (self.host, int (self.port), MonitorService ())
-        server.serve_forever ()
+        self.server = make_server (self.host, int(self.port), MonitorService())
+        self.server.serve_forever ()
 
+def shutdown (monitor):
+    if monitor.server:
+        monitor.server.shutdown ()
+
+    monitor.join ()
+    sys.exit (0)
 
 oparser = OptionParser (usage="usage: %prog [options]")
 
@@ -86,23 +94,31 @@ except:
 monitor = MonitorThread (host, monitorport)
 monitor.start ()
 
-monitor_wsdl = "http://" + host + ":" + monitorport + "/?wsdl"
-control.service.register_monitor (monitor_wsdl)
+time.sleep (1) # hack to ensure that monitor server was started
 
-s = control.service.list_snapshots ()
-snapshots = s.split (',')
+try:
+    monitor_wsdl = "http://" + host + ":" + monitorport + "/?wsdl"
+    control.service.register_monitor (monitor_wsdl)
+except:
+    print "monitor couldn't be registered (port already in use?)"
+    shutdown (monitor)
 
-print "select snapshot:"
-i = 0
-for s in snapshots:
-    if s:
-        print "  [%d] %s" % (i, s)
-    i = i + 1
+while 1:
+    s = control.service.list_snapshots ()
+    snapshots = s.split (',')
 
-sys.stdout.write ("% ")
-sys.stdout.flush ()
-n = int (raw_input ())
+    print "select snapshot:"
+    i = 0
+    for s in snapshots:
+        if s:
+            print "  [%d] %s" % (i, s)
+        i = i + 1
 
-print control.service.apply_snapshot (snapshots [n])
+    sys.stdout.write ("% ")
+    sys.stdout.flush ()
 
-sys.exit (0)
+    try:
+        n = int (raw_input ())
+        print control.service.apply_snapshot (snapshots [n])
+    except:
+        shutdown (monitor)
