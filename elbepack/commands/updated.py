@@ -43,6 +43,7 @@ from elbepack.xmldefaults import ElbeDefaults
 class UpdateStatus:
     monitor = None
     observer = None
+    soapserver = None
     stop = False
     step = 0
 
@@ -233,9 +234,8 @@ def shutdown (signum, fname):
 
     global status
 
-    status.observer.stop ()
-    status.observer = None
     status.stop = True
+    status.observer = None
 
 class ObserverThread (threading.Thread):
 
@@ -252,7 +252,8 @@ class ObserverThread (threading.Thread):
                 status.observer.process_events ()
 
             if status.stop:
-                print "terminate thread"
+                if status.soapserver:
+                    status.soapserver.shutdown ()
                 return
 
 def run_command (argv):
@@ -280,22 +281,13 @@ def run_command (argv):
     wm.add_watch (update_dir, pyinotify.IN_CLOSE_WRITE, proc_fun=FileMonitor ())
     signal.signal (signal.SIGTERM, shutdown)
 
-    obs = ObserverThread ()
-    obs.start ()
+    obs_thread = ObserverThread ()
+    obs_thread.start ()
 
-    server = make_server ('', 8088, UpdateService ())
-    server.serve_forever ()
+    status.soapserver = make_server ('', 8088, UpdateService ())
+    try:
+        status.soapserver.serve_forever ()
+    except:
+        shutdown (1, "now")
 
-    # TODO status report should be done by SOAP in the future.
-    #      this is just a quick hack to use multithreading from the begining
-    while 1:
-        try:
-            time.sleep (1)
-        except KeyboardInterrupt:
-            status.stop = True
-
-        if status.stop:
-            print "shutdown"
-            sys.exit (0)
-
-    obs.join ()
+    obs_thread.join ()
