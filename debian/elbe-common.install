@@ -1,5 +1,8 @@
 ./usr/bin/*
 ./usr/lib/python2.*/*-packages/elbepack/aptprogress.py
+./usr/lib/python2.*/*-packages/elbepack/aptpkgutils.py
+./usr/lib/python2.*/*-packages/elbepack/rpcaptcache.py
+./usr/lib/python2.*/*-packages/elbepack/elbexml.py
 ./usr/lib/python2.*/*-packages/elbepack/treeutils.py
 ./usr/lib/python2.*/*-packages/elbepack/fstab.py
 ./usr/lib/python2.*/*-packages/elbepack/dbsfed.xsd

@@ -1,1 +1,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/hdimg.py
+./usr/lib/python2.*/*-packages/elbepack/commands/gen_update.py
+./usr/lib/python2.*/*-packages/elbepack/hdimg.py
+./usr/lib/python2.*/*-packages/elbepack/dump.py
+./usr/lib/python2.*/*-packages/elbepack/finetuning.py
+./usr/lib/python2.*/*-packages/elbepack/rfs.py
+./usr/lib/python2.*/*-packages/elbepack/filesystem.py
