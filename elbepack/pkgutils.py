@@ -21,6 +21,7 @@
 import os
 
 from tempfile import mkdtemp
+import urllib2
 
 try:
     from elbepack import virtapt
