@@ -37,6 +37,7 @@ from wsgiref.simple_server import make_server
 from zipfile import (ZipFile, BadZipfile)
 
 from elbepack.aptprogress import (ElbeInstallProgress, ElbeAcquireProgress)
+from elbepack.gpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
 
@@ -46,6 +47,7 @@ class UpdateStatus:
     soapserver = None
     stop = False
     step = 0
+    nosign = False
 
 status = UpdateStatus ()
 
@@ -217,17 +219,36 @@ def update (upd_file):
     status.step = 0
     log ("update done: " + prefix)
 
-def action_select (event):
-    action = event.pathname.split ('.') [-1]
+def action_select (fname):
+
+    global status
+
+    action = fname.split ('.') [-1]
 
     if action == "upd":
-        update (event.pathname)
+        update (fname)
     else:
-        print "action_select: unhandled file: %s" % event.pathname
+        log ("action_select: unhandled file: " + fname)
 
 class FileMonitor (pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE (self, event):
-        action_select (event)
+
+        global status
+
+        extension = event.pathname.split ('.') [-1]
+
+        if extension == "gpg":
+            fname = unsign_file (event.pathname)
+            if fname:
+                action_select (fname)
+            else:
+                log ("checking signature failed: " + event.pathname)
+
+        elif status.nosign:
+            action_select (event.pathname)
+
+        else:
+            log ("file ignored: " + event.pathname)
 
 def shutdown (signum, fname):
 
@@ -265,7 +286,14 @@ def run_command (argv):
                         help="monitor dir (default is /opt/elbe/updates)",
                         metavar="FILE" )
 
+    oparser.add_option ("--nosign", action="store_true", dest="nosign",
+                        default=False,
+                        help="accept none signed files")
+
     (opt,args) = oparser.parse_args(argv)
+
+    if opt.nosign:
+        status.nosign = True
 
     if not opt.update_dir:
         update_dir = "/opt/elbe/updates"
