@@ -610,17 +610,6 @@
     </restriction>
   </simpleType>
 
-  <simpleType name="ubi_size">
-    <annotation>
-      <documentation>
-        size pattern as needed by ubinize
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <pattern value="(\d+MiB)" />
-    </restriction>
-  </simpleType>
-
   <complexType name="ubi">
     <annotation>
       <documentation>
@@ -649,7 +638,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="rfs:ubi_size" minOccurs="1" maxOccurs="1">
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             size of the ubi volume
@@ -739,17 +728,6 @@
     </sequence>
   </complexType>
 
-  <simpleType name="mtd_size">
-    <annotation>
-      <documentation>
-         size pattern for mtd
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <pattern value="(\d+MB)" />
-    </restriction>
-  </simpleType>
-
   <complexType name="mtd">
     <annotation>
       <documentation>
@@ -771,7 +749,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="rfs:mtd_size" minOccurs="1" maxOccurs="1">
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              size of the mtd device
