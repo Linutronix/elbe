@@ -283,8 +283,8 @@ class ChRootFilesystem(Filesystem):
         os.chroot (".")
 
 class TargetFs(ChRootFilesystem):
-    def __init__(self, path):
-        ChRootFilesystem.__init__(self,path,clean=True)
+    def __init__(self, path, clean=True):
+        ChRootFilesystem.__init__(self,path,clean)
 
     def do_elbe_dump(self, xml):
         self.remove("opt/elbe/dump.log", noerr=True)
