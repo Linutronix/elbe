@@ -1,0 +1,108 @@
+ELBE with update support
+========================
+Manuel Traut <manut@linutronix.de>
+v1, 20140312
+
+1) create a ELBE buildmachine
+-----------------------------
+
+create a VM that hosts ELBE development (webinterface, rootfilesystems, ..)
+
+------------------------------------------------------------------------------
+host-pc:~/elbe# ./elbe init examples/elbe-init.xml --directory=../elbe-init
+host-pc:~/elbe# cd ../elbe-init
+host-pc:~/elbe# make
+host-pc:~/elbe# make run-con
+
+Debian GNU/Linux 7 elbe-daemon ttyS0
+
+elbe-daemon login: root
+Password: root
+root@elbe-daemon:~#
+------------------------------------------------------------------------------
+
+2) build a ELBE project
+-----------------------
+
+Now an initial target image will be created inside the VM. The buildchroot
+command will block for several minutes without any output.
+
+Take care that the elbe-updated is in the pkg list for the traget!
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~# scp local@10.0.2.2:~/projects/elbe/elbe/examples/beaglebone-black.xml .
+local@10.0.2.2's password: 
+beaglebone-black.xml                          100%  403KB 402.6KB/s   00:00    
+root@elbe-daemon:~# elbe buildchroot -t beagle -o beagle.log -n beagle --skip-cdrom beaglebone-black.xml
+------------------------------------------------------------------------------
+
+The elbe project is now available in /root/beagle
+
+3) generate an update file
+--------------------------
+
+To add or update some packages modify the python script:
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~# cd beagle
+root@elbe-daemon:~/beagle# scp local@10.0.2.2:~/projects/elbe/elbe/test/modify_rfs.py .
+local@10.0.2.2's password: 
+modify_rfs.py                                 100%  744     0.7KB/s   00:00    
+root@elbe-daemon:~/beagle# python modify_rfs.py 
+------------------------------------------------------------------------------
+
+Increment the version number in the source.xml file.
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~# vi source.xml
+------------------------------------------------------------------------------
+
+Then generate an update file.
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~/beagle# elbe gen_update -t . -n beagle source.xml
+root@elbe-daemon:~/beagle# ls -lh *.upd
+-rw-r--r-- 1 root root 18M Mar 12 16:10 beaglebone-black_2.0.upd
+------------------------------------------------------------------------------
+
+Optional sign the update file (note gpg needs to be configured)
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~/beagle# apt-get install pgp
+root@elbe-daemon:~/beagle# gpg --gen-key
+...
+
+------------------------------------------------------------------------------
+
+4) apply an update file
+-----------------------
+
+
+5) select a specific update state
+---------------------------------
+
+a specific update state can be selected via soap interface.
+To get the wsdl file, use the following url:
+http://<your targetip>/?wsdl
+
+There is a testscript to test the soap interface. (This script can also be
+used to monitor the update progress if a file is placed on the target as
+described in 4)
+
+------------------------------------------------------------------------------
+hostpc:~/elbe/test# ./updated.py --host=192.168.0.123 2> /dev/null
+monitor ready localhost:8087
+
+connection established
+select snapshot:
+  [0] updated-example_1
+  [1] updated-example_2
+  [2] updated-example_3
+  [3] updated-example_4
+  [4] updated-example_5
+%
+------------------------------------------------------------------------------
+
+Enter the number of the snapshot that should be applied.
+Any other input will terminate the testscript.
+
