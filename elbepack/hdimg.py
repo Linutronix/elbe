@@ -83,7 +83,7 @@ def build_image_mtd( outf, mtd, target ):
             fp.write( "vol_name=%s\n" % vol.text("label") )
 
             if vol.text("size") != "remain":
-                fp.write( "vol_size=%d\n" % size_to_int( vol.text("size") )
+                fp.write( "vol_size=%d\n" % size_to_int( vol.text("size") ) )
 
     fp.close()
 
