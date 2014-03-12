@@ -12,3 +12,4 @@
 ./usr/lib/python2.*/*-packages/elbepack/validate.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/asciidoclog.py
+./usr/lib/python2.*/*-packages/elbepack/gpg.py

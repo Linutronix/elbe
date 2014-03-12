@@ -17,35 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import gpgme
-
-def sign_file(fname, fingerprint):
-    outfilename = fname + '.gpg'
-    ctx = gpgme.Context()
-    ctx.armor = False
-
-    try:
-        key = ctx.get_key(fingerprint)
-        try:
-            infile = open(fname, 'r')
-            try:
-                outfile = open(outfilename, 'w')
-                try:
-                    ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
-                    print 'Signed file written to: %s' % outfilename
-                    sys.exit(0)
-                except Exception as ex:
-                    print 'Error signing the file %s: %s' % (infilename, ex.message)
-                    sys.exit(20)
-            except IOError as ex:
-                print 'Cannot open output file %s: %s' % (outfilename, ex.message)
-                sys.exit(20)
-        except IOError as ex:
-            print 'Cannot open the file to sign: %s' % ex.message
-            sys.exit(20)
-    except gpgme.GpgmeError as ex:
-        print 'Cannot find key with fingerprint %s: %s' % (fingerprint % ex.message)
-        sys.exit(20)
+from elbepack.gpg import sign_file
 
 def run_command( argv ):
     if(len(argv) != 2):

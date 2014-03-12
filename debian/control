@@ -87,5 +87,6 @@ Depends: elbe-common,
   python-pyinotify,
   python-apt,
   python-suds,
+  python-gpgme,
   python-soaplib
 Description:  Elbe deamon used on targets to apply updates
