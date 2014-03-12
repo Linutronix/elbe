@@ -29,7 +29,7 @@ class ElbeInstallProgress (InstallProgress):
     def write (self, line):
         line = str (self.percent) + "% " + line
         if self.cb:
-            self.cb.service.msg (line)
+            self.cb (line)
         else:
             print line
 
@@ -44,9 +44,6 @@ class ElbeInstallProgress (InstallProgress):
     def status_change (self, pkg, percent, status):
         InstallProgress.status_change (self, pkg, percent, status)
         self.write (status)
-
-    def finishUpdate (self):
-        self.write ("install progress finished")
 
     def fork(self):
         retval = os.fork()
@@ -64,10 +61,9 @@ class ElbeAcquireProgress (AcquireProgress):
 
     def write (self, line):
         if self.cb:
-            self.cb.service.msg (line)
+            self.cb (line)
         else:
             print line
-
 
     def ims_hit(self, item):
         line = 'Hit ' + item.description
@@ -75,14 +71,9 @@ class ElbeAcquireProgress (AcquireProgress):
             line += ' [%sB]' % size_to_str(item.owner.filesize)
         self.write (line)
 
-
     def fail(self, item):
         if item.owner.status == item.owner.STAT_DONE:
             self.write ("Ign " + item.description)
-        else:
-            self.write ("Err " + item.description + " " +
-                    item.owner.error_text)
-
 
     def fetch(self, item):
         if item.owner.complete:
@@ -94,7 +85,6 @@ class ElbeAcquireProgress (AcquireProgress):
             line += (" [%sB]" % size_to_str(item.owner.filesize))
 
         self.write(line)
-
 
     def pulse (self, owner):
         return True

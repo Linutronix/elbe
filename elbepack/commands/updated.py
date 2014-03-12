@@ -44,6 +44,7 @@ class UpdateStatus:
     monitor = None
     observer = None
     stop = False
+    step = 0
 
 status = UpdateStatus ()
 
@@ -64,18 +65,21 @@ class UpdateService (SimpleWSGISoapApp):
         try:
             xml = etree ("/opt/elbe/" + version + "/new.xml")
         except:
-            return "version (%s) not found" % version
+            return "snapshot %s not found" % version
         try:
             apply_update (xml)
-        except:
-            return "apply snapshot failed"
+        except Exception, err:
+            print Exception, err
+            status.step = 0
+            return "apply snapshot %s failed" % version
 
-        return "snapshot applied"
+        status.step = 0
+        return "snapshot %s applied" % version
 
     @soapmethod (String)
     def register_monitor (self, wsdl_url):
         status.monitor = Client (wsdl_url)
-        status.monitor.service.msg ("connection established")
+        log ("connection established")
 
 def update_sourceslist (xml, update_dir):
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
@@ -105,7 +109,10 @@ def apply_update (xml):
 
     apt_pkg.init ()
     cache = apt_pkg.Cache ()
-    cache.update (ElbeAcquireProgress (cb=status.monitor), sources)
+
+    status.step = 1
+    log ("updating package cache ...")
+    cache.update (ElbeAcquireProgress (cb=log), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
     # the changed index files."
@@ -118,7 +125,18 @@ def apply_update (xml):
     #  mark the package for installation (with the specified version)
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
+    status.step = 2
+    log ("calculating packages to install/remove ...")
+    count = len (hl_cache)
+    step = count / 10
+    i = 0
+    percent = 0
     for p in hl_cache:
+        i = i + 1
+        if not (i % step):
+            percent = percent + 10
+            log (str (percent) + "% - " + str (i) + "/" + str (count))
+
         pkg = cache [p.name]
         marked = False
         for fpi in fpl:
@@ -131,24 +149,41 @@ def apply_update (xml):
         if not marked:
             depcache.mark_delete (pkg, True)
 
-    depcache.commit (ElbeAcquireProgress (cb=status.monitor),
-                     ElbeInstallProgress (cb=status.monitor))
+    status.step = 3
+    log ("applying snapshot ...")
+    depcache.commit (ElbeAcquireProgress (cb=log), ElbeInstallProgress (cb=log))
+
+def log (msg):
+
+    global status
+
+    if status.step:
+        msg = "(" + str (status.step) + "/3) " + msg
+
+    if status.monitor:
+        try:
+            status.monitor.service.msg (msg)
+        except:
+            print "logging to monitor failed, removing monitor connection"
+            status.monitor = None
+            print msg
+    else:
+        print msg
 
 def update (upd_file):
 
     global status
 
-    status.monitor.service.msg ( "updating.. %s" % upd_file)
+    log ( "updating.. %s" % upd_file)
 
     try:
         upd_file_z = ZipFile (upd_file)
     except BadZipfile:
-        status.monitor.service.msg ("update aborted (bad zip file: %s)" %
-                                    upd_file)
+        log ("update aborted (bad zip file: %s)" % upd_file)
         return
 
     if not "new.xml" in upd_file_z.namelist ():
-        status.monitor.service.msg ("update invalid (new.xml missing)")
+        log ("update invalid (new.xml missing)")
         return
 
     upd_file_z.extract ("new.xml", "/tmp/")
@@ -157,24 +192,30 @@ def update (upd_file):
     prefix = "/opt/elbe/" + xml.text ("/project/name")
     prefix += "_" + xml.text ("/project/version") + "/"
 
-    status.monitor.service.msg ("updating: " + prefix)
+    log ("updating: " + prefix)
 
     for i in upd_file_z.namelist ():
 
         (dirname, filename) = os.path.split (i)
-        status.monitor.service.msg ("unzip %s: %s" % (prefix+dirname, filename))
+        log ("unzip %s: %s" % (prefix+dirname, filename))
 
         try:
             upd_file_z.extract (i, prefix)
         except OSError:
-            status.monitor.service.msg ("extraction failed: %s" %
-                                        sys.exc_info () [1])
+            log ("extraction failed: %s" % sys.exc_info () [1])
             return
 
     update_sourceslist (xml, prefix + "repo")
-    apply_update (xml)
+    try:
+        apply_update (xml)
+    except Exception, err:
+        print Exception, err
+        status.step = 0
+        log ("apply update failed: " + prefix)
+        return
 
-    status.monitor.service.msg ("update done: " + prefix)
+    status.step = 0
+    log ("update done: " + prefix)
 
 def action_select (event):
     action = event.pathname.split ('.') [-1]
