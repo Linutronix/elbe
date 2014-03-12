@@ -97,16 +97,13 @@ def check_signature(ctx, sig):
     return status
 
 
-def unsign_file(fname, dest=None):
+def unsign_file(fname):
     # check for .gpg extension and create an output filename without it
     if len(fname) <= 4 or fname[len(fname)-4:] != '.gpg':
         print 'The input file needs a .gpg extension'
         return None
 
     outfilename = fname[:len(fname)-4]
-
-    if dest:
-        outfilename = os.path.join (dest, outfilename)
 
     ctx = gpgme.Context()
     ctx.armor = False
