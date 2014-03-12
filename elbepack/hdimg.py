@@ -293,6 +293,11 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
         grub.install( target )
 
 def do_hdimg(outf, xml, target, rfs, skip_grub):
+
+    # Check whether we have any images first
+    if not xml.tgt.has("images"):
+        return
+
     # Build a dictonary of mount points
     fslabel = {}
     for fs in xml.tgt.node("fstab"):
