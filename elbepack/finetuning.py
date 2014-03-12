@@ -31,6 +31,7 @@ class FinetuningAction(object):
     def __init__(self, node):
         self.node = node
 
+
 class RmAction(FinetuningAction):
 
     tag = 'rm'
@@ -42,6 +43,46 @@ class RmAction(FinetuningAction):
         log.do( "rm -rvf " + target.fname( self.node.et.text ) )
         
 FinetuningAction.register( RmAction )
+
+
+class MkdirAction(FinetuningAction):
+
+    tag = 'mkdir'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "mkdir -p " + target.fname( self.node.et.text ) )
+
+FinetuningAction.register( MkdirAction )
+
+
+class CpAction(FinetuningAction):
+
+    tag = 'cp'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+
+FinetuningAction.register( CpAction )
+
+
+class MvAction(FinetuningAction):
+
+    tag = 'mv'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+
+FinetuningAction.register( MvAction )
+
 
 def do_finetuning(xml, log, buildenv, target):
 
