@@ -1,18 +1,60 @@
 ELBE with update support
 ========================
 Manuel Traut <manut@linutronix.de>
-v1, 20140312
+v1
 
-1) create a ELBE buildmachine
------------------------------
+Files
+-----
+
+elbe-test.tbz
+~~~~~~~~~~~~~
+Debian Repository including the current development version of ELBE. Never use
+this prerelease to generate rootfilesystems for productive use!
+
+Extract the contents of this archive, so that a debian mirror is reachable on
+the localhost webserver:
+
+------------------------------------------------------------------------------
+host-pc:~/# sudo tar xjf elbe-test -C /var/www/html
+------------------------------------------------------------------------------
+
+'http://localhost/elbe-test' in a webbrowser needs to show:
+
+------------------------------------------------------------------------------
+Index of /elbe-test
+Name	Last modified	Size	Description
+Parent Directory		-		 
+[DIR]	conf/	2014-03-12 13:30	-		 
+[DIR]	db/	2014-03-12 13:30	-		 
+[DIR]	dists/	2014-03-12 13:30	-		 
+[DIR]	pool/	2014-03-12 13:30	-		 
+Apache/2.4.7 (Debian) Server at localhost Port 80
+------------------------------------------------------------------------------
+
+
+elbe-0.6-beta1.tbz
+~~~~~~~~~~~~~~~~~~
+
+This archive contains the current sourcetree of the development version of ELBE.
+It can be used on the test machine to get acess to the test scripts, examples
+and to create an initial development environment.
+
+It can be extracted to any directory:
+
+------------------------------------------------------------------------------
+host-pc:~/# tar xjf elbe-0.6-beta1.tbz
+------------------------------------------------------------------------------
+
+create a ELBE buildmachine
+--------------------------
 
 create a VM that hosts ELBE development (webinterface, rootfilesystems, ..)
 
 ------------------------------------------------------------------------------
-host-pc:~/elbe# ./elbe init examples/elbe-init.xml --directory=../elbe-init
-host-pc:~/elbe# cd ../elbe-init
-host-pc:~/elbe# make
-host-pc:~/elbe# make run-con
+host-pc:~/elbe-0.6-beta1# ./elbe init examples/elbe-init.xml --directory=../elbe-init
+host-pc:~/elbe-0.6-beta1# cd ../elbe-init
+host-pc:~/elbe-init# make
+host-pc:~/elbe-init# make run-con
 
 Debian GNU/Linux 7 elbe-daemon ttyS0
 
@@ -21,8 +63,8 @@ Password: root
 root@elbe-daemon:~#
 ------------------------------------------------------------------------------
 
-2) build a ELBE project
------------------------
+build a ELBE project
+--------------------
 
 Now an initial target image will be created inside the VM. The buildchroot
 command will block for several minutes without any output.
@@ -32,23 +74,23 @@ Take care that the elbe-updated is in the pkg list for the traget!
 ------------------------------------------------------------------------------
 root@elbe-daemon:~# scp local@10.0.2.2:~/projects/elbe/elbe/examples/beaglebone-black.xml .
 local@10.0.2.2's password: 
-beaglebone-black.xml                          100%  403KB 402.6KB/s   00:00    
+beaglebone-black.xml                          100%  403KB 402.6KB/s   00:00
 root@elbe-daemon:~# elbe buildchroot -t beagle -o beagle.log -n beagle --skip-cdrom beaglebone-black.xml
 ------------------------------------------------------------------------------
 
 The elbe project is now available in /root/beagle
 
-3) generate an update file
---------------------------
+generate an update file
+-----------------------
 
 To add or update some packages modify the python script:
 
 ------------------------------------------------------------------------------
 root@elbe-daemon:~# cd beagle
 root@elbe-daemon:~/beagle# scp local@10.0.2.2:~/projects/elbe/elbe/test/modify_rfs.py .
-local@10.0.2.2's password: 
-modify_rfs.py                                 100%  744     0.7KB/s   00:00    
-root@elbe-daemon:~/beagle# python modify_rfs.py 
+local@10.0.2.2's password:
+modify_rfs.py                                 100%  744     0.7KB/s   00:00
+root@elbe-daemon:~/beagle# python modify_rfs.py
 ------------------------------------------------------------------------------
 
 Increment the version number in the source.xml file.
@@ -66,43 +108,190 @@ root@elbe-daemon:~/beagle# ls -lh *.upd
 ------------------------------------------------------------------------------
 
 Optional sign the update file (note gpg needs to be configured)
+It is useful to install haveged to increase the entrophy in the VM
 
 ------------------------------------------------------------------------------
-root@elbe-daemon:~/beagle# apt-get install pgp
+root@elbe-daemon:~/beagle# apt-get install pgp haveged
 root@elbe-daemon:~/beagle# gpg --gen-key
 ...
-
+root@elbe-daemon:~/beagle# gpg --list-keys
+...
+pub   2048R/7C8F7060 2014-03-12
+...
+root@elbe-daemon:~/beagle# elbe sign beaglebone-black_2.0.upd 7C8F7060
+Signed file written to: beaglebone-black_2.0.upd.gpg
 ------------------------------------------------------------------------------
 
-4) apply an update file
------------------------
+Copy the update files to the host pc:
+
+------------------------------------------------------------------------------
+root@elbe-daemon:~/beagle# scp beagle*upd* local@10.0.2.2:/tmp
+local@10.0.2.2's password:
+beaglebone-black_2.0.upd                      100%   17MB  16.5MB/s   00:00
+beaglebone-black_2.0.upd.gpg                  100%   17MB  16.5MB/s   00:01
+------------------------------------------------------------------------------
 
 
-5) select a specific update state
+start the target system (in qemu)
 ---------------------------------
 
-a specific update state can be selected via soap interface.
-To get the wsdl file, use the following url:
-http://<your targetip>/?wsdl
+To simplify testing no real target hw is used. Instead we currently use qemu
+to boot our beaglebone-black image.
 
-There is a testscript to test the soap interface. (This script can also be
-used to monitor the update progress if a file is placed on the target as
-described in 4)
+First the necessary files are copied from the VM to the host pc:
 
 ------------------------------------------------------------------------------
-hostpc:~/elbe/test# ./updated.py --host=192.168.0.123 2> /dev/null
-monitor ready localhost:8087
+root@elbe-daemon:~/beagle# scp chroot/boot/*versatile* local@10.0.2.2:/tmp
+local@10.0.2.2's password:
+config-3.2.0-4-versatile                      100%   88KB  87.6KB/s   00:00
+initrd.img-3.2.0-4-versatile                  100% 7373KB   7.2MB/s   00:01
+System.map-3.2.0-4-versatile                  100% 1100KB   1.1MB/s   00:00
+vmlinuz-3.2.0-4-versatile                     100% 1383KB   1.4MB/s   00:00
+root@elbe-daemon:~/beagle# scp sdcard.img local@10.0.2.2:/tmp
+local@10.0.2.2's password:
+sdcard.img                                     48%  916MB  41.1MB/s   00:23 ETA
+------------------------------------------------------------------------------
 
+Then the qemu-system-arm is started on the host-pc:
+
+------------------------------------------------------------------------------
+local@host-pc:/tmp# qemu-system-arm -M versatilepb\
+  -kernel vmlinuz-3.2.0-4-versatile -initrd initrd.img-3.2.0-4-versatile\
+  -net nic,vlan=1,model=smc91c111,macaddr="ba:26:80:5a:c1:4c" -net user,vlan=1\
+  -redir tcp:6022::22 -redir tcp:8088::8088\
+  -hda sdcard.img -append "root=/dev/sda2"
+------------------------------------------------------------------------------
+
+(to login use 'root' with the password 'foo')
+
+The elbe-updated should be startet automatically. The SOAP interface should be
+reachable from the host-pc. A quick check is to retrieve the WSDL Interface
+description with a browser: "http://localhost:8088/?wsdl"
+
+------------------------------------------------------------------------------
+<definitions targetNamespace="elbepack.commands.updated.UpdateService"
+name="UpdateService"><types><schema
+targetNamespace="elbepack.commands.updated.UpdateService"><xs:complexType
+name="list_snapshots"><xs:sequence/></xs:complexType>
+...
+------------------------------------------------------------------------------
+
+
+apply an update file
+--------------------
+
+To monitor the update progress the 'updated.py' test script may be used:
+
+------------------------------------------------------------------------------
+host-pc:~/elbe/test# ./updated.py --listen=10.0.2.2 2> /dev/null
+monitor ready :8087
 connection established
 select snapshot:
-  [0] updated-example_1
-  [1] updated-example_2
-  [2] updated-example_3
-  [3] updated-example_4
-  [4] updated-example_5
+  [0] base_version
 %
 ------------------------------------------------------------------------------
+
+Now copy an update file to the monitored directory:
+
+------------------------------------------------------------------------------
+host-pc:~/# scp -P 6022 beaglebone-black_2.0.upd.gpg root@localhost:/opt/elbe/updates/
+root@localhost's password: foo
+beaglebone-black_2.0.upd.gpg                  100%   17MB   2.8MB/s   00:06
+------------------------------------------------------------------------------
+
+Due to a bug in the gpg checker, the upd file is always applied, even if
+the signature is unknown.
+
+If the file without the gpg ending will be uploaded, nothing will happen.
+This behaviour can be changed, if '--nosign' is added to the 'DAEMON_ARGS' in
+'/etc/init.d/elbe-updated'. The daemon needs to be restarted by
+'/etc/init.d/elbe-updated restart' that the change takes effect.
+
+The update progress can be monitored in the updated.py test script:
+
+------------------------------------------------------------------------------
+monitor ready :8087
+connection established
+select snapshot:
+  [0] base_version
+%  updating.. /opt/elbe/updates/beaglebone-black_2.0.upd
+preparing update: /opt/elbe/beaglebone-black_2.0/
+(1/3) updating package cache ...
+(1/3) Ign file: wheezy Release.gpg
+(1/3) Get:1 file: wheezy Release [932 B]
+(1/3) Ign file: wheezy/main Translation-en
+(2/3) calculating packages to install/remove ...
+(2/3) 10% - 24/248
+(2/3) 20% - 48/248
+(2/3) 30% - 72/248
+(2/3) 40% - 96/248
+(2/3) 50% - 120/248
+(2/3) 60% - 144/248
+(2/3) 70% - 168/248
+(2/3) 80% - 192/248
+(2/3) 90% - 216/248
+(2/3) 100% - 240/248
+(3/3) applying snapshot ...
+(3/3) 0.0% Running dpkg
+(3/3) 0.0% Installing libpcre3
+(3/3) 0.0% Installing libglib2.0-0
+(3/3) 0.0% Installing libatk1.0-data
+(3/3) 0.0% Preparing libatk1.0-data
+(3/3) 0.327869% Unpacking libatk1.0-data
+(3/3) 0.655738% Preparing to configure libatk1.0-data
+(3/3) 0.983607% Installing libatk1.0-0
+...
+(3/3) 20.0% Configuring libvorbisenc2
+(3/3) 20.0% Configuring libsndfile1
+(3/3) 20.0% Configuring quickplot
+(3/3) 20.0% Configuring quickplot
+(3/3) 20.3279% Installed quickplot
+update done: /opt/elbe/beaglebone-black_2.0/
+------------------------------------------------------------------------------
+
+select a specific update state
+------------------------------
+
+Use the updated.py test script to switch the target to a specific update state:
 
 Enter the number of the snapshot that should be applied.
 Any other input will terminate the testscript.
 
+------------------------------------------------------------------------------
+host-pc:~/elbe/test# ./updated.py --listen=10.0.2.2 2> /dev/null
+monitor ready :8087
+connection established
+select snapshot:
+  [0] base_version
+  [1] beaglebone-black_2.0
+% 0
+(1/3) updating package cache ...
+(1/3) Ign file: wheezy Release.gpg
+(1/3) Get:1 file: wheezy Release [932 B]
+(1/3) Ign file: wheezy/main Translation-en
+(2/3) calculating packages to install/remove ...
+(2/3) 10% - 24/248
+(2/3) 20% - 48/248
+(2/3) 30% - 72/248
+(2/3) 40% - 96/248
+(2/3) 50% - 120/248
+(2/3) 60% - 144/248
+(2/3) 70% - 168/248
+(2/3) 80% - 192/248
+(2/3) 90% - 216/248
+(2/3) 100% - 240/248
+(3/3) applying snapshot ...
+(3/3) 0.0% Running dpkg
+(3/3) 0.0% Removing quickplot
+...
+(3/3) 0.0% Preparing to completely remove quickplot
+(3/3) 0.819672% Completely removing quickplot
+(3/3) 0.819672% Completely removed quickplot
+(3/3) 1.63934% Removing libgtk-3-0
+(3/3) 1.63934% Completely removing libgtk-3-0
+(3/3) 18.8525% Completely removed ttf-dejavu-core
+(3/3) 19.6721% Removing ucf
+(3/3) 19.6721% Preparing to completely remove ucf
+(3/3) 20.4918% Completely removing ucf
+host-pc:~/elbe/test#
+------------------------------------------------------------------------------
