@@ -55,7 +55,13 @@ class UpdateService (SimpleWSGISoapApp):
 
     @soapmethod (_returns=String)
     def list_snapshots (self):
+        # use comma seperated string because array of string triggers a bug in
+        # python suds :(
         snapshots = ""
+
+        if os.path.isfile ("/etc/elbe_base.xml"):
+            snapshots += "base_version,"
+
         lists = os.listdir ("/etc/apt/sources.list.d")
 
         for l in lists:
@@ -65,10 +71,17 @@ class UpdateService (SimpleWSGISoapApp):
 
     @soapmethod (String, _returns=String)
     def apply_snapshot (self, version):
+
+        if version == "base_version":
+            fname = "/etc/elbe_base.xml"
+        else:
+            fname = "/opt/elbe/" + version + "/new.xml"
+
         try:
-            xml = etree ("/opt/elbe/" + version + "/new.xml")
+            xml = etree (fname)
         except:
             return "snapshot %s not found" % version
+
         try:
             apply_update (xml)
         except Exception, err:

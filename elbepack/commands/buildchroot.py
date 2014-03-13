@@ -237,7 +237,6 @@ def run_command( argv ):
     os.chdir(buildenv.rfs.fname(''))
 
     extract_target( buildenv.rfs, xml, targetfs )
-    targetfs.dump_elbeversion(xml)
 
     validation = os.path.join(opt.target, 'validation.txt')
     pkgs = xml.xml.node("/target/pkg-list")
@@ -247,6 +246,8 @@ def run_command( argv ):
         check_full_pkgs(pkgs, None, validation, cache)
 
     dump_fullpkgs(xml, buildenv.rfs, cache)
+
+    targetfs.dump_elbeversion(xml)
 
     sourcexml = os.path.join(opt.target, 'source.xml')
     xml.xml.write(sourcexml)

@@ -167,6 +167,8 @@ class Filesystem(object):
         f.write(time.strftime("%c\n"))
         f.close()
 
+        elbe_base = self.open("etc/elbe_base.xml", "wb")
+        xml.xml.write(elbe_base)
 
 def copy_filelist( src, filelist, dst ):
     for f in filelist:
