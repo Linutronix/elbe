@@ -59,7 +59,7 @@ class UpdateService (SimpleWSGISoapApp):
         lists = os.listdir ("/etc/apt/sources.list.d")
 
         for l in lists:
-            snapshots += l.split (".")[0] + ","
+            snapshots += l[:len(l)-5] + ","
 
         return snapshots
 
