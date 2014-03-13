@@ -1,3 +1,9 @@
+elbe (0.7.0-beta1) unstable; urgency=medium
+
+  * test release of elbe updated integration and buildchroot rework
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 13 Mar 2014 11:15:51 +0100
+
 elbe (0.6.0-wheezy) unstable; urgency=low
 
   * reworked debian packaging

@@ -1,7 +1,7 @@
 ELBE with update support
 ========================
 Manuel Traut <manut@linutronix.de>
-v1
+v1, 20140313
 
 Files
 -----
@@ -32,8 +32,8 @@ Apache/2.4.7 (Debian) Server at localhost Port 80
 ------------------------------------------------------------------------------
 
 
-elbe-0.6-beta1.tbz
-~~~~~~~~~~~~~~~~~~
+elbe-0.7.0-beta1.tar.gz
+~~~~~~~~~~~~~~~~~~~~~~~
 
 This archive contains the current sourcetree of the development version of ELBE.
 It can be used on the test machine to get acess to the test scripts, examples
@@ -42,7 +42,7 @@ and to create an initial development environment.
 It can be extracted to any directory:
 
 ------------------------------------------------------------------------------
-host-pc:~/# tar xjf elbe-0.6-beta1.tbz
+host-pc:~/# tar xzf elbe-0.7.0-beta1.tar.gz
 ------------------------------------------------------------------------------
 
 create a ELBE buildmachine
@@ -51,8 +51,8 @@ create a ELBE buildmachine
 create a VM that hosts ELBE development (webinterface, rootfilesystems, ..)
 
 ------------------------------------------------------------------------------
-host-pc:~/elbe-0.6-beta1# ./elbe init examples/elbe-init.xml --directory=../elbe-init
-host-pc:~/elbe-0.6-beta1# cd ../elbe-init
+host-pc:~/elbe-0.7.0-beta1# ./elbe init examples/elbe-init.xml --directory=../elbe-init
+host-pc:~/elbe-0.7.0-beta1# cd ../elbe-init
 host-pc:~/elbe-init# make
 host-pc:~/elbe-init# make run-con
 
