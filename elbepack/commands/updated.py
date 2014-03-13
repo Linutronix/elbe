@@ -304,7 +304,7 @@ def run_command (argv):
         update_dir = opt.update_dir
 
     if not os.path.isdir (update_dir):
-        os.mkdir (update_dir)
+        os.makedirs (update_dir)
 
     wm = pyinotify.WatchManager ()
     status.observer = pyinotify.Notifier (wm)
