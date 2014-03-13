@@ -105,14 +105,18 @@ except:
 
 while 1:
     s = control.service.list_snapshots ()
-    snapshots = s.split (',')
+    snapshots = []
+    try:
+        snapshots = s.split (',')
 
-    print "select snapshot:"
-    i = 0
-    for s in snapshots:
-        if s:
-            print "  [%d] %s" % (i, s)
-        i = i + 1
+        print "select snapshot:"
+        i = 0
+        for s in snapshots:
+            if s:
+                print "  [%d] %s" % (i, s)
+            i = i + 1
+    except:
+        print "no snapshots available"
 
     sys.stdout.write ("% ")
     sys.stdout.flush ()
