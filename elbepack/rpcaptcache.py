@@ -31,8 +31,9 @@ class InChRootObject(object):
         self.finalizer = Finalize(self,self.rfs.leave_chroot,exitpriority=10)
 
 class RPCAPTCache(InChRootObject):
-    def __init__( self, rfs, logpath, arch ):
+    def __init__( self, rfs, logpath, arch, notifier=None ):
         self.log = ASCIIDocLog(logpath)
+        self.notifier = notifier
         InChRootObject.__init__(self, rfs)
         config.set ("APT::Architecture", arch)
         config.set ("APT::Install-Recommends", "0")
@@ -65,8 +66,13 @@ class RPCAPTCache(InChRootObject):
         self.cache.update()
         self.cache.open()
 
+    def co_cb(self, msg):
+        if self.notifier:
+            self.notifier.status (msg)
+
     def commit(self):
-        self.cache.commit( ElbeAcquireProgress(), ElbeInstallProgress() )
+        self.cache.commit( ElbeAcquireProgress(cb=self.co_cb),
+                           ElbeInstallProgress(cb=self.co_cb) )
         self.cache.open()
 
     def get_dependencies(self, pkgname):
@@ -105,16 +111,8 @@ class MyMan(BaseManager):
 
 MyMan.register( "RPCAPTCache", RPCAPTCache )
 
-def get_rpcaptcache(rfs, logpath, arch):
+def get_rpcaptcache(rfs, logpath, arch, notifier=None):
     mm = MyMan()
     mm.start()
 
-    return mm.RPCAPTCache(rfs, logpath, arch)
-
-
-
-
-
-
-
-
+    return mm.RPCAPTCache(rfs, logpath, arch, notifier)
