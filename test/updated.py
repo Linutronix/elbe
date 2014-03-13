@@ -22,15 +22,14 @@ class MonitorService (SimpleWSGISoapApp):
         print m
 
 class MonitorThread (threading.Thread):
-    def __init__ (self, host, port):
+    def __init__ (self, port):
         threading.Thread.__init__ (self)
-        self.host = host
         self.port = port
         self.server = None
 
     def run (self):
-        print "monitor ready %s:%s" % (self.host, self.port)
-        self.server = make_server (self.host, int(self.port), MonitorService())
+        print "monitor ready :%s" % (self.port)
+        self.server = make_server ("", int(self.port), MonitorService())
         self.server.serve_forever ()
 
 def shutdown (monitor):
@@ -92,7 +91,7 @@ except:
     print wsdl, "not reachable"
     sys.exit (1)
 
-monitor = MonitorThread (host, monitorport)
+monitor = MonitorThread (monitorport)
 monitor.start ()
 
 time.sleep (1) # hack to ensure that monitor server was started
