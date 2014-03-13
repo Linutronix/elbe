@@ -8,7 +8,12 @@
 			<url-list>
 				<url>
 					<binary>
-						http://LOCALMACHINE/elbe wheezy main
+						http://debian.linutronix.de/elbe wheezy main
+					</binary>
+				</url>
+				<url>
+					<binary>
+						http://LOCALMACHINE/elbe-test wheezy main
 					</binary>
 				</url>
 			</url-list>
