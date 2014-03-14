@@ -224,8 +224,12 @@ def run_command( argv ):
                 cache.mark_install( p, None )
             except KeyError:
                 print "No Package " + p
-
-        cache.commit()
+            except SystemError:
+                print "Unable to correct problems " + p
+        try:
+            cache.commit()
+        except SystemError:
+            print "commiting changes failed"
 
         buildenv.seed_etc()
 
