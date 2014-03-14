@@ -19,6 +19,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 from subprocess import Popen, PIPE, STDOUT
 
 class commanderror(Exception):
@@ -31,11 +32,9 @@ class commanderror(Exception):
         return "Error: %d returned from Command %s" % (
                                              self.returncode, self.cmd)
 
-class ASCIIDocLog (object):
-    def __init__(self, fname):
-        if os.path.isfile(fname):
-            os.unlink(fname)
-        self.fp = file(fname, "w")
+class LogBase(object):
+    def __init__(self, fp):
+        self.fp = fp
 
     def printo(self, text=""):
         self.fp.write(text+"\n")
@@ -109,3 +108,19 @@ class ASCIIDocLog (object):
                 raise commanderror(cmd, p.returncode)
 
         return output
+
+class ASCIIDocLog (LogBase):
+    def __init__(self, fname):
+        if os.path.isfile(fname):
+            os.unlink(fname)
+        fp = file(fname, "w")
+
+        LogBase.__init__(self, fp)
+
+class StdoutLog(LogBase):
+    def __init__(self):
+        LogBase.__init__(self, sys.stdout)
+
+class StderrLog(LogBase):
+    def __init__(self):
+        LogBase.__init__(self, sys.stderr)
