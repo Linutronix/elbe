@@ -161,16 +161,16 @@ class BuildEnv (RFS):
 
         self.log.h2( "debootstrap log" )
 
+        arch = self.xml.text ("project/buildimage/arch", key="arch")
+
         if not self.xml.is_cross (self.host_arch):
-            cmd = 'debootstrap "%s" "%s" "%s"' % (
-                        suite, self.rfs.path, primary_mirror)
+            cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
+                        arch, suite, self.rfs.path, primary_mirror)
 
             self.log.do( cmd )
             self.rfs.dump_elbeversion (self.xml)
 
             return
-
-        arch = self.xml.text ("project/buildimage/arch", key="arch")
 
         cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
             arch, suite, self.rfs.path, primary_mirror)
