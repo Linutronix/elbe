@@ -11,7 +11,8 @@ armel_defaults = {
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb",
-        "nicmodel":     "smc91c111"
+        "nicmodel":     "smc91c111",
+        "triplet":      "arm-linux-gnueabi"
 }
 
 armel_virtio_defaults = {
@@ -22,7 +23,8 @@ armel_virtio_defaults = {
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb",
-        "nicmodel":     "smc91c111"
+        "nicmodel":     "smc91c111",
+        "triplet":      "arm-linux-gnueabi"
 }
 
 armhf_defaults = {
@@ -33,7 +35,8 @@ armhf_defaults = {
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb -cpu cortex-a9",
-        "nicmodel":     "smc91c111"
+        "nicmodel":     "smc91c111",
+        "triplet":      "arm-linux-gnueabihf"
 }
 
 armhf_virtio_defaults = {
@@ -44,7 +47,8 @@ armhf_virtio_defaults = {
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "versatilepb -cpu cortex-a9",
-        "nicmodel":     "virtio"
+        "nicmodel":     "virtio",
+        "triplet":      "arm-linux-gnueabihf"
 }
 
 ppc_defaults = {
@@ -55,7 +59,8 @@ ppc_defaults = {
         "userinterpr":  "qemu-ppc-static",
         "console":      "ttyPZ0,115200n1",
         "machine":      "mac99",
-        "nicmodel":     "rtl8139"
+        "nicmodel":     "rtl8139",
+        "triplet":      "powerpc-linux-gnu"
 }
 
 amd64_defaults = {
@@ -65,7 +70,8 @@ amd64_defaults = {
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
         "machine":      "pc",
-        "nicmodel":     "virtio"
+        "nicmodel":     "virtio",
+        "triplet":      "x86_64-linux-gnu"
 }
 
 i386_defaults = {
@@ -75,7 +81,8 @@ i386_defaults = {
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
         "machine":      "pc",
-        "nicmodel":     "virtio"
+        "nicmodel":     "virtio",
+        "triplet":      "i386-linux-gnu"
 }
 
 archindep_defaults = {
