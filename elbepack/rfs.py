@@ -20,10 +20,15 @@ import apt_pkg
 import os
 import sys
 
+import elbepack
+
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.filesystem import BuildImgFs
 
 from multiprocessing import Pipe
+
+from mako.template import Template
+from mako import exceptions
 
 # XXX mount the cdrom image 
 #                    cdrompath = os.path.join( rfs_path, "cdrom" )
@@ -100,6 +105,21 @@ class RFS:
     def __delete__ (self):
         os.close (self.cwd)
 
+def template(fname, d):
+    try:
+        return Template(filename=fname).render(**d)
+    except:
+        print exceptions.text_error_template().render()
+        raise
+
+def write_template( outname, fname, d ):
+    pack_dir = elbepack.__path__[0]
+    template_dir = os.path.join( pack_dir, "mako" )
+
+    outfile = file(outname, "w")
+    outfile.write( template( os.path.join(template_dir, fname), d ) )
+    outfile.close()
+
 class BuildEnv (RFS):
     def __init__ (self, xml, log, path ):
 
@@ -117,7 +137,6 @@ class BuildEnv (RFS):
             print 'work on existing rfs'
 
         self.initialize_dirs ()
-        # TODO: self.create_apt_prefs (prefs)
 
 
 
@@ -160,6 +179,8 @@ class BuildEnv (RFS):
         os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
 
         self.log.h2( "debootstrap log" )
+
+        self.create_apt_prefs ()
 
         arch = self.xml.text ("project/buildimage/arch", key="arch")
 
@@ -208,15 +229,20 @@ class BuildEnv (RFS):
         self.rfs.write_file ("etc/apt/sources.list", 644, mirror)
 
 
-    def create_apt_prefs (self, prefs):
+    def create_apt_prefs (self):
+
         filename = self.rfs.path + "/etc/apt/preferences"
 
         if os.path.exists (filename):
             os.remove (filename)
 
-        file = open (filename,"w")
-        file.write (prefs)
-        file.close ()
+        self.rfs.mkdir_p ("/etc/apt")
+
+        d = { "xml":  self.xml,
+              "prj":  self.xml.node("/project"),
+              "pkgs": self.xml.node("/target/pkg-list") }
+
+        write_template( filename, "preferences.mako", d )
 
     def seed_etc( self ):
         passwd = self.xml.text("target/passwd")
