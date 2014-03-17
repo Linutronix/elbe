@@ -5,6 +5,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/xsdtoasciidoc.mako
 ./usr/lib/python2.*/*-packages/elbepack/commands/xsdtoasciidoc.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/create.py
+./usr/lib/python2.*/*-packages/elbepack/commands/init.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/check_updates.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/setcdrom.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/show.py
