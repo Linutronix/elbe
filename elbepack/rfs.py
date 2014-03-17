@@ -168,7 +168,10 @@ class BuildEnv (RFS):
                         arch, suite, self.rfs.path, primary_mirror)
 
             self.log.do( cmd )
-            self.rfs.dump_elbeversion (self.xml)
+            try:
+                self.rfs.dump_elbeversion (self.xml)
+            except:
+                self.log.printo ("dump elbeversion failed")
 
             return
 
