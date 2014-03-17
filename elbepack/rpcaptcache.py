@@ -24,6 +24,8 @@ from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
+import os
+
 class InChRootObject(object):
     def __init__(self, rfs):
         self.rfs = rfs
@@ -71,6 +73,8 @@ class RPCAPTCache(InChRootObject):
             self.notifier.status (msg)
 
     def commit(self):
+        os.environ["DEBIAN_FRONTEND"]="noninteractive"
+        os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
         self.cache.commit( ElbeAcquireProgress(cb=self.co_cb),
                            ElbeInstallProgress(cb=self.co_cb) )
         self.cache.open()
