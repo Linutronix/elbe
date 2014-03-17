@@ -214,7 +214,10 @@ def run_command( argv ):
         cache = get_rpcaptcache( buildenv.rfs, "aptcache.log", xml.text("project/arch", key="arch" ) )
 
         # XXX: cache update currently fails because of GPG Key... and some file issue.
-        cache.update()
+        try:
+            cache.update()
+        except:
+            outf.printo ("update cache failed")
 
         be_pkgs = buildenv.xml.get_buildenv_packages()
         ta_pkgs = buildenv.xml.get_target_packages()
@@ -223,13 +226,13 @@ def run_command( argv ):
             try:
                 cache.mark_install( p, None )
             except KeyError:
-                print "No Package " + p
+                outf.printo ("No Package " + p)
             except SystemError:
-                print "Unable to correct problems " + p
+                outf.printo ("Unable to correct problems " + p)
         try:
             cache.commit()
         except SystemError:
-            print "commiting changes failed"
+            outf.printo ("commiting changes failed")
 
         buildenv.seed_etc()
 
