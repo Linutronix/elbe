@@ -134,9 +134,4 @@ class ElbeDefaults(object):
         if self.generic_defaults.has_key( key ):
             return self.generic_defaults[key]
 
-
-        print "No Default value has been Provided"
-        print "Either use a valid buildtype, or provide the field in the xml File."
-        print "The location in the xml is here:"
-        print xml_field_path[key]
-        sys.exit(20)
+        return None
