@@ -91,52 +91,6 @@ def get_preseed( xml ):
     return preseed
 
 
-def seed_files( outf, directory, slist, xml, xml_fname, opt, defs ):
-    policy = os.path.join( directory, "usr/sbin/policy-rc.d" )
-    write_file(policy, 0755, "#!/bin/sh\nexit 101\n")
-
-    sources = os.path.join( directory, "etc/apt/sources.list" )
-    write_file(sources, 0644, slist)
-
-    d = {"elbe_version": elbe_version,
-         "xml": xml,
-         "prj": xml.node("/project"),
-         "tgt": xml.node("/target"),
-         "pkgs": xml.node("/target/pkg-list"),
-         "fine": xml.node("/finetuning"),
-         "preseed": get_preseed(xml),
-         "defs": defs,
-         "buildchroot": True,
-         "opt": opt }
-
-    prefs_fname = os.path.join( directory, "etc/apt/preferences" )
-    write_template( prefs_fname, "preferences.mako", d )
-
-    optelbe_fname = os.path.join( directory, "opt/elbe/" )
-    outf.do( "mkdir -vp "+optelbe_fname )
-
-    create_fname = os.path.join( directory, "opt/elbe/custom-preseed.cfg" )
-    write_template( create_fname, "custom-preseed.cfg.mako", d )
-
-    create_fname = os.path.join( directory, "opt/elbe/pkg-list" )
-    write_template( create_fname, "pkg-list.mako", d )
-
-    dump_fname = os.path.join( directory, "opt/elbe/source.xml" )
-    os.system( 'cp "%s" "%s"' % (xml_fname, dump_fname) )
-
-    create_fname = os.path.join( directory, "opt/elbe/part-target.sh" )
-    write_template( create_fname, "part-target.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
-    create_fname = os.path.join( directory, "opt/elbe/finetuning.sh" )
-    write_template( create_fname, "finetuning.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
-    create_fname = os.path.join( directory, "opt/elbe/mkcdrom.sh" )
-    write_template( create_fname, "mkcdrom.sh.mako", d )
-    os.chmod( create_fname, 0755 )
-
-
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog buildchroot [options] <xmlfile>")
     oparser.add_option( "-t", "--target", dest="target",

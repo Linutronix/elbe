@@ -41,7 +41,7 @@ class RmAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         log.do( "rm -rvf " + target.fname( self.node.et.text ) )
-        
+
 FinetuningAction.register( RmAction )
 
 

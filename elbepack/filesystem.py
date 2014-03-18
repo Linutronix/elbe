@@ -286,18 +286,6 @@ class TargetFs(ChRootFilesystem):
     def __init__(self, path, clean=True):
         ChRootFilesystem.__init__(self,path,clean)
 
-    def do_elbe_dump(self, xml):
-        self.remove("opt/elbe/dump.log", noerr=True)
-
-        cmdline = "elbe dump --name \"%s\" --output opt/elbe/elbe-report.txt" %(xml.prj.text("name"))
-        cmdline += " --validation opt/elbe/validation.txt --target %s" %(self.fname(''))
-        cmdline += " --finetuning opt/elbe/finetuning.sh"
-        cmdline += " --kinitrd \"%s\" opt/elbe/source.xml" %(xml.prj.text("buildimage/kinitrd"))
-        if xml.has("archive"):
-            cmdline += " --archive opt/elbe/archive.tar.bz2"
-        cmdline += " >> opt/elbe/dump.log 2>&1"
-        os.system(cmdline)
-
     def part_target(self, log, xml, targetdir, skip_grub):
 
         # create target images and copy the rfs into them
