@@ -71,9 +71,6 @@ class BuildEnv ():
 
         self.initialize_dirs ()
 
-
-
-
     def __del__(self):
         if self.xml.prj.has ("mirror/cdrom"):
             cdrompath = os.path.join( self.rfs.path, "cdrom" )
@@ -83,8 +80,7 @@ class BuildEnv ():
 
         suite = self.xml.prj.text ("suite")
 
-        primary_mirror = self.xml.get_primary_mirror(
-                                           self.rfs.fname('cdrom') )
+        primary_mirror = self.xml.get_primary_mirror(self.rfs.fname('cdrom') )
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["http_proxy"] = self.xml.prj.text(
@@ -167,7 +163,8 @@ class BuildEnv ():
 
     def seed_etc( self ):
         passwd = self.xml.text("target/passwd")
-        self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (passwd, passwd) )
+        self.log.chroot( self.rfs.path,
+             """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" % (passwd, passwd) )
 
         hostname = self.xml.text("target/hostname")
         domain = self.xml.text("target/domain")

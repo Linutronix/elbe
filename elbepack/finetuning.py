@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+
 class FinetuningAction(object):
 
     actiondict = {}
@@ -111,8 +112,3 @@ def do_finetuning(xml, log, buildenv, target):
             action.execute(log, buildenv, target)
         except KeyError:
             print "Unimplemented finetuning action " + i.et.tag
-
-
-
-
-

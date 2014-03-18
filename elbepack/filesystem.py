@@ -28,6 +28,7 @@ from elbepack.hdimg import do_hdimg
 class Filesystem(object):
     def __init__(self, path, clean=False):
         self.path = os.path.abspath(path)
+
         if clean:
             shutil.rmtree(self.path, True)
             os.makedirs(self.path)
@@ -337,4 +338,3 @@ class BuildImgFs(ChRootFilesystem):
                         (os.path.join(dir, "copyright"), e.strerror))
             finally:
                 lic.close()
-
