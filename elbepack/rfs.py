@@ -30,24 +30,12 @@ from multiprocessing import Pipe
 from mako.template import Template
 from mako import exceptions
 
-# XXX mount the cdrom image 
+# XXX mount the cdrom image
 #                    cdrompath = os.path.join( rfs_path, "cdrom" )
 #                    log.do( 'mkdir -p "%s"' % cdrompath )
 #                    log.do( 'mount -o loop "%s" "%s"'
 #                       % (prj.text("mirror/cdrom"), cdrompath ) )
 
-
-class RFS:
-    depcache = None
-    cache = None
-    source = None
-
-    def __init__ (self, path, arch):
-        self.path = path
-        self.arch = arch
-        self.cwd = os.open ("/", os.O_RDONLY)
-    def __delete__ (self):
-        os.close (self.cwd)
 
 def template(fname, d):
     try:
@@ -64,13 +52,13 @@ def write_template( outname, fname, d ):
     outfile.write( template( os.path.join(template_dir, fname), d ) )
     outfile.close()
 
-class BuildEnv (RFS):
+class BuildEnv ():
     def __init__ (self, xml, log, path ):
 
         self.xml = xml
         self.log = log
 
-        self.rfs = BuildImgFs( path )
+        self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
         self.host_arch = self.log.get_command_out(
                               "dpkg --print-architecture").strip ()
 
@@ -89,21 +77,6 @@ class BuildEnv (RFS):
         if self.xml.prj.has ("mirror/cdrom"):
             cdrompath = os.path.join( self.rfs.path, "cdrom" )
             self.log.do ('umount "%s"' % cdrompath)
-
-    def __enter__(self):
-        if self.xml.is_cross (self.host_arch):
-            self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
-                self.rfs.fname( "usr/bin" )) )
-        self.rfs.mount(self.log)
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.rfs.umount(self.log)
-        if self.xml.is_cross (self.host_arch):
-            self.log.do( 'rm -f %s' %
-                    os.path.join(self.rfs.path,
-                        "usr/bin/"+self.xml.defs["userinterpr"] ))
-
 
     def debootstrap (self):
 

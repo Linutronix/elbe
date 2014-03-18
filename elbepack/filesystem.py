@@ -245,25 +245,40 @@ def extract_target( src, xml, dst ):
         os.system("umount %s" %(dst.fname('proc')))
 
 class ChRootFilesystem(Filesystem):
-    def __init__(self, path,clean=False):
+    def __init__(self, path, interpreter=None, clean=False):
         Filesystem.__init__(self,path,clean)
+        self.interpreter = interpreter
+        self.cwd = os.open ("/", os.O_RDONLY)
 
-    def mount(self, log):
+    def __delete__ (self):
+        os.close (self.cwd)
+
+    def __enter__(self):
+        if self.interpreter:
+            os.system ('cp /usr/bin/%s %s' % (self.interpreter,
+                self.fname( "usr/bin" )) )
+        self.mount()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.umount()
+        if self.interpreter:
+            os.system( 'rm -f %s' %
+                        os.path.join(self.path, "usr/bin/"+self.interpreter) )
+    def mount(self):
         try:
-            log.do ("mount -t proc none %s/proc" % self.path)
-            log.do ("mount -t sysfs none %s/sys" % self.path)
-            log.do ("mount -o bind /dev %s/dev" % self.path)
-            log.do ("mount -o bind /dev/pts %s/dev/pts" % self.path)
+            os.system ("mount -t proc none %s/proc" % self.path)
+            os.system ("mount -t sysfs none %s/sys" % self.path)
+            os.system ("mount -o bind /dev %s/dev" % self.path)
+            os.system ("mount -o bind /dev/pts %s/dev/pts" % self.path)
         except:
-            self.umount (log)
+            self.umount ()
             raise
 
         self.write_file ("usr/sbin/policy-rc.d",
                 0755, "#!/bin/sh\nexit 101\n")
 
     def enter_chroot (self):
-        self.cwd = os.open ("/", os.O_RDONLY)
-
         os.chdir(self.path)
         os.chroot(self.path)
 
@@ -271,30 +286,36 @@ class ChRootFilesystem(Filesystem):
         os.environ["LANGUAGE"] = "C"
         os.environ["LC_ALL"] = "C"
 
-    def umount (self, log):
-        log.do("umount %s/proc/sys/fs/binfmt_misc" % self.path, allow_fail=True)
-        log.do("umount %s/proc" % self.path, allow_fail=True)
-        log.do("umount %s/sys" % self.path, allow_fail=True)
-        log.do("umount %s/dev/pts" % self.path, allow_fail=True)
-        log.do("umount %s/dev" % self.path, allow_fail=True)
+    def _umount (self, path):
+        if os.path.ismount (path):
+            os.system("umount %s" % path)
+
+    def umount (self):
+        self._umount ("%s/proc/sys/fs/binfmt_misc" % self.path)
+        self._umount ("%s/proc" % self.path)
+        self._umount ("%s/sys" % self.path)
+        self._umount ("%s/dev/pts" % self.path)
+        self._umount ("%s/dev" % self.path)
 
     def leave_chroot (self):
         os.fchdir (self.cwd)
         os.chroot (".")
 
 class TargetFs(ChRootFilesystem):
-    def __init__(self, path, clean=True):
-        ChRootFilesystem.__init__(self,path,clean)
+    def __init__(self, path, log, xml, clean=True):
+        ChRootFilesystem.__init__(self, path, xml.defs["userinterpr"], clean)
+        self.log = log
+        self.xml = xml
 
-    def part_target(self, log, xml, targetdir, skip_grub):
+    def part_target(self, targetdir, skip_grub):
 
         # create target images and copy the rfs into them
-        do_hdimg( log, xml, targetdir, self, skip_grub )
+        do_hdimg( self.log, self.xml, targetdir, self, skip_grub )
 
-        if xml.has("target/package/tar"):
+        if self.xml.has("target/package/tar"):
             os.system("tar cfz %s/target.tar.gz -C %s ." %(targetdir,self.fname('')))
 
-        if xml.has("target/package/cpio"):
+        if self.xml.has("target/package/cpio"):
             oldwd = os.getcwd()
             cpio_name = xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
@@ -302,8 +323,8 @@ class TargetFs(ChRootFilesystem):
             os.chdir(oldwd)
 
 class BuildImgFs(ChRootFilesystem):
-    def __init__(self, path):
-        ChRootFilesystem.__init__(self,path)
+    def __init__(self, path, interpreter):
+        ChRootFilesystem.__init__(self, path, interpreter)
 
     def write_licenses(self,f):
         for dir in self.listdir("usr/share/doc/", skiplinks=True):

@@ -78,5 +78,5 @@ def run_command( argv ):
     target = os.path.join(opt.target, "target")
     targetfs = TargetFs(target, clean=False)
 
-    targetfs.part_target(outf, xml, opt.target, opt.skip_grub)
+    targetfs.part_target(opt.target, opt.skip_grub)
 
