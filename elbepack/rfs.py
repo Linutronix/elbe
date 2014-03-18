@@ -59,8 +59,6 @@ class BuildEnv ():
         self.log = log
 
         self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
-        self.host_arch = self.log.get_command_out(
-                              "dpkg --print-architecture").strip ()
 
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile( "etc/elbe_version" ):
@@ -104,7 +102,10 @@ class BuildEnv ():
 
         arch = self.xml.text ("project/buildimage/arch", key="arch")
 
-        if not self.xml.is_cross (self.host_arch):
+        host_arch = self.log.get_command_out(
+                "dpkg --print-architecture").strip ()
+
+        if not self.xml.is_cross (host_arch):
             cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
                         arch, suite, self.rfs.path, primary_mirror)
 
