@@ -275,9 +275,6 @@ class ChRootFilesystem(Filesystem):
             self.umount ()
             raise
 
-        self.write_file ("usr/sbin/policy-rc.d",
-                0755, "#!/bin/sh\nexit 101\n")
-
     def enter_chroot (self):
         os.chdir(self.path)
         os.chroot(self.path)

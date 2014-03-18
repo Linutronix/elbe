@@ -64,6 +64,9 @@ class BuildEnv ():
 
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile( "etc/elbe_version" ):
+            # avoid starting daemons inside the buildenv
+            self.rfs.write_file ("usr/sbin/policy-rc.d",
+                0755, "#!/bin/sh\nexit 101\n")
             self.debootstrap ()
         else:
             print 'work on existing rfs'
