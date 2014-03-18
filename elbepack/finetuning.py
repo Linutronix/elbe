@@ -84,6 +84,22 @@ class MvAction(FinetuningAction):
 FinetuningAction.register( MvAction )
 
 
+class CmdAction(FinetuningAction):
+
+    tag = 'command'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        with target:
+            target.enter_chroot ()
+            log.do (self.node.et.text)
+            target.leave_chroot ()
+
+FinetuningAction.register( CmdAction )
+
+
 def do_finetuning(xml, log, buildenv, target):
 
     if not xml.has('target/finetuning'):
