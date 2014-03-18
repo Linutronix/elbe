@@ -188,7 +188,7 @@ def copy_filelist( src, filelist, dst ):
             shutil.copystat(src.fname(f), dst.fname(f))
 
 
-def extract_target( src, xml, dst ):
+def extract_target( src, xml, dst, log ):
     # create filelists describing the content of the target rfs
     if xml.tgt.has("tighten") or xml.tgt.has("diet"):
         if xml.tgt.has("tighten"):
@@ -200,7 +200,7 @@ def extract_target( src, xml, dst ):
 
             # XXX: want to port to python for cache.
             # XXX: would need chroot support as it is.
-            os.system("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
+            log.do("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
             f = src.open("opt/elbe/allpkg-list")
 
         file_list = []
@@ -234,15 +234,15 @@ def extract_target( src, xml, dst ):
         pass
 
     if xml.tgt.has("setsel"):
-        os.system("mount -o bind /proc %s" %(dst.fname('proc')))
-        os.system("mount -o bind /sys %s" %(dst.fname('sys')))
+        log.do("mount -o bind /proc %s" %(dst.fname('proc')))
+        log.do("mount -o bind /sys %s" %(dst.fname('sys')))
 
-        os.system("chroot %s dpkg --clear-selections" %(dst.fname('')))
-        os.system("chroot %s dpkg --set-selections <opt/elbe/pkg-selections" %(dst.fname('')))
-        os.system("chroot %s dpkg --purge -a" %(dst.fname('')))
+        log.do("chroot %s dpkg --clear-selections" %(dst.fname('')))
+        log.do("chroot %s dpkg --set-selections <opt/elbe/pkg-selections" %(dst.fname('')))
+        log.do("chroot %s dpkg --purge -a" %(dst.fname('')))
 
-        os.system("umount %s" %(dst.fname('sys')))
-        os.system("umount %s" %(dst.fname('proc')))
+        log.do("umount %s" %(dst.fname('sys')))
+        log.do("umount %s" %(dst.fname('proc')))
 
 class ChRootFilesystem(Filesystem):
     def __init__(self, path, interpreter=None, clean=False):
@@ -310,13 +310,13 @@ class TargetFs(ChRootFilesystem):
         do_hdimg( self.log, self.xml, targetdir, self, skip_grub )
 
         if self.xml.has("target/package/tar"):
-            os.system("tar cfz %s/target.tar.gz -C %s ." %(targetdir,self.fname('')))
+            self.log.do("tar cfz %s/target.tar.gz -C %s ." %(targetdir,self.fname('')))
 
         if self.xml.has("target/package/cpio"):
             oldwd = os.getcwd()
             cpio_name = xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
-            os.system("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
+            self.log.do("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
             os.chdir(oldwd)
 
 class BuildImgFs(ChRootFilesystem):

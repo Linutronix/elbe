@@ -146,9 +146,6 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    chroot = os.path.join(opt.target, "chroot")
-    os.system( 'mkdir -p "%s"' % chroot )
-
     outf = ASCIIDocLog(opt.output)
 
     if opt.name:
@@ -157,6 +154,9 @@ def run_command( argv ):
         outf.h1( "ELBE Report" )
 
     outf.printo( "report timestamp: "+datetime.datetime.now().strftime("%Y%m%d-%H%M%S") )
+
+    chroot = os.path.join(opt.target, "chroot")
+    outf.do( 'mkdir -p "%s"' % chroot )
 
     buildenv = BuildEnv(xml, outf, chroot)
 
@@ -197,7 +197,7 @@ def run_command( argv ):
 
     os.chdir(buildenv.rfs.fname(''))
 
-    extract_target( buildenv.rfs, xml, targetfs )
+    extract_target( buildenv.rfs, xml, targetfs, outf )
 
     validation = os.path.join(opt.target, 'validation.txt')
     pkgs = xml.xml.node("/target/pkg-list")
