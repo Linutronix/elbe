@@ -315,7 +315,7 @@ class TargetFs(ChRootFilesystem):
 
         if self.xml.has("target/package/cpio"):
             oldwd = os.getcwd()
-            cpio_name = xml.text("target/package/cpio/name")
+            cpio_name = self.xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
             self.log.do("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
             os.chdir(oldwd)
