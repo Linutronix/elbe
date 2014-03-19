@@ -41,7 +41,7 @@ d-i clock-setup/utc boolean true
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select buildenv
 d-i partman-auto/disk string /dev/vda
-d-i partman-auto/expert_recipe string buildenv :: 256 1000000 -1 ext2 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext2 } mountpoint{ / } .
+d-i partman-auto/expert_recipe string buildenv :: 256 1000000 -1 ext3 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext3 } mountpoint{ / } .
 d-i partman/partitioning/confirm_write_new_label boolean true
 d-i partman/confirm_write_new_label boolean true
 d-i partman/choose_partition select Finish partitioning and write changes to disk
