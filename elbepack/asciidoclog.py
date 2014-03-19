@@ -20,17 +20,8 @@
 
 import os
 import sys
-from subprocess import Popen, PIPE, STDOUT
 
-class commanderror(Exception):
-    def __init__(self, cmd, returncode):
-        Exception.__init__(self)
-        self.returncode = returncode
-        self.cmd = cmd
-
-    def __repr__(self):
-        return "Error: %d returned from Command %s" % (
-                                             self.returncode, self.cmd)
+from elbepack.shellhelper import CommandError, command_out_stderr, command_out
 
 class LogBase(object):
     def __init__(self, fp):
@@ -64,48 +55,40 @@ class LogBase(object):
         self.printo( "------------------------------------------------------------------------------" )
         self.printo()
 
-    def do(self, cmd, **args):
-
-        if args.has_key("allow_fail"):
-            allow_fail = args["allow_fail"]
-        else:
-            allow_fail = False
+    def do(self, cmd, allow_fail=False):
 
         self.printo( "running cmd +%s+" % cmd )
-        self.verbatim_start()
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
-        output, stderr = p.communicate()
-        self.print_raw( output )
-        self.verbatim_end()
+        ret, output = command_out(cmd)
 
-        if p.returncode != 0:
+        if len(output) != 0:
+            self.verbatim_start()
+            self.print_raw( output )
+            self.verbatim_end()
+
+        if ret != 0:
             self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
-                raise commanderror(cmd, p.returncode)
+                raise CommandError(cmd, p.returncode)
 
     def chroot(self, directory, cmd, **args):
         chcmd = "chroot %s %s" % (directory, cmd)
         self.do( chcmd, **args )
 
-    def get_command_out(self, cmd, **args):
-
-        if args.has_key("allow_fail"):
-            allow_fail = args["allow_fail"]
-        else:
-            allow_fail = False
+    def get_command_out(self, cmd, allow_fail=False):
 
         self.printo( "getting output from cmd +%s+" % cmd )
-        self.verbatim_start()
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
-        output, stderr = p.communicate()
-        self.print_raw( stderr )
-        self.verbatim_end()
 
+        ret, output, stderr = command_out_stderr(cmd)
 
-        if p.returncode != 0:
+        if len(stderr) != 0:
+            self.verbatim_start()
+            self.print_raw( stderr )
+            self.verbatim_end()
+
+        if ret != 0:
             self.printo( "Command failed with errorcode %d" % p.returncode )
             if not allow_fail:
-                raise commanderror(cmd, p.returncode)
+                raise CommandError(cmd, p.returncode)
 
         return output
 
