@@ -36,7 +36,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
-from elbepack.dump import elbe_report, dump_fullpkgs, check_full_pkgs
+from elbepack.dump import elbe_report, dump_fullpkgs, check_full_pkgs, dump_debootstrappkgs
 
 def read_file( fname ):
     f = file( fname, "r" )
@@ -173,6 +173,15 @@ def run_command( argv ):
         except:
             outf.printo ("update cache failed")
 
+        # Then dump the debootstrap Packages
+
+        if buildenv.fresh_debootstrap:
+            dump_debootstrappkgs(xml, cache)
+            source = xml
+        else:
+            sourcepath = os.path.join(opt.target, "source.xml" )
+            source = ElbeXML( sourcepath, buildtype=buildtype, skip_validate=opt.skip_validation )
+
         be_pkgs = buildenv.xml.get_buildenv_packages()
         ta_pkgs = buildenv.xml.get_target_packages()
 
@@ -207,6 +216,9 @@ def run_command( argv ):
         check_full_pkgs(pkgs, None, validation, cache)
 
     dump_fullpkgs(xml, buildenv.rfs, cache)
+
+    if not buildenv.fresh_debootstrap:
+        xml.get_debootstrappkgs_from( source )
 
     try:
         targetfs.dump_elbeversion (xml)
