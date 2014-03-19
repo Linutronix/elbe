@@ -209,14 +209,14 @@ def run_command( argv ):
     dump_fullpkgs(xml, buildenv.rfs, cache)
 
     try:
-        targetfs.dump_elbeversion (self.xml)
-    except:
+        targetfs.dump_elbeversion (xml)
+    except MemoryError:
         outf.printo ("dump elbeversion failed")
 
     try:
         sourcexml = os.path.join(opt.target, 'source.xml')
         xml.xml.write(sourcexml)
-    except:
+    except MemoryError:
         outf.printo ("write source.xml failed (archive to huge?)")
 
     report = os.path.join(opt.target, "elbe-report.txt")
