@@ -67,8 +67,10 @@ class BuildEnv ():
             self.rfs.write_file ("usr/sbin/policy-rc.d",
                 0755, "#!/bin/sh\nexit 101\n")
             self.debootstrap ()
+            self.fresh_debootstrap = True
         else:
             print 'work on existing rfs'
+            self.fresh_debootstrap = False
 
         self.initialize_dirs ()
 
