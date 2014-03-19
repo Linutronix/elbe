@@ -27,6 +27,7 @@ LOOP_OFFSET=1048576
 HD_TYPE=virtio
 HD_NAME=vda1
 CDROM_TYPE=scsi
+GUIPORT=${opt.guiport}
 
 <%
 import string
@@ -90,6 +91,7 @@ run:
 		-no-reboot \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
+		-redir tcp:$(GUIPORT)::8080 \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
 		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
@@ -109,6 +111,7 @@ run-con:
 		-no-reboot \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
+		-redir tcp:$(GUIPORT)::8080 \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
 		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \

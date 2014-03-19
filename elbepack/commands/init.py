@@ -75,6 +75,9 @@ def run_command( argv ):
     oparser.add_option( "--buildtype", dest="buildtype",
                         help="Override the buildtype" )
 
+    oparser.add_option( "--guiport", dest="guiport", default=8080,
+                        help="port used for webgui" )
+
     oparser.add_option( "--debug", dest="debug",
                         action="store_true", default=False,
            help="start qemu in graphical mode to enable console switch" )
