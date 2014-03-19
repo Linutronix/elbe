@@ -120,12 +120,12 @@ class ElbeXML(object):
 
         return retval
 
-    def clear_full_pkglist( self ):
-        tree = self.xml.ensure_child( 'fullpkgs' )
+    def clear_pkglist( self, name ):
+        tree = self.xml.ensure_child( name )
         tree.clear()
 
-    def append_full_pkg( self, aptpkg ):
-        tree = self.xml.ensure_child( 'fullpkgs' )
+    def append_pkg( self, aptpkg, name ):
+        tree = self.xml.ensure_child( name )
         pak = tree.append( 'pkg' )
         pak.set_text( aptpkg.name )
         pak.et.tail = '\n'
@@ -136,9 +136,29 @@ class ElbeXML(object):
         else:
             pak.et.set( 'auto', 'false' )
 
+    def clear_full_pkglist( self ):
+        tree = self.xml.ensure_child( 'fullpkgs' )
+        tree.clear()
+
+    def clear_debootstrap_pkglist( self ):
+        tree = self.xml.ensure_child( 'fullpkgs' )
+        tree.clear()
+
+    def append_full_pkg( self, aptpkg ):
+        self.append_pkg( aptpkg, 'fullpkgs' )
+
+    def append_debootstrap_pkg( self, aptpkg ):
+        self.append_pkg( aptpkg, 'debootstrappkgs' )
+
     def archive_tmpfile( self ):
         fp = NamedTemporaryFile()
         fp.write( standard_b64decode( self.text("archive") ) )
         fp.file.flush()
         return fp
+
+    def get_debootstrappkgs_from( self, other ):
+        tree = self.xml.ensure_child( 'debootstrappkgs' )
+        tree.clear()
+
+        tree.append_treecopy( other.xml.node( 'debootstrappkgs' ) )
 
