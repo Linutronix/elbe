@@ -35,7 +35,7 @@ def dump_fullpkgs( xml, rfs, cache ):
         preferences = xml.xml.ensure_child( 'apt_prefs' )
         prefs = rfs.read_file("etc/apt/preferences")
         preferences.set_text(prefs)
-    except:
+    except IOError:
         pass
    
 def dump_debootstrappkgs( xml, cache ):
