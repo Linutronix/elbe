@@ -95,10 +95,6 @@ class elem(ebase):
         return retval
 
 
-    def clear( self ):
-        self.et.clear()
-
-
 
 class etree(ebase):
     def  __init__( self, fname ):
