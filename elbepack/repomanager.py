@@ -17,11 +17,19 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from elbepack.debianreleases import codename2suite
 
-class Repo(object):
-    def __init__( self, xml, path ):
+
+class RepoBase(object):
+    def __init__( self, path, arch, codename, origin, description, components="main" ):
+
         self.path = path
-        self.xml  = xml
+        self.codename = codename
+        self.arch = arch
+        self.components = components
+        self.origin = origin
+        self.description = description
+
 
         repoconfdir = os.path.join( path, "conf" )
 
@@ -30,17 +38,41 @@ class Repo(object):
         repoconf = os.path.join( repoconfdir, "distributions" )
         fp = open(repoconf, "w")
 
-        fp.write( "Origin: update XXX\n" )
-        fp.write( "Label: update'\n" )
-        fp.write( "Suite: " + xml.text("project/suite") + "\n" )
-        fp.write( "Codename: " + xml.text("project/suite") + "\n" )
-        fp.write( "Version: 7.0\n" )
-        fp.write( "Architectures: " + xml.text("project/arch", key="arch" ) + "\n" )
-        fp.write( "Components: main\n" )
-        fp.write( "Description: Update Repository XXX\n" )
+        fp.write( "Origin: " + self.origin + "\n" )
+        fp.write( "Label: " + self.origin + "\n" )
+        fp.write( "Suite: " + codename2suite[ self.codename ] + "\n" )
+        fp.write( "Codename: " + self.codename + "\n" )
+        fp.write( "Architectures: " + self.arch + "\n" )
+        fp.write( "Components: " + self.components + "\n" )
+        fp.write( "Description: " + self.description + "\n" )
 
         fp.close()
 
-    def includedeb( self, path ):
-        os.system( "reprepro --basedir " + self.path + " includedeb " + self.xml.text("project/suite") + " " + path ) 
+    def includedeb( self, path, component="main"):
+        os.system( "reprepro --basedir " + self.path + " -C " + component + " includedeb " + self.codename + " " + path ) 
     
+    def includedsc( self, path, component="main"):
+        os.system( "reprepro --basedir " + self.path + " -C " + component + " -P normal includedsc " + self.codename + " " + path ) 
+
+class UpdateRepo(RepoBase):
+    def __init__( self, xml, path ):
+        self.xml  = xml
+
+        arch = xml.text("project/arch", key="arch" )
+        codename = xml.text("project/suite")
+
+        RepoBase.__init__( self, path, arch, codename, "Update", "Update", "main" )
+
+class CdromBinRepo(RepoBase):
+    def __init__( self, xml, path ):
+        self.xml  = xml
+
+        arch = xml.text("project/arch", key="arch" )
+        codename = xml.text("project/suite")
+
+        RepoBase.__init__( self, path, arch, codename, "Elbe", "Elbe Binary Cdrom Repo", "main added" )
+
+class CdromSrcRepo(RepoBase):
+    def __init__( self, codename, path ):
+        RepoBase.__init__( self, path, "source", codename, "Elbe", "Elbe Source Cdrom Repo", "main" )
+

@@ -28,7 +28,7 @@ from elbepack.filesystem import BuildImgFs
 from elbepack.dump import dump_fullpkgs
 
 from elbepack.ziparchives import create_zip_archive
-from elbepack.repomanager import Repo
+from elbepack.repomanager import UpdateRepo
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog gen_update [options] <xmlfile>")
@@ -145,7 +145,7 @@ def run_command( argv ):
 
     repodir = os.path.join(update, "repo" )
 
-    repo = Repo( xml, repodir )
+    repo = UpdateRepo( xml, repodir )
 
     for fname in fnamelist:
         path = os.path.join( chroot, "var/cache/apt/archives", fname )
