@@ -213,7 +213,7 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
     size_in_sectors = s / sector_size
 
     imagename = os.path.join(target,hd.text("name"))
-    outf.do( 'rm "%s"' % imagename, allow_fail=True )
+    outf.do( 'rm -f "%s"' % imagename, allow_fail=True )
     f = open( imagename, "wb" )
     f.truncate( size_in_sectors * sector_size )
     f.close()
