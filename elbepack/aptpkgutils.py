@@ -81,7 +81,11 @@ class APTPackage(object):
         self.candidate_md5 = pkg.candidate and pkg.candidate.md5
         self.state = pkgstate(pkg)
         self.is_auto_installed = pkg.is_auto_installed
-        self.origin = pkg.installed and pkg.installed.origins[0].site
+        if pkg.installed:
+            o = pkg.installed.origins[0]
+            self.origin = "%s %s %s" % (o.site, o.archive, o.component)
+        else:
+            self.origin = None
 
         if pkg.installed:
             self.architecture = pkg.installed.architecture
