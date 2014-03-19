@@ -167,7 +167,7 @@ def run_command( argv ):
     with buildenv.rfs:
         cache = get_rpcaptcache( buildenv.rfs, "aptcache.log", xml.text("project/arch", key="arch" ) )
 
-        # XXX: cache update currently fails because of GPG Key... and some file issue.
+        # First Update the apt cache
         try:
             cache.update()
         except:
@@ -181,6 +181,8 @@ def run_command( argv ):
         else:
             sourcepath = os.path.join(opt.target, "source.xml" )
             source = ElbeXML( sourcepath, buildtype=buildtype, skip_validate=opt.skip_validation )
+
+        # Now install Packages from all sources
 
         be_pkgs = buildenv.xml.get_buildenv_packages()
         ta_pkgs = buildenv.xml.get_target_packages()
@@ -199,7 +201,8 @@ def run_command( argv ):
 
         buildenv.seed_etc()
 
-    #outf.chroot( chroot, "elbe create-target-rfs -t /target --buildchroot /opt/elbe/source.xml" )
+
+    # Now start with the extraction of the TargetFs
 
     target = os.path.join(opt.target, "target")
     targetfs = TargetFs(target, outf, buildenv.xml)
@@ -207,6 +210,9 @@ def run_command( argv ):
     os.chdir(buildenv.rfs.fname(''))
 
     extract_target( buildenv.rfs, xml, targetfs, outf )
+
+
+    # Package Validation and Package lists
 
     validation = os.path.join(opt.target, 'validation.txt')
     pkgs = xml.xml.node("/target/pkg-list")
@@ -220,6 +226,8 @@ def run_command( argv ):
     if not buildenv.fresh_debootstrap:
         xml.get_debootstrappkgs_from( source )
 
+    # Dump a few things
+
     try:
         targetfs.dump_elbeversion (xml)
     except MemoryError:
@@ -231,12 +239,17 @@ def run_command( argv ):
     except MemoryError:
         outf.printo ("write source.xml failed (archive to huge?)")
 
+    # Elbe Report
+
     report = os.path.join(opt.target, "elbe-report.txt")
     elbe_report( xml, buildenv.rfs, cache, report, targetfs )
 
     f = open(os.path.join(opt.target,"licence.txt"), "w+")
     buildenv.rfs.write_licenses(f)
     f.close()
+
+
+    # Generate images
 
     if cache.is_installed('grub-pc'):
         skip_grub = False
