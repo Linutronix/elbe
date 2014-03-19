@@ -49,7 +49,14 @@
       <element name="fullpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            install the given packages into the rootfilesystem
+            List of packages with their versions installed on the RFS
+          </documentation>
+        </annotation>
+      </element>
+      <element name="debootstrappkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            List of packages installed right after debootstrap
           </documentation>
         </annotation>
       </element>
