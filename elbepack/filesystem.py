@@ -22,6 +22,8 @@ import time
 import shutil
 import subprocess
 
+from glob import glob
+
 from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 
@@ -91,6 +93,9 @@ class Filesystem(object):
             retval = filter(lambda x: (not os.path.islink(x)) and os.path.isdir(x), retval)
 
         return retval
+
+    def glob( self, path ):
+        return glob( self.fname( path ) )
 
     def write_file( self, path, mode, cont ):
         f = self.open( path, "w" )
