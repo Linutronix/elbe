@@ -267,6 +267,8 @@ class ChRootFilesystem(Filesystem):
             os.system( 'rm -f %s' %
                         os.path.join(self.path, "usr/bin/"+self.interpreter) )
     def mount(self):
+        if self.path == '/':
+            return
         try:
             os.system ("mount -t proc none %s/proc" % self.path)
             os.system ("mount -t sysfs none %s/sys" % self.path)
@@ -289,6 +291,8 @@ class ChRootFilesystem(Filesystem):
             os.system("umount %s" % path)
 
     def umount (self):
+        if self.path == '/':
+            return
         self._umount ("%s/proc/sys/fs/binfmt_misc" % self.path)
         self._umount ("%s/proc" % self.path)
         self._umount ("%s/sys" % self.path)
