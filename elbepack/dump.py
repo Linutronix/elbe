@@ -38,6 +38,13 @@ def dump_fullpkgs( xml, rfs, cache ):
     except:
         pass
    
+def dump_debootstrappkgs( xml, cache ):
+    xml.clear_debootstrap_pkglist()
+
+    instpkgs = cache.get_installed_pkgs()
+    for p in instpkgs:
+        xml.append_debootstrap_pkg( p )
+
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     elog = ASCIIDocLog(errorname)
 
