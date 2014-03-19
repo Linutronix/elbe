@@ -66,9 +66,9 @@ class LogBase(object):
             self.verbatim_end()
 
         if ret != 0:
-            self.printo( "Command failed with errorcode %d" % p.returncode )
+            self.printo( "Command failed with errorcode %d" % ret )
             if not allow_fail:
-                raise CommandError(cmd, p.returncode)
+                raise CommandError(cmd, ret)
 
     def chroot(self, directory, cmd, **args):
         chcmd = "chroot %s %s" % (directory, cmd)
@@ -86,9 +86,9 @@ class LogBase(object):
             self.verbatim_end()
 
         if ret != 0:
-            self.printo( "Command failed with errorcode %d" % p.returncode )
+            self.printo( "Command failed with errorcode %d" % ret )
             if not allow_fail:
-                raise CommandError(cmd, p.returncode)
+                raise CommandError(cmd, ret)
 
         return output
 
