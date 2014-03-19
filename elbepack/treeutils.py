@@ -17,6 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from xml.etree.cElementTree import ElementTree, SubElement
+import copy
 
 # ElementTree helpers
 
@@ -72,6 +73,9 @@ class ebase(object):
 
     def clear( self ):
         self.et.clear()
+
+    def append_treecopy( self, other ):
+        self.et.append( copy.deepcopy( other.et ) )
 
 
 class elem(ebase):
