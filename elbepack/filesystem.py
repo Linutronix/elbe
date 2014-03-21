@@ -284,12 +284,17 @@ class ChRootFilesystem(Filesystem):
             raise
 
     def enter_chroot (self):
-        os.chdir(self.path)
-        os.chroot(self.path)
-
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"
         os.environ["LC_ALL"] = "C"
+
+        os.chdir(self.path)
+
+        if self.path == '/':
+            return
+
+        os.chroot(self.path)
+
 
     def _umount (self, path):
         if os.path.ismount (path):
@@ -306,6 +311,10 @@ class ChRootFilesystem(Filesystem):
 
     def leave_chroot (self):
         os.fchdir (self.cwd)
+
+        if self.path == '/':
+            return
+
         os.chroot (".")
 
 class TargetFs(ChRootFilesystem):
