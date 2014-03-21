@@ -97,9 +97,9 @@ def run_command( argv ):
             try:
                 cache.download_source( pkg.name, '/opt/elbe/sources' )
             except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name )
+                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + " could not be downloaded" )
+                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
 
 
