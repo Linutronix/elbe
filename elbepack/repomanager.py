@@ -52,7 +52,7 @@ class RepoBase(object):
         os.system( "reprepro --basedir " + self.path + " -C " + component + " includedeb " + self.codename + " " + path ) 
     
     def includedsc( self, path, component="main"):
-        os.system( "reprepro --basedir " + self.path + " -C " + component + " -P normal includedsc " + self.codename + " " + path ) 
+        os.system( "reprepro --basedir " + self.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
 
 class UpdateRepo(RepoBase):
     def __init__( self, xml, path ):
