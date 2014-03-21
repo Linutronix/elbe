@@ -245,7 +245,7 @@ def run_command( argv ):
     elbe_report( xml, buildenv.rfs, cache, report, targetfs )
 
     f = open(os.path.join(opt.target,"licence.txt"), "w+")
-    buildenv.rfs.write_licenses(f)
+    buildenv.rfs.write_licenses(f, outf)
     f.close()
 
 

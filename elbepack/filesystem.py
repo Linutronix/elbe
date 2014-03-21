@@ -342,7 +342,7 @@ class BuildImgFs(ChRootFilesystem):
     def __init__(self, path, interpreter):
         ChRootFilesystem.__init__(self, path, interpreter)
 
-    def write_licenses(self,f):
+    def write_licenses(self, f, log):
         for dir in self.listdir("usr/share/doc/", skiplinks=True):
             try:
                 lic = open(os.path.join(dir, "copyright"), "r")
@@ -352,7 +352,7 @@ class BuildImgFs(ChRootFilesystem):
                 f.write(lic.read())
                 f.write("\n\n")
             except IOError as e:
-                os.system("echo Error while processing license file %s: '%s' >> opt/elbe/elbe-report.txt" %
+                log.printo( "Error while processing license file %s: '%s'" %
                         (os.path.join(dir, "copyright"), e.strerror))
             finally:
                 lic.close()
