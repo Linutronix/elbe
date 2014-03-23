@@ -33,13 +33,21 @@ class InChRootObject(object):
         self.finalizer = Finalize(self,self.rfs.leave_chroot,exitpriority=10)
 
 class RPCAPTCache(InChRootObject):
-    def __init__( self, rfs, logpath, arch, notifier=None ):
+    def __init__( self, rfs, logpath, arch, notifier=None, norecommend = False, noauth = True ):
         self.log = ASCIIDocLog(logpath)
         self.notifier = notifier
         InChRootObject.__init__(self, rfs)
         config.set ("APT::Architecture", arch)
-        config.set ("APT::Install-Recommends", "0")
-        config.set ("APT::Get::AllowUnauthenticated", "1")
+        if norecommend:
+            config.set ("APT::Install-Recommends", "1")
+        else:
+            config.set ("APT::Install-Recommends", "0")
+
+        if noauth:
+            config.set ("APT::Get::AllowUnauthenticated", "1")
+        else:
+            config.set ("APT::Get::AllowUnauthenticated", "0")
+
         self.cache = Cache()
         self.cache.open()
 
