@@ -69,31 +69,70 @@ def pkgstate(pkg):
     else:
         return NOTINSTALLED
 
-class APTPackage(object):
+def pkgorigin(pkg):
+        if pkg.installed:
+            o = pkg.installed.origins[0]
+            origin = "%s %s %s" % (o.site, o.archive, o.component)
+        else:
+            origin = None
+
+        return origin
+
+
+
+class PackageBase(object):
+    def __init__( self, name, installed_version,
+                  candidate_version, installed_md5, candidate_md5,
+                  state, is_auto_installed, origin, architecture ):
+
+        self.name = name
+        self.installed_version = installed_version
+        self.candidate_version = candidate_version
+        self.installed_md5 = installed_md5
+        self.candidate_md5 = candidate_md5
+        self.state = state
+        self.is_auto_installed = is_auto_installed
+        self.origin = origin
+        self.architecture = architecture
+
+    def __repr__(self):
+        return "<APTPackage %s-%s state: %s>" % (self.name, self.installed_version, statestring[self.state])
+
+    def __eq__( self, other ):
+        vereq = (self.installed_version == other.installed_version)
+        nameq = (self.name == other.name)
+
+        return vereq and nameq
+
+class APTPackage(PackageBase):
     def __init__(self, pkg, cache=None):
         if type(pkg) == str:
             pkg = cache[pkg]
 
-        self.name = pkg.name
-        self.installed_version = pkg.installed and pkg.installed.version
-        self.candidate_version = pkg.candidate and pkg.candidate.version
-        self.installed_md5 = pkg.installed and pkg.installed.md5
-        self.candidate_md5 = pkg.candidate and pkg.candidate.md5
+        iver = pkg.installed and pkg.installed.version
+        cver = pkg.candidate and pkg.candidate.version
+        imd5 = pkg.installed and pkg.installed.md5
+        cmd5 = pkg.candidate and pkg.candidate.md5
         self.state = pkgstate(pkg)
         self.is_auto_installed = pkg.is_auto_installed
-        if pkg.installed:
-            o = pkg.installed.origins[0]
-            self.origin = "%s %s %s" % (o.site, o.archive, o.component)
-        else:
-            self.origin = None
+        origin = pkgorigin(pkg)
 
         if pkg.installed:
-            self.architecture = pkg.installed.architecture
+            arch = pkg.installed.architecture
         elif pkg.candidate:
-            self.architecture = pkg.candidate.architecture
+            arch = pkg.candidate.architecture
         else:
-            self.architecture = None
+            arch = None
 
-    def __repr__(self):
-        return "<APTPackage %s-%s state: %s>" % (self.name, self.installed_version, statestring[self.state])
+        PackageBase.__init__(pkg.name, iver, 
+                             cver, imd5, cmd5,
+                             pkgstate(pkg), pkg.is_auto_installed,
+                             origin, arch)
+
+
+class XMLPackage(PackageBase):
+    def __init__( self, node, arch ):
+        PackageBase.__init__( node.et.text, node.et.get('version'),
+                              None, node.et.get('md5'), node.et.get('auto') == 'true',
+                              None, arch )
 
