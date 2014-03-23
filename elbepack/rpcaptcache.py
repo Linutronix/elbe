@@ -110,13 +110,22 @@ class RPCAPTCache(InChRootObject):
     def compare_versions( self, ver1, ver2 ):
         return version_compare( ver1, ver2 )
 
-    def download_binary( self, pkgname, path ):
+    def download_binary( self, pkgname, path, version=None ):
         p = self.cache[pkgname]
-        p.installed.fetch_binary(path, ElbeAcquireProgress(cb=self.co_cb))
+        if version is None:
+            pkgver = p.installed
+        else:
+            pkgver = p.versions[version]
+        pkgver.fetch_binary(path, ElbeAcquireProgress(cb=self.co_cb))
 
-    def download_source( self, pkgname, path ):
+    def download_source( self, pkgname, path, version=None ):
         p = self.cache[pkgname]
-        p.installed.fetch_source(path, ElbeAcquireProgress(cb=self.co_cb), unpack=False)
+        if version is None:
+            pkgver = p.installed
+        else:
+            pkgver = p.versions[version]
+
+        pkgver.fetch_source(path, ElbeAcquireProgress(cb=self.co_cb), unpack=False)
 
 
 class MyMan(BaseManager):
