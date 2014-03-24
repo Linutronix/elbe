@@ -124,7 +124,7 @@ class APTPackage(PackageBase):
         else:
             arch = None
 
-        PackageBase.__init__(pkg.name, iver, 
+        PackageBase.__init__(self, pkg.name, iver,
                              cver, imd5, cmd5,
                              pkgstate(pkg), pkg.is_auto_installed,
                              origin, arch)
@@ -132,7 +132,7 @@ class APTPackage(PackageBase):
 
 class XMLPackage(PackageBase):
     def __init__( self, node, arch ):
-        PackageBase.__init__( node.et.text, node.et.get('version'),
+        PackageBase.__init__( self, node.et.text, node.et.get('version'),
                               None, node.et.get('md5'), node.et.get('auto') == 'true',
                               None, arch )
 
