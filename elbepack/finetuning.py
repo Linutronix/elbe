@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from elbepack.shellhelper import CommandError
 
 class FinetuningAction(object):
 
@@ -201,3 +202,5 @@ def do_finetuning(xml, log, buildenv, target):
             action.execute(log, buildenv, target)
         except KeyError:
             print "Unimplemented finetuning action " + i.et.tag
+        except CommandError:
+            log.printo( "Finetuning Error, trying to continue anyways" )
