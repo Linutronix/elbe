@@ -63,6 +63,18 @@ ppc_defaults = {
         "triplet":      "powerpc-linux-gnu"
 }
 
+ppcspe_defaults = {
+        "arch":         "powerpcspe",
+        "size":         "20G",
+        "mem":          "512",
+        "interpreter":  "qemu-system-ppc",
+        "userinterpr":  "qemu-ppc-static",
+        "console":      "ttyS0,115200n1",
+        "machine":      "mpc8544ds",
+        "nicmodel":     "rtl8139",
+        "triplet":      "powerpc-linux-gnuspe"
+}
+
 amd64_defaults = {
         "arch":         "amd64",
         "size":         "20G",
@@ -95,6 +107,7 @@ defaults = { "armel": armel_defaults,
              "armhf": armhf_defaults,
              "armhf-virtio": armhf_virtio_defaults,
              "ppc": ppc_defaults,
+             "ppcspe": ppcspe_defaults,
              "amd64": amd64_defaults,
              "i386": i386_defaults,
              "nodefaults": {}  }
