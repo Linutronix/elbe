@@ -58,6 +58,18 @@ class MkdirAction(FinetuningAction):
 
 FinetuningAction.register( MkdirAction )
 
+class BuildenvMkdirAction(FinetuningAction):
+
+    tag = 'buildenv_mkdir'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "mkdir -p " + buildenv.fname( self.node.et.text ) )
+
+FinetuningAction.register( BuildenvMkdirAction )
+
 
 class CpAction(FinetuningAction):
 
@@ -71,6 +83,41 @@ class CpAction(FinetuningAction):
 
 FinetuningAction.register( CpAction )
 
+class BuildenvCpAction(FinetuningAction):
+
+    tag = 'buildenv_cp'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "cp -av " + buildenv.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+
+FinetuningAction.register( BuildenvCpAction )
+
+class B2TCpAction(FinetuningAction):
+
+    tag = 'b2t_cp'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "cp -av " + buildenv.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+
+FinetuningAction.register( B2TCpAction )
+
+class T2BCpAction(FinetuningAction):
+
+    tag = 't2b_cp'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+
+FinetuningAction.register( T2BCpAction )
 
 class MvAction(FinetuningAction):
 
@@ -83,6 +130,18 @@ class MvAction(FinetuningAction):
         log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
 
 FinetuningAction.register( MvAction )
+
+class BuildenvMvAction(FinetuningAction):
+
+    tag = 'buildenv_mv'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "mv -v " + buildenv.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+
+FinetuningAction.register( BuildenvMvAction )
 
 
 class CmdAction(FinetuningAction):
@@ -99,6 +158,36 @@ class CmdAction(FinetuningAction):
             target.leave_chroot ()
 
 FinetuningAction.register( CmdAction )
+
+class BuildenvCmdAction(FinetuningAction):
+
+    tag = 'buildenv_command'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        with target:
+            buildenv.enter_chroot ()
+            log.do (self.node.et.text)
+            buildenv.leave_chroot ()
+
+FinetuningAction.register( BuildenvCmdAction )
+
+class PurgeAction(FinetuningAction):
+
+    tag = 'purge'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        with target:
+            target.enter_chroot ()
+            log.do ("dpkg --purge " + self.node.et.text)
+            target.leave_chroot ()
+
+FinetuningAction.register( PurgeAction )
 
 
 def do_finetuning(xml, log, buildenv, target):
