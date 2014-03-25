@@ -255,6 +255,7 @@ class ChRootFilesystem(Filesystem):
         Filesystem.__init__(self,path,clean)
         self.interpreter = interpreter
         self.cwd = os.open ("/", os.O_RDONLY)
+        self.inchroot = False
 
     def __delete__ (self):
         os.close (self.cwd)
@@ -267,6 +268,8 @@ class ChRootFilesystem(Filesystem):
         return self
 
     def __exit__(self, type, value, traceback):
+        if self.inchroot:
+            self.leave_chroot()
         self.umount()
         if self.interpreter:
             os.system( 'rm -f %s' %
@@ -284,11 +287,14 @@ class ChRootFilesystem(Filesystem):
             raise
 
     def enter_chroot (self):
+        assert not self.inchroot
+
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"
         os.environ["LC_ALL"] = "C"
 
         os.chdir(self.path)
+        self.inchroot = True
 
         if self.path == '/':
             return
@@ -310,8 +316,11 @@ class ChRootFilesystem(Filesystem):
         self._umount ("%s/dev" % self.path)
 
     def leave_chroot (self):
+        assert self.inchroot
+
         os.fchdir (self.cwd)
 
+        self.inchroot = False
         if self.path == '/':
             return
 
