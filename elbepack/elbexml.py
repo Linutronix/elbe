@@ -141,7 +141,7 @@ class ElbeXML(object):
         tree.clear()
 
     def clear_debootstrap_pkglist( self ):
-        tree = self.xml.ensure_child( 'fullpkgs' )
+        tree = self.xml.ensure_child( 'debootstrappkgs' )
         tree.clear()
 
     def append_full_pkg( self, aptpkg ):
