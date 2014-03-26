@@ -1221,7 +1221,35 @@
           </documentation>
         </annotation>
       </element>
+      <element name="buildenv_cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="b2t_cp" type="rfs:cpmv" minOccurs="0">
+	<annotation>
+	  <documentation>
+	    copy a file or directory (recursive)
+	  </documentation>
+	</annotation>
+      </element>
+      <element name="t2b_cp" type="rfs:cpmv" minOccurs="0">
+	<annotation>
+	  <documentation>
+	    copy a file or directory (recursive)
+	  </documentation>
+	</annotation>
+      </element>
       <element name="mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv_mv" type="rfs:cpmv" minOccurs="0">
         <annotation>
           <documentation>
             move a file or directory
@@ -1235,6 +1263,20 @@
           </documentation>
         </annotation>
       </element>
+      <element name="buildenv_mkdir" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mknod" type="rfs:mknod" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
       <element name="purge" type="string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1243,6 +1285,13 @@
         </annotation>
       </element>
       <element name="command" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv_command" type="string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command
@@ -1265,6 +1314,18 @@
     </simpleContent>
   </complexType>
 
+  <complexType name="mknod">
+    <annotation>
+      <documentation>
+        describes a mknod operaition in finetuning
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="opts" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
   <complexType name="git_src">
     <annotation>
       <documentation>
