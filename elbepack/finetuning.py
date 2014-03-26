@@ -60,6 +60,18 @@ class MkdirAction(FinetuningAction):
 
 FinetuningAction.register( MkdirAction )
 
+class MknodAction(FinetuningAction):
+
+    tag = 'mknod'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "mknod " + target.fname( self.node.et.text ) + " " + self.node.et.attrib['opts'] )
+
+FinetuningAction.register( MknodAction )
+
 class BuildenvMkdirAction(FinetuningAction):
 
     tag = 'buildenv_mkdir'
