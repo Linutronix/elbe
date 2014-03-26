@@ -27,10 +27,10 @@ from elbepack.asciidoclog import StdoutLog, ASCIIDocLog
 from elbepack.rfs import BuildEnv
 from elbepack.filesystem import ChRootFilesystem
 from elbepack.shellhelper import system
-from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.repomanager import CdromSrcRepo
 
-from apt.package import FetchError
+from elbepack.cdrom import mk_source_cdrom
+
+
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog mkcdrom [options] <builddir>")
@@ -86,31 +86,5 @@ def run_command( argv ):
         arch = opt.arch
         codename = opt.codename
 
-    rfs.mkdir_p( '/opt/elbe/sources' )
-
-    with rfs:
-        cache = get_rpcaptcache( rfs, "aptcache.log", arch )
-
-        pkglist = cache.get_installed_pkgs()
-
-        for pkg in pkglist:
-            try:
-                cache.download_source( pkg.name, '/opt/elbe/sources' )
-            except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
-            except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
-
-
-
-
-    repo = CdromSrcRepo(codename, "srcrepo" )
-
-    for dsc in rfs.glob('opt/elbe/sources/*.dsc'):
-        repo.includedsc(dsc)
-
-
-
-    
-    
+    mk_source_cdrom( rfs, arch, codename )
 
