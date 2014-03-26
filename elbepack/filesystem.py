@@ -181,7 +181,7 @@ def copy_filelist( src, filelist, dst ):
         f = f.rstrip("\n")
         if src.isdir(f) and not src.islink(f):
             if not dst.isdir(f):
-                dst.makedirs(f)
+                dst.mkdir(f)
             st = src.stat(f)
             dst.chown(f, st.st_uid, st.st_gid)
         else:
@@ -231,11 +231,11 @@ def extract_target( src, xml, dst, log ):
             subprocess.call(["cp", "-a", "--reflink=auto", f, dst.fname('')])
 
     try:
-        dst.makedirs("proc")
+        dst.mkdir_p("proc")
     except:
         pass
     try:
-        dst.makedirs("sys")
+        dst.mkdir_p("sys")
     except:
         pass
 
