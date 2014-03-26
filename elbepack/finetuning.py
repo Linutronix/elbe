@@ -17,6 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from elbepack.shellhelper import CommandError
+import os
 
 class FinetuningAction(object):
 
@@ -155,7 +156,8 @@ class CmdAction(FinetuningAction):
     def execute(self, log, buildenv, target):
         with target:
             target.enter_chroot ()
-            log.do (self.node.et.text)
+            #log.do (self.node.et.text)
+            os.system(self.node.et.text)
             target.leave_chroot ()
 
 FinetuningAction.register( CmdAction )
@@ -170,7 +172,8 @@ class BuildenvCmdAction(FinetuningAction):
     def execute(self, log, buildenv, target):
         with target:
             buildenv.enter_chroot ()
-            log.do (self.node.et.text)
+            #log.do (self.node.et.text)
+            os.system(self.node.et.text)
             buildenv.leave_chroot ()
 
 FinetuningAction.register( BuildenvCmdAction )
@@ -185,7 +188,8 @@ class PurgeAction(FinetuningAction):
     def execute(self, log, buildenv, target):
         with target:
             target.enter_chroot ()
-            log.do ("dpkg --purge " + self.node.et.text)
+            #log.do ("dpkg --purge " + self.node.et.text)
+            os.system(self.node.et.text)
             target.leave_chroot ()
 
 FinetuningAction.register( PurgeAction )
