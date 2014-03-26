@@ -105,8 +105,12 @@ class BuildEnv ():
                 "dpkg --print-architecture").strip ()
 
         if not self.xml.is_cross (host_arch):
-            cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
-                        arch, suite, self.rfs.path, primary_mirror)
+            if self.xml.has("project/noauth"):
+                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                            arch, suite, self.rfs.path, primary_mirror)
+            else:
+                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
+                            arch, suite, self.rfs.path, primary_mirror)
 
             self.log.do( cmd )
             try:
@@ -116,8 +120,12 @@ class BuildEnv ():
 
             return
 
-        cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
-            arch, suite, self.rfs.path, primary_mirror)
+        if self.xml.has("project/noauth"):
+            cmd = 'debootstrap --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
+                arch, suite, self.rfs.path, primary_mirror)
+        else:
+            cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
+                arch, suite, self.rfs.path, primary_mirror)
 
         self.log.do (cmd)
 
