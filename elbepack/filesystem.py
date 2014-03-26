@@ -194,34 +194,28 @@ def copy_filelist( src, filelist, dst ):
             shutil.copystat(src.fname(f), dst.fname(f))
 
 
-def extract_target( src, xml, dst, log ):
+def extract_target( src, xml, dst, log, cache ):
     # create filelists describing the content of the target rfs
     if xml.tgt.has("tighten") or xml.tgt.has("diet"):
-        if xml.tgt.has("tighten"):
-            f = src.open("opt/elbe/pkg-list")
+        pkglist = [ n.et.text for n in xml.node('target/pkg-list') if n.tag == 'pkg' ]
+        arch = xml.text("project/buildimage/arch", key="arch")
 
-        elif xml.tgt.has("diet"):
+        if xml.tgt.has("diet"):
+            withdeps = []
+            for p in pkglist:
+                deps = cache.get_dependencies( p )
+                withdeps += [d.name for d in deps]
+                withdeps += [p]
 
-            arch = xml.text("project/buildimage/arch", key="arch")
-
-            # XXX: want to port to python for cache.
-            # XXX: would need chroot support as it is.
-            log.do("apt-rdepends `cat opt/elbe/pkg-list` | grep -v \"^ \" | uniq >opt/elbe/allpkg-list")
-            f = src.open("opt/elbe/allpkg-list")
+            pkglist = list( set( withdeps ) )
 
         file_list = []
-        for line in f.readlines():
-            line = line.rstrip("\n")
+        for line in pkglist:
             file_list += src.cat_file("var/lib/dpkg/info/%s.list" %(line))
             file_list += src.cat_file("var/lib/dpkg/info/%s.conffiles" %(line))
 
             file_list += src.cat_file("var/lib/dpkg/info/%s:%s.list" %(line, arch))
             file_list += src.cat_file("var/lib/dpkg/info/%s:%s.conffiles" %(line, arch))
-
-        f.close()
-
-        if xml.tgt.has("diet"):
-            src.remove("opt/elbe/allpkg-list")
 
         file_list = list(sorted(set(file_list)))
         copy_filelist(src, file_list, dst)

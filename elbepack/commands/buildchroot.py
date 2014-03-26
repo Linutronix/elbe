@@ -209,7 +209,7 @@ def run_command( argv ):
 
     os.chdir(buildenv.rfs.fname(''))
 
-    extract_target( buildenv.rfs, xml, targetfs, outf )
+    extract_target( buildenv.rfs, xml, targetfs, outf, cache )
 
 
     # Package Validation and Package lists
