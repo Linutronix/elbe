@@ -181,6 +181,7 @@ def run_command( argv ):
         else:
             sourcepath = os.path.join(opt.target, "source.xml" )
             source = ElbeXML( sourcepath, buildtype=buildtype, skip_validate=opt.skip_validation )
+            xml.get_debootstrappkgs_from( source )
 
         # Now install Packages from all sources
 
@@ -222,9 +223,6 @@ def run_command( argv ):
         check_full_pkgs(pkgs, None, validation, cache)
 
     dump_fullpkgs(xml, buildenv.rfs, cache)
-
-    if not buildenv.fresh_debootstrap:
-        xml.get_debootstrappkgs_from( source )
 
     # Dump a few things
 
