@@ -160,5 +160,6 @@ class ElbeXML(object):
         tree = self.xml.ensure_child( 'debootstrappkgs' )
         tree.clear()
 
-        tree.append_treecopy( other.xml.node( 'debootstrappkgs' ) )
+        for e in other.node( 'debootstrappkgs' ):
+            tree.append_treecopy( e )
 
