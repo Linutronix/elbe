@@ -28,7 +28,7 @@ from mako import exceptions
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.pkgutils import copy_kinitrd
+from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 
@@ -145,7 +145,7 @@ def run_command( argv ):
 
     try:
         copy_kinitrd(xml, out_path, defs, arch="amd64")
-    except:
+    except NoKinitrdException:
         print "Failure to download kernel/initrd debian Package"
         print "Check Mirror configuration"
         sys.exit(20)

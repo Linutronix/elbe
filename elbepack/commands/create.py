@@ -29,7 +29,7 @@ from base64 import standard_b64decode, standard_b64encode
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.pkgutils import copy_kinitrd
+from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 
@@ -197,7 +197,7 @@ def run_command( argv ):
 
     try:
         copy_kinitrd(xml, out_path, defs)
-    except:
+    except NoKinitrdException:
         print "Failure to download kernel/initrd debian Package"
         print "Check your source URLs"
         sys.exit(20)
