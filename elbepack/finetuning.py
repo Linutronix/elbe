@@ -167,10 +167,7 @@ class CmdAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            target.enter_chroot ()
-            #log.do (self.node.et.text)
-            os.system(self.node.et.text)
-            target.leave_chroot ()
+            log.chroot (target.path, self.node.et.text)
 
 FinetuningAction.register( CmdAction )
 
@@ -182,11 +179,8 @@ class BuildenvCmdAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        with target:
-            buildenv.enter_chroot ()
-            #log.do (self.node.et.text)
-            os.system(self.node.et.text)
-            buildenv.leave_chroot ()
+        with buildenv:
+            log.chroot (buildenv.path, self.node.et.text)
 
 FinetuningAction.register( BuildenvCmdAction )
 
@@ -199,10 +193,7 @@ class PurgeAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            target.enter_chroot ()
-            #log.do ("dpkg --purge " + self.node.et.text)
-            os.system(self.node.et.text)
-            target.leave_chroot ()
+            log.chroot (target.path, "dpkg --purge " + self.node.et.text ) 
 
 FinetuningAction.register( PurgeAction )
 
