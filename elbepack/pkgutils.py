@@ -25,13 +25,18 @@ import urllib2
 
 try:
     from elbepack import virtapt
+    virtapt_imported = True
 except ImportError:
     print "WARNING - python-apt not available: if there are multiple versions of"
     print " kinitrd packages on the mirror(s) elbe selects the first package it"
     print " has found. There is no guarantee that the latest package is used."
     print " To ensure this, the python-apt package needs to be installed."
     import urllib2
+    virtapt_imported = False
 
+
+class NoKinitrdException(Exception):
+    pass
 
 def get_sources_list( xml, defs ):
 
@@ -68,19 +73,22 @@ def get_initrd_pkg( xml, defs ):
     return initrdname
 
 def get_url ( xml, arch, suite, target_pkg, mirror ):
-    packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
-      (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
-
-    packages = packages.readlines()
-    packages = filter( lambda x: x.startswith( "Filename" ), packages )
-    packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
-
     try:
+        packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
+          (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
+
+        packages = packages.readlines()
+        packages = filter( lambda x: x.startswith( "Filename" ), packages )
+        packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
+
         tmp = packages.pop()
         urla = tmp.split()
         url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
-    except:
+    except IOError:
         url = ""
+    except IndexError:
+        url = ""
+
 
     return url
 
@@ -94,7 +102,7 @@ def get_initrd_uri( xml, defs, arch ):
 
     target_pkg = get_initrd_pkg(xml, defs)
 
-    try:
+    if virtapt_imported:
         v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
         d = virtapt.apt_pkg.DepCache(v.cache)
 
@@ -107,7 +115,7 @@ def get_initrd_uri( xml, defs, arch ):
         r.lookup(c.file_list[0])
         uri = x.archive_uri(r.filename)
         return uri
-    except:
+    else:
         url = "%s://%s/%s" % (xml.text("project/mirror/primary_proto"),
           xml.text("project/mirror/primary_host"),
           xml.text("project/mirror/primary_path") )
@@ -142,7 +150,7 @@ def copy_kinitrd( xml, target_dir, defs, arch="default" ):
     elif uri.startswith("ftp://"):
         os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
     else:
-        raise Exception ('no kinitrd package available')
+        raise NoKinitrdException ('no kinitrd package available')
 
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
