@@ -28,7 +28,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.filesystem import ChRootFilesystem
 from elbepack.shellhelper import system
 
-from elbepack.cdrom import mk_source_cdrom
+from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 
 
@@ -48,6 +48,12 @@ def run_command( argv ):
                         help="builddir points to RFS" )
     oparser.add_option( "--log", dest="log",
                         help="Log to filename" )
+    oparser.add_option( "--binary", action="store_true",
+                        dest="binary", default=False,
+                        help="build binary cdrom" )
+    oparser.add_option( "--source", action="store_true",
+                        dest="source", default=False,
+                        help="build source cdrom" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -85,6 +91,10 @@ def run_command( argv ):
         rfs = ChRootFilesystem( args[0] )
         arch = opt.arch
         codename = opt.codename
+        xml = None
 
-    mk_source_cdrom( rfs, arch, codename )
+    if opt.source:
+        mk_source_cdrom( rfs, arch, codename )
 
+    if opt.binary:
+        mk_binary_cdrom( rfs, arch, codename, xml )
