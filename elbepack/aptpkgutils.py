@@ -133,6 +133,7 @@ class APTPackage(PackageBase):
 class XMLPackage(PackageBase):
     def __init__( self, node, arch ):
         PackageBase.__init__( self, node.et.text, node.et.get('version'),
-                              None, node.et.get('md5'), node.et.get('auto') == 'true',
+                              None, node.et.get('md5'), None,
+                              INSTALLED, node.et.get('auto') == 'true',
                               None, arch )
 
