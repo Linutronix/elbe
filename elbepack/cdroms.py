@@ -20,6 +20,7 @@ from apt.package import FetchError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
+from elbepack.aptpkgutils import XMLPackage
 
 def mk_source_cdrom(rfs, arch, codename):
 
@@ -43,9 +44,10 @@ def mk_source_cdrom(rfs, arch, codename):
     for dsc in rfs.glob('opt/elbe/sources/*.dsc'):
         repo.includedsc(dsc)
 
-def mk_binary_cdrom(rfs, arch, codename):
+def mk_binary_cdrom(rfs, arch, codename, xml):
 
-    rfs.mkdir_p( '/opt/elbe/binaries' )
+    rfs.mkdir_p( '/opt/elbe/binaries/added' )
+    rfs.mkdir_p( '/opt/elbe/binaries/main' )
 
     with rfs:
         cache = get_rpcaptcache( rfs, "aptcache.log", arch )
@@ -54,13 +56,28 @@ def mk_binary_cdrom(rfs, arch, codename):
 
         for pkg in pkglist:
             try:
-                cache.download_binary( pkg.name, '/opt/elbe/binaries' )
+                cache.download_binary( pkg.name, '/opt/elbe/binaries/added', pkg.installed_version )
             except ValueError as ve:
                 log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
                 log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromBinRepo(codename, "binrepo" )
+        arch = xml.text ("project/buildimage/arch", key="arch")
+        for p in xml.node("debootstrappkgs"):
+            pkg = XMLPackage(p, arch)
+            try:
+                cache.download_binary( pkg.name, '/opt/elbe/binaries/main', pkg.installed_version )
+            except ValueError as ve:
+                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+            except FetchError as fe:
+                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    for deb in rfs.glob('opt/elbe/binaries/*.deb'):
-        repo.includedeb(dsc)
+    repo = CdromBinRepo(xml, "binrepo" )
+
+    for deb in rfs.glob('opt/elbe/binaries/added/*.deb'):
+        repo.includedeb(deb, 'added')
+
+    for deb in rfs.glob('opt/elbe/binaries/main/*.deb'):
+        repo.includedeb(deb, 'main')
+
+
