@@ -11,7 +11,7 @@ Build-Depends: dh-python,
   asciidoc,
   xmlto,
   source-highlight
-Standards-Version: 3.7.3
+Standards-Version: 3.9.5
 Homepage: http://elbe-rfs.org
 
 Package: elbe-doc
