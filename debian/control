@@ -2,8 +2,7 @@ Source: elbe
 Section: misc
 Priority: optional
 Maintainer: Manuel Traut <manut@linutronix.de>
-Build-Depends: cdbs (>= 0.4.90~),
-  dh-python,
+Build-Depends: dh-python,
   debhelper (>= 7),
   python (>= 2.6.6-3~),
   python-mako,
@@ -18,12 +17,13 @@ Homepage: http://elbe-rfs.org
 Package: elbe-doc
 Section: doc
 Architecture: all
+Depends: ${misc:Depends}
 Description: RootFS build system documentation.
  Elbe is a flexible Root Filesystem builder.
 
 Package: elbe-common
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   python-lxml,
   python-apt,
   python-gpgme,
@@ -33,14 +33,14 @@ Description: RootFS build system common files.
 
 Package: elbe-adjustpkg
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   elbe-common
 Description: RootFS build system package adjustment.
  Elbe is a flexible Root Filesystem builder.
 
 Package: elbe-buildchroot
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   elbe-common,
   elbe-adjustpkg,
   python-parted,
@@ -55,7 +55,7 @@ Description: RootFS build system buildchroot version.
 
 Package: elbe-daemon
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   elbe-buildchroot,
   elbe-adjustpkg,
   python-parted,
@@ -73,7 +73,7 @@ Description: RootFS build system daemon.
 
 Package: elbe
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   elbe-common,
   qemu-utils,
   qemu-system,
@@ -88,7 +88,7 @@ Description: RootFS build system.
 
 Package: elbe-updated
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python:Depends}, ${misc:Depends},
   elbe-common,
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1),
