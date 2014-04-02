@@ -180,7 +180,7 @@ class BuildEnv ():
         hostname = self.xml.text("target/hostname")
         domain = self.xml.text("target/domain")
 
-        self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "127.0.0.1 %s %s.%s" >> /etc/hosts'""" % (hostname, hostname, domain) )
+        self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "127.0.0.1 %s.%s %s elbe-daemon" >> /etc/hosts'""" % (hostname, domain, hostname) )
         self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname )
         self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (hostname, domain) )
 
