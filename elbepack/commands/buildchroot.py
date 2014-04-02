@@ -183,6 +183,9 @@ def run_command( argv ):
             source = ElbeXML( sourcepath, buildtype=buildtype, skip_validate=opt.skip_validation )
             xml.get_debootstrappkgs_from( source )
 
+        # Seed etc, we need /etc/hosts for hostname -f to work correctly
+        buildenv.seed_etc()
+
         # Now install Packages from all sources
 
         be_pkgs = buildenv.xml.get_buildenv_packages()
@@ -199,8 +202,6 @@ def run_command( argv ):
             cache.commit()
         except SystemError:
             outf.printo ("commiting changes failed")
-
-        buildenv.seed_etc()
 
 
     # Now start with the extraction of the TargetFs
