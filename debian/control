@@ -15,6 +15,7 @@ Standards-Version: 3.7.3
 Homepage: http://elbe-rfs.org
 
 Package: elbe-doc
+Section: doc
 Architecture: all
 Description: RootFS build system documentation.
  Elbe is a flexible Root Filesystem builder.
