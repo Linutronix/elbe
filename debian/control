@@ -90,3 +90,4 @@ Depends: elbe-common,
   python-suds,
   python-soaplib
 Description:  Elbe deamon used on targets to apply updates
+ Elbe is a flexible Root Filesystem builder.
