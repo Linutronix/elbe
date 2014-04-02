@@ -780,40 +780,40 @@ partitions and mountpoints. Lets look at an example 'target' section.
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	<images>
 		<hd>
-			<name>sda.img</name> (1)
-			<size>1900</size>    (2)
-			<partitions>         (3)
+			<name>sda.img</name>			<1>
+			<size>1900</size>			<2>
+			<partitions>				<3>
 				<primary>
 					<part>1</part>
 					<size>remain</size>
-					<label>rfs</label>     (4)
+					<label>rfs</label>	<4>
 					<parttype>linux</parttype>
 				</primary>
 			</partitions>
 		</hd>
 		<hd>
-			<name>sdb.img</name> (1)
-			<size>400</size>     (2)
-			<partitions>         (3)
+			<name>sdb.img</name>			<1>
+			<size>400</size>			<2>
+			<partitions>				<3>
 				<primary>
 					<part>1</part>
 					<size>remain</size>
-					<label>config</label>   (4)
+					<label>config</label>	<4>
 					<parttype>linux</parttype>
 				</primary>
 			</partitions>
 		</hd>
 	</images>
-	<fstab>                     (5)
+	<fstab>							<5>
 		<bylabel>
-			<label>rfs</label>  (4)
+			<label>rfs</label>			<4>
 			<mountpoint>/</mountpoint>
 			<fs>
 				<type>ext4</type>
 			</fs>
 		</bylabel>
 		<bylabel>
-			<label>config</label> (4)
+			<label>config</label>			<4>
 			<mountpoint>/mnt/config</mountpoint>
 			<fs>
 				<type>ext4</type>
