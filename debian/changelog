@@ -4,7 +4,7 @@ elbe (0.7.0~beta1) unstable; urgency=medium
 
  -- Manuel Traut <manut@linutronix.de>  Thu, 13 Mar 2014 11:15:51 +0100
 
-elbe (0.6.0-wheezy) unstable; urgency=low
+elbe (0.6.0~wheezy) unstable; urgency=low
 
   * reworked debian packaging
   * bugfixes
@@ -12,13 +12,13 @@ elbe (0.6.0-wheezy) unstable; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 28 Jan 2014 15:50:40 +0100
 
-elbe (0.5.5-wheezy) wheezy; urgency=low
+elbe (0.5.5~wheezy) unstable; urgency=low
 
   * wheezy build
 
  -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:26:27 +0200
 
-elbe (0.5.5-squeeze) squeeze; urgency=low
+elbe (0.5.5~squeeze) unstable; urgency=low
 
   * enable mount options for bydev mounts
   * fix kernel location on armhf systems
@@ -29,26 +29,26 @@ elbe (0.5.5-squeeze) squeeze; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:20:47 +0200
 
-elbe (0.5.4-wheezy) wheezy; urgency=low
+elbe (0.5.4~wheezy) unstable; urgency=low
 
   * wheezy build
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:24:13 +0200
 
-elbe (0.5.4-squeeze) squeeze; urgency=low
+elbe (0.5.4~squeeze) unstable; urgency=low
 
   * BUGFIX dump.py crashed because of missing version.py on target
   * add dump.py output to elbe-report.txt 
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:20:53 +0200
 
-elbe (0.5.3-wheezy) wheezy; urgency=low
+elbe (0.5.3~wheezy) unstable; urgency=low
 
   * 5.3 wheezy build
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:37:47 +0200
 
-elbe (0.5.3-squeeze) squeeze; urgency=low
+elbe (0.5.3~squeeze) unstable; urgency=low
 
   * target package list support
   * version support (elbe --version, version info in report and target)
@@ -56,13 +56,13 @@ elbe (0.5.3-squeeze) squeeze; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:17:19 +0200
 
-elbe (0.5.2-wheezy) wheezy; urgency=low
+elbe (0.5.2~wheezy) unstable; urgency=low
 
   * build version for wheezy distribution
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 23 Aug 2013 10:56:12 +0200
 
-elbe (0.5.2-squeeze) squeeze; urgency=low
+elbe (0.5.2~squeeze) unstable; urgency=low
 
   * build version for squeeze distribution
 
