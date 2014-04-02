@@ -1,0 +1,49 @@
+elbe-chroot(1)
+==============
+
+
+NAME
+----
+elbe-chroot - Enter an Elbe root filesystem using chroot.
+
+
+SYNOPSIS
+--------
+[verse]
+'elbe chroot' [--skip-validation] [--buildtype=TYPE] <builddir>
+
+
+DESCRIPTION
+-----------
+Enters a previously built Elbe root filesystem using chroot. The command
+has to be run as root *inside the Elbe build VM* (created with
+linkgit:elbe-init[1]).
+
+
+OPTIONS
+-------
+
+--skip-validation::
+	Do not validate the source.xml file in <builddir> against the
+	XML schema. (Not recommended.)
+
+--buildtype=TYPE::
+	Override the buildtype specified in the source.xml file.
+
+<builddir>::
+	The build directory of the root filesystem to work with.
+
+
+EXAMPLES
+--------
+
+* Work with the root filesystem built in '/root/testrfs_arm'
++
+------------
+# elbe chroot /root/testrfs_arm
+------------
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite
