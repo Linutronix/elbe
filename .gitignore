@@ -3,6 +3,7 @@ build
 docs/*.1
 docs/*.html
 docs/*.png
+docs/manpage-base-url.xsl
 docs/elbe-examples.txt
 docs/elbe-schema-reference.txt
 debian/.control.swp
