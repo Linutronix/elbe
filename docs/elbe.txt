@@ -23,14 +23,52 @@ The '<command>' is a name of an Elbe command (see below).
 Elbe COMMANDS
 -------------
 
-linkgit:elbe-create[1]::
-        create a build directory and insert project files.
+linkgit:elbe-buildchroot[1]::
+	build a root filesystem.
+
+linkgit:elbe-buildsysroot[1]::
+	build a sysroot archive.
+
+linkgit:elbe-check_updates[1]::
+	check whether package updates are available for a given project.
 
 linkgit:elbe-chg_archive[1]::
         insert a new config archive (.tbz) into a XML file.
 
+linkgit:elbe-chroot[1]::
+	enter a root filesystem with chroot.
+
+linkgit:elbe-diff[1]::
+	compare two root file systems for differing files.
+
+linkgit:elbe-gen_update[1]::
+	generate an update archive for elbe-updated.
+
+linkgit:elbe-genlicence[1]::
+	generate a file containing the licences of all packages included in a
+	project.
+
 linkgit:elbe-get_archive[1]::
         extract a config archive (.tbz) from a XML file.
+
+linkgit:elbe-hdimg[1]::
+	create a hard disk image from the given XML file.
+
+linkgit:elbe-init[1]::
+	create a project for an Elbe build virtual machine.
+
+linkgit:elbe-initrdpack[1]::
+	build the kernel/initrd package for elbe-init.
+
+linkgit:elbe-mkcdrom[1]::
+	create an ISO image containing all binary or source packages used in
+	the given project.
+
+linkgit:elbe-pkgdiff[1]::
+	compare two root filesystems for differing packages.
+
+linkgit:elbe-remove_sign[1]::
+	verify a signed file and remove the signature.
 
 linkgit:elbe-setcdrom[1]::
         set an iso image as local debian mirror.
@@ -41,8 +79,17 @@ linkgit:elbe-setsel[1]::
 linkgit:elbe-show[1]::
         show a textual information about the given XML file.
 
+linkgit:elbe-sign[1]::
+	add a signature to the given file.
+
+linkgit:elbe-updated[1]::
+	start the Elbe update daemon.
+
+linkgit:elbe-validate[1]::
+	validate the given XML file against the Elbe XML Schema.
+
 linkgit:elbe-xsdtoasciidoc[1]::
-        create an asciidoc documentation from an annotated XML Schema file (xsd)
+        create an asciidoc documentation from an annotated XML Schema file (xsd).
 
 
 Authors
