@@ -209,7 +209,6 @@ elbe (0.2) unstable; urgency=low
 
 elbe (0.1-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release
 
  -- Torben Hohn <torbenh@linutronix.de>  Mon, 01 Aug 2011 15:21:14 +0200
-
