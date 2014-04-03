@@ -1,3 +1,11 @@
+elbe (0.7.0~beta2) unstable; urgency=medium
+
+  * reworked packaging again
+  * elbe init should work now
+  * huge number of bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 03 Apr 2014 16:20:19 +0200
+
 elbe (0.7.0~beta1) unstable; urgency=medium
 
   * test release of elbe updated integration and buildchroot rework
