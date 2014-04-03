@@ -101,7 +101,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 % endif
 
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string elbe-daemon elbe-webguid openssh-client
+d-i pkgsel/include string elbe-buildenv openssh-client
 
 passwd passwd/root-password password root
 passwd passwd/root-password-again password root

@@ -109,9 +109,9 @@ def run_command( argv ):
     xml_pkglist = xml.node("/target/pkg-list")
     xml_pkgs = [p.et.text for p in xml_pkglist]
 
-    mandatory_pkgs = ["elbe-daemon"]
+    mandatory_pkgs = ["elbe-buildenv"]
     if xml.has("target/images/msdoshd/grub-install"):
-        mandatory_pkgs = ["elbe-daemon", "grub-pc"]
+        mandatory_pkgs = ["elbe-buildenv", "grub-pc"]
 
     # TODO: install buildimage packages after target image generation
     #         and remove theme before target image generation

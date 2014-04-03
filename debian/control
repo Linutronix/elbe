@@ -31,59 +31,38 @@ Depends: ${python:Depends}, ${misc:Depends},
 Description: RootFS build system common files.
  Elbe is a flexible Root Filesystem builder.
 
-Package: elbe-adjustpkg
-Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
-  elbe-common
-Description: RootFS build system package adjustment.
- Elbe is a flexible Root Filesystem builder.
-
-Package: elbe-buildchroot
-Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
-  elbe-common,
-  elbe-adjustpkg,
-  python-parted,
-  python-mako,
-  debootstrap,
-  binfmt-support,
-  qemu-user-static,
-  elbe
-Recommends: elbe-doc
-Description: RootFS build system buildchroot version.
- Elbe is a flexible Root Filesystem builder.
-
-Package: elbe-daemon
-Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
-  elbe-buildchroot,
-  elbe-adjustpkg,
-  python-parted,
-  mtd-utils,
-  dpkg-dev,
-  dosfstools,
-  apt-rdepends,
-  python-apt,
-  rsync,
-  genisoimage,
-  reprepro
-Recommends: elbe-doc
-Description: RootFS build system daemon.
- Elbe is a flexible Root Filesystem builder.
-
 Package: elbe
 Architecture: all
 Depends: ${python:Depends}, ${misc:Depends},
   elbe-common,
   qemu-utils,
   qemu-system,
-  qemu-user-static,
   e2tools,
   python-mako,
   p7zip-full,
   make
 Recommends: qemu-kvm, elbe-doc
 Description: RootFS build system.
+ Elbe is a flexible Root Filesystem builder.
+
+Package: elbe-buildenv
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends},
+  apt-rdepends,
+  binfmt-support,
+  debootstrap,
+  dosfstools,
+  dpkg-dev,
+  elbe-common,
+  genisoimage,
+  mtd-utils,
+  python-apt,
+  python-mako,
+  python-parted,
+  qemu-user-static,
+  reprepro,
+  rsync
+Description: RootFS build system daemon.
  Elbe is a flexible Root Filesystem builder.
 
 Package: elbe-updated

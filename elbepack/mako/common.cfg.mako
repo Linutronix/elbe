@@ -127,7 +127,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 %  endif
 % endif
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string elbe-daemon \
+d-i pkgsel/include string elbe-buildenv \
 % for n in pkgs:
 % if n.tag == "pkg":
   ${n.et.text} \
