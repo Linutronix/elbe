@@ -34,9 +34,6 @@ import string
 
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 all_targets = [".stamps/stamp-install-initial-image", ".elbe-gen/files-to-extract"]
-if xml.has("fullpkgs"):
-  all_targets.append( "validation.txt" )
-all_targets = string.join( all_targets )
 target_num = 1
 %>
 
@@ -121,13 +118,9 @@ run-con:
 
 .elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
 	mkdir -p .elbe-gen
-	e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/build/chroot/opt/elbe/files-to-extract .elbe-gen/
+	e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/build/files-to-extract .elbe-gen/
 	for f in `cat .elbe-gen/files-to-extract`; do e2cp buildenv.img?offset=$(LOOP_OFFSET):/opt/elbe/build/$$f . ; done
-
-% if xml.has("fullpkgs"):
-validation.txt: .elbe-gen/files-to-extract
 	cat validation.txt
-% endif
 
 clean:
 	rm -fr .stamps/stamp* buildenv.img .elbe-vm .elbe-gen

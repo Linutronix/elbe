@@ -258,6 +258,20 @@ def run_command( argv ):
 
     targetfs.part_target(opt.target, skip_grub)
 
+    if targetfs.images:
+        fte = open(os.path.join(opt.target,"files-to-extract"), "w+")
+        # store each used image only once
+        files = set(targetfs.images)
+        print "generated files:"
+        for img in files:
+            fte.write(img + '\n')
+        fte.write("source.xml\n")
+        fte.write("licence.txt\n")
+        fte.write("validation.txt\n")
+        fte.write("elbe-report.txt\n")
+        fte.write("../elbe-report.log\n")
+        fte.close()
+
     #if not opt.skip_cdrom:
     #    outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
 
