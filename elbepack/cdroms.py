@@ -16,13 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from apt.package import FetchError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
 from elbepack.aptpkgutils import XMLPackage
 
-def mk_source_cdrom(rfs, arch, codename):
+def mk_source_cdrom(rfs, arch, codename, target):
 
     rfs.mkdir_p( '/opt/elbe/sources' )
 
@@ -39,12 +41,14 @@ def mk_source_cdrom(rfs, arch, codename):
             except FetchError as fe:
                 log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromSrcRepo(codename, "srcrepo" )
+    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ) )
 
     for dsc in rfs.glob('opt/elbe/sources/*.dsc'):
         repo.includedsc(dsc)
 
-def mk_binary_cdrom(rfs, arch, codename, xml):
+    repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
+
+def mk_binary_cdrom(rfs, arch, codename, xml, target):
 
     rfs.mkdir_p( '/opt/elbe/binaries/added' )
     rfs.mkdir_p( '/opt/elbe/binaries/main' )
@@ -72,12 +76,15 @@ def mk_binary_cdrom(rfs, arch, codename, xml):
             except FetchError as fe:
                 log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromBinRepo(xml, "binrepo" )
+
+    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ) )
 
     for deb in rfs.glob('opt/elbe/binaries/added/*.deb'):
         repo.includedeb(deb, 'added')
 
     for deb in rfs.glob('opt/elbe/binaries/main/*.deb'):
         repo.includedeb(deb, 'main')
+
+    repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
 
 

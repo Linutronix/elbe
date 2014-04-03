@@ -88,13 +88,14 @@ def run_command( argv ):
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite" )
     else:
+        builddir = os.path.abspath( os.path.curdir )
         rfs = ChRootFilesystem( args[0] )
         arch = opt.arch
         codename = opt.codename
         xml = None
 
     if opt.source:
-        mk_source_cdrom( rfs, arch, codename )
+        mk_source_cdrom( rfs, arch, codename, builddir )
 
     if opt.binary:
-        mk_binary_cdrom( rfs, arch, codename, xml )
+        mk_binary_cdrom( rfs, arch, codename, xml, builddir )
