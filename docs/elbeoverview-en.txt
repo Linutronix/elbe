@@ -113,11 +113,11 @@ This will start the root-filesystem generation process:
 
 This diagram illustrates the complete process:
 
-image:elbe-process.png[width=800]
+image:elbe-process.png[]
 
 The following steps are executed inside the emulator:
 
-image:emu-process.png[width=800]
+image:emu-process.png[]
 
 Example XML Files
 ~~~~~~~~~~~~~~~~~
