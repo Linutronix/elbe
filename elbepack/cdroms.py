@@ -66,16 +66,15 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target):
             except FetchError as fe:
                 log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-        arch = xml.text ("project/buildimage/arch", key="arch")
-        for p in xml.node("debootstrappkgs"):
-            pkg = XMLPackage(p, arch)
-            try:
-                cache.download_binary( pkg.name, '/opt/elbe/binaries/main', pkg.installed_version )
-            except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
-            except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
-
+        if not xml is None:
+            for p in xml.node("debootstrappkgs"):
+                pkg = XMLPackage(p, arch)
+                try:
+                    cache.download_binary( pkg.name, '/opt/elbe/binaries/main', pkg.installed_version )
+                except ValueError as ve:
+                    log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+                except FetchError as fe:
+                    log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
     repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ) )
 
