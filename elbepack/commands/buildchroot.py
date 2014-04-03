@@ -38,6 +38,9 @@ from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
 from elbepack.dump import elbe_report, dump_fullpkgs, check_full_pkgs, dump_debootstrappkgs
 
+from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
+
+
 def read_file( fname ):
     f = file( fname, "r" )
     d = f.read()
@@ -258,6 +261,15 @@ def run_command( argv ):
 
     targetfs.part_target(opt.target, skip_grub)
 
+    # build cdrom images
+    arch = xml.text("project/arch", key="arch" )
+    codename = xml.text("project/suite")
+
+    if not opt.skip_cdrom:
+        mk_binary_cdrom( buildenv.rfs, arch, codename, xml, opt.target )
+        if opt.buildsources:
+            mk_source_cdrom( buildenv.rfs, arch, codename, opt.target )
+
     if targetfs.images:
         fte = open(os.path.join(opt.target,"files-to-extract"), "w+")
         # store each used image only once
@@ -271,7 +283,4 @@ def run_command( argv ):
         fte.write("elbe-report.txt\n")
         fte.write("../elbe-report.log\n")
         fte.close()
-
-    #if not opt.skip_cdrom:
-    #    outf.chroot( chroot, "/opt/elbe/mkcdrom.sh" )
 
