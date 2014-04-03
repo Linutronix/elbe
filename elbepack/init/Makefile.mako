@@ -33,11 +33,10 @@ GUIPORT=${opt.guiport}
 import string
 
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
-all_targets = [".stamps/stamp-install-initial-image", ".elbe-gen/files-to-extract"]
 target_num = 1
 %>
 
-all: ${all_targets}
+all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 
 .elbe-gen/initrd-preseeded.gz: .elbe-in/*
 	rm -rf tmp-tree

@@ -7,24 +7,19 @@
 		</description>
 		<buildtype>armel</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>LOCALMACHINE</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe wheezy main
-					</binary>
-				</url>
-				<url>
-					<binary>
-						http://LOCALMACHINE/elbe-test wheezy main
+						http://LOCALMACHINE/elbe-test jessie main
 					</binary>
 				</url>
 			</url-list>
 		</mirror>
 		<noauth />
-		<suite>wheezy</suite>
+		<suite>jessie</suite>
 		<buildimage>
 			<kinitrd>elbe-bootstrap</kinitrd>
 			<portforwarding>
@@ -103,8 +98,6 @@
 			<command>cp boot/vmlinuz-3.12.4-rt6-00012-g8514562-dirty boot/zImage</command>
 		</finetuning>
 		<pkg-list>
-			<pkg>linux-image-3.12.4-rt6-00012-g8514562-dirty</pkg>
-			<pkg>linux-image-3.2.0-4-versatile</pkg>
 			<pkg>elbe-updated</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
