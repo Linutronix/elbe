@@ -24,6 +24,7 @@ import subprocess
 
 from glob import glob
 
+from elbepack.asciidoclog import CommandError
 from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 
@@ -325,21 +326,35 @@ class TargetFs(ChRootFilesystem):
         ChRootFilesystem.__init__(self, path, xml.defs["userinterpr"], clean)
         self.log = log
         self.xml = xml
+        self.images = None
 
     def part_target(self, targetdir, skip_grub):
 
         # create target images and copy the rfs into them
-        do_hdimg( self.log, self.xml, targetdir, self, skip_grub )
+        self.images = do_hdimg( self.log, self.xml, targetdir, self, skip_grub )
 
         if self.xml.has("target/package/tar"):
-            self.log.do("tar cfz %s/target.tar.gz -C %s ." %(targetdir,self.fname('')))
+            targz_name = self.xml.text ("target/package/tar/name")
+            try:
+                self.log.do("tar cfz %s/%s -C %s ." % (
+                            targetdir, targz_name, self.fname('')) )
+                # only append filename if creating tarball was successful
+                self.images.append (targz_name)
+            except CommandError as e:
+                # error was logged; continue creating cpio image
+                pass
 
         if self.xml.has("target/package/cpio"):
             oldwd = os.getcwd()
             cpio_name = self.xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
-            self.log.do("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
-            os.chdir(oldwd)
+            try:
+                self.log.do("find . -print | cpio -ov -H newc >%s" % os.path.join(targetdir,cpio_name) )
+                # only append filename if creating cpio was successful
+                self.images.append (cpio_name)
+            except CommandError as e:
+                # error was logged; continue
+                pass
 
 class BuildImgFs(ChRootFilesystem):
     def __init__(self, path, interpreter):

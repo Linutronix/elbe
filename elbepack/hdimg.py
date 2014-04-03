@@ -23,8 +23,12 @@ import parted
 import _ped
 
 from elbepack.fstab import fstabentry
+from elbepack.asciidoclog import CommandError
 
 def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
+
+    #generated files
+    img_files = []
 
     if not mtd.has("ubivg"):
         return
@@ -38,22 +42,35 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
             continue
 
         if v.has("binary"):
-            outf.do( "cp %s %s" % ( rfs.fname( v.text("binary") ), target ) )
+            # allow_fail is set that the generation of other images is done,
+            # even if this step fails
+            outf.do( "cp %s %s" % ( rfs.fname( v.text("binary") ), target ),
+                        allow_fail=True)
             continue
 
         label = v.text("label")
         if not fslabel.has_key(label):
             continue
 
-        outf.do( "mkfs.ubifs -r %s -o %s.ubifs -m %s -e %s -c %s %s" % (
-            os.path.join(target,"filesystems",label),
-            os.path.join(target,label),
-            ubivg.text("miniosize"),
-            ubivg.text("logicaleraseblocksize"),
-            ubivg.text("maxlogicaleraseblockcount"),
-            fslabel[label].mkfsopt ) )
+        try:
+            outf.do( "mkfs.ubifs -r %s -o %s.ubifs -m %s -e %s -c %s %s" % (
+                os.path.join(target,"filesystems",label),
+                os.path.join(target,label),
+                ubivg.text("miniosize"),
+                ubivg.text("logicaleraseblocksize"),
+                ubivg.text("maxlogicaleraseblockcount"),
+                fslabel[label].mkfsopt ) )
+            # only append the ubifs file if creation didn't fail
+            img_files.append ("%s.ubifs" % label)
+        except CommandError as e:
+            # continue creating further ubifs filesystems
+            pass
+
+    return img_files
 
 def build_image_mtd( outf, mtd, target ):
+
+    img_files = []
 
     if not mtd.has("ubivg"):
         return
@@ -69,9 +86,21 @@ def build_image_mtd( outf, mtd, target ):
             fp.write( "mode=ubi\n" )
             if not vol.has("empty"):
                 if vol.has("binary"):
-                    fp.write( "image=%s\n" % vol.text("binary") )
+                    tmp = ""
+                    # copy from target if path starts with /
+                    if vol.text("binary")[0] == '/':
+                        tmp = "target" + vol.text("binary")
+                        img_files.append (tmp)
+                        # img_files needs path relative to project dir
+                        # ubinize cfg file needs absolute path
+                        tmp = target + "/" + tmp
+                    # copy from project directory
+                    else:
+                        tmp = target + "/" + vol.text("binary")
+                    fp.write( "image=%s\n" % tmp )
                 else:
-                    fp.write( "image=%s.ubifs\n" % os.path.join(target, vol.text("label")) )
+                    fp.write( "image=%s.ubifs\n" % os.path.join(target,
+                        vol.text("label")) )
             else:
                 empt = open("/tmp/empty", "w" )
                 empt.write("EMPTY")
@@ -92,15 +121,23 @@ def build_image_mtd( outf, mtd, target ):
     else:
         subp = ""
 
-    outf.do( "ubinize %s -o %s -p %s -m %s %s/%s_%s.cfg" % (
-        subp,
-        os.path.join(target, mtd.text("name")),
-        ubivg.text("physicaleraseblocksize"),
-        ubivg.text("miniosize"),
-        target,
-        mtd.text("name"),
-        ubivg.text("label") ) )
+    try:
+        outf.do( "ubinize %s -o %s -p %s -m %s %s/%s_%s.cfg" % (
+            subp,
+            os.path.join(target, mtd.text("name")),
+            ubivg.text("physicaleraseblocksize"),
+            ubivg.text("miniosize"),
+            target,
+            mtd.text("name"),
+            ubivg.text("label") ) )
+        # only add file to list if ubinize command was successful
+        img_files.append (mtd.text("name"))
 
+    except CommandError as e:
+        # continue with generating further images
+        pass
+
+    return img_files
 
 def size_to_int( size ):
     if size[-1] in digits:
@@ -292,7 +329,11 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
     if hd.has( "grub-install" ) and not skip_grub:
         grub.install( target )
 
+    return hd.text("name")
+
 def do_hdimg(outf, xml, target, rfs, skip_grub):
+    # list of created files
+    img_files = []
 
     # Check whether we have any images first
     if not xml.tgt.has("images"):
@@ -329,13 +370,16 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
         # Now iterate over all images and create filesystems and partitions
         for i in xml.tgt.node("images"):
             if i.tag == "msdoshd":
-                do_image_hd( outf, i, fslabel, target, skip_grub )
+                img = do_image_hd( outf, i, fslabel, target, skip_grub )
+                img_files.append (img)
 
             if i.tag == "gpthd":
-                do_image_hd( outf, i, fslabel, target, skip_grub )
+                img = do_image_hd( outf, i, fslabel, target, skip_grub )
+                img_files.append (img)
 
             if i.tag == "mtd":
-                mkfs_mtd( outf, i, fslabel, rfs, target )
+                imgs = mkfs_mtd( outf, i, fslabel, rfs, target )
+                img_files.extend (imgs)
     finally:
         # Put back the filesystems into /target
         # most shallow fs first...
@@ -346,4 +390,7 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in xml.tgt.node("images"):
         if i.tag == "mtd":
-            build_image_mtd( outf, i, target )
+            imgs = build_image_mtd( outf, i, target )
+            img_files.extend (imgs)
+
+    return img_files
