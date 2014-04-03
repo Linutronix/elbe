@@ -54,6 +54,10 @@ class RepoBase(object):
     def includedsc( self, path, component="main"):
         os.system( "reprepro --basedir " + self.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
 
+    def buildiso( self, fname ):
+        os.system( "genisoimage -o %s -J -R %s" % (fname, self.path) )
+
+
 class UpdateRepo(RepoBase):
     def __init__( self, xml, path ):
         self.xml  = xml
