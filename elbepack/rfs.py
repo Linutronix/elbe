@@ -60,6 +60,12 @@ class BuildEnv ():
 
         self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
 
+        if self.xml.has("project/mirror/cdrom"):
+            cdrompath = self.rfs.fname("cdrom")
+            self.log.do( 'mkdir -p "%s"' % cdrompath )
+            self.log.do( 'mount -o loop "%s" "%s"'
+               % (self.xml.text("project/mirror/cdrom"), cdrompath ) )
+
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile( "etc/elbe_version" ):
             # avoid starting daemons inside the buildenv
@@ -76,7 +82,7 @@ class BuildEnv ():
 
     def __del__(self):
         if self.xml.prj.has ("mirror/cdrom"):
-            cdrompath = os.path.join( self.rfs.path, "cdrom" )
+            cdrompath = self.rfs.fname( "cdrom" )
             self.log.do ('umount "%s"' % cdrompath)
 
     def debootstrap (self):
