@@ -30,6 +30,8 @@ class ValidationError(Exception):
     def __repr__(self):
         return "Elbe XML Validation Error"
 
+class NoInitvmNode(Exception):
+    pass
 
 class ElbeXML(object):
     def __init__(self, fname, buildtype=None, skip_validate=False):
@@ -164,3 +166,15 @@ class ElbeXML(object):
         for e in other.node( 'debootstrappkgs' ):
             tree.append_treecopy( e )
 
+    def get_initvmnode_from( self, other ):
+        tree = self.xml.ensure_child( 'initvm' )
+        tree.clear()
+
+        ivm = other.node( 'initvm' )
+        if ivm is None:
+            raise NoInitvmNode()
+
+        for e in ivm:
+            tree.append_treecopy( e )
+
+        self.xml.set_child_position( tree, 0 )
