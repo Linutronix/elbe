@@ -85,7 +85,7 @@ class ElbeXML(object):
             mirror +=m.text("primary_path")
 
         elif self.prj.has("mirror/cdrom") and cdrompath:
-            mirror = "file://%s/debian" % cdrompath
+            mirror = "file://%s" % cdrompath
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
@@ -95,8 +95,9 @@ class ElbeXML(object):
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
+        mirror = ""
         if self.prj.has("mirror/primary_host"):
-            mirror  = "deb " + self.get_primary_mirror (None)
+            mirror += "deb " + self.get_primary_mirror (None)
             mirror += " " + self.prj.text("suite") + " main\n"
 
             for url in self.prj.node("mirror/url-list"):
@@ -106,7 +107,7 @@ class ElbeXML(object):
                     mirror += "deb-src "+url.text("source").strip()+"\n"
 
         if self.prj.has("mirror/cdrom"):
-            mirror += "deb copy:///mnt %s main\n" % (self.prj.text("suite"))
+            mirror += "deb copy:///cdrom %s main added\n" % (self.prj.text("suite"))
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
