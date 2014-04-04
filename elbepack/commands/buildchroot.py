@@ -31,7 +31,7 @@ from elbepack.treeutils import etree
 from elbepack.version import elbe_version
 from elbepack.asciidoclog import ASCIIDocLog
 
-from elbepack.elbexml import ElbeXML, ValidationError
+from elbepack.elbexml import ElbeXML, ValidationError, NoInitvmNode
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
@@ -177,10 +177,26 @@ def run_command( argv ):
         if buildenv.fresh_debootstrap:
             dump_debootstrappkgs(xml, cache)
             source = xml
+            try:
+                initxml = ElbeXML( "/opt/elbe/source.xml", skip_validate=opt.skip_validation )
+                xml.get_initvmnode_from( initxml )
+            except IOError:
+                outf.printo( "/opt/elbe/source.xml not available" )
+                outf.printo( "can not copy initvm node" )
+            except NoInitvmNode:
+                outf.printo( "/opt/elbe/source.xml is available" )
+                outf.printo( "But it does not contain an initvm node" )
         else:
             sourcepath = os.path.join(opt.target, "source.xml" )
             source = ElbeXML( sourcepath, buildtype=buildtype, skip_validate=opt.skip_validation )
             xml.get_debootstrappkgs_from( source )
+            try:
+                xml.get_initvmnode_from( source )
+            except NoInitvmNode:
+                outf.printo( "source.xml is available" )
+                outf.printo( "But it does not contain an initvm node" )
+
+
 
         # Seed etc, we need /etc/hosts for hostname -f to work correctly
         buildenv.seed_etc()
