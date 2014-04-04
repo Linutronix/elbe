@@ -364,7 +364,8 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
         outf.do( 'mkdir -p "%s"' % os.path.join( fspath, l.label ) )
         outf.do( 'mkdir -p "%s"' % rfs.fname('') + l.mountpoint )
         if len(rfs.listdir( l.mountpoint )) > 0:
-            outf.do( 'mv "%s"/* "%s"' % ( rfs.fname(l.mountpoint), os.path.join( fspath, l.label ) ) )
+            outf.do( 'mv "%s"/* "%s"' % ( rfs.fname(l.mountpoint), os.path.join(
+                fspath, l.label ) ), allow_fail=True )
 
     try:
         # Now iterate over all images and create filesystems and partitions
