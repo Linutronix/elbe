@@ -95,7 +95,7 @@ def run_command( argv ):
         xml = None
 
     if opt.source:
-        mk_source_cdrom( rfs, arch, codename, builddir )
+        mk_source_cdrom( rfs, arch, codename, builddir, log )
 
     if opt.binary:
-        mk_binary_cdrom( rfs, arch, codename, xml, builddir )
+        mk_binary_cdrom( rfs, arch, codename, xml, builddir, log )

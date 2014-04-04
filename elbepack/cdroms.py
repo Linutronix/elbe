@@ -24,7 +24,7 @@ from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
 from elbepack.aptpkgutils import XMLPackage
 
-def mk_source_cdrom(rfs, arch, codename, target):
+def mk_source_cdrom(rfs, arch, codename, target, log):
 
     rfs.mkdir_p( '/opt/elbe/sources' )
 
@@ -48,7 +48,7 @@ def mk_source_cdrom(rfs, arch, codename, target):
 
     repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
-def mk_binary_cdrom(rfs, arch, codename, xml, target):
+def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
 
     rfs.mkdir_p( '/opt/elbe/binaries/added' )
     rfs.mkdir_p( '/opt/elbe/binaries/main' )
