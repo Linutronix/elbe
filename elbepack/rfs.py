@@ -60,12 +60,6 @@ class BuildEnv ():
 
         self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
 
-        if self.xml.has("project/mirror/cdrom"):
-            cdrompath = self.rfs.fname("cdrom")
-            self.log.do( 'mkdir -p "%s"' % cdrompath )
-            self.log.do( 'mount -o loop "%s" "%s"'
-               % (self.xml.text("project/mirror/cdrom"), cdrompath ) )
-
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile( "etc/elbe_version" ):
             # avoid starting daemons inside the buildenv
@@ -80,10 +74,26 @@ class BuildEnv ():
 
         self.initialize_dirs ()
 
-    def __del__(self):
+    def cdrom_umount(self):
         if self.xml.prj.has ("mirror/cdrom"):
             cdrompath = self.rfs.fname( "cdrom" )
             self.log.do ('umount "%s"' % cdrompath)
+
+    def cdrom_mount(self):
+        if self.xml.has("project/mirror/cdrom"):
+            cdrompath = self.rfs.fname("cdrom")
+            self.log.do( 'mkdir -p "%s"' % cdrompath )
+            self.log.do( 'mount -o loop "%s" "%s"'
+               % (self.xml.text("project/mirror/cdrom"), cdrompath ) )
+
+    def __enter__(self):
+        self.cdrom_mount()
+        self.rfs.__enter__()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.rfs.__exit__(type, value, traceback)
+        self.cdrom_umount()
 
     def debootstrap (self):
 
@@ -118,10 +128,15 @@ class BuildEnv ():
                 cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
 
-            self.log.do( cmd )
+            try:
+                self.cdrom_mount()
+                self.log.do( cmd )
+            finally:
+                self.cdrom_umount()
+
             try:
                 self.rfs.dump_elbeversion (self.xml)
-            except:
+            except IOError:
                 self.log.printo ("dump elbeversion failed")
 
             return
@@ -133,17 +148,24 @@ class BuildEnv ():
             cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
                 arch, suite, self.rfs.path, primary_mirror)
 
-        self.log.do (cmd)
+        try:
+            self.cdrom_mount()
+            self.log.do (cmd)
 
-        self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
-            self.rfs.fname( "usr/bin" )) )
+            self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
+                self.rfs.fname( "usr/bin" )) )
 
-        self.log.chroot (self.rfs.path,
-                         '/debootstrap/debootstrap --second-stage')
+            self.log.chroot (self.rfs.path,
+                             '/debootstrap/debootstrap --second-stage')
 
-        self.log.chroot (self.rfs.path, 'dpkg --configure -a')
+            self.log.chroot (self.rfs.path, 'dpkg --configure -a')
 
-        self.rfs.dump_elbeversion (self.xml)
+            try:
+                self.rfs.dump_elbeversion (self.xml)
+            except IOError:
+                self.log.printo ("dump elbeversion failed")
+        finally:
+            self.cdrom_umount()
 
 
     def virtapt_init_dirs(self):
