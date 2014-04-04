@@ -30,13 +30,6 @@ from multiprocessing import Pipe
 from mako.template import Template
 from mako import exceptions
 
-# XXX mount the cdrom image
-#                    cdrompath = os.path.join( rfs_path, "cdrom" )
-#                    log.do( 'mkdir -p "%s"' % cdrompath )
-#                    log.do( 'mount -o loop "%s" "%s"'
-#                       % (prj.text("mirror/cdrom"), cdrompath ) )
-
-
 def template(fname, d):
     try:
         return Template(filename=fname).render(**d)
