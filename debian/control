@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Manuel Traut <manut@linutronix.de>
 Build-Depends: dh-python,
   debhelper (>= 7),
-  python (>= 2.6.6-3~),
+  python (>= 2.7~),
   python-mako,
   python-lxml,
   dia,
@@ -23,7 +23,7 @@ Description: RootFS build system documentation.
 
 Package: elbe-common
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
+Depends: python (>= 2.7~),
   python-lxml,
   python-apt,
   python-gpgme,
@@ -33,7 +33,7 @@ Description: RootFS build system common files.
 
 Package: elbe
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
+Depends: python (>= 2.7~),
   elbe-common,
   qemu-utils,
   qemu-system,
@@ -47,7 +47,7 @@ Description: RootFS build system.
 
 Package: elbe-buildenv
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
+Depends: python (>= 2.7~),
   apt-rdepends,
   binfmt-support,
   debootstrap,
@@ -67,7 +67,7 @@ Description: RootFS build system daemon.
 
 Package: elbe-updated
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends},
+Depends: python (>= 2.7~),
   elbe-common,
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1),
