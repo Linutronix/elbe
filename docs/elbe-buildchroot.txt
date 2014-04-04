@@ -1,0 +1,98 @@
+elbe-buildchroot(1)
+===================
+
+
+NAME
+----
+elbe-buildchroot - Build a root filesystem.
+
+
+SYNOPSIS
+--------
+[verse]
+'elbe buildchroot' --output <logfile> --target <targetdir> \
+	[ --build-sources ] \
+	[ --buildtype <type> ] \
+	[ --debug ] \
+	[ --name <name> ] \
+	[ --proxy <addr> ] \
+	[ --skip-cdrom ] \
+	[ --skip-debootstrap ] \
+	[ --skip-validation ] \
+	<xmlfile>
+
+
+DESCRIPTION
+-----------
+'elbe buildchroot' builds a root filesystem using the settings specified in the
+given XML file. This command has to be run as root *inside the Elbe build VM*.
+
+By default, also an ISO image for a binary CD-ROM will be generated, which will
+contain all packages installed into the root filesystem. It can also be used
+as an installation source. For details, please refer to
+linkgit:elbe-mkcdrom[1]. Optionally, a source CD-ROM image can be generated,
+too.
+
+
+OPTIONS
+-------
+
+--output <logfile>::
+	Name of the file to write the build report to.
+
+--target <targetdir>::
+	Target directory for the build. The directory must not exist before
+	calling this command.
+
+--build-sources::
+	Build a Debian source CD-ROM image, containing the source packages used by the
+	project.
+
+--buildtype <buildtype>::
+	Override the build type specified in the XML file.
+
+--debug::
+	Enables a few features that allow for better debugging of the build process.
+
+--name <name>::
+	Override the name of the project (used in the build report),
+
+--proxy <addr>::
+	Override the HTTP proxy setting specified in the XML file.
+
+--skip-cdrom::
+	Skip the generation of Debian binary cdroms. This makes the build faster.
+	Otherwise all used binary packages are stored on an ISO cdrom image.
+
+--skip-debootstrap::
+	Skip debootstrap.
+
+--skip-validation::
+	Skip the validation of the XML file. (Not recommended)
+
+<xmlfile>::
+	The XML describing the Elbe project.
+
+
+EXAMPLES
+--------
+* Build a root filesystem from 'myarm.xml' in '/root/myarm'. Log to
+'myarm.txt'. Do not build any ISO-Images.
++
+--------
+# elbe buildchroot --output myarm.txt --target /root/myarm --skip-cdrom \
+	myarm.xml
+--------
+
+* Build a root filesystem from 'myarm.xml' in '/root/myarm'. Log to
+'myarm.txt'. Also build source and binary ISO-Images.
++
+--------
+# elbe buildchroot --output myarm.txt --target /root/myarm \
+	--build-sources myarm.xml
+--------
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite
