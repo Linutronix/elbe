@@ -101,7 +101,8 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
             continue
 
         if pkg.installed_md5 != md5:
-            elog.printo( "- package %s md5 %s does not match installed md5 %s" % (name, md5,  pkg.installed.md5) )
+            elog.printo( "- package %s md5 %s does not match installed md5 %s" %
+              (name, md5,  pkg.installed_md5) )
             errors += 1
 
     for cp in cache.get_installed_pkgs():
