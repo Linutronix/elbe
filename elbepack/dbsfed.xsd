@@ -21,7 +21,15 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="project" type="rfs:project">
+      <element name="initvm" type="rfs:project" minOccurs="0">
+        <annotation>
+          <documentation>
+            Configurations that are used for creating the initvm
+            e.g. the definition of the used debian mirrors, suite and buildtype
+          </documentation>
+        </annotation>
+      </element>
+      <element name="project" type="rfs:project" minOccurs="0">
         <annotation>
           <documentation>
             Configurations that are used for creating the buildenvironment and
