@@ -261,10 +261,11 @@ def run_command( argv ):
     arch = xml.text("project/arch", key="arch" )
     codename = xml.text("project/suite")
 
-    if not opt.skip_cdrom:
-        mk_binary_cdrom( buildenv.rfs, arch, codename, xml, opt.target, outf )
-        if opt.buildsources:
-            mk_source_cdrom( buildenv.rfs, arch, codename, opt.target, outf )
+    with buildenv:
+        if not opt.skip_cdrom:
+            mk_binary_cdrom( buildenv.rfs, arch, codename, xml, opt.target, outf )
+            if opt.buildsources:
+                mk_source_cdrom( buildenv.rfs, arch, codename, opt.target, outf )
 
     if targetfs.images:
         fte = open(os.path.join(opt.target,"files-to-extract"), "w+")

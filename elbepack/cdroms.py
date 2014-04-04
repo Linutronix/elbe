@@ -28,18 +28,17 @@ def mk_source_cdrom(rfs, arch, codename, target, log):
 
     rfs.mkdir_p( '/opt/elbe/sources' )
 
-    with rfs:
-        cache = get_rpcaptcache( rfs, "aptcache.log", arch )
+    cache = get_rpcaptcache( rfs, "aptcache.log", arch )
 
-        pkglist = cache.get_installed_pkgs()
+    pkglist = cache.get_installed_pkgs()
 
-        for pkg in pkglist:
-            try:
-                cache.download_source( pkg.name, '/opt/elbe/sources' )
-            except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
-            except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+    for pkg in pkglist:
+        try:
+            cache.download_source( pkg.name, '/opt/elbe/sources' )
+        except ValueError as ve:
+            log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+        except FetchError as fe:
+            log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
     repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ) )
 
@@ -53,28 +52,27 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
     rfs.mkdir_p( '/opt/elbe/binaries/added' )
     rfs.mkdir_p( '/opt/elbe/binaries/main' )
 
-    with rfs:
-        cache = get_rpcaptcache( rfs, "aptcache.log", arch )
+    cache = get_rpcaptcache( rfs, "aptcache.log", arch )
 
-        pkglist = cache.get_installed_pkgs()
+    pkglist = cache.get_installed_pkgs()
 
-        for pkg in pkglist:
+    for pkg in pkglist:
+        try:
+            cache.download_binary( pkg.name, '/opt/elbe/binaries/added', pkg.installed_version )
+        except ValueError as ve:
+            log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
+        except FetchError as fe:
+            log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+
+    if not xml is None:
+        for p in xml.node("debootstrappkgs"):
+            pkg = XMLPackage(p, arch)
             try:
-                cache.download_binary( pkg.name, '/opt/elbe/binaries/added', pkg.installed_version )
+                cache.download_binary( pkg.name, '/opt/elbe/binaries/main', pkg.installed_version )
             except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+                log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
-
-        if not xml is None:
-            for p in xml.node("debootstrappkgs"):
-                pkg = XMLPackage(p, arch)
-                try:
-                    cache.download_binary( pkg.name, '/opt/elbe/binaries/main', pkg.installed_version )
-                except ValueError as ve:
-                    log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
-                except FetchError as fe:
-                    log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+                log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
     repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ) )
 
