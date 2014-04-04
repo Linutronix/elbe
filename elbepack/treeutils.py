@@ -78,6 +78,7 @@ class ebase(object):
         self.et.append( copy.deepcopy( other.et ) )
 
 
+
 class elem(ebase):
     def __init__( self, el ):
         ebase.__init__( self, el )
@@ -94,6 +95,9 @@ class elem(ebase):
         retval.et.tail = '\n'
         return retval
 
+    def set_child_position( self, child, pos ):
+        self.et.remove( child.et )
+        self.et.insert( pos, child.et )
 
 
 class etree(ebase):
@@ -110,3 +114,7 @@ class etree(ebase):
         else:
             return elem( SubElement( self.et.getroot(), tag ) )
 
+    def set_child_position( self, child, pos ):
+        root = self.et.getroot()
+        root.remove( child.et )
+        root.insert( pos, child.et )
