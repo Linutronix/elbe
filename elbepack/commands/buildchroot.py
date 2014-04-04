@@ -163,11 +163,7 @@ def run_command( argv ):
 
     buildenv = BuildEnv(xml, outf, chroot)
 
-
-    # XXX: need to add cdrom feature into buildenv
-    #if prj.has("mirror/cdrom"):
-    #    outf.do( 'mount -o loop "%s" "%s"' % (prj.text("mirror/cdrom"), os.path.join(chroot, "mnt")) )
-    with buildenv.rfs:
+    with buildenv:
         cache = get_rpcaptcache( buildenv.rfs, "aptcache.log", xml.text("project/arch", key="arch" ) )
 
         # First Update the apt cache
