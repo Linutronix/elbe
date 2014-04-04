@@ -38,9 +38,8 @@ except ImportError:
 class NoKinitrdException(Exception):
     pass
 
-def get_sources_list( xml, defs ):
+def get_sources_list( prj, defs ):
 
-    prj = xml.node("/project")
     suite = prj.text("suite")
 
     slist = ""
@@ -66,13 +65,12 @@ def get_sources_list( xml, defs ):
 
     return slist
 
-def get_initrd_pkg( xml, defs ):
-    prj = xml.node("/project")
+def get_initrd_pkg( prj, defs ):
     initrdname = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
 
     return initrdname
 
-def get_url ( xml, arch, suite, target_pkg, mirror ):
+def get_url ( arch, suite, target_pkg, mirror ):
     try:
         packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
           (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
@@ -92,15 +90,15 @@ def get_url ( xml, arch, suite, target_pkg, mirror ):
 
     return url
 
-def get_initrd_uri( xml, defs, arch ):
+def get_initrd_uri( prj, defs, arch ):
     if arch == "default":
-        arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
-    suite = xml.text("project/suite")
+        arch  = prj.text("buildimage/arch", default=defs, key="arch")
+    suite = prj.text("suite")
 
-    name  = xml.text("project/name", default=defs, key="name")
-    apt_sources = get_sources_list(xml, defs)
+    name  = prj.text("name", default=defs, key="name")
+    apt_sources = get_sources_list(prj, defs)
 
-    target_pkg = get_initrd_pkg(xml, defs)
+    target_pkg = get_initrd_pkg(prj, defs)
 
     if virtapt_imported:
         v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
@@ -116,18 +114,18 @@ def get_initrd_uri( xml, defs, arch ):
         uri = x.archive_uri(r.filename)
         return uri
     else:
-        url = "%s://%s/%s" % (xml.text("project/mirror/primary_proto"),
-          xml.text("project/mirror/primary_host"),
-          xml.text("project/mirror/primary_path") )
-        pkg = get_url ( xml, arch, suite, target_pkg, url )
+        url = "%s://%s/%s" % (prj.text("mirror/primary_proto"),
+          prj.text("mirror/primary_host"),
+          prj.text("mirror/primary_path") )
+        pkg = get_url ( arch, suite, target_pkg, url )
 
         if pkg:
             return pkg
 
-        for n in xml.node("project/mirror/url-list"):
+        for n in prj.node("mirror/url-list"):
             url = n.text("binary")
             urla = url.split()
-            pkg = get_url ( xml, arch, suite, target_pkg,
+            pkg = get_url ( arch, suite, target_pkg,
               urla[0].replace("BUILDHOST", "localhost") )
 
             if pkg:
@@ -137,9 +135,8 @@ def get_initrd_uri( xml, defs, arch ):
 
 
 
-def copy_kinitrd( xml, target_dir, defs, arch="default" ):
-    prj = xml.node("/project")
-    uri = get_initrd_uri(xml, defs, arch)
+def copy_kinitrd( prj, target_dir, defs, arch="default" ):
+    uri = get_initrd_uri(prj, defs, arch)
 
     tmpdir = mkdtemp()
 

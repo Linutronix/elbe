@@ -196,7 +196,7 @@ def run_command( argv ):
          "preseed": get_preseed(xml) }
 
     try:
-        copy_kinitrd(xml, out_path, defs)
+        copy_kinitrd(xml.node("/project"), out_path, defs)
     except NoKinitrdException:
         print "Failure to download kernel/initrd debian Package"
         print "Check your source URLs"

@@ -104,8 +104,8 @@ def run_command( argv ):
 
     if opt.buildtype:
         buildtype = opt.buildtype
-    elif xml.has( "project/buildtype" ):
-        buildtype = xml.text( "/project/buildtype" )
+    elif xml.has( "initvm/buildtype" ):
+        buildtype = xml.text( "/initvm/buildtype" )
     else:
         buildtype = "nodefaults"
 
@@ -114,8 +114,8 @@ def run_command( argv ):
     http_proxy = ""
     if opt.proxy:
         http_proxy = opt.proxy
-    elif xml.has("project/mirror/primary_proxy"):
-        http_proxy = xml.text("project/mirror/primary_proxy")
+    elif xml.has("initvm/mirror/primary_proxy"):
+        http_proxy = xml.text("initvm/mirror/primary_proxy")
 
     if not opt.directory:
         path = "./build"
@@ -139,12 +139,11 @@ def run_command( argv ):
          "defs": defs,
          "opt": opt,
          "xml": xml,
-         "prj": xml.node("/project"),
-         "tgt": xml.node("/target"),
+         "prj": xml.node("/initvm"),
          "http_proxy": http_proxy }
 
     try:
-        copy_kinitrd(xml, out_path, defs, arch="amd64")
+        copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
     except NoKinitrdException:
         print "Failure to download kernel/initrd debian Package"
         print "Check Mirror configuration"
