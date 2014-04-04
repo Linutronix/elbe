@@ -1,5 +1,5 @@
-elbe-create(1)
-=============
+elbe-get_archive(1)
+===================
 
 NAME
 ----
