@@ -386,7 +386,8 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
         # most shallow fs first...
         for i in fslist:
             if len(os.listdir(os.path.join( fspath, i.label ))) > 0:
-                outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.label ), rfs.fname(i.mountpoint) ) )
+                outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.label ),
+                    rfs.fname(i.mountpoint) ), allow_fail=True )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in xml.tgt.node("images"):
