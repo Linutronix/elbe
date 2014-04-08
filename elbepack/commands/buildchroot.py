@@ -23,10 +23,6 @@ import datetime
 import sys
 import os
 
-from mako.template import Template
-from mako import exceptions
-
-import elbepack
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
 from elbepack.asciidoclog import ASCIIDocLog
@@ -39,59 +35,6 @@ from elbepack.filesystem import extract_target
 from elbepack.dump import elbe_report, dump_fullpkgs, check_full_pkgs, dump_debootstrappkgs
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
-
-
-def read_file( fname ):
-    f = file( fname, "r" )
-    d = f.read()
-    f.close()
-    return d
-
-def write_file( fname, mode, cont ):
-    f = file( fname, "w" )
-    f.write(cont)
-    f.close()
-    os.chmod( fname, mode )
-
-
-
-# Some more helpers
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-def write_template( outname, fname, d ):
-    pack_dir = elbepack.__path__[0]
-    template_dir = os.path.join( pack_dir, "mako" )
-
-    outfile = file(outname, "w")
-    outfile.write( template( os.path.join(template_dir, fname), d ) )
-    outfile.close()
-
-def get_preseed( xml ):
-    pack_dir = elbepack.__path__[0]
-    def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
-
-    preseed = {}
-    for c in def_xml.node("/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
-
-        preseed[k] = v
-
-    if not xml.has("./project/preseed"):
-        return preseed
-
-    for c in xml.node("/project/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
-
-        preseed[k] = v
-
-    return preseed
 
 
 def run_command( argv ):
