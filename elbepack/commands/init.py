@@ -126,7 +126,9 @@ def run_command( argv ):
          "opt": opt,
          "xml": xml,
          "prj": xml.node("/initvm"),
-         "http_proxy": http_proxy }
+         "http_proxy": http_proxy,
+         "pkgs": xml.node("/initvm/pkg-list") or [],
+         "preseed": get_preseed(xml) }
 
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
