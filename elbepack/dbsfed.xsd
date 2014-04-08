@@ -276,6 +276,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="size" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the virtual harddisk used to run the build environment
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
