@@ -30,7 +30,7 @@ from elbepack.filesystem import BuildImgFs
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog genlicence [options] <rfs>")
-    oparser.add_option( "--outpuf", dest="output",
+    oparser.add_option( "--output", dest="output",
                         help="outputfilename" )
 
     (opt,args) = oparser.parse_args(argv)
