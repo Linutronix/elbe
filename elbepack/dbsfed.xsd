@@ -21,7 +21,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="initvm" type="rfs:project" minOccurs="0">
+      <element name="initvm" type="rfs:initvm" minOccurs="0">
         <annotation>
           <documentation>
             Configurations that are used for creating the initvm
@@ -210,6 +210,90 @@
         <annotation>
           <documentation>
             additional debian repositories, e.g. for own debian packages
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="initvm">
+    <annotation>
+      <documentation>
+        describes settings that apply to the creation of the initvm
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            name of the project this initvm is associated with
+          </documentation>
+        </annotation>
+      </element>
+      <element name="version" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            version of the rootfilesystem definition
+          </documentation>
+        </annotation>
+      </element>
+      <element name="description" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            human readable description of the project
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Default buildtype like armel, ppc, and in the future armel-virtio
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mirror" type="rfs:mirror">
+        <annotation>
+          <documentation>
+            used debian mirrors
+          </documentation>
+        </annotation>
+      </element>
+      <element name="noauth" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            allow installation of unsigned debian packages
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preference" type="rfs:preference" minOccurs="0">
+        <annotation>
+          <documentation>
+            used for pinning of all packages
+            TODO: example??
+          </documentation>
+        </annotation>
+      </element>
+      <element name="suite" type="string">
+        <annotation>
+          <documentation>
+            name of the debian suite that should be used to generate the
+            buildenvironment and the rootfilesystem.
+            e.g. "lenny", "squeeze", "sid", ..
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildimage" type="rfs:buildimage" minOccurs="0">
+        <annotation>
+          <documentation>
+            reference to the buildimage which is used to generate the
+            rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preseed" type="rfs:preseed" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Custom preseeding Values for apt
           </documentation>
         </annotation>
       </element>
