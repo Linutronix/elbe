@@ -223,27 +223,6 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="0">
-        <annotation>
-          <documentation>
-            name of the project this initvm is associated with
-          </documentation>
-        </annotation>
-      </element>
-      <element name="version" type="string" minOccurs="0">
-        <annotation>
-          <documentation>
-            version of the rootfilesystem definition
-          </documentation>
-        </annotation>
-      </element>
-      <element name="description" type="string" minOccurs="0">
-        <annotation>
-          <documentation>
-            human readable description of the project
-          </documentation>
-        </annotation>
-      </element>
       <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
