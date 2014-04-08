@@ -59,3 +59,25 @@ def get_preseed( xml ):
         preseed[k] = v
 
     return preseed
+
+def get_initvm_preseed( xml ):
+    pack_dir = elbepack.__path__[0]
+    def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
+
+    preseed = {}
+    for c in def_xml.node("/preseed"):
+        k = (c.et.attrib["owner"], c.et.attrib["key"])
+        v = (c.et.attrib["type"], c.et.attrib["value"])
+
+        preseed[k] = v
+
+    if not xml.has("./initvm/preseed"):
+        return preseed
+
+    for c in xml.node("/initvm/preseed"):
+        k = (c.et.attrib["owner"], c.et.attrib["key"])
+        v = (c.et.attrib["type"], c.et.attrib["value"])
+
+        preseed[k] = v
+
+    return preseed

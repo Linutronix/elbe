@@ -29,7 +29,7 @@ from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
-from elbepack.templates import write_template, get_preseed
+from elbepack.templates import write_template, get_initvm_preseed
 
 from optparse import OptionParser
 
@@ -128,7 +128,7 @@ def run_command( argv ):
          "prj": xml.node("/initvm"),
          "http_proxy": http_proxy,
          "pkgs": xml.node("/initvm/pkg-list") or [],
-         "preseed": get_preseed(xml) }
+         "preseed": get_initvm_preseed(xml) }
 
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
