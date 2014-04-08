@@ -101,7 +101,12 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 % endif
 
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string elbe-buildenv openssh-client
+d-i pkgsel/include string elbe-buildenv openssh-client \
+% for n in pkgs:
+% if n.tag == "pkg":
+  ${n.et.text} \
+% endif
+% endfor
 
 passwd passwd/root-password password root
 passwd passwd/root-password-again password root
@@ -110,3 +115,7 @@ passwd passwd/make-user boolean false
 popularity-contest popularity-contest/participate boolean false
 tasksel tasksel/first multiselect
 console-data console-data/keymap/policy select Don't touch keymap
+
+% for (k, v) in preseed.items():
+${k[0]} ${k[1]} ${v[0]} ${v[1]}
+% endfor
