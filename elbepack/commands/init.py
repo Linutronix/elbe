@@ -22,8 +22,6 @@ import os
 import sys
 import shutil
 
-from mako.template import Template
-from mako import exceptions
 
 import elbepack
 from elbepack.treeutils import etree
@@ -31,21 +29,9 @@ from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
+from elbepack.templates import write_template, get_preseed
 
 from optparse import OptionParser
-
-# Some more helpers
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-def write_template( outname, fname, d ):
-    outfile = file(outname, "w")
-    outfile.write( template( fname, d ) )
-    outfile.close()
 
 def run_command( argv ):
     pack_dir = elbepack.__path__[0]
