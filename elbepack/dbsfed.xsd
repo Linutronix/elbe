@@ -255,17 +255,15 @@
       <element name="suite" type="string">
         <annotation>
           <documentation>
-            name of the debian suite that should be used to generate the
-            buildenvironment and the rootfilesystem.
+            name of the debian suite that should be used to generate the initvm.
             e.g. "lenny", "squeeze", "sid", ..
           </documentation>
         </annotation>
       </element>
-      <element name="buildimage" type="rfs:buildimage" minOccurs="0">
+      <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            reference to the buildimage which is used to generate the
-            rootfilesystem
+            additional packages that are installed into the initvm.
           </documentation>
         </annotation>
       </element>
