@@ -29,10 +29,10 @@ Elbe takes a different approach for solving these problems:
 - Standard packages are not self compiled.
   Elbe uses the Debian distributions binary packages.
 - Own applications are not cross compiled.
-  They are built natively on the target architecture in a virtual machine or
-  emulator (qemu-system-* or kvm is supported at the moment).
-- The root-filesystem is a subset of of the Debian system on the virtual
-  development machine. This implicitly ensures, that the same toolchain is used
+  They are built natively on the target architecture in a chroot environment
+  using qemu.
+- The root-filesystem is a subset of the Debian system inside the chroot
+  environment. This implicitly ensures, that the same toolchain is used
   on the development machine and on the target.
 - Updating, adding or removing a package is done via Debians package-management
   (apt) which also resolves package dependencies.
@@ -47,7 +47,7 @@ dependencies.
 Configure `/etc/apt/sources.list.d` appropriately:
 
 -----------------------------------------------------------------------------------
-echo 'deb http://debian.linutronix.de/elbe squeeze main' >> /etc/apt/sources.list
+echo 'deb http://debian.linutronix.de/elbe wheezy main' >> /etc/apt/sources.list.d/elbe.list
 -----------------------------------------------------------------------------------
 
 Optionally the public key for the repo can be installed:
@@ -79,63 +79,82 @@ For example:
 
 ---------------------------------------------------
 elbe <command>
-elbe create --directory /scratch/example example.xml
+elbe init --directory /scratch/example example.xml
 elbe chg_archive example.xml archive.tar.bz2
 ---------------------------------------------------
 
-An Elbe project consists of an xml file that describes the project.
+An Elbe project consists of an XML file that describes the project.
 
-The 'elbe create' command generates a project directory, which contains the
-virtual hard disk image and a 'Makefile' to create a buildimage and the
-root-filesystem.
+The 'elbe init' command generates a project directory, which contains a hard
+disk image for a virtual build machine and a 'Makefile' to install the build
+VM and to work with it.
 
-During this process, 'elbe create' will search the package repos mentioned in
-the xml files mirror section for the kinitrd package, that includes the
-debian-installer. You can use the packages provided by Linutronix from
+During this process, 'elbe init' will search the package repos mentioned in the
+mirror section of the XML file for the elbe-bootstrap package, which includes
+the debian-installer. You can use the packages provided by Linutronix from
 http://debian.linutronix.de/elbe by adding this url to the mirror section.
 
-After 'elbe create' has generated the project directory, change to the
-project directory and run 'make'.
+After 'elbe init' has generated the project directory, change to the
+project directory and run 'make'. This will start the installation of the
+build VM.
 
+After finishing the installation, if the XML file contains a 'target' section,
+Elbe will start the root filesystem generation process using the build VM:
 
-This will start the root-filesystem generation process:
-
-- The initrd of the debian-installer is modified by elbe, so that it doesn't ask
-  questions during installation.
-- The target image generation is hooked into the install process
-- An emulator starts the installation process
-- A copy of the buildimage (installed by the debian-installer) is used as
-  target image. (There is a set of different modes for this copy)
-- fine-tuning commands are applied to this copy.
-- The archive is unpacked into the copy.
-- According to what is specified in the xml file. The copy is then baked into a
-  tar archive or filesystem image.
+- Debian's 'debootstrap' utility is used to setup a Debian base system.
+- The packages specified in the package list of the XML file are installed
+  to the base system. The result of this is called the build environment.
+- A copy of the environment is used as the target system.
+  There is a set of different modes for this copy.
+- If the XML file contains an archive, it will be unpacked into the target, so
+  the fine-tuning commands can use the content of the archive, too.
+- Inside a chroot environment, the fine-tuning commands are applied to the
+  target.
+- The archive from the XML file is unpacked again. This is to ensure the target
+  filesystem contains all files from the archive, even if some of them have
+  been deleted by a fine-tuning command.
+- According to what is specified in the XML file, the target filesystem is then
+  baked into a tar archive and/or a filesystem image.
 
 This diagram illustrates the complete process:
 
 image:elbe-process.png[]
 
-The following steps are executed inside the emulator:
+The following figure shows the steps performed inside the build VM during the
+build process of the target. The highlighted steps are performed inside a
+chroot environment:
 
 image:emu-process.png[]
+
+.No automatic startup of services during package installation
+******************************************************************************
+On regular Debian installations, init scripts installed by packages are
+started automatically during the post-installation step. Please note that
+Elbe *will not start any services during package installation*.
+
+As a consequence, packages that require a specific service to be running will
+cause problems during installation. This typically includes database
+application packages, which set up a database in their postinst script and
+rely on the database server to be already running.
+******************************************************************************
 
 Example XML Files
 ~~~~~~~~~~~~~~~~~
 
-A root-filesystem-project is described with a xml file.
+A root-filesystem-project is described with a XML file.
 
-Elbe ships with a set of example xml files.
+Elbe ships with a set of example XML files.
 
-The following xml file describes a simple system in the default full copy mode.
-The root filesystem is essentially identical to the build system and it will
-be saved as `nfsroot.tar.gz`
+The following XML file describes a simple system in the default full copy mode.
+The root filesystem is essentially identical to the build environment and it
+will be saved as `nfsroot.tar.gz`
 
-.arm-example.xml
+.example.xml
 [xml]
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	created="2009-05-20T08:50:56" revision="5"
+	created="2009-05-20T08:50:56" revision="6"
 	xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
 		<name>ARMexample</name>
@@ -148,14 +167,14 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://debian.linutronix.de/elbe squeeze main</binary>
+					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
 				</url>
 			</url-list>
 		</mirror>
 		<noauth />
-		<suite>squeeze</suite>
+		<suite>wheezy</suite>
 		<buildimage>
-			<kinitrd>testrd</kinitrd>
+			<kinitrd>elbe-bootstrap</kinitrd>
 		</buildimage>
 	</project>
 	<target>
@@ -178,14 +197,14 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 </ns0:RootFileSystem>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To generate the project directory from the xml file the following command is
+To generate the project directory from the XML file the following command is
 used:
 
 -----------------------------------------------------
-elbe create --directory /home/user/example example.xml
+elbe init --directory /home/user/example example.xml
 -----------------------------------------------------
 
-The project-directory must not exist before calling this command.
+The project directory must not exist before calling this command.
 It will contain several scripts, files and a Makefile, which controls the
 creation of the root-filesystem.
 
@@ -198,19 +217,20 @@ Now change to the project directory and run
 make
 -----------------------------------------------
 
-This will start the debian-installer in the virtual machine, which will install
-the build system according to the xml file description. It also generates the
-archive `nfsroot.tar.gz` with a copy of the buildimage.
+This will install the build VM and then start the root filesystem generation
+process inside the VM, using the settings specified in the XML file. An archive
+'nfsroot.tar.gz' will be generated, as well as a chroot environment to work
+with the build environment inside the build VM.
 
 .Note
 *******************************************************
 This takes a while.
 *******************************************************
 
-Working inside the virtual machine
+Working with the build environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After successful installation, the virtual machine can be started:
+After successful installation, the build VM can be started:
 
 -------------------------------------------
 make run
@@ -221,6 +241,18 @@ or without a graphical terminal:
 -------------------------------------------
 make run-con
 -------------------------------------------
+
+Now log in as root on the build VM, change to the project directory and enter
+the chroot environment:
+
+------------------------------------------
+elbe chroot
+------------------------------------------
+
+This can now be used to test the root filesystem and to build additional
+packages. If the root filesystem has been created for another architecture
+than amd64, then the binaries in the root filesystem will be executed via
+qemu automatically.
 
 Changing the subset that is extracted as the root filesystem
 ------------------------------------------------------------
@@ -238,33 +270,65 @@ root-filesystem.
 Finetuning
 ~~~~~~~~~~
 
-The finetuning section allows to copy, move and delete files in the target
+The finetuning section allows to copy, move and delete files in the
 root-filesystem. Additionally it is possible to run commands. Here is an
 example finetuning section:
 
 [xml]
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   <finetuning>
-    <rm>/usr/share/doc</rm>
-    <mv path="/var">/var_ro</mv>
-    <cp path=/copy/me>/my/name/on/target</mv>
+    <rm>/usr/share/doc</rm>						<1>
+    <mkdir>/mydir</mkdir>						<2>
+    <mknod opts="c 1 5">/dev/zero</mknod>				<3>
+    <buildenv_mkdir>/mydir</buildenv_mkdir>				<4>
+    <cp path="/copy/me">/my/destination</cp>				<5>
+    <buildenv_cp path="/copy/me">/my/destination</buildenv_cp>		<6>
+    <b2t_cp path="/copy/me">/my/name/on/target</b2t_cp>			<7>
+    <t2b_cp path="/copy/me">/my/name/on/buildenv</b2t_cp>		<8>
+    <mv path="/var">/var_ro</mv>					<9>
+    <buildenv_mv path="/var">/var_ro</buildenv_mv>			<10>
+    <command>echo "T0:23:respawn:/sbin/getty -L ttyO0 115200 vt102" &gt;&gt; /etc/inittab</command>	<11>
+    <buildenv_command>some_command</buildenv_command>			<12>
+    <purge>apt</purge>							<13>
   </finetuning>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<1> Remove the directory '/usr/share/doc' from the target.
+
+<2> Create the directory '/mydir' on the target.
+
+<3> Create the character device '/dev/zero' with major number 1 and
+    minor number 5 on the target.
+
+<4> Create the directory '/mydir' in the build environment.
+
+<5> Copy '/copy/me' on the target to '/my/destination'.
+
+<6> Copy '/copy/me' in the build environment to '/my/destination'.
+
+<7> Copy '/copy/me' from the build environment to '/my/name/on/target' on
+    the target.
+
+<8> Copy '/copy/me' from the target to '/my/name/on/buildenv' in the build
+    environment.
+
+<9> Move '/var' to '/var/ro' in the target root filesystem.
+
+<10> Move '/var' to '/var/ro' in the build environment.
+
+<11> Execute the given command in the target root filesystem. In this example
+     a line is added to '/etc/inittab' in order to permit logins via the serial
+     console.
+
+<12> Execute 'some_command' in the build environment.
+
+<13> Remove the 'apt' package from the target root filesystem using
+     'dpkg --purge'.
+
 
 .Note
 *******************************************************
 The copy, mv, and rm commands operate on full directories.
-*******************************************************
-
-.Advanced Copy
-*******************************************************
-To copy files from the buildimage into the target image, the
-`<command>` tag can be used. The current directory is /target.
-
-For example to copy `/etc/passwd` from the buildenvironment into the target,
-the following command can be used:
-
-`<command>cp /etc/passwd etc/ </command>`
 *******************************************************
 
 Useful directories to trim with finetuning
@@ -305,10 +369,10 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Archive
 ~~~~~~~
 
-It's also possible to include an archive into the xml file, that is unpacked
+It's also possible to include an archive into the XML file, that is unpacked
 into the target root-filesystem after the finetuning step.
 This archive must be a bzip2 compressed tar (.tar.bz2) and the following
-command can be used to embed the archive into the xml file:
+command can be used to embed the archive into the XML file:
 
 -------------------------------------------
 elbe chg_archive <xmlfile> archive.tar.bz2
@@ -390,7 +454,7 @@ The recommended usage is as follows:
   `dpkg --get-selections > selections.list`
 - Transfer this file to the host System.
 - Use `elbe setsel <xmlfile> selections.list`
-  to import the pkg-list into the xml file.
+  to import the pkg-list into the XML file.
 - Rebuild using setsel mode.
 
 .How it works
@@ -429,7 +493,7 @@ tighten
 
 Tighten mode only extracts the files referenced by the packages in 'pkg-list'.
 No dependencies are resolved.
-This mode is intended for compatibility with old xml files, do not use in
+This mode is intended for compatibility with old XML files, do not use in
 new elbe projects.
 
 CDROM Functionality
@@ -473,13 +537,13 @@ XML Reference
 
 This section is a step by step explanation of the ARM example.
 
-The xml file starts with the following header, which should always be the same:
+The XML file starts with the following header, which should always be the same:
 
-[xml]
+[XML]
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     created="2009-05-20T08:50:56" revision="5"
+     created="2009-05-20T08:50:56" revision="6"
      xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -496,13 +560,13 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<primary_proto>http</primary_proto>
 			<url-list>					<2>
 				<url>
-					<binary>http://debian.linutronix.de/elbe squeeze main</binary>
+					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
 				</url>
 			</url-list>
 
 		</mirror>
 		<noauth /> 						<3>
-		<suite>squeeze</suite>					<4>
+		<suite>wheezy</suite>					<4>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <1> The 'mirror' tag contains
@@ -532,7 +596,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<size>20G</size>				<2>
 			<mem>256</mem>					<3>
 			<interpreter>qemu-system-arm</interpreter>	<4>
-			<kinitrd>testrd</kinitrd>			<5>
+			<kinitrd>elbe-bootstrap</kinitrd>		<5>
 			<console>ttyAMA0,115200n1</console>		<6>
 			<machine>versatilepb</machine>			<7>
 			<NIC>
@@ -564,8 +628,8 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Usage of kvm is usually only possible, when the target is 'x86'.
 		(optional)
 
-<5> The name of the kinitrd package.
-    All package sources mentioned in the xml file are scanned for this package.
+<5> The name of the elbe-bootstrap package.
+    All package sources mentioned in the XML file are scanned for this package.
     It provides the debian-installer kernel and initrd. This package is not
     hosted on official Debian mirrors. So it makes sense additional add the
     <noauth/> tag to the <mirror> section.

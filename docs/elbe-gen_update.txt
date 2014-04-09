@@ -1,0 +1,69 @@
+elbe-gen_update(1)
+==================
+
+NAME
+----
+elbe-gen_update - Generate an update archive to be used by elbe-updated.
+
+SYNOPSIS
+--------
+[verse]
+'elbe gen_update' --target <targetdir> \
+	[ --buildtype <type> ] \
+	[ --debug ] \
+	[ --name <name> ] \
+	[ --skip-validation ] \
+	<xmlfile>
+
+
+DESCRIPTION
+-----------
+'elbe-gen_update' creates an update archive by comparing the packages
+installed in the given target project against the packages listed in
+the given XML file. The resulting update archive will contain all new and all
+updated packages and can be used to update the target system with
+linkgit:elbe-updated[1]. It will be named 'NAME_VERSION.upd', with 'NAME'
+being the project name and 'VERSION' being the version specified in the
+XML file passed in the command line.
+
+This command has to be run as root *inside the Elbe build VM*.
+
+
+OPTIONS
+-------
+--target <targetdir>::
+	The project directory to generate the update for.
+
+--buildtype <type>::
+	Override the build type specified in the XML file.
+
+--debug::
+	Enable a few debug features.
+
+--name <name>::
+	Override the name of the project.
+
+--skip-validation::
+	Skip validation of the passed XML file and of the 'source.xml' file
+	in the target directory (Not recommended).
+
+<xmlfile>::
+	The updated XML file including the package changes.
+
+
+EXAMPLES
+--------
+* Create an update package for the old version v0.1 of 'myproject' located in
+  '/root/myproject-v0.1' to upgrade to v0.2, which is located in
+  '/root/myproject-v0.2'.
++
+---------
+# elbe gen_update --target /root/myproject-v0.1 \
+	/root/myproject-v0.2/source.xml
+---------
+
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite

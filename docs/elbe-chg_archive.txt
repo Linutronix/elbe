@@ -32,10 +32,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* Insert 'myarch.tar.bz2' into 'mysqueeze.xml'
+* Insert 'myarch.tar.bz2' into 'mywheezy.xml'
 +
 ------------
-$ elbe chg_archive mysqueeze.xml myarch.tar.bz2
+$ elbe chg_archive mywheezy.xml myarch.tar.bz2
 ------------
 
 

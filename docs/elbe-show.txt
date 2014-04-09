@@ -33,10 +33,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* get a human readable representation of 'mysqueeze.xml'
+* get a human readable representation of 'mywheezy.xml'
 +
 ------------
-$ elbe show mysqueeze.xml
+$ elbe show mywheezy.xml
 ------------
 
 

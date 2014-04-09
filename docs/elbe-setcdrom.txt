@@ -34,10 +34,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* Insert 'elbe-cd.iso' into 'mysqueeze.xml'
+* Insert 'elbe-cd.iso' into 'mywheezy.xml'
 +
 ------------
-$ elbe setcdrom mysqueeze.xml elbe-cd.iso 
+$ elbe setcdrom mywheezy.xml elbe-cd.iso 
 ------------
 
 
