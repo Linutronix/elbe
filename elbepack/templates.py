@@ -87,3 +87,11 @@ def get_initvm_preseed( xml ):
         preseed[k] = v
 
     return preseed
+
+def preseed_to_text( pres ):
+    retval = ""
+    for k,v in pres.items():
+        retval += "%s\t%s\t%s\t%s\n" % (k[0], k[1], v[0], v[1])
+
+    return retval
+
