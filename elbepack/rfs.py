@@ -24,26 +24,8 @@ import elbepack
 
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.filesystem import BuildImgFs
+from elbepack.templates import write_pack_template, get_preseed, preseed_to_text
 
-from multiprocessing import Pipe
-
-from mako.template import Template
-from mako import exceptions
-
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-def write_template( outname, fname, d ):
-    pack_dir = elbepack.__path__[0]
-    template_dir = os.path.join( pack_dir, "mako" )
-
-    outfile = file(outname, "w")
-    outfile.write( template( os.path.join(template_dir, fname), d ) )
-    outfile.close()
 
 class BuildEnv ():
     def __init__ (self, xml, log, path ):
@@ -191,7 +173,7 @@ class BuildEnv ():
               "prj":  self.xml.node("/project"),
               "pkgs": self.xml.node("/target/pkg-list") }
 
-        write_template( filename, "preferences.mako", d )
+        write_pack_template( filename, "preferences.mako", d )
 
     def seed_etc( self ):
         passwd = self.xml.text("target/passwd")
