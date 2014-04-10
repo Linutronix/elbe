@@ -37,6 +37,12 @@ def write_template( outname, fname, d ):
     outfile.write( template( fname, d ) )
     outfile.close()
 
+def write_pack_template( outname, fname, d ):
+    pack_dir = elbepack.__path__[0]
+    template_name = os.path.join( pack_dir, "mako", fname )
+
+    write_template( outname, template_name, d )
+
 
 def get_preseed( xml ):
     pack_dir = elbepack.__path__[0]
