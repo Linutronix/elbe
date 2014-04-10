@@ -175,7 +175,7 @@ class BuildEnv ():
         if self.rfs.exists("etc/apt/sources.list"):
             self.rfs.remove("etc/apt/sources.list")
 
-        self.rfs.write_file ("etc/apt/sources.list", 644, mirror)
+        self.rfs.write_file ("etc/apt/sources.list", 0644, mirror)
 
 
     def create_apt_prefs (self):
