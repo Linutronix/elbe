@@ -18,15 +18,13 @@
 
 
 from optparse import OptionParser
-import datetime
 import sys
 import os
 
-from elbepack.elbexml import ElbeXML, ValidationError
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ValidationError
 from elbepack.asciidoclog import StdoutLog, ASCIIDocLog
-from elbepack.rfs import BuildEnv
 from elbepack.filesystem import ChRootFilesystem
-from elbepack.shellhelper import system
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
@@ -62,37 +60,31 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    if opt.log:
-        log = ASCIIDocLog( opt.log )
-    else:
-        log = StdoutLog()
-
     if not opt.rfs_only:
-        builddir = os.path.abspath(args[0])
-        sourcexml = os.path.join( builddir, "source.xml" )
-        chroot = os.path.join( builddir, "chroot" )
-
-        if opt.buildtype:
-            buildtype = opt.buildtype
-        else:
-            buildtype = None
-
         try:
-            xml = ElbeXML( sourcexml, buildtype=buildtype, skip_validate=opt.skip_validation )
+            project = ElbeProject( args[0], logpath=opt.log,
+                    override_buildtype=opt.buildtype,
+                    skip_validate=opt.skip_validation )
         except ValidationError:
             print "xml validation failed. Bailing out"
             sys.exit(20)
 
-        buildenv = BuildEnv(xml, log, chroot)
-        rfs = buildenv.rfs
+        builddir = project.builddir
+        rfs = project.buildenv.rfs
+        xml = project.xml
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite" )
+        log = project.log
     else:
         builddir = os.path.abspath( os.path.curdir )
         rfs = ChRootFilesystem( args[0] )
         arch = opt.arch
         codename = opt.codename
         xml = None
+        if opt.log:
+            log = ASCIIDocLog( opt.log )
+        else:
+            log = StdoutLog()
 
     if opt.source:
         with rfs:
