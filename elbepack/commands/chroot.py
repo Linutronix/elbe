@@ -18,13 +18,12 @@
 
 
 from optparse import OptionParser
-import datetime
 import sys
 import os
 
 from elbepack.asciidoclog import StdoutLog
-from elbepack.rfs import BuildEnv
-from elbepack.elbexml import ElbeXML, ValidationError
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ValidationError
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog mount [options] <builddir>")
@@ -41,26 +40,15 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-
-    builddir = os.path.abspath(args[0])
-    sourcexml = os.path.join( builddir, "source.xml" )
-    chroot = os.path.join( builddir, "chroot" )
-
-    if opt.buildtype:
-        buildtype = opt.buildtype
-    else:
-        buildtype = None
+    log = StdoutLog()
 
     try:
-        xml = ElbeXML( sourcexml, buildtype=buildtype, skip_validate=opt.skip_validation )
+        project = ElbeProject(args[0], log, override_buildtype=opt.buildtype,
+                skip_validate=opt.skip_validation)
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    log = StdoutLog()
-
-    buildenv = BuildEnv(xml, log, chroot)
-
-    with buildenv.rfs:
-        os.system( "chroot %s" % chroot )
+    with project.buildenv.rfs:
+        os.system( "chroot %s" % project.chrootpath )
 
