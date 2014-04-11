@@ -31,18 +31,29 @@ from elbepack.dump import dump_fullpkgs, check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 class ElbeProject ():
-    def __init__ (self, xml, targetpath, log, name = None,
-            override_buildtype = None):
-        self.xml = xml
+    def __init__ (self, targetpath, log, xmlpath = None, name = None,
+            override_buildtype = None, skip_validate = False):
         self.targetpath = os.path.abspath(targetpath)
         self.log = log
+
+        # Use supplied XML file, if given, otherwise use the source.xml
+        # file of the project
+        if xmlpath:
+            self.xml = ElbeXML( xmlpath, buildtype=override_buildtype,
+                    skip_validate=skip_validate )
+        else:
+            sourcexmlpath = os.path.join( self.targetpath, "source.xml" )
+            self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
+                    skip_validate=skip_validate )
+
         self.name = name
         self.override_buildtype = override_buildtype
         self.buildenv = None
         self.targetfs = None
+        self.skip_validate = skip_validate
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
-            build_sources = False, skip_validate = False, debug = False):
+            build_sources = False, debug = False):
         # Write the log header
         self.write_log_header()
 
@@ -51,7 +62,7 @@ class ElbeProject ():
         self.buildenv = self.create_buildenv( chroot_path )
 
         # Install packages
-        cache = self.install_packages( skip_validate )
+        cache = self.install_packages()
 
         # Extract target FS
         targetfspath = os.path.join( self.targetpath, "target" )
@@ -137,7 +148,7 @@ class ElbeProject ():
         self.log.do( 'mkdir -p "%s"' % chroot_path )
         return BuildEnv( self.xml, self.log, chroot_path )
 
-    def install_packages (self, skip_validation):
+    def install_packages (self):
         with self.buildenv:
             cache = get_rpcaptcache( self.buildenv.rfs, "aptcache.log",
                     self.xml.text( "project/arch", key="arch" ) )
@@ -154,7 +165,7 @@ class ElbeProject ():
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/opt/elbe/source.xml",
-                            skip_validate = skip_validation )
+                            skip_validate=self.skip_validate )
                     self.xml.get_initvmnode_from( initxml )
                 except IOError:
                     self.log.printo( "/opt/elbe/source.xml not available" )
@@ -166,7 +177,7 @@ class ElbeProject ():
                 sourcepath = os.path.join( self.targetpath, "source.xml" )
                 source = ElbeXML( sourcepath,
                         buildtype=self.override_buildtype,
-                        skip_validate=skip_validation )
+                        skip_validate=self.skip_validate )
                 self.xml.get_debootstrappkgs_from( source )
                 try:
                     self.xml.get_initvmnode_from( source )

@@ -24,7 +24,7 @@ import sys
 from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.elbeproject import ElbeProject
 
-from elbepack.elbexml import ElbeXML, ValidationError
+from elbepack.elbexml import ValidationError
 
 
 def run_command( argv ):
@@ -69,15 +69,14 @@ def run_command( argv ):
         print "No target specified"
         sys.exit(20)
 
+    outf = ASCIIDocLog( opt.output )
+
     try:
-        xml = ElbeXML( args[0], buildtype=opt.buildtype,
-                skip_validate=opt.skip_validation )
+        project = ElbeProject( opt.target, outf, args[0], opt.name,
+                opt.buildtype, opt.skip_validation )
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    outf = ASCIIDocLog( opt.output )
-
-    project = ElbeProject( xml, opt.target, outf, opt.name, opt.buildtype )
     project.build( opt.skip_debootstrap, opt.skip_cdrom,
-            opt.build_sources, opt.skip_validation, opt.debug )
+            opt.build_sources, opt.debug )
