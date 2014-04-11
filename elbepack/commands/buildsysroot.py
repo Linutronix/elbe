@@ -18,13 +18,11 @@
 
 
 from optparse import OptionParser
-import datetime
 import sys
 import os
 
-from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.asciidoclog import StdoutLog
-from elbepack.rfs import BuildEnv
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ValidationError
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog buildsysroot [options] <builddir>")
@@ -41,44 +39,36 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-
-    builddir = os.path.abspath(args[0])
-    sourcexml = os.path.join( builddir, "source.xml" )
-    chroot = os.path.join( builddir, "chroot" )
-    sysrootfilelist = os.path.join(builddir, "sysroot-filelist")
-
-    if opt.buildtype:
-        buildtype = opt.buildtype
-    else:
-        buildtype = None
-
     try:
-        xml = ElbeXML( sourcexml, buildtype=buildtype, skip_validate=opt.skip_validation )
+        project = ElbeProject( args[0], override_buildtype=opt.buildtype,
+                skip_validate=opt.skip_validation )
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    log = StdoutLog()
+    sysrootfilelist = os.path.join(project.builddir, "sysroot-filelist")
 
-    buildenv = BuildEnv(xml, log, chroot)
+    with project.buildenv.rfs:
+        project.log.do( "chroot %s /usr/bin/symlinks -cr /usr/lib" %
+                project.chrootpath )
 
-    with buildenv.rfs:
-        log.do( "chroot %s /usr/bin/symlinks -cr /usr/lib" % chroot )
-
-    triplet = xml.defs["triplet"]
+    triplet = project.xml.defs["triplet"]
 
 
-    paths = [ './usr/include', './lib/*.so', './lib/*.so.*', './lib/' + triplet, './usr/lib/*.so', './usr/lib/*.so', './usr/lib/*.so.*', './usr/lib/' + triplet ]
+    paths = [ './usr/include', './lib/*.so', './lib/*.so.*',
+            './lib/' + triplet, './usr/lib/*.so', './usr/lib/*.so',
+            './usr/lib/*.so.*', './usr/lib/' + triplet ]
 
     
-    log.do( "rm %s" % sysrootfilelist, allow_fail=True)
+    project.log.do( "rm %s" % sysrootfilelist, allow_fail=True)
 
-    os.chdir( chroot )
+    os.chdir( project.chrootpath )
 
 
     for p in paths:
-        log.do( 'find -path "%s" >> %s' % (p, sysrootfilelist) )
-    log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" % (builddir,chroot, sysrootfilelist) )
+        project.log.do( 'find -path "%s" >> %s' % (p, sysrootfilelist) )
+    project.log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" %
+            (project.builddir, project.chrootpath, sysrootfilelist) )
     
     
 
