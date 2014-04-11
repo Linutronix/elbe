@@ -22,8 +22,6 @@ import os
 import sys
 import shutil
 
-from mako.template import Template
-from mako import exceptions
 from base64 import standard_b64decode, standard_b64encode
 
 import elbepack
@@ -32,53 +30,14 @@ from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
+from elbepack.templates import write_template, get_preseed
 
 from optparse import OptionParser
-
-# Some more helpers
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-def write_template( outname, fname, d ):
-    outfile = file(outname, "w")
-    outfile.write( template( fname, d ) )
-    outfile.close()
 
 def unbase( s, fname ):
     outfile = file(fname, "w")
     outfile.write( standard_b64decode(s) )
     outfile.close()
-
-def enbase( fname ):
-    infile = file(fname, "r")
-    s = infile.read()
-    return standard_b64encode(s)
-
-def get_preseed( xml ):
-    pack_dir = elbepack.__path__[0]
-    def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
-
-    preseed = {}
-    for c in def_xml.node("/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
-
-        preseed[k] = v
-
-    if not xml.has("./project/preseed"):
-        return preseed
-
-    for c in xml.node("/project/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
-
-        preseed[k] = v
-
-    return preseed
 
 def run_command( argv ):
     pack_dir = elbepack.__path__[0]

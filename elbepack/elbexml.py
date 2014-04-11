@@ -167,12 +167,12 @@ class ElbeXML(object):
             tree.append_treecopy( e )
 
     def get_initvmnode_from( self, other ):
-        tree = self.xml.ensure_child( 'initvm' )
-        tree.clear()
-
         ivm = other.node( 'initvm' )
         if ivm is None:
             raise NoInitvmNode()
+
+        tree = self.xml.ensure_child( 'initvm' )
+        tree.clear()
 
         for e in ivm:
             tree.append_treecopy( e )
