@@ -21,6 +21,7 @@
 import os
 import datetime
 
+from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.elbexml import ElbeXML, NoInitvmNode
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -31,13 +32,11 @@ from elbepack.dump import dump_fullpkgs, check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 class ElbeProject ():
-    def __init__ (self, builddir, log, xmlpath = None, name = None,
+    def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
-
-        self.log = log
 
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
@@ -48,6 +47,13 @@ class ElbeProject ():
             sourcexmlpath = os.path.join( self.builddir, "source.xml" )
             self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
                     skip_validate=skip_validate )
+
+        # If logpath is given, use an AsciiDocLog instance, otherwise log
+        # to stdout
+        if logpath:
+            self.log = ASCIIDocLog( logpath )
+        else:
+            self.log = StdoutLog()
 
         self.name = name
         self.override_buildtype = override_buildtype
