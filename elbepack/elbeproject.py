@@ -33,7 +33,8 @@ from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 class ElbeProject ():
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
-            override_buildtype = None, skip_validate = False):
+            override_buildtype = None, skip_validate = False,
+            rpcaptcache_notifier = None):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -80,6 +81,11 @@ class ElbeProject ():
         else:
             self.targetfs = None
 
+        # Apt-Cache will be created on demand with the specified notifier by
+        # the get_rpcaptcache method
+        self._rpcaptcache = None
+        self.rpcaptcache_notifier = rpcaptcache_notifier
+
         self.skip_validate = skip_validate
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
@@ -93,7 +99,7 @@ class ElbeProject ():
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
 
         # Install packages
-        cache = self.install_packages()
+        self.install_packages()
 
         # Extract target FS
         if not self.targetfs:
@@ -101,17 +107,17 @@ class ElbeProject ():
                     self.buildenv.xml )
         os.chdir( self.buildenv.rfs.fname( '' ) )
         extract_target( self.buildenv.rfs, self.xml, self.targetfs,
-                self.log, cache )
+                self.log, self._rpcaptcache )
 
         # Package validation and package list
         validationpath = os.path.join( self.builddir, "validation.txt" )
         pkgs = self.xml.xml.node( "/target/pkg-list" )
         if self.xml.has( "fullpkgs" ):
             check_full_pkgs( pkgs, self.xml.xml.node( "/fullpkgs" ),
-                    validationpath, cache )
+                    validationpath, self._rpcaptcache )
         else:
-            check_full_pkgs( pkgs, None, validationpath, cache )
-        dump_fullpkgs( self.xml, self.buildenv.rfs, cache )
+            check_full_pkgs( pkgs, None, validationpath, self._rpcaptcache )
+        dump_fullpkgs( self.xml, self.buildenv.rfs, self._rpcaptcache )
 
         # Dump ELBE version
         try:
@@ -128,8 +134,8 @@ class ElbeProject ():
 
         # Elbe report
         reportpath = os.path.join( self.builddir, "elbe-report.txt" )
-        elbe_report( self.xml, self.buildenv.rfs, cache, reportpath,
-                self.targetfs )
+        elbe_report( self.xml, self.buildenv.rfs, self._rpcaptcache,
+                reportpath, self.targetfs )
 
         # Licenses
         f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
@@ -137,7 +143,7 @@ class ElbeProject ():
         f.close()
 
         # Generate images
-        if cache.is_installed( 'grub-pc' ):
+        if self._rpcaptcache.is_installed( 'grub-pc' ):
             skip_grub = False
         else:
             self.log.printo( "package grub-pc is not installed, skipping grub" )
@@ -168,6 +174,14 @@ class ElbeProject ():
         fte.write("../elbe-report.log\n")
         fte.close()
 
+    def get_rpcaptcache (self):
+        if self._rpcaptcache is None:
+            self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
+                    "aptcache.log",
+                    self.xml.text( "project/arch", key="arch" ),
+                    self.rpcaptcache_notifier )
+        return self._rpcaptcache
+
     def write_log_header (self):
         if self.name:
             self.log.h1( "ELBE Report for Project " + self.name)
@@ -178,18 +192,18 @@ class ElbeProject ():
 
     def install_packages (self):
         with self.buildenv:
-            cache = get_rpcaptcache( self.buildenv.rfs, "aptcache.log",
-                    self.xml.text( "project/arch", key="arch" ) )
+            # Create self._rpcaptcache
+            self.get_rpcaptcache()
 
             # First update the apt cache
             try:
-                cache.update()
+                self._rpcaptcache.update()
             except:
                 self.log.printo( "update cache failed" )
 
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
-                dump_debootstrappkgs( self.xml, cache )
+                dump_debootstrappkgs( self.xml, self._rpcaptcache )
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/opt/elbe/source.xml",
@@ -222,14 +236,12 @@ class ElbeProject ():
 
             for p in be_pkgs + ta_pkgs:
                 try:
-                    cache.mark_install( p, None )
+                    self._rpcaptcache.mark_install( p, None )
                 except KeyError:
                     self.log.printo( "No Package " + p )
                 except SystemError:
                     self.log.printo( "Unable to correct problems " + p )
             try:
-                cache.commit()
+                self._rpcaptcache.commit()
             except SystemError:
                 self.log.printo( "commiting changes failed" )
-
-        return cache
