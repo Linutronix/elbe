@@ -22,9 +22,9 @@ from optparse import OptionParser
 import sys
 import os
 
+from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.filesystem import BuildImgFs
 from elbepack.dump import dump_fullpkgs
 
 from elbepack.ziparchives import create_zip_archive
@@ -56,8 +56,6 @@ def run_command( argv ):
         print "No target specified"
         sys.exit(20)
 
-    opt.target = os.path.abspath(opt.target)
-
     if opt.buildtype:
         buildtype = opt.buildtype
     else:
@@ -73,24 +71,24 @@ def run_command( argv ):
         print "Xml does not have fullpkgs list"
         sys.exit(20)
 
-    sourcexml = os.path.join(opt.target, 'source.xml')
     try:
-        sxml = ElbeXML( sourcexml, buildtype=buildtype, skip_validate=opt.skip_validation )
+        project = ElbeProject( opt.target, name=opt.name,
+                override_buildtype=buildtype,
+                skip_validate=opt.skip_validation )
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    if not sxml.has("fullpkgs"):
+    if not project.xml.has("fullpkgs"):
         print "Source Xml does not have fullpkgs list"
         sys.exit(20)
 
-    chroot = os.path.join(opt.target, "chroot")
-
-    buildrfs = BuildImgFs(chroot)
+    if not project.buildenv.rfs:
+        print "Target does not have a build environment"
+        sys.exit(20)
 
     arch = xml.text("project/arch", key="arch" )
-    cache = get_rpcaptcache( buildrfs, "aptcache.log", arch )
-
+    cache = get_rpcaptcache( project.buildenv.rfs, "aptcache.log", arch )
 
     instpkgs  = cache.get_installed_pkgs()
     instindex = {}
@@ -148,16 +146,16 @@ def run_command( argv ):
     repo = UpdateRepo( xml, repodir )
 
     for fname in fnamelist:
-        path = os.path.join( chroot, "var/cache/apt/archives", fname )
+        path = os.path.join( project.chrootpath, "var/cache/apt/archives", fname )
         repo.includedeb( path )
 
 
-    dump_fullpkgs(sxml, buildrfs, cache)
+    dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
-    sxml.xml.write( os.path.join( update, "new.xml" ) )
+    project.xml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (args[0], os.path.join( update, "base.xml" )) )
 
-    zipfilename = os.path.join( opt.target, "%s_%s.upd" %
+    zipfilename = os.path.join( project.builddir, "%s_%s.upd" %
         (xml.text ("/project/name"), xml.text ("/project/version")) )
 
     create_zip_archive( zipfilename, update, "." )
