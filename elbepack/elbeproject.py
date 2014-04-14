@@ -97,7 +97,7 @@ class ElbeProject ():
 
         # Extract target FS
         if not self.targetfs:
-            self.targetfs = TargetFs( self.targetfspath, self.log,
+            self.targetfs = TargetFs( self.targetpath, self.log,
                     self.buildenv.xml )
         os.chdir( self.buildenv.rfs.fname( '' ) )
         extract_target( self.buildenv.rfs, self.xml, self.targetfs,
