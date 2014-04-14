@@ -84,6 +84,13 @@ Description: ELBE build environment
  need to be executed with root privileges. It is not recommended to install
  this package on a native system.
 
+Package: elbe-soap
+Architecture: all
+Depends: python (>= 2.7~),
+  elbe-buildenv,
+Description: RootFS build system.
+ Elbe is a flexible Root Filesystem builder.
+
 Package: elbe-updated
 Architecture: all
 Depends: python (>= 2.7~),
