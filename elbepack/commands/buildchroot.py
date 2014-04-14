@@ -21,9 +21,7 @@
 from optparse import OptionParser
 import sys
 
-from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.elbeproject import ElbeProject
-
 from elbepack.elbexml import ValidationError
 
 
@@ -69,10 +67,8 @@ def run_command( argv ):
         print "No target specified"
         sys.exit(20)
 
-    outf = ASCIIDocLog( opt.output )
-
     try:
-        project = ElbeProject( opt.target, outf, args[0], opt.name,
+        project = ElbeProject( opt.target, args[0], opt.output, opt.name,
                 opt.buildtype, opt.skip_validation )
     except ValidationError:
         print "xml validation failed. Bailing out"

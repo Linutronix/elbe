@@ -21,6 +21,7 @@
 import os
 import datetime
 
+from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.elbexml import ElbeXML, NoInitvmNode
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -31,10 +32,11 @@ from elbepack.dump import dump_fullpkgs, check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 class ElbeProject ():
-    def __init__ (self, targetpath, log, xmlpath = None, name = None,
+    def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False):
-        self.targetpath = os.path.abspath(targetpath)
-        self.log = log
+        self.builddir = os.path.abspath(builddir)
+        self.chrootpath = os.path.join(self.builddir, "chroot")
+        self.targetpath = os.path.join(self.builddir, "target")
 
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
@@ -42,14 +44,42 @@ class ElbeProject ():
             self.xml = ElbeXML( xmlpath, buildtype=override_buildtype,
                     skip_validate=skip_validate )
         else:
-            sourcexmlpath = os.path.join( self.targetpath, "source.xml" )
+            sourcexmlpath = os.path.join( self.builddir, "source.xml" )
             self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
                     skip_validate=skip_validate )
 
+        # If logpath is given, use an AsciiDocLog instance, otherwise log
+        # to stdout
+        if logpath:
+            self.log = ASCIIDocLog( logpath )
+        else:
+            self.log = StdoutLog()
+
         self.name = name
         self.override_buildtype = override_buildtype
-        self.buildenv = None
-        self.targetfs = None
+
+        # Create BuildEnv instance, if the chroot directory exists and
+        # has an etc/elbe_version
+        if os.path.exists( self.chrootpath ):
+            elbeversionpath = os.path.join( self.chrootpath,
+                    "etc", "elbe_version" )
+            if os.path.isfile( elbeversionpath ):
+                self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+            else:
+                self.log.printo( "%s exists, but it does not have an etc/elbe_version file." %
+                        self.chrootpath )
+                # Apparently we do not have a functional build environment
+                self.buildenv = None
+        else:
+            self.buildenv = None
+
+        # Create TargetFs instance, if the target directory exists
+        if os.path.exists( self.targetpath ):
+            self.targetfs = TargetFs( self.targetpath, self.log,
+                    self.buildenv.xml )
+        else:
+            self.targetfs = None
+
         self.skip_validate = skip_validate
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
@@ -57,22 +87,24 @@ class ElbeProject ():
         # Write the log header
         self.write_log_header()
 
-        # Create the build environment
-        chroot_path = os.path.join( self.targetpath, "chroot" )
-        self.buildenv = self.create_buildenv( chroot_path )
+        # Create the build environment, if it does not exist yet
+        if not self.buildenv:
+            self.log.do( 'mkdir -p "%s"' % self.chrootpath )
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
 
         # Install packages
         cache = self.install_packages()
 
         # Extract target FS
-        targetfspath = os.path.join( self.targetpath, "target" )
-        self.targetfs = TargetFs( targetfspath, self.log, self.buildenv.xml )
+        if not self.targetfs:
+            self.targetfs = TargetFs( self.targetpath, self.log,
+                    self.buildenv.xml )
         os.chdir( self.buildenv.rfs.fname( '' ) )
         extract_target( self.buildenv.rfs, self.xml, self.targetfs,
                 self.log, cache )
 
         # Package validation and package list
-        validationpath = os.path.join( self.targetpath, "validation.txt" )
+        validationpath = os.path.join( self.builddir, "validation.txt" )
         pkgs = self.xml.xml.node( "/target/pkg-list" )
         if self.xml.has( "fullpkgs" ):
             check_full_pkgs( pkgs, self.xml.xml.node( "/fullpkgs" ),
@@ -89,18 +121,18 @@ class ElbeProject ():
 
         # Write source.xml
         try:
-            sourcexmlpath = os.path.join( self.targetpath, "source.xml" )
+            sourcexmlpath = os.path.join( self.builddir, "source.xml" )
             self.xml.xml.write( sourcexmlpath )
         except MemoryError:
             self.log.printo( "write source.xml failed (archive to huge?)" )
 
         # Elbe report
-        reportpath = os.path.join( self.targetpath, "elbe-report.txt" )
+        reportpath = os.path.join( self.builddir, "elbe-report.txt" )
         elbe_report( self.xml, self.buildenv.rfs, cache, reportpath,
                 self.targetfs )
 
         # Licenses
-        f = open( os.path.join( self.targetpath, "licence.txt" ), "w+" )
+        f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
         self.buildenv.rfs.write_licenses(f, self.log)
         f.close()
 
@@ -110,7 +142,7 @@ class ElbeProject ():
         else:
             self.log.printo( "package grub-pc is not installed, skipping grub" )
             skip_grub = True
-        self.targetfs.part_target( self.targetpath, skip_grub )
+        self.targetfs.part_target( self.builddir, skip_grub )
 
         # Build cdrom images
         arch = self.xml.text( "project/arch", key="arch" )
@@ -118,13 +150,13 @@ class ElbeProject ():
         with self.buildenv:
             if not skip_cdrom:
                 mk_binary_cdrom( self.buildenv.rfs, arch, codename, self.xml,
-                        self.targetpath, self.log )
+                        self.builddir, self.log )
                 if build_sources:
                     mk_source_cdrom( self.buildenv.rfs, arch, codename,
-                            self.targetpath, self.log )
+                            self.builddir, self.log )
 
         # Write files to extract list
-        fte = open( os.path.join( self.targetpath, "files-to-extract" ), "w+" )
+        fte = open( os.path.join( self.builddir, "files-to-extract" ), "w+" )
         # store each image only once
         files = set( self.targetfs.images )
         for img in files:
@@ -143,10 +175,6 @@ class ElbeProject ():
             self.log.h1( "ELBE Report" )
         self.log.printo( "report timestamp: " +
                 datetime.datetime.now().strftime("%Y%m%d-%H%M%S") )
-
-    def create_buildenv (self, chroot_path):
-        self.log.do( 'mkdir -p "%s"' % chroot_path )
-        return BuildEnv( self.xml, self.log, chroot_path )
 
     def install_packages (self):
         with self.buildenv:
@@ -174,7 +202,7 @@ class ElbeProject ():
                     self.log.printo( "/opt/elbe/source.xml is available" )
                     self.log.printo( "But it does not contain an initvm node" )
             else:
-                sourcepath = os.path.join( self.targetpath, "source.xml" )
+                sourcepath = os.path.join( self.builddir, "source.xml" )
                 source = ElbeXML( sourcepath,
                         buildtype=self.override_buildtype,
                         skip_validate=self.skip_validate )
