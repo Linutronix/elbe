@@ -45,6 +45,14 @@ Recommends: qemu-kvm, elbe-doc
 Description: RootFS build system.
  Elbe is a flexible Root Filesystem builder.
 
+Package: elbe-daemon
+Architecture: all
+Depends: python (>= 2.7~),
+  elbe-common,
+  python-cherrypy3,
+Description: RootFS build system.
+ Elbe is a flexible Root Filesystem builder.
+
 Package: elbe-buildenv
 Architecture: all
 Depends: python (>= 2.7~),
