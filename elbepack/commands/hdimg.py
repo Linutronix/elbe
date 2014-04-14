@@ -23,8 +23,8 @@ import sys
 
 from optparse import OptionParser
 
-from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.filesystem import TargetFs
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ValidationError
 from elbepack.asciidoclog import ASCIIDocLog
 
 def run_command( argv ):
@@ -61,23 +61,12 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    opt.target = os.path.abspath(opt.target)
-
-    if opt.buildtype:
-        buildtype = opt.buildtype
-    else:
-        buildtype = None
-
     try:
-        xml = ElbeXML( args[0], buildtype=buildtype, skip_validate=opt.skip_validation )
+        project = ElbeProject( opt.target, override_buildtype=opt.buildtype,
+                xmlpath=args[0], logpath=opt.output,
+                skip_validate=opt.skip_validation )
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    outf = ASCIIDocLog(opt.output)
-
-    target = os.path.join(opt.target, "target")
-    targetfs = TargetFs(target, clean=False)
-
-    targetfs.part_target(opt.target, opt.skip_grub)
-
+    project.targetfs.part_target(opt.target, opt.skip_grub)
