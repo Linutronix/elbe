@@ -88,12 +88,9 @@ class User(Base):
 class Project (Base):
     __tablename__ = 'projects'
 
-    id = Column (Integer, Sequence('article_aid_seq', start=1001, increment=1),
-                 primary_key=True)
-
+    builddir = Column (String, primary_key=True)
     name     = Column (String)
     version  = Column (String)
-    builddir = Column (String)
     xml      = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
 
@@ -123,10 +120,10 @@ def save_project (ep):
 
     session.commit ()
 
-def load_project (project_id):
+def load_project (builddir):
     session = get_db_session ()
     try:
-        p = session.query (Project).filter (Project.id == project_id). one ()
+        p = session.query(Project).filter(Project.builddir == builddir).one()
         return ElbeProject (p.builddir, name=p.name)
     except NoResultFound:
         return None
