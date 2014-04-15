@@ -19,19 +19,23 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from elbepack.db import (get_db_session, User)
+from elbepack.db import (get_db_session, User, DbAction)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 def run_command (argv):
-    session = get_db_session ()
 
-    root = User (name='root',
-                 fullname='Administrator',
-                 password='foo',
-                 email='root@localhost',
-                 admin=True)
+    if not len(argv):
+        print 'elbe db - no action given'
+        DbAction.print_actions ()
+        return
 
-    session.add (root)
-    session.commit ()
+    try:
+        DbAction (argv[0]).execute (argv[1:])
+    except KeyError:
+        print 'elbe db - unknown action given'
+        DbAction.print_actions ()
+        return
+
+    return
