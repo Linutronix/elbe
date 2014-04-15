@@ -209,6 +209,9 @@ class ElbeProject ():
                     initxml = ElbeXML( "/opt/elbe/source.xml",
                             skip_validate=self.skip_validate )
                     self.xml.get_initvmnode_from( initxml )
+                except ValidationError:
+                    self.log.printo( "/opt/elbe/source.xml validation failed" )
+                    self.log.printo( "will not copy initvm node" )
                 except IOError:
                     self.log.printo( "/opt/elbe/source.xml not available" )
                     self.log.printo( "can not copy initvm node" )
@@ -220,6 +223,7 @@ class ElbeProject ():
                 source = ElbeXML( sourcepath,
                         buildtype=self.override_buildtype,
                         skip_validate=self.skip_validate )
+
                 self.xml.get_debootstrappkgs_from( source )
                 try:
                     self.xml.get_initvmnode_from( source )
