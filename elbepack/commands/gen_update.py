@@ -24,7 +24,6 @@ import os
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.dump import dump_fullpkgs
 
 from elbepack.ziparchives import create_zip_archive
@@ -87,8 +86,7 @@ def run_command( argv ):
         print "Target does not have a build environment"
         sys.exit(20)
 
-    arch = xml.text("project/arch", key="arch" )
-    cache = get_rpcaptcache( project.buildenv.rfs, "aptcache.log", arch )
+    cache = project.get_rpcaptcache()
 
     instpkgs  = cache.get_installed_pkgs()
     instindex = {}
