@@ -148,7 +148,7 @@ def set_xml (builddir, xml_file):
 
     p.name = xml.text ("project/name")
     p.version = xml.text ("project/version")
-    p.edited = datetime.utcnow ()
+    p.edit = datetime.utcnow ()
     p.status = "needs_build"
 
     try:
