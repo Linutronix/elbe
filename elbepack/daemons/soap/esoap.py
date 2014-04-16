@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import binascii
 import soaplib
 
 from soaplib.service import soapmethod
@@ -49,8 +50,9 @@ class ESoap (SimpleWSGISoapApp):
         if not projects:
             return ret
         for p in projects:
-            ret += p.builddir + ":" + str(p.name) + ":" + str(p.version)
-            ret += str(p.status) + ":" + str(p.edited) + ", "
+            ret += p.builddir + "____" + str(p.name)
+            ret += "____" + str(p.version) + "____" + str(p.status)
+            ret += "____" + str(p.edit) + ", "
         return ret
 
     @soapmethod (String, _returns=String)
@@ -71,9 +73,10 @@ class ESoap (SimpleWSGISoapApp):
 
     @soapmethod (String, String, String)
     def set_xml (self, builddir, xmlfile, content):
-        fn = "/tmp/" + xmlfile
+        fn = "/tmp/" + xmlfile.split('/')[-1]
         fp = file (fn, "w")
         fp.write (binascii.a2b_base64 (content))
+        fp.flush ()
         elbepack.db.set_xml (builddir, fn)
 
     @soapmethod (String)

@@ -87,7 +87,16 @@ Description: ELBE build environment
 Package: elbe-soap
 Architecture: all
 Depends: python (>= 2.7~),
-  elbe-buildenv,
+  python-soaplib,
+  elbe-buildenv
+Description: RootFS build system.
+ Elbe is a flexible Root Filesystem builder.
+
+Package: elbe-control
+Architecture: all
+Depends: python (>= 2.7~),
+  python-suds,
+  elbe-common
 Description: RootFS build system.
  Elbe is a flexible Root Filesystem builder.
 
