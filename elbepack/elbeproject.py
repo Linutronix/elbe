@@ -37,7 +37,7 @@ class IncompatibeArchitectureException(Exception):
             "Cannot change architecture from %s to %s in existing project" %
             (oldarch, newarch) )
 
-class ElbeProject ():
+class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
             rpcaptcache_notifier = None):
