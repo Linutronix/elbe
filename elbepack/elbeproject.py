@@ -31,6 +31,12 @@ from elbepack.dump import elbe_report, dump_debootstrappkgs
 from elbepack.dump import dump_fullpkgs, check_full_pkgs 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
+class IncompatibeArchitectureException(Exception):
+    def __init__ (self, oldarch, newarch):
+        Exception.__init__(self,
+            "Cannot change architecture from %s to %s in existing project" %
+            (oldarch, newarch) )
+
 class ElbeProject ():
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
@@ -61,16 +67,8 @@ class ElbeProject ():
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
-        if os.path.exists( self.chrootpath ):
-            elbeversionpath = os.path.join( self.chrootpath,
-                    "etc", "elbe_version" )
-            if os.path.isfile( elbeversionpath ):
-                self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
-            else:
-                self.log.printo( "%s exists, but it does not have an etc/elbe_version file." %
-                        self.chrootpath )
-                # Apparently we do not have a functional build environment
-                self.buildenv = None
+        if self.has_full_buildenv():
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
         else:
             self.buildenv = None
 
@@ -181,6 +179,52 @@ class ElbeProject ():
                     self.xml.text( "project/arch", key="arch" ),
                     self.rpcaptcache_notifier )
         return self._rpcaptcache
+
+    def has_full_buildenv (self):
+        if os.path.exists( self.chrootpath ):
+            elbeversionpath = os.path.join( self.chrootpath,
+                    "etc", "elbe_version" )
+            if os.path.isfile( elbeversionpath ):
+                return True
+            else:
+                self.log.printo( "%s exists, but it does not have an etc/elbe_version file." %
+                        self.chrootpath )
+                # Apparently we do not have a functional build environment
+                return False
+        else:
+            return False
+
+    def set_xml (self, xmlpath):
+        # Use supplied XML file, if given, otherwise change to source.xml
+        if not xmlpath:
+            xmlpath = os.path.join( self.builddir, "source.xml" )
+
+        newxml = ElbeXML( xmlpath, buildtype=self.override_buildtype,
+                skip_validate=self.skip_validate )
+
+        # New XML file has to have the same architecture
+        oldarch = self.xml.text( "project/arch", key="arch" )
+        newarch = newxml.text( "project/arch", key="arch" )
+        if newarch != oldarch:
+            raise IncompatibleArchitectureException( oldarch, newarch )
+
+        # Throw away old APT cache, targetfs and buildenv
+        self._rpcaptcache = None
+        self.targetfs = None
+        self.buildenv = None
+
+        self.xml = newxml
+
+        # Create a new BuildEnv instance, if we have a build directory
+        if self.has_full_buildenv():
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+
+        # Create TargetFs instance, if the target directory exists
+        if os.path.exists( self.targetpath ):
+            self.targetfs = TargetFs( self.targetpath, self.log,
+                    self.buildenv.xml )
+        else:
+            self.targetfs = None
 
     def write_log_header (self):
         if self.name:
