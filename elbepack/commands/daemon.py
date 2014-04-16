@@ -68,8 +68,8 @@ def run_command( argv ):
 
     cherrypy.server.unsubscribe()
     server = cherrypy._cpserver.Server()
-    server.socket_host = opt.host 
-    server.socket_port = opt.port 
+    server.socket_host = opt.host
+    server.socket_port = int(opt.port)
     server.thread_pool = 30
 
     # For SSL Support
