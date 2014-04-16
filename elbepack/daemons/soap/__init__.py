@@ -16,5 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from esoap import ESoap
+
 def get_app():
-    return None
+    return ESoap ()
