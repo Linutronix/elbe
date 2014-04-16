@@ -30,18 +30,18 @@ def get_files (client, builddir):
     return client.service.get_files (builddir)
 
 def build_project (client, builddir):
-    return client.service.build (builddir)
+    client.service.build (builddir)
 
 def set_xml (client, builddir, xml_file):
     fp = file (xml_file, "r")
-    return client.service.set_xml (builddir, xml_file, binascii.b2a_base64(
+    client.service.set_xml (builddir, xml_file, binascii.b2a_base64(
         fp.read ()))
 
 def del_project (client, builddir):
-    return client.service.del_project (builddir)
+    client.service.del_project (builddir)
 
 def create_project (client, builddir):
-    return client.service.create_project (builddir)
+    client.service.create_project (builddir)
 
 class ClientAction(object):
     actiondict = {}
@@ -87,6 +87,7 @@ class ListUsersAction(ClientAction):
         users = list_users (client)
         if not users:
             return
+        users = users.split(', ')
         for u in users:
             print u
 
@@ -173,6 +174,7 @@ class GetFilesAction(ClientAction):
         files = get_files (client, args[0])
         if not files:
             return
+        files = files.split(", ")
         for f in files:
             print f
 

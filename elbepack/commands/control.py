@@ -47,8 +47,6 @@ def run_command (argv):
         print e, wsdl
         return
 
-    print args
-
     if len(args) < 1:
         print 'elbe control - no subcommand given'
         ClientAction.print_actions ()

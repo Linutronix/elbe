@@ -67,7 +67,7 @@ def session_scope(session):
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
-    
+
     def __init__ (self):
         engine = create_engine( self.__class__.db_location )
         Base.metadata.create_all( engine )
