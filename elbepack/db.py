@@ -88,6 +88,7 @@ def get_files (builddir):
 
     return files
 
+# TODO think about return value and locking!
 def build_project (builddir):
     if not os.path.exists (builddir):
         print "project directory doesn't exist"
@@ -104,8 +105,23 @@ def build_project (builddir):
         print "project:", builddir, "isn't in db"
         return
 
+    if p.status == "build_in_progress":
+        print "project:", builddir, "invalid status:", p.status
+        return
+
+    if p.status == "empty_project":
+        print "project:", builddir, "invalid status:", p.status
+        return
+
+    p.status = "build_in_progress"
+    session.commit ()
+
+    # TODO progress notifications
     ep = load_project (builddir)
     ep.build (skip_debootstrap = True)
+
+    p.status = "build_done"
+    session.commit ()
 
 def set_xml (builddir, xml_file):
 
@@ -133,6 +149,7 @@ def set_xml (builddir, xml_file):
     p.name = xml.text ("project/name")
     p.version = xml.text ("project/version")
     p.edited = datetime.utcnow ()
+    p.status = "needs_build"
 
     try:
         copyfile (xml_file, builddir+"/source.xml");
@@ -192,7 +209,7 @@ def create_project (builddir):
     if not session:
         return
 
-    p = Project (builddir=builddir)
+    p = Project (builddir=builddir, status="empty_project")
 
     session.add (p)
     try:
@@ -426,6 +443,7 @@ class Project (Base):
     name     = Column (String)
     version  = Column (String)
     xml      = Column (String)
+    status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
 
 def save_project (ep):
