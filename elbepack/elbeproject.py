@@ -75,7 +75,7 @@ class ElbeProject ():
         # Create TargetFs instance, if the target directory exists
         if os.path.exists( self.targetpath ):
             self.targetfs = TargetFs( self.targetpath, self.log,
-                    self.buildenv.xml )
+                    self.buildenv.xml, clean=False )
         else:
             self.targetfs = None
 
@@ -99,10 +99,10 @@ class ElbeProject ():
         # Install packages
         self.install_packages()
 
-        # Extract target FS
-        if not self.targetfs:
-            self.targetfs = TargetFs( self.targetpath, self.log,
-                    self.buildenv.xml )
+        # Extract target FS. We always create a new instance here with
+        # clean=true, because we want a pristine directory.
+        self.targetfs = TargetFs( self.targetpath, self.log,
+                self.buildenv.xml, clean=True )
         os.chdir( self.buildenv.rfs.fname( '' ) )
         extract_target( self.buildenv.rfs, self.xml, self.targetfs,
                 self.log, self._rpcaptcache )
@@ -219,10 +219,12 @@ class ElbeProject ():
         if self.has_full_buildenv():
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
 
-        # Create TargetFs instance, if the target directory exists
+        # Create TargetFs instance, if the target directory exists.
+        # We use the old content of the directory if no rebuild is done, so
+        # don't clean it (yet).
         if os.path.exists( self.targetpath ):
             self.targetfs = TargetFs( self.targetpath, self.log,
-                    self.buildenv.xml )
+                    self.buildenv.xml, clean=False )
         else:
             self.targetfs = None
 
