@@ -279,7 +279,7 @@ class User(Base):
     id = Column (Integer, Sequence('article_aid_seq', start=1001, increment=1),
                  primary_key=True)
 
-    name     = Column (String)
+    name     = Column (String, unique=True)
     fullname = Column (String)
     password = Column (String)
     email    = Column (String)
