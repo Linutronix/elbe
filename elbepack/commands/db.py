@@ -19,7 +19,6 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from elbepack.db import get_db_session
 from elbepack.dbaction import DbAction
 
 from sqlalchemy import create_engine
