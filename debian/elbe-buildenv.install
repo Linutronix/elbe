@@ -9,6 +9,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/mkcdrom.py
 ./usr/lib/python2.*/*-packages/elbepack/hdimg.py
 ./usr/lib/python2.*/*-packages/elbepack/db.py
+./usr/lib/python2.*/*-packages/elbepack/dbaction.py
 ./usr/lib/python2.*/*-packages/elbepack/dump.py
 ./usr/lib/python2.*/*-packages/elbepack/ziparchives.py
 ./usr/lib/python2.*/*-packages/elbepack/repomanager.py

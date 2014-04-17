@@ -7,6 +7,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/dbsfed.xsd
 ./usr/lib/python2.*/*-packages/elbepack/default-preseed.xml
 ./usr/lib/python2.*/*-packages/elbepack/elbexml.py
+./usr/lib/python2.*/*-packages/elbepack/elbeproject.py
 ./usr/lib/python2.*/*-packages/elbepack/gpg.py
 ./usr/lib/python2.*/*-packages/elbepack/pkgutils.py
 ./usr/lib/python2.*/*-packages/elbepack/treeutils.py
