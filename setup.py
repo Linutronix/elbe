@@ -43,7 +43,7 @@ setup(name='elbe',
       author='Torben Hohn',
       author_email='torbenh@linutronix.de',
       url='http://elbe-rfs.org/',
-      packages=['elbepack', 'elbepack.commands'],
+      packages=['elbepack', 'elbepack.commands', 'elbepack.daemons'],
       package_data = {'elbepack': ["mako/*.mako", "init/*.mako", "dbsfed.xsd", \
 "default-preseed.xml", "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
