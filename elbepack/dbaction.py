@@ -21,8 +21,7 @@
 import os
 
 from optparse import OptionParser
-from elbepack.db import (init_db, list_projects, list_users,
-        get_files, build_project, set_xml, del_project, create_project)
+from elbepack.db import ElbeDB
 
 class DbAction(object):
 
@@ -62,7 +61,8 @@ class InitAction(DbAction):
 
         (opt, arg) = oparser.parse_args (args)
 
-        init_db (opt.name, opt.fullname, opt.password, opt.email, opt.admin)
+        ElbeDB.init_db (opt.name, opt.fullname, opt.password,
+			opt.email, opt.admin)
 
 DbAction.register(InitAction)
 
@@ -74,7 +74,8 @@ class ListProjectsAction(DbAction):
         DbAction.__init__(self, node)
 
     def execute(self, args):
-        projects = list_projects ()
+        db = ElbeDB()
+        projects = db.list_projects ()
         if not projects:
             return
 
@@ -91,7 +92,8 @@ class ListUsersAction(DbAction):
         DbAction.__init__(self, node)
 
     def execute(self, args):
-        users = list_users ()
+        db = ElbeDB()
+        users = db.list_users ()
         if not users:
             return
         for u in users:
@@ -111,7 +113,8 @@ class CreateProjectAction(DbAction):
             print "usage: elbe db create_project <project_dir>"
             return
 
-        create_project (args[0])
+        db = ElbeDB()
+        db.create_project (args[0])
 
 DbAction.register(CreateProjectAction)
 
@@ -127,7 +130,8 @@ class DeleteProjectAction(DbAction):
             print "usage: elbe db del_project <project_dir>"
             return
 
-        del_project (args[0])
+        db = ElbeDB()
+        db.del_project (args[0])
 
 DbAction.register(DeleteProjectAction)
 
@@ -143,7 +147,8 @@ class SetXmlAction(DbAction):
             print "usage: elbe db set_xml <project_dir> <xml>"
             return
 
-        set_xml (args[0], args[1])
+        db = ElbeDB()
+        db.set_xml (args[0], args[1])
 
 DbAction.register(SetXmlAction)
 
@@ -160,7 +165,8 @@ class BuildAction(DbAction):
             print "usage: elbe db build <project_dir>"
             return
 
-        build_project (args[0])
+        db = ElbeDB()
+        db.build_project (args[0])
 
 DbAction.register(BuildAction)
 
@@ -177,7 +183,8 @@ class GetFilesAction(DbAction):
             print "usage: elbe db get_files <project_dir>"
             return
 
-        files = get_files (args[0])
+        db = ElbeDB()
+        files = db.get_files (args[0])
         if not files:
             return
         for f in files:
