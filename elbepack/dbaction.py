@@ -62,7 +62,7 @@ class InitAction(DbAction):
         (opt, arg) = oparser.parse_args (args)
 
         ElbeDB.init_db (opt.name, opt.fullname, opt.password,
-			opt.email, opt.admin)
+                        opt.email, opt.admin)
 
 DbAction.register(InitAction)
 
