@@ -124,11 +124,12 @@ def apply_update (xml):
     sources = apt_pkg.SourceList ()
     sources.read_main_list ()
 
+    log ("initialize apt")
     apt_pkg.init ()
     cache = apt_pkg.Cache ()
 
     status.step = 1
-    log ("updating package cache ...")
+    log ("updating package cache")
     cache.update (ElbeAcquireProgress (cb=log), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
@@ -143,7 +144,7 @@ def apply_update (xml):
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
     status.step = 2
-    log ("calculating packages to install/remove ...")
+    log ("calculating packages to install/remove")
     count = len (hl_cache)
     step = count / 10
     i = 0
@@ -167,7 +168,7 @@ def apply_update (xml):
             depcache.mark_delete (pkg, True)
 
     status.step = 3
-    log ("applying snapshot ...")
+    log ("applying snapshot")
     depcache.commit (ElbeAcquireProgress (cb=log), ElbeInstallProgress (cb=log))
 
 def log (msg):
@@ -193,7 +194,7 @@ def update (upd_file):
 
     global status
 
-    log ( "updating.. " + upd_file)
+    log ( "updating: " + upd_file)
 
     try:
         upd_file_z = ZipFile (upd_file)
@@ -251,6 +252,7 @@ class FileMonitor (pyinotify.ProcessEvent):
 
         global status
 
+        log ("checking file: " + str(event.pathname))
         extension = event.pathname.split ('.') [-1]
 
         if extension == "gpg":
@@ -262,6 +264,8 @@ class FileMonitor (pyinotify.ProcessEvent):
 
         elif status.nosign:
             action_select (event.pathname)
+
+        log ("ignore file: " + str(event.pathname))
 
 def shutdown (signum, fname):
 
@@ -278,6 +282,8 @@ class ObserverThread (threading.Thread):
     def run (self):
 
         global status
+
+        log ("monitoringing updated dir")
 
         while 1:
             if status.observer.check_events (timeout=1000):
