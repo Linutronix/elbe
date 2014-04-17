@@ -33,6 +33,7 @@ from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Array
 from suds.client import Client
+from syslog import syslog
 from wsgiref.simple_server import make_server
 from zipfile import (ZipFile, BadZipfile)
 
@@ -183,7 +184,9 @@ def log (msg):
             print "logging to monitor failed, removing monitor connection"
             status.monitor = None
             print msg
-    else:
+    try:
+        syslog (msg)
+    except:
         print msg
 
 def update (upd_file):
