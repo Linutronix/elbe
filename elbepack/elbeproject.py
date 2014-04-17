@@ -22,7 +22,7 @@ import os
 import datetime
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
-from elbepack.elbexml import ElbeXML, NoInitvmNode
+from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
