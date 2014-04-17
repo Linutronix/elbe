@@ -446,6 +446,9 @@ class Project (Base):
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
 
+# TODO what about source.xml ? stored always in db ? version management ?
+#       build/need_rebuild state ? locking ?
+
 def save_project (ep):
     session = get_db_session ()
 
@@ -456,6 +459,11 @@ def save_project (ep):
                     Project.builddir == ep.builddir).one ()
     except NoResultFound:
         pass
+
+    if not os.path.exists (ep.builddir):
+        os.makedirs (ep.builddir)
+    if not os.path.isfile (ep.builddir + "/source.xml") and ep.xml:
+        ep.xml.xml.write (ep.builddir + "/source.xml")
 
     with open (ep.builddir + "/source.xml") as xml_file:
         xml_str  = xml_file.read ()
