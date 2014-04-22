@@ -102,11 +102,12 @@ class ElbeXML(object):
             mirror += "deb " + self.get_primary_mirror (None)
             mirror += " " + self.prj.text("suite") + " main\n"
 
-            for url in self.prj.node("mirror/url-list"):
-                if url.has("binary"):
-                    mirror += "deb " + url.text("binary").strip() + "\n"
-                if url.has("source"):
-                    mirror += "deb-src "+url.text("source").strip()+"\n"
+            if self.prj.has("mirror/url-list"):
+                for url in self.prj.node("mirror/url-list"):
+                    if url.has("binary"):
+                        mirror += "deb " + url.text("binary").strip() + "\n"
+                    if url.has("source"):
+                        mirror += "deb-src "+url.text("source").strip()+"\n"
 
         if self.prj.has("mirror/cdrom"):
             mirror += "deb copy:///cdrom %s main added\n" % (self.prj.text("suite"))
