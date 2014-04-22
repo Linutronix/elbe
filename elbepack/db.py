@@ -22,6 +22,7 @@ import os
 
 from datetime import datetime
 from shutil import (rmtree, copyfile)
+from contextlib import contextmanager
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
@@ -36,6 +37,24 @@ from elbepack.elbexml import (ElbeXML, ValidationError)
 
 Base = declarative_base ()
 
+class ElbeDBError(Exception):
+    def __init__ (self, message):
+        Exception.__init__(self, message)
+
+@contextmanager
+def session_scope(session):
+    try:
+        yield session
+        try:
+            session.commit()
+        except OperationalError as e:
+            raise ElbeDBError( "database commit failed: " + str(e) )
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
@@ -47,190 +66,167 @@ class ElbeDB(object):
         self.session = smaker()
 
     def list_users (self):
-        return self.session.query (User)
+        with session_scope(self.session) as s:
+            return s.query (User)
 
     def list_projects (self):
-        return self.session.query (Project)
+        with session_scope(self.session) as s:
+            return s.query (Project)
 
     def get_files (self, builddir):
+        # Can throw: ElbeDBError, IOError
+
         if not os.path.exists (builddir):
-            print "project directory doesn't exist"
-            return
+            raise ElbeDBError( "project directory does not exist" )
 
         files = []
-        try:
-            with open (builddir+"/files-to-extract") as fte:
-                files.append (fte.read ())
-        except IOError as e:
-            print e
-            return None
+
+        with open (builddir+"/files-to-extract") as fte:    #IOError
+            files.append (fte.read ())      #IOError
 
         return files
 
     def set_xml (self, builddir, xml_file):
+        # This method can throw: ElbeDBError, ValidationError, OSError
+
         if not os.path.exists (builddir):
-            print "project directory doesn't exist"
-            return
+            raise ElbeDBError( "project directory does not exist" )
 
-        p = None
-        try:
-            p = self.session.query (Project). \
-                    filter(Project.builddir == builddir).one()
-        except NoResultFound:
-            print "project:", builddir, "isn't in db"
-            return
+        with session_scope(self.session) as s:
+            p = None
+            try:
+                p = s.query (Project). \
+                        filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
 
-        try:
-            xml = ElbeXML (xml_file)
-        except ValidationError as e:
-            print e
-            return
+            xml = ElbeXML (xml_file)    #ValidationError
 
-        p.name = xml.text ("project/name")
-        p.version = xml.text ("project/version")
-        p.edit = datetime.utcnow ()
-        p.status = "needs_build"
+            p.name = xml.text ("project/name")
+            p.version = xml.text ("project/version")
+            p.edit = datetime.utcnow ()
+            p.status = "needs_build"
 
-        try:
-            copyfile (xml_file, builddir+"/source.xml");
-        except OSError as e:
-            print "copy xml_file to builddir failed", e
-            return
-
-        try:
-            self.session.commit ()
-        except OperationalError as e:
-            print e
-            return
+            copyfile (xml_file, builddir+"/source.xml");    #OSError
 
 
     # TODO what about source.xml ? stored always in db ? version management ?
     #       build/need_rebuild state ? locking ?
 
     def create_project (self, builddir):
+        # Throws: ElbeDBError, OSError
         if os.path.exists (builddir):
-            print "project directory already exists"
-            return
+            raise ElbeDBError( "project directory %s already exists" %
+                    builddir )
 
-        try:
-            os.makedirs (builddir)
-        except OSError as e:
-            print "create build directory failed", e
-            return
+        os.makedirs (builddir)  #OSError
 
         p = Project (builddir=builddir, status="empty_project")
 
-        self.session.add (p)
         try:
-            self.session.commit ()
-        except OperationalError as e:
-            print e
-            return
+            with session_scope(self.session) as s:
+                s.add (p)
+        except ElbeDBError as e:
+            # If we fail to create the database entry, we have to remove the
+            # fresh and otherwise orphaned build directory.
+            rmtree (builddir)
+            raise
 
 
     def del_project (self, builddir):
+        # Throws: ElbeDBError, OSError
         p = None
-        try:
-            p = self.session.query (Project).filter(Project.builddir == builddir).one()
-        except NoResultFound:
-            print "project:", builddir, "isn't in db"
-            return
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
 
-        self.session.delete (p)
+            if os.path.exists (builddir):
+                rmtree (builddir)   # OSError
 
-        if not os.path.exists (builddir):
-            print "project directory doesn't exist"
-            return
-
-        try:
-            rmtree (builddir)
-        except OSError as e:
-            print "remove build directory failed", e
-            return
-
-        try:
-            self.session.commit ()
-        except OperationalError as e:
-            print e
-            return
+            s.delete (p)
 
     def save_project (self, ep):
+        # TODO: Recover in case writing the XML file or commiting the
+        # database entry fails
         project = None
 
-        try:
-            project = self.session.query (Project).filter (
-                        Project.builddir == ep.builddir).one ()
-        except NoResultFound:
-            pass
+        with session_scope(self.session) as s:
+            try:
+                project = s.query (Project).filter (
+                            Project.builddir == ep.builddir).one ()
+            except NoResultFound:
+                pass
 
-        if not os.path.exists (ep.builddir):
-            os.makedirs (ep.builddir)
-        if not os.path.isfile (ep.builddir + "/source.xml") and ep.xml:
-            ep.xml.xml.write (ep.builddir + "/source.xml")
+            if not os.path.exists (ep.builddir):
+                os.makedirs (ep.builddir)
+            if not os.path.isfile (ep.builddir + "/source.xml") and ep.xml:
+                ep.xml.xml.write (ep.builddir + "/source.xml")
 
-        with open (ep.builddir + "/source.xml") as xml_file:
-            xml_str  = xml_file.read ()
-            if not project:
-                project = Project (name = ep.xml.text ("project/name"),
-                                   version = ep.xml.text ("project/version"),
-                                   builddir = ep.builddir,
-                                   xml = xml_str)
-                self.session.add (project)
-            else:
-                project.edit = datetime.utcnow ()
-                project.version = ep.xml.text ("project/version")
-                project.xml = xml_str
-
-        self.session.commit ()
+            with open (ep.builddir + "/source.xml") as xml_file:
+                xml_str  = xml_file.read ()
+                if not project:
+                    project = Project (name = ep.xml.text ("project/name"),
+                                       version = ep.xml.text ("project/version"),
+                                       builddir = ep.builddir,
+                                       xml = xml_str)
+                    s.add (project)
+                else:
+                    project.edit = datetime.utcnow ()
+                    project.version = ep.xml.text ("project/version")
+                    project.xml = xml_str
 
 
     def load_project (self, builddir):
-        try:
-            p = self.session.query(Project). \
-                    filter(Project.builddir == builddir).one()
-            return ElbeProject (p.builddir, name=p.name)
-        except NoResultFound:
-            return None
+        with session_scope(self.session) as s:
+            try:
+                p = s.query(Project). \
+                        filter(Project.builddir == builddir).one()
+                return ElbeProject (p.builddir, name=p.name)
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
 
 
     def set_build_in_progress (self, builddir):
-        try:
-            p = self.session.query( Project ).with_lockmode( 'update' ). \
-                    filter( Project.builddir == builddir ).one()
-        except NoResultFound:
-            print "project:", builddir, "isn't in db"
-            return False
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).with_lockmode( 'update' ). \
+                        filter( Project.builddir == builddir ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
 
-        if p.status == "build_in_progress" or p.status == "empty_project":
-            print "project:", builddir, "invalid status:", p.status
-            self.session.close()
-            return False
+            if p.status == "build_in_progress" or p.status == "empty_project":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
 
-        p.status = "build_in_progress"
-        self.session.commit()
-        return True
+            p.status = "build_in_progress"
 
 
     def set_build_done (self, builddir, successful=True):
-        try:
-            p = self.session.query( Project ).with_lockmode( 'update' ). \
-                    filter( Project.builddir == builddir ).one()
-        except NoResultFound:
-            print "project:", builddir, "isn't in db"
-            return False
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).with_lockmode( 'update' ). \
+                        filter( Project.builddir == builddir ).one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
 
-        if p.status != "build_in_progress":
-            print "project:", builddir, "invalid status:", p.status
-            self.session.close()
-            return False
+            if p.status != "build_in_progress":
+                raise ElbeDBError( "project: " + builddir + " invalid status: " +
+                        p.status )
 
-        if successful:
-            p.status = "build_done"
-        else:
-            p.status = "build_failed"
-        self.session.commit()
-
-        return True
+            if successful:
+                p.status = "build_done"
+            else:
+                p.status = "build_failed"
 
 
     ### User management ###
@@ -242,27 +238,30 @@ class ElbeDB(object):
                   password = password,
                   email = email,
                   admin = admin )
-        self.session.add( u )
-        self.session.commit()
+        with session_scope(self.session) as s:
+            s.add( u )
+
 
     def get_userid (self, user_name):
-        id = self.session.query(User.id).filter(User.name == user_name).first()
-        return id
+        with session_scope(self.session) as s:
+            id = s.query(User.id).filter(User.name == user_name).first()
+            return id
 
     def verify_password (self, name, password):
-        stored_password = self.session.query(User.password).\
-                filter(User.name == name).first()
-        if stored_password is None:
-            # For a non-existent user, password verification always fails
-            return False
-        else:
-            # TODO compare hashes instead of plaintext
-            return stored_password == password
+        with session_scope(self.session) as s:
+            stored_password = s.query(User.password).\
+                    filter(User.name == name).first()
+            if stored_password is None:
+                # For a non-existent user, password verification always fails
+                return False
+            else:
+                # TODO compare hashes instead of plaintext
+                return stored_password == password
 
     def get_user_role (self, name):
-        role = self.session.query(User.admin).\
-                filter(User.name == name).first()
-        return role
+        with session_scope(self.session) as s:
+            role = s.query(User.admin).filter(User.name == name).first()
+            return role
 
     @classmethod
     def init_db (cls, name, fullname, password, email, admin):
@@ -277,9 +276,8 @@ class ElbeDB(object):
 
         try:
             db.add_user(name, fullname, password, email, admin)
-        except OperationalError as e:
+        except ElbeDBError as e:
             print e
-            return
 
 
 class User(Base):
