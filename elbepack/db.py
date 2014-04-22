@@ -267,7 +267,7 @@ class ElbeDB(object):
     def init_db (cls, name, fullname, password, email, admin):
         if not os.path.exists (cls.db_path):
             try:
-                os.makedirs (db_path)
+                os.makedirs (cls.db_path)
             except OSError as e:
                 print e
                 return
