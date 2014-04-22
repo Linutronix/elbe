@@ -166,7 +166,15 @@ class BuildAction(DbAction):
             return
 
         db = ElbeDB()
-        db.build_project (args[0])
+        if db.set_build_in_progress( args[0] ):
+            try:
+                ep = db.load_project( args[0] )
+                ep.build( skip_debootstrap = True )
+            except Exception as e:
+                db.set_build_done( args[0], successful = False )
+                print e
+                return
+            db.set_build_done( args[0], successful = True )
 
 DbAction.register(BuildAction)
 

@@ -193,36 +193,45 @@ class ElbeDB(object):
             return None
 
 
-    def build_project (self, builddir):
-        if not os.path.exists (builddir):
-            print "project directory doesn't exist"
-            return
-
-        p = None
+    def set_build_in_progress (self, builddir):
         try:
-            p = self.session.query (Project). \
-                    filter(Project.builddir == builddir).one()
+            p = self.session.query( Project ).with_lockmode( 'update' ). \
+                    filter( Project.builddir == builddir ).one()
         except NoResultFound:
             print "project:", builddir, "isn't in db"
-            return
+            return False
 
-        if p.status == "build_in_progress":
+        if p.status == "build_in_progress" or p.status == "empty_project":
             print "project:", builddir, "invalid status:", p.status
-            return
-
-        if p.status == "empty_project":
-            print "project:", builddir, "invalid status:", p.status
-            return
+            self.session.close()
+            return False
 
         p.status = "build_in_progress"
-        self.session.commit ()
+        self.session.commit()
+        return True
 
-        # TODO progress notifications
-        ep = self.load_project (builddir)
-        ep.build (skip_debootstrap = True)
 
-        p.status = "build_done"
-        self.session.commit ()
+    def set_build_done (self, builddir, successful=True):
+        try:
+            p = self.session.query( Project ).with_lockmode( 'update' ). \
+                    filter( Project.builddir == builddir ).one()
+        except NoResultFound:
+            print "project:", builddir, "isn't in db"
+            return False
+
+        if p.status != "build_in_progress":
+            print "project:", builddir, "invalid status:", p.status
+            self.session.close()
+            return False
+
+        if successful:
+            p.status = "build_done"
+        else:
+            p.status = "build_failed"
+        self.session.commit()
+
+        return True
+
 
     ### User management ###
 
