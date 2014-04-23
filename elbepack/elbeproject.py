@@ -71,6 +71,7 @@ class ElbeProject (object):
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
         else:
             self.buildenv = None
+            return
 
         # Create TargetFs instance, if the target directory exists
         if os.path.exists( self.targetpath ):
