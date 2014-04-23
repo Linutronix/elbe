@@ -43,6 +43,15 @@ class ElbeDBError(Exception):
     def __init__ (self, message):
         Exception.__init__(self, message)
 
+class InvalidLogin(Exception):
+    def __init__ (self):
+        Exception.__init__(self, "Invalid login")
+
+class LoginData(object):
+    def __init__(self, userid, admin):
+        self.userid = userid
+        self.admin = admin
+
 @contextmanager
 def session_scope(session):
     try:
@@ -269,34 +278,22 @@ class ElbeDB(object):
         with session_scope(self.session) as s:
             s.add( u )
 
-
-    def get_userid (self, user_name):
+    def get_logindata (self, name, password):
         with session_scope(self.session) as s:
+            # Find the user with the given name
             try:
-                res = s.query(User.id).filter(User.name == user_name).one()
-                return res[0]
+                u = s.query(User).filter(User.name == name).one()
             except NoResultFound:
-                raise ElbeDBError(
-                        "Cannot get user id for %s: Not in database" %
-                        user_name )
+                raise InvalidLogin()
 
-    def verify_password (self, name, password):
-        with session_scope(self.session) as s:
-            res = s.query(User.pwhash).filter(User.name == name).first()
-            if res is None:
-                # For a non-existent user, password verification always fails
-                return False
-            else:
-                return pbkdf2_sha512.verify( password, res[0] )
+            # Check password, throw an exception if invalid
+            if not pbkdf2_sha512.verify( password, u.pwhash ):
+                raise InvalidLogin()
 
-    def get_user_role (self, name):
-        with session_scope(self.session) as s:
-            try:
-                res = s.query(User.admin).filter(User.name == name).one()
-                return res[0]
-            except NoResultFound:
-                raise ElbeDBError(
-                        "Cannot get role of user %s: Not in database" % name )
+            # Everything good, now return the user id and the role to
+            # the caller
+            return LoginData( userid=u.id, admin=u.admin )
+
 
     @classmethod
     def init_db (cls, name, fullname, password, email, admin):
