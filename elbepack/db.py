@@ -24,6 +24,8 @@ from datetime import datetime
 from shutil import (rmtree, copyfile)
 from contextlib import contextmanager
 
+from passlib.hash import pbkdf2_sha512
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
 
@@ -150,6 +152,33 @@ class ElbeDB(object):
 
             s.delete (p)
 
+
+    def reset_project (self, builddir, clean):
+        # Throws: ElbeDBError, OSError
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            sourcexmlpath = os.path.join( builddir, "source.xml" )
+            if os.path.exists( sourcexmlpath ):
+                p.status = "needs_rebuild"
+            else:
+                p.status = "empty_project"
+
+        if clean:
+            targetpath = os.path.join( builddir, "target" )
+            if os.path.exists( targetpath ):
+                rmtree( targetpath )      # OSError 
+
+            chrootpath = os.path.join( builddir, "chroot" )
+            if os.path.exists( chrootpath ):
+                rmtree( chrootpath )      # OSError
+
+
     def save_project (self, ep):
         # TODO: Recover in case writing the XML file or commiting the
         # database entry fails
@@ -232,10 +261,9 @@ class ElbeDB(object):
     ### User management ###
 
     def add_user (self, name, fullname, password, email, admin):
-        # TODO store a hash instead of plaintext
         u = User( name = name,
                   fullname = fullname,
-                  password = password,
+                  pwhash = pbkdf2_sha512.encrypt( password ),
                   email = email,
                   admin = admin )
         with session_scope(self.session) as s:
@@ -249,14 +277,13 @@ class ElbeDB(object):
 
     def verify_password (self, name, password):
         with session_scope(self.session) as s:
-            stored_password = s.query(User.password).\
+            stored_pwhash = s.query(User.pwhash).\
                     filter(User.name == name).first()
-            if stored_password is None:
+            if stored_pwhash is None:
                 # For a non-existent user, password verification always fails
                 return False
             else:
-                # TODO compare hashes instead of plaintext
-                return stored_password == password
+                return pbkdf2_sha512.verify( password, stored_pwhash )
 
     def get_user_role (self, name):
         with session_scope(self.session) as s:
@@ -288,7 +315,7 @@ class User(Base):
 
     name     = Column (String, unique=True)
     fullname = Column (String)
-    password = Column (String)
+    pwhash   = Column (String)
     email    = Column (String)
     admin    = Column (Boolean)
     # projects = relationship("Project", backref="users")

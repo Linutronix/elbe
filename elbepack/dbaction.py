@@ -199,3 +199,28 @@ class GetFilesAction(DbAction):
             print f
 
 DbAction.register(GetFilesAction)
+
+
+class ResetProjectAction(DbAction):
+
+    tag = 'reset_project'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        oparser = OptionParser (
+                usage="usage: %prog db reset_project [options] <project_dir>")
+        oparser.add_option ("--clean", dest="clean", default=False,
+                action="store_true")
+
+        (opt, arg) = oparser.parse_args (args)
+
+        if len(arg) != 1:
+            print "wrong number of arguments"
+            oparser.print_help()
+
+        db = ElbeDB()
+        db.reset_project (arg[0], opt.clean)
+
+DbAction.register(ResetProjectAction)
