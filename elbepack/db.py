@@ -152,6 +152,33 @@ class ElbeDB(object):
 
             s.delete (p)
 
+
+    def reset_project (self, builddir, clean):
+        # Throws: ElbeDBError, OSError
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            sourcexmlpath = os.path.join( builddir, "source.xml" )
+            if os.path.exists( sourcexmlpath ):
+                p.status = "needs_rebuild"
+            else:
+                p.status = "empty_project"
+
+        if clean:
+            targetpath = os.path.join( builddir, "target" )
+            if os.path.exists( targetpath ):
+                rmtree( targetpath )      # OSError 
+
+            chrootpath = os.path.join( builddir, "chroot" )
+            if os.path.exists( chrootpath ):
+                rmtree( chrootpath )      # OSError
+
+
     def save_project (self, ep):
         # TODO: Recover in case writing the XML file or commiting the
         # database entry fails
