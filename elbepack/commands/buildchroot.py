@@ -23,7 +23,7 @@ import sys
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
-from elbepack.db import save_project
+from elbepack.db import ElbeDB
 
 
 def run_command( argv ):
@@ -78,4 +78,5 @@ def run_command( argv ):
     project.build( opt.skip_debootstrap, opt.skip_cdrom,
             opt.build_sources, opt.debug )
 
-    save_project (project)
+    db = ElbeDB()
+    db.save_project (project)
