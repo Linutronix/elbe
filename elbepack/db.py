@@ -272,23 +272,31 @@ class ElbeDB(object):
 
     def get_userid (self, user_name):
         with session_scope(self.session) as s:
-            id = s.query(User.id).filter(User.name == user_name).first()
-            return id
+            try:
+                res = s.query(User.id).filter(User.name == user_name).one()
+                return res[0]
+            except NoResultFound:
+                raise ElbeDBError(
+                        "Cannot get user id for %s: Not in database" %
+                        user_name )
 
     def verify_password (self, name, password):
         with session_scope(self.session) as s:
-            stored_pwhash = s.query(User.pwhash).\
-                    filter(User.name == name).first()
-            if stored_pwhash is None:
+            res = s.query(User.pwhash).filter(User.name == name).first()
+            if res is None:
                 # For a non-existent user, password verification always fails
                 return False
             else:
-                return pbkdf2_sha512.verify( password, stored_pwhash )
+                return pbkdf2_sha512.verify( password, res[0] )
 
     def get_user_role (self, name):
         with session_scope(self.session) as s:
-            role = s.query(User.admin).filter(User.name == name).first()
-            return role
+            try:
+                res = s.query(User.admin).filter(User.name == name).one()
+                return res[0]
+            except NoResultFound:
+                raise ElbeDBError(
+                        "Cannot get role of user %s: Not in database" % name )
 
     @classmethod
     def init_db (cls, name, fullname, password, email, admin):
