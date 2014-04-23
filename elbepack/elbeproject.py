@@ -99,6 +99,11 @@ class ElbeProject (object):
         # Install packages
         self.install_packages()
 
+        try:
+            self.buildenv.rfs.dump_elbeversion (self.xml)
+        except IOError:
+            self.log.printo ("dump elbeversion failed")
+
         # Extract target FS. We always create a new instance here with
         # clean=true, because we want a pristine directory.
         self.targetfs = TargetFs( self.targetpath, self.log,

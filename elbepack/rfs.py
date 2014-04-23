@@ -109,11 +109,6 @@ class BuildEnv ():
             finally:
                 self.cdrom_umount()
 
-            try:
-                self.rfs.dump_elbeversion (self.xml)
-            except IOError:
-                self.log.printo ("dump elbeversion failed")
-
             return
 
         if self.xml.has("project/noauth"):
@@ -135,10 +130,6 @@ class BuildEnv ():
 
             self.log.chroot (self.rfs.path, 'dpkg --configure -a')
 
-            try:
-                self.rfs.dump_elbeversion (self.xml)
-            except IOError:
-                self.log.printo ("dump elbeversion failed")
         finally:
             self.cdrom_umount()
 
