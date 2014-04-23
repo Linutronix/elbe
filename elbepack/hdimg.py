@@ -31,7 +31,7 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
     img_files = []
 
     if not mtd.has("ubivg"):
-        return
+        return img_files
 
     ubivg = mtd.node("ubivg")
     for v in ubivg:
