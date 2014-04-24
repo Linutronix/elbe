@@ -45,6 +45,15 @@ class ElbeProject (object):
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
 
+        self.name = name
+        self.override_buildtype = override_buildtype
+        self.skip_validate = skip_validate
+
+        # Apt-Cache will be created on demand with the specified notifier by
+        # the get_rpcaptcache method
+        self._rpcaptcache = None
+        self.rpcaptcache_notifier = rpcaptcache_notifier
+
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
         if xmlpath:
@@ -62,15 +71,13 @@ class ElbeProject (object):
         else:
             self.log = StdoutLog()
 
-        self.name = name
-        self.override_buildtype = override_buildtype
-
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
         if self.has_full_buildenv():
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
         else:
             self.buildenv = None
+            self.targetfs = None
             return
 
         # Create TargetFs instance, if the target directory exists
@@ -79,13 +86,6 @@ class ElbeProject (object):
                     self.buildenv.xml, clean=False )
         else:
             self.targetfs = None
-
-        # Apt-Cache will be created on demand with the specified notifier by
-        # the get_rpcaptcache method
-        self._rpcaptcache = None
-        self.rpcaptcache_notifier = rpcaptcache_notifier
-
-        self.skip_validate = skip_validate
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
             build_sources = False, debug = False):
