@@ -187,6 +187,11 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
+            if p.status == "build_in_progress":
+                raise ElbeDBError(
+                        "cannot delete project %s while it is being built" %
+                        builddir )
+
             if os.path.exists (builddir):
                 rmtree (builddir)   # OSError
 
