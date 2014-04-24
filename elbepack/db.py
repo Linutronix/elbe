@@ -19,6 +19,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import errno
 
 from datetime import datetime
 from shutil import (rmtree, copyfile)
@@ -145,21 +146,34 @@ class ElbeDB(object):
 
     def create_project (self, builddir):
         # Throws: ElbeDBError, OSError
-        if os.path.exists (builddir):
-            raise ElbeDBError( "project directory %s already exists" %
-                    builddir )
-
-        os.makedirs (builddir)  #OSError
-
-        p = Project (builddir=builddir, status="empty_project")
+        directory_created = False
 
         try:
             with session_scope(self.session) as s:
+                if s.query(Project).\
+                        filter(Project.builddir == builddir).count() > 0:
+                    raise ElbeDBError( "project %s already exists in database" %
+                            builddir )
+
+                try:
+                    os.makedirs (builddir)  #OSError
+                    directory_created = True
+                except OSError as e:
+                    if e.errno == errno.EEXIST:
+                        raise ElbeDBError(
+                                "project directory %s already exists" %
+                                builddir )
+                    else:
+                        raise
+
+                p = Project (builddir=builddir, status="empty_project")
                 s.add (p)
-        except ElbeDBError as e:
-            # If we fail to create the database entry, we have to remove the
-            # fresh and otherwise orphaned build directory.
-            rmtree (builddir)
+        except:
+            # If we have created a project directory but could not add the
+            # project to the database, remove the otherwise orphaned directory
+            # again.
+            if directory_created:
+                rmtree (builddir)       #OSError
             raise
 
 
