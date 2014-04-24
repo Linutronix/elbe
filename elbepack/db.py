@@ -113,6 +113,11 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
+            if p.status == "build_in_progress":
+                raise ElbeDBError(
+                        "cannot set XML file while project %s is being built" %
+                        builddir )
+
             xml = ElbeXML (xml_file)    #ValidationError
 
             p.name = xml.text ("project/name")
