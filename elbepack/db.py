@@ -90,10 +90,22 @@ class ElbeDB(object):
         if not os.path.exists (builddir):
             raise ElbeDBError( "project directory does not exist" )
 
-        files = []
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
 
-        with open (builddir+"/files-to-extract") as fte:    #IOError
-            files.append (fte.read ())      #IOError
+            if p.status != "build_done":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            files = []
+
+            with open (builddir+"/files-to-extract") as fte:    #IOError
+                files.append (fte.read ())      #IOError
 
         return files
 
