@@ -30,7 +30,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
@@ -64,7 +64,7 @@ def session_scope(session):
         session.rollback()
         raise
     finally:
-        session.close()
+        session.remove()
 
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
@@ -74,7 +74,7 @@ class ElbeDB(object):
         engine = create_engine( self.__class__.db_location )
         Base.metadata.create_all( engine )
         smaker = sessionmaker( bind=engine )
-        self.session = smaker()
+        self.session = scoped_session( smaker )
 
     def list_users (self):
         with session_scope(self.session) as s:
