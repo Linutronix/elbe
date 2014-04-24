@@ -141,7 +141,7 @@ class ElbeDB(object):
 
 
     # TODO what about source.xml ? stored always in db ? version management ?
-    #       build/need_rebuild state ? locking ?
+    #       build/needs_build state ? locking ?
 
     def create_project (self, builddir):
         # Throws: ElbeDBError, OSError
@@ -191,7 +191,7 @@ class ElbeDB(object):
 
             sourcexmlpath = os.path.join( builddir, "source.xml" )
             if os.path.exists( sourcexmlpath ):
-                p.status = "needs_rebuild"
+                p.status = "needs_build"
             else:
                 p.status = "empty_project"
 
