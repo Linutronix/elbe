@@ -155,7 +155,8 @@ class BuildEnv ():
         preseed = get_preseed( self.xml )
         preseed_txt = preseed_to_text( preseed )
         self.rfs.write_file( "opt/elbe/preseed.txt", 0644, preseed_txt )
-        self.log.chroot( self.rfs.path, 'debconf-set-selections < %s' % self.rfs.fname("opt/elbe/preseed.txt") )
+        with self.rfs:
+            self.log.chroot( self.rfs.path, 'debconf-set-selections < %s' % self.rfs.fname("opt/elbe/preseed.txt") )
 
 
     def create_apt_prefs (self):
