@@ -88,6 +88,10 @@ def run_command( argv ):
 
     xml = etree( args[0] )
 
+    if not xml.has( "initvm" ):
+        print "fatal error: xml missing mandatory section 'initvm'"
+        sys.exit(20)
+
     if opt.buildtype:
         buildtype = opt.buildtype
     elif xml.has( "initvm/buildtype" ):
