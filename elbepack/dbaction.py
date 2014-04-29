@@ -76,8 +76,6 @@ class ListProjectsAction(DbAction):
     def execute(self, args):
         db = ElbeDB()
         projects = db.list_projects ()
-        if not projects:
-            return
 
         for p in projects:
             print p.builddir+":", p.name, "[", p.version, "]", p.edit
@@ -94,8 +92,7 @@ class ListUsersAction(DbAction):
     def execute(self, args):
         db = ElbeDB()
         users = db.list_users ()
-        if not users:
-            return
+
         for u in users:
             print u.name+":", u.fullname, "<"+u.email+">"
 

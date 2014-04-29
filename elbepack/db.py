@@ -31,7 +31,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, object_mapper
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
@@ -79,11 +79,19 @@ class ElbeDB(object):
 
     def list_users (self):
         with session_scope(self.session) as s:
-            return s.query (User)
+            res = s.query (User).all()
+            ret = []
+            for u in res:
+                ret.append(UserData(u))
+            return ret
 
     def list_projects (self):
         with session_scope(self.session) as s:
-            return s.query (Project)
+            res = s.query (Project).all()
+            ret = []
+            for p in res:
+                ret.append(ProjectData(p))
+            return ret
 
     def get_files (self, builddir):
         # Can throw: ElbeDBError, IOError
@@ -361,6 +369,13 @@ class User(Base):
     admin    = Column (Boolean)
     # projects = relationship("Project", backref="users")
 
+class UserData (object):
+    def __init__ (self, user):
+        self.name       = str(user.name)
+        self.fullname   = str(user.fullname)
+        self.email      = str(user.email)
+        self.admin      = bool(user.admin)
+
 
 class Project (Base):
     __tablename__ = 'projects'
@@ -371,3 +386,15 @@ class Project (Base):
     xml      = Column (String)
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
+
+class ProjectData (object):
+    def __init__ (self, project):
+        self.builddir   = str(project.builddir)
+        self.name       = str(project.name)
+        self.version    = str(project.version)
+        #self.xml        = str(project.xml) # omit, as long as not needed
+        self.status     = str(project.status)
+        self.edit       = datetime(project.edit.year, project.edit.month,
+                            project.edit.day, project.edit.hour,
+                            project.edit.minute, project.edit.second,
+                            project.edit.microsecond, project.edit.tzinfo)
