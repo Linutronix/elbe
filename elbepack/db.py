@@ -28,10 +28,12 @@ from contextlib import contextmanager
 from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
+from sqlalchemy import (Column, ForeignKey)
+from sqlalchemy import (Integer, String, Boolean, Sequence, DateTime)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, object_mapper
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
@@ -369,7 +371,7 @@ class User(Base):
     pwhash   = Column (String)
     email    = Column (String)
     admin    = Column (Boolean)
-    # projects = relationship("Project", backref="users")
+    projects = relationship("Project", backref="owner")
 
 class UserData (object):
     def __init__ (self, user):
@@ -388,6 +390,7 @@ class Project (Base):
     xml      = Column (String)
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
+    owner_id = Column (Integer, ForeignKey('users.id'))
 
 class ProjectData (object):
     def __init__ (self, project):
