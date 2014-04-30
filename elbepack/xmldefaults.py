@@ -3,7 +3,7 @@ import random
 import string
 import sys
 
-armel_defaults = { 
+armel_defaults = {
         "arch":         "armel",
         "size":         "20G",
         "mem":          "256",
@@ -32,8 +32,9 @@ armhf_defaults = {
         "interpreter":  "qemu-system-arm",
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
-        "machine":      "versatilepb -cpu cortex-a9",
-        "nicmodel":     "smc91c111"
+        "machine":      "vexpress-a9 -cpu cortex-a9",
+        "nicmodel":     "smc91c111",
+        "triplet":      "arm-linux-gnueabihf"
 }
 
 armhf_virtio_defaults = {
