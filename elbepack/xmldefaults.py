@@ -33,7 +33,7 @@ armhf_defaults = {
         "userinterpr":  "qemu-arm-static",
         "console":      "ttyAMA0,115200n1",
         "machine":      "vexpress-a9 -cpu cortex-a9",
-        "nicmodel":     "smc91c111",
+        "nicmodel":     "lan9118",
         "triplet":      "arm-linux-gnueabihf"
 }
 

@@ -120,7 +120,11 @@ all: ${all_targets}
 
 .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
 	${interpreter}  \
+		% if machine == 'vexpress-a9 -cpu cortex-a9':
+		-M versatilepb -cpu cortex-a9 \
+		% else:
 		-M ${machine} \
+		% endif
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
@@ -136,7 +140,11 @@ all: ${all_targets}
 % if not opt.debug:
 		-nographic \
 % endif
+		% if machine == 'vexpress-a9 -cpu cortex-a9':
+		-net nic,vlan=1,model=smc91c111,macaddr="${nicmac}" \
+		% else:
 		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
+		% endif
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
 		-usb && reset
@@ -146,10 +154,16 @@ all: ${all_targets}
 run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 	${interpreter}  \
 		-M ${machine} \
+% if prj.has("buildtype") and prj.text("buildtype") == "armhf":
+	-append 'root=/dev/mmcblk0p1' \
+	-sd buildenv.img \
+% else:
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
 		-drive file=buildenv.img,if=${hd_type},bus=1,unit=0 \
+% endif
+		-append 'root=/dev/${hd_name}' \
 % endif
 		-no-reboot \
 		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
@@ -161,7 +175,6 @@ run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 % endif
 		-kernel .elbe-vm/vmkernel \
 		-initrd .elbe-vm/vminitrd \
-		-append 'root=/dev/${hd_name}' \
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
@@ -173,10 +186,16 @@ run: .elbe-vm/vmkernel .elbe-vm/vminitrd
 run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
 	${interpreter}  \
 		-M ${machine} \
+% if prj.has("buildtype") and prj.text("buildtype") == "armhf":
+	-append 'root=/dev/mmcblk0p1 console=ttyAMA0,115200' \
+	-sd buildenv.img \
+% else:
 % if opt.oldkvm:
 		-drive file=buildenv.img,if=${hd_type},index=0,boot=on \
 % else:
 		-drive file=buildenv.img,if=${hd_type},bus=1,unit=0 \
+% endif
+		-append 'root=/dev/${hd_name}' \
 % endif
 		-no-reboot \
 		-net nic,vlan=1,model=${nicmodel},macaddr="${nicmac}" \
@@ -189,7 +208,6 @@ run-con: .elbe-vm/vmkernel .elbe-vm/vminitrd
 % endif
 		-kernel .elbe-vm/vmkernel \
 		-initrd .elbe-vm/vminitrd \
-		-append 'root=/dev/${hd_name}' \
 		-smp $(SMP) \
 % if prj.has("buildimage/portforwarding"):
 % for f in prj.node("buildimage/portforwarding"):
