@@ -136,7 +136,11 @@ def get_initrd_uri( prj, defs, arch ):
 
 
 def copy_kinitrd( prj, target_dir, defs, arch="default" ):
-    uri = get_initrd_uri(prj, defs, arch)
+    try:
+        uri = get_initrd_uri(prj, defs, arch)
+    except KeyError:
+        print '\n\nelbe-bootstrap package not found on any mirror'
+        return
 
     tmpdir = mkdtemp()
 
@@ -158,4 +162,3 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
 
     os.system( 'rm -r "%s"' % tmpdir )
-
