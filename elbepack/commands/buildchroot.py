@@ -78,5 +78,9 @@ def run_command( argv ):
     project.build( opt.skip_debootstrap, opt.skip_cdrom,
             opt.build_sources, opt.debug )
 
-    db = ElbeDB()
-    db.save_project (project)
+    try:
+        db = ElbeDB()
+        db.save_project (project)
+    except sqlalchemy.exc.OperationalError:
+        print "failed to save project in database"
+        sys.exit(20)
