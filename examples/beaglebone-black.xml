@@ -2,18 +2,19 @@
 	<initvm>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>LOCALMACHINE</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe wheezy main
+						http://debian.linutronix.de/elbe-testing wheezy main
 					</binary>
 				</url>
+				<!-- for elbe-boostrap --!>
 				<url>
 					<binary>
-						http://LOCALMACHINE/elbe-test wheezy main
+						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 				</url>
 			</url-list>
@@ -29,10 +30,16 @@
 		</description>
 		<buildtype>armhf</buildtype>
 		<mirror>
-			<primary_host>LOCALMACHINE</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</binary>
+				</url>
+				<!-- for linux-image-rt --!>
 				<url>
 					<binary>
 						http://debian.linutronix.de/elbe wheezy main
