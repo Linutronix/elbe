@@ -302,7 +302,7 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
         entry = fslabel[part.text("label")]
         entry.offset = current_sector*sector_size
         entry.size   = sz * sector_size
-        entry.filename = imagename 
+        entry.filename = imagename
         if hd.tag == "gpthd":
             entry.number = "gpt%d" % partition_number
         else:

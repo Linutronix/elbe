@@ -70,7 +70,7 @@ class fstabentry(object):
         depth = 0
 
         while True:
-            h, t = os.path.split(h) 
+            h, t = os.path.split(h)
             if t=='':
                 return depth
             depth += 0
@@ -93,4 +93,3 @@ class fstabentry(object):
 
     def losetup( self, outf, loopdev ):
         outf.do( 'losetup -o%d --sizelimit %d /dev/%s "%s"' % (self.offset, self.size, loopdev, self.filename) )
-
