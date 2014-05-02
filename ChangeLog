@@ -1,3 +1,567 @@
+* fix fstab creation
+* updated.xml: use public mirrors and add initvm node
+* powerpc.xml: add initvm node
+* mini-weezy-nfsroot.xml: add initvm node
+* mini-ubi.xml add initvm node
+* remove mini-squeeze-nfsroot.xml example
+* hdimage-grub.xml add init-vm node
+* elbe-desktop: add init-vm node
+* elbe-init.xml use public available mirrors
+* beaglebone-black.xml: use public available mirrors
+* extract_targetfs create /dev directory
+* remove tailing whitespaces and newlines
+* targetfs: create fstab
+* buildchroot: print error if db save failed
+* examples/beaglebone-black: use armhf rt kernel
+* example/beaglebone-black: add linux-image
+* print error msg if elbe-bootstrap is not on mirror
+* elbe chroot: fix missing userinterpr
+* docs: add new graphics
+* add elbe-init section and switch to armhf
+* elbe-init: check if initvm section is available
+* db: Don't use db queries outside the session_scope
+* Merge remote-tracking branch 'origin/devel/stefan/fixes' into devel/manut
+* ElbeProject: Perform trivial initialisation first
+* db: Reject del_project if build in progress
+* db: Make create_project thread-safe
+* db: Fix needs_rebuild => needs_build
+* db: Only allow get_files for built projects
+* db: Reject set_xml when project is being built
+* db: Use scoped_session instead of plain session
+* db: Merge login-related code into one function
+* db: Fix user management functions
+* hdimg: return empty img list if no img is defined
+* Merge remote-tracking branch 'origin/devel/stefan/dbclass' into devel/manut
+* elbeproject: stop init if buildenv isn't available
+* db: Implement reset command
+* db: Use python-passlib to check user passwords
+* move elbe_version creation
+* buildchroot: switch to db class
+* db/init_db: Fix typo
+* db: Rework error handling, close session when idle
+* db: Split build_project
+* don't crash if no url-list is given
+* dbaction: tab -> space conversion
+* Merge remote-tracking branch 'origin/devel/stefan/dbclass' into devel/manut
+* add templates.py to elbe-common.install
+* add missing py scripts to debian/*.install
+* Merge remote-tracking branch 'origin/devel/stefan/fixes' into devel/manut
+* db: Add unique constraint to User.name
+* db: Make a class out of the code in db.py
+* commands/db: Remove unneccessary import
+* ElbeProject: Add missing ValidationError import
+* add elbepack.daemons to setup.py
+* add an example to test powerpc
+* updated: more verbose logging
+* updated: also log to syslog if availabe
+* split dbactions and db code
+* db - save_project: store ElbeProject:xml as source.xml
+* Merge remote-tracking branch 'origin/devel/stefan/elbeproject' into devel/manut
+* set buildtype = amd64 in elbe-init.xml
+* fix typo in db.py
+* ElbeProject: Change into new-style class
+* ElbeProject: Only clean builddir/target on build
+* ElbeProject: Add set_xml to change XML file
+* db: add status to Project table
+* wsgi daemon: cast port to int
+* elbeproject: copy initvm node, handle validation error
+* elbe db: implement the subcommands
+* db: project - use builddir as primary key
+* add database support
+* Merge remote-tracking branch 'origin/devel/stefan/elbeproject2' into devel/manut
+* Add get_rpcaptcache method to ElbeProject
+* Merge remote-tracking branch 'origin/devel/stefan/elbeproject2' into devel/manut
+* add a 'elbe daemon' command
+* commands/gen_update: Use ElbeProject
+* Merge remote-tracking branch 'origin/devel/stefan/elbeproject2' into devel/manut
+* ElbeProject: Fix typo targetfspath -> targetpath
+* commands/hdimg: Use ElbeProject class
+* commands/hdimg: Add missing import for sys.exit
+* commands/mkcdrom: Use ElbeProject
+* commands/buildsysroot: Use ElbeProject class
+* Create log object in ElbeProject constructor
+* Merge remote-tracking branch 'origin/devel/stefan/elbeproject2' into devel/manut
+* Merge remote-tracking branch 'origin/devel/torbenh/noguid' into devel/manut
+* commands/chroot: Use ElbeProject class
+* ElbeProject: Add further attributes
+* Construct ElbeXML object in ElbeProject
+* commands/buildchroot: Use the ElbeProject class
+* Add new class ElbeProject
+* rfs: add support for preseeds using preseed_to_text function
+* templates: implement preseed_to_text function
+* rfs: remove private write_template function and use elbepack.templates
+* rfs: /etc/apt/sources.list was using decimal 644 rights. use octal
+* templates: add write_pack_template()
+* elbexml: fix initvm node generation in case of error...
+* Merge remote-tracking branch 'origin/devel/stefan/doc' into devel/manut
+* templates: add get_initvm_preseed() and use that in commands/init.py
+* templates: add missing imports
+* genlicence: Fix typo in --output option
+* docs: Add man page for elbe updated
+* docs/elbeoverview-en.txt: Architecture updates
+* dbsfed.xsd: remove buildimage and add pkg-list to <initvm />, docs fixes
+* dbsfed.xsd: add size element to <initvm />
+* dbsfed.xsd: remove name version and description from <initvm />
+* dbsfed.xsd: copy project complex type to initvm
+* init preseed.cfg: add pkgs and preseed items to preseeding
+* commands/init: add pkgs and preseed to template struct
+* commands/buildchroot: cleanup unused helper functions
+* elbepack: isolate template functions into elbepack/templates.py and use em
+* docs/emu-process.dia fixes
+* docs: Update all squeeze references to wheezy
+* docs: Add man page for elbe setsel
+* docs: Add man page for elbe gen_update
+* docs: Add man page for elbe genlicence
+* commands/buildchroot: manage initvm node in source.xml
+* elbexml: Add code to copy the initvm from another xml file
+* treeutils: add set_child_position() method
+* examples/elbe-init.xml: use <initvm> tag
+* pkgutils: change copy_kinitrd() so that we only need the prj node
+* dbsfed.xsd: Add <initvm /> node which is basically a copy of project
+* rfs: remove now obsolete XXX comment about cdrom
+* Merge remote-tracking branch 'origin/devel/stefan/doc' into devel/manut
+* docs: Add man page for elbe check_updates
+* docs: Add man page for elbe buildsysroot
+* update .gitignore file
+* hdimg: don't crash if path to move doesn't exist
+* fix typo
+* hdimg: don't crash if files don't exist
+* fix minimal python version in debian src package
+* beaglebone-black.xml revert changes
+* docs: Add man page for elbe buildchroot
+* Merge remote-tracking branch 'origin/devel/stefan/doc' into devel/manut
+* cdroms: remove "with rfs:" from the mk_*_cdrom() functions
+* cdroms: add log parameter to mk_binary_cdrom() and mk_source_cdrom()
+* commands/buildchroot: use with buildenv: again
+* rfs: isolate cdrom mounting into own functions.. debootstrap and __enter__
+* elbexml: fix the cdrom mirror codes
+* rfs: mount cdrom in BuildEnv.__init__()
+* commands/buildchroot: build cdroms again
+* cdroms: allow xml to be None in mk_binary_cdrom()
+* cdroms: add target parameter, and make us of it in commands/mkcdrom.py
+* repomanager: add buildiso method
+* docs: Rework overview diagrams for buildchroot
+* elbe-init: Makefile remove all target python list
+* docs: Add man page for elbe init
+* version bump: 0.7.0~beta2
+* fix files-to-extract
+* Makefile: remove cpio and tar.gz target files handling
+* TargetFs: add new member variable images
+* docs: Add man page for elbe mkcdrom
+* docs: Add man page for elbe hdimg
+* rework debian packaging
+* docs: Add man pages for sign/remove_sign
+* docs/elbe-get_archive.txt: Fix title
+* docs: Add man page for elbe-chroot.txt
+* docs: Add man page for elbe pkgdiff
+* docs/elbe.txt: Update command list
+* lintian fix: invalid changelog
+* lintian: ignore warnings about using git pkg format
+* update last changelog entry
+* fix lintian: ancient-standards-version
+* fix lintian: debhelper-but-no-misc-depends
+* fix lintian: native-package-with-dash-version
+* add Makefile target for unsigned packages
+* fix unused substitution variable ${python:Depends}
+* fix lintian: elbe-common: binary-without-manpage usr/bin/elbe
+* fix lintian: wrong-section-according-to-package-name
+* lintian fix: elbe-updated: extended-description-is-empty
+* lintian fix: helper-templates-in-copyright
+* update debian/copyright file to make lintian happy
+* Makefile: add lintian to deb target
+* add docs/manpage-base-url.xsl to gitignore
+* fix lintian:  wrong-bug-number-in-closes l212:#nnnn
+* fix lintian: diff-contains-git-control-dir .git
+* rfs: in seed_etc() add elbe-daemon in /etc/hosts so that hostname -f works
+* commands/buildchroot: seed_etc() needs to run, before we install pkgs
+* elbeoverview-en: Fix callouts
+* commands/mkcdrom: add options for source and binary cdroms
+* cdroms: binary cdroms properly split debootstrap and normal
+* aptpkgutils: fix constructor for XMLPackage
+* finetuning: use log.chroot, where applicable
+* create, init: Make use of NoKinitrdException
+* pkgutils: improve Exception handling, add specific NoKinitrdException
+* rfs: when <noauth/> is specified also run debootstrap with --no-check-gpg
+* add powerpcspe
+* cdroms: abstract cdrom generation into own module and use it in comands/mkcdrom
+* dbsfed.xsd: add the new finetuning commands to xsd
+* elbexml: fix get debootstrappkgs_from() function
+* elbexml: fix typo in clear_debootstrap_pkglist()
+* finetuning: add mknod action
+* buildchroot: fix the copy madness of the debootstrappkgs
+* filesystem: fix tighten and diet mode in extract_target()
+* finetuning: subprocess.Popen doesnt work with chroot stuff
+* filesystem: in diet/tighten codepaths, fix makedirs() calls to mkdir*()
+* finetuning: catch CommandError in finetuning actions
+* dbsfed.xsd: put debootstrappkgs to the proper position
+* finetuning: add more Finetuning actions
+* filesystem: improve enter/leave_chroot() tracking, better umounts
+* aptpkgutils: provide self to PackageBase.__init__()
+* rpcaptcache: Add noauth and norecommend parameters to rpcaptcache
+* examples elbe-init: correct primary_host
+* rpcaptcache: allow downloading specific versions
+* aptpkgutils: add XMLPackage and create PackageBase
+* commands/genlicence: initial version of command generating licence.txt
+* repomanager: with importdsc also specify section misc
+* filesystem: change write_licenses() to accept logfile param
+* debianreleases: add missing ,
+* commands/mkcdrom: print version numbers of errored packages
+* filesystem: dont even chroot, when self.path == '/'
+* debianreleases: Add ubuntu releases, mapping to themselves
+* dbsfed.xsd: move debootstrapkgs node to the proper place
+* init preseed: try out, whether elbe init also works with ext3
+* buildchroot: cleanup and some comments
+* buildchroot: add support for debootstrap packages
+* mkcdrom: First version only building source repos
+* repomanager: Refactor things, to allow more RepoTypes
+* dump: dont catch all exceptions in dump_fullpkgs()
+* dump: Add dump_debootstrappkgs()
+* filesystem: add glob method, for filename globbing lists
+* filesystem: skip mounts when path == '/' allows working on host
+* dbsfed.xsd: Add debootstrappkgs node to schema
+* aptpkgutils: improve the origin field
+* elbexml: add methods to handle debootstrappkgs. similar to fullpkglist
+* debianreleases: Initial commit, allows to map codenames to suite and vv
+* rfs: Add fresh_debootstrap flag to BuildEnv
+* rpcaptcache: add methods to download packages
+* treeutils: remove elem.clear() its already in ebase
+* treeutils: Add method to copy xml nodes around
+* CommandError: fix unknown variable p
+* hdimg: fix for nicer logfile
+* filesystem: use self.xml instead of xml
+* commands/buildchroot: catch only MemoryError exceptions, where xml is written
+* asciidoclog: use shellhelper and now throw CommandError not commanderror
+* shellhelper: first version of shellhelper
+* commands/buildsysroot: initial commit of buildsysroot command
+* commands/chroot: initial commit of elbe chroot command
+* xmldefaults: add triplet key to defaults
+* asciidoclog: add LogBase and add StdoutLog and StderrLog
+* elbe-init: add --guiport parameter
+* rfs.py: fix bug in inital run
+* some whitespace/newline fixes
+* remove unused old code
+* replace some os.system calls by log.do
+* Finetuning: add command action
+* Buildenv: remove host_arch member variable
+* filesystem: only disable daemons in buildenv
+* cleanup: mount/umount chroot code
+* xmldefaults: don't use sys.exit
+* remove unused code
+* BuildEnv: write /etc/apt/preferences file
+* RPCAPTCache: set noninteractive DEBIAN_FRONTEND
+* BuildEnv: catch exception if dump_elbeversion fails
+* buildchroot: catch exception from apt cache
+* buildchroot: log failures on xml writes
+* add elbepack/init/*mako to setup.py data
+* add elbe init mako templates to elbe debian package
+* add elbe init to elbe debian package
+* debootstrap: set arch for non foreign debootstrap
+* buildchroot: handle exceptions if working with apt cache
+* commands/hdimg: dump old code, and use the new code from elbepack.hdimg
+* filesystem: allow creation of TargetFS object from already existing one
+* pkgutils: fix missing import urllib2
+* hdimg: fix typo missing )
+* dbsfed.xsd: Make mtd and ubinize accept part_size style sizes
+* hdimg: check for images before iterating over them, in do_hdimg()
+* hdimg: implement generation of ubinize cfg files in python
+* init/Makefile: add SMP?=`nproc` so that vm is running on all cores
+* finetuning: implement mkdir, cp, mv
+* buildchroot: import ValidationError
+* rpcaptcache: add a notifier
+* version bump
+* version bump
+* update the updated test readme
+* beaglebone-black.xml: add elbe-updated support
+* buildchroot/updated: add support to revert 1st update
+* test/updated: don't crash if now snapshots available
+* test/updated: monitor listens on all interfaces
+* elbe-init: fix mirror section
+* dump_elbeversion: add newlines
+* updated: fix snapshots name extraction
+* updated: use makedirs to create /opt/elbe/updates
+* elbexml: flush archive file
+* fix debian packaging
+* add first version of test README
+* elbe-init: add openssh-client to initial vm
+* packaging: adding modules required by elbe-daemon
+* virtapt: add missing import
+* updated: add commandline arguments for host and port
+* updated: improve logging
+* updated: add (optional) gpg support
+* test/updated: simplify --debug use
+* gpg: remove destination path again
+* updated: cleanup log calls
+* rem_sign: cleanup
+* gpg: enable to set destination path
+* gpg: make code better readable
+* updated: enable termination by signal and ctrl+c
+* updated: cleanup status monitorung
+* elbe sign: split command and code
+* test/updated: enable shutdown of test application
+* updated: add init script for updated
+* updated: enable status monitoring via soap itf
+* test/updated: add --debug switch
+* test/updated: ignore warnings raised by python-soaplib
+* update .gitignore
+* add a test for the upated soap interface
+* updated: add soap interface
+* gen_update: remove get_filename call
+* updated: fix initialization of apt cache
+* updated: remove unneeded slash in repo url
+* updated: fix unzip of an update archive
+* updated: source.xml in the context of an update is called new.xml
+* updated: cache.update needs some arguments
+* updated: use apt.cache.Cache to iterate over all packages
+* updated: use str compare for version compare
+* updated: keyword args are not supported by python-apt in wheezy
+* updated: fix naming of sources.list.d file
+* aptprogress: add to elbe-common
+* gen_update: rename update.zip into <project>_<version>.upd
+* gen_update: strip 'update' directory from zip file
+* gen_update: also add newly installed packages to update
+* debian: updated package contents fixed
+* remove dump.py from elbe-daemon debian package
+* remove createtargetrfs.py from debian package
+* add example for updated
+* cleanup
+* updated: implement apt cache actions
+* updated: use pyinotify instead of watchdog and unzip update
+* gen_update: generate zip archive of the update
+* gen_update: use repomanager.Repo class
+* gen_updates: generate fullpkgs list in new.xml from cache
+* gen_update: only inlcude all packages, when --debug is specified
+* ziparchives: add first implementation of create_zip_archive()
+* repomanager: add first implementation of a reprepro managed package repo
+* updated: create skeleton
+* gen_update: first version of implementation of gen_update command
+* aptpkgutils: include architecture in APTPackage class
+* rpcaptcache: fix compare_versions which has been broken
+* hdimg: fix pylint warning about type
+* rpcaptcache: add method to compare debian versions
+* dump: use new finetuning module, and stop generating report from buildenv
+* finetuning: First implementation of pythonized finetuning
+* elbexml: add node method to ElbeXML
+* pkgutils: Fix pylint warning about unspecified Exception
+* .pylintrc: Add default pylintrc generated with  pylint --generate-rcfile
+* .gitignore: Add tags
+* updated: remove unused imports
+* examples/hdimage-grub: Add kernel package
+* buildchroot: seed_etc() needs userinterpreter, so move inside the with block
+* buildchroot: reactivate the cache update, because it is fixed now.
+* rfs: move userinterpreter install/remove to BuildEnv.__enter__ / __exit__
+* filesystem: create tar.gz archive
+* builchroot: when grub-pc is not availabel dont try to install grub on hd
+* hdimg: Add skip_grub parameter, for cases where grub is not installed
+* hdimg: remove unused var fslabe in build_image_mtd()
+* filesystem: yield paths prefixed with / in walk_dirs()
+* filesystem: when using the InChRoot also change workingdir into the chroot
+* rpcaptcache: pass cache architecture, when creating the cache
+* rpcaptcache: make is_installed work on not existing packages
+* commands/createtargetrfs: Remove createtargetrfs command
+* commands/dump: Remove elbe dump command
+* buildchroot: implement package validation and dump fullpkglist
+* rpcaptcache: Add methods for package validation
+* dump: port check_full_pkgs() from elbepack.commands.dump
+* elbepack: remove exceptions.py and expect.py
+* treeutils: make self.et an attribute of ebase,
+* hdimg: import string -> from string import digits
+* remove_sign: Make variables declared as classmembers objectmembers
+* remove_sign: Clean unused imports
+* elbepack: Call Exception.__init__() when deriving
+* elbepack: clean unused imports
+* aptprogress: Fix error in whitepsace correction
+* elbepack: remove occurrences of unnecessary semicolons reported by pylint
+* elbepack: Fix all whitespace indentation complaints from pylint
+* examples hdimg-grub: need to install grub-pc package now.
+* buildchroot: make use of the new modules
+* filesystem: make part_target() use the new hdimg module
+* rfs: Add seed_etc() function to BuildEnv Class
+* fstab: Fixed do_command() to do() for new ASCIIDoclog
+* hdimg: converted elbepack.commands.hdimg to the new style
+* dump: Converted elbepack.commands.dump to the new style
+* filesystem: In full copy mode, we can now do a real full copy
+* filesystem: Add comment about dump_elbeversion()
+* filesystem: Remove extract_some_files()
+* filesystem: Add some methods used in elbe dump
+* filesystem: Allow to prefix fname() param with /
+* filesyste: fix typo in copy_filelist()
+* elbexml: Add more support methods
+* elbexml: fix missing conversion from project -> self.prj
+* elbexml: Add support for skip_validate in Constructor
+* rpcaptcache: Add get_installed_pkgs() and get_fileindex()
+* rpcaptcache: create APTPackage class and use that for return values
+* suffix/prefix config file for the resulting images or update names will be removed from git
+* rfs: add missing slash
+* rfs: use is_cross function
+* elbexml: implement is_cross function
+* persistency: Add Baseclass for persistency managed objects
+* rpcaptcache: make proper use of aptpkgutils and fix pkgstates and deps
+* aptpkgutils: Add utils for working with apt caches, dont clutter rpcaptcache
+* rfs: Add __enter__/__exit__ methods to BuildEnv
+* rpcaptcache: fixup for new filesystem semantics
+* filesystem: separate enter_chroot() and mount()
+* rpcaptcache: Add first version of rpcaptcache
+* aptprogress: add missing import os
+* reset debian changelog to a wheezy release
+* filesystem: fix some left behinds from enter_chroot()
+* filesystem: import elbe_version
+* rfs: fixup destructor
+* rfs: import multiprocessing Pipe
+* rfs: also write elbe_version for non-cross debootstrap
+* elbexml: fixup create_apt_sources with cdrom path
+* filesystem: fix open() not taking mode param
+* rfs: more fixes for debootstrap implementation
+* rfs: import BuildImgFS
+* rfs: fixup initialise_dirs
+* filesystem: allow ChRootFilesystem.__init__ with only 2 args
+* elbexml: fix typo defs -> self.defs
+* elbexml: fixup ValidationError exception
+* rfs: fixup debootstrap function a bit
+* rfs, filesystem: The mount and chroot stuff belongs into a separate class
+* rfs: use allow_fail of asciidoclog.do() in BuildImg.umount()
+* rfs: split BuildEnv into 2 classes
+* filesystem: move dump_elbeversion() from TargetFs to Filesystem
+* rfs, elbexml: move get_primary_mirror() and reate_apt_sources_list() to xml
+* rfs, filesystem: move simple operations to filesystem
+* rfs: switch to new InChroot api...
+* rfs: switch InChroot object to use multiprocessing.Pipe()
+* aptprogress: isolate ElbeProgress from rfs.py into their own file
+* rfs: move enter_chroot() and friends from InChroot into the RFS class
+* filesystem, createtargetrfs: more refactoring
+* createtargetrfs: use the extracted code modules
+* Add elbepack.elbexml and elbepack.filesystem modules
+* first try to run chroot code in fork
+* elbe-init: try to fix files-to-extract
+* hdimg.py fix import of fstab module
+* fix imports in commands directory
+* dump.py fix imports broken by command split
+* debian-packaging: make elbepack/common a python-package
+* fix etree import in createtargetrfs.py
+* rfs - commit_changes: reopen cache after commmit
+* rfs - ElbeInstallProgress: remove unnecessary overloaded functions
+* packaging: Fix *.install files elbepack.commands and also mention in setup.py
+* validate: split validate command from validate implementation
+* move all elbe subcommands into elbepack.commands and make ./elbe scan that
+* rfs: fix InstallProgress Mess
+* init: Dont run elbe buildchroot in init step, when no <target> node exists
+* init: unset envvars from installer resulting in hangs during buildchroot
+* rfs: avoid deamons to start in chroot
+* rfs: simplify file creation
+* rfs: switch back to default progress monitoring
+* rfs - acquireProcess: fix return value
+* rfs: fix typo
+* rfs: fix string conversion
+* rfs: ElbeInstallProgress - use base.InstallProgress
+* rfs: code cleanup
+* rfs - add_pkgs: make adding packages more robust
+* rfs - check_update: simplify version checker
+* rfs: use own Progress Implementations
+* implement dump_xml
+* rfs: coding style fixup
+* rfs: implement helper for elbe check_updates
+* rfs: automatically add packages from pkg-list
+* rfs: implement apt-get upgrade functionality
+* rfs: implement 'apt-get autoremove' functionality
+* rfs: implement remove_pkgs
+* rfs: add function to add packages to an existing rfs
+* rfs: improve chroot functionality
+* rfs: coding-style fixups
+* rfs: implent get_pkg_list
+* rfs: implement functions to execute python code in the chroot
+* use ASCIIDocLog class in adjustpkgs
+* rfs.py initial import
+* ASCIIDocLog: move commanderror class from buildchroot
+* asciidoclog: import os
+* asciidoclog: fix indent
+* cleanup do_command / do_chroot usage
+* asciidoclog: move class in asciidoclog.py
+* check_updates.py: remove newline on end of file
+* elbe-init: add debug option
+* createtargetrfs: use reflink also for the whole copy
+* createtargetrfs: redo the file list for tigh diet mode
+* buildchroot umount binfmt_misc
+* createtargetrfs: merge the common file list code
+* elbe: dann run_command once
+* elbe: add missing run_command
+* show: fix the elbe show command
+* setup.py: don't copy the the examples into to elbe
+* setup.py: redo example inclusion
+* createtargetrfs: check :arch files in thight case as well
+* createtargetrfs: don't fail if can't create /proc in target
+* create-target-rfs: add a root prefix
+* createtargetrfs: create the file lists with a little less shell magic
+* createtargetrfs: shrik the if archive part
+* createtargetrfs: use the target argument in a few more places
+* createtargetrfs: redo a few functions in python, mainly the license thingy
+* buildchroot: add binfmt-support dependency
+* mkcdrom: fix LOCALMACHINE usage
+* createtargetrfs: remove a space in filename
+* new command: elbe-init
+* createtargetrfs: missing the -t argument is not okay
+* convert create-target-rfs from shell mako to python
+* create-target-rfs: don't build packages from here
+* buildchroot: use full name for the directory
+* adjpkgs: update TODO about internal package management
+* adjustpkg: cleanup code to be more reusable
+* revert e4a35eef25c40c55e8e45978887dcde915ce550c
+* adjustpkgs: enable deletion of autoremoveable packages
+* adjustpkgs: fix xml.has call
+* adjpkgs: simplify basic package list
+* move elbe-adjustpkg in an own debian binary package
+* example cleanup
+* virtapt: remove debug print
+* new command: elbe-init
+* provide more xmldefaults
+* package adjustpkg in seperate debian package
+* buildchroot: use 10.0.2.2 for LOCALMACHINE
+* xmldefaults: fix whitespace damage
+* adjpkgs: update TODO about internal package management
+* adjustpkg: cleanup code to be more reusable
+* revert e4a35eef25c40c55e8e45978887dcde915ce550c
+* buildchroot: remove adjustpkgs.py copy
+* adjustpkgs: enable deletion of autoremoveable packages
+* adjustpkgs: fix xml.has call
+* fix typo in adjustpkg call
+* remove mkisofs dependency
+* adjpkgs: simplify basic package list
+* move elbe-adjustpkg in an own debian binary package
+* adjustpkgs: mark "unknown" packages as auto instead of deleting them
+* buildchroot: remove some files some /opt and install elbe-daemon
+* updated: hardcode a config
+* update elbe-daemon dependencies in debian/control
+* be aware of 80 char/line in debian/control
+* buildchroot: remove some files some /opt and install elbe-daemon
+* buildchroot: remove one / while creating the sources.list
+* run the clean rule in docs/
+* elbe-common: add missing .py files required by elbe buildchroot
+* elbe-buildchroot: add build-deps
+* import elbe-updated code
+* package elbe buildchroot
+* update amd64 example to use wheezy instead of sid
+* fix debian package contents
+* add debian sid build 0.6.0
+* add beaglebone-black example
+* wheezy build
+* fix file modes
+* improve elbe debian packaging
+* update THANKS file
+* add python-pyme dependency
+* Add sign and remove_sign functionality
+* add a desktop example
+* fix diet mode for wheezy
+* add version.py to build chroot dir
+* elbe-diff: fix usage output
+* fix check_updates to work with LOCALMACHINE
+* Merge branch 'master' of ssh://lxcvs/linutronix/elbe/elbe
+* update schema: add devpts to filesystem list
+* Merge remote-tracking branch 'origin/devel/torbenh/devel'
+* enable LOCALMACHINE for primary_host
+* check_updates: Fix xmldefaults not being initialised and used properly
+* set debian source format
+* add apt.conf.mako
+* fix use of LOCALMACHINE if no python-apt is available
+* v0.5.5-wheezy
+* v0.5.5-squeeze
 * disallow the use of localhost inside the url-list
 * add source repositories the virtapt cache
 * if a proxy is configured; 10.0.2.2 should be ignored

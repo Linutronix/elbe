@@ -1,3 +1,14 @@
+elbe (0.7.0~beta3) unstable; urgency=medium
+
+  * buildchroot: implement build of cdroms
+  * introduce initvm tag
+  * add man pages for all commands
+  * ElbeProject class for project handling
+  * basic db integration
+  * various bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 02 May 2014 12:41:11 +0200
+
 elbe (0.7.0~beta2) unstable; urgency=medium
 
   * reworked packaging again
