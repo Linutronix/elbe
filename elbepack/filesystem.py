@@ -227,6 +227,10 @@ def extract_target( src, xml, dst, log, cache ):
             subprocess.call(["cp", "-a", "--reflink=auto", f, dst.fname('')])
 
     try:
+        dst.mkdir_p("dev")
+    except:
+        pass
+    try:
         dst.mkdir_p("proc")
     except:
         pass
