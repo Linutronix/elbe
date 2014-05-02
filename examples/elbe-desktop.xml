@@ -11,7 +11,7 @@
 						http://debian.linutronix.de/elbe-testing wheezy main
 					</binary>
 				</url>
-				<!-- for elbe-bootstrap --!>
+				<!-- for elbe bootstrap -->
 				<url>
 					<binary>
 						http://debian.linutronix.de/elbe wheezy main

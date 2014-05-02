@@ -33,7 +33,7 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
-				<!-- for elbe-updated -->
+				<!-- for elbe updated -->
 				<url>
 					<binary>
 						http://debian.linutronix.de/elbe-testing wheezy main
