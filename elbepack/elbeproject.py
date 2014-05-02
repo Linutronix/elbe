@@ -123,6 +123,8 @@ class ElbeProject (object):
             check_full_pkgs( pkgs, None, validationpath, self._rpcaptcache )
         dump_fullpkgs( self.xml, self.buildenv.rfs, self._rpcaptcache )
 
+        self.targetfs.write_fstab (self.xml )
+
         # Dump ELBE version
         try:
             self.targetfs.dump_elbeversion( self.xml )

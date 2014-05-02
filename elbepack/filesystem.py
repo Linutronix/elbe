@@ -27,6 +27,7 @@ from glob import glob
 from elbepack.asciidoclog import CommandError
 from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
+from elbepack.fstab import fstabentry
 
 class Filesystem(object):
     def __init__(self, path, clean=False):
@@ -327,6 +328,13 @@ class TargetFs(ChRootFilesystem):
         self.log = log
         self.xml = xml
         self.images = None
+
+    def write_fstab(self, xml):
+        f = self.open("etc/fstab", "w")
+        for fs in xml.tgt.node("fstab"):
+            fstab = fstabentry(fs)
+            f.write (fstab.get_str ())
+        f.close()
 
     def part_target(self, targetdir, skip_grub):
 

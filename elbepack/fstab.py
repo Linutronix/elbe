@@ -18,13 +18,52 @@
 
 import os
 
+def get_mtdnum(label):
+  if not tgt.has("images"):
+    raise Exception( "No images tag in target" )
+
+  for i in tgt.node("images"):
+    if i.tag != "mtd":
+      continue
+
+    if not i.has("ubivg"):
+      continue
+
+    for v in i.node("ubivg"):
+      if v.tag != "ubi":
+        continue
+
+      if v.text("label") == label:
+        return i.text("nr")
+
+  raise Exception( "No ubi volume with label " + label + " found" )
+
+
+def get_devicelabel( node ):
+  if node.text("fs/type") == "ubifs":
+    return "ubi" + get_mtdnum(node.text("label")) + ":" + node.text("label")
+  else:
+    return "LABEL=" + node.text("label")
+
+
 class fstabentry(object):
     def __init__(self, entry):
-        self.label = entry.text("label")
+        if entry.has("source"):
+            self.source = entry.text("source")
+        else:
+            self.source = get_devicelabel(entry)
+
+        if entry.has("label"):
+            self.label = entry.text("label")
+
         self.mountpoint = entry.text("mountpoint")
+        self.options = entry.text("options", default="defaults")
         if entry.has("fs"):
             self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
+
+    def get_str(self):
+        return "%s %s %s %s 0 0\n" % (self.source, self.mountpoint, self.fstype, self.options)
 
     def mountdepth(self):
         h = self.mountpoint
