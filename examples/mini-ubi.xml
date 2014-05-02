@@ -1,4 +1,26 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe wheezy main
+					</binary>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth/>
+		<suite>wheezy</suite>
+	</initvm>
 	<project>
 		<name>ARMexample</name>
 		<version>08.15</version>
@@ -11,24 +33,10 @@
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
-			
-			<url-list>
-				<url>
-					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
-				</url>
-			</url-list>
 		</mirror>
 		<noauth />
 		<suite>wheezy</suite>
 		<buildimage>
-			<kinitrd>elbe-bootstrap</kinitrd>
-			<portforwarding>
-				<forward>
-					<proto>tcp</proto>
-					<buildenv>22</buildenv>
-					<host>5022</host>
-				</forward>
-			</portforwarding>
 			<pkg-list>
 				<pkg>build-essential</pkg>
 				<pkg>devscripts</pkg>
@@ -45,11 +53,6 @@
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
-		<package>
-			<tar>
-				<name>nfsroot.tar.gz</name>
-			</tar>
-		</package>
 		<images>
 			<mtd>
 				<name>full.img</name>
@@ -188,26 +191,6 @@
 			<rm>etc/init.d/checkfs.sh</rm>
 			<rm>/etc/mtab</rm>
 			<command>ln -s /proc/mounts etc/mtab</command>
-			<mkdir>dev</mkdir>
-			<mkdir>proc</mkdir>
-			<mkdir>sys</mkdir>
-			<command>mknod dev/i2c-0 c 89 1</command>
-			<command>mknod dev/ttyS0 c 4 64</command>
-			<command>mknod dev/ttyS1 c 4 65</command>
-			<command>mknod dev/ubi_ctrl c 10 63</command>
-			<command>mknod dev/ubi0 c 253 0</command>
-			<command>mknod dev/ubi0_0 c 253 1</command>
-			<command>mknod dev/ubi0_1 c 253 2</command>
-			<command>mknod dev/ubi0_2 c 254 3</command>
-			<command>mknod dev/mtd0 c 90 2</command>
-			<command>mknod dev/mtd1 c 90 2</command>
-			<command>mknod dev/mtdblock0 b 31 0</command>
-			<command>mknod dev/console c 5 1</command>
-			<command>mknod dev/zero c 1 5</command>
-			<command>mknod dev/null c 1 3</command>
-			<command>mkdir data</command>
-			<command>date > data/builddate</command>
-			<command>echo huhu > opt/prod_data</command>
 		</finetuning>
 		<pkg-list>
 			<pkg>util-linux</pkg>
@@ -233,45 +216,4 @@
 			<pkg>libstdc++</pkg>
 		</pkg-list>
 	</target>
-<archive>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
-QQRwrIA=
-</archive></ns0:RootFileSystem>
+</ns0:RootFileSystem>
