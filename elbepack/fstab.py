@@ -18,7 +18,8 @@
 
 import os
 
-def get_mtdnum(label):
+def get_mtdnum(xml, label):
+  tgt = xml.node ("target")
   if not tgt.has("images"):
     raise Exception( "No images tag in target" )
 
@@ -39,19 +40,19 @@ def get_mtdnum(label):
   raise Exception( "No ubi volume with label " + label + " found" )
 
 
-def get_devicelabel( node ):
+def get_devicelabel( xml, node ):
   if node.text("fs/type") == "ubifs":
-    return "ubi" + get_mtdnum(node.text("label")) + ":" + node.text("label")
+    return "ubi" + get_mtdnum(xml, node.text("label")) + ":" + node.text("label")
   else:
     return "LABEL=" + node.text("label")
 
 
 class fstabentry(object):
-    def __init__(self, entry):
+    def __init__(self, xml, entry):
         if entry.has("source"):
             self.source = entry.text("source")
         else:
-            self.source = get_devicelabel(entry)
+            self.source = get_devicelabel(xml, entry)
 
         if entry.has("label"):
             self.label = entry.text("label")

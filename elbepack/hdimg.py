@@ -345,7 +345,7 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
         if fs.tag != "bylabel":
             continue
 
-        fslabel[fs.text("label")] = fstabentry(fs)
+        fslabel[fs.text("label")] = fstabentry(xml, fs)
 
     # Build a sorted list of mountpoints
     fslist = fslabel.values()
