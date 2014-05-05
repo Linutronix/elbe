@@ -25,7 +25,7 @@ from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 
 def run_command( argv ):
-    oparser = OptionParser(usage="usage: %prog mount [options] <builddir>")
+    oparser = OptionParser(usage="usage: %prog chroot [options] <builddir>")
     oparser.add_option( "--skip-validation", action="store_true",
                         dest="skip_validation", default=False,
                         help="Skip xml schema validation" )
