@@ -1,2 +1,3 @@
 ./usr/lib/python2.*/*-packages/elbepack/daemons/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/daemon.py
+./usr/lib/python2.*/*-packages/elbepack/asyncbuilder.py
