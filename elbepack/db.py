@@ -90,6 +90,21 @@ class ElbeDB(object):
                 ret.append(ProjectData(p))
             return ret
 
+    def get_project_data (self, builddir):
+        # Can throw: ElbeDBError
+        if not os.path.exists (builddir):
+            raise ElbeDBError( "project directory does not exist" )
+
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            return ProjectData(p)
+
     def get_files (self, builddir):
         # Can throw: ElbeDBError, IOError
 
@@ -289,6 +304,22 @@ class ElbeDB(object):
             p.status = "build_in_progress"
 
 
+    def is_build_in_progress (self, builddir):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir ). \
+                        one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "build_in_progress":
+                return True
+            else:
+                return False
+
+
     def set_build_done (self, builddir, successful=True):
         with session_scope(self.session) as s:
             try:
@@ -342,6 +373,16 @@ class ElbeDB(object):
                 raise ElbeDBError("no user with id %i" % userid)
 
             return bool(u.admin)
+
+    def get_username (self, userid):
+        with session_scope(self.session) as s:
+            try:
+                u = s.query(User).filter(User.id == userid).one()
+            except NoResultFound:
+                raise ElbeDBError( "no user with id %i" % userid)
+
+            return str(u.name)
+
 
     @classmethod
     def init_db (cls, name, fullname, password, email, admin):
