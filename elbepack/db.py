@@ -28,10 +28,12 @@ from contextlib import contextmanager
 from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import (Column, Integer, String, Boolean, Sequence, DateTime)
+from sqlalchemy import (Column, ForeignKey)
+from sqlalchemy import (Integer, String, Boolean, Sequence, DateTime)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, object_mapper
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
@@ -47,11 +49,6 @@ class ElbeDBError(Exception):
 class InvalidLogin(Exception):
     def __init__ (self):
         Exception.__init__(self, "Invalid login")
-
-class LoginData(object):
-    def __init__(self, userid, admin):
-        self.userid = userid
-        self.admin = admin
 
 @contextmanager
 def session_scope(session):
@@ -322,7 +319,7 @@ class ElbeDB(object):
         with session_scope(self.session) as s:
             s.add( u )
 
-    def get_logindata (self, name, password):
+    def validate_login (self, name, password):
         with session_scope(self.session) as s:
             # Find the user with the given name
             try:
@@ -334,10 +331,17 @@ class ElbeDB(object):
             if not pbkdf2_sha512.verify( password, u.pwhash ):
                 raise InvalidLogin()
 
-            # Everything good, now return the user id and the role to
-            # the caller
-            return LoginData( userid=u.id, admin=u.admin )
+            # Everything good, now return the user id to the caller
+            return int(u.id)
 
+    def is_admin (self, userid):
+        with session_scope(self.session) as s:
+            try:
+                u = s.query(User).filter(User.id == userid).one()
+            except NoResultFound:
+                raise ElbeDBError("no user with id %i" % userid)
+
+            return bool(u.admin)
 
     @classmethod
     def init_db (cls, name, fullname, password, email, admin):
@@ -367,7 +371,7 @@ class User(Base):
     pwhash   = Column (String)
     email    = Column (String)
     admin    = Column (Boolean)
-    # projects = relationship("Project", backref="users")
+    projects = relationship("Project", backref="owner")
 
 class UserData (object):
     def __init__ (self, user):
@@ -386,6 +390,7 @@ class Project (Base):
     xml      = Column (String)
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
+    owner_id = Column (Integer, ForeignKey('users.id'))
 
 class ProjectData (object):
     def __init__ (self, project):
