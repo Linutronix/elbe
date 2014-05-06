@@ -275,12 +275,12 @@ class ElbeDB(object):
                     project.xml = xml_str
 
 
-    def load_project (self, builddir):
+    def load_project (self, builddir, logpath = None):
         with session_scope(self.session) as s:
             try:
                 p = s.query(Project). \
                         filter(Project.builddir == builddir).one()
-                return ElbeProject (p.builddir, name=p.name)
+                return ElbeProject (p.builddir, name=p.name, logpath=logpath)
             except NoResultFound:
                 raise ElbeDBError(
                         "project %s is not registered in the database" %
