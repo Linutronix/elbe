@@ -71,7 +71,9 @@ class ProjectManager(object):
                 raise
 
             # Open the new project
-            ep = self.db.load_project( builddir )
+            logpath = path.join( builddir, "log.txt" )
+            ep = self.db.load_project( builddir, logpath )
+
             self.userid2project[ userid ] = ep
             self.builddir2userid[ builddir ] = userid
 
@@ -93,7 +95,8 @@ class ProjectManager(object):
 
             # Load project from the database
             # TODO: Permission check
-            ep = self.db.load_project( builddir )
+            logpath = path.join( builddir, "log.txt" )
+            ep = self.db.load_project( builddir, logpath )
 
             # Add project to our dictionaries
             self.userid2project[ userid ] = ep
