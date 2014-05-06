@@ -337,7 +337,7 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
 
     # Check whether we have any images first
     if not xml.tgt.has("images"):
-        return
+        return img_files
 
     # Build a dictonary of mount points
     fslabel = {}
