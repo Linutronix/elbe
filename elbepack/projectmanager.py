@@ -160,6 +160,17 @@ class ProjectManager(object):
 
             self.builder.enqueue( ep )
 
+    def read_current_project_log (self, userid):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            logpath = path.join( ep.builddir, "log.txt" )
+            f = open( logpath, "r" )
+        try:
+            data = f.read()
+        finally:
+            f.close()
+        return data
+
     def _get_current_project (self, userid):
         # Must be called with self.lock held
         if not userid in self.userid2project:
