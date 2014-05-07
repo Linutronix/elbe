@@ -40,7 +40,7 @@ def mk_source_cdrom(rfs, arch, codename, target, log):
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ) )
+    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ), log )
 
     for dsc in rfs.glob('opt/elbe/sources/*.dsc'):
         repo.includedsc(dsc)
@@ -74,7 +74,7 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
             except FetchError as fe:
                 log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ) )
+    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log )
 
     for deb in rfs.glob('opt/elbe/binaries/added/*.deb'):
         repo.includedeb(deb, 'added')

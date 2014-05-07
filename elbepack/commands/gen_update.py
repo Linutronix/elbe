@@ -141,7 +141,7 @@ def run_command( argv ):
 
     repodir = os.path.join(update, "repo" )
 
-    repo = UpdateRepo( xml, repodir )
+    repo = UpdateRepo( xml, repodir, project.log )
 
     for fname in fnamelist:
         path = os.path.join( project.chrootpath, "var/cache/apt/archives", fname )

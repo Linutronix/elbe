@@ -21,9 +21,10 @@ from elbepack.debianreleases import codename2suite
 
 
 class RepoBase(object):
-    def __init__( self, path, arch, codename, origin, description, components="main" ):
+    def __init__( self, path, log, arch, codename, origin, description, components="main" ):
 
         self.path = path
+        self.log = log
         self.codename = codename
         self.arch = arch
         self.components = components
@@ -33,7 +34,7 @@ class RepoBase(object):
 
         repoconfdir = os.path.join( path, "conf" )
 
-        os.system( 'mkdir -p %s' % repoconfdir )
+        self.log.do( 'mkdir -p %s' % repoconfdir )
 
         repoconf = os.path.join( repoconfdir, "distributions" )
         fp = open(repoconf, "w")
@@ -49,34 +50,34 @@ class RepoBase(object):
         fp.close()
 
     def includedeb( self, path, component="main"):
-        os.system( "reprepro --basedir " + self.path + " -C " + component + " includedeb " + self.codename + " " + path ) 
+        self.log.do( "reprepro --basedir " + self.path + " -C " + component + " includedeb " + self.codename + " " + path )
     
     def includedsc( self, path, component="main"):
-        os.system( "reprepro --basedir " + self.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
+        self.log.do( "reprepro --basedir " + self.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
 
     def buildiso( self, fname ):
-        os.system( "genisoimage -o %s -J -R %s" % (fname, self.path) )
+        self.log.do( "genisoimage -o %s -J -R %s" % (fname, self.path) )
 
 
 class UpdateRepo(RepoBase):
-    def __init__( self, xml, path ):
+    def __init__( self, xml, path, log ):
         self.xml  = xml
 
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
-        RepoBase.__init__( self, path, arch, codename, "Update", "Update", "main" )
+        RepoBase.__init__( self, path, log, arch, codename, "Update", "Update", "main" )
 
 class CdromBinRepo(RepoBase):
-    def __init__( self, xml, path ):
+    def __init__( self, xml, path, log ):
         self.xml  = xml
 
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
-        RepoBase.__init__( self, path, arch, codename, "Elbe", "Elbe Binary Cdrom Repo", "main added" )
+        RepoBase.__init__( self, path, log, arch, codename, "Elbe", "Elbe Binary Cdrom Repo", "main added" )
 
 class CdromSrcRepo(RepoBase):
-    def __init__( self, codename, path ):
-        RepoBase.__init__( self, path, "source", codename, "Elbe", "Elbe Source Cdrom Repo", "main" )
+    def __init__( self, codename, path, log ):
+        RepoBase.__init__( self, path, log, "source", codename, "Elbe", "Elbe Source Cdrom Repo", "main" )
 
