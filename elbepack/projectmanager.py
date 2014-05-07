@@ -34,6 +34,11 @@ class AlreadyOpen(ProjectManagerError):
         ProjectManagerError.__init__( self,
                 "project in %s is already opened by %s" % (builddir, username) )
 
+class PermissionDenied(ProjectManagerError):
+    def __init__ (self, builddir):
+        ProjectManagerError.__init__( self,
+                "permission denied for project in %s" % builddir )
+
 class NoOpenProject(ProjectManagerError):
     def __init__ (self):
         ProjectManagerError.__init__( self, "must open a project first" )
@@ -60,8 +65,7 @@ class ProjectManager(object):
             # Try to close old project, if any
             self._close_current_project( userid )
 
-            # TODO: Create with owner = userid
-            self.db.create_project( builddir )
+            self.db.create_project( builddir, owner_id=userid )
 
             try:
                 self.db.set_xml( builddir, xml_file )
@@ -78,6 +82,8 @@ class ProjectManager(object):
             self.builddir2userid[ builddir ] = userid
 
     def open_project (self, userid, builddir):
+        self._check_project_permission( userid, builddir )
+
         with self.lock:
             if builddir in self.builddir2userid:
                 if self.builddir2userid[ builddir ] == userid:
@@ -94,7 +100,6 @@ class ProjectManager(object):
             self._close_current_project( userid )
 
             # Load project from the database
-            # TODO: Permission check
             logpath = path.join( builddir, "log.txt" )
             ep = self.db.load_project( builddir, logpath )
 
@@ -107,8 +112,9 @@ class ProjectManager(object):
             self._close_current_project( userid )
 
     def del_project (self, userid, builddir):
+        self._check_project_permission( userid, builddir )
+
         with self.lock:
-            # TODO: Permission check
             # Does anyone have the project opened right now?
             if builddir in self.builddir2userid:
                 if self.builddir2userid[ builddir ] == userid:
@@ -173,3 +179,14 @@ class ProjectManager(object):
 
             del self.builddir2userid[ builddir ]
             del self.userid2project[ userid ]
+
+    def _check_project_permission (self, userid, builddir):
+        if self.db.is_admin( userid ):
+            # Admin may access all projects
+            return
+
+        if self.db.get_owner_id( builddir ) != userid:
+            # Project of another user, deny access
+            raise PermissionDenied( builddir )
+
+        # User is owner, so allow it
