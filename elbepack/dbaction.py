@@ -106,12 +106,19 @@ class CreateProjectAction(DbAction):
         DbAction.__init__(self, node)
 
     def execute(self, args):
-        if len (args) != 1:
-            print "usage: elbe db create_project <project_dir>"
+        oparser = OptionParser (
+                usage="usage: %prog db create_project [options] <project_dir>" )
+        oparser.add_option( "--user", dest="user",
+                help="user name of the designated project owner" )
+        (opt, arg) = oparser.parse_args(args)
+
+        if len (arg) != 1:
+            oparser.print_help()
             return
 
         db = ElbeDB()
-        db.create_project (args[0])
+        owner_id = db.get_user_id( opt.user )
+        db.create_project (arg[0], owner_id)
 
 DbAction.register(CreateProjectAction)
 
