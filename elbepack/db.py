@@ -340,6 +340,21 @@ class ElbeDB(object):
                 p.status = "build_failed"
 
 
+    def get_owner_id (self, builddir):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir ).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            if p.owner_id is None:
+                return None
+            else:
+                return int(p.owner_id)
+
+
     ### User management ###
 
     def add_user (self, name, fullname, password, email, admin):
