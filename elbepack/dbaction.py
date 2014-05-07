@@ -216,6 +216,7 @@ class ResetProjectAction(DbAction):
         if len(arg) != 1:
             print "wrong number of arguments"
             oparser.print_help()
+            return
 
         db = ElbeDB()
         db.reset_project (arg[0], opt.clean)
