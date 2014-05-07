@@ -21,6 +21,7 @@
 import os
 
 from optparse import OptionParser
+from getpass import getpass
 from elbepack.db import ElbeDB
 
 class DbAction(object):
@@ -65,6 +66,37 @@ class InitAction(DbAction):
                         opt.email, opt.admin)
 
 DbAction.register(InitAction)
+
+class AddUserAction(DbAction):
+    tag = 'add_user'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        oparser = OptionParser (usage="usage: %prog db add_user [options] username")
+        oparser.add_option ("--fullname", dest="fullname")
+        oparser.add_option ("--password", dest="password")
+        oparser.add_option ("--email", dest="email")
+        oparser.add_option ("--admin", dest="admin", default=False,
+                action="store_true")
+
+        (opt, arg) = oparser.parse_args (args)
+
+        if len(arg) != 1:
+            print "wrong number of arguments"
+            oparser.print_help()
+            return
+
+        if not opt.password:
+            password = getpass('Password for the new user: ')
+        else:
+            password = oparser.password
+
+        db = ElbeDB()
+        db.add_user( arg[0], opt.fullname, password, opt.email, opt.admin )
+
+DbAction.register(AddUserAction)
 
 class ListProjectsAction(DbAction):
 
