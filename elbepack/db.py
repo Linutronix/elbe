@@ -377,6 +377,29 @@ class ElbeDB(object):
                         name )
             s.add( u )
 
+    def modify_user (self, userid, name, fullname, email, admin,
+            password = None):
+        with session_scope(self.session) as s:
+            try:
+                u = s.query( User ).filter( User.id == userid ).one()
+            except NoResultFound:
+                raise ElbeDBError( "no user with id %i" % userid )
+
+            # If a user name change is requested, check for uniqueness
+            if name != u.name:
+                if s.query(User).filter(User.name == name).count() > 0:
+                    raise ElbeDBError(
+                            "user %s already exists in the database" % name )
+
+            u.name = name
+            u.fullname = fullname
+            u.email = email
+            u.admin = admin
+
+            # Update password only if given
+            if not password is None:
+                u.pwhash = pbkdf2_sha512.encrypt( password )
+
     def del_user (self, userid):
         with session_scope(self.session) as s:
             try:
