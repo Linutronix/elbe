@@ -22,7 +22,7 @@ import os
 
 from optparse import OptionParser
 from getpass import getpass
-from elbepack.db import ElbeDB
+from elbepack.db import ElbeDB, ElbeDBError
 
 class DbAction(object):
 
@@ -97,6 +97,53 @@ class AddUserAction(DbAction):
         db.add_user( arg[0], opt.fullname, password, opt.email, opt.admin )
 
 DbAction.register(AddUserAction)
+
+class DelUserAction(DbAction):
+    tag = 'del_user'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        oparser = OptionParser (usage="usage: %prog db del_user [options] <userid>")
+        oparser.add_option ("--delete-projects", dest="delete_projects",
+                default=False, action="store_true")
+        oparser.add_option ("--quiet", dest="quiet",
+                default=False, action="store_true")
+
+        (opt, arg) = oparser.parse_args (args)
+
+        if len(arg) != 1:
+            print "usage: elbe db del_user <userid>"
+            return
+
+        try:
+            userid = int(arg[0])
+        except:
+            print "userid must be an integer"
+            return
+
+        db = ElbeDB()
+
+        projects = db.del_user( userid )
+
+        if projects:
+            if not opt.quiet:
+                if opt.delete_projects:
+                    print "removing projects owned by the deleted user:"
+                else:
+                    print "keeping projects owned by the deleted user:"
+
+        for p in projects:
+            if not opt.quiet:
+                print p.builddir + ":", p.name, "[", p.version, "]", p.edit
+            if opt.delete_projects:
+                try:
+                    db.del_project( p.builddir )
+                except ElbeDBError as e:
+                    print "  ==> ", e
+
+DbAction.register(DelUserAction)
 
 class ListProjectsAction(DbAction):
 

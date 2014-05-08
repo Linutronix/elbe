@@ -377,6 +377,27 @@ class ElbeDB(object):
                         name )
             s.add( u )
 
+    def del_user (self, userid):
+        with session_scope(self.session) as s:
+            try:
+                u = s.query( User ).filter( User.id == userid ).one()
+            except NoResultFound:
+                raise ElbeDBError( "no user with id %i" % userid )
+
+            # Get a list of all projects owned by the user to delete. Set their
+            # owner to nobody and return them to the caller later, so it can
+            # decide whether to keep the projects or delete them.
+            orphaned_projects = s.query( Project ).\
+                    filter( Project.owner_id == userid ).all()
+            projectlist = []
+            for p in orphaned_projects:
+                p.owner_id = None
+                projectlist.append( ProjectData(p) )
+
+            # Now delete the user and return the list
+            s.delete( u )
+            return projectlist
+
     def validate_login (self, name, password):
         with session_scope(self.session) as s:
             # Find the user with the given name
