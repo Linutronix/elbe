@@ -449,6 +449,7 @@ class User(Base):
 
 class UserData (object):
     def __init__ (self, user):
+        self.id         = int(user.id)
         self.name       = str(user.name)
         self.fullname   = str(user.fullname)
         self.email      = str(user.email)
