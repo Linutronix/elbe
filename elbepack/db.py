@@ -372,6 +372,9 @@ class ElbeDB(object):
                   email = email,
                   admin = admin )
         with session_scope(self.session) as s:
+            if s.query(User).filter(User.name == name).count() > 0:
+                raise ElbeDBError( "user %s already exists in the database"  %
+                        name )
             s.add( u )
 
     def validate_login (self, name, password):
