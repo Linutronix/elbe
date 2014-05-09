@@ -454,6 +454,15 @@ class ElbeDB(object):
 
             return str(u.name)
 
+    def get_user_data (self, userid):
+        with session_scope(self.session) as s:
+            try:
+                u = s.query(User).filter(User.id == userid).one()
+            except NoResultFound:
+                raise ElbeDBError( "no user with id %i" % userid)
+
+            return UserData(u)
+
     def get_user_id (self, name):
         with session_scope(self.session) as s:
             try:
