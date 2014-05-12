@@ -90,7 +90,7 @@ def run_command( argv ):
     pkgfname = "%s_%s_%s" % (opt.name, opt.version, opt.arch)
     pkgdir = os.path.join( tmpdir, pkgfname )
 
-    rdpath = os.path.join( pkgdir, "var/cache/elbe/initrd" )
+    rdpath = os.path.join( pkgdir, "var/lib/elbe/initrd" )
     os.system( 'mkdir -p "%s"' % rdpath )
     os.system( 'mkdir -p "%s"' % os.path.join( pkgdir, "DEBIAN" ) )
 
