@@ -1,6 +1,5 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/check_updates.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/chg_archive.py
-./usr/lib/python2.*/*-packages/elbepack/commands/create.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/diff.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/get_archive.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/init.py
