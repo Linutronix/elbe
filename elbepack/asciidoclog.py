@@ -96,7 +96,7 @@ class ASCIIDocLog (LogBase):
     def __init__(self, fname):
         if os.path.isfile(fname):
             os.unlink(fname)
-        fp = file(fname, "w")
+        fp = file(fname, "w", 1)
 
         LogBase.__init__(self, fp)
 
