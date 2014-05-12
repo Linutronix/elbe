@@ -1,3 +1,35 @@
+* version bump - beta4
+* elbe-bootstrap: update path of files
+* initrdpack: use /var/lib/elbe instead of /var/cache/elbe
+* update debian binary package descriptions
+* replace opt/elbe by var/cache/elbe
+* remove 'elbe create' and unused make templates
+* Merge remote-tracking branch 'origin/devel/stefan/projectmanager' into devel/manut
+* Merge remote-tracking branch 'origin/devel/stefan/fixes' into devel/manut
+* ProjectManager: Add permission checks for open/del
+* ProjectManager: Write log files to builddir
+* Add a ProjectManager for open projects
+* Add AsyncBuilder class for background builds
+* db: Add get_user_data to query user details
+* db: Add modify_user
+* db: Implement user deletion
+* db:add_user: Raise ElbeDBError on non-unique name
+* db: Add id to UserData
+* db: Add list_projects_of
+* db: Add get_owner_id to query for project owner
+* db: Add an action to create new users
+* db: Save owner for new projects
+* Write repomanager output to log object
+* dbaction: Add missing return to ResetProjectAction
+* db.load_project: Add optional logpath parameter
+* db: Add get_project_data, is_build_in_progress, get_username
+* AsciiDocLog: Use only line buffering
+* Merge remote-tracking branch 'origin/devel/stefan/dbclass' into devel/manut
+* do_hdimg: always return an initialized list object
+* only write fstab is <fstab> node is in xml:
+* fix help msg. elbe chroot is not elbe mount
+* fix comments in xml examples
+* v0.7.0~beta3
 * fix fstab creation
 * updated.xml: use public mirrors and add initvm node
 * powerpc.xml: add initvm node
@@ -14,6 +46,8 @@
 * buildchroot: print error if db save failed
 * examples/beaglebone-black: use armhf rt kernel
 * example/beaglebone-black: add linux-image
+* db: Add an owner column to the project table
+* db: Split get_logindata
 * print error msg if elbe-bootstrap is not on mirror
 * elbe chroot: fix missing userinterpr
 * docs: add new graphics

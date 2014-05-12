@@ -1,3 +1,13 @@
+elbe (0.7.0~beta4) unstable; urgency=medium
+
+  * AsyncBuilder
+  * ProjectManager
+  * DB improvementes
+  * use /var/cache/elbe, /var/lib/elbe instead of /opt/elbe
+  * this requires at least elbe-bootstrap_1.0
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 12 May 2014 20:35:37 +0200
+
 elbe (0.7.0~beta3) unstable; urgency=medium
 
   * buildchroot: implement build of cdroms
