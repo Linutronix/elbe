@@ -156,9 +156,9 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
     if prj.has("mirror/cdrom"):
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
+        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
     else:
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
-    os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
+        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
+    os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
 
     os.system( 'rm -r "%s"' % tmpdir )

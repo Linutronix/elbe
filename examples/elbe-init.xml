@@ -8,11 +8,6 @@
 			<url-list>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe wheezy main
-					</binary>
-				</url>
-				<url>
-					<binary>
 						http://debian.linutronix.de/elbe-testing wheezy main
 					</binary>
 				</url>
