@@ -13,17 +13,22 @@ Crash Course
 1. use a Elbe XML file (e.g. from /usr/share/doc/elbe/examples or
    examples/ in the elbe source tree)
 
-2. run "./elbe create ./examples/i386-example.xml".
+2. run "./elbe init ./examples/beaglebone-black.xml".
    This command creates the build directory in the current working directory.
 
 3. go into the working directory "cd build", run "make" and wait.
 
-4. run 'make run-con' to boot the ELBE Buildenvironment in qemu/kvm.
-   A stripped down and readonly target rootfilesystem is available within
-     'nfsroot.tar.gz'
+4. copy the rfs to a sdcard: 'sudo dd if=sdcard.img of=/dev/mmcblk0'
 
-For further informations read ABOUT, INSTALL docs/elbeoverview-en.txt
-Or get a nicer HTML documentation and run 'make' at the docs folder.
+5. run 'make run-con' to boot the ELBE Buildenvironment in qemu/kvm.
+   (login: root password: root)
+
+6. Use 'elbe chroot /var/cache/elbe/build' to enter the Beaglebone Black
+   Build Environment.
+
+For more documentation run 'make' at the docs folder.
+An introduction can be found in docs/elbeoverview-en.html
+Also man pages will be build.
 
 Report bugs or any other feedback
 ---------------------------------
@@ -32,13 +37,12 @@ Please report bugs or success stories to <elbe-devel@linutronix.de>.
 
 Development
 -----------
-There is a 'TODO' file that describes the next development steps.
-The project is hosted on github: https://github.com/linutronix/elbe
+The project is hosted on github:
+https://github.com/linutronix/elbe
+
+To get the source use:
+git clone https://github.com/linutronix/elbe
+git checkout -t -b origin/devel/elbe-1.0 devel/elbe-1.0
+
 If you are intrested in joining the elbe-devel team please send an email to
 <elbe-devel@linutronix.de>.
-
-Port it to other systems
-------------------------
-It is possible to port it to other systems, but it has a dependency to
-python-apt. So either this dependency needs to be eliminated, or python-apt
-needs to be available on the target platform.
