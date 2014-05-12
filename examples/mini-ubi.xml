@@ -82,7 +82,7 @@
 						<label>rfs2</label>
 						<id>2</id>
 						<size>25MiB</size>
-						<binary>/opt/elbe/rfs1.ubifs</binary>
+						<binary>/var/cache/elbe/build/rfs1.ubifs</binary>
 					</ubi>
 					<ubi>
 						<type>dynamic</type>

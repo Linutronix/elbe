@@ -26,8 +26,8 @@ unset TERM_TYPE
 # stop confusion /target is buildenv in this context
 ln -s /target /buildenv
 
-mkdir -p /buildenv/opt/elbe
-cp source.xml /buildenv/opt/elbe/
+mkdir -p /buildenv/var/cache/elbe
+cp source.xml /buildenv/var/cache/elbe/
 
 mkdir -p /buildenv/dev
 mount -o bind /dev /buildenv/dev
@@ -52,9 +52,9 @@ chroot /buildenv elbe buildchroot \
 %  if opt.buildtype:
   --buildtype=${buildtype} \
 %  endif
-  -t /opt/elbe/build \
-  -o /opt/elbe/elbe-report.log \
-  /opt/elbe/source.xml
+  -t /var/cache/elbe/build \
+  -o /var/cache/elbe/elbe-report.log \
+  /var/cache/elbe/source.xml
 % endif
 
 umount /buildenv/proc /buildenv/sys /buildenv/dev

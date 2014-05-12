@@ -352,7 +352,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	<rm>lib/modules/2.6.32-5-versatile/</rm>	<4>
 	<rm>var/cache/man/*</rm>			<5>
-	<rm>opt/elbe</rm>				<6>
+	<rm>var/cache/elbe</rm>				<6>
 	<rm>var/cache/debconf/*</rm>			<7>
 </finetuning>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

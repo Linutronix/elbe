@@ -244,7 +244,7 @@ def extract_target( src, xml, dst, log, cache ):
         log.do("mount -o bind /sys %s" %(dst.fname('sys')))
 
         log.do("chroot %s dpkg --clear-selections" %(dst.fname('')))
-        log.do("chroot %s dpkg --set-selections <opt/elbe/pkg-selections" %(dst.fname('')))
+        log.do("chroot %s dpkg --set-selections <var/cache/elbe/pkg-selections" %(dst.fname('')))
         log.do("chroot %s dpkg --purge -a" %(dst.fname('')))
 
         log.do("umount %s" %(dst.fname('sys')))

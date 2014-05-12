@@ -35,7 +35,7 @@ OPTIONS
 -------
 --directory <update_dir>::
 	Monitor the given directory for incoming update packages. Default is:
-	'/opt/elbe/updates'
+	'/var/cache/elbe/updates'
 
 --host <host>::
 	Bind address for the SOAP interface. Default is to bind to all network

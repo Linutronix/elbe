@@ -76,7 +76,7 @@ class UpdateService (SimpleWSGISoapApp):
         if version == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
-            fname = "/opt/elbe/" + version + "/new.xml"
+            fname = "/var/cache/elbe/" + version + "/new.xml"
 
         try:
             xml = etree (fname)
@@ -209,7 +209,7 @@ def update (upd_file):
     upd_file_z.extract ("new.xml", "/tmp/")
 
     xml = etree ("/tmp/new.xml")
-    prefix = "/opt/elbe/" + xml.text ("/project/name")
+    prefix = "/var/cache/elbe/" + xml.text ("/project/name")
     prefix += "_" + xml.text ("/project/version") + "/"
 
     log ("preparing update: " + prefix)
@@ -302,7 +302,7 @@ def run_command (argv):
     oparser = OptionParser (usage="usage: %prog init [options] <filename>")
 
     oparser.add_option ("--directory", dest="update_dir",
-                        help="monitor dir (default is /opt/elbe/updates)",
+                        help="monitor dir (default is /var/cache/elbe/updates)",
                         metavar="FILE" )
 
     oparser.add_option ("--host", dest="host", default="",
@@ -321,7 +321,7 @@ def run_command (argv):
         status.nosign = True
 
     if not opt.update_dir:
-        update_dir = "/opt/elbe/updates"
+        update_dir = "/var/cache/elbe/updates"
     else:
         update_dir = opt.update_dir
 

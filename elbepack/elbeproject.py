@@ -260,17 +260,17 @@ class ElbeProject (object):
                 dump_debootstrappkgs( self.xml, self._rpcaptcache )
                 source = self.xml
                 try:
-                    initxml = ElbeXML( "/opt/elbe/source.xml",
+                    initxml = ElbeXML( "/var/cache/elbe/source.xml",
                             skip_validate=self.skip_validate )
                     self.xml.get_initvmnode_from( initxml )
                 except ValidationError:
-                    self.log.printo( "/opt/elbe/source.xml validation failed" )
+                    self.log.printo( "/var/cache/elbe/source.xml validation failed" )
                     self.log.printo( "will not copy initvm node" )
                 except IOError:
-                    self.log.printo( "/opt/elbe/source.xml not available" )
+                    self.log.printo( "/var/cache/elbe/source.xml not available" )
                     self.log.printo( "can not copy initvm node" )
                 except NoInitvmNode:
-                    self.log.printo( "/opt/elbe/source.xml is available" )
+                    self.log.printo( "/var/cache/elbe/source.xml is available" )
                     self.log.printo( "But it does not contain an initvm node" )
             else:
                 sourcepath = os.path.join( self.builddir, "source.xml" )
