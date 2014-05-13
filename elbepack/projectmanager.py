@@ -43,7 +43,7 @@ class NoOpenProject(ProjectManagerError):
     def __init__ (self):
         ProjectManagerError.__init__( self, "must open a project first" )
 
-class CurrentlyBuilt(ProjectManagerError):
+class InvalidState(ProjectManagerError):
     def __init__ (self, message):
         ProjectManagerError.__init__( self, message )
 
@@ -144,7 +144,7 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project( userid )
             if self.db.is_build_in_progress( ep.builddir ):
-                raise CurrentlyBuilt(
+                raise InvalidState(
                         "cannot change XML file for project being currently built in %s" %
                         ep.builddir )
 
@@ -155,7 +155,7 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project( userid )
             if self.db.is_build_in_progress( ep.builddir ):
-                raise CurrentlyBuilt(
+                raise InvalidState(
                         "project %s is already being built" % ep.builddir )
 
             self.builder.enqueue( ep )
@@ -184,7 +184,7 @@ class ProjectManager(object):
         if userid in self.userid2project:
             builddir = self.userid2project[ userid ].builddir
             if self.db.is_build_in_progress( builddir ):
-                raise CurrentlyBuilt(
+                raise InvalidState(
                         "project in directory %s of user %s is currently being built and cannot be closed" %
                         ( builddir, self.db.get_username( userid ) ) )
 
