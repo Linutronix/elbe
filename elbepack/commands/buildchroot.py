@@ -61,9 +61,6 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    if not opt.output:
-        print "No Log output"
-        sys.exit(20)
     if not opt.target:
         print "No target specified"
         sys.exit(20)
