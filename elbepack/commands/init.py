@@ -134,6 +134,9 @@ def run_command( argv ):
          "pkgs": xml.node("/initvm/pkg-list") or [],
          "preseed": get_initvm_preseed(xml) }
 
+    if http_proxy != "":
+        os.putenv ("http_proxy", http_proxy)
+
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
     except NoKinitrdException:
