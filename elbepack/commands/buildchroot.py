@@ -21,6 +21,7 @@
 from optparse import OptionParser
 import sys
 
+from elbepack.shellhelper import CommandError
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDB
@@ -72,8 +73,12 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    project.build( opt.skip_debootstrap, opt.skip_cdrom,
-            opt.build_sources, opt.debug )
+    try:
+        project.build( opt.skip_debootstrap, opt.skip_cdrom,
+                opt.build_sources, opt.debug )
+    except CommandError as ce:
+        print "command in project build failed:", ce.cmd
+        sys.exit(20)
 
     try:
         db = ElbeDB()
