@@ -139,7 +139,10 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     try:
         uri = get_initrd_uri(prj, defs, arch)
     except KeyError:
-        print '\n\nelbe-bootstrap package not found on any mirror'
+        raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
+        return
+    except SystemError:
+        raise NoKinitrdException ('a configured mirror is not reachable')
         return
 
     tmpdir = mkdtemp()
@@ -151,7 +154,7 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     elif uri.startswith("ftp://"):
         os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
     else:
-        raise NoKinitrdException ('no kinitrd package available')
+        raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
 
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
