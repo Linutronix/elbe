@@ -71,6 +71,10 @@ class LogBase(object):
                 raise CommandError(cmd, ret)
 
     def chroot(self, directory, cmd, **args):
+        os.environ["LANG"] = "C"
+        os.environ["LANGUAGE"] = "C"
+        os.environ["LC_ALL"] = "C"
+
         chcmd = "chroot %s %s" % (directory, cmd)
         self.do( chcmd, **args )
 

@@ -47,5 +47,8 @@ def run_command( argv ):
         sys.exit(20)
 
     with project.buildenv.rfs:
+        os.environ["LANG"] = "C"
+        os.environ["LANGUAGE"] = "C"
+        os.environ["LC_ALL"] = "C"
         os.system( "chroot %s" % project.chrootpath )
 
