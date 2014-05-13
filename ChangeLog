@@ -1,3 +1,9 @@
+* buildchroot: make errors user readable
+* buildchroot: don't require -o parameter
+* add preferences.mako again
+* update README file
+* remove 'elbe create' stuff from debianization
+* update changelogs for beta4
 * version bump - beta4
 * elbe-bootstrap: update path of files
 * initrdpack: use /var/lib/elbe instead of /var/cache/elbe
