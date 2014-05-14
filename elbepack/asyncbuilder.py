@@ -21,6 +21,13 @@
 from threading import Thread
 from Queue import Queue
 
+class BuildJob(object):
+    FULL, APT_COMMIT = range(2)
+
+    def __init__ (self, project, buildtype):
+        self.project = project
+        self.buildtype = buildtype
+
 class AsyncBuilder(Thread):
     def __init__ (self, db):
         Thread.__init__( self )
@@ -28,17 +35,28 @@ class AsyncBuilder(Thread):
         self.queue = Queue()
         self.start()
 
-    def enqueue (self, ep):
-        self.db.set_build_in_progress( ep.builddir )
-        self.queue.put( ep )
+    def enqueue (self, buildjob):
+        if buildjob.buildtype == BuildJob.FULL:
+            self.db.set_build_in_progress( buildjob.project.builddir )
+            self.queue.put( buildjob )
+        elif buildjob.buildtype == BuildJob.APT_COMMIT:
+            self.db.set_build_in_progress( buildjob.project.builddir )
+            if buildjob.project.get_rpcaptcache().get_changes():
+                self.queue.put( buildjob )
+            else:
+                self.db.set_build_done( buildjob.project.builddir )
 
     def run (self):
         while True:
-            ep = self.queue.get()
+            job = self.queue.get()
 
             try:
-                ep.build()
-                self.db.set_build_done( ep.builddir, successful=True )
+                if job.buildtype == BuildJob.FULL:
+                    job.project.build()
+                elif job.buildtype == BuildJob.APT_COMMIT:
+                    job.project.get_rpcaptcache().commit()
+
+                self.db.set_build_done( job.project.builddir, successful=True )
             except Exception as e:
-                self.db.set_build_done( ep.builddir, successful=False )
+                self.db.set_build_done( job.project.builddir, successful=False )
                 print e     # XXX Think about better error handling here

@@ -23,7 +23,7 @@ from os import path
 from threading import Lock
 from uuid import uuid4
 from elbepack.db import ElbeDB, ElbeDBError
-from elbepack.asyncbuilder import AsyncBuilder
+from elbepack.asyncbuilder import AsyncBuilder, BuildJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -151,14 +151,14 @@ class ProjectManager(object):
             self.db.set_xml( ep.builddir, xml_file )
             ep.set_xml()    # Always use source.xml in the project directory
 
-    def build_current_project (self, userid):
+    def build_current_project (self, userid, buildtype):
         with self.lock:
             ep = self._get_current_project( userid )
             if self.db.is_build_in_progress( ep.builddir ):
                 raise InvalidState(
                         "project %s is already being built" % ep.builddir )
 
-            self.builder.enqueue( ep )
+            self.builder.enqueue( BuildJob( ep, buildtype ) )
 
     def read_current_project_log (self, userid):
         with self.lock:
