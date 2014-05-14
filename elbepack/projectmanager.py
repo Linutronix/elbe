@@ -160,6 +160,46 @@ class ProjectManager(object):
 
             self.builder.enqueue( BuildJob( ep, buildtype ) )
 
+    def apt_update (self, userid):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.update()
+
+    def apt_mark_install (self, userid, pkgname, version):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.mark_install( pkgname, version )
+
+    def apt_mark_upgrade (self, userid, pkgname, version):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.mark_upgrade( pkgname, version )
+
+    def apt_mark_delete (self, userid, pkgname, version):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.mark_delete( pkgname, version )
+
+    def apt_mark_keep (self, userid, pkgname, version):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.mark_keep( pkgname, version )
+
+    def apt_get_marked_install (self, userid):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_marked_install( userid )
+
+    def apt_get_pkglist (self, userid, section):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_pkglist( section )
+
+    def apt_get_sections (self, userid):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_sections()
+
     def read_current_project_log (self, userid):
         with self.lock:
             ep = self._get_current_project( userid )
@@ -201,3 +241,19 @@ class ProjectManager(object):
             raise PermissionDenied( builddir )
 
         # User is owner, so allow it
+
+    def _get_current_project_apt_cache( self, userid ):
+        # Must be called with self.lock held
+        ep = self._get_current_project( userid )
+
+        if self.db.is_build_in_progress( ep.builddir ):
+            raise InvalidState(
+                    "project in directory %s is currently being built" %
+                    ep.builddir )
+
+        if not ep.has_full_buildenv():
+            raise InvalidState(
+                    "project in directory %s does not have a functional"
+                    "build environment" % ep.builddir )
+
+        return ep.get_rpcaptcache()
