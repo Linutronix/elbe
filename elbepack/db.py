@@ -69,7 +69,8 @@ class ElbeDB(object):
     db_location = 'sqlite:///' + db_path + '/elbe.db'
     
     def __init__ (self):
-        engine = create_engine( self.__class__.db_location )
+        engine = create_engine( self.__class__.db_location,
+                connect_args={ 'timeout': 30 } )
         Base.metadata.create_all( engine )
         smaker = sessionmaker( bind=engine )
         self.session = scoped_session( smaker )
