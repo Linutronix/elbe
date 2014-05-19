@@ -54,7 +54,8 @@ class AsyncBuilder(Thread):
                 if job.buildtype == BuildJob.FULL:
                     job.project.build()
                 elif job.buildtype == BuildJob.APT_COMMIT:
-                    job.project.get_rpcaptcache().commit()
+                    with job.project.buildenv:
+                        job.project.get_rpcaptcache().commit()
 
                 self.db.set_build_done( job.project.builddir, successful=True )
             except Exception as e:
