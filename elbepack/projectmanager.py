@@ -185,6 +185,11 @@ class ProjectManager(object):
             c = self._get_current_project_apt_cache( userid )
             c.mark_keep( pkgname, version )
 
+    def apt_get_changes (self, userid):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_changes()
+
     def apt_get_marked_install (self, userid):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
