@@ -143,9 +143,9 @@ class ProjectManager(object):
     def set_current_project_xml (self, userid, xmlfile):
         with self.lock:
             ep = self._get_current_project( userid )
-            if self.db.is_build_in_progress( ep.builddir ):
+            if self.db.is_busy( ep.builddir ):
                 raise InvalidState(
-                        "cannot change XML file for project being currently built in %s" %
+                        "cannot change XML file for busy project in %s" %
                         ep.builddir )
 
             self.db.set_xml( ep.builddir, xml_file )
@@ -154,9 +154,9 @@ class ProjectManager(object):
     def build_current_project (self, userid, buildtype):
         with self.lock:
             ep = self._get_current_project( userid )
-            if self.db.is_build_in_progress( ep.builddir ):
+            if self.db.is_busy( ep.builddir ):
                 raise InvalidState(
-                        "project %s is already being built" % ep.builddir )
+                        "project %s is busy" % ep.builddir )
 
             self.worker.enqueue( AsyncWorkerJob( ep, buildtype ) )
 
@@ -228,9 +228,9 @@ class ProjectManager(object):
 
         if userid in self.userid2project:
             builddir = self.userid2project[ userid ].builddir
-            if self.db.is_build_in_progress( builddir ):
+            if self.db.is_busy( builddir ):
                 raise InvalidState(
-                        "project in directory %s of user %s is currently being built and cannot be closed" %
+                        "project in directory %s of user %s is currently busy and cannot be closed" %
                         ( builddir, self.db.get_username( userid ) ) )
 
             del self.builddir2userid[ builddir ]
@@ -251,9 +251,9 @@ class ProjectManager(object):
         # Must be called with self.lock held
         ep = self._get_current_project( userid )
 
-        if self.db.is_build_in_progress( ep.builddir ):
+        if self.db.is_busy( ep.builddir ):
             raise InvalidState(
-                    "project in directory %s is currently being built" %
+                    "project in directory %s is currently busy" %
                     ep.builddir )
 
         if not ep.has_full_buildenv():

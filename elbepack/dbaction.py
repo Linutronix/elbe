@@ -249,15 +249,15 @@ class BuildAction(DbAction):
             return
 
         db = ElbeDB()
-        db.set_build_in_progress( args[0] )
+        db.set_busy( args[0], True )
         try:
             ep = db.load_project( args[0] )
             ep.build( skip_debootstrap = True )
         except Exception as e:
-            db.set_build_done( args[0], successful = False )
+            db.reset_busy( args[0], "build_failed" )
             print e
             return
-        db.set_build_done( args[0], successful = True )
+        db.set_build_done( args[0], "build_done" )
 
 DbAction.register(BuildAction)
 

@@ -155,9 +155,9 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 raise ElbeDBError(
-                        "cannot set XML file while project %s is being built" %
+                        "cannot set XML file while project %s is busy" %
                         builddir )
 
             xml = ElbeXML (xml_file)    #ValidationError
@@ -165,7 +165,7 @@ class ElbeDB(object):
             p.name = xml.text ("project/name")
             p.version = xml.text ("project/version")
             p.edit = datetime.utcnow ()
-            p.status = "needs_build"
+            p.status = "has_changes"
 
             copyfile (xml_file, builddir+"/source.xml");    #OSError
 
@@ -217,9 +217,9 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 raise ElbeDBError(
-                        "cannot delete project %s while it is being built" %
+                        "cannot delete project %s while it is busy" %
                         builddir )
 
             if os.path.exists (builddir):
@@ -297,7 +297,7 @@ class ElbeDB(object):
                         builddir )
 
 
-    def set_build_in_progress (self, builddir):
+    def set_busy (self, builddir, rebuilding):
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).with_lockmode( 'update' ). \
@@ -307,14 +307,18 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress" or p.status == "empty_project":
+            if p.status == "busy" or p.status == "empty_project" or \
+               ( not rebuilding and p.status != "build_done" and
+                       p.status != "has_changes" ):
                 raise ElbeDBError( "project: " + builddir +
                         " invalid status: " + p.status )
 
-            p.status = "build_in_progress"
+            old_status = p.status
+            p.status = "busy"
+            return old_status
 
 
-    def is_build_in_progress (self, builddir):
+    def is_busy (self, builddir):
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).filter( Project.builddir == builddir ). \
@@ -324,13 +328,17 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 return True
             else:
                 return False
 
 
-    def set_build_done (self, builddir, successful=True):
+    def reset_busy (self, builddir, new_status):
+        assert new_status == "has_changes" or \
+               new_status == "build_done" or \
+               new_status == "build_failed"
+
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).with_lockmode( 'update' ). \
@@ -339,14 +347,11 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
-            if p.status != "build_in_progress":
+            if p.status != "busy":
                 raise ElbeDBError( "project: " + builddir + " invalid status: " +
                         p.status )
 
-            if successful:
-                p.status = "build_done"
-            else:
-                p.status = "build_failed"
+            p.status = new_status
 
 
     def get_owner_id (self, builddir):

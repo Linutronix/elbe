@@ -37,27 +37,37 @@ class AsyncWorker(Thread):
 
     def enqueue (self, job):
         if job.action == AsyncWorkerJob.BUILD:
-            self.db.set_build_in_progress( job.project.builddir )
+            self.db.set_busy( job.project.builddir, True )
             self.queue.put( job )
+
         elif job.action == AsyncWorkerJob.APT_COMMIT:
-            self.db.set_build_in_progress( job.project.builddir )
+            old_status = self.db.set_busy( job.project.builddir, False )
             if job.project.get_rpcaptcache().get_changes():
                 self.queue.put( job )
             else:
-                self.db.set_build_done( job.project.builddir )
+                self.db.reset_busy( job.project.builddir, old_status )
 
     def run (self):
         while True:
             job = self.queue.get()
 
-            try:
-                if job.action == AsyncWorkerJob.BUILD:
+            if job.action == AsyncWorkerJob.BUILD:
+                try:
                     job.project.build()
-                elif job.action == AsyncWorkerJob.APT_COMMIT:
+                    self.db.reset_busy( job.project.builddir,
+                            "build_done" )
+                except Exception as e:
+                    self.db.reset_busy( job.project.builddir,
+                            "build_failed" )
+                    print e     # TODO: Think about better error handling here
+
+            elif job.action == AsyncWorkerJob.APT_COMMIT:
+                try:
                     with job.project.buildenv:
                         job.project.get_rpcaptcache().commit()
-
-                self.db.set_build_done( job.project.builddir, successful=True )
-            except Exception as e:
-                self.db.set_build_done( job.project.builddir, successful=False )
-                print e     # XXX Think about better error handling here
+                        self.db.reset_busy( job.project.builddir,
+                                "has_changes" )
+                except Exception as e:
+                    self.db.reset_busy( job.project.builddir,
+                            "build_failed" )
+                    print e     # TODO: Think about better error handling here
