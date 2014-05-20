@@ -25,6 +25,7 @@ import urllib2
 
 try:
     from elbepack import virtapt
+    from apt_pkg import TagFile
     virtapt_imported = True
 except ImportError:
     print "WARNING - python-apt not available: if there are multiple versions of"
@@ -134,6 +135,21 @@ def get_initrd_uri( prj, defs, arch ):
     return ""
 
 
+def get_dsc_size( fname ):
+    if not virtapt_imported:
+        return 0
+
+    tf = TagFile( fname )
+
+    sz = os.path.getsize(fname)
+    for sect in tf:
+        if sect.has_key('Files'):
+            files = sect['Files'].split('\n')
+            files = [ f.strip().split(' ') for f in files ]
+            for f in files:
+                sz += int(f[1])
+
+    return sz
 
 def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     try:
