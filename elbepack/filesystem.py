@@ -262,8 +262,11 @@ class ChRootFilesystem(Filesystem):
 
     def __enter__(self):
         if self.interpreter:
+            if not self.exists ("usr/bin"):
+                self.mkdir ("usr/bin")
+
             os.system ('cp /usr/bin/%s %s' % (self.interpreter,
-                self.fname( "usr/bin" )) )
+                self.fname( "usr/bin/" )) )
         self.mount()
         return self
 
