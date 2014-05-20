@@ -162,8 +162,13 @@ class ProjectManager(object):
 
     def apt_update (self, userid):
         with self.lock:
-            c = self._get_current_project_apt_cache( userid )
-            c.update()
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "project %s is busy" % ep.builddir )
+
+            self.worker.enqueue( AsyncWorkerJob( ep,
+                AsyncWorkerJob.APT_UPDATE ) )
 
     def apt_mark_install (self, userid, pkgname, version):
         with self.lock:

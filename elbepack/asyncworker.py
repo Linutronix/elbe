@@ -22,7 +22,7 @@ from threading import Thread
 from Queue import Queue
 
 class AsyncWorkerJob(object):
-    BUILD, APT_COMMIT = range(2)
+    BUILD, APT_COMMIT, APT_UPDATE = range(3)
 
     def __init__ (self, project, action):
         self.project = project
@@ -47,6 +47,10 @@ class AsyncWorker(Thread):
             else:
                 self.db.reset_busy( job.project.builddir, old_status )
 
+        elif job.action == AsyncWorkerJob.APT_UPDATE:
+            self.db.set_busy( job.project.builddir, False )
+            self.queue.put( job )
+
     def run (self):
         while True:
             job = self.queue.get()
@@ -70,4 +74,14 @@ class AsyncWorker(Thread):
                 except Exception as e:
                     self.db.reset_busy( job.project.builddir,
                             "build_failed" )
+                    print e     # TODO: Think about better error handling here
+
+            elif job.action == AsyncWorkerJob.APT_UPDATE:
+                try:
+                    with job.project.buildenv:
+                        job.project.get_rpcaptcache().update()
+                        self.db.reset_busy( job.project.builddir,
+                                "has_changes" )
+                except Exception as e:
+                    self.db.reset_busy( job.project.builddir, "build_failed" )
                     print e     # TODO: Think about better error handling here
