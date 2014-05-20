@@ -23,7 +23,7 @@ from os import path
 from threading import Lock
 from uuid import uuid4
 from elbepack.db import ElbeDB, ElbeDBError
-from elbepack.asyncbuilder import AsyncBuilder, BuildJob
+from elbepack.asyncworker import AsyncWorker, AsyncWorkerJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -52,7 +52,7 @@ class ProjectManager(object):
     def __init__ (self, basepath):
         self.basepath = basepath    # Base path for new projects
         self.db = ElbeDB()          # Database of projects and users
-        self.builder = AsyncBuilder( self.db )
+        self.worker = AsyncWorker( self.db )
         self.userid2project = {}    # (userid, ElbeProject) map of open projects
         self.builddir2userid = {}   # (builddir, userid) map of open projects
         self.lock = Lock()          # Lock protecting our data
@@ -158,7 +158,7 @@ class ProjectManager(object):
                 raise InvalidState(
                         "project %s is already being built" % ep.builddir )
 
-            self.builder.enqueue( BuildJob( ep, buildtype ) )
+            self.worker.enqueue( AsyncWorkerJob( ep, buildtype ) )
 
     def apt_update (self, userid):
         with self.lock:

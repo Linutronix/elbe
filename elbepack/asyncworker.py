@@ -21,39 +21,39 @@
 from threading import Thread
 from Queue import Queue
 
-class BuildJob(object):
-    FULL, APT_COMMIT = range(2)
+class AsyncWorkerJob(object):
+    BUILD, APT_COMMIT = range(2)
 
-    def __init__ (self, project, buildtype):
+    def __init__ (self, project, action):
         self.project = project
-        self.buildtype = buildtype
+        self.action = action
 
-class AsyncBuilder(Thread):
+class AsyncWorker(Thread):
     def __init__ (self, db):
         Thread.__init__( self )
         self.db = db
         self.queue = Queue()
         self.start()
 
-    def enqueue (self, buildjob):
-        if buildjob.buildtype == BuildJob.FULL:
-            self.db.set_build_in_progress( buildjob.project.builddir )
-            self.queue.put( buildjob )
-        elif buildjob.buildtype == BuildJob.APT_COMMIT:
-            self.db.set_build_in_progress( buildjob.project.builddir )
-            if buildjob.project.get_rpcaptcache().get_changes():
-                self.queue.put( buildjob )
+    def enqueue (self, job):
+        if job.action == AsyncWorkerJob.BUILD:
+            self.db.set_build_in_progress( job.project.builddir )
+            self.queue.put( job )
+        elif job.action == AsyncWorkerJob.APT_COMMIT:
+            self.db.set_build_in_progress( job.project.builddir )
+            if job.project.get_rpcaptcache().get_changes():
+                self.queue.put( job )
             else:
-                self.db.set_build_done( buildjob.project.builddir )
+                self.db.set_build_done( job.project.builddir )
 
     def run (self):
         while True:
             job = self.queue.get()
 
             try:
-                if job.buildtype == BuildJob.FULL:
+                if job.action == AsyncWorkerJob.BUILD:
                     job.project.build()
-                elif job.buildtype == BuildJob.APT_COMMIT:
+                elif job.action == AsyncWorkerJob.APT_COMMIT:
                     with job.project.buildenv:
                         job.project.get_rpcaptcache().commit()
 
