@@ -178,6 +178,22 @@ class Filesystem(object):
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
 
+    def __disk_usage(self, directory):
+        size = os.path.getsize(directory)
+
+        for i in os.listdir(directory):
+            full = os.path.join(directory, i)
+            if os.path.isfile(full):
+                size += os.path.getsize(full)
+            elif os.path.isdir(full):
+                size += self.__disk_usage(full)
+
+        return size
+
+    def disk_usage(self, dirname=''):
+        directory = self.fname(dirname)
+        return self.__disk_usage(directory)
+
 def copy_filelist( src, filelist, dst ):
     for f in filelist:
         f = f.rstrip("\n")
