@@ -1,0 +1,77 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth />
+		<suite>wheezy</suite>
+	</initvm>
+	<project>
+		<name>rescue image</name>
+		<version>1.0</version>
+		<description>
+			busybox based rescue rfs for armel
+		</description>
+		<buildtype>armel</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<noauth />
+		<suite>wheezy</suite>
+	</project>
+	<target>
+		<hostname>rescue</hostname>
+		<domain>linutronix.de</domain>
+		<passwd>foo</passwd>
+		<console>ttyO0,115200</console>
+		<package>
+			<cpio><name>rescue.cpio</name></cpio>
+		</package>
+		<fstab>
+			<bydev>
+                                <source>none</source>
+                                <mountpoint>/sys/kernel/debug</mountpoint>
+                                <fs>
+                                        <type>debugfs</type>
+                                </fs>
+			</bydev>
+		</fstab>
+		<diet />
+		<norecommend />
+		<finetuning>
+			<mkdir>/lib/arm-linux-gnueabi</mkdir>
+			<b2t_cp path="/lib/arm-linux-gnueabi/libgcc_s.so.1">/lib/arm-linux-gnueabi/libgcc_s.so.1</b2t_cp>
+			<b2t_cp path="/lib/arm-linux-gnueabi/libc-2.13.so">/lib/arm-linux-gnueabi/libc.so.6</b2t_cp>
+			<b2t_cp path="/lib/arm-linux-gnueabi/ld-2.13.so">/lib/ld-linux.so.3</b2t_cp>
+			<b2t_cp path="/bin/dash">/bin/dash</b2t_cp>
+			<b2t_cp path="/bin/ln">/bin/ln2</b2t_cp>
+			<command>/install_bb.sh</command>
+			<rm>/bin/ln2</rm>
+			<rm>/bin/dash</rm>
+			<rm>/usr/share</rm>
+			<rm>/lib/ld-linux.so.3</rm>
+			<rm>/lib/arm-linux-gnueabi/libc.so.6</rm>
+			<rm>/lib/arm-linux-gnueabi/libgcc_s.so.1</rm>
+		</finetuning>
+		<pkg-list>
+			<pkg>busybox-static</pkg>
+		</pkg-list>
+	</target>
+<archive>QlpoOTFBWSZTWVg9NvMAAI17hswQAEBsY/+ACAD3ZZ5gAACEAAAIIACUhKp6
+aSYQ0xGRp5EPUepo9QMqn6TU2jRGAjARjUybR2cyPIIEKyCCPfpgrRixJ2JI
+CHPanTx3hdKjuJVbF1oqxlQ/LFXJGxysEwCaFoOVl/aFL1aiHhj0bBs9FJ8S
+41ujdgSIquhemZlOVTfrDr9r0Bvllp3JNKxiVcN/rjoeWCgvaFBQaSQOhdyR
+ThQkFg9NvMA=
+</archive></ns0:RootFileSystem>
