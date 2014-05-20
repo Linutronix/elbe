@@ -18,12 +18,14 @@
 
 import os
 from elbepack.debianreleases import codename2suite
+from elbepack.filesystem import Filesystem
 
 
 class RepoBase(object):
     def __init__( self, path, log, arch, codename, origin, description, components="main" ):
 
-        self.path = path
+        self.fs = Filesystem(path)
+
         self.log = log
         self.codename = codename
         self.arch = arch
@@ -31,13 +33,8 @@ class RepoBase(object):
         self.origin = origin
         self.description = description
 
-
-        repoconfdir = os.path.join( path, "conf" )
-
-        self.log.do( 'mkdir -p %s' % repoconfdir )
-
-        repoconf = os.path.join( repoconfdir, "distributions" )
-        fp = open(repoconf, "w")
+        self.fs.mkdir_p( "conf" )
+        fp = self.fs.open( "conf/distributions", "w")
 
         fp.write( "Origin: " + self.origin + "\n" )
         fp.write( "Label: " + self.origin + "\n" )
@@ -50,13 +47,13 @@ class RepoBase(object):
         fp.close()
 
     def includedeb( self, path, component="main"):
-        self.log.do( "reprepro --basedir " + self.path + " -C " + component + " includedeb " + self.codename + " " + path )
-    
+        self.log.do( "reprepro --basedir " + self.fs.path + " -C " + component + " includedeb " + self.codename + " " + path )
+
     def includedsc( self, path, component="main"):
-        self.log.do( "reprepro --basedir " + self.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
+        self.log.do( "reprepro --basedir " + self.fs.path + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
 
     def buildiso( self, fname ):
-        self.log.do( "genisoimage -o %s -J -R %s" % (fname, self.path) )
+        self.log.do( "genisoimage -o %s -J -R %s" % (fname, self.fs.path) )
 
 
 class UpdateRepo(RepoBase):
