@@ -1,3 +1,11 @@
+elbe (0.7.0~beta6) unstable; urgency=medium
+
+  * rescue rfs example
+  * avoid perl warnings
+  * use qemu-elbe-user-static if available
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 21 May 2014 11:46:45 +0200
+
 elbe (0.7.0~beta5) unstable; urgency=medium
 
   * fix bug that avoids that ElbeProject.build works
