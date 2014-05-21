@@ -20,14 +20,10 @@
 
 from optparse import OptionParser
 import sys
-import os
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.dump import dump_fullpkgs
-
-from elbepack.ziparchives import create_zip_archive
-from elbepack.repomanager import UpdateRepo
+from elbepack.elbexml import ValidationError
+from elbepack.updatepkg import gen_update_pkg, MissingData
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog gen_update [options] <xmlfile>")
@@ -61,16 +57,6 @@ def run_command( argv ):
         buildtype = None
 
     try:
-        xml = ElbeXML( args[0], buildtype=buildtype, skip_validate=opt.skip_validation )
-    except ValidationError:
-        print "xml validation failed. Bailing out"
-        sys.exit(20)
-
-    if not xml.has("fullpkgs"):
-        print "Xml does not have fullpkgs list"
-        sys.exit(20)
-
-    try:
         project = ElbeProject( opt.target, name=opt.name,
                 override_buildtype=buildtype,
                 skip_validate=opt.skip_validation )
@@ -78,82 +64,12 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    if not project.xml.has("fullpkgs"):
-        print "Source Xml does not have fullpkgs list"
+    try:
+        gen_update_pkg( project, args[ 0 ], buildtype, opt.skip_validation,
+                opt.debug )
+    except ValidationError:
+        print "xml validation failed. Bailing out"
         sys.exit(20)
-
-    if not project.buildenv.rfs:
-        print "Target does not have a build environment"
+    except MissingData as e:
+        print str(e)
         sys.exit(20)
-
-    cache = project.get_rpcaptcache()
-
-    instpkgs  = cache.get_installed_pkgs()
-    instindex = {}
-
-    for p in instpkgs:
-        instindex[p.name] = p
-
-    xmlpkgs = xml.node("/fullpkgs")
-    xmlindex = {}
-
-    fnamelist = []
-
-    for p in xmlpkgs:
-        name = p.et.text
-        ver  = p.et.get('version')
-        md5  = p.et.get('md5')
-
-        xmlindex[name] = p
-    
-        if not name in instindex:
-            print "package removed: " + name
-            continue
-
-        ipkg = instindex[name]
-        comp = cache.compare_versions(ipkg.installed_version, ver)
-
-        pfname = ipkg.name + '_' + ipkg.installed_version.replace( ':', '%3a' ) + '_' + ipkg.architecture + '.deb'
-
-        if comp == 0:
-            print "package ok: " + name + "-" + ipkg.installed_version
-            if opt.debug:
-                fnamelist.append( pfname )
-            continue
-
-        if comp > 0:
-            print "package upgrade: " + pfname
-            fnamelist.append( pfname )
-        else:
-            print "package downgrade: " + name + "-" + ipkg.installed_version
-
-    for p in instpkgs:
-        if p.name in xmlindex:
-            continue
-
-        print "package new installed " + p.name
-        pfname = p.name + '_' + p.installed_version.replace( ':', '%3a' ) + '_' + p.architecture + '.deb'
-        fnamelist.append( pfname )
-
-
-    update = os.path.join(opt.target, "update")
-    os.system( 'mkdir -p %s' % update )
-
-    repodir = os.path.join(update, "repo" )
-
-    repo = UpdateRepo( xml, repodir, project.log )
-
-    for fname in fnamelist:
-        path = os.path.join( project.chrootpath, "var/cache/apt/archives", fname )
-        repo.includedeb( path )
-
-
-    dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
-
-    project.xml.xml.write( os.path.join( update, "new.xml" ) )
-    os.system( "cp %s %s" % (args[0], os.path.join( update, "base.xml" )) )
-
-    zipfilename = os.path.join( project.builddir, "%s_%s.upd" %
-        (xml.text ("/project/name"), xml.text ("/project/version")) )
-
-    create_zip_archive( zipfilename, update, "." )
