@@ -89,6 +89,7 @@
 		</finetuning>
 		<pkg-list>
 			<pkg>grub-pc</pkg>
+			<pkg>linux-image</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
