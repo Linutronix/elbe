@@ -28,7 +28,6 @@ class RepoBase(object):
 
         self.vol_path = path
         self.volume_count = 0
-        self.fs = self.get_volume_fs(self.volume_count)
 
         self.log = log
         self.codename = codename
@@ -38,11 +37,16 @@ class RepoBase(object):
         self.description = description
         self.maxsize = maxsize
 
+        self.fs = self.get_volume_fs(self.volume_count)
+
         self.gen_repo_conf()
 
     def get_volume_fs( self, volume ):
-        volname = os.path.join( self.vol_path, "vol%02d" % volume )
-        return Filesystem(volname)
+        if self.maxsize:
+            volname = os.path.join( self.vol_path, "vol%02d" % volume )
+            return Filesystem(volname)
+        else:
+            return Filesystem(self.vol_path)
 
     def new_repo_volume( self ):
         self.volume_count += 1
