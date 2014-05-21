@@ -24,6 +24,8 @@ from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
 from elbepack.aptpkgutils import XMLPackage
 
+CDROM_SIZE = 640*1000*1000
+
 def mk_source_cdrom(rfs, arch, codename, target, log):
 
     rfs.mkdir_p( '/var/cache/elbe/sources' )
@@ -40,7 +42,7 @@ def mk_source_cdrom(rfs, arch, codename, target, log):
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ), log )
+    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ), log, CDROM_SIZE )
 
     for dsc in rfs.glob('var/cache/elbe/sources/*.dsc'):
         repo.includedsc(dsc)
@@ -74,7 +76,7 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
             except FetchError as fe:
                 log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log )
+    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, CDROM_SIZE )
 
     for deb in rfs.glob('var/cache/elbe/binaries/added/*.deb'):
         repo.includedeb(deb, 'added')
