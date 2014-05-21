@@ -2,19 +2,16 @@
 	<initvm>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>ftp.debian.org</primary_host>
+			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
+					<source>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</source>
 					<binary>
 						http://debian.linutronix.de/elbe-testing wheezy main
-					</binary>
-				</url>
-				<!-- for elbe bootstrap -->
-				<url>
-					<binary>
-						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 				</url>
 			</url-list>
@@ -36,12 +33,19 @@
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<source>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</source>
+					<binary>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</binary>
+				</url>
+			</url-list>
 		</mirror>
 		<noauth/>
 		<suite>wheezy</suite>
-		<buildimage>
-			<kinitrd>elbe-bootstrap</kinitrd>
-		</buildimage>
 	</project>
 	<target>
 		<hostname>elbe-test</hostname>
@@ -84,6 +88,7 @@
 			<command>chroot . passwd elbe -d</command>
 		</finetuning>
 		<pkg-list>
+			<pkg>grub-pc</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
