@@ -109,6 +109,7 @@ def gen_update_pkg (project, xml_filename, version_number,
 
     project.xml.node("/project/version").set_text(version_number)
 
+    project.xml.xml.write( os.path.join( project.builddir, "source.xml")
     project.xml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
 
