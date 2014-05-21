@@ -25,6 +25,7 @@ from elbepack.shellhelper import CommandError
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDB
+from sqlalchemy.exc import OperationalError
 
 
 def run_command( argv ):
@@ -83,6 +84,6 @@ def run_command( argv ):
     try:
         db = ElbeDB()
         db.save_project (project)
-    except sqlalchemy.exc.OperationalError:
+    except OperationalError:
         print "failed to save project in database"
         sys.exit(20)
