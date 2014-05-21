@@ -122,8 +122,12 @@ class BuildEnv ():
             self.cdrom_mount()
             self.log.do (cmd)
 
-            self.log.do ('cp /usr/bin/%s %s' % (self.xml.defs["userinterpr"],
-                self.rfs.fname( "usr/bin" )) )
+            ui = "/usr/share/elbe/qemu-elbe/" + self.xml.defs["userinterpr"]
+
+            if not os.path.exists (ui):
+                ui = "/usr/bin/" + self.xml.defs["userinterpr"]
+
+            self.log.do ('cp %s %s' % ui, self.rfs.fname( "usr/bin" )) )
 
             self.log.chroot (self.rfs.path,
                              '/debootstrap/debootstrap --second-stage')
