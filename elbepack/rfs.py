@@ -127,7 +127,7 @@ class BuildEnv ():
             if not os.path.exists (ui):
                 ui = "/usr/bin/" + self.xml.defs["userinterpr"]
 
-            self.log.do ('cp %s %s' % ui, self.rfs.fname( "usr/bin" )) )
+            self.log.do ('cp %s %s' % ui, self.rfs.fname( "usr/bin" ))
 
             self.log.chroot (self.rfs.path,
                              '/debootstrap/debootstrap --second-stage')

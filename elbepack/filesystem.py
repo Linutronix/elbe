@@ -268,7 +268,7 @@ class ChRootFilesystem(Filesystem):
             ui = "/usr/share/elbe/qemu-elbe/" + self.interpreter
             if not os.path.exists (ui):
                 ui = "/usr/bin/" + self.interpreter
-            os.system ('cp %s %s' % ui, self.fname( "usr/bin" )) )
+            os.system ('cp %s %s' % ui, self.fname( "usr/bin" ))
 
         self.mount()
         return self
