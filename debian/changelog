@@ -1,3 +1,9 @@
+elbe (0.7.0~beta7) unstable; urgency=medium
+
+  * fix update package generation
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 21 May 2014 16:48:47 +0200
+
 elbe (0.7.0~beta6) unstable; urgency=medium
 
   * rescue rfs example
