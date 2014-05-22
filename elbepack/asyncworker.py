@@ -20,6 +20,9 @@
 
 from threading import Thread
 from Queue import Queue
+from os import path
+
+from elbepack.dump import dump_fullpkgs
 
 class AsyncWorkerJob(object):
     BUILD, APT_COMMIT, APT_UPDATE = range(3)
@@ -68,7 +71,16 @@ class AsyncWorker(Thread):
             elif job.action == AsyncWorkerJob.APT_COMMIT:
                 try:
                     with job.project.buildenv:
+                        # Commit changes, update full package list and write
+                        # out new source.xml
                         job.project.get_rpcaptcache().commit()
+                        dump_fullpkgs( job.project.xml,
+                                job.project.buildenv.rfs,
+                                job.project.get_rpcaptcache() )
+                        sourcexmlpath = path.join( job.project.builddir,
+                                "source.xml" )
+                        job.project.xml.xml.write( sourcexmlpath )
+
                         self.db.reset_busy( job.project.builddir,
                                 "has_changes" )
                 except Exception as e:
