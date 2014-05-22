@@ -151,6 +151,37 @@ class ProjectManager(object):
             self.db.set_xml( ep.builddir, xml_file )
             ep.set_xml()    # Always use source.xml in the project directory
 
+    def set_current_project_version( self, userid, new_version ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "cannot change version number for busy project in %s" %
+                        ep.builddir )
+
+            self.db.set_project_version( ep.builddir, new_version )
+            ep.xml.node( "/target/version" ).set_text( new_version )
+
+    def list_current_project_versions( self, userid ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            return self.db.list_project_versions( ep.builddir )
+
+    def save_current_project_version( self, userid, description = None ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            self.db.save_version( ep.builddir, description )
+
+    def del_current_project_version( self, userid, version ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "cannot delete version of busy project in %s" %
+                        ep.builddir )
+
+            self.db.del_version( ep.builddir, version )
+
     def build_current_project (self, userid, buildtype):
         with self.lock:
             ep = self._get_current_project( userid )
