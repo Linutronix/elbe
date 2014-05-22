@@ -65,6 +65,8 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
             log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
         except FetchError as fe:
             log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+        except TypeError as te:
+            log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
     if not xml is None:
         for p in xml.node("debootstrappkgs"):
@@ -75,6 +77,8 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
                 log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
                 log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+            except TypeError as te:
+                log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
     repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, CDROM_SIZE )
 
@@ -85,5 +89,3 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
         repo.includedeb(deb, 'main')
 
     repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
-
-
