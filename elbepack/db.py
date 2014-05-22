@@ -24,6 +24,7 @@ import errno
 from datetime import datetime
 from shutil import (rmtree, copyfile)
 from contextlib import contextmanager
+from uuid import uuid4
 
 from passlib.hash import pbkdf2_sha512
 
@@ -225,6 +226,9 @@ class ElbeDB(object):
             if os.path.exists (builddir):
                 rmtree (builddir)   # OSError
 
+            s.query( ProjectVersion ).\
+                    filter( ProjectVersion.builddir == builddir ).delete()
+
             s.delete (p)
 
 
@@ -367,6 +371,88 @@ class ElbeDB(object):
                 return None
             else:
                 return int(p.owner_id)
+
+
+    ### Version management ###
+
+    def list_project_versions (self, builddir):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            return [ProjectVersionData(v) for v in p.versions]
+
+    def save_version (self, builddir, description = None):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status != "build_done" and p.status != "has_changes":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            sourcexmlpath = os.path.join( builddir, "source.xml" )
+            sourcexml = ElbeXML( sourcexmlpath )
+
+            version = sourcexml.text( "project/version" )
+            if s.query( ProjectVersion ).\
+                    filter( ProjectVersion.builddir == builddir ).\
+                    filter( ProjectVersion.version == version ).count() > 0:
+                raise ElbeDBError(
+                        "Version %s already exists for project in %s, "
+                        "please change version number first" %\
+                                (version, builddir)
+                        )
+
+            versionxmlname = str(uuid4()) + ".version.xml"
+            versionxmlpath = os.path.join( builddir, versionxmlname )
+            copyfile( sourcexmlpath, versionxmlpath )
+
+            v = ProjectVersion( builddir = builddir,
+                                version = version,
+                                xmlpath = versionxmlpath,
+                                description = description )
+            s.add(v)
+
+    def del_version (self, builddir, version):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            if v.project.status == "busy":
+                raise ElbeDBError(
+                        "cannot delete version of project in %s while "
+                        "it is busy" % builddir )
+
+            os.remove( v.xmlpath )
+
+            s.delete( v )
+
+    def get_version_xml (self, builddir, version):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError( "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            return str(v.xmlpath)
 
 
     ### User management ###
@@ -528,6 +614,7 @@ class Project (Base):
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
     owner_id = Column (Integer, ForeignKey('users.id'))
+    versions = relationship("ProjectVersion", backref="project")
 
 class ProjectData (object):
     def __init__ (self, project):
@@ -540,3 +627,23 @@ class ProjectData (object):
                             project.edit.day, project.edit.hour,
                             project.edit.minute, project.edit.second,
                             project.edit.microsecond, project.edit.tzinfo)
+
+
+class ProjectVersion (Base):
+    __tablename__ = 'projectversions'
+
+    builddir        = Column (String, ForeignKey('projects.builddir'),
+                              primary_key=True )
+    version         = Column (String, primary_key=True)
+    xmlpath         = Column (String, unique=True)
+    description     = Column (String)
+
+class ProjectVersionData (object):
+    def __init__ (self, pv):
+        self.builddir       = str(pv.builddir)
+        self.version        = str(pv.version)
+        self.xmlpath        = str(pv.xmlpath)
+        if pv.description:
+            self.description    = str(pv.description)
+        else:
+            self.description    = None
