@@ -582,28 +582,28 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="hostname" type="string">
+      <element name="hostname" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             hostname of the system
           </documentation>
         </annotation>
       </element>
-      <element name="domain" type="string">
+      <element name="domain" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             domainname of the network the target system is part of
           </documentation>
         </annotation>
       </element>
-      <element name="passwd" type="string">
+      <element name="passwd" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             root password
           </documentation>
         </annotation>
       </element>
-      <element name="console" type="string" minOccurs="0">
+      <element name="console" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             serial console for getty
