@@ -312,6 +312,24 @@ class ResetProjectAction(DbAction):
 DbAction.register(ResetProjectAction)
 
 
+class SetProjectVersionAction(DbAction):
+
+    tag = 'set_project_version'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        if len(args) != 2:
+            print "usage: elbe db set_project_version <project_dir> <version>"
+            return
+
+        db = ElbeDB()
+        db.set_project_version( args[0], args[1] )
+
+DbAction.register(SetProjectVersionAction)
+
+
 class ListVersionsAction(DbAction):
 
     tag = 'list_versions'

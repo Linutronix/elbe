@@ -373,6 +373,32 @@ class ElbeDB(object):
                 return int(p.owner_id)
 
 
+    def set_project_version( self, builddir, new_version = None):
+        if new_version == "":
+            raise ElbeDBError( "version number must not be empty" )
+
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir ).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "empty_project" or p.status == "busy":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            xmlpath = os.path.join( builddir, "source.xml" )
+            xml = ElbeXML( xmlpath )
+
+            if not new_version is None:
+                xml.node( "/project/version" ).set_text( new_version )
+                xml.xml.write( xmlpath )
+
+            p.version = xml.text( "/project/version" )
+
+
     ### Version management ###
 
     def list_project_versions (self, builddir):
