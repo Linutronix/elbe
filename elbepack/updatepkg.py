@@ -114,6 +114,6 @@ def gen_update_pkg (project, xml_filename, version_number,
     os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
 
     zipfilename = os.path.join( project.builddir, "%s_%s.upd" %
-        (xml.text ("/project/name"), version_number) )
+        (xml.text ("/project/name"), project.xml.text ("/project/version")) )
 
     create_zip_archive( zipfilename, update, "." )
