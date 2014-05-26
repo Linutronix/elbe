@@ -160,7 +160,7 @@ class ProjectManager(object):
                         ep.builddir )
 
             self.db.set_project_version( ep.builddir, new_version )
-            ep.xml.node( "/target/version" ).set_text( new_version )
+            ep.xml.node( "/project/version" ).set_text( new_version )
 
     def list_current_project_versions( self, userid ):
         with self.lock:
