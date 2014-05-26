@@ -23,6 +23,7 @@ from Queue import Queue
 from os import path
 
 from elbepack.dump import dump_fullpkgs
+from elbepack.updatepkg import gen_update_pkg
 
 class AsyncWorkerJob(object):
     def __init__ (self, project):
@@ -101,6 +102,26 @@ class APTCommitJob(AsyncWorkerJob):
             db.reset_busy( self.project.builddir,
                     "build_failed" )
             print e     # TODO: Think about better error handling here
+
+
+class GenUpdateJob(AsyncWorkerJob):
+    def __init__ (self, project, base_version_xml):
+        self.base_version_xml = base_version_xml
+        AsyncWorkerJob.__init__(self, project)
+
+    def enqueue (self, queue, db):
+        self.old_status = db.set_busy( self.project.builddir, False )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            gen_update_pkg( self.project, self.base_version_xml )
+        except Exception as e:
+            print e     # TODO: Think about better error handling here
+        finally:
+            # Update generation does not change the project, so we always
+            # keep the old status
+            db.reset_busy( self.project.builddir, self.old_status )
 
 
 class AsyncWorker(Thread):

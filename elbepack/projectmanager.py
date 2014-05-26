@@ -24,7 +24,7 @@ from threading import Lock
 from uuid import uuid4
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
-from elbepack.asyncworker import APTCommitJob
+from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -197,6 +197,19 @@ class ProjectManager(object):
                         "project %s is busy" % ep.builddir )
 
             self.worker.enqueue( BuildJob( ep ) )
+
+    def build_update_package (self, userid, base_version):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            if c.get_changes():
+                raise InvalidState(
+                        "project %s has uncommited package changes, "
+                        "please commit them first" )
+
+            ep = self._get_current_project( userid )
+            base_xml_file = self.db.get_version_xml( ep.builddir, base_version )
+
+            self.worker.enqueue( GenUpdateJob ( ep, base_xml_file ) )
 
     def apt_update (self, userid):
         with self.lock:
