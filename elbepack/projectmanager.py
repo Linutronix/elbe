@@ -23,7 +23,8 @@ from os import path
 from threading import Lock
 from uuid import uuid4
 from elbepack.db import ElbeDB, ElbeDBError
-from elbepack.asyncworker import AsyncWorker, AsyncWorkerJob
+from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
+from elbepack.asyncworker import APTCommitJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -188,14 +189,14 @@ class ProjectManager(object):
 
             self.db.del_version( ep.builddir, version )
 
-    def build_current_project (self, userid, buildtype):
+    def build_current_project (self, userid):
         with self.lock:
             ep = self._get_current_project( userid )
             if self.db.is_busy( ep.builddir ):
                 raise InvalidState(
                         "project %s is busy" % ep.builddir )
 
-            self.worker.enqueue( AsyncWorkerJob( ep, buildtype ) )
+            self.worker.enqueue( BuildJob( ep ) )
 
     def apt_update (self, userid):
         with self.lock:
@@ -204,8 +205,16 @@ class ProjectManager(object):
                 raise InvalidState(
                         "project %s is busy" % ep.builddir )
 
-            self.worker.enqueue( AsyncWorkerJob( ep,
-                AsyncWorkerJob.APT_UPDATE ) )
+            self.worker.enqueue( APTUpdateJob( ep ) )
+
+    def apt_commit (self, userid):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "project %s is busy" % ep.builddir )
+
+            self.worker.enqueue( APTCommitJob( ep ) )
 
     def apt_mark_install (self, userid, pkgname, version):
         with self.lock:

@@ -25,11 +25,83 @@ from os import path
 from elbepack.dump import dump_fullpkgs
 
 class AsyncWorkerJob(object):
-    BUILD, APT_COMMIT, APT_UPDATE = range(3)
-
-    def __init__ (self, project, action):
+    def __init__ (self, project):
         self.project = project
-        self.action = action
+
+    def enqueue (self, queue, db):
+        queue.put( self )
+
+    def execute (self, db):
+        pass
+
+
+class BuildJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir, True )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            self.project.build()
+            db.reset_busy( self.project.builddir, "build_done" )
+        except Exception as e:
+            db.reset_budy( self.project.builddir, "build_failed" )
+            print e     # TODO: Think about better error handling here
+
+
+class APTUpdateJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir, False )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            with self.project.buildenv:
+                self.project.get_rpcaptcache().update()
+                db.reset_busy( self.project.builddir,
+                        "has_changes" )
+        except Exception as e:
+            db.reset_busy( self.project.builddir, "build_failed" )
+            print e     # TODO: Think about better error handling here
+
+
+class APTCommitJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        old_status = db.set_busy( self.project.builddir, False )
+        if self.project.get_rpcaptcache().get_changes():
+            AsyncWorkerJob.enqueue( self, queue, db )
+        else:
+            db.reset_busy( self.project.builddir, old_status )
+
+    def execute (self, db):
+        try:
+            with self.project.buildenv:
+                # Commit changes, update full package list and write
+                # out new source.xml
+                self.project.get_rpcaptcache().commit()
+                dump_fullpkgs( self.project.xml,
+                        self.project.buildenv.rfs,
+                        self.project.get_rpcaptcache() )
+                sourcexmlpath = path.join( self.project.builddir,
+                        "source.xml" )
+                self.project.xml.xml.write( sourcexmlpath )
+
+                db.reset_busy( self.project.builddir,
+                        "has_changes" )
+        except Exception as e:
+            db.reset_busy( self.project.builddir,
+                    "build_failed" )
+            print e     # TODO: Think about better error handling here
+
 
 class AsyncWorker(Thread):
     def __init__ (self, db):
@@ -39,61 +111,9 @@ class AsyncWorker(Thread):
         self.start()
 
     def enqueue (self, job):
-        if job.action == AsyncWorkerJob.BUILD:
-            self.db.set_busy( job.project.builddir, True )
-            self.queue.put( job )
-
-        elif job.action == AsyncWorkerJob.APT_COMMIT:
-            old_status = self.db.set_busy( job.project.builddir, False )
-            if job.project.get_rpcaptcache().get_changes():
-                self.queue.put( job )
-            else:
-                self.db.reset_busy( job.project.builddir, old_status )
-
-        elif job.action == AsyncWorkerJob.APT_UPDATE:
-            self.db.set_busy( job.project.builddir, False )
-            self.queue.put( job )
+        job.enqueue( self.queue, self.db )
 
     def run (self):
         while True:
             job = self.queue.get()
-
-            if job.action == AsyncWorkerJob.BUILD:
-                try:
-                    job.project.build()
-                    self.db.reset_busy( job.project.builddir,
-                            "build_done" )
-                except Exception as e:
-                    self.db.reset_busy( job.project.builddir,
-                            "build_failed" )
-                    print e     # TODO: Think about better error handling here
-
-            elif job.action == AsyncWorkerJob.APT_COMMIT:
-                try:
-                    with job.project.buildenv:
-                        # Commit changes, update full package list and write
-                        # out new source.xml
-                        job.project.get_rpcaptcache().commit()
-                        dump_fullpkgs( job.project.xml,
-                                job.project.buildenv.rfs,
-                                job.project.get_rpcaptcache() )
-                        sourcexmlpath = path.join( job.project.builddir,
-                                "source.xml" )
-                        job.project.xml.xml.write( sourcexmlpath )
-
-                        self.db.reset_busy( job.project.builddir,
-                                "has_changes" )
-                except Exception as e:
-                    self.db.reset_busy( job.project.builddir,
-                            "build_failed" )
-                    print e     # TODO: Think about better error handling here
-
-            elif job.action == AsyncWorkerJob.APT_UPDATE:
-                try:
-                    with job.project.buildenv:
-                        job.project.get_rpcaptcache().update()
-                        self.db.reset_busy( job.project.builddir,
-                                "has_changes" )
-                except Exception as e:
-                    self.db.reset_busy( job.project.builddir, "build_failed" )
-                    print e     # TODO: Think about better error handling here
+            job.execute( self.db )
