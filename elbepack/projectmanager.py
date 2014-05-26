@@ -172,6 +172,12 @@ class ProjectManager(object):
             ep = self._get_current_project( userid )
             self.db.save_version( ep.builddir, description )
 
+    def set_current_project_version_description( self, userid, version,
+            description ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            self.db.set_version_description( ep.builddir, version, description )
+
     def del_current_project_version( self, userid, version ):
         with self.lock:
             ep = self._get_current_project( userid )
