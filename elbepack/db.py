@@ -448,6 +448,19 @@ class ElbeDB(object):
                                 description = description )
             s.add(v)
 
+    def set_version_description (self, builddir, version, description):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            v.description = description
+
     def del_version (self, builddir, version):
         with session_scope(self.session) as s:
             try:
