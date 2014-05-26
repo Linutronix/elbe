@@ -18,13 +18,13 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-'elbe-gen_update' creates an update archive by comparing the packages
+'elbe gen_update' creates an update archive by comparing the packages
 installed in the given target project against the packages listed in
-the given base XML file.  The resulting update archive will contain all new and
+the given base XML file. The resulting update archive will contain all new and
 all updated packages and can be used to update the target system with
 linkgit:elbe-updated[1]. It will be named 'NAME_VERSION.upd', with 'NAME'
-being the project name and 'VERSION' being the version specified on the
-command line.
+being the project name and 'VERSION' being read from the 'source.xml' file in
+the target directory.
 
 This command has to be run as root *inside the Elbe build VM*.
 
@@ -48,18 +48,29 @@ OPTIONS
 	in the target directory (Not recommended).
 
 <base_sourcexml>::
+<<<<<<< HEAD
 	The source.xml file of the base version of the project.
+=======
+	The 'source.xml' file of the base version of the project.
+>>>>>>> 8cc37b8... docs: Fix target/xmlfile confusion in gen_update
 
 
 EXAMPLES
 --------
 * Create an update package for 'myproject' including all packages installed or
+<<<<<<< HEAD
   updated via 'apt-get' since the project has been built with
   'v0.1.xml'. Bump version to 0.2.
 +
 ---------
 # elbe gen_update --target /root/myproject \
 	--version 0.2
+=======
+  updated via 'apt-get' since the project has been built with 'v0.1.xml'.
++
+---------
+# elbe gen_update --target /root/myproject \
+>>>>>>> 8cc37b8... docs: Fix target/xmlfile confusion in gen_update
 	/root/v0.1.xml
 ---------
 
