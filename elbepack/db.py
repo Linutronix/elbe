@@ -166,7 +166,10 @@ class ElbeDB(object):
             p.name = xml.text ("project/name")
             p.version = xml.text ("project/version")
             p.edit = datetime.utcnow ()
-            p.status = "has_changes"
+            if p.status == "empty_project" or p.status == "build_failed":
+                p.status = "needs_build"
+            elif p.status == "build_done":
+                p.status = "has_changes"
 
             copyfile (xml_file, builddir+"/source.xml");    #OSError
 
