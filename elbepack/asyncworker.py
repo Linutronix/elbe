@@ -49,7 +49,7 @@ class BuildJob(AsyncWorkerJob):
             self.project.build()
             db.reset_busy( self.project.builddir, "build_done" )
         except Exception as e:
-            db.reset_budy( self.project.builddir, "build_failed" )
+            db.reset_busy( self.project.builddir, "build_failed" )
             print e     # TODO: Think about better error handling here
 
 
