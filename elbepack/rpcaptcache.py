@@ -96,6 +96,9 @@ class RPCAPTCache(InChRootObject):
                            ElbeInstallProgress(cb=self.co_cb) )
         self.cache.open()
 
+    def clear(self):
+        self.cache.clear()
+
     def get_dependencies(self, pkgname):
         deps = getalldeps( self.cache, pkgname )
         return [APTPackage(p, cache=self.cache) for p in deps]
@@ -120,6 +123,9 @@ class RPCAPTCache(InChRootObject):
         ret = [ APTPackage(p) for p in self.cache
                             if p.is_upgradable == True]
         return ret
+
+    def upgrade( self, dist_upgrade = False ):
+        self.cache.upgrade( dist_upgrade )
 
     def get_changes( self ):
         changes = self.cache.get_changes()
