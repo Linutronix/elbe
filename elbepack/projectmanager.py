@@ -229,6 +229,11 @@ class ProjectManager(object):
 
             self.worker.enqueue( APTCommitJob( ep ) )
 
+    def apt_clear (self, userid):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.clear()
+
     def apt_mark_install (self, userid, pkgname, version):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
@@ -248,6 +253,11 @@ class ProjectManager(object):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
             c.mark_keep( pkgname, version )
+
+    def apt_upgrade (self, userid, dist_upgrade = False):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            c.upgrade( dist_upgrade )
 
     def apt_get_changes (self, userid):
         with self.lock:
