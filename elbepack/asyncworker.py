@@ -20,7 +20,8 @@
 
 from threading import Thread
 from Queue import Queue
-from os import path
+from os import path, getcwd, chdir
+from contextlib import contextmanager
 
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
@@ -124,6 +125,15 @@ class GenUpdateJob(AsyncWorkerJob):
             db.reset_busy( self.project.builddir, self.old_status )
 
 
+@contextmanager
+def savecwd ():
+    oldcwd = getcwd()
+    try:
+        yield
+    finally:
+        chdir( oldcwd )
+
+
 class AsyncWorker(Thread):
     def __init__ (self, db):
         Thread.__init__( self )
@@ -136,5 +146,6 @@ class AsyncWorker(Thread):
 
     def run (self):
         while True:
-            job = self.queue.get()
-            job.execute( self.db )
+            with savecwd():
+                job = self.queue.get()
+                job.execute( self.db )
