@@ -48,29 +48,16 @@ OPTIONS
 	in the target directory (Not recommended).
 
 <base_sourcexml>::
-<<<<<<< HEAD
-	The source.xml file of the base version of the project.
-=======
 	The 'source.xml' file of the base version of the project.
->>>>>>> 8cc37b8... docs: Fix target/xmlfile confusion in gen_update
 
 
 EXAMPLES
 --------
 * Create an update package for 'myproject' including all packages installed or
-<<<<<<< HEAD
-  updated via 'apt-get' since the project has been built with
-  'v0.1.xml'. Bump version to 0.2.
-+
----------
-# elbe gen_update --target /root/myproject \
-	--version 0.2
-=======
   updated via 'apt-get' since the project has been built with 'v0.1.xml'.
 +
 ---------
 # elbe gen_update --target /root/myproject \
->>>>>>> 8cc37b8... docs: Fix target/xmlfile confusion in gen_update
 	/root/v0.1.xml
 ---------
 
