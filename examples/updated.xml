@@ -74,6 +74,7 @@
 		</finetuning>
 		<pkg-list>
 			<pkg>grub-pc</pkg>
+			<pkg>linux-image-amd64</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
