@@ -29,8 +29,8 @@ class MissingData(Exception):
     def __init__ (self, message):
         Exception.__init__( self, message )
 
-def gen_update_pkg (project, xml_filename, version_number,
-        override_buildtype = None, skip_validate = False, debug = False):
+def gen_update_pkg (project, xml_filename, override_buildtype = None,
+        skip_validate = False, debug = False):
     xml = ElbeXML( xml_filename, buildtype=override_buildtype,
             skip_validate=skip_validate )
 
@@ -107,9 +107,6 @@ def gen_update_pkg (project, xml_filename, version_number,
 
     dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
-    project.xml.node("/project/version").set_text(version_number)
-
-    project.xml.xml.write( os.path.join( project.builddir, "source.xml")
     project.xml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
 

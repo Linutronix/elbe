@@ -29,8 +29,6 @@ def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog gen_update [options] <xmlfile>")
     oparser.add_option( "-t", "--target", dest="target",
                         help="directoryname of target" )
-    oparser.add_option( "-v", "--version", dest="version",
-                        help="version number of the update package" )
     oparser.add_option( "-n", "--name", dest="name",
                         help="name of the project (included in the report)" )
     oparser.add_option( "--skip-validation", action="store_true",
@@ -53,10 +51,6 @@ def run_command( argv ):
         print "No target specified"
         sys.exit(20)
 
-    if not opt.version:
-        print "No version number specified"
-        sys.exit(20)
-
     if opt.buildtype:
         buildtype = opt.buildtype
     else:
@@ -71,8 +65,8 @@ def run_command( argv ):
         sys.exit(20)
 
     try:
-        gen_update_pkg( project, args[ 0 ], opt.version, buildtype,
-                opt.skip_validation, opt.debug )
+        gen_update_pkg( project, args[ 0 ], buildtype, opt.skip_validation,
+                opt.debug )
     except ValidationError:
         print "xml validation failed. Bailing out"
         sys.exit(20)
