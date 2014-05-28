@@ -98,11 +98,24 @@ class UpdateService (SimpleWSGISoapApp):
         status.monitor = Client (wsdl_url)
         log ("connection established")
 
+def fname_replace (s):
+    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    allowed += "0123456789"
+    allowed += "_-."
+    res = ""
+    for c in s:
+        if c in allowed:
+            res += c
+        else:
+            res += '_'
+    return res
+
 def update_sourceslist (xml, update_dir):
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
     deb += " main\n"
     fname = "/etc/apt/sources.list.d/"
-    fname += xml.text ("/project/name") + "_" + xml.text ("/project/version")
+    fname += fname_replace (xml.text ("/project/name")) + "_"
+    fname += fname_replace (xml.text ("/project/version"))
     fname += ".list"
 
     with open (fname, 'w') as f:
@@ -209,8 +222,8 @@ def update (upd_file):
     upd_file_z.extract ("new.xml", "/tmp/")
 
     xml = etree ("/tmp/new.xml")
-    prefix = "/var/cache/elbe/" + xml.text ("/project/name")
-    prefix += "_" + xml.text ("/project/version") + "/"
+    prefix = "/var/cache/elbe/" + fname_replace (xml.text ("/project/name"))
+    prefix += "_" + fname_replace (xml.text ("/project/version")) + "/"
 
     log ("preparing update: " + prefix)
 
