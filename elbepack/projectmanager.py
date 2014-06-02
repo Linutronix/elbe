@@ -139,7 +139,7 @@ class ProjectManager(object):
     def get_current_project_files (self, userid):
         with self.lock:
             builddir = self._get_current_project( userid ).builddir
-            return self.db.get_files( builddir )
+            return self.db.get_project_files( builddir )
 
     def set_current_project_xml (self, userid, xmlfile):
         with self.lock:

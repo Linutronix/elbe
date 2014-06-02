@@ -255,7 +255,9 @@ class BuildAction(DbAction):
         try:
             ep = db.load_project( args[0] )
             ep.build( skip_debootstrap = True )
+            db.update_project_files( ep )
         except Exception as e:
+            db.update_project_files( ep )
             db.reset_busy( args[0], "build_failed" )
             print e
             return
@@ -277,11 +279,12 @@ class GetFilesAction(DbAction):
             return
 
         db = ElbeDB()
-        files = db.get_files (args[0])
-        if not files:
-            return
+        files = db.get_project_files (args[0])
         for f in files:
-            print f
+            if f.description:
+                print "%-40s  %s" % (f.name, f.description)
+            else:
+                print f.name
 
 DbAction.register(GetFilesAction)
 
