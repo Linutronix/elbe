@@ -512,7 +512,8 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            self._update_project_file( builddir, name, mime_type, description )
+            self._update_project_file( s, builddir, name, mime_type,
+                    description )
 
     def update_project_files (self, ep):
         with session_scope(self.session) as s:
