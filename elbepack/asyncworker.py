@@ -122,24 +122,28 @@ class GenUpdateJob(AsyncWorkerJob):
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
+        upd_filename = self._gen_upd_filename()
+        upd_pathname = path.join( self.project.builddir, upd_filename )
+
         try:
-            gen_update_pkg( self.project, self.base_version_xml,
-                    self._gen_upd_pathname() )
+            gen_update_pkg( self.project, self.base_version_xml, upd_pathname )
         except Exception as e:
             print e     # TODO: Think about better error handling here
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
-            # TODO: Add resulting update file to the project file table
+            db.add_project_file( self.project.builddir, upd_filename,
+                    "application/octet-stream",
+                    "Update package from %s to %s" %
+                    ( self.base_version, self.current_version ) )
             db.reset_busy( self.project.builddir, self.old_status )
 
-    def _gen_upd_pathname (self):
+    def _gen_upd_filename (self):
         filename = quote( self.name, ' ' ) + '_'
         filename += quote( self.base_version ) + '_'
         filename += quote( self.current_version ) + '.upd'
 
-        pathname = path.join( self.project.builddir, filename )
-        return pathname
+        return filename
 
 
 @contextmanager
