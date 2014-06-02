@@ -207,9 +207,8 @@ class ProjectManager(object):
                         "please commit them first" )
 
             ep = self._get_current_project( userid )
-            base_xml_file = self.db.get_version_xml( ep.builddir, base_version )
 
-            self.worker.enqueue( GenUpdateJob ( ep, base_xml_file ) )
+            self.worker.enqueue( GenUpdateJob ( ep, base_version ) )
 
     def apt_update (self, userid):
         with self.lock:

@@ -22,6 +22,7 @@ from threading import Thread
 from Queue import Queue
 from os import path, getcwd, chdir
 from contextlib import contextmanager
+from urllib import quote
 
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
@@ -108,17 +109,22 @@ class APTCommitJob(AsyncWorkerJob):
 
 
 class GenUpdateJob(AsyncWorkerJob):
-    def __init__ (self, project, base_version_xml):
-        self.base_version_xml = base_version_xml
+    def __init__ (self, project, base_version):
+        self.name = project.xml.text( "/project/name" )
+        self.base_version = base_version
+        self.current_version = project.xml.text( "/project/version" )
         AsyncWorkerJob.__init__(self, project)
 
     def enqueue (self, queue, db):
         self.old_status = db.set_busy( self.project.builddir, False )
+        self.base_version_xml = db.get_version_xml( self.project.builddir,
+                self.base_version )
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
         try:
-            gen_update_pkg( self.project, self.base_version_xml )
+            gen_update_pkg( self.project, self.base_version_xml,
+                    self._gen_upd_pathname() )
         except Exception as e:
             print e     # TODO: Think about better error handling here
         finally:
@@ -126,6 +132,14 @@ class GenUpdateJob(AsyncWorkerJob):
             # keep the old status
             # TODO: Add resulting update file to the project file table
             db.reset_busy( self.project.builddir, self.old_status )
+
+    def _gen_upd_pathname (self):
+        filename = quote( self.name, ' ' ) + '_'
+        filename += quote( self.base_version ) + '_'
+        filename += quote( self.current_version ) + '.upd'
+
+        pathname = path.join( self.project.builddir, filename )
+        return pathname
 
 
 @contextmanager
