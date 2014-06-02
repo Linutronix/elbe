@@ -48,8 +48,10 @@ class BuildJob(AsyncWorkerJob):
     def execute (self, db):
         try:
             self.project.build()
+            db.update_project_files( self.project )
             db.reset_busy( self.project.builddir, "build_done" )
         except Exception as e:
+            db.update_project_files( self.project )
             db.reset_busy( self.project.builddir, "build_failed" )
             print e     # TODO: Think about better error handling here
 
@@ -122,6 +124,7 @@ class GenUpdateJob(AsyncWorkerJob):
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
+            # TODO: Add resulting update file to the project file table
             db.reset_busy( self.project.builddir, self.old_status )
 
 
