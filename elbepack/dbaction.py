@@ -259,7 +259,7 @@ class BuildAction(DbAction):
             db.reset_busy( args[0], "build_failed" )
             print e
             return
-        db.set_build_done( args[0], "build_done" )
+        db.reset_busy( args[0], "build_done" )
 
 DbAction.register(BuildAction)
 
