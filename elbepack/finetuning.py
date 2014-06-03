@@ -180,7 +180,7 @@ class CmdAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            log.chroot (target.path, self.node.et.text)
+            log.chroot (target.path, "/bin/sh -c '%s'" % self.node.et.text)
 
 FinetuningAction.register( CmdAction )
 
@@ -193,7 +193,7 @@ class BuildenvCmdAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with buildenv:
-            log.chroot (buildenv.path, self.node.et.text)
+            log.chroot (buildenv.path, "/bin/sh -c '%s'" % self.node.et.text)
 
 FinetuningAction.register( BuildenvCmdAction )
 
