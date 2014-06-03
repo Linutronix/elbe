@@ -795,7 +795,8 @@ class ProjectFile (Base):
     __tablename__ = 'files'
 
     name        = Column (String, primary_key=True)
-    builddir    = Column (String, ForeignKey('projects.builddir'))
+    builddir    = Column (String, ForeignKey('projects.builddir'),
+                          primary_key=True)
     mime_type   = Column (String, nullable=False)
     description = Column (String)
 
