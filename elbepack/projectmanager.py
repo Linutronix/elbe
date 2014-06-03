@@ -307,6 +307,11 @@ class ProjectManager(object):
             f.close()
         return data
 
+    def current_project_has_changes (self, userid):
+        with self.lock:
+            builddir = self._get_current_project( userid ).builddir
+            return self.db.has_changes( builddir )
+
     def _get_current_project (self, userid):
         # Must be called with self.lock held
         if not userid in self.userid2project:
