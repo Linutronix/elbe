@@ -83,14 +83,17 @@
 		</fstab>
 		<norecommend />
 		<finetuning>
-			<rm>etc/apt/sources.list</rm>
-			<rm>lib/modules/*versatile*</rm>
-			<rm>var/cache/apt/archives/*.deb</rm>
-			<command>echo "T0:23:respawn:/sbin/getty -L ttyPS0 115200 vt102" &gt;&gt; etc/inittab</command>
+			<rm>/etc/apt/sources.list</rm>
+			<rm>/var/cache/apt/archives/*.deb</rm>
+			<rm>/usr/share/doc</rm>
+			<rm>/usr/share/man</rm>
+			<command>echo "ttyPS0" &gt;&gt; /etc/securetty</command>
+			<command>echo "auto eth0" &gt;&gt; /etc/network/interfaces</command>
+			<command>echo "iface eth0 inet dhcp" &gt;&gt; /etc/network/interfaces</command>
 		</finetuning>
 		<pkg-list>
 			<pkg>u-boot-xlnx</pkg>
-			<pkg>linux-image-zedboard-3.12.14-rt23</pkg>
+			<pkg>linux-image-zedboard-3.12.14-rt23-1</pkg>
 			<pkg>elbe-updated</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
