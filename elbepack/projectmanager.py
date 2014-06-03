@@ -49,6 +49,13 @@ class InvalidState(ProjectManagerError):
         ProjectManagerError.__init__( self, message )
 
 
+class OpenProjectFile(object):
+    def __init__ (self, pfd, mode = 'r'):
+        self.path = path.join( pfd.builddir, pfd.name )
+        self.mime_type = pfd.mime_type
+        self.fobj = open( self.path, mode )
+
+
 class ProjectManager(object):
     def __init__ (self, basepath):
         self.basepath = basepath    # Base path for new projects
@@ -140,6 +147,17 @@ class ProjectManager(object):
         with self.lock:
             builddir = self._get_current_project( userid ).builddir
             return self.db.get_project_files( builddir )
+
+    def open_current_project_file (self, userid, filename, mode = 'r'):
+        with self.lock:
+            builddir = self._get_current_project( userid ).builddir
+            if self.db.is_busy( builddir ):
+                raise InvalidState(
+                        "cannot open file %s of busy project in %s" %
+                        ( filename, builddir ) )
+
+            pfd = self.db.get_project_file( builddir, filename )
+            return OpenProjectFile( pfd, mode )
 
     def set_current_project_xml (self, userid, xmlfile):
         with self.lock:
