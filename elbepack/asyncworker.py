@@ -44,17 +44,21 @@ class BuildJob(AsyncWorkerJob):
 
     def enqueue (self, queue, db):
         db.set_busy( self.project.builddir, True )
+        self.project.log.printo( "Enqueueing project for build" )
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
         try:
+            self.project.log.printo( "Build started" )
             self.project.build()
             db.update_project_files( self.project )
+            self.project.log.printo( "Build finished successfully" )
             db.reset_busy( self.project.builddir, "build_done" )
         except Exception as e:
             db.update_project_files( self.project )
+            self.project.log.printo( "Build failed" )
+            self.project.log.printo( str(e) )
             db.reset_busy( self.project.builddir, "build_failed" )
-            print e     # TODO: Think about better error handling here
 
 
 class APTUpdateJob(AsyncWorkerJob):
@@ -63,17 +67,21 @@ class APTUpdateJob(AsyncWorkerJob):
 
     def enqueue (self, queue, db):
         db.set_busy( self.project.builddir, False )
+        self.project.log.printo( "Enqueueing project for APT cache update" )
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
         try:
+            self.project.log.printo( "APT cache update started" )
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
-                db.reset_busy( self.project.builddir,
-                        "has_changes" )
+            self.project.log.printo( "APT cache update finished successfully" )
+            db.reset_busy( self.project.builddir,
+                    "has_changes" )
         except Exception as e:
+            self.project.log.printo( "APT cache update failed" )
+            self.project.log.printo( str(e) )
             db.reset_busy( self.project.builddir, "build_failed" )
-            print e     # TODO: Think about better error handling here
 
 
 class APTCommitJob(AsyncWorkerJob):
@@ -83,12 +91,14 @@ class APTCommitJob(AsyncWorkerJob):
     def enqueue (self, queue, db):
         old_status = db.set_busy( self.project.builddir, False )
         if self.project.get_rpcaptcache().get_changes():
+            self.project.log.printo( "Enqueueing project for package changes" )
             AsyncWorkerJob.enqueue( self, queue, db )
         else:
             db.reset_busy( self.project.builddir, old_status )
 
     def execute (self, db):
         try:
+            self.project.log.printo( "Applying package changes" )
             with self.project.buildenv:
                 # Commit changes, update full package list and write
                 # out new source.xml
@@ -96,16 +106,19 @@ class APTCommitJob(AsyncWorkerJob):
                 dump_fullpkgs( self.project.xml,
                         self.project.buildenv.rfs,
                         self.project.get_rpcaptcache() )
-                sourcexmlpath = path.join( self.project.builddir,
-                        "source.xml" )
-                self.project.xml.xml.write( sourcexmlpath )
 
-                db.reset_busy( self.project.builddir,
-                        "has_changes" )
+            sourcexmlpath = path.join( self.project.builddir,
+                    "source.xml" )
+            self.project.xml.xml.write( sourcexmlpath )
+
+            self.project.log.printo( "Package changes applied successfully" )
+            db.reset_busy( self.project.builddir,
+                    "has_changes" )
         except Exception as e:
+            self.project.log.printo( "Applying package changes failed" )
+            self.project.log.printo( str(e) )
             db.reset_busy( self.project.builddir,
                     "build_failed" )
-            print e     # TODO: Think about better error handling here
 
 
 class GenUpdateJob(AsyncWorkerJob):
@@ -119,16 +132,23 @@ class GenUpdateJob(AsyncWorkerJob):
         self.old_status = db.set_busy( self.project.builddir, False )
         self.base_version_xml = db.get_version_xml( self.project.builddir,
                 self.base_version )
+
+        self.project.log.printo(
+                "Enqueueing project for generating update package" )
+
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
         upd_filename = self._gen_upd_filename()
         upd_pathname = path.join( self.project.builddir, upd_filename )
 
+        self.project.log.printo( "Generating update package" )
+
         try:
             gen_update_pkg( self.project, self.base_version_xml, upd_pathname )
+            self.project.log.printo( "Update package generated successfully" )
         except Exception as e:
-            print e     # TODO: Think about better error handling here
+            self.project.log.printo( "Generating update package failed" )
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
