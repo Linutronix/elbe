@@ -354,7 +354,7 @@ class ProjectManager(object):
 
         if not ep.has_full_buildenv():
             raise InvalidState(
-                    "project in directory %s does not have a functional"
+                    "project in directory %s does not have a functional "
                     "build environment" % ep.builddir )
 
         return ep.get_rpcaptcache()
