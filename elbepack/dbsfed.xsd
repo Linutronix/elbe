@@ -1297,6 +1297,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="ln" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a symbolic link
+          </documentation>
+        </annotation>
+      </element>
       <element name="buildenv_cp" type="rfs:cpmv" minOccurs="0">
         <annotation>
           <documentation>

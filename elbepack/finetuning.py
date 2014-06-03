@@ -145,6 +145,19 @@ class MvAction(FinetuningAction):
 
 FinetuningAction.register( MvAction )
 
+class LnAction(FinetuningAction):
+
+    tag = 'ln'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        log.do( "ln -s " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+
+FinetuningAction.register( LnAction )
+
+
 class BuildenvMvAction(FinetuningAction):
 
     tag = 'buildenv_mv'
