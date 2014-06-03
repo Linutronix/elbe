@@ -502,6 +502,30 @@ class ElbeDB(object):
 
             return [ ProjectFileData(f) for f in p.files ]
 
+    def get_project_file (self, builddir, name):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            try:
+                f = s.query( ProjectFile ).\
+                        filter( ProjectFile.builddir == builddir ).\
+                        filter( ProjectFile.name == name ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no file %s in project %s registered" %
+                        ( name, builddir ) )
+
+            return ProjectFileData(f)
+
     def add_project_file (self, builddir, name, mime_type, description = None):
         with session_scope(self.session) as s:
             try:
