@@ -70,7 +70,7 @@ class RPCAPTCache(InChRootObject):
 
     def mark_delete( self, pkgname, version ):
         p = self.cache[pkgname]
-        p.mark_delete()
+        p.mark_delete( purge=True )
 
     def update(self):
         self.cache.update()
