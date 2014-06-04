@@ -93,7 +93,7 @@
 		</finetuning>
 		<pkg-list>
 			<pkg>u-boot-xlnx</pkg>
-			<pkg>linux-image-zedboard-3.12.14-rt23-1</pkg>
+			<pkg>linux-image-zedboard-3.12.14-rt23</pkg>
 			<pkg>elbe-updated</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
