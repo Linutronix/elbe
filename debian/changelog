@@ -1,3 +1,11 @@
+elbe (0.7.0~beta8) unstable; urgency=medium
+
+  * added zedboard example
+  * fixed missing kernel in various examples
+  * reworked gen_update code
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 04 Jun 2014 21:30:22 +0200
+
 elbe (0.7.0~beta7) unstable; urgency=medium
 
   * fix update package generation
