@@ -20,6 +20,8 @@
 
 import os
 
+from shutil import rmtree
+
 from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
 from elbepack.ziparchives import create_zip_archive
@@ -94,6 +96,10 @@ def gen_update_pkg (project, xml_filename, upd_filename,
 
 
     update = os.path.join(project.builddir, "update")
+
+    if os.path.exists( update ):
+        rmtree( update )
+
     os.system( 'mkdir -p %s' % update )
 
     repodir = os.path.join(update, "repo" )
