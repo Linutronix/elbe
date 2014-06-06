@@ -24,7 +24,7 @@ import errno
 from datetime import datetime
 from shutil import (rmtree, copyfile)
 from contextlib import contextmanager
-from uuid import uuid4
+from urllib import quote
 
 from passlib.hash import pbkdf2_sha512
 
@@ -64,6 +64,9 @@ def session_scope(session):
         raise
     finally:
         session.remove()
+
+def get_versioned_filename( name, version, suffix ):
+    return quote( name, ' ') + '_' + quote( version, ' ') + suffix
 
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
@@ -437,13 +440,13 @@ class ElbeDB(object):
                                 (version, builddir)
                         )
 
-            versionxmlname = str(uuid4()) + ".version.xml"
+            versionxmlname = get_versioned_filename( p.name, version,
+                    ".version.xml" )
             versionxmlpath = os.path.join( builddir, versionxmlname )
             copyfile( sourcexmlpath, versionxmlpath )
 
             v = ProjectVersion( builddir = builddir,
                                 version = version,
-                                xmlpath = versionxmlpath,
                                 description = description )
             s.add(v)
 
@@ -480,8 +483,10 @@ class ElbeDB(object):
                         "cannot delete version of project in %s while "
                         "it is busy" % builddir )
 
-            xmlname = os.path.basename( v.xmlpath )
-            os.remove( v.xmlpath )
+            xmlname = get_versioned_filename( v.project.name, version,
+                    ".version.xml" )
+            xmlpath = os.path.join( builddir, xmlname )
+            os.remove( xmlpath )
             s.delete( v )
 
             s.query( ProjectFile ).filter( ProjectFile.builddir == builddir ).\
@@ -497,7 +502,9 @@ class ElbeDB(object):
                 raise ElbeDBError( "no such project version: %s (version %s)" %
                         (builddir, version) )
 
-            return str(v.xmlpath)
+            xmlname = get_versioned_filename( v.project.name, version,
+                    ".version.xml" )
+            return os.path.join( builddir, xmlname )
 
 
     ### File management ###
@@ -793,14 +800,12 @@ class ProjectVersion (Base):
     builddir        = Column (String, ForeignKey('projects.builddir'),
                               primary_key=True )
     version         = Column (String, primary_key=True)
-    xmlpath         = Column (String, unique=True)
     description     = Column (String)
 
 class ProjectVersionData (object):
     def __init__ (self, pv):
         self.builddir       = str(pv.builddir)
         self.version        = str(pv.version)
-        self.xmlpath        = str(pv.xmlpath)
         if pv.description:
             self.description    = str(pv.description)
         else:
