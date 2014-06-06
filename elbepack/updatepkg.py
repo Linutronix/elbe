@@ -72,7 +72,7 @@ def gen_update_pkg (project, xml_filename, upd_filename,
         ipkg = instindex[name]
         comp = cache.compare_versions(ipkg.installed_version, ver)
 
-        pfname = ipkg.name + '_' + ipkg.installed_version.replace( ':', '%3a' ) + '_' + ipkg.architecture + '.deb'
+        pfname = ipkg.installed_deb
 
         if comp == 0:
             print "package ok: " + name + "-" + ipkg.installed_version
@@ -91,7 +91,7 @@ def gen_update_pkg (project, xml_filename, upd_filename,
             continue
 
         print "package new installed " + p.name
-        pfname = p.name + '_' + p.installed_version.replace( ':', '%3a' ) + '_' + p.architecture + '.deb'
+        pfname = p.installed_deb
         fnamelist.append( pfname )
 
 
