@@ -173,6 +173,31 @@ class GenUpdateJob(AsyncWorkerJob):
         return filename
 
 
+class SaveVersionJob(AsyncWorkerJob):
+    def __init__ (self, project, description):
+        AsyncWorkerJob.__init__( self, project )
+        self.description = description
+
+    def enqueue (self, queue, db):
+        self.old_status = db.set_busy( self.project.builddir,
+                [ "build_done", "has_changes" ] )
+        self.project.log.printo( "Enqueueing project to save version" )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        self.project.log.printo( "Saving version" )
+        try:
+            # TODO: Generate APT repository with all packages installed and
+            # store it somewhere
+            db.save_version( self.project.builddir, self.description )
+            self.project.log.printo( "Version saved successfully" )
+        except Exception as e:
+            self.project.log.printo( "Saving version failed" )
+            self.project.log.printo( str(e) )
+        finally:
+            db.reset_busy( self.project.builddir, self.old_status )
+
+
 @contextmanager
 def savecwd ():
     oldcwd = getcwd()

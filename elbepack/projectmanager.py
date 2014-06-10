@@ -25,6 +25,7 @@ from uuid import uuid4
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
+from elbepack.asyncworker import SaveVersionJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -200,7 +201,11 @@ class ProjectManager(object):
     def save_current_project_version( self, userid, description = None ):
         with self.lock:
             ep = self._get_current_project( userid )
-            self.db.save_version( ep.builddir, description )
+            if self.db.is_busy( ep. builddir ):
+                raise InvalidState(
+                        "project %s is busy" % ep.builddir )
+
+            self.worker.enqueue( SaveVersionJob( ep, description ) )
 
     def set_current_project_version_description( self, userid, version,
             description ):
