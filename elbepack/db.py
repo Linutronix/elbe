@@ -287,7 +287,8 @@ class ElbeDB(object):
                         builddir )
 
 
-    def set_busy (self, builddir, rebuilding):
+    def set_busy (self, builddir, allowed_status):
+        assert not "busy" in allowed_status
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).with_lockmode( 'update' ). \
@@ -297,9 +298,7 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "busy" or p.status == "empty_project" or \
-               ( not rebuilding and p.status != "build_done" and
-                       p.status != "has_changes" ):
+            if not p.status in allowed_status:
                 raise ElbeDBError( "project: " + builddir +
                         " invalid status: " + p.status )
 

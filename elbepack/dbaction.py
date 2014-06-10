@@ -251,7 +251,8 @@ class BuildAction(DbAction):
             return
 
         db = ElbeDB()
-        db.set_busy( args[0], True )
+        db.set_busy( args[0], [ "empty_project", "needs_build", "has_changes",
+                                "build_done", "build_failed" ] )
         try:
             ep = db.load_project( args[0] )
             ep.build( skip_debootstrap = True )
