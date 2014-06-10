@@ -422,9 +422,7 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
-            if p.status != "build_done" and p.status != "has_changes":
-                raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
+            assert p.status == "busy"
 
             sourcexmlpath = os.path.join( builddir, "source.xml" )
             sourcexml = ElbeXML( sourcexmlpath )
