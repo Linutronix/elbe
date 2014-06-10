@@ -44,7 +44,9 @@ class BuildJob(AsyncWorkerJob):
         AsyncWorkerJob.__init__( self, project )
 
     def enqueue (self, queue, db):
-        db.set_busy( self.project.builddir, True )
+        db.set_busy( self.project.builddir,
+                [ "empty_project", "needs_build", "has_changes",
+                  "build_done", "build_failed" ] )
         self.project.log.printo( "Enqueueing project for build" )
         AsyncWorkerJob.enqueue( self, queue, db )
 
@@ -67,7 +69,8 @@ class APTUpdateJob(AsyncWorkerJob):
         AsyncWorkerJob.__init__( self, project )
 
     def enqueue (self, queue, db):
-        db.set_busy( self.project.builddir, False )
+        db.set_busy( self.project.builddir,
+                [ "build_done", "has_changes" ] )
         self.project.log.printo( "Enqueueing project for APT cache update" )
         AsyncWorkerJob.enqueue( self, queue, db )
 
@@ -90,7 +93,8 @@ class APTCommitJob(AsyncWorkerJob):
         AsyncWorkerJob.__init__( self, project )
 
     def enqueue (self, queue, db):
-        old_status = db.set_busy( self.project.builddir, False )
+        old_status = db.set_busy( self.project.builddir,
+                [ "build_done", "has_changes" ] )
         if self.project.get_rpcaptcache().get_changes():
             self.project.log.printo( "Enqueueing project for package changes" )
             AsyncWorkerJob.enqueue( self, queue, db )
@@ -130,7 +134,8 @@ class GenUpdateJob(AsyncWorkerJob):
         AsyncWorkerJob.__init__(self, project)
 
     def enqueue (self, queue, db):
-        self.old_status = db.set_busy( self.project.builddir, False )
+        self.old_status = db.set_busy( self.project.builddir,
+                [ "build_done", "has_changes" ] )
         self.base_version_xml = db.get_version_xml( self.project.builddir,
                 self.base_version )
 
