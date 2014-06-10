@@ -149,6 +149,7 @@ class GenUpdateJob(AsyncWorkerJob):
             self.project.log.printo( "Update package generated successfully" )
         except Exception as e:
             self.project.log.printo( "Generating update package failed" )
+            self.project.log.printo( str(e) )
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
