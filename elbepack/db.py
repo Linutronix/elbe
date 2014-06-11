@@ -464,7 +464,7 @@ class ElbeDB(object):
 
             v.description = description
 
-    def del_version (self, builddir, version):
+    def del_version (self, builddir, version, force=False):
         with session_scope(self.session) as s:
             try:
                 v = s.query( ProjectVersion ).\
@@ -475,10 +475,11 @@ class ElbeDB(object):
                         "no such project version: %s (version %s)" %
                         (builddir, version) )
 
-            if v.project.status == "busy":
-                raise ElbeDBError(
-                        "cannot delete version of project in %s while "
-                        "it is busy" % builddir )
+            if not force:
+                if v.project.status == "busy":
+                    raise ElbeDBError(
+                            "cannot delete version of project in %s while "
+                            "it is busy" % builddir )
 
             xmlname = get_versioned_filename( v.project.name, version,
                     ".version.xml" )

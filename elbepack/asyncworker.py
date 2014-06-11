@@ -183,19 +183,31 @@ class SaveVersionJob(AsyncWorkerJob):
     def enqueue (self, queue, db):
         self.old_status = db.set_busy( self.project.builddir,
                 [ "build_done", "has_changes" ] )
-        self.project.log.printo( "Enqueueing project to save version" )
+        self.name = self.project.xml.text( "project/name" )
+        self.version = self.project.xml.text( "project/version" )
+
+        # Create the database entry now. This has the advantage that the
+        # user will see an error message immediately, if he tries to use
+        # the same version number twice. The time-consuming part is creating
+        # the package archive, which is done in execute.
+        try:
+            db.save_version( self.project.builddir, self.description )
+        except:
+            db.reset_busy( self.project.builddir, self.old_status )
+            raise
+
+        self.project.log.printo( "Enqueueing project to save package archive" )
         AsyncWorkerJob.enqueue( self, queue, db )
 
     def execute (self, db):
-        self.project.log.printo( "Saving version" )
+        self.project.log.printo( "Generating package archive" )
+        repodir = get_versioned_filename( self.name, self.version,
+                ".pkgarchive" )
         try:
-            name = self.project.xml.text( "project/name" )
-            version = self.project.xml.text( "project/version" )
-            repodir = get_versioned_filename( name, version, ".pkgarchive" )
             gen_binpkg_archive( self.project, repodir )
-            db.save_version( self.project.builddir, self.description )
             self.project.log.printo( "Version saved successfully" )
         except Exception as e:
+            db.del_version( self,project.builddir, self.version, force=True )
             self.project.log.printo( "Saving version failed" )
             self.project.log.printo( str(e) )
         finally:
