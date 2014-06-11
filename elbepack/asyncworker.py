@@ -25,8 +25,10 @@ from contextlib import contextmanager
 from urllib import quote
 import traceback
 
+from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
+from elbepack.pkgarchive import gen_binpkg_archive
 
 class AsyncWorkerJob(object):
     def __init__ (self, project):
@@ -187,8 +189,10 @@ class SaveVersionJob(AsyncWorkerJob):
     def execute (self, db):
         self.project.log.printo( "Saving version" )
         try:
-            # TODO: Generate APT repository with all packages installed and
-            # store it somewhere
+            name = self.project.xml.text( "project/name" )
+            version = self.project.xml.text( "project/version" )
+            repodir = get_versioned_filename( name, version, ".pkgarchive" )
+            gen_binpkg_archive( self.project, repodir )
             db.save_version( self.project.builddir, self.description )
             self.project.log.printo( "Version saved successfully" )
         except Exception as e:

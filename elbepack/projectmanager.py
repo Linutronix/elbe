@@ -19,10 +19,14 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import errno
+
 from os import path
 from threading import Lock
 from uuid import uuid4
-from elbepack.db import ElbeDB, ElbeDBError
+from shutil import rmtree
+
+from elbepack.db import ElbeDB, ElbeDBError, get_versioned_filename
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob
@@ -221,7 +225,17 @@ class ProjectManager(object):
                         "cannot delete version of busy project in %s" %
                         ep.builddir )
 
+            name = ep.xml.text( "project/name" )
             self.db.del_version( ep.builddir, version )
+
+            # Delete corresponding package archive, if existing
+            pkgarchive = get_versioned_filename( name, version, ".pkgarchive" )
+            pkgarchive_path = path.join( ep.builddir, pkgarchive )
+            try:
+                rmtree( pkgarchive_path )
+            except OSError as e:
+                if e.errno != errno.ENOENT:
+                    raise
 
     def build_current_project (self, userid):
         with self.lock:
