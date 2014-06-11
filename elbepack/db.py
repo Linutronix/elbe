@@ -71,7 +71,7 @@ def get_versioned_filename( name, version, suffix ):
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
-    
+
     def __init__ (self):
         engine = create_engine( self.__class__.db_location,
                 connect_args={ 'timeout': 30 } )
@@ -237,7 +237,7 @@ class ElbeDB(object):
         if clean:
             targetpath = os.path.join( builddir, "target" )
             if os.path.exists( targetpath ):
-                rmtree( targetpath )      # OSError 
+                rmtree( targetpath )      # OSError
 
             chrootpath = os.path.join( builddir, "chroot" )
             if os.path.exists( chrootpath ):
