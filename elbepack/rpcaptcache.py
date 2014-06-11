@@ -177,7 +177,10 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.installed
         else:
             pkgver = p.versions[version]
-        pkgver.fetch_binary(path, ElbeAcquireProgress(cb=self.co_cb))
+
+        rel_filename = pkgver.fetch_binary(path,
+                ElbeAcquireProgress(cb=self.co_cb))
+        return self.rfs.fname( rel_filename )
 
     def download_source( self, pkgname, path, version=None ):
         p = self.cache[pkgname]
@@ -186,7 +189,9 @@ class RPCAPTCache(InChRootObject):
         else:
             pkgver = p.versions[version]
 
-        pkgver.fetch_source(path, ElbeAcquireProgress(cb=self.co_cb), unpack=False)
+        rel_filename = pkgver.fetch_source(path,
+                ElbeAcquireProgress(cb=self.co_cb), unpack=False)
+        return self.rfs.fname( rel_filename )
 
 
 class MyMan(BaseManager):
