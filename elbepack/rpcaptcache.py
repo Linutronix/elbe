@@ -64,11 +64,13 @@ class RPCAPTCache(InChRootObject):
 
         return ret
 
-    def mark_install( self, pkgname, version ):
+    def mark_install( self, pkgname, version, from_user=True, nodeps=False ):
         p = self.cache[pkgname]
         if version:
             p.candidate = p.versions[ version ]
-        p.mark_install()
+        p.mark_install( auto_fix = not nodeps,
+                auto_inst = not nodeps,
+                from_user = from_user )
 
     def cleanup (self, debootstrap_pkgs):
         for p in self.cache:
