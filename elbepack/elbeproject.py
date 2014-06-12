@@ -203,6 +203,9 @@ class ElbeProject (object):
                     self.rpcaptcache_notifier )
         return self._rpcaptcache
 
+    def drop_rpcaptcache (self):
+        self._rpcaptcache = None;
+
     def has_full_buildenv (self):
         if os.path.exists( self.chrootpath ):
             elbeversionpath = os.path.join( self.chrootpath,
