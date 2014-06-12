@@ -464,6 +464,27 @@ class ElbeDB(object):
 
             v.description = description
 
+    def checkout_version_xml (self, builddir, version):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            assert v.project.status == "busy"
+
+            sourcexmlpath = os.path.join( builddir, "source.xml" )
+            versionxmlname = get_versioned_filename( v.project.name, version,
+                    ".version.xml" )
+            versionxmlpath = os.path.join( builddir, versionxmlname )
+
+            copyfile( versionxmlpath, sourcexmlpath )
+            v.project.version = version
+
     def del_version (self, builddir, version, force=False):
         with session_scope(self.session) as s:
             try:
