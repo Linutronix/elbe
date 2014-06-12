@@ -29,7 +29,7 @@ from shutil import rmtree
 from elbepack.db import ElbeDB, ElbeDBError, get_versioned_filename
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
-from elbepack.asyncworker import SaveVersionJob
+from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -210,6 +210,15 @@ class ProjectManager(object):
                         "project %s is busy" % ep.builddir )
 
             self.worker.enqueue( SaveVersionJob( ep, description ) )
+
+    def checkout_project_version( self, userid, version ):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "project %s is busy" % ep.builddir )
+
+            self.worker.enqueue( CheckoutVersionJob( ep, version ) )
 
     def set_current_project_version_description( self, userid, version,
             description ):
