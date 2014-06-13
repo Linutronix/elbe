@@ -119,10 +119,14 @@ class APTPackage(PackageBase):
 
         if pkg.installed:
             arch = pkg.installed.architecture
+            self.installed_deb = pkg.name + '_' + iver.replace( ':', '%3a' ) + \
+                    '_' + arch + '.deb'
         elif pkg.candidate:
             arch = pkg.candidate.architecture
+            self.installed_deb = None
         else:
             arch = None
+            self.installed_deb = None
 
         PackageBase.__init__(self, pkg.name, iver,
                              cver, imd5, cmd5,

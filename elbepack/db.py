@@ -24,6 +24,7 @@ import errno
 from datetime import datetime
 from shutil import (rmtree, copyfile)
 from contextlib import contextmanager
+from urllib import quote
 
 from passlib.hash import pbkdf2_sha512
 
@@ -64,12 +65,16 @@ def session_scope(session):
     finally:
         session.remove()
 
+def get_versioned_filename( name, version, suffix ):
+    return quote( name, ' ') + '_' + quote( version, ' ') + suffix
+
 class ElbeDB(object):
     db_path     = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
-    
+
     def __init__ (self):
-        engine = create_engine( self.__class__.db_location )
+        engine = create_engine( self.__class__.db_location,
+                connect_args={ 'timeout': 30 } )
         Base.metadata.create_all( engine )
         smaker = sessionmaker( bind=engine )
         self.session = scoped_session( smaker )
@@ -113,31 +118,6 @@ class ElbeDB(object):
 
             return ProjectData(p)
 
-    def get_files (self, builddir):
-        # Can throw: ElbeDBError, IOError
-
-        if not os.path.exists (builddir):
-            raise ElbeDBError( "project directory does not exist" )
-
-        with session_scope(self.session) as s:
-            try:
-                p = s.query (Project).filter(Project.builddir == builddir).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                        "project %s is not registered in the database" %
-                        builddir )
-
-            if p.status != "build_done":
-                raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
-
-            files = []
-
-            with open (builddir+"/files-to-extract") as fte:    #IOError
-                files.append (fte.read ())      #IOError
-
-        return files
-
     def set_xml (self, builddir, xml_file):
         # This method can throw: ElbeDBError, ValidationError, OSError
 
@@ -154,9 +134,9 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 raise ElbeDBError(
-                        "cannot set XML file while project %s is being built" %
+                        "cannot set XML file while project %s is busy" %
                         builddir )
 
             xml = ElbeXML (xml_file)    #ValidationError
@@ -164,9 +144,14 @@ class ElbeDB(object):
             p.name = xml.text ("project/name")
             p.version = xml.text ("project/version")
             p.edit = datetime.utcnow ()
-            p.status = "needs_build"
+            if p.status == "empty_project" or p.status == "build_failed":
+                p.status = "needs_build"
+            elif p.status == "build_done":
+                p.status = "has_changes"
 
             copyfile (xml_file, builddir+"/source.xml");    #OSError
+            self._update_project_file( s, builddir, "source.xml",
+                    "application/xml", "ELBE recipe of the project" )
 
 
     # TODO what about source.xml ? stored always in db ? version management ?
@@ -216,13 +201,19 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 raise ElbeDBError(
-                        "cannot delete project %s while it is being built" %
+                        "cannot delete project %s while it is busy" %
                         builddir )
 
             if os.path.exists (builddir):
                 rmtree (builddir)   # OSError
+
+            s.query( ProjectVersion ).\
+                    filter( ProjectVersion.builddir == builddir ).delete()
+
+            s.query( ProjectFile ).\
+                    filter( ProjectFile.builddir == builddir ).delete()
 
             s.delete (p)
 
@@ -246,7 +237,7 @@ class ElbeDB(object):
         if clean:
             targetpath = os.path.join( builddir, "target" )
             if os.path.exists( targetpath ):
-                rmtree( targetpath )      # OSError 
+                rmtree( targetpath )      # OSError
 
             chrootpath = os.path.join( builddir, "chroot" )
             if os.path.exists( chrootpath ):
@@ -296,7 +287,7 @@ class ElbeDB(object):
                         builddir )
 
 
-    def set_build_in_progress (self, builddir):
+    def set_busy (self, builddir, rebuilding):
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).with_lockmode( 'update' ). \
@@ -306,14 +297,18 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress" or p.status == "empty_project":
+            if p.status == "busy" or p.status == "empty_project" or \
+               ( not rebuilding and p.status != "build_done" and
+                       p.status != "has_changes" ):
                 raise ElbeDBError( "project: " + builddir +
                         " invalid status: " + p.status )
 
-            p.status = "build_in_progress"
+            old_status = p.status
+            p.status = "busy"
+            return old_status
 
 
-    def is_build_in_progress (self, builddir):
+    def is_busy (self, builddir):
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).filter( Project.builddir == builddir ). \
@@ -323,13 +318,17 @@ class ElbeDB(object):
                         "project %s is not registered in the database" %
                         builddir )
 
-            if p.status == "build_in_progress":
+            if p.status == "busy":
                 return True
             else:
                 return False
 
 
-    def set_build_done (self, builddir, successful=True):
+    def reset_busy (self, builddir, new_status):
+        assert new_status == "has_changes" or \
+               new_status == "build_done" or \
+               new_status == "build_failed"
+
         with session_scope(self.session) as s:
             try:
                 p = s.query( Project ).with_lockmode( 'update' ). \
@@ -338,14 +337,27 @@ class ElbeDB(object):
                 raise ElbeDBError( "project %s is not registered in the database" %
                         builddir )
 
-            if p.status != "build_in_progress":
+            if p.status != "busy":
                 raise ElbeDBError( "project: " + builddir + " invalid status: " +
                         p.status )
 
-            if successful:
-                p.status = "build_done"
+            p.status = new_status
+
+
+    def has_changes (self, builddir):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir ). \
+                        one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "has_changes":
+                return True
             else:
-                p.status = "build_failed"
+                return False
 
 
     def get_owner_id (self, builddir):
@@ -361,6 +373,250 @@ class ElbeDB(object):
                 return None
             else:
                 return int(p.owner_id)
+
+
+    def set_project_version( self, builddir, new_version = None):
+        if new_version == "":
+            raise ElbeDBError( "version number must not be empty" )
+
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir ).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "empty_project" or p.status == "busy":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            xmlpath = os.path.join( builddir, "source.xml" )
+            xml = ElbeXML( xmlpath )
+
+            if not new_version is None:
+                xml.node( "/project/version" ).set_text( new_version )
+                xml.xml.write( xmlpath )
+
+            p.version = xml.text( "/project/version" )
+
+
+    ### Version management ###
+
+    def list_project_versions (self, builddir):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            return [ProjectVersionData(v) for v in p.versions]
+
+    def save_version (self, builddir, description = None):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError( "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status != "build_done" and p.status != "has_changes":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            sourcexmlpath = os.path.join( builddir, "source.xml" )
+            sourcexml = ElbeXML( sourcexmlpath )
+
+            version = sourcexml.text( "project/version" )
+            if s.query( ProjectVersion ).\
+                    filter( ProjectVersion.builddir == builddir ).\
+                    filter( ProjectVersion.version == version ).count() > 0:
+                raise ElbeDBError(
+                        "Version %s already exists for project in %s, "
+                        "please change version number first" %\
+                                (version, builddir)
+                        )
+
+            versionxmlname = get_versioned_filename( p.name, version,
+                    ".version.xml" )
+            versionxmlpath = os.path.join( builddir, versionxmlname )
+            copyfile( sourcexmlpath, versionxmlpath )
+
+            v = ProjectVersion( builddir = builddir,
+                                version = version,
+                                description = description )
+            s.add(v)
+
+            self._update_project_file( s, builddir, versionxmlname,
+                    "application/xml",
+                    "source.xml for version %s" % version )
+
+    def set_version_description (self, builddir, version, description):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            v.description = description
+
+    def del_version (self, builddir, version):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            if v.project.status == "busy":
+                raise ElbeDBError(
+                        "cannot delete version of project in %s while "
+                        "it is busy" % builddir )
+
+            xmlname = get_versioned_filename( v.project.name, version,
+                    ".version.xml" )
+            xmlpath = os.path.join( builddir, xmlname )
+            os.remove( xmlpath )
+            s.delete( v )
+
+            s.query( ProjectFile ).filter( ProjectFile.builddir == builddir ).\
+                    filter( ProjectFile.name == xmlname ).delete()
+
+    def get_version_xml (self, builddir, version):
+        with session_scope(self.session) as s:
+            try:
+                v = s.query( ProjectVersion ).\
+                        filter( ProjectVersion.builddir == builddir ).\
+                        filter( ProjectVersion.version == version ).one()
+            except NoResultFound:
+                raise ElbeDBError( "no such project version: %s (version %s)" %
+                        (builddir, version) )
+
+            xmlname = get_versioned_filename( v.project.name, version,
+                    ".version.xml" )
+            return os.path.join( builddir, xmlname )
+
+
+    ### File management ###
+
+    def get_project_files (self, builddir):
+        # Can throw: ElbeDBError
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            return [ ProjectFileData(f) for f in p.files ]
+
+    def get_project_file (self, builddir, name):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query (Project).filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError( "project: " + builddir +
+                        " invalid status: " + p.status )
+
+            try:
+                f = s.query( ProjectFile ).\
+                        filter( ProjectFile.builddir == builddir ).\
+                        filter( ProjectFile.name == name ).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "no file %s in project %s registered" %
+                        ( name, builddir ) )
+
+            return ProjectFileData(f)
+
+    def add_project_file (self, builddir, name, mime_type, description = None):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).filter( Project.builddir == builddir).\
+                        one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            self._update_project_file( s, builddir, name, mime_type,
+                    description )
+
+    def update_project_files (self, ep):
+        with session_scope(self.session) as s:
+            try:
+                p = s.query( Project ).\
+                        filter( Project.builddir == ep.builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            # Delete no longer existing files from the database
+            files = s.query( ProjectFile ).\
+                    filter( ProjectFile.builddir == ep.builddir ).all()
+            for f in files:
+                if not os.path.isfile( os.path.join( ep.builddir, f.name ) ):
+                    s.delete( f )
+
+            # Add images from the given ElbeProject
+            if ep.targetfs:
+                images = set( ep.targetfs.images )
+                for img in images:
+                    self._update_project_file( s, p.builddir, img,
+                            "application/octet-stream", "Image" )
+
+            # Add other generated files
+            self._update_project_file( s, p.builddir, "source.xml",
+                    "application/xml", "Current source.xml of the project" )
+            self._update_project_file( s, p.builddir, "license.txt",
+                    "text/plain; charset=utf-8", "License file" )
+            self._update_project_file( s, p.builddir, "validation.txt",
+                    "text/plain; charset=utf-8", "Package list validation result" )
+            self._update_project_file( s, p.builddir, "elbe-report.txt",
+                    "text/plain; charset=utf-8", "Report" )
+            self._update_project_file( s, p.builddir, "log.txt",
+                    "text/plain; charset=utf-8", "Log file" )
+
+    def _update_project_file (self, s, builddir, name, mime_type, description):
+        try:
+            f = s.query( ProjectFile ).\
+                    filter( ProjectFile.builddir == builddir ).\
+                    filter( ProjectFile.name == name).one()
+        except NoResultFound:
+            if os.path.isfile( os.path.join( builddir, name ) ):
+                f = ProjectFile( builddir = builddir,
+                        name = name,
+                        mime_type = mime_type,
+                        description = description )
+                s.add( f )
+            return
+
+        if os.path.isfile( os.path.join( builddir, name ) ):
+            f.mime_type = mime_type
+            f.description = description
+        else:
+            s.delete( f )
 
 
     ### User management ###
@@ -522,6 +778,8 @@ class Project (Base):
     status   = Column (String)
     edit     = Column (DateTime, default=datetime.utcnow)
     owner_id = Column (Integer, ForeignKey('users.id'))
+    versions = relationship("ProjectVersion", backref="project")
+    files    = relationship("ProjectFile", backref="project")
 
 class ProjectData (object):
     def __init__ (self, project):
@@ -534,3 +792,41 @@ class ProjectData (object):
                             project.edit.day, project.edit.hour,
                             project.edit.minute, project.edit.second,
                             project.edit.microsecond, project.edit.tzinfo)
+
+
+class ProjectVersion (Base):
+    __tablename__ = 'projectversions'
+
+    builddir        = Column (String, ForeignKey('projects.builddir'),
+                              primary_key=True )
+    version         = Column (String, primary_key=True)
+    description     = Column (String)
+
+class ProjectVersionData (object):
+    def __init__ (self, pv):
+        self.builddir       = str(pv.builddir)
+        self.version        = str(pv.version)
+        if pv.description:
+            self.description    = str(pv.description)
+        else:
+            self.description    = None
+
+
+class ProjectFile (Base):
+    __tablename__ = 'files'
+
+    name        = Column (String, primary_key=True)
+    builddir    = Column (String, ForeignKey('projects.builddir'),
+                          primary_key=True)
+    mime_type   = Column (String, nullable=False)
+    description = Column (String)
+
+class ProjectFileData (object):
+    def __init__ (self, pf):
+        self.name           = str(pf.name)
+        self.builddir       = str(pf.builddir)
+        self.mime_type      = str(pf.mime_type)
+        if pf.description:
+            self.description    = str(pf.description)
+        else:
+            self.description    = None

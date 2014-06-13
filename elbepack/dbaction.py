@@ -19,9 +19,11 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 
 from optparse import OptionParser
 from getpass import getpass
+from shutil import copyfileobj
 from elbepack.db import ElbeDB, ElbeDBError
 
 class DbAction(object):
@@ -249,15 +251,17 @@ class BuildAction(DbAction):
             return
 
         db = ElbeDB()
-        db.set_build_in_progress( args[0] )
+        db.set_busy( args[0], True )
         try:
             ep = db.load_project( args[0] )
             ep.build( skip_debootstrap = True )
+            db.update_project_files( ep )
         except Exception as e:
-            db.set_build_done( args[0], successful = False )
+            db.update_project_files( ep )
+            db.reset_busy( args[0], "build_failed" )
             print e
             return
-        db.set_build_done( args[0], successful = True )
+        db.reset_busy( args[0], "build_done" )
 
 DbAction.register(BuildAction)
 
@@ -275,11 +279,12 @@ class GetFilesAction(DbAction):
             return
 
         db = ElbeDB()
-        files = db.get_files (args[0])
-        if not files:
-            return
+        files = db.get_project_files (args[0])
         for f in files:
-            print f
+            if f.description:
+                print "%-40s  %s" % (f.name, f.description)
+            else:
+                print f.name
 
 DbAction.register(GetFilesAction)
 
@@ -308,3 +313,107 @@ class ResetProjectAction(DbAction):
         db.reset_project (arg[0], opt.clean)
 
 DbAction.register(ResetProjectAction)
+
+
+class SetProjectVersionAction(DbAction):
+
+    tag = 'set_project_version'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        if len(args) != 2:
+            print "usage: elbe db set_project_version <project_dir> <version>"
+            return
+
+        db = ElbeDB()
+        db.set_project_version( args[0], args[1] )
+
+DbAction.register(SetProjectVersionAction)
+
+
+class ListVersionsAction(DbAction):
+
+    tag = 'list_versions'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        if len(args) != 1:
+            print "usage: elbe db list_versions <project_dir>"
+            return
+
+        db = ElbeDB()
+        versions = db.list_project_versions (args[0])
+
+        for v in versions:
+            if v.description:
+                print v.version + ": " + v.description
+            else:
+                print v.version
+
+DbAction.register(ListVersionsAction)
+
+
+class SaveVersionAction(DbAction):
+
+    tag = 'save_version'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        oparser = OptionParser (usage="usage: %prog db save_version <project_dir>")
+        oparser.add_option ("--description", dest="description")
+
+        (opt, arg) = oparser.parse_args (args)
+
+        if len(arg) != 1:
+            print "wrong number of arguments"
+            oparser.print_help()
+            return
+
+        db = ElbeDB()
+        db.save_version( arg[0], opt.description )
+
+DbAction.register(SaveVersionAction)
+
+
+class DelVersionAction(DbAction):
+
+    tag = 'del_version'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        if len(args) != 2:
+            print "usage: elbe db del_version <project_dir> <version>"
+            return
+
+        db = ElbeDB()
+        db.del_version( args[0], args[1] )
+
+DbAction.register(DelVersionAction)
+
+
+class PrintVersionXMLAction(DbAction):
+
+    tag = 'print_version_xml'
+
+    def __init__(self, node):
+        DbAction.__init__(self, node)
+
+    def execute(self, args):
+        if len(args) != 2:
+            print "usage: elbe db print_version_xml <project_dir> <version>"
+            return
+
+        db = ElbeDB()
+        filename = db.get_version_xml( args[0], args[1] )
+        with open( filename ) as f:
+            copyfileobj( f, sys.stdout )
+
+DbAction.register(PrintVersionXMLAction)

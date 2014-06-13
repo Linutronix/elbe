@@ -20,6 +20,8 @@
 
 import os
 
+from shutil import rmtree
+
 from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
 from elbepack.ziparchives import create_zip_archive
@@ -29,8 +31,8 @@ class MissingData(Exception):
     def __init__ (self, message):
         Exception.__init__( self, message )
 
-def gen_update_pkg (project, xml_filename, override_buildtype = None,
-        skip_validate = False, debug = False):
+def gen_update_pkg (project, xml_filename, upd_filename,
+        override_buildtype = None, skip_validate = False, debug = False):
     xml = ElbeXML( xml_filename, buildtype=override_buildtype,
             skip_validate=skip_validate )
 
@@ -70,7 +72,7 @@ def gen_update_pkg (project, xml_filename, override_buildtype = None,
         ipkg = instindex[name]
         comp = cache.compare_versions(ipkg.installed_version, ver)
 
-        pfname = ipkg.name + '_' + ipkg.installed_version.replace( ':', '%3a' ) + '_' + ipkg.architecture + '.deb'
+        pfname = ipkg.installed_deb
 
         if comp == 0:
             print "package ok: " + name + "-" + ipkg.installed_version
@@ -89,11 +91,15 @@ def gen_update_pkg (project, xml_filename, override_buildtype = None,
             continue
 
         print "package new installed " + p.name
-        pfname = p.name + '_' + p.installed_version.replace( ':', '%3a' ) + '_' + p.architecture + '.deb'
+        pfname = p.installed_deb
         fnamelist.append( pfname )
 
 
     update = os.path.join(project.builddir, "update")
+
+    if os.path.exists( update ):
+        rmtree( update )
+
     os.system( 'mkdir -p %s' % update )
 
     repodir = os.path.join(update, "repo" )
@@ -110,7 +116,4 @@ def gen_update_pkg (project, xml_filename, override_buildtype = None,
     project.xml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
 
-    zipfilename = os.path.join( project.builddir, "%s_%s.upd" %
-        (xml.text ("/project/name"), project.xml.text ("/project/version")) )
-
-    create_zip_archive( zipfilename, update, "." )
+    create_zip_archive( upd_filename, update, "." )

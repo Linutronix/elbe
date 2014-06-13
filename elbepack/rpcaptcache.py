@@ -57,7 +57,11 @@ class RPCAPTCache(InChRootObject):
         return ret
 
     def get_pkglist( self, section ):
-        ret = [ APTPackage(p) for p in self.cache if p.section == section ]
+        if section == 'all':
+            ret = [ APTPackage(p) for p in self.cache ]
+        else:
+            ret = [ APTPackage(p) for p in self.cache if p.section == section ]
+
         return ret
 
     def mark_install( self, pkgname, version ):
@@ -70,9 +74,14 @@ class RPCAPTCache(InChRootObject):
 
     def mark_delete( self, pkgname, version ):
         p = self.cache[pkgname]
-        p.mark_delete()
+        p.mark_delete( purge=True )
 
-    def update(self):
+    def mark_keep( self, pkgname, version ):
+        p = self.cache[pkgname]
+        p.mark_keep()
+
+
+    def update( self ):
         self.cache.update()
         self.cache.open()
 
@@ -86,6 +95,9 @@ class RPCAPTCache(InChRootObject):
         self.cache.commit( ElbeAcquireProgress(cb=self.co_cb),
                            ElbeInstallProgress(cb=self.co_cb) )
         self.cache.open()
+
+    def clear(self):
+        self.cache.clear()
 
     def get_dependencies(self, pkgname):
         deps = getalldeps( self.cache, pkgname )
@@ -103,6 +115,21 @@ class RPCAPTCache(InChRootObject):
                     index[f] = p.name
 
         return index
+
+    def get_marked_install( self ):
+        return [APTPackage(p) for p in self.cache if p.marked_install == True]
+
+    def get_upgradeable( self):
+        ret = [ APTPackage(p) for p in self.cache
+                            if p.is_upgradable == True]
+        return ret
+
+    def upgrade( self, dist_upgrade = False ):
+        self.cache.upgrade( dist_upgrade )
+
+    def get_changes( self ):
+        changes = self.cache.get_changes()
+        return [ APTPackage(p) for p in changes ]
 
     def has_pkg( self, pkgname ):
         return pkgname in self.cache
