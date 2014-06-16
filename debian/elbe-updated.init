@@ -5,13 +5,11 @@
 # Required-Stop:     $local_fs $network $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: <Enter a short description of the software>
-# Description:       <Enter a long description of the software>
-#                    <...>
-#                    <...>
+# Short-Description: elbe-updated
+# Description:       monitor elbe update directory and apply sw up/downgrades
 ### END INIT INFO
 
-# Author: local <local@slartibartfast.linutronix>
+# Author: Manuel Traut <manut@linutronix.de>
 
 # Do NOT "set -e"
 

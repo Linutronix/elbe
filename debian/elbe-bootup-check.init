@@ -5,10 +5,8 @@
 # Required-Stop:     $local_fs $network $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: <Enter a short description of the software>
-# Description:       <Enter a long description of the software>
-#                    <...>
-#                    <...>
+# Short-Description: elbe-bootup-check
+# Description:       check if elbe rfs was modified by a user
 ### END INIT INFO
 
 # Author: Manuel Traut <manut@linutronix.de>
