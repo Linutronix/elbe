@@ -41,7 +41,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
-	$DAEMON
+	$DAEMON $DAEMON_ARGS
 	return $?
 }
 
