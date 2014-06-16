@@ -1,10 +1,11 @@
 elbe (0.7.0~beta8) unstable; urgency=medium
 
+  * projectmanager updated
+  * new package elbe-bootup-check
+  * gen_update reworked
   * added zedboard example
-  * fixed missing kernel in various examples
-  * reworked gen_update code
 
- -- Manuel Traut <manut@linutronix.de>  Wed, 04 Jun 2014 21:30:22 +0200
+ -- Manuel Traut <manut@linutronix.de>  Mon, 16 Jun 2014 17:42:52 +0200
 
 elbe (0.7.0~beta7) unstable; urgency=medium
 

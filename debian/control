@@ -84,6 +84,16 @@ Description: ELBE build environment
  need to be executed with root privileges. It is not recommended to install
  this package on a native system.
 
+Package: elbe-bootup-check
+Architecture: all
+Depends: python (>= 2.7~),
+  elbe-common,
+  python-apt
+Description: ELBE bootup check
+ ELBE (embedded linux build environment) bootup checker. This package is
+ typically installed on a embedded system. The bootup checker shows some
+ informations about the installed software on the embedded device.
+
 Package: elbe-updated
 Architecture: all
 Depends: python (>= 2.7~),
