@@ -25,7 +25,7 @@ from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 
 def run_command( argv ):
-    oparser = OptionParser(usage="usage: %prog chroot [options] <builddir>")
+    oparser = OptionParser(usage="usage: %prog chroot [options] <builddir> [cmd]")
     oparser.add_option( "--skip-validation", action="store_true",
                         dest="skip_validation", default=False,
                         help="Skip xml schema validation" )
@@ -34,10 +34,17 @@ def run_command( argv ):
 
     (opt,args) = oparser.parse_args(argv)
 
-    if len(args) != 1:
+    if len(args) < 1:
         print "wrong number of arguments"
         oparser.print_help()
         sys.exit(20)
+
+    cmd = '/bin/bash'
+    if len(args) > 1:
+        cmd = ""
+        cmd2 = args[1:]
+        for c in cmd2:
+            cmd += (c + " ")
 
     try:
         project = ElbeProject(args[0], override_buildtype=opt.buildtype,
@@ -50,5 +57,5 @@ def run_command( argv ):
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"
         os.environ["LC_ALL"] = "C"
-        os.system( "chroot %s" % project.chrootpath )
+        os.system( "chroot %s %s" % (project.chrootpath, cmd) )
 
