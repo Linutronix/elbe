@@ -48,5 +48,8 @@ setup(name='elbe',
 "default-preseed.xml", "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
       cmdclass={"install": my_install},
-      data_files= [('/usr/share/doc/elbe-doc/examples', glob.glob("examples/*xml"))],
+      data_files= [
+          ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbe-schema-reference*")),
+          ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbeoverview-en*")),
+          ('/usr/share/doc/elbe-doc/examples', glob.glob("examples/*xml"))],
 )
