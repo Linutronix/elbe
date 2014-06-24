@@ -26,7 +26,7 @@ the archive can be unpacked into
 'gcc-linaro-arm-linux-gnueabihf-4.8-2014.02_linux/arm-linux-gnueabihf/libc'
 to set up a cross-toolchain for the given root filesystem.
 
-The archive will be created as 'sysroot.tar.xz' in the build directory. 
+The archive will be created as 'sysroot.tar.xz' in the build directory.
 
 This command has to be run as root *inside the Elbe build VM*.
 
