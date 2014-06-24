@@ -82,10 +82,7 @@
 		</fstab>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
-			<command>adduser --disabled-password --gecos "" elbe</command>
-			<command>passwd elbe -d</command>
-			<command>chroot . adduser --disabled-password --gecos "" elbe</command>
-			<command>chroot . passwd elbe -d</command>
+			<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
 		</finetuning>
 		<pkg-list>
 			<pkg>grub-pc</pkg>
