@@ -286,6 +286,12 @@ class ChRootFilesystem(Filesystem):
                 ui = "/usr/bin/" + self.interpreter
             os.system ('cp %s %s' % (ui, self.fname( "usr/bin" )))
 
+        if self.exists ("/etc/resolv.conf"):
+            os.system ('mv %s %s' % (self.fname ("etc/resolv.conf"),
+                                     self.fname ("etc/resolv.conf.orig")))
+        os.system ('cp %s %s' % ("/etc/resolv.conf",
+                                 self.fname("etc/resolv.conf")))
+
         self.mount()
         return self
 
@@ -296,6 +302,12 @@ class ChRootFilesystem(Filesystem):
         if self.interpreter:
             os.system( 'rm -f %s' %
                         os.path.join(self.path, "usr/bin/"+self.interpreter) )
+
+        if self.exists ("/etc/resolv.conf.orig"):
+            os.system ('rm -f %s' % (self.fname ("etc/resolv.conf")))
+            os.system ('mv %s %s' % (self.fname ("etc/resolv.conf.orig"),
+                                     self.fname ("etc/resolv.conf")))
+
     def mount(self):
         if self.path == '/':
             return
