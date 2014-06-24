@@ -1283,6 +1283,20 @@
       </documentation>
     </annotation>
     <choice>
+      <element name="addgroup" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            add a group by name
+          </documentation>
+        </annotation>
+      </element>
+      <element name="adduser" type="rfs:adduser" minOccurs="0">
+        <annotation>
+          <documentation>
+            add a user account by login name
+          </documentation>
+        </annotation>
+      </element>
       <element name="rm" type="string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1383,6 +1397,21 @@
       </element>
     </choice>
   </group>
+
+  <complexType name="adduser">
+    <annotation>
+      <documentation>
+        describes an additional user account
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="shell" type="string" use="required" />
+        <attribute name="passwd" type="string" use="required" />
+        <attribute name="groups" type="string" use="optional" />
+      </extension>
+    </simpleContent>
+  </complexType>
 
   <complexType name="cpmv">
     <annotation>

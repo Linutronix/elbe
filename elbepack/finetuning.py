@@ -171,6 +171,45 @@ class BuildenvMvAction(FinetuningAction):
 FinetuningAction.register( BuildenvMvAction )
 
 
+class AddUserAction(FinetuningAction):
+
+    tag = 'adduser'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+      with target:
+        if 'groups' in self.node.et.attrib:
+          log.chroot (target.path, "/usr/sbin/useradd -U -m -G %s -s %s %s" % (
+                self.node.et.attrib['groups'],
+                self.node.et.attrib['shell'],
+                self.node.et.text))
+        else:
+          log.chroot (target.path, "/usr/sbin/useradd -U -m -s %s %s" % (
+                self.node.et.attrib['shell'], self.node.et.text))
+
+        log.chroot (target.path, "/bin/echo %s:%s | /usr/sbin/chpasswd" % (
+                self.node.et.text, self.node.et.attrib['passwd']))
+
+FinetuningAction.register( AddUserAction )
+
+
+class AddGroupAction(FinetuningAction):
+
+    tag = 'addgroup'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+      with target:
+        log.chroot (target.path, "/usr/sbin/groupadd -f %s" % (
+            self.node.et.text))
+
+FinetuningAction.register( AddGroupAction )
+
+
 class CmdAction(FinetuningAction):
 
     tag = 'command'

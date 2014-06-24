@@ -290,6 +290,9 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <command>echo "T0:23:respawn:/sbin/getty -L ttyO0 115200 vt102" &gt;&gt; /etc/inittab</command>	<11>
     <buildenv_command>some_command</buildenv_command>			<12>
     <purge>apt</purge>							<13>
+    <addgroup>mygroup</addgroup>							<14>
+    <adduser groups='mygroup,audio' passwd='huhu' shell='/bin/zsh'>manut</adduser>							<15>
+    <adduser passwd='test' shell='/bin/bash'>test</adduser>							<15>
   </finetuning>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -325,6 +328,13 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <13> Remove the 'apt' package from the target root filesystem using
      'dpkg --purge'.
 
+<14> A group with the name 'mygroup' is created.
+
+<15> Adds the user 'manut' with '/bin/zsh' as default shell. A group with the
+      same name as the user is always created and is the default group.
+      manut is additionally added to the groups 'mygroup' and 'audio'. manuts
+      login password is 'huhu'.
+      The 'groups' attribute is optional, 'passwd' and 'shell' are mandatory.
 
 .Note
 *******************************************************
