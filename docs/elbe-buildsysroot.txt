@@ -23,7 +23,7 @@ directory (built with linkgit:elbe-buildchroot[1] before), containing the
 libraries and header files of the root filesystem. This can be used for
 cross-compiling. For example, if a Linaro 2014.02 toolchain is used,
 the archive can be unpacked into
-'gcc-linaro-arm-linux-gnueabihf-4.8-2014.02_linux/arm-linux-gnueabihf/libc'
+'gcc-linaro-arm-linux-gnueabihf-*/arm-linux-gnueabihf/libc'
 to set up a cross-toolchain for the given root filesystem.
 
 The archive will be created as 'sysroot.tar.xz' in the build directory.
