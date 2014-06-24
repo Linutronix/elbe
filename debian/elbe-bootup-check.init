@@ -69,6 +69,7 @@ case "$1" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
+	;;
 	restart)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
 	do_stop
@@ -81,6 +82,7 @@ case "$1" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
+	;;
 	force-reload)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
 	do_stop
@@ -93,6 +95,7 @@ case "$1" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
+	;;
 esac
 
 :
