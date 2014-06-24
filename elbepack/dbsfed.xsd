@@ -1312,18 +1312,18 @@
         </annotation>
       </element>
       <element name="b2t_cp" type="rfs:cpmv" minOccurs="0">
-	<annotation>
-	  <documentation>
-	    copy a file or directory (recursive)
-	  </documentation>
-	</annotation>
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
       </element>
       <element name="t2b_cp" type="rfs:cpmv" minOccurs="0">
-	<annotation>
-	  <documentation>
-	    copy a file or directory (recursive)
-	  </documentation>
-	</annotation>
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
       </element>
       <element name="mv" type="rfs:cpmv" minOccurs="0">
         <annotation>
