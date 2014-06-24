@@ -10,6 +10,7 @@ Build-Depends: dh-python,
   dia,
   asciidoc,
   xmlto,
+  lintian,
   source-highlight
 Standards-Version: 3.9.5
 Homepage: http://elbe-rfs.org
