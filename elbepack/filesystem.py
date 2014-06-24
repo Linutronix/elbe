@@ -303,8 +303,9 @@ class ChRootFilesystem(Filesystem):
             os.system( 'rm -f %s' %
                         os.path.join(self.path, "usr/bin/"+self.interpreter) )
 
+        os.system ('rm -f %s' % (self.fname ("etc/resolv.conf")))
+
         if self.exists ("/etc/resolv.conf.orig"):
-            os.system ('rm -f %s' % (self.fname ("etc/resolv.conf")))
             os.system ('mv %s %s' % (self.fname ("etc/resolv.conf.orig"),
                                      self.fname ("etc/resolv.conf")))
 
