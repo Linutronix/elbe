@@ -1,3 +1,11 @@
+elbe (0.7.0~beta10) unstable; urgency=medium
+
+  * elbe chroot extended
+  * adduser/addgroup finetuning tags added
+  * dns fixes for finetuning / chroot
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 25 Jun 2014 15:01:45 +0200
+
 elbe (0.7.0~beta9) unstable; urgency=medium
 
   * merge conflict resulted in an old debian package version; rerelease with
