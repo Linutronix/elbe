@@ -68,6 +68,16 @@ class RPCAPTCache(InChRootObject):
         p = self.cache[pkgname]
         p.mark_install()
 
+    def cleanup (self, debootstrap_pkgs):
+        for p in self.cache:
+            if p.is_installed:
+                remove = True
+                for x in debootstrap_pkgs:
+                    if x == p.name:
+                        remove = False
+                if remove:
+                    p.mark_delete( auto_fix=False, purge=True )
+
     def mark_upgrade( self, pkgname, version ):
         p = self.cache[pkgname]
         p.mark_upgrade()

@@ -288,9 +288,17 @@ class ElbeProject (object):
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
             self.buildenv.seed_etc()
 
+            # remove all non-essential packages to ensure that on a incremental
+            # build packages can be removed
+            debootstrap_pkgs = []
+            for p in self.xml.node("debootstrappkgs"):
+                debootstrap_pkgs.append (p.et.text)
+            print "debootstrap_pkgs:", debootstrap_pkgs
+            self._rpcaptcache.cleanup(debootstrap_pkgs)
             # Now install packages from all sources
             be_pkgs = self.buildenv.xml.get_buildenv_packages()
             ta_pkgs = self.buildenv.xml.get_target_packages()
+
 
             for p in be_pkgs + ta_pkgs:
                 try:
