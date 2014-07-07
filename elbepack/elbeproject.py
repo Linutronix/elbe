@@ -150,11 +150,15 @@ class ElbeProject (object):
 
         # Generate images
         if self._rpcaptcache.is_installed( 'grub-pc' ):
-            skip_grub = False
+            grub_version = 2
+
+        elif self._rpcaptcache.is_installed( 'grub-legacy' ):
+            grub_version = 1
         else:
             self.log.printo( "package grub-pc is not installed, skipping grub" )
-            skip_grub = True
-        self.targetfs.part_target( self.builddir, skip_grub )
+            # version 0 == skip_grub
+            grub_version = 0
+        self.targetfs.part_target( self.builddir, grub_version )
 
         # Build cdrom images
         arch = self.xml.text( "project/arch", key="arch" )

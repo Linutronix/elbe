@@ -240,7 +240,7 @@ class simple_fstype(object):
     def __init__(self, typ):
         self.type = typ
 
-def do_image_hd( outf, hd, fslabel, target, skip_grub ):
+def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
     # Init to 0 because we increment before using it
     partition_number = 0
@@ -261,7 +261,10 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
     else:
         disk = parted.freshDisk(imag, "msdos" )
 
-    grub = grubinstaller( outf )
+    if grub_version == 1:
+        grub = grubinstaller1( outf )
+    elif grub_version == 2:
+        grub = grubinstaller2( outf )
 
     current_sector = 2048
     for part in hd:
@@ -326,12 +329,12 @@ def do_image_hd( outf, hd, fslabel, target, skip_grub ):
 
     disk.commit()
 
-    if hd.has( "grub-install" ) and not skip_grub:
+    if hd.has( "grub-install" ) and grub_version != 0:
         grub.install( target )
 
     return hd.text("name")
 
-def do_hdimg(outf, xml, target, rfs, skip_grub):
+def do_hdimg(outf, xml, target, rfs, grub_version):
     # list of created files
     img_files = []
 
@@ -371,11 +374,11 @@ def do_hdimg(outf, xml, target, rfs, skip_grub):
         # Now iterate over all images and create filesystems and partitions
         for i in xml.tgt.node("images"):
             if i.tag == "msdoshd":
-                img = do_image_hd( outf, i, fslabel, target, skip_grub )
+                img = do_image_hd( outf, i, fslabel, target, grub_version )
                 img_files.append (img)
 
             if i.tag == "gpthd":
-                img = do_image_hd( outf, i, fslabel, target, skip_grub )
+                img = do_image_hd( outf, i, fslabel, target, grub_version )
                 img_files.append (img)
 
             if i.tag == "mtd":

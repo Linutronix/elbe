@@ -43,6 +43,9 @@ def run_command( argv ):
     oparser.add_option( "--skip-grub", action="store_true",
                         dest="skip_grub", default=False,
                         help="Skip grub install" )
+    oparser.add_option( "--grub-version", type="int",
+                        dest="grub_version", default=2,
+                        help="use specific grub version" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -61,6 +64,9 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
+    if opt.skip_grub:
+        opt.grub_version = 0
+
     try:
         project = ElbeProject( opt.target, override_buildtype=opt.buildtype,
                 xmlpath=args[0], logpath=opt.output,
@@ -69,4 +75,4 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    project.targetfs.part_target(opt.target, opt.skip_grub)
+    project.targetfs.part_target(opt.target, opt.grub_version)
