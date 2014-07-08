@@ -28,6 +28,7 @@ ln -s /target /buildenv
 
 mkdir -p /buildenv/var/cache/elbe
 cp source.xml /buildenv/var/cache/elbe/
+cp /etc/apt/apt.conf /buildenv/etc/apt/
 
 mkdir -p /buildenv/dev
 mount -o bind /dev /buildenv/dev
