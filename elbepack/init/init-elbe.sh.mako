@@ -19,7 +19,7 @@
 #! /bin/sh
 
 # First unset the variables which are set by the debian-installer
-unset DEBCONF_REDIR DEBCONF_OLD_FD_BASE MENU 
+unset DEBCONF_REDIR DEBCONF_OLD_FD_BASE MENU
 unset DEBIAN_FRONTEND DEBIAN_HAS_FRONTEND debconf_priority
 unset TERM_TYPE
 
