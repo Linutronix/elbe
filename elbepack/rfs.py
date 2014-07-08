@@ -77,6 +77,7 @@ class BuildEnv ():
         primary_mirror = self.xml.get_primary_mirror(self.rfs.fname('cdrom') )
 
         if self.xml.prj.has("mirror/primary_proxy"):
+            os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
             os.environ["http_proxy"] = self.xml.prj.text(
                     "mirror/primary_proxy")
 

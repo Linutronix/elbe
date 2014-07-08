@@ -136,6 +136,7 @@ def run_command( argv ):
 
     if http_proxy != "":
         os.putenv ("http_proxy", http_proxy)
+        os.putenv ("no_proxy", "localhost,127.0.0.1")
 
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
