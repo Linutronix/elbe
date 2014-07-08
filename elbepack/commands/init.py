@@ -51,7 +51,7 @@ def run_command( argv ):
                         help="Working directory (default is build)",
                         metavar="FILE" )
 
-    oparser.add_option( "--build-source", action="store_true",
+    oparser.add_option( "--build-sources", action="store_true",
                         dest="buildsources", default=False,
                         help="Build source cdrom" )
 
