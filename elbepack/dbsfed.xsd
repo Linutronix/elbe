@@ -126,7 +126,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="binary" type="string">
+      <element name="binary" type="string" minOccurs="0">
         <annotation>
           <documentation>
             e.g. "http://myhost/debian /" or "http://debian.org/debian main"
