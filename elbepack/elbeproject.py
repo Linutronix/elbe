@@ -297,7 +297,6 @@ class ElbeProject (object):
             debootstrap_pkgs = []
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
-            print "debootstrap_pkgs:", debootstrap_pkgs
             self._rpcaptcache.cleanup(debootstrap_pkgs)
             # Now install packages from all sources
             be_pkgs = self.buildenv.xml.get_buildenv_packages()
