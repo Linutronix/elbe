@@ -81,7 +81,8 @@ Depends: ${misc:Depends},
   python-sqlalchemy,
   qemu-user-static,
   reprepro,
-  rsync
+  rsync,
+  kpartx
 Description: ELBE build environment
  ELBE (embedded linux build environment) is a flexible Root Filesystem builder.
  This package is typically installed in a virtual machine (that can be created
