@@ -174,7 +174,7 @@ def size_to_int( size ):
     return int(s) * unit
 
 
-class grubinstaller2( object ):
+class grubinstaller_base( object ):
     def __init__( self, outf ):
         self.outf = outf
         self.root = None
@@ -186,6 +186,11 @@ class grubinstaller2( object ):
 
     def set_root_entry( self, entry ):
         self.root = entry
+
+    def install( self, target ):
+        pass
+
+class grubinstaller2( grubinstaller_base ):
 
     def install( self, target ):
         if not self.root:
@@ -236,18 +241,7 @@ class grubinstaller2( object ):
             self.outf.do( 'umount /dev/poop1', allow_fail=True )
             self.outf.do( 'losetup -d /dev/poop1', allow_fail=True )
 
-class grubinstaller1( object ):
-    def __init__( self, outf ):
-        self.outf = outf
-        self.root = None
-        self.boot = None
-
-    def set_boot_entry( self, entry ):
-        print "setting boot entry"
-        self.boot = entry
-
-    def set_root_entry( self, entry ):
-        self.root = entry
+class grubinstaller1( grubinstaller_base ):
 
     def install( self, target ):
         if not self.root:
@@ -322,6 +316,8 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
         grub = grubinstaller1( outf )
     elif grub_version == 2:
         grub = grubinstaller2( outf )
+    else:
+        grub = grubinstaller_base( outf );
 
     current_sector = 2048
     for part in hd:
@@ -387,7 +383,7 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
     disk.commit()
 
-    if hd.has( "grub-install" ) and grub_version != 0:
+    if hd.has( "grub-install" ):
         grub.install( target )
 
     return hd.text("name")
