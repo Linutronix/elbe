@@ -29,6 +29,9 @@ def run_command( argv ):
     oparser.add_option( "--skip-validation", action="store_true",
                         dest="skip_validation", default=False,
                         help="Skip xml schema validation" )
+    oparser.add_option( "--target", action="store_true", dest="target",
+                        help="chroot into target instead of buildenv",
+                        default=False )
     oparser.add_option( "--buildtype", dest="buildtype",
                         help="Override the buildtype" )
 
@@ -53,9 +56,16 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    with project.buildenv.rfs:
-        os.environ["LANG"] = "C"
-        os.environ["LANGUAGE"] = "C"
-        os.environ["LC_ALL"] = "C"
-        os.system( "chroot %s %s" % (project.chrootpath, cmd) )
+    if opt.target:
+        with project.targetfs:
+            os.environ["LANG"] = "C"
+            os.environ["LANGUAGE"] = "C"
+            os.environ["LC_ALL"] = "C"
+            os.system( "chroot %s %s" % (project.targetpath, cmd) )
+    else:
+        with project.buildenv.rfs:
+            os.environ["LANG"] = "C"
+            os.environ["LANGUAGE"] = "C"
+            os.environ["LC_ALL"] = "C"
+            os.system( "chroot %s %s" % (project.chrootpath, cmd) )
 

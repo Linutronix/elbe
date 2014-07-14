@@ -10,13 +10,14 @@ elbe-chroot - Enter an Elbe root filesystem using chroot.
 SYNOPSIS
 --------
 [verse]
-'elbe chroot' [--skip-validation] [--buildtype=TYPE] <builddir> ["command"]
+'elbe chroot' [--skip-validation] [--buildtype=TYPE] [--target] <builddir> \
+	["command"]
 
 
 DESCRIPTION
 -----------
-Enters a previously built Elbe root filesystem using chroot. The command
-has to be run as root *inside the Elbe build VM* (created with
+Enters buildenv of a previously built Elbe root filesystem using chroot.
+The command has to be run as root *inside the Elbe build VM* (created with
 linkgit:elbe-init[1]).
 
 
@@ -29,6 +30,9 @@ OPTIONS
 
 --buildtype=TYPE::
 	Override the buildtype specified in the source.xml file.
+
+--target::
+	chroot into target rfs instead of buildenv
 
 <builddir>::
 	The build directory of the root filesystem to work with.
