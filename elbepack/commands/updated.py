@@ -312,7 +312,7 @@ def run_command (argv):
 
     global status
 
-    oparser = OptionParser (usage="usage: %prog init [options] <filename>")
+    oparser = OptionParser (usage="usage: %prog updated [options] <filename>")
 
     oparser.add_option ("--directory", dest="update_dir",
                         help="monitor dir (default is /var/cache/elbe/updates)",
