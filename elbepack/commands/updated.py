@@ -330,8 +330,7 @@ def run_command (argv):
 
     (opt,args) = oparser.parse_args(argv)
 
-    if opt.nosign:
-        status.nosign = True
+    status.nosign = opt.nosign
 
     if not opt.update_dir:
         update_dir = "/var/cache/elbe/updates"
