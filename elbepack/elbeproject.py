@@ -131,6 +131,9 @@ class ElbeProject (object):
         except MemoryError:
             self.log.printo( "dump elbeversion failed" )
 
+        # install packages for buildenv
+        self.install_packages(buildenv=True)
+
         # Write source.xml
         try:
             sourcexmlpath = os.path.join( self.builddir, "source.xml" )
@@ -248,7 +251,7 @@ class ElbeProject (object):
         self.log.printo( "report timestamp: " +
                 datetime.datetime.now().strftime("%Y%m%d-%H%M%S") )
 
-    def install_packages (self):
+    def install_packages (self, buildenv=False):
         with self.buildenv:
             # Create self._rpcaptcache
             self.get_rpcaptcache()
@@ -297,13 +300,16 @@ class ElbeProject (object):
             debootstrap_pkgs = []
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
+
             self._rpcaptcache.cleanup(debootstrap_pkgs)
-            # Now install packages from all sources
-            be_pkgs = self.buildenv.xml.get_buildenv_packages()
-            ta_pkgs = self.buildenv.xml.get_target_packages()
 
+            # Now install requested packages
+            pkgs = self.buildenv.xml.get_target_packages()
 
-            for p in be_pkgs + ta_pkgs:
+            if buildenv:
+                pkgs = pkgs + self.buildenv.xml.get_buildenv_packages()
+
+            for p in pkgs:
                 try:
                     self._rpcaptcache.mark_install( p, None )
                 except KeyError:
