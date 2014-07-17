@@ -119,3 +119,7 @@ class CdromSrcRepo(RepoBase):
     def __init__( self, codename, path, log, maxsize ):
         RepoBase.__init__( self, path, log, "source", codename, "Elbe", "Elbe Source Cdrom Repo", "main", maxsize )
 
+
+class ToolchainRepo(RepoBase):
+    def __init__( self, arch, codename, path, log):
+        RepoBase.__init__( self, path, log, arch, codename, "toolchain", "Toolchain binary packages Repo", "main" )
