@@ -64,11 +64,9 @@ def run_command( argv ):
     for lib in toolchain.pkg_libs:
         files = toolchain.get_files_for_pkg( lib )
 
-        print files
         pkglibpath = os.path.join( "usr/lib", defaults["triplet"] )
         fmap = [ (f, pkglibpath) for f in files ]
 
-        print fmap
         build_binary_deb( lib, defaults["arch"], defaults["toolchainver"], lib + " extracted from toolchain", fmap, toolchain.pkg_deps[lib], tmpdir )
 
     pkgs = os.listdir(tmpdir)
