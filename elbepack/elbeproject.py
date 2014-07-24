@@ -187,6 +187,8 @@ class ElbeProject (object):
         fte.write("../elbe-report.log\n")
         fte.close()
 
+        os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
+
     def get_rpcaptcache (self):
         if self._rpcaptcache is None:
             self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
