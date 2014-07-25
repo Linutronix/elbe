@@ -7,6 +7,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/gen_update.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/hdimg.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/mkcdrom.py
+./usr/lib/python2.*/*-packages/elbepack/commands/toolchainextract.py
 ./usr/lib/python2.*/*-packages/elbepack/mako/*
 ./usr/lib/python2.*/*-packages/elbepack/hdimg.py
 ./usr/lib/python2.*/*-packages/elbepack/db.py
