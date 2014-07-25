@@ -35,6 +35,7 @@ class VirtApt:
         self.create_apt_prefs        (prefs)
 
         apt_pkg.config.set ("APT::Architecture", arch)
+        apt_pkg.config.set ("Acquire::http::Proxy::127.0.0.1", "DIRECT")
         apt_pkg.config.set ("APT::Install-Recommends", "0")
         apt_pkg.config.set ("Dir", self.projectpath)
         apt_pkg.config.set ("APT::Cache-Limit", "0")
