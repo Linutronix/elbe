@@ -16,18 +16,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
-IMGSIZE=20G
-MEMSIZE=1024
+IMGSIZE?=20G
+MEMSIZE?=1024
 SMP?=`nproc`
 INTERPRETER?=kvm
-MACHINE=pc
-NICMODEL=virtio
-CONSOLE=ttyS0,115200n1
-LOOP_OFFSET=1048576
-HD_TYPE=virtio
-HD_NAME=vda1
-CDROM_TYPE=scsi
-GUIPORT=${opt.guiport}
+MACHINE?=pc
+NICMODEL?=virtio
+CONSOLE?=ttyS0,115200n1
+LOOP_OFFSET?=1048576
+HD_TYPE?=virtio
+HD_NAME?=vda1
+CDROM_TYPE?=scsi
+GUIPORT?=${opt.guiport}
 
 <%
 import string
