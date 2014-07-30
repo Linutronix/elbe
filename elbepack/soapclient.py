@@ -39,8 +39,8 @@ def get_file (client, builddir, filename):
         if ret == "EndOfFile":
             fp.close ()
             return filename + " saved"
+
         fp.write (binascii.a2b_base64 (ret))
-        fp.flush ()
         part = part + 1
 
     return filename + " unknown error"

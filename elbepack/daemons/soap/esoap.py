@@ -20,10 +20,11 @@
 
 import binascii
 import soaplib
+import os
 
 from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
-from soaplib.serializers.primitive import String, Array
+from soaplib.serializers.primitive import String, Integer, Array
 
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.elbeproject import ElbeProject
@@ -94,12 +95,19 @@ class ESoap (SimpleWSGISoapApp):
 
     @soapmethod (String, String, Integer, _returns=String)
     def get_file (self, builddir, filename, part):
-        size = 1024 * 1024
-        with file (builddir + "/" + filename) as fp:
+        size = 1024 * 1024 * 5
+        pos = size * part
+        file_name = builddir + "/" + filename
+        file_stat = os.stat (file_name)
+
+        if (pos >= file_stat.st_size):
+            return "EndOfFile"
+
+        with file (file_name) as fp:
             if not fp:
                 return "FileNotFound"
             try:
-                fp.seek (part*size)
+                fp.seek (pos)
                 data = fp.read (size)
                 return binascii.b2a_base64 (data)
             except:
