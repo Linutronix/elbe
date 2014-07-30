@@ -26,16 +26,17 @@ from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Integer, Array
 
-from elbepack.db import ElbeDB, ElbeDBError
-from elbepack.elbeproject import ElbeProject
-from elbepack.asyncworker import AsyncWorker, BuildJob
+from tempfile import NamedTemporaryFile
+
+from elbepack.projectmanager import ProjectManager, ProjectManagerError
+from elbepack.elbexml import ValidationError
+from elbepack.db import ElbeDBError, InvalidLogin
 
 class ESoap (SimpleWSGISoapApp):
 
     def __init__ (self):
         SimpleWSGISoapApp.__init__ (self)
-        db = ElbeDB ()
-        self.worker = AsyncWorker (db)
+        self.pm = ProjectManager ("/var/cache/elbe")
 
     @soapmethod (_returns=String)
     def list_users (self):
@@ -43,9 +44,8 @@ class ESoap (SimpleWSGISoapApp):
         # python suds :(
         ret = ""
         users = []
-        db = ElbeDB ()
         try:
-            users = db.list_users ()
+            users = self.pm.db.list_users ()
         except ElbeDBError as e:
             print "soap list_users failed (db error):", e
         if not users:
@@ -60,9 +60,8 @@ class ESoap (SimpleWSGISoapApp):
         # python suds :(
         ret = ""
         projects = []
-        db = ElbeDB ()
         try:
-            projects = db.list_projects ()
+            projects = self.pm.db.list_projects ()
         except ElbeDBError as e:
             print "soap list_projects failed (db error):", e
         if not projects:
@@ -79,9 +78,8 @@ class ESoap (SimpleWSGISoapApp):
         # python suds :(
         ret = ""
         files = []
-        db = ElbeDB ()
         try:
-            files = db.get_project_files (builddir)
+            files = self.pm.db.get_project_files (builddir)
         except ElbeDBError as e:
             print "soap get_files failed (db error):", e
         if not files:
@@ -120,28 +118,42 @@ class ESoap (SimpleWSGISoapApp):
 
     @soapmethod (String, String, String)
     def set_xml (self, builddir, xmlfile, content):
-        db = ElbeDB ()
         fn = "/tmp/" + xmlfile.split('/')[-1]
         fp = file (fn, "w")
         fp.write (binascii.a2b_base64 (content))
         fp.flush ()
         try:
-            db.set_xml (builddir, fn)
+            self.pm.db.set_xml (builddir, fn)
         except ElbeDBError as e:
             print "soap set_xml failed (db error):", e
 
     @soapmethod (String)
     def del_project (self, builddir):
-        db = ElbeDB ()
         try:
-            db.del_project (builddir)
+            self.pm.db.del_project (builddir)
         except ElbeDBError as e:
             print "soap del_project failed (db error):", e
 
-    @soapmethod (String)
-    def create_project (self, builddir):
-        db = ElbeDB ()
+    @soapmethod (String, String, String, String, _returns=String)
+    def create_project (self, user, passwd, filename, xml):
+
         try:
-            db.create_project (builddir)
-        except ElbeDBError as e:
-            print "soap create_project failed (db error):", e
+            userid = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin as e:
+            return str (e)
+
+        with NamedTemporaryFile() as fp:
+            fp.write (binascii.a2b_base64 (xml))
+            fp.flush ()
+            try:
+                self.pm.create_project (userid, fp.name)
+            except ProjectManagerError as e:
+                return str (e)
+            except ElbeDBError as e:
+                return str (e)
+            except OSError as e:
+                return str (e)
+            except ValidationError as e:
+                return "Invalid XML file"
+
+        return "OK"

@@ -56,8 +56,10 @@ def set_xml (client, builddir, xml_file):
 def del_project (client, builddir):
     client.service.del_project (builddir)
 
-def create_project (client, builddir):
-    client.service.create_project (builddir)
+def create_project (client, user, passwd, filename):
+    with file (filename, "r") as fp:
+        return client.service.create_project (user, passwd, filename,
+                binascii.b2a_base64(fp.read ()))
 
 class ClientAction(object):
     actiondict = {}
@@ -82,7 +84,7 @@ class ListProjectsAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, user, passwd, args):
+    def execute(self, client, user, passwd, args):
         projects = list_projects (client)
         if not projects:
             return
@@ -99,7 +101,7 @@ class ListUsersAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, user, passwd, args):
+    def execute(self, client, user, passwd, args):
         users = list_users (client)
         if not users:
             return
@@ -118,10 +120,10 @@ class CreateProjectAction(ClientAction):
 
     def execute(self, client, user, passwd, args):
         if len (args) != 1:
-            print "usage: elbe control create_project <project_dir>"
+            print "usage: elbe control create_project <xmlfile>"
             return
 
-        create_project (client, args[0])
+        print create_project (client, user, passwd, args[0])
 
 ClientAction.register(CreateProjectAction)
 
