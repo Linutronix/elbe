@@ -168,6 +168,23 @@ class BuildAction(ClientAction):
 ClientAction.register(BuildAction)
 
 
+class GetFileAction(ClientAction):
+
+    tag = 'get_file'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, args):
+        if len (args) != 2:
+            print "usage: elbe control get_file <project_dir> <file>"
+            return
+
+        print get_file (client, args[0], args[1])
+
+ClientAction.register(GetFileAction)
+
+
 class GetFilesAction(ClientAction):
 
     tag = 'get_files'
