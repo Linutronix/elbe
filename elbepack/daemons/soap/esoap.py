@@ -113,10 +113,26 @@ class ESoap (SimpleWSGISoapApp):
             except:
                 return "EndOfFile"
 
-    @soapmethod (String)
-    def build (self, builddir):
-        project = ElbeProject (builddir)
-        self.worker.enqueue (BuildJob (project))
+    @soapmethod (String, String, String, _returns=String)
+    def build (self, user, passwd, builddir):
+        try:
+            userid = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin as e:
+            return str (e)
+
+        try:
+            self.pm.open_project (userid, builddir)
+        except ValidationError as e:
+            return "old XML file is invalid - open project failed"
+        except Exception as e:
+            return str (e) + " - open project failed"
+
+        try:
+            self.pm.build_current_project (userid)
+        except Exception as e:
+            return str (e) + " - build project failed"
+
+        return "OK"
 
     @soapmethod (String, String, String, String, _returns=String)
     def set_xml (self, user, passwd, builddir, xml):
@@ -130,7 +146,6 @@ class ESoap (SimpleWSGISoapApp):
         except ValidationError as e:
             return "old XML file is invalid - open project failed"
         except Exception as e:
-            print e
             return str (e) + " - open project failed"
 
         with NamedTemporaryFile() as fp:

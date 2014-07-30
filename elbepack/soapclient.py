@@ -45,8 +45,8 @@ def get_file (client, builddir, filename):
 
     return filename + " unknown error"
 
-def build_project (client, builddir):
-    client.service.build (builddir)
+def build_project (client, user, passwd, builddir):
+    return client.service.build (user, passwd, builddir)
 
 def set_xml (client, user, passwd, builddir, filename):
     print filename
@@ -173,7 +173,7 @@ class BuildAction(ClientAction):
             print "usage: elbe control build <project_dir>"
             return
 
-        build_project (client, args[0])
+        print build_project (client, user, passwd, args[0])
 
 ClientAction.register(BuildAction)
 
