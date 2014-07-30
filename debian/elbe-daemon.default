@@ -1,0 +1,3 @@
+# elbe daemon configuration
+
+DAEMON_ARGS="daemon --port=8080 --soap"
