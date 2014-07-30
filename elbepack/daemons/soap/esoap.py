@@ -26,6 +26,7 @@ from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Array
 
 from elbepack.db import ElbeDB, ElbeDBError
+from elbepack.elbeproject import ElbeProject
 
 class ESoap (SimpleWSGISoapApp):
 
@@ -84,11 +85,8 @@ class ESoap (SimpleWSGISoapApp):
 
     @soapmethod (String)
     def build (self, builddir):
-        db = ElbeDB ()
-        try:
-            db.build_project (builddir)
-        except ElbeDBError as e:
-            print "soap build_project failed (db error):", e
+        project = ElbeProject (builddir)
+        project.build ()
 
     @soapmethod (String, String, String)
     def set_xml (self, builddir, xmlfile, content):
