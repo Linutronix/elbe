@@ -83,7 +83,7 @@ class ESoap (SimpleWSGISoapApp):
         try:
             files = self.pm.db.get_project_files (builddir)
         except ElbeDBError as e:
-            print "soap get_files failed (db error):", e
+            return str(e)
         if not files:
             return ret
         for f in files:
