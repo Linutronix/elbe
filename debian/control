@@ -47,7 +47,7 @@ Depends: ${misc:Depends},
   python-mako,
   p7zip-full,
   make
-Recommends: qemu-kvm, elbe-doc
+Recommends: qemu-kvm, elbe-doc, elbe-control
 Description: embedded linux build environment
  ELBE (embedded linux build environment) is a flexible Root Filesystem builder.
  This package is used to build a virtual machine including the 'elbe-buildenv'
@@ -83,6 +83,7 @@ Depends: ${misc:Depends},
   reprepro,
   rsync,
   kpartx
+Recommends: elbe-daemon, elbe-soap
 Description: ELBE build environment
  ELBE (embedded linux build environment) is a flexible Root Filesystem builder.
  This package is typically installed in a virtual machine (that can be created
@@ -100,6 +101,22 @@ Description: ELBE bootup check
  ELBE (embedded linux build environment) bootup checker. This package is
  typically installed on a embedded system. The bootup checker shows some
  information about the installed software on the embedded device.
+
+Package: elbe-soap
+Architecture: all
+Depends: python (>= 2.7~),
+  python-soaplib,
+  elbe-buildenv
+Description: SOAP Interface for elbe buildenv
+ Enables remote control of the elbe buildenv via SOAP.
+
+Package: elbe-control
+Architecture: all
+Depends: python (>= 2.7~),
+  python-suds,
+  elbe-common
+Description: Commandline Tool to control an elbe buildenv
+ The SOAP Interface is used to control an elbe buildenv.
 
 Package: elbe-updated
 Architecture: all
