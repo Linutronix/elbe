@@ -49,7 +49,7 @@ class ESoap (SimpleWSGISoapApp):
         try:
             users = self.pm.db.list_users ()
         except ElbeDBError as e:
-            print "soap list_users failed (db error):", e
+            return str (e)
         if not users:
             return ret
         for u in users:
