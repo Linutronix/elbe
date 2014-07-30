@@ -29,6 +29,15 @@ def list_projects (client):
 def get_files (client, builddir):
     return client.service.get_files (builddir)
 
+def get_file (client, builddir, filename):
+    ret = client.service.get_file (builddir, filename)
+    if ret == "FileNotFound":
+        return ret
+    fp = file (filename, "w")
+    fp.write (binascii.a2b_base64 (ret))
+    fp.flush ()
+    return filename + " saved"
+
 def build_project (client, builddir):
     client.service.build (builddir)
 

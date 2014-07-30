@@ -92,6 +92,13 @@ class ESoap (SimpleWSGISoapApp):
                 ret += f.name + ", "
         return ret
 
+    @soapmethod (String, String, _returns=String)
+    def get_file (self, builddir, filename):
+        fp = file (builddir + "/" + filename)
+        if not fp:
+            return "FileNotFound"
+        return binascii.b2a_base64 (fp.read ())
+
     @soapmethod (String)
     def build (self, builddir):
         project = ElbeProject (builddir)
