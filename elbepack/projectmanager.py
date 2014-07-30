@@ -159,7 +159,7 @@ class ProjectManager(object):
             pfd = self.db.get_project_file( builddir, filename )
             return OpenProjectFile( pfd, mode )
 
-    def set_current_project_xml (self, userid, xmlfile):
+    def set_current_project_xml (self, userid, xml_file):
         with self.lock:
             ep = self._get_current_project( userid )
             if self.db.is_busy( ep.builddir ):
