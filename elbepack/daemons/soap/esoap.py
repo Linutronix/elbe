@@ -167,6 +167,20 @@ class ESoap (SimpleWSGISoapApp):
         return "OK"
 
     @soapmethod (String, String, String, _returns=String)
+    def reset_project (self, user, passwd, builddir):
+        try:
+            userid = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin as e:
+            return str (e)
+
+        try:
+            self.pm.db.reset_project (builddir, True)
+        except Exception as e:
+            return str (e)
+
+        return "OK"
+
+    @soapmethod (String, String, String, _returns=String)
     def del_project (self, user, passwd, builddir):
         try:
             userid = self.pm.db.validate_login(user, passwd)

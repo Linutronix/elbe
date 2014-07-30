@@ -57,6 +57,9 @@ def set_xml (client, user, passwd, builddir, filename):
 def del_project (client, user, passwd, builddir):
     return client.service.del_project (user, passwd, builddir)
 
+def reset_project (client, user, passwd, builddir):
+    return client.service.reset_project (user, passwd, builddir)
+
 def create_project (client, user, passwd, filename):
     with file (filename, "r") as fp:
         return client.service.create_project (user, passwd,
@@ -127,6 +130,23 @@ class CreateProjectAction(ClientAction):
         print create_project (client, user, passwd, args[0])
 
 ClientAction.register(CreateProjectAction)
+
+class ResetProjectAction(ClientAction):
+
+    tag = 'reset_project'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, user, passwd, args):
+        if len (args) != 1:
+            print "usage: elbe control reset_project <project_dir>"
+            return
+
+        print reset_project (client, user, passwd, args[0])
+
+ClientAction.register(ResetProjectAction)
+
 
 class DeleteProjectAction(ClientAction):
 
