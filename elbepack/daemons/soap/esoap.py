@@ -25,7 +25,7 @@ from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Array
 
-import elbepack.db
+from elbepack.db import ElbeDB, ElbeDBError
 
 class ESoap (SimpleWSGISoapApp):
 
@@ -34,7 +34,12 @@ class ESoap (SimpleWSGISoapApp):
         # use comma seperated string because array of string triggers a bug in
         # python suds :(
         ret = ""
-        users = elbepack.db.list_users ()
+        users = []
+        db = ElbeDB ()
+        try:
+            users = db.list_users ()
+        except ElbeDBError as e:
+            print "soap list_users failed (db error):", e
         if not users:
             return ret
         for u in users:
@@ -46,7 +51,12 @@ class ESoap (SimpleWSGISoapApp):
         # use comma seperated string because array of string triggers a bug in
         # python suds :(
         ret = ""
-        projects = elbepack.db.list_projects ()
+        projects = []
+        db = ElbeDB ()
+        try:
+            projects = db.list_projects ()
+        except ElbeDBError as e:
+            print "soap list_projects failed (db error):", e
         if not projects:
             return ret
         for p in projects:
@@ -60,7 +70,12 @@ class ESoap (SimpleWSGISoapApp):
         # use comma seperated string because array of string triggers a bug in
         # python suds :(
         ret = ""
-        files = elbepack.db.get_files (builddir)
+        files = []
+        db = ElbeDB ()
+        try:
+            files = db.get_files (builddir)
+        except ElbeDBError as e:
+            print "soap get_files failed (db error):", e
         if not files:
             return ret
         for f in files:
@@ -69,20 +84,36 @@ class ESoap (SimpleWSGISoapApp):
 
     @soapmethod (String)
     def build (self, builddir):
-        elbepack.db.build_project (builddir)
+        db = ElbeDB ()
+        try:
+            db.build_project (builddir)
+        except ElbeDBError as e:
+            print "soap build_project failed (db error):", e
 
     @soapmethod (String, String, String)
     def set_xml (self, builddir, xmlfile, content):
+        db = ElbeDB ()
         fn = "/tmp/" + xmlfile.split('/')[-1]
         fp = file (fn, "w")
         fp.write (binascii.a2b_base64 (content))
         fp.flush ()
-        elbepack.db.set_xml (builddir, fn)
+        try:
+            db.set_xml (builddir, fn)
+        except ElbeDBError as e:
+            print "soap set_xml failed (db error):", e
 
     @soapmethod (String)
     def del_project (self, builddir):
-        elbepack.db.del_project (builddir)
+        db = ElbeDB ()
+        try:
+            db.del_project (builddir)
+        except ElbeDBError as e:
+            print "soap del_project failed (db error):", e
 
     @soapmethod (String)
     def create_project (self, builddir):
-        elbepack.db.create_project (builddir)
+        db = ElbeDB ()
+        try:
+            db.create_project (builddir)
+        except ElbeDBError as e:
+            print "soap create_project failed (db error):", e
