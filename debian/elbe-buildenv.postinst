@@ -1,0 +1,3 @@
+#!/bin/bash
+
+elbe db init --name=root --password=foo
