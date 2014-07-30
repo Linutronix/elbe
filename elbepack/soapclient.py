@@ -53,8 +53,8 @@ def set_xml (client, builddir, xml_file):
     client.service.set_xml (builddir, xml_file, binascii.b2a_base64(
         fp.read ()))
 
-def del_project (client, builddir):
-    client.service.del_project (builddir)
+def del_project (client, user, passwd, builddir):
+    return client.service.del_project (user, passwd, builddir)
 
 def create_project (client, user, passwd, filename):
     with file (filename, "r") as fp:
@@ -139,7 +139,7 @@ class DeleteProjectAction(ClientAction):
             print "usage: elbe control del_project <project_dir>"
             return
 
-        del_project (client, args[0])
+        print del_project (client, user, passwd, args[0])
 
 ClientAction.register(DeleteProjectAction)
 

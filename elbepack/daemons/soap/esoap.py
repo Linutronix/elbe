@@ -127,12 +127,19 @@ class ESoap (SimpleWSGISoapApp):
         except ElbeDBError as e:
             print "soap set_xml failed (db error):", e
 
-    @soapmethod (String)
-    def del_project (self, builddir):
+    @soapmethod (String, String, String, _returns=String)
+    def del_project (self, user, passwd, builddir):
         try:
-            self.pm.db.del_project (builddir)
-        except ElbeDBError as e:
-            print "soap del_project failed (db error):", e
+            userid = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin as e:
+            return str (e)
+
+        try:
+            self.pm.del_project (userid, builddir)
+        except Exception as e:
+            return str (e)
+
+        return "OK"
 
     @soapmethod (String, String, String, String, _returns=String)
     def create_project (self, user, passwd, filename, xml):
