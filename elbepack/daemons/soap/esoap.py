@@ -28,7 +28,9 @@ from soaplib.serializers.primitive import String, Integer, Array
 
 from tempfile import NamedTemporaryFile
 
-from elbepack.projectmanager import ProjectManager, ProjectManagerError
+from elbepack.projectmanager import (ProjectManager, ProjectManagerError,
+        InvalidState)
+
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
@@ -116,16 +118,38 @@ class ESoap (SimpleWSGISoapApp):
         project = ElbeProject (builddir)
         self.worker.enqueue (BuildJob (project))
 
-    @soapmethod (String, String, String)
-    def set_xml (self, builddir, xmlfile, content):
-        fn = "/tmp/" + xmlfile.split('/')[-1]
-        fp = file (fn, "w")
-        fp.write (binascii.a2b_base64 (content))
-        fp.flush ()
+    @soapmethod (String, String, String, String, _returns=String)
+    def set_xml (self, user, passwd, builddir, xml):
         try:
-            self.pm.db.set_xml (builddir, fn)
-        except ElbeDBError as e:
-            print "soap set_xml failed (db error):", e
+            userid = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin as e:
+            return str (e)
+
+        try:
+            self.pm.open_project (userid, builddir)
+        except ValidationError as e:
+            return "old XML file is invalid - open project failed"
+        except Exception as e:
+            print e
+            return str (e) + " - open project failed"
+
+        with NamedTemporaryFile() as fp:
+            fp.write (binascii.a2b_base64 (xml))
+            fp.flush ()
+            try:
+                self.pm.set_current_project_xml (userid, fp.name)
+            except ProjectManagerError as e:
+                return str (e)
+            except InvalidState as e:
+                return str (e)
+            except ElbeDBError as e:
+                return str (e)
+            except OSError as e:
+                return str (e)
+            except ValidationError as e:
+                return "Invalid XML file"
+
+        return "OK"
 
     @soapmethod (String, String, String, _returns=String)
     def del_project (self, user, passwd, builddir):
@@ -141,9 +165,8 @@ class ESoap (SimpleWSGISoapApp):
 
         return "OK"
 
-    @soapmethod (String, String, String, String, _returns=String)
-    def create_project (self, user, passwd, filename, xml):
-
+    @soapmethod (String, String, String, _returns=String)
+    def create_project (self, user, passwd, xml):
         try:
             userid = self.pm.db.validate_login(user, passwd)
         except InvalidLogin as e:

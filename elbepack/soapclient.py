@@ -48,17 +48,18 @@ def get_file (client, builddir, filename):
 def build_project (client, builddir):
     client.service.build (builddir)
 
-def set_xml (client, builddir, xml_file):
-    fp = file (xml_file, "r")
-    client.service.set_xml (builddir, xml_file, binascii.b2a_base64(
-        fp.read ()))
+def set_xml (client, user, passwd, builddir, filename):
+    print filename
+    with file (filename, "r") as fp:
+        return client.service.set_xml (user, passwd, builddir,
+                binascii.b2a_base64(fp.read ()))
 
 def del_project (client, user, passwd, builddir):
     return client.service.del_project (user, passwd, builddir)
 
 def create_project (client, user, passwd, filename):
     with file (filename, "r") as fp:
-        return client.service.create_project (user, passwd, filename,
+        return client.service.create_project (user, passwd,
                 binascii.b2a_base64(fp.read ()))
 
 class ClientAction(object):
@@ -155,7 +156,7 @@ class SetXmlAction(ClientAction):
             print "usage: elbe control set_xml <project_dir> <xml>"
             return
 
-        set_xml (client, args[0], args[1])
+        print set_xml (client, user, passwd, args[0], args[1])
 
 ClientAction.register(SetXmlAction)
 
