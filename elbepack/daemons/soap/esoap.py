@@ -92,12 +92,18 @@ class ESoap (SimpleWSGISoapApp):
                 ret += f.name + ", "
         return ret
 
-    @soapmethod (String, String, _returns=String)
-    def get_file (self, builddir, filename):
-        fp = file (builddir + "/" + filename)
-        if not fp:
-            return "FileNotFound"
-        return binascii.b2a_base64 (fp.read ())
+    @soapmethod (String, String, Integer, _returns=String)
+    def get_file (self, builddir, filename, part):
+        size = 1024 * 1024
+        with file (builddir + "/" + filename) as fp:
+            if not fp:
+                return "FileNotFound"
+            try:
+                fp.seek (part*size)
+                data = fp.read (size)
+                return binascii.b2a_base64 (data)
+            except:
+                return "EndOfFile"
 
     @soapmethod (String)
     def build (self, builddir):

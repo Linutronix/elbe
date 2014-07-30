@@ -30,13 +30,20 @@ def get_files (client, builddir):
     return client.service.get_files (builddir)
 
 def get_file (client, builddir, filename):
-    ret = client.service.get_file (builddir, filename)
-    if ret == "FileNotFound":
-        return ret
     fp = file (filename, "w")
-    fp.write (binascii.a2b_base64 (ret))
-    fp.flush ()
-    return filename + " saved"
+    part = 0
+    while True:
+        ret = client.service.get_file (builddir, filename, part)
+        if ret == "FileNotFound":
+            return ret
+        if ret == "EndOfFile":
+            fp.close ()
+            return filename + " saved"
+        fp.write (binascii.a2b_base64 (ret))
+        fp.flush ()
+        part = part + 1
+
+    return filename + " unknown error"
 
 def build_project (client, builddir):
     client.service.build (builddir)
