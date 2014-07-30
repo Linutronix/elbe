@@ -50,7 +50,7 @@ do_start()
 #
 do_stop()
 {
-	start-stop-daemon --background --stop --quiet --pidfile $PIDFILE \
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE \
 		--oknodo --retry=TERM/30/KILL/5
 	return $?
 }
