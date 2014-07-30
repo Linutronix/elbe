@@ -93,7 +93,7 @@ class AddUserAction(DbAction):
         if not opt.password:
             password = getpass('Password for the new user: ')
         else:
-            password = oparser.password
+            password = opt.password
 
         db = ElbeDB()
         db.add_user( arg[0], opt.fullname, password, opt.email, opt.admin )
