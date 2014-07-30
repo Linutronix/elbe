@@ -18,4 +18,4 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-elbe_version = "0.7.0~beta12"
+elbe_version = "0.8.0~beta1"

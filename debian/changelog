@@ -1,3 +1,9 @@
+elbe (0.8.0~beta1) unstable; urgency=medium
+
+  * added packages for SOAP support
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 30 Jul 2014 11:05:55 +0200
+
 elbe (0.7.0~beta12) unstable; urgency=medium
 
   * added support for grub1 (grub2 is still available)
