@@ -65,7 +65,7 @@ class ESoap (SimpleWSGISoapApp):
         try:
             projects = self.pm.db.list_projects ()
         except ElbeDBError as e:
-            print "soap list_projects failed (db error):", e
+            return str (e)
         if not projects:
             return ret
         for p in projects:
