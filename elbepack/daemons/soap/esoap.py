@@ -27,8 +27,13 @@ from soaplib.serializers.primitive import String, Array
 
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.elbeproject import ElbeProject
+from elbepack.asyncworker import AsyncWorker, BuildJob
 
 class ESoap (SimpleWSGISoapApp):
+
+    def __init__ (self):
+        db = ElbeDB ()
+        self.worker = AsyncWorker (db)
 
     @soapmethod (_returns=String)
     def list_users (self):
@@ -86,7 +91,7 @@ class ESoap (SimpleWSGISoapApp):
     @soapmethod (String)
     def build (self, builddir):
         project = ElbeProject (builddir)
-        project.build ()
+        self.worker.enqueue (BuildJob (project))
 
     @soapmethod (String, String, String)
     def set_xml (self, builddir, xmlfile, content):
