@@ -50,8 +50,7 @@ do_start()
 #
 do_stop()
 {
-	start-stop-daemon --stop --quiet --pidfile $PIDFILE \
-		--oknodo --retry=TERM/30/KILL/5
+	ps aux | grep 'elbe daemon' | awk '{print $2;}' | xargs kill -9
 	return $?
 }
 
