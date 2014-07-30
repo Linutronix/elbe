@@ -80,13 +80,16 @@ class ESoap (SimpleWSGISoapApp):
         files = []
         db = ElbeDB ()
         try:
-            files = db.get_files (builddir)
+            files = db.get_project_files (builddir)
         except ElbeDBError as e:
             print "soap get_files failed (db error):", e
         if not files:
             return ret
         for f in files:
-            ret += f + ", "
+            if f.description:
+                ret += "%s (%s), " % (f.name, f.description)
+            else:
+                ret += f.name + ", "
         return ret
 
     @soapmethod (String)
