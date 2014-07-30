@@ -104,7 +104,8 @@ Description: ELBE bootup check
 
 Package: elbe-soap
 Architecture: all
-Depends: python (>= 2.7~),
+Depends: ${misc:Depends},
+  python (>= 2.7~),
   python-soaplib,
   elbe-buildenv,
   elbe-daemon
@@ -113,7 +114,8 @@ Description: SOAP Interface for elbe buildenv
 
 Package: elbe-control
 Architecture: all
-Depends: python (>= 2.7~),
+Depends: ${misc:Depends},
+  python (>= 2.7~),
   python-suds,
   elbe-common
 Description: Commandline Tool to control an elbe buildenv
