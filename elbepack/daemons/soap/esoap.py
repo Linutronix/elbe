@@ -32,6 +32,7 @@ from elbepack.asyncworker import AsyncWorker, BuildJob
 class ESoap (SimpleWSGISoapApp):
 
     def __init__ (self):
+        SimpleWSGISoapApp.__init__ (self)
         db = ElbeDB ()
         self.worker = AsyncWorker (db)
 
