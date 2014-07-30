@@ -168,7 +168,6 @@ class ProjectManager(object):
                         ep.builddir )
 
             self.db.set_xml( ep.builddir, xml_file )
-            ep.set_xml()    # Always use source.xml in the project directory
 
     def set_current_project_version( self, userid, new_version ):
         with self.lock:
