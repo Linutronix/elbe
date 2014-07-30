@@ -35,6 +35,11 @@ def run_command (argv):
     oparser.add_option ("--port", dest="port", default="8080",
                         help="port of soap itf on elbe-daemon")
 
+    oparser.add_option ("--pass", dest="passwd", default="foo",
+                        help="password (default is foo)")
+
+    oparser.add_option ("--user", dest="user", default="root",
+                        help="username (default is root)")
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
@@ -53,7 +58,7 @@ def run_command (argv):
         return
 
     try:
-        ClientAction (args[0]).execute (control, args[1:])
+        ClientAction (args[0]).execute (control, opt.user, opt.passwd, args[1:])
     except KeyError:
         print 'elbe control - unknown subcommand'
         ClientAction.print_actions ()
