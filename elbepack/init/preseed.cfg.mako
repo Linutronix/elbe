@@ -101,7 +101,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 % endif
 
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string elbe-buildenv openssh-client qemu-elbe-user-static \
+d-i pkgsel/include string elbe-buildenv elbe-soap openssh-client qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":
   ${n.et.text} \

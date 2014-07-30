@@ -106,7 +106,8 @@ Package: elbe-soap
 Architecture: all
 Depends: python (>= 2.7~),
   python-soaplib,
-  elbe-buildenv
+  elbe-buildenv,
+  elbe-daemon
 Description: SOAP Interface for elbe buildenv
  Enables remote control of the elbe buildenv via SOAP.
 
