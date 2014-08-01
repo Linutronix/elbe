@@ -26,7 +26,7 @@ You need docker installed and a running docker service.
 
 Start a dettached docker session
 
-    % docker run -d own-elbe-system
+    % docker run --privileged -d own-elbe-system
 
 You get a Container-ID like this one
 
