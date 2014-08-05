@@ -12,3 +12,4 @@ debian/elbe.prerm.debhelper
 debian/elbe.substvars
 debian/elbe
 debian/files
+docs/manpage-base-url.xsl
