@@ -1,3 +1,9 @@
+elbe (0.5.6-squeeze) squeeze; urgency=medium
+
+  * various bugfixes see ChangeLog for details
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 05 Aug 2014 17:18:04 +0200
+
 elbe (0.5.5-wheezy) wheezy; urgency=low
 
   * wheezy build

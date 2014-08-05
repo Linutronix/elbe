@@ -1,3 +1,23 @@
+* update gitignore file
+* fix tighten mode for wheezy
+* copy vmlinuz and initrd to /opt/elbe for armhf
+* Makefile: interpreter/nic/image switch for armhf
+* xmldefaults/armhf: use vexpress-a9 machine
+* add a desktop example
+* fix diet mode for wheezy
+* add version.py to build chroot dir
+* elbe-diff: fix usage output
+* fix check_updates to work with LOCALMACHINE
+* Merge branch 'master' of ssh://lxcvs/linutronix/elbe/elbe
+* update schema: add devpts to filesystem list
+* Merge remote-tracking branch 'origin/devel/torbenh/devel'
+* enable LOCALMACHINE for primary_host
+* check_updates: Fix xmldefaults not being initialised and used properly
+* set debian source format
+* add apt.conf.mako
+* fix use of LOCALMACHINE if no python-apt is available
+* v0.5.5-wheezy
+* v0.5.5-squeeze
 * disallow the use of localhost inside the url-list
 * add source repositories the virtapt cache
 * if a proxy is configured; 10.0.2.2 should be ignored
