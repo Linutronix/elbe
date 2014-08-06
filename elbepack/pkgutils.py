@@ -152,11 +152,15 @@ def copy_kinitrd( xml, target_dir, defs ):
 
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
+    # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ
     if prj.has("mirror/cdrom"):
         os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
+        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
     else:
         os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
+        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
     os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
+    os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
 
     os.system( 'rm -r "%s"' % tmpdir )
 
