@@ -1,3 +1,9 @@
+elbe (0.5.7-wheezy) wheezy; urgency=medium
+
+  * wheezy build
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 06 Aug 2014 19:58:55 +0200
+
 elbe (0.5.7-squeeze) squeeze; urgency=medium
 
   * alow using LOCALMACHINE for primary_mirror that includes kinitrd
