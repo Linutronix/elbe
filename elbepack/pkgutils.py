@@ -43,7 +43,10 @@ def get_sources_list( xml ):
 
     slist = ""
     if prj.has("mirror/primary_host"):
-        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"), prj.text("mirror/primary_host"), prj.text("mirror/primary_path") )
+        mirror = "%s://%s/%s" % ( prj.text("mirror/primary_proto"),
+                                  prj.text("mirror/primary_host").replace(
+                                      "LOCALMACHINE", "localhost"),
+                                  prj.text("mirror/primary_path") )
         slist += "deb %s %s main\n" % (mirror, suite)
         slist += "deb-src %s %s main\n" % (mirror, suite)
 
