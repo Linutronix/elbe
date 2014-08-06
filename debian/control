@@ -2,7 +2,7 @@ Source: elbe
 Section: misc
 Priority: optional
 Maintainer: Torben Hohn <torbenh@linutronix.de>
-Build-Depends: cdbs (>= 0.4.89), debhelper (>= 7), python (>= 2.6.6-3~), python-mako, python-lxml, dia, asciidoc, xmlto, source-highlight
+Build-Depends: git, cdbs (>= 0.4.89), debhelper (>= 7), python (>= 2.6.6-3~), python-mako, python-lxml, dia, asciidoc, xmlto, source-highlight
 Standards-Version: 3.7.3
 Homepage: http://elbe-rfs.org
 
