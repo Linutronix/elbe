@@ -1,3 +1,6 @@
+* elbe-init: replace LOCALMACHINE by localhost for get kinitrd
+* v0.5.6-wheezy
+* v0.5.6-squeeze
 * update gitignore file
 * fix tighten mode for wheezy
 * copy vmlinuz and initrd to /opt/elbe for armhf
