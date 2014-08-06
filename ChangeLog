@@ -1,3 +1,6 @@
+* enable to work with elbe-bootstrap v1.0 packages
+* v0.5.7-wheezy
+* v0.5.7-squeeze
 * elbe-init: replace LOCALMACHINE by localhost for get kinitrd
 * v0.5.6-wheezy
 * v0.5.6-squeeze

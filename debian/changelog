@@ -1,3 +1,9 @@
+elbe (0.5.8-squeeze) squeeze; urgency=medium
+
+  * enable use of elbe_bootstrap v1.0 and v0.9
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 07 Aug 2014 00:49:46 +0200
+
 elbe (0.5.7-wheezy) wheezy; urgency=medium
 
   * wheezy build
