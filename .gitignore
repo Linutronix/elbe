@@ -1,3 +1,15 @@
+tags
+elbe.egg-info
+debian/elbe-bootup-check/
+debian/elbe-buildenv/
+debian/elbe-common/
+debian/elbe-control/
+debian/elbe-daemon/
+debian/elbe-doc/
+debian/elbe-soap/
+debian/elbe-updated/
+*.debhelper
+*.substvars
 *.pyc
 build
 docs/*.1
@@ -7,9 +19,6 @@ docs/elbe-examples.txt
 docs/elbe-schema-reference.txt
 debian/.control.swp
 debian/elbe.debhelper.log
-debian/elbe.postinst.debhelper
-debian/elbe.prerm.debhelper
-debian/elbe.substvars
 debian/elbe
 debian/files
 docs/manpage-base-url.xsl
