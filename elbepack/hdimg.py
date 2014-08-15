@@ -174,7 +174,7 @@ def size_to_int( size ):
     return int(s) * unit
 
 
-class grubinstaller_base( object ):
+class grubinstaller( object ):
     def __init__( self, outf ):
         self.outf = outf
         self.root = None
@@ -188,104 +188,59 @@ class grubinstaller_base( object ):
         self.root = entry
 
     def install( self, target ):
-        pass
-
-class grubinstaller2( grubinstaller_base ):
-
-    def install( self, target ):
         if not self.root:
             return
 
         imagemnt = os.path.join(target, "imagemnt" )
         try:
             self.outf.do( 'cp -a /dev/loop0 /dev/poop0' )
+            self.outf.do( 'cp -a /dev/loop1 /dev/poop1' )
+            self.outf.do( 'cp -a /dev/loop2 /dev/poop2' )
 
             self.outf.do( 'losetup /dev/poop0 "%s"' % self.root.filename )
-            self.outf.do( 'kpartx -as /dev/poop0' );
-            self.outf.do( 'mount /dev/mapper/poop0p%d %s' % (self.root.partnum,imagemnt))
+            self.root.losetup( self.outf, "poop1" )
+            self.outf.do( 'mount /dev/poop1 %s' % imagemnt )
 
             if self.boot:
-                self.outf.do( 'mount /dev/mapper/poop0p%d %s' % (self.boot.partnum,os.path.join( imagemnt, "boot" ) ) )
+                self.boot.losetup( self.outf, "poop2" )
+                self.outf.do( 'mount /dev/poop2 %s' % (os.path.join( imagemnt, "boot" ) ) )
+
+            devmap = open( os.path.join( imagemnt, "boot/grub/device.map" ), "w" )
+            devmap.write( "(hd0) /dev/poop0\n" )
+            devmap.write( "(hd0,%s) /dev/poop1\n" % self.root.number )
+            if self.boot:
+                devmap.write( "(hd0,%s) /dev/poop2\n" % self.boot.number )
+
+            devmap.close()
+
 
             self.outf.do( "mount --bind /dev %s" % os.path.join( imagemnt, "dev" ) )
             self.outf.do( "mount --bind /proc %s" % os.path.join( imagemnt, "proc" ) )
             self.outf.do( "mount --bind /sys %s" % os.path.join( imagemnt, "sys" ) )
-
-            self.outf.do( 'mkdir -p "%s"' % os.path.join( imagemnt, "boot/grub" ))
-
-            devmap = open( os.path.join( imagemnt, "boot/grub/device.map" ), "w" )
-            devmap.write( "(hd0) /dev/poop0\n" )
-            devmap.close()
 
             self.outf.do( "chroot %s  update-grub2"  % imagemnt )
 
-            self.outf.do( "chroot %s grub-install --no-floppy /dev/poop0" % (imagemnt))
+            self.outf.do( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (imagemnt,imagemnt))
 
         finally:
-            self.outf.do( "rm %s" % os.path.join( imagemnt, "boot/grub/device.map" ), allow_fail=True )
             self.outf.do( "umount %s" % os.path.join( imagemnt, "dev" ), allow_fail=True )
             self.outf.do( "umount %s" % os.path.join( imagemnt, "proc" ), allow_fail=True )
             self.outf.do( "umount %s" % os.path.join( imagemnt, "sys" ), allow_fail=True )
 
-            if self.boot:
-                self.outf.do( 'umount /dev/mapper/poop0p%d' % self.boot.partnum, allow_fail=True )
-
-            self.outf.do( 'umount /dev/mapper/poop0p%d' % self.root.partnum, allow_fail=True )
-
-            self.outf.do( 'kpartx -d /dev/poop0', allow_fail=True );
             self.outf.do( "losetup -d /dev/poop0", allow_fail=True )
 
-class grubinstaller1( grubinstaller_base ):
-
-    def install( self, target ):
-        if not self.root:
-            return
-
-        imagemnt = os.path.join(target, "imagemnt" )
-        try:
-            self.outf.do( 'cp -a /dev/loop0 /dev/poop0' )
-
-            self.outf.do( 'losetup /dev/poop0 "%s"' % self.root.filename )
-            self.outf.do( 'kpartx -as /dev/poop0' );
-            self.outf.do( 'mount /dev/mapper/poop0p%d %s' % (self.root.partnum,imagemnt))
-
             if self.boot:
-                self.outf.do( 'mount /dev/mapper/poop0p%d %s' % (self.boot.partnum,os.path.join( imagemnt, "boot" ) ) )
+                self.outf.do( 'umount /dev/poop2', allow_fail=True )
+                self.outf.do( 'losetup -d /dev/poop2', allow_fail=True )
 
-
-            self.outf.do( "mount --bind /dev %s" % os.path.join( imagemnt, "dev" ) )
-            self.outf.do( "mount --bind /proc %s" % os.path.join( imagemnt, "proc" ) )
-            self.outf.do( "mount --bind /sys %s" % os.path.join( imagemnt, "sys" ) )
-
-            self.outf.do( 'mkdir -p "%s"' % os.path.join( imagemnt, "boot/grub" ))
-
-            devmap = open( os.path.join( imagemnt, "boot/grub/device.map" ), "w" )
-            devmap.write( "(hd0) /dev/poop0\n" )
-            devmap.close()
-
-            self.outf.do( "chroot %s  update-grub"  % imagemnt )
-
-            self.outf.do( "chroot %s grub-install --no-floppy /dev/poop0" % (imagemnt))
-
-        finally:
-            self.outf.do( "rm %s" % os.path.join( imagemnt, "boot/grub/device.map" ), allow_fail=True )
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "dev" ), allow_fail=True )
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "proc" ), allow_fail=True )
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "sys" ), allow_fail=True )
-
-            if self.boot:
-                self.outf.do( 'umount /dev/mapper/poop0p%d' % self.boot.partnum, allow_fail=True )
-
-            self.outf.do( 'umount /dev/mapper/poop0p%d' % self.root.partnum, allow_fail=True )
-
-            self.outf.do( 'kpartx -d /dev/poop0', allow_fail=True );
-            self.outf.do( "losetup -d /dev/poop0", allow_fail=True )
+            self.outf.do( 'umount /dev/poop1', allow_fail=True )
+            self.outf.do( 'losetup -d /dev/poop1', allow_fail=True )
 
 class simple_fstype(object):
     def __init__(self, typ):
         self.type = typ
 
-def do_image_hd( outf, hd, fslabel, target, grub_version ):
+def do_image_hd( outf, hd, fslabel, target, skip_grub ):
 
     # Init to 0 because we increment before using it
     partition_number = 0
@@ -306,12 +261,7 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
     else:
         disk = parted.freshDisk(imag, "msdos" )
 
-    if grub_version == 1:
-        grub = grubinstaller1( outf )
-    elif grub_version == 2:
-        grub = grubinstaller2( outf )
-    else:
-        grub = grubinstaller_base( outf );
+    grub = grubinstaller( outf )
 
     current_sector = 2048
     for part in hd:
@@ -353,7 +303,6 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
         entry.offset = current_sector*sector_size
         entry.size   = sz * sector_size
         entry.filename = imagename
-        entry.partnum = partition_number
         if hd.tag == "gpthd":
             entry.number = "gpt%d" % partition_number
         else:
@@ -377,12 +326,12 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
     disk.commit()
 
-    if hd.has( "grub-install" ):
+    if hd.has( "grub-install" ) and not skip_grub:
         grub.install( target )
 
     return hd.text("name")
 
-def do_hdimg(outf, xml, target, rfs, grub_version):
+def do_hdimg(outf, xml, target, rfs, skip_grub):
     # list of created files
     img_files = []
 
@@ -422,11 +371,11 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         # Now iterate over all images and create filesystems and partitions
         for i in xml.tgt.node("images"):
             if i.tag == "msdoshd":
-                img = do_image_hd( outf, i, fslabel, target, grub_version )
+                img = do_image_hd( outf, i, fslabel, target, skip_grub )
                 img_files.append (img)
 
             if i.tag == "gpthd":
-                img = do_image_hd( outf, i, fslabel, target, grub_version )
+                img = do_image_hd( outf, i, fslabel, target, skip_grub )
                 img_files.append (img)
 
             if i.tag == "mtd":
