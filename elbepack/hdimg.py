@@ -214,7 +214,7 @@ class grubinstaller2( grubinstaller_base ):
             self.outf.do( 'mkdir -p "%s"' % os.path.join( imagemnt, "boot/grub" ))
 
             devmap = open( os.path.join( imagemnt, "boot/grub/device.map" ), "w" )
-            devmap.write( "(hd0) /dev/mapper/poop0\n" )
+            devmap.write( "(hd0) /dev/poop0\n" )
             devmap.close()
 
             self.outf.do( "chroot %s  update-grub2"  % imagemnt )
