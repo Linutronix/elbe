@@ -30,6 +30,7 @@ Architecture: ${arch}
 Maintainer: elbe-devel@linutronix.de
 Description: ${description}
 Depends: ${deps}
+Multi-Arch: same
 """
 
 control_template = string.Template(control_template_string)
