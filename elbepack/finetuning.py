@@ -189,8 +189,10 @@ class AddUserAction(FinetuningAction):
           log.chroot (target.path, "/usr/sbin/useradd -U -m -s %s %s" % (
                 self.node.et.attrib['shell'], self.node.et.text))
 
-        log.chroot (target.path, "/bin/echo %s:%s | /usr/sbin/chpasswd" % (
-                self.node.et.text, self.node.et.attrib['passwd']))
+        log.chroot (target.path, "/bin/sh -c 'echo %s\n%s\n | passwd %s" % (
+                           self.node.et.attrib['passwd'],
+                           self.node.et.attrib['passwd'],
+                           self.node.et.text))
 
 FinetuningAction.register( AddUserAction )
 
