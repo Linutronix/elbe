@@ -1,3 +1,9 @@
+elbe (0.8.1~beta1) unstable; urgency=medium
+
+  * fixed passwd finetuning rule
+
+ -- local <local@slartibartfast.linutronix>  Thu, 21 Aug 2014 10:37:58 +0200
+
 elbe (0.8.0~beta1) unstable; urgency=medium
 
   * added packages for SOAP support
