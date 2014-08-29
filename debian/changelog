@@ -1,8 +1,14 @@
+elbe (0.8.1~beta2) unstable; urgency=medium
+
+  * fix grub install
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 29 Aug 2014 23:01:11 +0200
+
 elbe (0.8.1~beta1) unstable; urgency=medium
 
   * fixed passwd finetuning rule
 
- -- local <local@slartibartfast.linutronix>  Thu, 21 Aug 2014 10:37:58 +0200
+ -- Manuel Traut <manut@linutronix.de>  Thu, 21 Aug 2014 10:37:58 +0200
 
 elbe (0.8.0~beta1) unstable; urgency=medium
 
