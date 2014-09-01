@@ -78,6 +78,26 @@ class LogBase(object):
             if not allow_fail:
                 raise CommandError(cmd, ret)
 
+    def command(self, cmd, input=None, output=None, ret=0):
+
+        self.printo( "running cmd +%s+" % cmd )
+        if input is not None:
+            self.printo( "Sending on STDIN:")
+            self.verbatim_start()
+            if input.endswith(('\n', '\r')):
+                self.print_raw(input)
+            else:
+                self.print_raw(input + "\n")
+            self.verbatim_end()
+
+        if (output is not None) and (len(output) != 0):
+            self.verbatim_start()
+            self.print_raw( output )
+            self.verbatim_end()
+
+        if ret != 0:
+            self.printo( "Command failed with errorcode %d" % ret )
+
     def chroot(self, directory, cmd, **args):
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"
