@@ -55,10 +55,18 @@ class LogBase(object):
         self.printo( "------------------------------------------------------------------------------" )
         self.printo()
 
-    def do(self, cmd, allow_fail=False):
+    def do(self, cmd, allow_fail=False, input=None):
 
         self.printo( "running cmd +%s+" % cmd )
-        ret, output = command_out(cmd)
+        if input is not None:
+            self.printo( "Sending on STDIN:")
+            self.verbatim_start()
+            if input.endswith(('\n', '\r')):
+                self.print_raw(input)
+            else:
+                self.print_raw(input + "\n")
+            self.verbatim_end()
+        ret, output = command_out(cmd, input=input)
 
         if len(output) != 0:
             self.verbatim_start()
@@ -69,6 +77,25 @@ class LogBase(object):
             self.printo( "Command failed with errorcode %d" % ret )
             if not allow_fail:
                 raise CommandError(cmd, ret)
+
+    def command(self, cmd, input=None, output=None, ret=0):
+        self.printo( "running cmd +%s+" % cmd )
+        if input is not None:
+            self.printo( "Sending on STDIN:")
+            self.verbatim_start()
+            if input.endswith(('\n', '\r')):
+                self.print_raw(input)
+            else:
+                self.print_raw(input + "\n")
+            self.verbatim_end()
+
+        if (output is not None) and (len(output) != 0):
+            self.verbatim_start()
+            self.print_raw( output )
+            self.verbatim_end()
+
+        if ret != 0:
+            self.printo( "Command failed with errorcode %d" % ret )
 
     def chroot(self, directory, cmd, **args):
         os.environ["LANG"] = "C"

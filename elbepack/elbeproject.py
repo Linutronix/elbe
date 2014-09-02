@@ -27,6 +27,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
+from elbepack.finetuning import Finetuner
 from elbepack.dump import elbe_report, dump_debootstrappkgs
 from elbepack.dump import dump_fullpkgs, check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
@@ -97,6 +98,9 @@ class ElbeProject (object):
             self.log.do( 'mkdir -p "%s"' % self.chrootpath )
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
 
+        # Open Summaryfile
+        summary = open(os.path.join( self.builddir, "summary.txt" ), 'w+')
+
         # Install packages
         self.install_packages()
 
@@ -122,6 +126,8 @@ class ElbeProject (object):
         else:
             check_full_pkgs( pkgs, None, validationpath, self._rpcaptcache )
         dump_fullpkgs( self.xml, self.buildenv.rfs, self._rpcaptcache )
+        summary.write(open(validationpath, 'r').read())
+        summary.write('\n\n')
 
         self.targetfs.write_fstab (self.xml )
 
@@ -141,10 +147,16 @@ class ElbeProject (object):
         except MemoryError:
             self.log.printo( "write source.xml failed (archive to huge?)" )
 
+        # Perform finetuning
+        self.finetuner = Finetuner(self.buildenv.rfs, self.targetfs, self._rpcaptcache)
+        self.finetuner.do_finetuning(self.xml)
+        summary.write(self.finetuner.summarize())
+        summary.write('\n\n')
+
         # Elbe report
         reportpath = os.path.join( self.builddir, "elbe-report.txt" )
         elbe_report( self.xml, self.buildenv.rfs, self._rpcaptcache,
-                reportpath, self.targetfs )
+                reportpath, self.targetfs , self.finetuner)
 
         # Licenses
         f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
@@ -174,6 +186,9 @@ class ElbeProject (object):
                     mk_source_cdrom( self.buildenv.rfs, arch, codename,
                             self.builddir, self.log )
 
+        # Close Summary
+        summary.close()
+
         # Write files to extract list
         fte = open( os.path.join( self.builddir, "files-to-extract" ), "w+" )
         # store each image only once
@@ -185,9 +200,10 @@ class ElbeProject (object):
         fte.write("validation.txt\n")
         fte.write("elbe-report.txt\n")
         fte.write("../elbe-report.log\n")
+        fte.write("summary.txt\n")
         fte.close()
 
-        os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
+        os.system( 'cat "%s"' % os.path.join( self.builddir, "summary.txt" ) )
 
     def get_rpcaptcache (self):
         if self._rpcaptcache is None:
