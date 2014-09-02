@@ -20,6 +20,15 @@ from elbepack.filesystem import ChRootFilesystem
 from elbepack.shellhelper import CommandError, command_out
 import os
 
+class FinetuningError(Exception):
+    """Base class for Finetuning exception."""
+    pass
+
+class FinetuningUnknonwAction(FinetuningError):
+    """Unknown Finetuning Action exception. """
+    def __init__(self, action):
+        FinetuningError(self, "Unimplemented finetuning action " + action)
+
 class FinetuningAction(object):
 
     actiondict = {}
@@ -29,6 +38,8 @@ class FinetuningAction(object):
         cls.actiondict[action.tag] = action
 
     def __new__(cls, node):
+        if node.tag not in cls.actiondict:
+            raise FinetuningUnknonwAction(node.tag)
         action = cls.actiondict[node.tag]
         return object.__new__(action, node)
 
@@ -324,7 +335,7 @@ def do_finetuning(xml, log, buildenv, target):
             action = FinetuningAction( i )
             action.execute(buildenv, target)
             action.write_log(log)
-        except KeyError:
+        except FinetuningError as e:
             print "Unimplemented finetuning action " + i.et.tag
         except CommandError:
             log.printo( "Finetuning Error, trying to continue anyways" )
