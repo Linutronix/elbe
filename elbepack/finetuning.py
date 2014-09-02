@@ -325,17 +325,56 @@ class PurgeAction(FinetuningAction):
 FinetuningAction.register( PurgeAction )
 
 
-def do_finetuning(xml, log, buildenv, target):
+class Finetuner(object):
+    def __init__(self, buildfs, targetfs, cache):
+        self.buildfs = buildfs
+        self.targetfs = targetfs
+        self.cache = cache
+        self.finetunes = []
+        self.invalid_finetunes = []
 
-    if not xml.has('target/finetuning'):
-        return
+    def do_finetuning(self, xml):
+        self.finetunes = []
+        self.invalid_finetunes = []
+        self.pre_fine_index = self.cache.get_fileindex()
+        self.mt_index_pre_fine = self.targetfs.mtime_snap()
+        if xml.has("target/finetuning"):
+            self._process_finetuning_action(xml.node('target/finetuning'))
+            self.mt_index_post_fine = self.targetfs.mtime_snap()
+        else:
+            self.mt_index_post_fine = mt_index
 
-    for i in xml.node('target/finetuning'):
-        try:
-            action = FinetuningAction( i )
-            action.execute(buildenv, target)
+    def _process_finetuning_action(self, xml_node):
+        for i in xml_node:
+            try:
+                action = FinetuningAction( i )
+                self.finetunes.append(action)
+                action.execute(self.buildfs, self.targetfs)
+            except FinetuningError as e:
+                self.invalid_finetunes.append(e)
+            except CommandError as e:
+                action.error = e
+
+    def write_log(self, log):
+        log.h2( "finetuning log" )
+
+        log.verbatim_start()
+        self._log_invalid_finetunes(log)
+        log.verbatim_end()
+
+        log.verbatim_start()
+        self._log_finetunes(log)
+        log.verbatim_end()
+
+    def _log_finetunes(self, log):
+        for action in self.finetunes:
             action.write_log(log)
-        except FinetuningError as e:
-            print "Unimplemented finetuning action " + i.et.tag
-        except CommandError:
-            log.printo( "Finetuning Error, trying to continue anyways" )
+
+    def _log_invalid_finetunes(self, log):
+        if len(self.invalid_finetunes) == 0:
+            log.printo("No invalid finetune actions.")
+            return
+
+        log.printo("%i invalid finetune actions:" % len(self.invalid_finetunes))
+        for action in self.invalid_finetunes:
+            log.printto(str(action))

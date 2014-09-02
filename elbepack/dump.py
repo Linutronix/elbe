@@ -18,7 +18,6 @@
 
 from elbepack.asciidoclog import ASCIIDocLog
 from datetime import datetime
-from elbepack.finetuning import do_finetuning
 
 def dump_fullpkgs( xml, rfs, cache ):
     xml.clear_full_pkglist()
@@ -113,7 +112,7 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     if errors == 0:
         elog.printo( "No Errors found" )
 
-def elbe_report( xml, rfs, cache, reportname, targetfs ):
+def elbe_report( xml, rfs, cache, reportname, targetfs, finetuner ):
     outf = ASCIIDocLog(reportname)
 
     outf.h1( "ELBE Report for Project " + xml.text("project/name") )
@@ -156,19 +155,11 @@ def elbe_report( xml, rfs, cache, reportname, targetfs ):
         with xml.archive_tmpfile() as fp:
             outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path) )
 
-    outf.h2( "finetuning log" )
-    outf.verbatim_start()
-
-    index = cache.get_fileindex()
-    mt_index = targetfs.mtime_snap()
-    if xml.has("target/finetuning"):
-        do_finetuning(xml, outf, rfs, targetfs)
-        #outf.print_raw( do_command( opt.finetuning ) )
-        mt_index_post_fine = targetfs.mtime_snap()
-    else:
-        mt_index_post_fine = mt_index
-
-    outf.verbatim_end()
+    # Dump fintuning log
+    index = finetuner.pre_fine_index
+    mt_index = finetuner.mt_index_pre_fine
+    mt_index_post_fine = finetuner.mt_index_post_fine
+    finetuner.write_log(outf)
 
     outf.h2( "archive extract after finetuning" )
 

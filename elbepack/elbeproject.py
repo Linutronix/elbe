@@ -27,6 +27,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
+from elbepack.finetuning import Finetuner
 from elbepack.dump import elbe_report, dump_debootstrappkgs
 from elbepack.dump import dump_fullpkgs, check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
@@ -141,10 +142,14 @@ class ElbeProject (object):
         except MemoryError:
             self.log.printo( "write source.xml failed (archive to huge?)" )
 
+        # Perform finetuning
+        self.finetuner = Finetuner(self.buildenv.rfs, self.targetfs, self._rpcaptcache)
+        self.finetuner.do_finetuning(self.xml)
+
         # Elbe report
         reportpath = os.path.join( self.builddir, "elbe-report.txt" )
         elbe_report( self.xml, self.buildenv.rfs, self._rpcaptcache,
-                reportpath, self.targetfs )
+                reportpath, self.targetfs , self.finetuner)
 
         # Licenses
         f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
