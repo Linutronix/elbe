@@ -79,7 +79,6 @@ class LogBase(object):
                 raise CommandError(cmd, ret)
 
     def command(self, cmd, input=None, output=None, ret=0):
-
         self.printo( "running cmd +%s+" % cmd )
         if input is not None:
             self.printo( "Sending on STDIN:")

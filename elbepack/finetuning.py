@@ -378,3 +378,18 @@ class Finetuner(object):
         log.printo("%i invalid finetune actions:" % len(self.invalid_finetunes))
         for action in self.invalid_finetunes:
             log.printto(str(action))
+
+    def summarize(self):
+        def successfilter(action):
+            if hasattr(action, 'success'):
+                return action.success
+            return action.returncode == 0
+
+        total   = len(self.finetunes) + len(self.invalid_finetunes)
+        success = len(filter(successfilter, self.finetunes))
+        failed  = len(filter(lambda a: not successfilter(a), self.finetunes))
+        invalid = len(self.invalid_finetunes)
+
+        msg = "Finetuning:\n===========\n\nTotal: {total:d}, Successfull: {success:d}, Failed: {failed:d}, Invalid {invalid:d}\nFor further information have a look at 'elbe-report.txt'.\n"
+
+        return msg.format(total=total, success=success, failed=failed, invalid=invalid)
