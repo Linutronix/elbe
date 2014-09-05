@@ -1261,6 +1261,7 @@
       <enumeration value="proc" />
       <enumeration value="sysfs" />
       <enumeration value="vfat" />
+      <enumeration value="btrfs" />
     </restriction>
   </simpleType>
 
