@@ -42,6 +42,9 @@ def run_command( argv ):
     oparser.add_option( "--skip-debootstrap", action="store_true",
                         dest="skip_debootstrap", default=False,
                         help="Skip debootstrap" )
+    oparser.add_option( "--skip-pkglist", action="store_true",
+                        dest="skip_pkglist", default=False,
+                        help="ignore changes of the package list" )
     oparser.add_option( "--skip-cdrom", action="store_true",
                         dest="skip_cdrom", default=False,
                         help="Skip cdrom iso generation" )
@@ -76,7 +79,7 @@ def run_command( argv ):
 
     try:
         project.build( opt.skip_debootstrap, opt.skip_cdrom,
-                opt.build_sources, opt.debug )
+                opt.build_sources, opt.debug, opt.skip_pkglist )
     except CommandError as ce:
         print "command in project build failed:", ce.cmd
         sys.exit(20)

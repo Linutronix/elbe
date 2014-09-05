@@ -88,7 +88,7 @@ class ElbeProject (object):
             self.targetfs = None
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
-            build_sources = False, debug = False):
+            build_sources = False, debug = False, skip_pkglist = False):
         # Write the log header
         self.write_log_header()
 
@@ -98,7 +98,8 @@ class ElbeProject (object):
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
 
         # Install packages
-        self.install_packages()
+        if not skip_pkglist:
+            self.install_packages()
 
         try:
             self.buildenv.rfs.dump_elbeversion (self.xml)
@@ -114,14 +115,16 @@ class ElbeProject (object):
                 self.log, self.get_rpcaptcache() )
 
         # Package validation and package list
-        validationpath = os.path.join( self.builddir, "validation.txt" )
-        pkgs = self.xml.xml.node( "/target/pkg-list" )
-        if self.xml.has( "fullpkgs" ):
-            check_full_pkgs( pkgs, self.xml.xml.node( "/fullpkgs" ),
-                    validationpath, self._rpcaptcache )
-        else:
-            check_full_pkgs( pkgs, None, validationpath, self._rpcaptcache )
-        dump_fullpkgs( self.xml, self.buildenv.rfs, self._rpcaptcache )
+        if not skip_pkglist:
+            validationpath = os.path.join( self.builddir, "validation.txt" )
+            pkgs = self.xml.xml.node( "/target/pkg-list" )
+            if self.xml.has( "fullpkgs" ):
+                check_full_pkgs( pkgs, self.xml.xml.node( "/fullpkgs" ),
+                        validationpath, self.get_rpcaptcache() )
+            else:
+                check_full_pkgs( pkgs, None, validationpath,
+                        self.get_rpcaptcache() )
+            dump_fullpkgs( self.xml, self.buildenv.rfs, self.get_rpcaptcache() )
 
         self.targetfs.write_fstab (self.xml )
 
@@ -132,7 +135,8 @@ class ElbeProject (object):
             self.log.printo( "dump elbeversion failed" )
 
         # install packages for buildenv
-        self.install_packages(buildenv=True)
+        if not skip_pkglist:
+            self.install_packages(buildenv=True)
 
         # Write source.xml
         try:
