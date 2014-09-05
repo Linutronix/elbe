@@ -111,7 +111,7 @@ class ElbeProject (object):
                 self.buildenv.xml, clean=True )
         os.chdir( self.buildenv.rfs.fname( '' ) )
         extract_target( self.buildenv.rfs, self.xml, self.targetfs,
-                self.log, self._rpcaptcache )
+                self.log, self.get_rpcaptcache() )
 
         # Package validation and package list
         validationpath = os.path.join( self.builddir, "validation.txt" )
@@ -143,7 +143,7 @@ class ElbeProject (object):
 
         # Elbe report
         reportpath = os.path.join( self.builddir, "elbe-report.txt" )
-        elbe_report( self.xml, self.buildenv.rfs, self._rpcaptcache,
+        elbe_report( self.xml, self.buildenv.rfs, self.get_rpcaptcache(),
                 reportpath, self.targetfs )
 
         # Licenses
@@ -152,10 +152,10 @@ class ElbeProject (object):
         f.close()
 
         # Generate images
-        if self._rpcaptcache.is_installed( 'grub-pc' ):
+        if self.get_rpcaptcache().is_installed( 'grub-pc' ):
             grub_version = 2
 
-        elif self._rpcaptcache.is_installed( 'grub-legacy' ):
+        elif self.get_rpcaptcache().is_installed( 'grub-legacy' ):
             grub_version = 1
         else:
             self.log.printo( "package grub-pc is not installed, skipping grub" )
@@ -255,18 +255,15 @@ class ElbeProject (object):
 
     def install_packages (self, buildenv=False):
         with self.buildenv:
-            # Create self._rpcaptcache
-            self.get_rpcaptcache()
-
             # First update the apt cache
             try:
-                self._rpcaptcache.update()
+                self.get_rpcaptcache().update()
             except:
                 self.log.printo( "update cache failed" )
 
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
-                dump_debootstrappkgs( self.xml, self._rpcaptcache )
+                dump_debootstrappkgs( self.xml, self.get_rpcaptcache() )
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/var/cache/elbe/source.xml",
@@ -303,7 +300,7 @@ class ElbeProject (object):
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
 
-            self._rpcaptcache.cleanup(debootstrap_pkgs)
+            self.get_rpcaptcache().cleanup(debootstrap_pkgs)
 
             # Now install requested packages
             pkgs = self.buildenv.xml.get_target_packages()
@@ -313,12 +310,12 @@ class ElbeProject (object):
 
             for p in pkgs:
                 try:
-                    self._rpcaptcache.mark_install( p, None )
+                    self.get_rpcaptcache().mark_install( p, None )
                 except KeyError:
                     self.log.printo( "No Package " + p )
                 except SystemError:
                     self.log.printo( "Unable to correct problems " + p )
             try:
-                self._rpcaptcache.commit()
+                self.get_rpcaptcache().commit()
             except SystemError:
                 self.log.printo( "commiting changes failed" )
