@@ -58,14 +58,6 @@ class LogBase(object):
     def do(self, cmd, allow_fail=False, input=None):
 
         self.printo( "running cmd +%s+" % cmd )
-        if input is not None:
-            self.printo( "Sending on STDIN:")
-            self.verbatim_start()
-            if input.endswith(('\n', '\r')):
-                self.print_raw(input)
-            else:
-                self.print_raw(input + "\n")
-            self.verbatim_end()
         ret, output = command_out(cmd, input=input)
 
         if len(output) != 0:
