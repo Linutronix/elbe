@@ -212,6 +212,18 @@ class AddGroupAction(FinetuningAction):
 
 FinetuningAction.register( AddGroupAction )
 
+class RawCmdAction(FinetuningAction):
+
+    tag = 'raw_cmd'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        with target:
+            log.chroot (target.path, self.node.et.text)
+
+FinetuningAction.register( RawCmdAction )
 
 class CmdAction(FinetuningAction):
 

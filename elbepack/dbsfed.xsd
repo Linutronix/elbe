@@ -1382,10 +1382,17 @@
           </documentation>
         </annotation>
       </element>
-      <element name="command" type="string" minOccurs="0">
+      <element name="raw_cmd" type="string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command
+          </documentation>
+        </annotation>
+      </element>
+      <element name="command" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command in /bin/sh
           </documentation>
         </annotation>
       </element>
