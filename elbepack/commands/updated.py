@@ -299,7 +299,7 @@ class ObserverThread (threading.Thread):
 
         global status
 
-        log ("monitoringing updated dir")
+        log ("monitoring updated dir")
 
         while 1:
             if status.observer.check_events (timeout=1000):
