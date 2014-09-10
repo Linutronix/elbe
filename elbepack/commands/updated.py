@@ -49,6 +49,7 @@ class UpdateStatus:
     stop = False
     step = 0
     nosign = False
+    verbose = False
 
 status = UpdateStatus ()
 
@@ -202,6 +203,8 @@ def log (msg):
         syslog (msg)
     except:
         print msg
+    if status.verbose:
+        print msg
 
 def update (upd_file):
 
@@ -328,9 +331,14 @@ def run_command (argv):
                         default=False,
                         help="accept none signed files")
 
+    oparser.add_option ("--verbose", action="store_true", dest="verbose",
+                        default=False,
+                        help="force output to stdout instead of syslog")
+
     (opt,args) = oparser.parse_args(argv)
 
     status.nosign = opt.nosign
+    status.verbose = opt.verbose
 
     if not opt.update_dir:
         update_dir = "/var/cache/elbe/updates"
