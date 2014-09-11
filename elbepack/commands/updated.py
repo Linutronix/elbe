@@ -240,7 +240,14 @@ def update (upd_file):
             log ("extraction failed: %s" % sys.exc_info () [1])
             return
 
-    update_sourceslist (xml, prefix + "repo")
+    try:
+        update_sourceslist (xml, prefix + "repo")
+    except Exception, err:
+        print Exception, err
+        status.step = 0
+        log ("update apt sources list failed: " + prefix)
+        return
+
     try:
         apply_update (xml)
     except Exception, err:
