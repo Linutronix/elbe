@@ -280,8 +280,8 @@ class FileMonitor (pyinotify.ProcessEvent):
 
         elif status.nosign:
             action_select (event.pathname)
-
-        log ("ignore file: " + str(event.pathname))
+        else:
+            log ("ignore file: " + str(event.pathname))
 
 def shutdown (signum, fname):
 
