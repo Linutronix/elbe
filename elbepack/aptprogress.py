@@ -51,6 +51,8 @@ class ElbeInstallProgress (InstallProgress):
             self.child_pid = retval
         return retval
 
+    def finishUpdate(self):
+        self.write ("update finished")
 
 class ElbeAcquireProgress (AcquireProgress):
 
