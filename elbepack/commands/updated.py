@@ -99,6 +99,59 @@ class UpdateService (SimpleWSGISoapApp):
         status.monitor = Client (wsdl_url)
         log ("connection established")
 
+class rw_access:
+    def __init__ (self, filename):
+        self.filename = filename
+        self.mount = self.get_mount ()
+        self.mount_orig = self.get_mount_status ()
+
+    def __enter__ (self):
+        if self.mount_orig == 'ro':
+            log ("remount %s read/writeable" % self.mount)
+            cmd = "mount -o remount,rw %s" % self.mount
+            os.system (cmd)
+        if os.path.isfile (self.filename):
+            self.f = open (self.filename, 'w')
+            return self.f
+
+    def __exit__ (self, type, value, traceback):
+        if os.path.isfile (self.filename):
+            self.f.close ()
+        if self.mount_orig == 'ro':
+            log ("remount %s readonly" % self.mount)
+            os.system ("sync")
+            cmd = "mount -o remount,ro %s" % self.mount
+            ret = os.system (cmd)
+            print ret
+            if ret:
+                os.system ("lsof > /tmp/updated.dbg")
+                os.system (cmd)
+
+    def get_mount_status (self):
+        with open ('/etc/mtab') as mtab:
+            mtab_lines = mtab.readlines ()
+            # take care, to use the last mount if overlayed mountpoints are
+            # used: e.g. rootfs / rootfs rw 0 0 vs. /dev/root / ext2 ro
+            ret = 'unknown'
+            for ml in mtab_lines:
+                mle = ml.split (' ')
+                if mle[1] == self.mount:
+                    attr_list = mle[3].split(',')
+                    for attr in attr_list:
+                        if attr == 'ro':
+                            ret = 'ro'
+                        elif attr == 'rw':
+                            ret = 'rw'
+        return ret
+
+    def get_mount (self):
+        path = os.path.realpath (os.path.abspath (self.filename))
+        while path != os.path.sep:
+            if os.path.ismount (path):
+                return path
+            path = os.path.abspath (os.path.join (path, os.pardir))
+        return path
+
 def fname_replace (s):
     allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     allowed += "0123456789"
