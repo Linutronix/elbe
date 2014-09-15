@@ -50,6 +50,7 @@ class UpdateStatus:
     step = 0
     nosign = False
     verbose = False
+    repo_dir = ""
 
 status = UpdateStatus ()
 
@@ -77,7 +78,7 @@ class UpdateService (SimpleWSGISoapApp):
         if version == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
-            fname = "/var/cache/elbe/" + version + "/new.xml"
+            fname = status.repo_dir + "/" + version + "/new.xml"
 
         try:
             xml = etree (fname)
@@ -278,7 +279,7 @@ def update (upd_file):
     upd_file_z.extract ("new.xml", "/tmp/")
 
     xml = etree ("/tmp/new.xml")
-    prefix = "/var/cache/elbe/" + fname_replace (xml.text ("/project/name"))
+    prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
     prefix += "_" + fname_replace (xml.text ("/project/version")) + "/"
 
     log ("preparing update: " + prefix)
@@ -381,6 +382,10 @@ def run_command (argv):
                         help="monitor dir (default is /var/cache/elbe/updates)",
                         metavar="FILE" )
 
+    oparser.add_option ("--repocache", dest="repo_dir",
+                        help="monitor dir (default is /var/cache/elbe/repos)",
+                        metavar="FILE" )
+
     oparser.add_option ("--host", dest="host", default="",
                         help="listen host")
 
@@ -404,6 +409,11 @@ def run_command (argv):
         update_dir = "/var/cache/elbe/updates"
     else:
         update_dir = opt.update_dir
+
+    if not opt.repo_dir:
+        status.repo_dir = "/var/cache/elbe/repos"
+    else:
+        status.repo_dir = opt.repo_dir
 
     if not os.path.isdir (update_dir):
         os.makedirs (update_dir)
