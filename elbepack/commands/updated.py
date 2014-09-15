@@ -42,6 +42,8 @@ from elbepack.gpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
 
+from multiprocessing import Process, Queue
+
 class UpdateStatus:
     monitor = None
     observer = None
@@ -74,19 +76,13 @@ class UpdateService (SimpleWSGISoapApp):
 
     @soapmethod (String, _returns=String)
     def apply_snapshot (self, version):
-
         if version == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
             fname = status.repo_dir + "/" + version + "/new.xml"
 
         try:
-            xml = etree (fname)
-        except:
-            return "snapshot %s not found" % version
-
-        try:
-            apply_update (xml)
+            apply_update (fname)
         except Exception, err:
             print Exception, err
             status.step = 0
@@ -181,7 +177,12 @@ def mark_install (depcache, pkg, version, auto):
 
     log ("ERROR: " + pkg.name + version + " is not available in the cache")
 
-def apply_update (xml):
+def _apply_update (fname):
+
+    try:
+        xml = etree (fname)
+    except:
+        return "read %s failed" % fname
 
     fpl = xml.node ("fullpkgs")
 
@@ -224,8 +225,8 @@ def apply_update (xml):
         for fpi in fpl:
             if pkg.name == fpi.et.text:
                 mark_install (depcache, pkg,
-                              fpi.et.get('version'),
-                              fpi.et.get('auto'))
+                            fpi.et.get('version'),
+                            fpi.et.get('auto'))
                 marked = True
 
         if not marked:
@@ -234,6 +235,21 @@ def apply_update (xml):
     status.step = 3
     log ("applying snapshot")
     depcache.commit (ElbeAcquireProgress (cb=log), ElbeInstallProgress (cb=log))
+    del depcache
+    del hl_cache
+    del cache
+    del sources
+
+def apply_update (fname):
+    # As soon as python-apt closes its opened files on object deletion
+    # we can drop this fork workaround. As long as they keep their files
+    # open, we run the code in an own fork, than the files are closed on
+    # process termination an we can remount the filesystem readonly
+    # without errors.
+    p = Process (target=_apply_update, args=(fname, ))
+    with rw_access ("/"):
+        p.start ()
+        p.join ()
 
 def log (msg):
 
@@ -301,9 +317,9 @@ def update (upd_file):
         return
 
     try:
-        apply_update (xml)
+        apply_update ("/tmp/new.xml")
     except Exception, err:
-        print Exception, err
+        log (str (err))
         status.step = 0
         log ("apply update failed: " + prefix)
         return
