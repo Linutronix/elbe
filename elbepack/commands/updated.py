@@ -123,10 +123,6 @@ class rw_access:
             os.system ("sync")
             cmd = "mount -o remount,ro %s" % self.mount
             ret = os.system (cmd)
-            print ret
-            if ret:
-                os.system ("lsof > /tmp/updated.dbg")
-                os.system (cmd)
 
     def get_mount_status (self):
         with open ('/etc/mtab') as mtab:
