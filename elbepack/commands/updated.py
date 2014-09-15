@@ -169,7 +169,7 @@ def update_sourceslist (xml, update_dir):
     fname += fname_replace (xml.text ("/project/version"))
     fname += ".list"
 
-    with open (fname, 'w') as f:
+    with rw_access (fname) as f:
         f.write (deb)
 
 def mark_install (depcache, pkg, version, auto):
@@ -272,7 +272,8 @@ def update (upd_file):
         log ("update invalid (new.xml missing)")
         return
 
-    upd_file_z.extract ("new.xml", "/tmp/")
+    with rw_access ("/tmp"):
+        upd_file_z.extract ("new.xml", "/tmp/")
 
     xml = etree ("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
@@ -280,15 +281,16 @@ def update (upd_file):
 
     log ("preparing update: " + prefix)
 
-    for i in upd_file_z.namelist ():
+    with rw_access (prefix):
+        for i in upd_file_z.namelist ():
 
-        (dirname, filename) = os.path.split (i)
+            (dirname, filename) = os.path.split (i)
 
-        try:
-            upd_file_z.extract (i, prefix)
-        except OSError:
-            log ("extraction failed: %s" % sys.exc_info () [1])
-            return
+            try:
+                upd_file_z.extract (i, prefix)
+            except OSError:
+                log ("extraction failed: %s" % sys.exc_info () [1])
+                return
 
     try:
         update_sourceslist (xml, prefix + "repo")
