@@ -281,6 +281,14 @@
           </documentation>
         </annotation>
       </element>
+      <element name="portforwarding" type="rfs:portforwarding" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            network ports of the buildenvironment that are forwarded to the
+            host machine
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
