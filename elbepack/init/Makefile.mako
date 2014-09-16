@@ -84,8 +84,8 @@ run:
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-redir tcp:$(GUIPORT)::8080 \
-% if prj.has("buildimage/portforwarding"):
-% for f in prj.node("buildimage/portforwarding"):
+% if prj.has("portforwarding"):
+% for f in prj.node("portforwarding"):
 		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
 % endfor
 % endif
@@ -104,8 +104,8 @@ run-con:
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-redir tcp:$(GUIPORT)::8080 \
-% if prj.has("buildimage/portforwarding"):
-% for f in prj.node("buildimage/portforwarding"):
+% if prj.has("portforwarding"):
+% for f in prj.node("portforwarding"):
 		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
 % endfor
 % endif
