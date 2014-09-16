@@ -15,5 +15,12 @@
 		</mirror>
 		<noauth/>
 		<suite>wheezy</suite>
+		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>8080</buildenv>
+				<host>8080</host>
+			</forward>
+		</portforwarding>
 	</initvm>
 </ns0:RootFileSystem>
