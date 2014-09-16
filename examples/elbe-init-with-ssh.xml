@@ -15,6 +15,9 @@
 		</mirror>
 		<noauth/>
 		<suite>wheezy</suite>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+		</pkg-list>
 		<portforwarding>
 			<forward>
 				<proto>tcp</proto>
