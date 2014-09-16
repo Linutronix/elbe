@@ -1,3 +1,15 @@
+elbe (0.9.0~beta1) unstable; urgency=medium
+
+  * make updated work on read-only RFS
+  * finetuning: added raw_cmd
+  * added dockerfile
+  * fixed quoting issue in finetuning 'command'
+  * finetuning fixed ln
+  * enabled btrfs support (not for /boot)
+  * buildchroot add option to skip pkg-list
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 16 Sep 2014 10:13:39 +0200
+
 elbe (0.8.1~beta2) unstable; urgency=medium
 
   * fix grub install
