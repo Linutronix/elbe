@@ -114,9 +114,11 @@ run-con:
 
 .elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
 	mkdir -p .elbe-gen
+% if xml.has("project"):
 	e2cp buildenv.img?offset=$(LOOP_OFFSET):/var/cache/elbe/build/files-to-extract .elbe-gen/
 	for f in `cat .elbe-gen/files-to-extract`; do e2cp buildenv.img?offset=$(LOOP_OFFSET):/var/cache/elbe/build/$$f . ; done
 	cat validation.txt
+% endif
 
 clean:
 	rm -fr .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
