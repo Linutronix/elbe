@@ -1,0 +1,243 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth/>
+		<suite>wheezy</suite>
+		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>8080</buildenv>
+				<host>8080</host>
+			</forward>
+		</portforwarding>
+	</initvm>
+	<project>
+		<name>read-only-rfs</name>
+		<version>1.0</version>
+		<description>
+			read-only rfs with elbe-updated
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>http://debian.linutronix.de/elbe-testing wheezy main</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<noauth />
+		<suite>wheezy</suite>
+	</project>
+	<target>
+		<hostname>elbe-ro</hostname>
+		<domain>tec.linutronix.de</domain>
+		<passwd>foo</passwd>
+		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>rorootfs.tar.gz</name>
+			</tar>
+		</package>
+		<images>
+		<msdoshd>
+			<name>hd.img</name>
+			<size>4G</size>
+			<grub-install/>
+			<partition>
+				<size>100M</size>
+				<label>boot</label>
+			</partition>
+			<partition>
+				<size>remain</size>
+				<label>rfs</label>
+			</partition>
+		</msdoshd>
+		</images>
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs><type>ext4</type></fs>
+				<options>ro</options>
+			</bylabel>
+			<bylabel>
+				<label>boot</label>
+				<mountpoint>/boot</mountpoint>
+				<fs><type>vfat</type></fs>
+				<options>ro</options>
+			</bylabel>
+			<bydev>
+				<source>sysfs</source>
+				<mountpoint>/sys</mountpoint>
+				<fs>
+					<type>sysfs</type>
+				</fs>
+				<options>rw,nosuid,nodev,noexec,relatime</options>
+			</bydev>
+			<bydev>
+				<source>devpts</source>
+				<mountpoint>/dev/pts</mountpoint>
+				<fs>
+					<type>devpts</type>
+				</fs>
+				<options>rw,nosuid,noexec,relatime,gid=5,mode=620</options>
+			</bydev>
+			<bydev>
+				<source>tmpfs</source>
+				<mountpoint>/tmp</mountpoint>
+				<fs>
+					<type>tmpfs</type>
+				</fs>
+				<options>size=16M</options>
+			</bydev>
+		</fstab>
+		<norecommend />
+		<finetuning>
+			<adduser passwd="foo" shell="/bin/bash">user</adduser>
+			<mv path="/var">/var_debian</mv>
+			<mkdir>/var</mkdir>
+			<rm>/etc/mtab</rm>
+			<rm>/run</rm>
+			<command>ln -s /var/run /run</command>
+			<rm>/etc/udev/rules.d/70-persistent-net.rules</rm>
+			<rm>/lib/udev/rules.d/75-persistent-net-generator.rules</rm>
+			<rm>/etc/nologin</rm>
+			<rm>/etc/init.d/bootmisc.sh</rm>
+			<rm>/etc/init.d/mountkernfs.sh</rm>
+			<rm>/etc/init.d/mountdevsubfs.sh</rm>
+			<rm>/etc/init.d/procps</rm>
+			<rm>/etc/init.d/checkroot.sh</rm>
+			<rm>/etc/init.d/kmod</rm>
+			<rm>/etc/init.d/mtab.sh</rm>
+			<rm>/etc/init.d/urandom</rm>
+			<rm>/etc/init.d/checkfs.sh</rm>
+			<rm>/etc/init.d/udev-mtab</rm>
+			<rm>/etc/init.d/checkroot-bootclean.sh</rm>
+			<rm>/etc/init.d/dbus</rm>
+			<rm>/etc/init.d/motd</rm>
+			<rm>/etc/init.d/mountall.sh</rm>
+			<rm>/etc/init.d/mountnfs.sh</rm>
+			<rm>/etc/init.d/mountall-bootclean.sh</rm>
+			<rm>/etc/init.d/mountnfs-bootclean.sh</rm>
+			<command>insserv -f -d -p /etc/init.d</command>
+			<command>insserv -d mountfstab.sh</command>
+			<command>insserv -d rofshooks.sh</command>
+			<command>insserv -d elbe-updated</command>
+		</finetuning>
+		<pkg-list>
+			<pkg>grub-pc</pkg>
+			<pkg>linux-image-amd64</pkg>
+			<pkg>elbe-updated</pkg>
+			<pkg>openssh-client</pkg>
+			<pkg>openssh-server</pkg>
+			<pkg>bash</pkg>
+			<pkg>gdbserver</pkg>
+			<pkg>psmisc</pkg>
+			<pkg>strace</pkg>
+			<pkg>console-data</pkg>
+			<pkg>kbd</pkg>
+		</pkg-list>
+	</target>
+	<archive>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
+gAV6U1ikCsnJJL/F3JFOFCQOdqUxAA==
+</archive>
+</ns0:RootFileSystem>
