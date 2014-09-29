@@ -351,6 +351,9 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
     fslist = fslabel.values()
     fslist.sort( key = lambda x: x.mountdepth() )
 
+    # unmount to prevent busy ressources
+    rfs.umount()
+
     # now move all mountpoints into own directories
     # begin from deepest mountpoints
 
