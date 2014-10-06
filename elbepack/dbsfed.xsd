@@ -119,6 +119,32 @@
     </restriction>
   </simpleType>
 
+  <complexType name="binary-url">
+    <annotation>
+      <documentation>
+        e.g. "http://myhost/debian /" or "http://debian.org/debian main"
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="pin" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Pin-Priority of packages from this source.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="package" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Packages that should be pinned.
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
   <complexType name="url">
     <annotation>
       <documentation>
@@ -126,7 +152,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="binary" type="string" minOccurs="0">
+      <element name="binary" type="rfs:binary-url" minOccurs="0">
         <annotation>
           <documentation>
             e.g. "http://myhost/debian /" or "http://debian.org/debian main"

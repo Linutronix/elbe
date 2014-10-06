@@ -19,6 +19,7 @@
 import apt_pkg
 import os
 import sys
+import urlparse
 
 import elbepack
 
@@ -173,9 +174,31 @@ class BuildEnv ():
 
         self.rfs.mkdir_p ("/etc/apt")
 
-        d = { "xml":  self.xml,
-              "prj":  self.xml.node("/project"),
-              "pkgs": self.xml.node("/target/pkg-list") }
+        pinned_origins = []
+        if self.xml.has('/project/mirror/url-list'):
+            for url in self.xml.node('/project/mirror/url-list'):
+                if not url.has('binary'):
+                    continue
+
+                repo = url.node('binary')
+                if not 'pin' in repo.et.attrib:
+                    continue
+
+                origin = urlparse.urlsplit(repo.et.text.strip()).hostname
+                pin = repo.et.attrib['pin']
+                if 'package' in repo.et.attrib:
+                    package = repo.et.attrib['package']
+                else:
+                    package = '*'
+                pinning = { 'pin':     pin,
+                            'origin':  origin,
+                            'package': package }
+                pinned_origins.append(pinning)
+
+        d = { "xml":   self.xml,
+              "prj":   self.xml.node("/project"),
+              "pkgs":  self.xml.node("/target/pkg-list"),
+              "porgs": pinned_origins }
 
         write_pack_template( filename, "preferences.mako", d )
 
