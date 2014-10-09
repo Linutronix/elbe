@@ -19,6 +19,9 @@ You need docker installed and a running docker service.
 
 ## Build image
 
+Please add a `MAINTAINER` entry in the dockerfile and start the buildprocess
+with
+
     % cd dockerfile
     % docker build -t own-elbe-system .
 

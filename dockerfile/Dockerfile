@@ -4,7 +4,7 @@
 FROM debian:wheezy
 
 # Maintainer
-MAINTAINER Silvio Fricke <silvio.fricke@gmail.com>
+# MAINTAINER forename surename <your.mail@address.com>
 
 # set debian/ubuntu config environment to noninteractive
 ENV DEBIAN_FRONTEND noninteractive
