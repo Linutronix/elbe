@@ -107,7 +107,7 @@ class rw_access:
             log ("remount %s read/writeable" % self.mount)
             cmd = "mount -o remount,rw %s" % self.mount
             os.system (cmd)
-        if os.path.isfile (self.filename):
+        if not os.path.isdir (self.filename):
             self.f = open (self.filename, 'w')
             return self.f
 
