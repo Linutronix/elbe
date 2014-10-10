@@ -311,7 +311,7 @@ def update (upd_file):
     try:
         update_sourceslist (xml, prefix + "repo")
     except Exception, err:
-        print Exception, err
+        log (str (err))
         status.step = 0
         log ("update apt sources list failed: " + prefix)
         return
