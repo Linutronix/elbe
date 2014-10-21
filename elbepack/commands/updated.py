@@ -96,9 +96,24 @@ class UpdateService (SimpleWSGISoapApp):
         status.monitor = Client (wsdl_url)
         log ("connection established")
 
-class rw_access:
+class rw_access_file:
     def __init__ (self, filename):
         self.filename = filename
+        self.rw = rw_access (filename)
+
+    def __enter__ (self):
+        self.rw.__enter__ ()
+        self.f = open (self.filename, 'w')
+        return self.f
+
+    def __exit__ (self, type, value, traceback):
+        if os.path.isfile (self.filename):
+            self.f.close ()
+        self.rw.__exit__ (type, value, traceback)
+
+class rw_access:
+    def __init__ (self, directory):
+        self.directory = directory
         self.mount = self.get_mount ()
         self.mount_orig = self.get_mount_status ()
 
@@ -107,13 +122,8 @@ class rw_access:
             log ("remount %s read/writeable" % self.mount)
             cmd = "mount -o remount,rw %s" % self.mount
             os.system (cmd)
-        if not os.path.isdir (self.filename):
-            self.f = open (self.filename, 'w')
-            return self.f
 
     def __exit__ (self, type, value, traceback):
-        if os.path.isfile (self.filename):
-            self.f.close ()
         if self.mount_orig == 'ro':
             log ("remount %s readonly" % self.mount)
             os.system ("sync")
@@ -138,7 +148,7 @@ class rw_access:
         return ret
 
     def get_mount (self):
-        path = os.path.realpath (os.path.abspath (self.filename))
+        path = os.path.realpath (os.path.abspath (self.directory))
         while path != os.path.sep:
             if os.path.ismount (path):
                 return path
@@ -165,7 +175,7 @@ def update_sourceslist (xml, update_dir):
     fname += fname_replace (xml.text ("/project/version"))
     fname += ".list"
 
-    with rw_access (fname) as f:
+    with rw_access_file (fname) as f:
         f.write (deb)
 
 def mark_install (depcache, pkg, version, auto):
