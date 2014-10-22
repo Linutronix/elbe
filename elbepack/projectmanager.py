@@ -159,6 +159,18 @@ class ProjectManager(object):
             pfd = self.db.get_project_file( builddir, filename )
             return OpenProjectFile( pfd, mode )
 
+    def set_current_project_private_data (self, userid, private_data):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            ep.private_data = private_data
+
+    def get_current_project_private_data (self, userid):
+        private_data = None
+        with self.lock:
+            ep = self._get_current_project( userid )
+            private_data = ep.private_data
+        return private_data
+
     def set_current_project_xml (self, userid, xml_file):
         with self.lock:
             ep = self._get_current_project( userid )

@@ -40,7 +40,7 @@ class IncompatibeArchitectureException(Exception):
 class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
-            rpcaptcache_notifier = None):
+            rpcaptcache_notifier = None, private_data = None):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -48,6 +48,8 @@ class ElbeProject (object):
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
+
+        self.private_data = private_data
 
         # Apt-Cache will be created on demand with the specified notifier by
         # the get_rpcaptcache method
