@@ -113,8 +113,12 @@ class RPCAPTCache(InChRootObject):
         deps = getalldeps( self.cache, pkgname )
         return [APTPackage(p, cache=self.cache) for p in deps]
 
-    def get_installed_pkgs( self ):
-        return [APTPackage(p) for p in self.cache if p.is_installed]
+    def get_installed_pkgs( self, section='all' ):
+        if section == 'all':
+            return [APTPackage(p) for p in self.cache if p.is_installed]
+        else:
+            return [APTPackage(p) for p in self.cache if (p.section == section
+                and p.is_installed)]
 
     def get_fileindex( self ):
         index = {}
@@ -126,12 +130,20 @@ class RPCAPTCache(InChRootObject):
 
         return index
 
-    def get_marked_install( self ):
-        return [APTPackage(p) for p in self.cache if p.marked_install == True]
+    def get_marked_install( self, section='all' ):
+        if section == 'all':
+            ret = [APTPackage(p) for p in self.cache if p.marked_install]
+        else:
+            ret = [APTPackage(p) for p in self.cache if (p.section == section
+                and p.marked_install)]
+        return ret
 
-    def get_upgradeable( self):
-        ret = [ APTPackage(p) for p in self.cache
-                            if p.is_upgradable == True]
+    def get_upgradeable(self, section='all'):
+        if section == 'all':
+            ret = [ APTPackage(p) for p in self.cache if p.is_upgradable]
+        else:
+            ret = [APTPackage(p) for p in self.cache if (p.section == section
+                and p.is_upgradeable)]
         return ret
 
     def upgrade( self, dist_upgrade = False ):

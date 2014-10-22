@@ -280,15 +280,30 @@ class ProjectManager(object):
             c = self._get_current_project_apt_cache( userid )
             return c.get_changes()
 
-    def apt_get_marked_install (self, userid):
+    def apt_get_marked_install (self, userid, section='all'):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
-            return c.get_marked_install( userid )
+            return c.get_marked_install (section=section)
 
-    def apt_get_pkglist (self, userid, section):
+    def apt_get_installed (self, userid, section='all'):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_installed_pkgs (section=section)
+
+    def apt_get_upgradeable (self, userid, section='all'):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_upgradeable (section=section)
+
+    def apt_get_pkglist (self, userid, section='all'):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
             return c.get_pkglist( section )
+
+    def apt_get_pkg (self, userid, term):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_pkg( term )
 
     def apt_get_sections (self, userid):
         with self.lock:
