@@ -142,8 +142,8 @@ class RPCAPTCache(InChRootObject):
         if section == 'all':
             ret = [ APTPackage(p) for p in self.cache if p.is_upgradable]
         else:
-            ret = [APTPackage(p) for p in self.cache if (p.section == section
-                and p.is_upgradeable)]
+            ret = [ APTPackage(p) for p in self.cache if (p.section == section
+                and p.is_upgradable)]
         return ret
 
     def upgrade( self, dist_upgrade = False ):
