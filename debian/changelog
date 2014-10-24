@@ -1,3 +1,10 @@
+elbe (0.9.0~beta2) unstable; urgency=medium
+
+  * allow pinning of origins
+  * upated: various bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 24 Oct 2014 10:08:06 +0200
+
 elbe (0.9.0~beta1) unstable; urgency=medium
 
   * make updated work on read-only RFS
