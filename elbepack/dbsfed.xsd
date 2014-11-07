@@ -477,7 +477,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="kinitrd" type="string">
+      <element name="kinitrd" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             pkg name of the initrd/kernel package.
