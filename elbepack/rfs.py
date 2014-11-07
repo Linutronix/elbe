@@ -175,8 +175,8 @@ class BuildEnv ():
         self.rfs.mkdir_p ("/etc/apt")
 
         pinned_origins = []
-        if self.xml.has('/project/mirror/url-list'):
-            for url in self.xml.node('/project/mirror/url-list'):
+        if self.xml.has('project/mirror/url-list'):
+            for url in self.xml.node('project/mirror/url-list'):
                 if not url.has('binary'):
                     continue
 
