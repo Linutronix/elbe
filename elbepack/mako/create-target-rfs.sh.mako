@@ -151,7 +151,11 @@ find /usr/share/doc -name copyright -exec \
 /opt/elbe/part-target.sh >> /opt/elbe/elbe-report.txt 2>&1
 
 % if xml.has("target/package/tar"):
+% if xml.has("target/package/tar/options"):
+tar cf /opt/elbe/target.tar -C /target ${xml.text("target/package/tar/options")} .
+% else:
 tar cf /opt/elbe/target.tar -C /target .
+% endif
 echo /opt/elbe/target.tar >> /opt/elbe/files-to-extract
 % endif
 
