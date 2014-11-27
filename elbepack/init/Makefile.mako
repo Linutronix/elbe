@@ -47,6 +47,9 @@ all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/init-elbe.sh tmp-tree/
 	cp .elbe-in/source.xml tmp-tree/
+% if opt.devel:
+	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
+% endif
 	mkdir -p .elbe-gen
 	gzip -cd .elbe-in/initrd.gz >.elbe-gen/initrd-preseeded
 	cd tmp-tree && find . | cpio -H newc -o --append -F ../.elbe-gen/initrd-preseeded

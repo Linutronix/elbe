@@ -39,8 +39,16 @@ mount -o bind /sys /buildenv/sys
 mkdir -p /buildenv/proc
 mount -o bind /proc /buildenv/proc
 
+% if opt.devel:
+   mkdir /buildenv/var/cache/elbe/devel
+   tar xvj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
+% endif
 % if xml.has('target'):
-chroot /buildenv elbe buildchroot \
+%   if opt.devel:
+chroot /buildenv /bin/sh -c "cd /var/cache/elbe/devel; ./elbe buildchroot \
+%  else:
+chroot /buildenv /bin/sh -c "elbe buildchroot \
+%  endif
 %  if opt.skip_validation:
   --skip-validation \
 %  endif
@@ -55,7 +63,7 @@ chroot /buildenv elbe buildchroot \
 %  endif
   -t /var/cache/elbe/build \
   -o /var/cache/elbe/elbe-report.log \
-  /var/cache/elbe/source.xml
+  /var/cache/elbe/source.xml"
 % endif
 
 umount /buildenv/proc /buildenv/sys /buildenv/dev
