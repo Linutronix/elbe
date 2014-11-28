@@ -73,7 +73,7 @@ class RepoBase(object):
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        self.log.do( "reprepro --basedir " + "\"" + self.fs.path + "\"" " -C " + component + " includedeb " + self.codename + " " + path )
+        self.log.do( 'reprepro --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + self.codename + ' ' + path )
 
     def includedsc( self, path, component="main"):
         if self.maxsize:
@@ -84,11 +84,11 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        self.log.do( "reprepro --basedir " + "\"" + self.fs.path + "\"" + " -C " + component + " -P normal -S misc includedsc " + self.codename + " " + path ) 
+        self.log.do( 'reprepro --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + self.codename + ' ' + path ) 
 
     def buildiso( self, fname ):
         if self.volume_count == 0:
-            new_path = "\"" + self.fs.path + "\""
+            new_path = '"' + self.fs.path + '"'
             self.log.do( "genisoimage -o %s -J -R %s" % (fname, new_path) )
         else:
             for i in range(self.volume_count+1):
