@@ -266,6 +266,12 @@ class ProjectManager(object):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
             c.mark_install( pkgname, version )
+            ep = self._get_current_project( userid )
+            pkgs = ep.xml.get_target_packages()
+            if not pkgname in pkgs:
+                pkgs.append(pkgname)
+            ep.xml.set_target_packages(pkgs)
+
 
     def apt_mark_upgrade (self, userid, pkgname, version):
         with self.lock:
@@ -277,10 +283,22 @@ class ProjectManager(object):
             c = self._get_current_project_apt_cache( userid )
             c.mark_delete( pkgname, version )
 
+            ep = self._get_current_project( userid )
+            pkgs = ep.xml.get_target_packages()
+            if pkgname in pkgs:
+                pkgs.remove(pkgname)
+            ep.xml.set_target_packages(pkgs)
+
     def apt_mark_keep (self, userid, pkgname, version):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
             c.mark_keep( pkgname, version )
+
+            ep = self._get_current_project( userid )
+            pkgs = ep.xml.get_target_packages()
+            if not pkgname in pkgs:
+                pkgs.append(pkgname)
+            ep.xml.set_target_packages(pkgs)
 
     def apt_upgrade (self, userid, dist_upgrade = False):
         with self.lock:
