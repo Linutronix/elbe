@@ -117,6 +117,15 @@ class ElbeXML(object):
     def get_target_packages(self):
         return [p.et.text for p in self.xml.node("/target/pkg-list")]
 
+    def set_target_packages(self, pkglist):
+        plist = self.xml.ensure_child("/target/pkg-list")
+        plist.clear()
+        for p in pkglist:
+            pak = plist.append('pkg')
+            pak.set_text( p )
+            pak.et.tail = '\n'
+
+
     def get_buildenv_packages(self):
         retval = []
         if self.xml.has("./project/buildimage/pkg-list"):
