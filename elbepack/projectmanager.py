@@ -281,13 +281,20 @@ class ProjectManager(object):
     def apt_mark_delete (self, userid, pkgname, version):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
-            c.mark_delete( pkgname, version )
 
             ep = self._get_current_project( userid )
             pkgs = ep.xml.get_target_packages()
             if pkgname in pkgs:
                 pkgs.remove(pkgname)
             ep.xml.set_target_packages(pkgs)
+
+            debootstrap_pkgs = []
+            for p in ep.xml.xml.node("debootstrappkgs"):
+                debootstrap_pkgs.append (p.et.text)
+            c.cleanup(debootstrap_pkgs)
+
+            for p in pkgs:
+                c.mark_install( p, None )
 
     def apt_mark_keep (self, userid, pkgname, version):
         with self.lock:
@@ -299,6 +306,12 @@ class ProjectManager(object):
             if not pkgname in pkgs:
                 pkgs.append(pkgname)
             ep.xml.set_target_packages(pkgs)
+
+    def apt_get_target_packages (self, userid):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            return ep.xml.get_target_packages()
+
 
     def apt_upgrade (self, userid, dist_upgrade = False):
         with self.lock:
