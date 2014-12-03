@@ -250,6 +250,10 @@ def _apply_update (fname):
     del cache
     del sources
 
+    version_file = open("/etc/updated_version", "w")
+    version_file.write( xml.text ("/project/version") )
+    version_file.close()
+
 def apply_update (fname):
     # As soon as python-apt closes its opened files on object deletion
     # we can drop this fork workaround. As long as they keep their files
