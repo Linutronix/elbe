@@ -23,6 +23,7 @@ from Queue import Queue
 from os import path, getcwd, chdir
 from contextlib import contextmanager
 from urllib import quote
+import traceback
 
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
@@ -57,7 +58,7 @@ class BuildJob(AsyncWorkerJob):
         except Exception as e:
             db.update_project_files( self.project )
             self.project.log.printo( "Build failed" )
-            self.project.log.printo( str(e) )
+            self.project.log.printo( traceback.format_exc() )
             db.reset_busy( self.project.builddir, "build_failed" )
 
 
