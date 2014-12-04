@@ -1,5 +1,7 @@
 debian/elbe-bootup-check/
 debian/elbe-daemon/
+debian/elbe-buildchroot/
+debian/elbe-adjustpkg/
 *.pyc
 build
 docs/*.1
