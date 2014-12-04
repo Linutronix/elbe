@@ -379,7 +379,7 @@ class TargetFs(ChRootFilesystem):
         ChRootFilesystem.__init__(self, path, xml.defs["userinterpr"], clean)
         self.log = log
         self.xml = xml
-        self.images = None
+        self.images = []
 
     def write_fstab(self, xml):
         if not self.exists("etc"):
