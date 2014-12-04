@@ -269,7 +269,9 @@ class ElbeProject (object):
 
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
-                dump_debootstrappkgs( self.xml, self.get_rpcaptcache() )
+                if self.buildenv.need_dumpdebootstrap:
+                    dump_debootstrappkgs( self.xml, self.get_rpcaptcache() )
+                self.buildenv.need_dumpdebootstrap = False
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/var/cache/elbe/source.xml",
