@@ -581,7 +581,8 @@ class ElbeDB(object):
 
             # Add images from the given ElbeProject
             if ep.targetfs:
-                images = set( ep.targetfs.images )
+
+                images = set( ep.targetfs.images or [] )
                 for img in images:
                     self._update_project_file( s, p.builddir, img,
                             "application/octet-stream", "Image" )
