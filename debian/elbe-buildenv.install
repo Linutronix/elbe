@@ -22,6 +22,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/asciidoclog.py
 ./usr/lib/python2.*/*-packages/elbepack/cdroms.py
 ./usr/lib/python2.*/*-packages/elbepack/debianreleases.py
+./usr/lib/python2.*/*-packages/elbepack/debpkg.py
 ./usr/lib/python2.*/*-packages/elbepack/fstab.py
 ./usr/lib/python2.*/*-packages/elbepack/persistency.py
 ./usr/lib/python2.*/*-packages/elbepack/rpcaptcache.py
