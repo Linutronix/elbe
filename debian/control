@@ -12,7 +12,7 @@ Build-Depends: dh-python,
   xmlto,
   lintian,
   source-highlight
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Homepage: http://elbe-rfs.org
 
 Package: elbe-doc
