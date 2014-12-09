@@ -169,3 +169,11 @@ def sign_file(fname, fingerprint):
     except gpgme.GpgmeError as ex:
         print 'Cannot find key with fingerprint %s: %s' % (fingerprint % ex.message)
         sys.exit(20)
+
+def get_fingerprints ():
+    ctx = gpgme.Context ()
+    keys = ctx.keylist ()
+    fingerprints = []
+    for k in keys:
+        fingerprints.append (k.subkeys[0].fpr)
+    return fingerprints
