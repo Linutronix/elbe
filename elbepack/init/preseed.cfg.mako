@@ -101,7 +101,8 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 % endif
 
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string btrfs-tools elbe-buildenv elbe-soap openssh-client qemu-elbe-user-static \
+d-i pkgsel/include string rng-tools btrfs-tools openssh-client \
+elbe-soap elbe-buildenv qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":
   ${n.et.text} \

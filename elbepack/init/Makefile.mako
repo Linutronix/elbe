@@ -60,6 +60,7 @@ all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 
 .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
 	$(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=1 \
@@ -78,6 +79,7 @@ all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 
 run:
 	$(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
@@ -97,6 +99,7 @@ run:
 
 run-con:
 	$(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
