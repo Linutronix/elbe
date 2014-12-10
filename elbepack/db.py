@@ -22,7 +22,7 @@ import os
 import errno
 
 from datetime import datetime
-from shutil import (rmtree, copyfile)
+from shutil import (rmtree, copyfile, copyfileobj)
 from contextlib import contextmanager
 from urllib import quote
 
@@ -117,6 +117,69 @@ class ElbeDB(object):
                         builddir )
 
             return ProjectData(p)
+
+    def set_presh (self, builddir, presh_file):
+        if not os.path.exists (builddir):
+            raise ElbeDBError( "project directory does not exist" )
+
+        with session_scope(self.session) as s:
+            p = None
+            try:
+                p = s.query (Project). \
+                        filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError(
+                        "cannot set presh file while project %s is busy" %
+                        builddir )
+
+            p.edit = datetime.utcnow ()
+            if p.status == "empty_project" or p.status == "build_failed":
+                p.status = "needs_build"
+            elif p.status == "build_done":
+                p.status = "has_changes"
+
+            with open (builddir+"/"+p.version+"-pre.sh", 'w') as dst:
+                copyfileobj (presh_file, dst)
+
+            self._update_project_file( s, builddir, p.version+"-pre.sh",
+                    "application/sh", "pre install script" )
+
+    def set_postsh (self, builddir, postsh_file):
+        if not os.path.exists (builddir):
+            raise ElbeDBError( "project directory does not exist" )
+
+        with session_scope(self.session) as s:
+            p = None
+            try:
+                p = s.query (Project). \
+                        filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError(
+                        "cannot set postsh file while project %s is busy" %
+                        builddir )
+
+            p.edit = datetime.utcnow ()
+            if p.status == "empty_project" or p.status == "build_failed":
+                p.status = "needs_build"
+            elif p.status == "build_done":
+                p.status = "has_changes"
+
+            with open (builddir+"/"+p.version+"-pre.sh", 'w') as dst:
+                copyfileobj (postsh_file, dst)
+
+            self._update_project_file( s, builddir, p.version+"-pre.sh",
+                    "application/sh", "pre install script" )
+
 
     def set_xml (self, builddir, xml_file):
         # This method can throw: ElbeDBError, ValidationError, OSError
