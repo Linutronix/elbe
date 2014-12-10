@@ -46,6 +46,7 @@ class OverallStatus:
             return 1
         if self.sig_expired or self.key_expired or self.key_revoked or self.key_missing:
             return 2
+
         return 0
 
 def check_signature(ctx, sig):
@@ -109,36 +110,27 @@ def unsign_file(fname):
     ctx.armor = False
 
     try:
-        infile = open(fname, 'r')
-    except IOError as ex:
-        print 'Cannot open the file to read from: %s' % ex.message
-        return None
-
-    try:
-        outfile = open(outfilename, 'w')
-    except IOError as ex:
-        print 'Cannot open output file %s: %s' % (outfilename, ex.message)
-        infile.close ()
-        return None
-
-    try:
-        # obtain signature and write unsigned file
-        sigs = ctx.verify(infile, None, outfile)
-
-        # print status of all signatures and check if all signatures ar
         overall_status = OverallStatus()
-        print 'Signatures found:'
-        for sig in sigs:
-            overall_status.add(check_signature(ctx, sig))
 
-        infile.close ()
-        outfile.close ()
+        with open (fname, 'r') as infile:
+            with open (outfilename, 'w') as outfile:
+
+                # obtain signature and write unsigned file
+                sigs = ctx.verify(infile, None, outfile)
+
+                for sig in sigs:
+                    status = check_signature (ctx, sig)
+                    overall_status.add (status)
+
+        if overall_status.to_exitcode ():
+            return None
+
         return outfilename
 
+    except IOError as ex:
+        print ex.message
     except Exception as ex:
         print 'Error checking the file %s: %s' % (fname, ex.message)
-        infile.close ()
-        outfile.close ()
 
     return None
 
