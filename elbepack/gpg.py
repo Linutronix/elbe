@@ -142,33 +142,38 @@ def unsign_file(fname):
 
     return None
 
-def sign_file(fname, fingerprint):
-    outfilename = fname + '.gpg'
+def sign (infile, outfile, fingerprint):
+
     ctx = gpgme.Context()
-    ctx.armor = False
+    key = None
 
     try:
         key = ctx.get_key(fingerprint)
-        try:
-            infile = open(fname, 'r')
-            try:
-                outfile = open(outfilename, 'w')
-                try:
-                    ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
-                    print 'Signed file written to: %s' % outfilename
-                    sys.exit(0)
-                except Exception as ex:
-                    print 'Error signing the file %s: %s' % (infilename, ex.message)
-                    sys.exit(20)
-            except IOError as ex:
-                print 'Cannot open output file %s: %s' % (outfilename, ex.message)
-                sys.exit(20)
-        except IOError as ex:
-            print 'Cannot open the file to sign: %s' % ex.message
-            sys.exit(20)
     except gpgme.GpgmeError as ex:
-        print 'Cannot find key with fingerprint %s: %s' % (fingerprint % ex.message)
-        sys.exit(20)
+        print 'no key with fingerprint %s: %s' % (fingerprint % ex.message)
+        pass
+
+    ctx.signers = [key]
+    ctx.armor = False
+
+    try:
+        ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
+    except Exception as ex:
+        print 'Error signing file %s' % ex.message
+        pass
+
+
+def sign_file(fname, fingerprint):
+    outfilename = fname + '.gpg'
+
+    try:
+        with open(fname, 'r') as infile:
+            with open(outfilename, 'w') as outfile:
+                sign (infile, outfile, fingerprint)
+    except Exception as ex:
+        print 'Error signing file %s' % ex.message
+        pass
+
 
 def get_fingerprints ():
     ctx = gpgme.Context ()
