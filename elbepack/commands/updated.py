@@ -24,6 +24,7 @@ import os
 import pyinotify
 import signal
 import soaplib
+import subprocess
 import sys
 import time
 import threading
@@ -53,6 +54,7 @@ class UpdateStatus:
     nosign = False
     verbose = False
     repo_dir = ""
+    prefix = ""
 
 status = UpdateStatus ()
 
@@ -254,6 +256,17 @@ def _apply_update (fname):
     version_file.write( xml.text ("/project/version") )
     version_file.close()
 
+def execute (cmd):
+    log (subprocess.check_output (cmd, stderr=subprocess.STDOUT))
+
+def pre_sh ():
+    global status
+    execute (status.prefix + '/' + 'pre.sh')
+
+def post_sh ():
+    global status
+    execute (status.prefix + '/' + 'post.sh')
+
 def apply_update (fname):
     # As soon as python-apt closes its opened files on object deletion
     # we can drop this fork workaround. As long as they keep their files
@@ -262,8 +275,10 @@ def apply_update (fname):
     # without errors.
     p = Process (target=_apply_update, args=(fname, ))
     with rw_access ("/"):
+        pre_sh ()
         p.start ()
         p.join ()
+        post_sh ()
 
 def log (msg):
 
@@ -308,6 +323,8 @@ def update (upd_file):
     xml = etree ("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
     prefix += "_" + fname_replace (xml.text ("/project/version")) + "/"
+
+    status.prefix = prefix
 
     log ("preparing update: " + prefix)
 
