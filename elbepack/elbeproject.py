@@ -48,6 +48,8 @@ class ElbeProject (object):
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
+        self.presh_file = None
+        self.postsh_file = None
 
         self.private_data = private_data
 

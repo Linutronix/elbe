@@ -195,6 +195,7 @@ class ProjectManager(object):
                         ep.builddir )
 
             self.db.set_presh( ep.builddir, presh_file )
+            ep.presh_file = presh_file
 
     def set_current_project_postsh (self, userid, postsh_file):
         with self.lock:
@@ -205,6 +206,7 @@ class ProjectManager(object):
                         ep.builddir )
 
             self.db.set_postsh( ep.builddir, postsh_file )
+            ep.postsh_file = postsh_file
 
     def set_current_project_version( self, userid, new_version ):
         with self.lock:
