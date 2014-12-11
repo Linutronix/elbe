@@ -17,7 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 import os
 
 def create_zip_archive( zipfilename, path, inarchpath ):
@@ -30,5 +30,11 @@ def create_zip_archive( zipfilename, path, inarchpath ):
                 if not os.path.isfile(filename):
                     continue
                 archname = os.path.join( archpath, f )
-                zf.write( filename, archname )
+                zi = ZipInfo( archname)
+                stat = os.stat( path + '/' + archname )
+                zi.external_attr = stat.st_mode << 16L
+                # this hack is needed to use the external attributes
+                # there is no way to set a zipinfo object directly to an archive
+                with open (filename, 'rb') as f:
+                    zf.writestr( zi, f.read () )
 
