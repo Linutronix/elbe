@@ -20,7 +20,7 @@
 
 import os
 
-from shutil import rmtree
+from shutil import rmtree, copyfileobj
 
 from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
@@ -115,5 +115,15 @@ def gen_update_pkg (project, xml_filename, upd_filename,
 
     project.xml.xml.write( os.path.join( update, "new.xml" ) )
     os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
+
+    if project.presh_file:
+        with open (update + '/pre.sh', 'w') as presh:
+            copyfileobj (project.presh_file, presh)
+        os.chmod (update + '/pre.sh', 0755)
+
+    if project.postsh_file:
+        with open (update + '/post.sh', 'w') as postsh:
+            copyfileobj (project.postsh_file, postsh)
+        os.chmod (update + '/post.sh', 0755)
 
     create_zip_archive( upd_filename, update, "." )
