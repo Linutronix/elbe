@@ -381,13 +381,16 @@ class FileMonitor (pyinotify.ProcessEvent):
 
         if extension == "gpg":
             fname = unsign_file (event.pathname)
+            os.remove (event.pathname)
             if fname:
                 action_select (fname)
+                os.remove (fname)
             else:
                 log ("checking signature failed: " + event.pathname)
 
         elif status.nosign:
             action_select (event.pathname)
+            os.remove (event.pathname)
         else:
             log ("ignore file: " + str(event.pathname))
 
