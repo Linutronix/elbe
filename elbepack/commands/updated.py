@@ -317,7 +317,9 @@ def update (upd_file):
             (dirname, filename) = os.path.split (i)
 
             try:
-                upd_file_z.extract (i, prefix)
+                zi = upd_file_z.getinfo (i)
+                upd_file_z.extract (zi, prefix)
+                os.chmod (prefix + '/' + i, zi.external_attr >> 16)
             except OSError:
                 log ("extraction failed: %s" % sys.exc_info () [1])
                 return
