@@ -30,6 +30,9 @@ def create_zip_archive( zipfilename, path, inarchpath ):
                 if not os.path.isfile(filename):
                     continue
                 archname = os.path.join( archpath, f )
+                # this hack is needed to avoid leading ./ in the archive
+                while archname.startswith ('./'):
+                    archname = archname[2:]
                 zi = ZipInfo( archname)
                 stat = os.stat( path + '/' + archname )
                 zi.external_attr = stat.st_mode << 16L
