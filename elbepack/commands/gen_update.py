@@ -33,6 +33,10 @@ def run_command( argv ):
                         help="filename of the update package" )
     oparser.add_option( "-n", "--name", dest="name",
                         help="name of the project (included in the report)" )
+    oparser.add_option( "-p", "--pre-sh", dest="presh_file",
+                        help="script that is executed before the update will be applied" )
+    oparser.add_option( "-P", "--post-sh", dest="postsh_file",
+                        help="script that is executed after the update was applied" )
     oparser.add_option( "--skip-validation", action="store_true",
                         dest="skip_validation", default=False,
                         help="Skip xml schema validation" )
@@ -70,6 +74,20 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
+    if opt.presh_file:
+        try:
+            project.presh_file = open (opt.presh_file)
+        except IOError as e:
+            print 'pre.sh file invalid: %s' % str (e)
+            sys.exit(20)
+
+    if opt.postsh_file:
+        try:
+            project.postsh_file = open (opt.postsh_file)
+        except IOError as e:
+            print 'post.sh file invalid: %s' % str (e)
+            sys.exit(20)
+
     try:
         gen_update_pkg( project, args[ 0 ], opt.output, buildtype,
                 opt.skip_validation, opt.debug )
@@ -79,3 +97,9 @@ def run_command( argv ):
     except MissingData as e:
         print str(e)
         sys.exit(20)
+
+    if project.postsh_file:
+        project.postsh_file.close ()
+
+    if project.presh_file:
+        project.presh_file.close ()
