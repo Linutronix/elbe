@@ -143,10 +143,10 @@ class ElbeDB(object):
             elif p.status == "build_done":
                 p.status = "has_changes"
 
-            with open (builddir+"/"+p.version+"-pre.sh", 'w') as dst:
+            with open (builddir+"/pre.sh", 'w') as dst:
                 copyfileobj (presh_file, dst)
 
-            self._update_project_file( s, builddir, p.version+"-pre.sh",
+            self._update_project_file( s, builddir, "pre.sh",
                     "application/sh", "pre install script" )
 
     def set_postsh (self, builddir, postsh_file):
@@ -174,11 +174,11 @@ class ElbeDB(object):
             elif p.status == "build_done":
                 p.status = "has_changes"
 
-            with open (builddir+"/"+p.version+"-pre.sh", 'w') as dst:
+            with open (builddir+"/post.sh", 'w') as dst:
                 copyfileobj (postsh_file, dst)
 
-            self._update_project_file( s, builddir, p.version+"-pre.sh",
-                    "application/sh", "pre install script" )
+            self._update_project_file( s, builddir, "post.sh",
+                    "application/sh", "post install script" )
 
 
     def set_xml (self, builddir, xml_file):
