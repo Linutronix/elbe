@@ -404,8 +404,17 @@ class TargetFs(ChRootFilesystem):
         if self.xml.has("target/package/tar"):
             targz_name = self.xml.text ("target/package/tar/name")
             try:
-                self.log.do("tar cfz %s/%s -C %s ." % (
-                            targetdir, targz_name, self.fname('')) )
+                options = ''
+                if self.xml.has("target/package/tar/options"):
+                    options = self.xml.text("target/package/tar/options")
+                cmd = "tar cfz %(targetdir)s/%(targz_name)s -C %(sourcedir)s %(options)s ."
+                args = dict(
+                    options=options,
+                    targetdir=targetdir,
+                    targz_name=targz_name,
+                    sourcedir=self.fname('')
+                )
+                self.log.do(cmd % args)
                 # only append filename if creating tarball was successful
                 self.images.append (targz_name)
             except CommandError as e:
