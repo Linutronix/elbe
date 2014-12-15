@@ -20,6 +20,7 @@
 
 import apt
 import apt_pkg
+import errno
 import os
 import pyinotify
 import signal
@@ -29,7 +30,9 @@ import sys
 import time
 import threading
 
+from multiprocessing import Process, Queue
 from optparse import OptionParser
+from shutil import copyfile, rmtree
 from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Array
@@ -43,7 +46,6 @@ from elbepack.gpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
 
-from multiprocessing import Process, Queue
 
 class UpdateStatus:
     monitor = None
@@ -256,6 +258,15 @@ def _apply_update (fname):
     version_file.write( xml.text ("/project/version") )
     version_file.close()
 
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
 def execute (cmd):
     log (subprocess.check_output (cmd, stderr=subprocess.STDOUT))
 
@@ -303,7 +314,7 @@ def log (msg):
     if status.verbose:
         print msg
 
-def update (upd_file):
+def action_select (upd_file):
 
     global status
 
@@ -343,35 +354,54 @@ def update (upd_file):
                 log ("extraction failed: %s" % sys.exc_info () [1])
                 return
 
-    try:
-        update_sourceslist (xml, prefix + "repo")
-    except Exception, err:
-        log (str (err))
+    if os.path.isdir (prefix + "conf"):
+        log ("copying config files:")
+        for path, pathname, filenames in os.walk (prefix + "conf"):
+            dst = '/' + path[len(prefix + "conf"):]
+            with rw_access (dst):
+                for f in filenames:
+                    src = os.path.join (path, f)
+                    log ("cp " + src + " " + dst)
+                    try:
+                        mkdir_p (dst)
+                        copyfile (src, dst + '/' + f)
+                    except OSError as e:
+                        log ('failed: ' + str (e))
+        rmtree (prefix + "conf")
+
+    if os.path.isdir (prefix + "cmd"):
+        log ("executing scripts:")
+        for path, pathname, filenames in os.walk (prefix + "cmd"):
+            for f in filenames:
+                cmd = os.path.join (path, f)
+                if os.path.isfile (cmd):
+                    log ('exec: ' + cmd)
+                    try:
+                        execute (cmd)
+                    except OSError as e:
+                        log ('exec: ' + cmd + ' - ' + str (e))
+        rmtree (prefix + "cmd")
+
+    if os.path.isdir (prefix + "repo"):
+        try:
+            update_sourceslist (xml, prefix + "repo")
+        except Exception, err:
+            log (str (err))
+            status.step = 0
+            log ("update apt sources list failed: " + prefix)
+            return
+
+        try:
+            apply_update ("/tmp/new.xml")
+        except Exception, err:
+            log (str (err))
+            status.step = 0
+            log ("apply update failed: " + prefix)
+            return
+
         status.step = 0
-        log ("update apt sources list failed: " + prefix)
-        return
+        log ("update done: " + prefix)
 
-    try:
-        apply_update ("/tmp/new.xml")
-    except Exception, err:
-        log (str (err))
-        status.step = 0
-        log ("apply update failed: " + prefix)
-        return
-
-    status.step = 0
-    log ("update done: " + prefix)
-
-def action_select (fname):
-
-    global status
-
-    action = fname.split ('.') [-1]
-
-    if action == "upd":
-        update (fname)
-    else:
-        log ("unhandled file: " + fname)
 
 class FileMonitor (pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE (self, event):
