@@ -113,6 +113,8 @@ def build_image_mtd( outf, mtd, target ):
 
             if vol.text("size") != "remain":
                 fp.write( "vol_size=%d\n" % size_to_int( vol.text("size") ) )
+            else
+                fp.write( "vol_flags=autoresize\n" )
 
     fp.close()
 
