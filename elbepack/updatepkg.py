@@ -128,6 +128,8 @@ def gen_update_pkg (project, xml_filename, upd_filename,
 
         project.xml.xml.write( os.path.join( update, "new.xml" ) )
         os.system( "cp %s %s" % (xml_filename, os.path.join( update, "base.xml" )) )
+    else:
+        os.system( "cp source.xml update/new.xml")
 
     if project.presh_file:
         with open (update + '/pre.sh', 'w') as presh:
