@@ -339,31 +339,33 @@ class ElbeDB(object):
 
 
     def load_project (self, builddir, logpath = None):
+
+        presh_file = None
+        presh_handle = None
+        try:
+            presh_handle = self.get_project_file (builddir, 'pre.sh')
+            presh_file = open (presh_handle.builddir + '/' +
+                    presh_handle.name)
+        except ElbeDBError as e:
+            print str (e)
+        except IOError as e:
+            print str (e)
+
+        postsh_file = None
+        postsh_handle = None
+        try:
+            postsh_handle = self.get_project_file (builddir, 'post.sh')
+            postsh_file = open (postsh_handle.builddir + '/' +
+                    postsh_handle.name)
+        except ElbeDBError as e:
+            print str (e)
+        except IOError as e:
+            print str (e)
+
         with session_scope(self.session) as s:
             try:
                 p = s.query(Project). \
                         filter(Project.builddir == builddir).one()
-                presh_file = None
-                presh_handle = None
-                try:
-                    presh_handle = get_project_file (builddir, 'pre.sh')
-                    presh_file = open (presh_handle.builddir + '/' +
-                            presh_handle.name)
-                except ElbeDBError as e:
-                    print str (e)
-                except IOError as e:
-                    print str (e)
-
-                postsh_file = None
-                postsh_handle = None
-                try:
-                    postsh_handle = get_project_file (builddir, 'post.sh')
-                    postsh_file = open (postsh_handle.builddir + '/' +
-                            postsh_handle.name)
-                except ElbeDBError as e:
-                    print str (e)
-                except IOError as e:
-                    print str (e)
 
                 return ElbeProject (p.builddir, name=p.name, logpath=logpath,
                         presh_file=presh_file, postsh_file=postsh_file)
