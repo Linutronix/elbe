@@ -118,6 +118,35 @@ class ElbeDB(object):
 
             return ProjectData(p)
 
+    def set_postbuild (self, builddir, postbuild_file):
+        if not os.path.exists (builddir):
+            raise ElbeDBError( "project directory does not exist" )
+
+        with session_scope(self.session) as s:
+            p = None
+            try:
+                p = s.query (Project). \
+                        filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError(
+                        "cannot set presh file while project %s is busy" %
+                        builddir )
+
+            p.edit = datetime.utcnow ()
+
+            with open (builddir+"/postbuild.sh", 'w') as dst:
+                copyfileobj (postbuild_file, dst)
+
+            os.chmod (builddir+"/postbuild.sh", 0755)
+
+            return self._update_project_file( s, builddir, "postbuild.sh",
+                    "application/sh", "postbuild script" )
+
     def set_presh (self, builddir, presh_file):
         if not os.path.exists (builddir):
             raise ElbeDBError( "project directory does not exist" )
@@ -146,7 +175,7 @@ class ElbeDB(object):
             with open (builddir+"/pre.sh", 'w') as dst:
                 copyfileobj (presh_file, dst)
 
-            self._update_project_file( s, builddir, "pre.sh",
+            return self._update_project_file( s, builddir, "pre.sh",
                     "application/sh", "pre install script" )
 
     def set_postsh (self, builddir, postsh_file):
@@ -177,7 +206,7 @@ class ElbeDB(object):
             with open (builddir+"/post.sh", 'w') as dst:
                 copyfileobj (postsh_file, dst)
 
-            self._update_project_file( s, builddir, "post.sh",
+            return self._update_project_file( s, builddir, "post.sh",
                     "application/sh", "post install script" )
 
 
@@ -340,26 +369,25 @@ class ElbeDB(object):
 
     def load_project (self, builddir, logpath = None):
 
-        presh_file = None
-        presh_handle = None
+        postbuild_file = None
         try:
-            presh_handle = self.get_project_file (builddir, 'pre.sh')
-            presh_file = open (presh_handle.builddir + '/' +
-                    presh_handle.name)
+            postbuild = self.get_project_file (builddir, 'postbuild.sh')
+            postbuild_file = postbuild.builddir + '/' + postbuild.name
         except ElbeDBError as e:
             print str (e)
-        except IOError as e:
+
+        presh_file = None
+        try:
+            presh_handle = self.get_project_file (builddir, 'pre.sh')
+            presh_file = presh_handle.builddir + '/' + presh_handle.name
+        except ElbeDBError as e:
             print str (e)
 
         postsh_file = None
-        postsh_handle = None
         try:
             postsh_handle = self.get_project_file (builddir, 'post.sh')
-            postsh_file = open (postsh_handle.builddir + '/' +
-                    postsh_handle.name)
+            postsh_file = postsh_handle.builddir + '/' + postsh_handle.name
         except ElbeDBError as e:
-            print str (e)
-        except IOError as e:
             print str (e)
 
         with session_scope(self.session) as s:
@@ -368,6 +396,7 @@ class ElbeDB(object):
                         filter(Project.builddir == builddir).one()
 
                 return ElbeProject (p.builddir, name=p.name, logpath=logpath,
+                        postbuild_file=postbuild_file,
                         presh_file=presh_file, postsh_file=postsh_file)
             except NoResultFound:
                 raise ElbeDBError(
@@ -707,6 +736,7 @@ class ElbeDB(object):
                     "text/plain; charset=utf-8", "Log file" )
 
     def _update_project_file (self, s, builddir, name, mime_type, description):
+        filename = os.path.join( builddir, name )
         try:
             f = s.query( ProjectFile ).\
                     filter( ProjectFile.builddir == builddir ).\
@@ -718,14 +748,17 @@ class ElbeDB(object):
                         mime_type = mime_type,
                         description = description )
                 s.add( f )
-            return
+                return filename
+            return None
 
-        if os.path.isfile( os.path.join( builddir, name ) ):
+        if os.path.isfile( filename ):
             f.mime_type = mime_type
             f.description = description
         else:
             s.delete( f )
+            None
 
+        return filename
 
     ### User management ###
 

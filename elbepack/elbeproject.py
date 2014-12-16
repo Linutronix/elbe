@@ -41,7 +41,7 @@ class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
             rpcaptcache_notifier = None, private_data = None,
-            presh_file = None, postsh_file = None):
+            postbuild_file = None, presh_file = None, postsh_file = None):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -49,6 +49,7 @@ class ElbeProject (object):
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
+        self.postbuild_file = postbuild_file
         self.presh_file = presh_file
         self.postsh_file = postsh_file
 
@@ -182,6 +183,16 @@ class ElbeProject (object):
                 if build_sources:
                     mk_source_cdrom( self.buildenv.rfs, arch, codename,
                             self.builddir, self.log )
+
+
+        if self.postbuild_file:
+            self.log.h2 ("postbuild script:")
+            self.log.do (self.postbuild_file + ' "%s %s %s"' % (
+                            self.builddir,
+                            self.xml.text ("project/version"),
+                            self.xml.text ("project/name")),
+                         allow_fail=True)
+
 
         # Write files to extract list
         fte = open( os.path.join( self.builddir, "files-to-extract" ), "w+" )

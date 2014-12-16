@@ -186,6 +186,17 @@ class ProjectManager(object):
 
             self.db.set_xml( ep.builddir, xml_file )
 
+    def set_current_project_postbuild (self, userid, postbuild_file):
+        with self.lock:
+            ep = self._get_current_project( userid )
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "cannot change pre.sh file for busy project in %s" %
+                        ep.builddir )
+
+            f = self.db.set_postbuild( ep.builddir, postbuild_file )
+            ep.postbuild_file = f
+
     def set_current_project_presh (self, userid, presh_file):
         with self.lock:
             ep = self._get_current_project( userid )
@@ -194,8 +205,8 @@ class ProjectManager(object):
                         "cannot change pre.sh file for busy project in %s" %
                         ep.builddir )
 
-            self.db.set_presh( ep.builddir, presh_file )
-            ep.presh_file = presh_file
+            f = self.db.set_presh( ep.builddir, presh_file )
+            ep.presh_file = f
 
     def set_current_project_postsh (self, userid, postsh_file):
         with self.lock:
@@ -205,8 +216,8 @@ class ProjectManager(object):
                         "cannot change post.sh file for busy project in %s" %
                         ep.builddir )
 
-            self.db.set_postsh( ep.builddir, postsh_file )
-            ep.postsh_file = postsh_file
+            f = self.db.set_postsh( ep.builddir, postsh_file )
+            ep.postsh_file = f
 
     def set_current_project_version( self, userid, new_version ):
         with self.lock:
