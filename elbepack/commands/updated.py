@@ -290,7 +290,9 @@ def apply_update (fname):
         p.start ()
         p.join ()
         log ("cleanup /var/cache/apt/archives")
-        execute ("apt-get clean")
+        # don't use execute() here, it results in an error that the apt-cache
+        # is locked. We currently don't understand this behaviour :(
+        os.system ("apt-get clean")
         post_sh ()
 
 def log (msg):
