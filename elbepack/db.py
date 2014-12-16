@@ -942,6 +942,7 @@ class ProjectVersion (Base):
                               primary_key=True )
     version         = Column (String, primary_key=True)
     description     = Column (String)
+    timestamp       = Column (DateTime, default=datetime.utcnow)
 
 class ProjectVersionData (object):
     def __init__ (self, pv):
@@ -951,7 +952,10 @@ class ProjectVersionData (object):
             self.description    = str(pv.description)
         else:
             self.description    = None
-
+        self.timestamp       = datetime(pv.timestamp.year, pv.timestamp.month,
+                                pv.timestamp.day, pv.timestamp.hour,
+                                pv.timestamp.minute, pv.timestamp.second,
+                                pv.timestamp.microsecond, pv.timestamp.tzinfo)
 
 class ProjectFile (Base):
     __tablename__ = 'files'
