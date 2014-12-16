@@ -252,9 +252,6 @@ def _apply_update (fname):
     del cache
     del sources
 
-    log ("cleanup /var/cache/apt/archives")
-    execute ("apt-get clean")
-
     version_file = open("/etc/updated_version", "w")
     version_file.write( xml.text ("/project/version") )
     version_file.close()
@@ -281,6 +278,8 @@ def apply_update (fname):
         pre_sh ()
         p.start ()
         p.join ()
+        log ("cleanup /var/cache/apt/archives")
+        execute ("apt-get clean")
         post_sh ()
 
 def log (msg):
