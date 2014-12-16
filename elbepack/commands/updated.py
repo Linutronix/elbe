@@ -369,6 +369,8 @@ def action_select (upd_file):
                         copyfile (src, dst + '/' + f)
                     except OSError as e:
                         log ('failed: ' + str (e))
+                    except IOError as e:
+                        log ('failed: ' + str (e))
         rmtree (prefix + "conf")
 
     if os.path.isdir (prefix + "cmd"):
