@@ -16,8 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from elbepack.shellhelper import CommandError
 import os
+
+from apt.package import FetchError
+from shutil import rmtree
+
+from elbepack.aptpkgutils import XMLPackage
+from elbepack.filesystem import ChRootFilesystem
+from elbepack.repomanager import UpdateRepo
+from elbepack.rpcaptcache import get_rpcaptcache
+from elbepack.shellhelper import CommandError
 
 class FinetuningAction(object):
 
@@ -261,9 +269,56 @@ class PurgeAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            log.chroot (target.path, "dpkg --purge " + self.node.et.text ) 
+            log.chroot (target.path, "dpkg --purge " + self.node.et.text)
 
 FinetuningAction.register( PurgeAction )
+
+class UpdatedAction(FinetuningAction):
+
+    tag = 'updated'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+
+        log.printo( "generate base repo")
+        arch = target.xml.text ("project/arch", key="arch")
+        rfs = ChRootFilesystem (target.path)
+        with rfs:
+            rfs.mkdir_p ('/tmp/pkgs')
+            cache = get_rpcaptcache (rfs, "updated-repo.log", arch)
+            for p in target.xml.node ("fullpkgs"):
+                pkg = XMLPackage (p, arch)
+                print pkg
+                try:
+                    cache.download_binary (pkg.name, '/tmp/pkgs',
+                            pkg.installed_version)
+                except ValueError as ve:
+                    log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
+                except FetchError as fe:
+                    log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+                except TypeError as te:
+                    log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
+
+            r = UpdateRepo (target.xml,
+                  target.path + '/var/cache/elbe/repos/base',
+                  log)
+
+            for d in target.glob ('tmp/pkgs/*.deb'):
+                r.includedeb (d, 'main')
+
+            slist = target.path + '/etc/apt/sources.list.d/base.list'
+            slist_txt = 'deb file:///var/cache/elbe/repos/base '
+            slist_txt += target.xml.text ("/project/suite")
+            slist_txt += " main"
+            with open (slist, 'w') as apt_source:
+                apt_source.write (slist_txt)
+
+            rmtree (target.path + '/tmp/pkgs')
+
+
+FinetuningAction.register( UpdatedAction )
 
 
 def do_finetuning(xml, log, buildenv, target):

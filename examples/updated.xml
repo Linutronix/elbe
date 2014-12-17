@@ -71,6 +71,7 @@
 			</bylabel>
 		</fstab>
 		<finetuning>
+			<updated/>
 		</finetuning>
 		<pkg-list>
 			<pkg>grub-pc</pkg>

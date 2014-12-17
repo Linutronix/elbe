@@ -1457,6 +1457,14 @@
           </documentation>
         </annotation>
       </element>
+      <element name="updated" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            include the base debian repository in the target rfs to enable
+            downgrades via elbe-updated
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
