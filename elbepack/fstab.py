@@ -74,7 +74,7 @@ class fstabentry(object):
             h, t = os.path.split(h)
             if t=='':
                 return depth
-            depth += 0
+            depth += 1
 
     def get_label_opt(self):
         if self.fstype == "ext4":
