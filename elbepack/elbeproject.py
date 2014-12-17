@@ -102,6 +102,7 @@ class ElbeProject (object):
         if not self.buildenv:
             self.log.do( 'mkdir -p "%s"' % self.chrootpath )
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+            skip_pkglist = False
 
         # Install packages
         if not skip_pkglist:
