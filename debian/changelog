@@ -1,3 +1,26 @@
+elbe (0.9.1) unstable; urgency=medium
+
+  * finetuning: add an updated finetuning rule
+  * gen_update/updated: added pre.sh and post.sh feature
+  * gen_update/updated: added conf and cmd features
+  * hdimg: fix mountdepth bug
+  * init-vm: forward host random number generator to vm
+  * db: add timestamp to projectversion
+  * updated: clean cache after update
+  * finetuning/adduser: fix bug in password setting
+  * ziptarchive: store file attributes in archive
+  * gpg: code cleanup
+  * lintian: fix warnings
+  * debian/control depend on same binary version between all elbe packages
+  * ProjectManager: Support version checkout
+  * projectmanager: add method to get debootstrap packages
+  * updated: write currently installed version into /etc/updated_version
+  * projectmanager: modify target pkg-list in xml, when modifying aptcache
+  * buildchroot: remove FutureWarning printed by etree.py
+  * dbsfed.xsd: make kinitrd optional
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 19 Dec 2014 15:40:48 +0100
+
 elbe (0.9.0~beta3) unstable; urgency=medium
 
   * remove newlines from etc/apt/preferences to stop confusing apt
