@@ -76,7 +76,7 @@ def check_signature(ctx, sig):
     if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIRED:
         print 'KEY EXPIRED!',
         status.key_expired = True
-    if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKEK:
+    if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKED:
         print 'KEY REVOKED!',
         status.key_revoked = True
     if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
