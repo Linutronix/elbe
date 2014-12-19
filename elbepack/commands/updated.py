@@ -32,7 +32,7 @@ import threading
 
 from multiprocessing import Process, Queue
 from optparse import OptionParser
-from shutil import copyfile, rmtree
+from shutil import copyfile, rmtree, copy
 from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Array
@@ -56,7 +56,6 @@ class UpdateStatus:
     nosign = False
     verbose = False
     repo_dir = ""
-    prefix = ""
 
 status = UpdateStatus ()
 
@@ -270,13 +269,21 @@ def mkdir_p(path):
 def execute (cmd):
     log (subprocess.check_output (cmd, stderr=subprocess.STDOUT))
 
-def pre_sh ():
-    global status
-    execute (status.prefix + '/' + 'pre.sh')
+def pre_sh (current_version, target_version):
+    if os.path.isfile('/var/cache/elbe/' + 'pre.sh'):
+        execute (['/var/cache/elbe/' + 'pre.sh', current_version, target_version])
 
-def post_sh ():
-    global status
-    execute (status.prefix + '/' + 'post.sh')
+def post_sh (current_version, target_version):
+    if os.path.isfile('/var/cache/elbe/' + 'post.sh'):
+        execute (['/var/cache/elbe/' + 'post.sh', current_version, target_version])
+
+def get_target_version (fname):
+    xml = etree (fname)
+    return xml.text ("/project/version")
+
+def get_current_version ():
+    with open ("/etc/updated_version", "r") as version_file:
+        return version_file.read ()
 
 def apply_update (fname):
     # As soon as python-apt closes its opened files on object deletion
@@ -286,14 +293,26 @@ def apply_update (fname):
     # without errors.
     p = Process (target=_apply_update, args=(fname, ))
     with rw_access ("/"):
-        pre_sh ()
+        try:
+            t_ver = get_target_version(fname)
+        except:
+            log ('Reading xml-file failed!')
+            return
+
+        try:
+            c_ver = get_current_version()
+        except IOError as e:
+            log ('get current version failed: ' + str (e))
+            c_ver = ""
+
+        pre_sh (c_ver, t_ver)
         p.start ()
         p.join ()
         log ("cleanup /var/cache/apt/archives")
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
         os.system ("apt-get clean")
-        post_sh ()
+        post_sh (c_ver, t_ver)
 
 def log (msg):
 
@@ -339,8 +358,6 @@ def action_select (upd_file):
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
     prefix += "_" + fname_replace (xml.text ("/project/version")) + "/"
 
-    status.prefix = prefix
-
     log ("preparing update: " + prefix)
 
     with rw_access (prefix):
@@ -356,10 +373,27 @@ def action_select (upd_file):
                 log ("extraction failed: %s" % sys.exc_info () [1])
                 return
 
+    with rw_access ("/var/cache/elbe"):
+        if os.path.isfile(prefix + '/' + 'pre.sh'):
+            try:
+                copy (prefix + '/' + 'pre.sh', '/var/cache/elbe/' + 'pre.sh')
+            except OSError as e:
+                log ('presh-copy failed: ' + str (e))
+            except IOError as e:
+                log ('presh-copy failed: ' + str (e))
+
+        if os.path.isfile(prefix + '/' + 'post.sh'):
+            try:
+                copy (prefix + '/' + 'post.sh', '/var/cache/elbe/' + 'post.sh')
+            except OSError as e:
+                log ('postsh-copy failed: ' + str (e))
+            except IOError as e:
+                log ('postsh-copy failed: ' + str (e))
+
     if os.path.isdir (prefix + "conf"):
         log ("copying config files:")
         for path, pathname, filenames in os.walk (prefix + "conf"):
-            dst = '/' + path[len(prefix + "conf"):]
+            dst = path[len(prefix + "conf"):]
             with rw_access (dst):
                 for f in filenames:
                     src = os.path.join (path, f)
