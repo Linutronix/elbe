@@ -20,6 +20,7 @@
 
 import os
 import errno
+import re
 
 from datetime import datetime
 from shutil import (rmtree, copyfile, copyfileobj)
@@ -494,6 +495,9 @@ class ElbeDB(object):
     def set_project_version( self, builddir, new_version = None):
         if new_version == "":
             raise ElbeDBError( "version number must not be empty" )
+
+        if not re.match("^[A-Za-z0-9_.-]{1,25}$", new_version):
+            raise ElbeDBError( "version number must contain valid characters [A-Za-z0-9_-.]" )
 
         with session_scope(self.session) as s:
             try:
