@@ -1,3 +1,9 @@
+elbe (0.9.2) unstable; urgency=medium
+
+  * fix bug in updated that is needed for running on r/o RFS
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 22 Dec 2014 13:03:36 +0100
+
 elbe (0.9.1) unstable; urgency=medium
 
   * finetuning: add an updated finetuning rule
