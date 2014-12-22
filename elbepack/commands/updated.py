@@ -405,7 +405,8 @@ def action_select (upd_file):
                         log ('failed: ' + str (e))
                     except IOError as e:
                         log ('failed: ' + str (e))
-        rmtree (prefix + "conf")
+        with rw_access (prefix + "conf"):
+            rmtree (prefix + "conf")
 
     if os.path.isdir (prefix + "cmd"):
         log ("executing scripts:")
@@ -418,7 +419,8 @@ def action_select (upd_file):
                         execute (cmd)
                     except OSError as e:
                         log ('exec: ' + cmd + ' - ' + str (e))
-        rmtree (prefix + "cmd")
+        with rw_access (prefix + "cmd"):
+            rmtree (prefix + "cmd")
 
     if os.path.isdir (prefix + "repo"):
         try:
