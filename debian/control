@@ -60,6 +60,7 @@ Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
   elbe-common (= ${binary:Version}),
+  elbe-buildenv (= ${binary:Version}),
   python-cherrypy3,
 Description: ELBE wsgi daemon interface
  subcommand to start wsgi services.
