@@ -17,9 +17,11 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import gpgme
 
 from apt.package import FetchError
 from shutil import rmtree
+from io import BytesIO
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.filesystem import ChRootFilesystem
@@ -281,6 +283,23 @@ class UpdatedAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
+
+        if self.node.et.text:
+            fp = self.node.et.text
+            log.printo ("transfer gpg key to target: " + fp)
+
+            key = BytesIO ()
+            ctx = gpgme.Context ()
+            ctx.armor = True
+            ctx.export (fp, key)
+
+            log.printo (str (key.getvalue ()))
+            with open ((target.path + '/pub.key'), 'wb') as tkey:
+                tkey.write (key.getvalue ())
+
+            with target:
+                os.environ ['GNUPGHOME'] = target.path
+                log.do ("gpg --import " + target.path + "/pub.key")
 
         log.printo( "generate base repo")
         arch = target.xml.text ("project/arch", key="arch")
