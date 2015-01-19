@@ -321,6 +321,7 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
         outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
         outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
+        outf.do( 'cp -a "%s"/.* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
         outf.do( 'umount /dev/loop0' )
         outf.do( 'losetup -d /dev/loop0' )
 
@@ -368,6 +369,8 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         if len(rfs.listdir( l.mountpoint )) > 0:
             outf.do( 'mv "%s"/* "%s"' % ( rfs.fname(l.mountpoint), os.path.join(
                 fspath, l.label ) ), allow_fail=True )
+            outf.do( 'mv "%s"/.* "%s"' % ( rfs.fname(l.mountpoint), os.path.join(
+                fspath, l.label ) ), allow_fail=True )
 
     try:
         # Now iterate over all images and create filesystems and partitions
@@ -389,6 +392,8 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         for i in fslist:
             if len(os.listdir(os.path.join( fspath, i.label ))) > 0:
                 outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.label ),
+                    rfs.fname(i.mountpoint) ), allow_fail=True )
+                outf.do( 'mv "%s"/.* "%s"' % ( os.path.join( fspath, i.label ),
                     rfs.fname(i.mountpoint) ), allow_fail=True )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
