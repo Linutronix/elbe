@@ -163,8 +163,9 @@ class LnAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.chroot (target.path, "/bin/ln -s %s %s" % (self.node.et.attrib['path'],
-                                                  self.node.et.text))
+        with target:
+            log.chroot (target.path, """/bin/sh -c 'ln -s %s "%s"' """ % (self.node.et.attrib['path'],
+                                                      self.node.et.text))
 
 FinetuningAction.register( LnAction )
 
