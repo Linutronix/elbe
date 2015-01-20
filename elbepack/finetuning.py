@@ -288,6 +288,7 @@ class UpdatedAction(FinetuningAction):
             fp = self.node.et.text
             log.printo ("transfer gpg key to target: " + fp)
 
+            os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
             key = BytesIO ()
             ctx = gpgme.Context ()
             ctx.armor = True
@@ -297,6 +298,7 @@ class UpdatedAction(FinetuningAction):
             with open ((target.path + '/pub.key'), 'wb') as tkey:
                 tkey.write (key.getvalue ())
 
+            target.mkdir_p ("/var/cache/elbe/gnupg", mode=0700)
             with target:
                 os.environ ['GNUPGHOME'] = target.path + "/var/cache/elbe/gnupg"
                 log.do ("gpg --import " + target.path + "/pub.key")
