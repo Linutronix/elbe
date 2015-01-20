@@ -276,6 +276,7 @@ class ChRootFilesystem(Filesystem):
         self.interpreter = interpreter
         self.cwd = os.open ("/", os.O_RDONLY)
         self.inchroot = False
+        self._ismounted = False
 
     def __delete__ (self):
         os.close (self.cwd)
@@ -326,6 +327,18 @@ class ChRootFilesystem(Filesystem):
             os.system ('mv %s %s' % (self.fname ("etc/apt/apt.conf.orig"),
                                      self.fname ("etc/apt/apt.conf")))
 
+    def get_ismounted(self):
+        return self._ismounted
+
+    def set_ismounted(self, new):
+        if self._ismounted != new:
+            if new:
+                self.mount()
+            else:
+                self.umount()
+
+    ismounted = property(fget=get_ismounted, fset=set_ismounted)
+
     def mount(self):
         if self.path == '/':
             return
@@ -337,6 +350,7 @@ class ChRootFilesystem(Filesystem):
         except:
             self.umount ()
             raise
+        self._ismounted = True
 
     def enter_chroot (self):
         assert not self.inchroot
@@ -366,6 +380,7 @@ class ChRootFilesystem(Filesystem):
         self._umount ("%s/sys" % self.path)
         self._umount ("%s/dev/pts" % self.path)
         self._umount ("%s/dev" % self.path)
+        self._ismounted = False
 
     def leave_chroot (self):
         assert self.inchroot
