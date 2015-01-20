@@ -298,7 +298,7 @@ class UpdatedAction(FinetuningAction):
                 tkey.write (key.getvalue ())
 
             with target:
-                os.environ ['GNUPGHOME'] = target.path + "/var/cache/elbe/"
+                os.environ ['GNUPGHOME'] = target.path + "/var/cache/elbe/gnupg"
                 log.do ("gpg --import " + target.path + "/pub.key")
 
         log.printo( "generate base repo")

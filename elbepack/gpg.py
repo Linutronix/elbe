@@ -107,7 +107,7 @@ def unsign_file(fname):
 
     outfilename = fname[:len(fname)-4]
 
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context()
     ctx.armor = False
 
@@ -138,7 +138,7 @@ def unsign_file(fname):
 
 def sign (infile, outfile, fingerprint):
 
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context()
     key = None
 
@@ -171,7 +171,7 @@ def sign_file(fname, fingerprint):
 
 
 def get_fingerprints ():
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context ()
     keys = ctx.keylist ()
     fingerprints = []
