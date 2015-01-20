@@ -296,11 +296,12 @@ class ChRootFilesystem(Filesystem):
         os.system ('cp %s %s' % ("/etc/resolv.conf",
                                  self.fname("etc/resolv.conf")))
 
-        if os.path.exists (self.fname("/etc/apt/apt.conf")):
+        if self.exists("/etc/apt/apt.conf"):
             os.system ('cp %s %s' % (self.fname ("/etc/apt/apt.conf"),
                                      self.fname ("/etc/apt/apt.conf.orig")))
-        os.system ('cp %s %s' % ("/etc/apt/apt.conf",
-                                 self.fname("/etc/apt/")))
+        if os.path.exists ("/etc/apt/apt.conf"):
+            os.system ('cp %s %s' % ("/etc/apt/apt.conf",
+                                     self.fname("/etc/apt/")))
 
 
         self.mount()
@@ -320,7 +321,8 @@ class ChRootFilesystem(Filesystem):
             os.system ('mv %s %s' % (self.fname ("etc/resolv.conf.orig"),
                                      self.fname ("etc/resolv.conf")))
 
-        os.system ('rm -f %s' % (self.fname ("etc/apt/apt.conf")))
+        if self.exists("/etc/apt/apt.conf"):
+            os.system ('rm -f %s' % (self.fname ("etc/apt/apt.conf")))
 
         if self.exists ("/etc/apt/apt.conf.orig"):
             os.system ('mv %s %s' % (self.fname ("etc/apt/apt.conf.orig"),
