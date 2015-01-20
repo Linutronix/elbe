@@ -303,6 +303,9 @@ class ChRootFilesystem(Filesystem):
             os.system ('cp %s %s' % ("/etc/apt/apt.conf",
                                      self.fname("/etc/apt/")))
 
+        self.mkdir_p ("usr/sbin")
+        self.write_file ("usr/sbin/policy-rc.d",
+            0755, "#!/bin/sh\nexit 101\n")
 
         self.mount()
         return self
@@ -327,6 +330,9 @@ class ChRootFilesystem(Filesystem):
         if self.exists ("/etc/apt/apt.conf.orig"):
             os.system ('mv %s %s' % (self.fname ("etc/apt/apt.conf.orig"),
                                      self.fname ("etc/apt/apt.conf")))
+
+        if self.exists("/usr/sbin/policy-rc.d"):
+            os.system ('rm -f %s' % (self.fname ("usr/sbin/policy-rc.d")))
 
     def mount(self):
         if self.path == '/':
