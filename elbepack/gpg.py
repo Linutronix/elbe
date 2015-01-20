@@ -18,8 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import gpgme
+import os
+import sys
 
 class OverallStatus:
 
@@ -106,6 +107,7 @@ def unsign_file(fname):
 
     outfilename = fname[:len(fname)-4]
 
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
     ctx = gpgme.Context()
     ctx.armor = False
 
@@ -136,6 +138,7 @@ def unsign_file(fname):
 
 def sign (infile, outfile, fingerprint):
 
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
     ctx = gpgme.Context()
     key = None
 
@@ -168,6 +171,7 @@ def sign_file(fname, fingerprint):
 
 
 def get_fingerprints ():
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/"
     ctx = gpgme.Context ()
     keys = ctx.keylist ()
     fingerprints = []
