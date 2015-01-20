@@ -79,7 +79,7 @@ class VirtApt:
         #print "updating in progress", obj
         return True
 
-    def mkdir_p (self, newdir, mode=0777):
+    def mkdir_p (self, newdir, mode=0755):
         """works the way a good mkdir -p would...
                 - already exists, silently complete
                 - regular file in the way, raise an exception
