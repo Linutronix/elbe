@@ -65,6 +65,10 @@ def run_command( argv ):
                         action="store_true", default=False,
            help="start qemu in graphical mode to enable console switch" )
 
+    oparser.add_option( "--devel", dest="devel",
+                        action="store_true", default=False,
+           help="use devel mode, and install current builddir inside initvm" )
+
     (opt,args) = oparser.parse_args(argv)
 
     print opt.directory
@@ -77,6 +81,11 @@ def run_command( argv ):
         print "too many filenames specified"
         oparser.print_help()
         sys.exit(20)
+
+    if opt.devel:
+        if not os.path.isdir("./elbepack" ):
+            print "Devel Mode only valid, when running from elbe checkout"
+            sys.exit(20)
 
     if not opt.skip_validation:
         if not validate_xml( args[0] ):
@@ -160,3 +169,6 @@ def run_command( argv ):
 
     shutil.copyfile( args[0],
        os.path.join(out_path, "source.xml" ) )
+
+    if opt.devel:
+        os.system( 'tar cvfj "%s" .' % os.path.join( out_path, "elbe-devel.tar.bz2" ) )
