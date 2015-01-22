@@ -25,6 +25,7 @@ from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
 import os
+import time
 
 class InChRootObject(object):
     def __init__(self, rfs):
@@ -50,6 +51,19 @@ class RPCAPTCache(InChRootObject):
 
         self.cache = Cache()
         self.cache.open()
+
+    def dbg_dump( self, filename ):
+        ts = time.localtime ()
+        filename = filename + (
+                '_%02d%02d%02d' % (ts.tm_hour, ts.tm_min, ts.tm_sec))
+        with open (filename, 'w') as dbg:
+            for p in self.cache:
+                dbg.write ('%s %s %d %d %d %d %d %d %d %d %d %d %d %d\n' % (
+                    p.name, p.candidate.version, p.marked_keep, p.marked_delete,
+                    p.marked_upgrade, p.marked_downgrade, p.marked_install,
+                    p.marked_reinstall, p.is_auto_installed, p.is_installed,
+                    p.is_auto_removable, p.is_now_broken, p.is_inst_broken,
+                    p.is_upgradable))
 
     def get_sections( self ):
         ret = list(set( [p.section for p in self.cache] ))
