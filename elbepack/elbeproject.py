@@ -318,7 +318,8 @@ class ElbeProject (object):
                     self.log.printo( "But it does not contain an initvm node" )
 
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
-            self.buildenv.seed_etc()
+            if not buildenv:
+                self.buildenv.seed_etc()
 
             # remove all non-essential packages to ensure that on a incremental
             # build packages can be removed

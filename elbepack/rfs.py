@@ -218,6 +218,9 @@ class BuildEnv ():
 
         serial_con, serial_baud = self.xml.text( "target/console" ).split(',')
         if serial_baud:
-            self.log.chroot(self.rfs.path, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
+            if (self.xml.text( "project/suite" ) == "wheezy") or (self.xml.text( "project/suite" ) == "squeeze"):
+                self.log.chroot(self.rfs.path, """/bin/sh -c 'echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud) )
+            else:
+                self.log.chroot(self.rfs.path, """/bin/sh -c 'ln -s /lib/systemd/system/serial-getty@.service /etc/systemd/system/getty.target.wants/serial-getty@%s.service'""" % serial_con )
         else:
             self.log.printo("parsing console tag failed, needs to be of '/dev/ttyS0,115200' format.")
