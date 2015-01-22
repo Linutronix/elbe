@@ -326,14 +326,11 @@ class ElbeProject (object):
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
 
-            self.get_rpcaptcache().cleanup(debootstrap_pkgs)
-
-            # Now install requested packages
             pkgs = self.buildenv.xml.get_target_packages()
-
             if buildenv:
                 pkgs = pkgs + self.buildenv.xml.get_buildenv_packages()
 
+            # Now install requested packages
             for p in pkgs:
                 try:
                     self.get_rpcaptcache().mark_install( p, None )
@@ -341,6 +338,9 @@ class ElbeProject (object):
                     self.log.printo( "No Package " + p )
                 except SystemError:
                     self.log.printo( "Unable to correct problems " + p )
+
+            self.get_rpcaptcache().cleanup(debootstrap_pkgs + pkgs)
+
             try:
                 self.get_rpcaptcache().commit()
             except SystemError:

@@ -86,15 +86,15 @@ class RPCAPTCache(InChRootObject):
                 auto_inst = not nodeps,
                 from_user = from_user )
 
-    def cleanup (self, debootstrap_pkgs):
+    def cleanup (self, exclude_pkgs):
         for p in self.cache:
-            if p.is_installed:
+            if (p.is_installed and not p.is_auto_installed) or p.is_auto_removable:
                 remove = True
-                for x in debootstrap_pkgs:
+                for x in exclude_pkgs:
                     if x == p.name:
                         remove = False
                 if remove:
-                    p.mark_delete( auto_fix=False, purge=True )
+                    p.mark_delete( auto_fix=True, purge=True )
 
     def mark_upgrade( self, pkgname, version ):
         p = self.cache[pkgname]
