@@ -345,17 +345,18 @@ class ProjectManager(object):
 
             ep = self._get_current_project( userid )
             pkgs = ep.xml.get_target_packages()
+
             if pkgname in pkgs:
                 pkgs.remove(pkgname)
+                c.mark_delete(pkgname, version)
+
             ep.xml.set_target_packages(pkgs)
 
             debootstrap_pkgs = []
             for p in ep.xml.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
-            c.cleanup(debootstrap_pkgs)
 
-            for p in pkgs:
-                c.mark_install( p, None )
+            c.cleanup(debootstrap_pkgs + pkgs)
 
     def get_debootstrap_pkgs(self, userid):
         with self.lock:
