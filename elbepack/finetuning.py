@@ -306,16 +306,15 @@ class UpdatedAction(FinetuningAction):
 
         log.printo( "generate base repo")
         arch = target.xml.text ("project/arch", key="arch")
-        rfs = ChRootFilesystem (target.path)
-        with rfs:
-            rfs.mkdir_p ('/tmp/pkgs')
-            cache = get_rpcaptcache (rfs, "updated-repo.log", arch)
-            for p in target.xml.node ("fullpkgs"):
-                pkg = XMLPackage (p, arch)
-                print pkg
+
+        buildenv.rfs.mkdir_p ('/tmp/pkgs')
+        with buildenv:
+            cache = get_rpcaptcache (buildenv.rfs, "updated-repo.log", arch)
+
+            pkglist = cache.get_installed_pkgs()
+            for pkg in pkglist:
                 try:
-                    cache.download_binary (pkg.name, '/tmp/pkgs',
-                            pkg.installed_version)
+                    cache.download_binary (pkg.name, '/tmp/pkgs', pkg.installed_version)
                 except ValueError as ve:
                     log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
                 except FetchError as fe:
@@ -323,21 +322,22 @@ class UpdatedAction(FinetuningAction):
                 except TypeError as te:
                     log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
-            r = UpdateRepo (target.xml,
-                  target.path + '/var/cache/elbe/repos/base',
-                  log)
+        r = UpdateRepo (target.xml,
+              target.path + '/var/cache/elbe/repos/base',
+              log)
 
-            for d in target.glob ('tmp/pkgs/*.deb'):
-                r.includedeb (d, 'main')
+        for d in buildenv.rfs.glob ('tmp/pkgs/*.deb'):
+            r.includedeb (d, 'main')
 
-            slist = target.path + '/etc/apt/sources.list.d/base.list'
-            slist_txt = 'deb file:///var/cache/elbe/repos/base '
-            slist_txt += target.xml.text ("/project/suite")
-            slist_txt += " main"
-            with open (slist, 'w') as apt_source:
-                apt_source.write (slist_txt)
+        slist = target.path + '/etc/apt/sources.list.d/base.list'
+        slist_txt = 'deb file:///var/cache/elbe/repos/base '
+        slist_txt += target.xml.text ("/project/suite")
+        slist_txt += " main"
 
-            rmtree (target.path + '/tmp/pkgs')
+        with open (slist, 'w') as apt_source:
+            apt_source.write (slist_txt)
+
+        rmtree (buildenv.rfs.path + '/tmp/pkgs')
 
 
 FinetuningAction.register( UpdatedAction )
