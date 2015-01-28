@@ -154,7 +154,7 @@ class ElbeProject (object):
 
         # Elbe report
         reportpath = os.path.join( self.builddir, "elbe-report.txt" )
-        elbe_report( self.xml, self.buildenv.rfs, self.get_rpcaptcache(),
+        elbe_report( self.xml, self.buildenv, self.get_rpcaptcache(),
                 reportpath, self.targetfs )
 
         # Licenses

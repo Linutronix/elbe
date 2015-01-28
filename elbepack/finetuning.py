@@ -90,7 +90,7 @@ class BuildenvMkdirAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mkdir -p " + buildenv.fname( self.node.et.text ) )
+        log.do( "mkdir -p " + buildenv.rfs.fname( self.node.et.text ) )
 
 FinetuningAction.register( BuildenvMkdirAction )
 
@@ -115,7 +115,7 @@ class BuildenvCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + buildenv.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+        log.do( "cp -av " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
 
 FinetuningAction.register( BuildenvCpAction )
 
@@ -127,7 +127,7 @@ class B2TCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + buildenv.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+        log.do( "cp -av " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
 
 FinetuningAction.register( B2TCpAction )
 
@@ -139,7 +139,7 @@ class T2BCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
 
 FinetuningAction.register( T2BCpAction )
 
@@ -178,7 +178,7 @@ class BuildenvMvAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mv -v " + buildenv.fname( self.node.et.attrib['path'] ) + " " + buildenv.fname( self.node.et.text ) )
+        log.do( "mv -v " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
 
 FinetuningAction.register( BuildenvMvAction )
 

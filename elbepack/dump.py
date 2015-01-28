@@ -113,8 +113,9 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     if errors == 0:
         elog.printo( "No Errors found" )
 
-def elbe_report( xml, rfs, cache, reportname, targetfs ):
+def elbe_report( xml, buildenv, cache, reportname, targetfs ):
     outf = ASCIIDocLog(reportname)
+    rfs = buildenv.rfs
 
     outf.h1( "ELBE Report for Project " + xml.text("project/name") )
 
@@ -162,7 +163,7 @@ def elbe_report( xml, rfs, cache, reportname, targetfs ):
     index = cache.get_fileindex()
     mt_index = targetfs.mtime_snap()
     if xml.has("target/finetuning"):
-        do_finetuning(xml, outf, rfs, targetfs)
+        do_finetuning(xml, outf, buildenv, targetfs)
         #outf.print_raw( do_command( opt.finetuning ) )
         mt_index_post_fine = targetfs.mtime_snap()
     else:
