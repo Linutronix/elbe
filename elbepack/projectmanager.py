@@ -356,7 +356,10 @@ class ProjectManager(object):
             for p in ep.xml.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append (p.et.text)
 
-            c.cleanup(debootstrap_pkgs + pkgs)
+            # temporary disabled because of
+            # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
+            # the functions cleans up to much
+            # c.cleanup(debootstrap_pkgs + pkgs)
 
     def get_debootstrap_pkgs(self, userid):
         with self.lock:

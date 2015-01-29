@@ -340,7 +340,10 @@ class ElbeProject (object):
                 except SystemError:
                     self.log.printo( "Unable to correct problems " + p )
 
-            self.get_rpcaptcache().cleanup(debootstrap_pkgs + pkgs)
+            # temporary disabled because of
+            # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
+            # the functions cleans up to much
+            # self.get_rpcaptcache().cleanup(debootstrap_pkgs + pkgs)
 
             try:
                 self.get_rpcaptcache().commit()
