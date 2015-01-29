@@ -171,6 +171,11 @@ def fname_replace (s):
     return res
 
 def update_sourceslist (xml, update_dir):
+    # only create sources list entry if repo is valid
+    if not os.path.isdir (update_dir + '/dists'):
+        log ('invalid repository, not added to sources.list')
+        return
+
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
     deb += " main\n"
     fname = "/etc/apt/sources.list.d/"
