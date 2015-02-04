@@ -62,9 +62,13 @@ class fstabentry(object):
         if entry.has("fs"):
             self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
+        if entry.has("passno"):
+            self.passno = entry.text("passno")
+        else:
+            self.passno = "0"
 
     def get_str(self):
-        return "%s %s %s %s 0 0\n" % (self.source, self.mountpoint, self.fstype, self.options)
+        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint, self.fstype, self.options, self.passno)
 
     def mountdepth(self):
         h = self.mountpoint
