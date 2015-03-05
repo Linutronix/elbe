@@ -76,7 +76,7 @@ all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
-		-usb && reset
+		-usb
 	mkdir -p .stamps
 	touch .stamps/stamp-install-initial-image
 
@@ -97,8 +97,7 @@ run:
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=1 \
 % endif
-		-smp $(SMP) \
-	&& reset
+		-smp $(SMP)
 
 run-con:
 	$(INTERPRETER) -M $(MACHINE) \
@@ -115,8 +114,7 @@ run-con:
 		-m $(MEMSIZE) \
 		-usb \
 		-nographic \
-		-smp $(SMP) \
-	&& reset
+		-smp $(SMP)
 
 .elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
 	mkdir -p .elbe-gen
