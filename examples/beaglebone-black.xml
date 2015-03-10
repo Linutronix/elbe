@@ -55,7 +55,7 @@
 				<size>1900MiB</size>
 					<partition>
 						<size>50MiB</size>
-						<label>boot</label>
+						<label>uboot</label>
 						<bootable />
 					</partition>
 					<partition>
@@ -69,47 +69,26 @@
 				<label>rfs</label>
 				<mountpoint>/</mountpoint>
 				<fs>
-					<type>ext4</type>
+					<type>ext2</type>
 					<tune2fs>-i 0</tune2fs>
 				</fs>
 			</bylabel>
 			<bylabel>
-				<label>boot</label>
-				<mountpoint>/boot</mountpoint>
+				<label>uboot</label>
+				<mountpoint>/uboot</mountpoint>
 				<fs>
 					<type>vfat</type>
 				</fs>
 			</bylabel>
-			<bydev>
-				<source>none</source>
-				<mountpoint>/sys/kernel/debug</mountpoint>
-				<fs>
-					<type>debugfs</type>
-				</fs>
-			</bydev>
-			<bydev>
-				<source>none</source>
-				<mountpoint>/proc</mountpoint>
-				<fs>
-					<type>proc</type>
-				</fs>
-			</bydev>
-			<bydev>
-				<source>none</source>
-				<mountpoint>/sys</mountpoint>
-				<fs>
-					<type>sysfs</type>
-				</fs>
-			</bydev>
 		</fstab>
 		<norecommend />
 		<finetuning>
-			<rm>etc/apt/sources.list</rm>
-			<rm>lib/modules/*versatile*</rm>
-			<rm>var/cache/apt/archives/*.deb</rm>
-			<command>echo "T0:23:respawn:/sbin/getty -L ttyO0 115200 vt102" &gt;&gt; etc/inittab</command>
-			<command>chroot . passwd -d root</command>
-			<command>cp boot/vmlinuz-3.12.4-rt6-* boot/zImage</command>
+			<rm>/var/cache/apt/archives/*.deb</rm>
+			<mkdir>/uboot</mkdir>
+			<cp path='/boot/*'>/uboot</cp>
+			<mkdir>/uboot/boot</mkdir>
+			<mv path='/boot/vmlinuz-3.12.4-rt6-*'>/uboot/boot/zImage</mv>
+			<mv path='/boot/*.dtb'>/uboot/boot/</mv>
 		</finetuning>
 		<pkg-list>
 			<pkg>linux-image-3.12.4-rt6-00013-ga8fd04d</pkg>
