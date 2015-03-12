@@ -1,3 +1,14 @@
+elbe (0.9.4) unstable; urgency=medium
+
+  * fix systemd/sysvinit login-console initialization
+  * fix beaglebone-black example
+  * remove reset calls form Makefile to allow automated builds
+  * allow specification of passno in fstab
+  * improve behaviour of incremental rebuilds
+  * finetuning: run ln action under 'with target'
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 12 Mar 2015 13:23:22 +0100
+
 elbe (0.9.3) unstable; urgency=medium
 
   * finetuning/updated: enable automatic pubkey install
