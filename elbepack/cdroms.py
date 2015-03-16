@@ -30,22 +30,25 @@ def mk_source_cdrom(rfs, arch, codename, target, log):
 
     rfs.mkdir_p( '/var/cache/elbe/sources' )
 
+    repo = CdromSrcRepo( codename,
+                         os.path.join( target, "srcrepo" ),
+                         log,
+                         CDROM_SIZE )
+
     cache = get_rpcaptcache( rfs, "aptcache.log", arch )
 
     pkglist = cache.get_installed_pkgs()
 
     for pkg in pkglist:
         try:
-            cache.download_source( pkg.name, '/var/cache/elbe/sources' )
+            dsc = cache.download_source( pkg.name, '/var/cache/elbe/sources' )
+            repo.includedsc( dsc )
         except ValueError as ve:
             log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
-    repo = CdromSrcRepo(codename, os.path.join(target, "srcrepo" ), log, CDROM_SIZE )
 
-    for dsc in rfs.glob('var/cache/elbe/sources/*.dsc'):
-        repo.includedsc(dsc)
 
     repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
@@ -54,13 +57,17 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
     rfs.mkdir_p( '/var/cache/elbe/binaries/added' )
     rfs.mkdir_p( '/var/cache/elbe/binaries/main' )
 
+    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, CDROM_SIZE )
     cache = get_rpcaptcache( rfs, "aptcache.log", arch )
 
     pkglist = cache.get_installed_pkgs()
 
     for pkg in pkglist:
         try:
-            cache.download_binary( pkg.name, '/var/cache/elbe/binaries/added', pkg.installed_version )
+            deb = cache.download_binary( pkg.name,
+                                        '/var/cache/elbe/binaries/added',
+                                        pkg.installed_version )
+            repo.includedeb(deb, 'added')
         except ValueError as ve:
             log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
         except FetchError as fe:
@@ -72,20 +79,15 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
         for p in xml.node("debootstrappkgs"):
             pkg = XMLPackage(p, arch)
             try:
-                cache.download_binary( pkg.name, '/var/cache/elbe/binaries/main', pkg.installed_version )
+                deb = cache.download_binary( pkg.name,
+                                             '/var/cache/elbe/binaries/main',
+                                             pkg.installed_version )
+                repo.includedeb(deb, 'main')
             except ValueError as ve:
                 log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
                 log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
             except TypeError as te:
                 log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
-
-    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, CDROM_SIZE )
-
-    for deb in rfs.glob('var/cache/elbe/binaries/added/*.deb'):
-        repo.includedeb(deb, 'added')
-
-    for deb in rfs.glob('var/cache/elbe/binaries/main/*.deb'):
-        repo.includedeb(deb, 'main')
 
     repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
