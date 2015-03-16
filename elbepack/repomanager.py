@@ -24,7 +24,9 @@ from elbepack.pkgutils import get_dsc_size
 
 
 class RepoBase(object):
-    def __init__( self, path, log, arch, codename, origin, description, components="main", maxsize=None ):
+    def __init__( self, path, log, arch, codename, origin, description,
+            components="main", maxsize=None,
+            mirror='http://ftp.debian.org/debian' ):
 
         self.vol_path = path
         self.volume_count = 0
@@ -36,7 +38,7 @@ class RepoBase(object):
         self.origin = origin
         self.description = description
         self.maxsize = maxsize
-
+        self.mirror = mirror
         self.fs = self.get_volume_fs(self.volume_count)
 
         self.gen_repo_conf()
@@ -65,7 +67,25 @@ class RepoBase(object):
         fp.write( "Components: " + self.components + "\n" )
         fp.write( "Description: " + self.description + "\n" )
 
+        if 'main/debian-installer' in self.components:
+            fp.write( "Update: di\n" )
+            fp.write( "UDebComponents: main\n" )
+
         fp.close()
+
+        if 'main/debian-installer' in self.components:
+            fp = self.fs.open( "conf/updates", "w" )
+
+            fp.write( "Name: di\n" )
+            fp.write( "Method: " + self.mirror + "\n" )
+            fp.write( "VerifyRelease: blindtrust\n" )
+            fp.write( "Components: \n" )
+            fp.write ( "UDebComponents: main>main\n" )
+
+            fp.close()
+
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update' )
+
 
     def includedeb( self, path, component="main"):
         if self.maxsize:
@@ -94,8 +114,8 @@ class RepoBase(object):
             for i in range(self.volume_count+1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
-                self.log.do( "genisoimage -o %s -J -R %s" % (newname, volfs.path) )
-
+                self.log.do( "genisoimage -o %s -J -R %s" % (newname,
+                                                             volfs.path) )
 
 
 class UpdateRepo(RepoBase):
@@ -105,7 +125,15 @@ class UpdateRepo(RepoBase):
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
-        RepoBase.__init__( self, path, log, arch, codename, "Update", "Update", "main" )
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           arch,
+                           codename,
+                           "Update",
+                           "Update",
+                           "main" )
+
 
 class CdromBinRepo(RepoBase):
     def __init__( self, xml, path, log, maxsize ):
@@ -114,13 +142,44 @@ class CdromBinRepo(RepoBase):
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
-        RepoBase.__init__( self, path, log, arch, codename, "Elbe", "Elbe Binary Cdrom Repo", "main added", maxsize )
+        # add amd64 for initvm packages
+        if arch != 'amd64':
+            arch += ' amd64'
+
+        mirror = xml.get_primary_mirror ("/media/cdrom")
+
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           arch,
+                           codename,
+                           "Elbe",
+                           "Elbe Binary Cdrom Repo",
+                           "main main/debian-installer added",
+                           maxsize,
+                           mirror=mirror )
+
 
 class CdromSrcRepo(RepoBase):
     def __init__( self, codename, path, log, maxsize ):
-        RepoBase.__init__( self, path, log, "source", codename, "Elbe", "Elbe Source Cdrom Repo", "main", maxsize )
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           "source",
+                           codename,
+                           "Elbe",
+                           "Elbe Source Cdrom Repo",
+                           "main main/debian-installer",
+                           maxsize )
 
 
 class ToolchainRepo(RepoBase):
     def __init__( self, arch, codename, path, log):
-        RepoBase.__init__( self, path, log, arch, codename, "toolchain", "Toolchain binary packages Repo", "main" )
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           arch,
+                           codename,
+                           "toolchain",
+                           "Toolchain binary packages Repo",
+                           "main" )
