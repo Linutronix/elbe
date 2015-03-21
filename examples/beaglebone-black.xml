@@ -55,7 +55,7 @@
 				<size>1900MiB</size>
 					<partition>
 						<size>50MiB</size>
-						<label>uboot</label>
+						<label>boot</label>
 						<bootable />
 					</partition>
 					<partition>
@@ -74,8 +74,8 @@
 				</fs>
 			</bylabel>
 			<bylabel>
-				<label>uboot</label>
-				<mountpoint>/uboot</mountpoint>
+				<label>boot</label>
+				<mountpoint>/boot</mountpoint>
 				<fs>
 					<type>vfat</type>
 				</fs>
@@ -84,11 +84,7 @@
 		<norecommend />
 		<finetuning>
 			<rm>/var/cache/apt/archives/*.deb</rm>
-			<mkdir>/uboot</mkdir>
-			<cp path='/boot/*'>/uboot</cp>
-			<mkdir>/uboot/boot</mkdir>
-			<mv path='/boot/vmlinuz-3.12.4-rt6-*'>/uboot/boot/zImage</mv>
-			<mv path='/boot/*.dtb'>/uboot/boot/</mv>
+			<mv path='/boot/vmlinuz-3.12.4-rt6-00013-ga8fd04d'>/boot/zImage</mv>
 		</finetuning>
 		<pkg-list>
 			<pkg>linux-image-3.12.4-rt6-00013-ga8fd04d</pkg>
