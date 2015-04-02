@@ -29,7 +29,7 @@ def get_cmdlist():
 
 def usage():
     print 'elbe v' + elbe_version
-    print 'need a subcommand: e.g. \'elbe create\'. \n\
+    print 'need a subcommand: e.g. \'elbe init\'. \n\
     Available subcommands are: \n'
     for i in get_cmdlist():
         print '        * '+i
