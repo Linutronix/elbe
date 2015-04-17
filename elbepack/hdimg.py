@@ -225,9 +225,9 @@ class grubinstaller( object ):
             self.outf.do( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (imagemnt,imagemnt))
 
         finally:
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "dev" ), allow_fail=True )
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "proc" ), allow_fail=True )
-            self.outf.do( "umount %s" % os.path.join( imagemnt, "sys" ), allow_fail=True )
+            self.outf.do( "umount -l %s" % os.path.join( imagemnt, "dev" ), allow_fail=True )
+            self.outf.do( "umount -l %s" % os.path.join( imagemnt, "proc" ), allow_fail=True )
+            self.outf.do( "umount -l %s" % os.path.join( imagemnt, "sys" ), allow_fail=True )
 
             self.outf.do( "losetup -d /dev/poop0", allow_fail=True )
 
