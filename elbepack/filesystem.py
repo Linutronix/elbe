@@ -441,6 +441,18 @@ class TargetFs(ChRootFilesystem):
                 # error was logged; continue
                 pass
 
+        if self.xml.has("target/package/squashfs"):
+            oldwd = os.getcwd()
+            sfs_name = self.xml.text("target/package/squashfs/name")
+            os.chdir(self.fname(''))
+            try:
+                self.log.do("mksquashfs %s %s/%s -noappend -no-progress" % (self.fname(''), targetdir, sfs_name))
+                # only append filename if creating mksquashfs was successful
+                self.images.append (sfs_name)
+            except CommandError as e:
+                # error was logged; continue
+                pass
+
 class BuildImgFs(ChRootFilesystem):
     def __init__(self, path, interpreter):
         ChRootFilesystem.__init__(self, path, interpreter)

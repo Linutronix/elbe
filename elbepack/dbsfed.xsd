@@ -667,7 +667,7 @@
       <element name="package" type="rfs:package" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            package rootfilesystem as a tarball or cpio image
+            package rootfilesystem as a tarball, cpio or a squashfs image
           </documentation>
         </annotation>
       </element>
@@ -1192,6 +1192,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="squashfs" type="rfs:squashfs" minOccurs="0">
+        <annotation>
+          <documentation>
+             squashfs image of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
@@ -1230,6 +1237,23 @@
         <annotation>
           <documentation>
              filename of the cpio package 
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="squashfs">
+    <annotation>
+      <documentation>
+         describes a squashfs image
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             filename of the squashfs image
           </documentation>
         </annotation>
       </element>

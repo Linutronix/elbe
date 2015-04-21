@@ -85,7 +85,8 @@ Depends: ${misc:Depends},
   qemu-user-static,
   reprepro,
   rsync,
-  kpartx
+  kpartx,
+  squashfs-tools
 Recommends: elbe-daemon (= ${binary:Version}),
   elbe-soap (= ${binary:Version})
 Description: ELBE build environment
