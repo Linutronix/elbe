@@ -13,30 +13,6 @@ buildenv/build environment: debian environment in which the target image is
 elbe xml file: XML description to generate buildenv and target image
 
 
-fix installation of grub bootloader
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-grub needs informations how the disk drives are connected (hd0,1 - ..).
-These informations need to be added to the XML format and used in the preseeding
-step.
-
-
-Debian Packages stored on the Host PC should be installable to the target
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The user should specify the path and filename of all local packages that should
-be installed inside the <pkg-list> attribute:
-
-  ..
-  </pkg file=/home/manut/deb/mypackage_0815_armel.deb>
-  <pkg>bash</pkg>
-  ..
-
-'elbe create' makes a debian cdrom containing these packages (with reprepro).
-This has nothing todo with the <cdrom> tag currently used.
-The so created cdrom is added to qemu as an additional drive.
-In the preseeding step of the installer the cdrom is added to apt and the
-specified packages are installed with apt-get install.
-
-
 define multiple debian mirror groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 multiple mirror groups can be defined in the elbe xml file. At elbe create time
@@ -52,52 +28,15 @@ A swap partition/file can be defined in the xml file. This may be needed to
 build huge software packages like firefox or qt.
 
 
-support multicore arm emulator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-There should be ARM SMP support in qemu. Therefore another machine emulation
-is needed. Build a kernel for this machine and try to run elbe daemon inside
-a machine with qemu-system-arm -smp 2 or higher. This should increase elbe
-performance on multicore machines.
-
-
-support virtio inside arm emulator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-There are experimental virtio-mmio patches for qemu-system-arm:
-  https://lkml.org/lkml/2011/10/6/226
-  http://lists.nongnu.org/archive/html/qemu-devel/2011-11/msg01870.html
-
-Monitor the status of these patches and make an optional switch for virtio
-for arm xml description files.
-
 
 NEW ELBE TOOLS
 --------------
-
-elbe daemon
-^^^^^^^^^^^
-There is an undocumented feature to build several target images inside one
-buildimage. This can be used to speedup target image generation.
-
-Currently this process needs to be started inside the buildenv. There should
-be tooling to send elbe XML files into an existing buildenv and to get back
-a new target image.
 
 host package cache
 ^^^^^^^^^^^^^^^^^^
 store all used debian packages in a package cache on the host system.
 http://www.ehow.com/list_7499016_alternatives-aptproxy.html
 approx and apt-cacher may be used.
-
-
-convert lxexec to work with elbe daemon
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lxexec is used to prefix commands on the developer PC. If a command is prefixed
-by lxexec it runs inside the elbe buildenvironment. The outputs of the command
-are redirected to the developers PC and the content of the currently working
-directory is synchronized to the buildenvironment. This is used e.g. to compile
-an own application. Therefore the make command can be prefixed with lxexec
-inside eclipse and the compilation process looks for eclipse like it is running
-on the developers PC.
 
 
 elbe test suite
