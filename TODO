@@ -12,6 +12,15 @@ buildenv/build environment: debian environment in which the target image is
 
 elbe xml file: XML description to generate buildenv and target image
 
+remove buildchroot from preseed
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+and use elbe control after the initvm is created to create and build the
+project
+
+fix binary/source cd generation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+think about syncing the target part into the initvm / resource manager for
+loopback mounts / container ?
 
 define multiple debian mirror groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
