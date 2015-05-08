@@ -37,14 +37,14 @@ def get_initvm_pkglist ():
     return pkglist
 
 
-def mk_source_cdrom(rfs, arch, codename, target, log):
+def mk_source_cdrom(rfs, arch, codename, target, log, cdrom_size=CDROM_SIZE):
 
     rfs.mkdir_p( '/var/cache/elbe/sources' )
 
     repo = CdromSrcRepo( codename,
                          os.path.join( target, "srcrepo" ),
                          log,
-                         CDROM_SIZE )
+                         cdrom_size )
 
     cache = get_rpcaptcache( rfs, "aptcache.log", arch )
 
@@ -79,12 +79,12 @@ def mk_source_cdrom(rfs, arch, codename, target, log):
     repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
 
-def mk_binary_cdrom(rfs, arch, codename, xml, target, log):
+def mk_binary_cdrom(rfs, arch, codename, xml, target, log, cdrom_size=CDROM_SIZE):
 
     rfs.mkdir_p( '/var/cache/elbe/binaries/added' )
     rfs.mkdir_p( '/var/cache/elbe/binaries/main' )
 
-    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, CDROM_SIZE )
+    repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, cdrom_size)
 
     if not xml is None:
         pkglist = get_initvm_pkglist()

@@ -25,6 +25,7 @@ from elbepack.shellhelper import CommandError
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDB
+from elbepack.cdroms import CDROM_SIZE
 from sqlalchemy.exc import OperationalError
 
 
@@ -51,6 +52,8 @@ def run_command( argv ):
     oparser.add_option( "--build-sources", action="store_true",
                         dest="build_sources", default=False,
                         help="Build Source CD" )
+    oparser.add_option( "--cdrom-size", action="store",
+                        dest="cdrom_size", default=CDROM_SIZE, help="ISO CD size in MB" )
     oparser.add_option( "--debug", action="store_true", dest="debug",
                         default=False,
                         help="Enable various features to debug the build" )
@@ -79,7 +82,7 @@ def run_command( argv ):
 
     try:
         project.build( opt.skip_debootstrap, opt.skip_cdrom,
-                opt.build_sources, opt.debug, opt.skip_pkglist )
+                opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist )
     except CommandError as ce:
         print "command in project build failed:", ce.cmd
         sys.exit(20)

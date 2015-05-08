@@ -29,7 +29,7 @@ from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
 from elbepack.dump import elbe_report, dump_debootstrappkgs
 from elbepack.dump import dump_fullpkgs, check_full_pkgs
-from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
+from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 
 class IncompatibeArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
@@ -94,7 +94,7 @@ class ElbeProject (object):
             self.targetfs = None
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
-            build_sources = False, debug = False, skip_pkglist = False):
+            build_sources = False, cdrom_size = CDROM_SIZE, debug = False, skip_pkglist = False):
         # Write the log header
         self.write_log_header()
 
@@ -180,10 +180,10 @@ class ElbeProject (object):
         with self.buildenv:
             if not skip_cdrom:
                 mk_binary_cdrom( self.buildenv.rfs, arch, codename, self.xml,
-                        self.builddir, self.log )
+                        self.builddir, self.log, cdrom_size=cdrom_size )
                 if build_sources:
                     mk_source_cdrom( self.buildenv.rfs, arch, codename,
-                            self.builddir, self.log )
+                            self.builddir, self.log, cdrom_size=cdrom_size )
 
 
         if self.postbuild_file:

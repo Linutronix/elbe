@@ -26,7 +26,7 @@ from elbepack.elbexml import ValidationError
 from elbepack.asciidoclog import StdoutLog, ASCIIDocLog
 from elbepack.filesystem import ChRootFilesystem
 
-from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
+from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 
 
 
@@ -52,6 +52,8 @@ def run_command( argv ):
     oparser.add_option( "--source", action="store_true",
                         dest="source", default=False,
                         help="build source cdrom" )
+    oparser.add_option( "--cdrom-size", action="store",
+                        dest="cdrom_size", default=CDROM_SIZE, help="ISO CD size in MB" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -88,8 +90,10 @@ def run_command( argv ):
 
     if opt.source:
         with rfs:
-            mk_source_cdrom( rfs, arch, codename, builddir, log )
+            mk_source_cdrom( rfs, arch, codename, builddir, log,
+                    opt.cdrom_size )
 
     if opt.binary:
         with rfs:
-            mk_binary_cdrom( rfs, arch, codename, xml, builddir, log )
+            mk_binary_cdrom( rfs, arch, codename, xml, builddir, log,
+                    opt.cdrom_size )
