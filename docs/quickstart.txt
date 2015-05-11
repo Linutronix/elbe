@@ -184,8 +184,6 @@ $ ssh root@vm
 Everything else we do is now on the initvm as root. Any commands I now
 show will be from within the initvm.
 
-----------------------------------------------------------------
-
 To build my "fun.xml" root filesystem:
 
 ----------------------------------------------------------------
