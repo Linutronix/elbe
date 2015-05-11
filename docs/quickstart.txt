@@ -1,0 +1,308 @@
+Embedded Linux Build Environment (elbe) Quickstart Guide
+========================================================
+
+Elbe is a
+Debian based system to generate root-filesystems for embedded devices.
+
+You have probably received a root-filesystem, which has been built with Elbe.
+Additionally you should have an xml File describing the root-filesystem.
+
+This quickstart guide describes the steps necessary to rebuild the 
+root-filesystem from the xml File.
+
+Steps necessary
+---------------
+
+. Install Elbe on Host Linux
+. Use elbe init to generate `initvm`
+. Build the root-filesystem
+
+Steps 1 and 2 need only be performed once.
+
+
+Installing Elbe
+---------------
+
+There are several possibilities to install Elbe.
+The simplest method is by installing prebuilt binary packages 
+via linutronix package repository on a Debian 8 (Jessie) System.
+
+But elbe can also be installed from git.
+
+Binary Debian Packages
+~~~~~~~~~~~~~~~~~~~~~~
+
+The latest development packages for elbe reside in the following Repository
+
+--------------------------------------------------------
+http://debian.linutronix.de/elbe-testing
+--------------------------------------------------------
+
+Add the following Line to the file `/etc/apt/sources.list`
+
+--------------------------------------------------------
+deb http://debian.linutronix.de/elbe-testing jessie main
+--------------------------------------------------------
+
+Then as root run:
+
+--------------------------------------------------------
+$ apt-get update
+$ apt-get install elbe elbe-control
+--------------------------------------------------------
+
+Git Version
+~~~~~~~~~~~
+
+If you can not use Debian Jessie, you can also checkout the current
+Elbe sourcecode via git from github.
+
+--------------------------------------------------------
+git clone https://github.com/Linutronix/elbe.git
+git checkout -b elbe-1.0 origin/devel/elbe-1.0
+--------------------------------------------------------
+
+Please note, that the master branch is pointing to the old elbe version 0.5.x
+until elbe-1.0 is finalized.
+
+Elbe can run without being installed from the git checkout.
+Just note that file paths are different under this situation.
+
+--------------------------------------------------------
+elbe -> ./elbe 
+/usr/share/doc/elbe-doc/examples -> examples/
+--------------------------------------------------------
+
+
+Create initvm
+-------------
+
+The first thing you need to do is set up a virtual machine for
+generating root filesystems. The reason why a virtual machine is used
+for this is because:
+
+. it doesn't require the user's workstation to install lots of special
+   packages required by elbe
+
+. it allows elbe to run in an environment that we know works
+
+. elbe can become root when needed without risks to the user's
+   workstation
+
+This virtual machine is referred to as "initvm". You will want your
+initvm to be the same architecture as your workstation. This allows
+using kvm for acceleration.
+
+To create the initvm you need a special elbe XML file that describes the
+initvm to create. The elbe-doc package includes 2 examples that can be
+used "as is" if your workstation is x86_64:
+
+- `/usr/share/doc/elbe-doc/examples/elbe-init.xml`
+- `/usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml`
+
+We use "elbe-init-with-ssh.xml". This installs the
+openssh-server on the initvm and sets up ssh port forwarding on local
+port 5022 so I can use ssh to connect to my running initvm.
+
+To create the initvm, first run:
+
+----------------------------------------------------------------------------------------------
+$ elbe init --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+----------------------------------------------------------------------------------------------
+
+This creates an "initvm" subdirectory and puts all the necessary project
+files to build the initvm there.
+
+Then the initvm is built with:
+
+----------------------------------------------------------------------------------------------
+$ cd initvm
+$ make
+----------------------------------------------------------------------------------------------
+
+(If you get error messages about "virtio-rng-pci" then your qemu is not
+version 1.3 or higher. Make sure you use a newer qemu)
+
+Once this is finished, you now have an initvm that you can use to build
+whatever type and as many root filesystems as you want. You can start
+the initvm by running (from within the initvm directory):
+
+(to have the initvm run in text mode with the terminal as the serial console)
+
+----------------------------------------------------------------------------------------------
+$ make run-con
+----------------------------------------------------------------------------------------------
+
+(to have the initvm run in a graphical qemu window, use qemu's ctrl-alt-3 to
+ switch to the serial login)
+
+----------------------------------------------------------------------------------------------
+$ make run
+----------------------------------------------------------------------------------------------
+
+This initvm will open port 8080 on localhost, and allows the elbe control Tool
+to communicate with it. Also the sshd inside the VM will be available via Port 5022.
+
+Add the following lines to your `~/.ssh/config`, so that you can access the VM 
+easiely:
+
+---------------------------------------
+Host vm
+Port 5022
+HostName localhost
+---------------------------------------
+
+
+Build Rootfilesystem
+--------------------
+
+There are 2 ways to build the Rootfilesystem 
+
+. via ssh login into the initvm
+. via the elbe control tool
+
+
+Building via ssh and elbe buildchroot
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Once you have your XML file you need to copy it to your initvm. For
+example, if you have openssh-server and port forwarding in the initvm
+and the initvm is running:
+
+
+----------------------------------------------------------------
+$ scp fun.xml root@vm:.
+----------------------------------------------------------------
+
+Then ssh into the VM using:
+
+----------------------------------------------------------------
+$ ssh root@vm
+----------------------------------------------------------------
+
+Everything else we do is now on the initvm as root. Any commands I now
+show will be from within the initvm.
+
+----------------------------------------------------------------
+
+To build my "fun.xml" root filesystem:
+
+----------------------------------------------------------------
+# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
+----------------------------------------------------------------
+
+When this command finishes I will have a "fun" subdirectory (specified
+with the --target= argument) that contains all the generated rootfs
+files. I also have a file "fun.log" that saved the elbe build protocol
+for the root filesystem.
+
+If you want to do some primitive testing or looking inside your new root
+filesystem, you can chroot into it with:
+
+----------------------------------------------------------------
+# elbe chroot --target fun
+----------------------------------------------------------------
+
+Now you are inside your new root filesystem. Even though this filesystem
+may be for another architecture, elbe makes use of the qemu-*-static
+binaries to emulate the architecture so you can actually execute the
+binaries in that root filesystem. Obviously being in a chroot
+environment is not the same as a native boot, but is often sufficient to
+do some looking around. With "exit" you can exit the chroot and return
+to your initvm environment.
+
+NOTE: In the above command I used the --target option. This is important
+      if you want to switch to the target's generated root filesystem
+      (fun/target/). If you leave the --target option off, you will
+      chroot into a root filesystem that was used to build the target
+      filesystem (fun/chroot/).
+
+If you make changes to your XML file, you can regenerate your root
+filesystem using the same command as before:
+
+----------------------------------------------------------------
+# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
+----------------------------------------------------------------
+
+In this example elbe will see that a "fun" directory with existing root
+filesystem and attempt to efficiently make the necessary changes based
+on the XML changes you have made (elbe has a copy of the old XML file as
+fun/source.xml).
+
+However... this sometimes introduces problems or
+differences from generating from scratch. So it might make sense to 
+regenerate the root filesystem from scratch every time, the xml is changed.
+
+
+----------------------------------------------------------------
+# rm -rf fun fun.log
+# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
+----------------------------------------------------------------
+
+This will be fixed in elbe-1.0.
+
+Elbe has many other features. Refer to the installed documentation (not
+the website). And if you have any other questions, feel free to ask.
+
+
+Elbe control Tool
+~~~~~~~~~~~~~~~~~
+
+elbe control allows to communicate with the elbe daemon inside the initvm.
+
+To create a Project based the XML File, which you received, do the following:
+
+----------------------------------------------------------------
+$ elbe control create_project example.xml
+OK
+----------------------------------------------------------------
+
+You can list the projects using:
+
+----------------------------------------------------------------
+$ elbe control list_projects
+/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   needs_build     2015-05-11 12:33:11.319908
+----------------------------------------------------------------
+
+Start the build via:
+
+----------------------------------------------------------------
+$ elbe control build /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9 
+OK
+----------------------------------------------------------------
+
+The Project will now build, which you can observe via:
+
+----------------------------------------------------------------
+$ elbe control list_projects                                                                                                                        
+/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   busy    2015-05-11 12:33:11.319908
+----------------------------------------------------------------
+
+Once it finishes, it will report:
+
+----------------------------------------------------------------
+$ elbe control list_projects                                                                                                                        
+/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   build_done      2015-05-11 12:33:11.319908
+----------------------------------------------------------------
+
+Once the build has finished, you can query which files got built:
+
+----------------------------------------------------------------
+$ elbe control get_files /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9
+source.xml (Current source.xml of the project)
+nfsroot.tar.gz (Image)
+sda.img (Image)
+validation.txt (Package list validation result)
+elbe-report.txt (Report)
+log.txt (Log file)
+----------------------------------------------------------------
+
+You can extract these files out of the VM:
+
+----------------------------------------------------------------
+$ elbe control get_file /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9 sda.img                                                                
+sda.img saved
+----------------------------------------------------------------
+
+
