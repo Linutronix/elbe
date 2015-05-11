@@ -19,6 +19,8 @@ Steps necessary
 
 Steps 1 and 2 need only be performed once.
 
+This guide also explains how the archive can be extracted, and regenerated.
+
 
 Installing Elbe
 ---------------
@@ -301,6 +303,39 @@ You can extract these files out of the VM:
 ----------------------------------------------------------------
 $ elbe control get_file /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9 sda.img                                                                
 sda.img saved
+----------------------------------------------------------------
+
+Elbe Archive
+------------
+
+The elbe xml file contains an Archive which is extracted into the root-filesystem during
+the image generation phase.
+
+It is acessed with the following commands:
+
+----------------------------------------------------------------
+$ elbe get_archive fun.xml archive.tar.bz2
+----------------------------------------------------------------
+
+Its a normal tar.bz2 which can be manipulated and regenerated using tar
+
+----------------------------------------------------------------
+$ mkdir arch
+$ tar xvfj archive.tar.bz2 -C arch
+$ echo hello > arch/hello
+----------------------------------------------------------------
+
+When regenerating the tar archive, be careful about file ownership inside the
+tar file.
+
+----------------------------------------------------------------
+$ tar cvfj archive.tar.bz2 --owner=root --group=root -C arch/ .
+----------------------------------------------------------------
+
+The updated archive File can then be inserted into the xml File:
+
+----------------------------------------------------------------
+$ elbe set_archive fun.xml archive.tar.bz2
 ----------------------------------------------------------------
 
 
