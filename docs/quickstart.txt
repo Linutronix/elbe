@@ -19,8 +19,9 @@ Steps necessary
 
 Steps 1 and 2 need only be performed once.
 
-This guide also explains how the archive can be extracted, and regenerated.
+This guide also explains how the archive can be extracted from the xml File, and regenerated 
 
+In the last chapter we describe, how sourcecode can be accessed.
 
 Installing Elbe
 ---------------
@@ -40,7 +41,8 @@ The latest development packages for elbe reside in the following Repository
 http://debian.linutronix.de/elbe-testing
 --------------------------------------------------------
 
-Add the following Line to the file `/etc/apt/sources.list`
+Create the file `/etc/apt/sources.list.d/elbe-testing.list`
+with the following contents:
 
 --------------------------------------------------------
 deb http://debian.linutronix.de/elbe-testing jessie main
@@ -80,36 +82,43 @@ Create initvm
 -------------
 
 The first thing you need to do is set up a virtual machine for
-generating root filesystems. The reason why a virtual machine is used
-for this is because:
-
-. it doesn't require the user's workstation to install lots of special
-   packages required by elbe
-
-. it allows elbe to run in an environment that we know works
-
-. elbe can become root when needed without risks to the user's
-   workstation
+generating root filesystems. 
 
 This virtual machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
 using kvm for acceleration.
 
 To create the initvm you need a special elbe XML file that describes the
-initvm to create. The elbe-doc package includes 2 examples that can be
-used "as is" if your workstation is x86_64:
+initvm to create. The elbe-doc package includes an example that can be 
+used "as is" if your workstation is x86_64: 
 
-- `/usr/share/doc/elbe-doc/examples/elbe-init.xml`
-- `/usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml`
+----------------------------------------------------------------
+/usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+----------------------------------------------------------------
 
-We use "elbe-init-with-ssh.xml". This installs the
+This installs the
 openssh-server on the initvm and sets up ssh port forwarding on local
-port 5022 so I can use ssh to connect to my running initvm.
+port 5022 so you can use ssh to connect to my running initvm.
 
-To create the initvm, first run:
+To create the initvm, first run this:
 
 ----------------------------------------------------------------------------------------------
 $ elbe init --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+initvm
+Reading package lists... Done
+Building dependency tree... Done
+Reading package lists... DonetmpburdqJ/etc/apt/trusted.gpg.d/.No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.
+Building dependency tree... Done
+No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.--2015-05-11 17:23:42--  http://debian.linutronix.de/elbe-testing/pool/main/e/elbe-bootstrap/elbe-bootstrap_1.0_amd64.deb
+Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
+Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 18397860 (18M) [application/x-debian-package]
+Saving to: ‘/tmp/tmpzlwx01/pkg.deb’
+
+/tmp/tmpzlwx01/pkg.deb                100%[========================================================================>]  17.54M  7.88MB/s   in 2.2s   
+
+2015-05-11 17:23:45 (7.88 MB/s) - ‘/tmp/tmpzlwx01/pkg.deb’ saved [18397860/18397860]
 ----------------------------------------------------------------------------------------------
 
 This creates an "initvm" subdirectory and puts all the necessary project
@@ -122,25 +131,17 @@ $ cd initvm
 $ make
 ----------------------------------------------------------------------------------------------
 
-(If you get error messages about "virtio-rng-pci" then your qemu is not
-version 1.3 or higher. Make sure you use a newer qemu)
+NOTE: If you get error messages about "virtio-rng-pci" then your qemu is not
+      version 1.3 or higher. Make sure you use a newer qemu.
 
 Once this is finished, you now have an initvm that you can use to build
 whatever type and as many root filesystems as you want. You can start
 the initvm by running (from within the initvm directory):
 
-(to have the initvm run in text mode with the terminal as the serial console)
-
 ----------------------------------------------------------------------------------------------
 $ make run-con
 ----------------------------------------------------------------------------------------------
 
-(to have the initvm run in a graphical qemu window, use qemu's ctrl-alt-3 to
- switch to the serial login)
-
-----------------------------------------------------------------------------------------------
-$ make run
-----------------------------------------------------------------------------------------------
 
 This initvm will open port 8080 on localhost, and allows the elbe control Tool
 to communicate with it. Also the sshd inside the VM will be available via Port 5022.
@@ -242,8 +243,10 @@ regenerate the root filesystem from scratch every time, the xml is changed.
 
 This will be fixed in elbe-1.0.
 
-Elbe has many other features. Refer to the installed documentation (not
-the website). And if you have any other questions, feel free to ask.
+Elbe has many other features. Refer to the installed documentation in
+the manpages and `/usr/share/doc/elbe-doc/elbeoverview-en.html`
+
+
 
 
 Elbe control Tool
@@ -338,4 +341,69 @@ The updated archive File can then be inserted into the xml File:
 $ elbe set_archive fun.xml archive.tar.bz2
 ----------------------------------------------------------------
 
+Source Code
+-----------
+
+The generated root-filesystem is a full-featured Debian System under normal
+circumstances. So when the source Repositories are specified correctly,
+its always possible to download the source for any installed Package using 
+
+----------------------------------------------------------------------
+$ apt-get source <pkgname>
+----------------------------------------------------------------------
+
+For example on jessie:
+
+----------------------------------------------------------------------
+$ apt-get source util-linux
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+NOTICE: 'util-linux' packaging is maintained in the 'Git' version control system at:
+git://git.debian.org/git/collab-maint/pkg-util-linux.git
+Need to get 4,011 kB of source archives.
+Get:1 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (dsc) [3,443 B]
+Get:2 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (tar) [3,704 kB]
+Get:3 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (diff) [304 kB]
+Fetched 4,011 kB in 0s (5,879 kB/s) 
+dpkg-source: info: extracting util-linux in util-linux-2.25.2
+dpkg-source: info: unpacking util-linux_2.25.2.orig.tar.xz
+dpkg-source: info: unpacking util-linux_2.25.2-6.debian.tar.xz
+dpkg-source: info: applying Multiarch-support-in-util-linux-build.patch
+dpkg-source: info: applying cfdisk.8-mention-slang-next-to-curses.-Closes-295487.patch
+dpkg-source: info: applying man-page-tweaks-cleanup-my_dev_t.h-ancient-stuff.patch
+dpkg-source: info: applying Disable-the-fallback-clause-in-hwclock-when-dev-rtc-.patch
+dpkg-source: info: applying verbose-tests.patch
+dpkg-source: info: applying Update-POT-file.patch
+dpkg-source: info: applying Update-PO-files.patch
+dpkg-source: info: applying Update-German-translation.patch
+dpkg-source: info: applying Update-Spanish-translation.patch
+dpkg-source: info: applying Update-French-translation.patch
+dpkg-source: info: applying Update-Ukrainian-translation.patch
+dpkg-source: info: applying Update-Brazilian-Portuguese-translation.patch
+dpkg-source: info: applying Update-Chinese-simplified-translation.patch
+dpkg-source: info: applying Update-Danish-translation.patch
+dpkg-source: info: applying Update-Finnish-translation.patch
+dpkg-source: info: applying Update-Japanese-translation.patch
+dpkg-source: info: applying Update-Russian-translation.patch
+dpkg-source: info: applying Trivial-unfuzzy.patch
+dpkg-source: info: applying libblkid-care-about-unsafe-chars-in-cache.patch
+dpkg-source: info: applying unshare-Fix-map-root-user-to-work-on-new-kernels.patch
+----------------------------------------------------------------------
+
+You can now find the source here:
+
+----------------------------------------------------------------------
+$ ls
+util-linux-2.25.2  util-linux_2.25.2-6.debian.tar.xz  util-linux_2.25.2-6.dsc  util-linux_2.25.2.orig.tar.xz
+----------------------------------------------------------------------
+
+NOTE: This also works on the target.
+
+When elbe buildchroot builds the root-filesystem, it can be instructed to download all sourcecode
+and create a source cdrom.
+
+----------------------------------------------------------------
+# elbe buildchroot --target=fun --output=fun.log --build_sources fun.xml
+----------------------------------------------------------------
 
