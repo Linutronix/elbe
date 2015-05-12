@@ -13,13 +13,26 @@ root-filesystem from the xml File.
 Steps necessary
 ---------------
 
+. Install Debian 8 (Jessie) on your Host
 . Install Elbe on Host Linux
 . Use elbe init to generate `initvm`
 . Build the root-filesystem
 
 Steps 1 and 2 need only be performed once.
 
+Customisation of the build
+--------------------------
+
+The Elbe xml contains an archive, which can contain Configuration Files, 
+and additional Software. This archive is extracted during onto the Image
+during the Buildprocess. It allows you to override any File, which needs to be different
+from the default Debian Install.
+
 This guide also explains how the archive can be extracted from the xml File, and regenerated 
+
+Elbe also allows to manipulate the generated root-filesystem through a set of
+`<finetuning>` rules. We also describe, how these can be used to add a user, change
+directory permissions, and remove Files from the root-filesystem.
 
 In the last chapter we describe, how sourcecode can be accessed.
 
@@ -62,8 +75,21 @@ If you can not use Debian Jessie, you can also checkout the current
 Elbe sourcecode via git from github.
 
 --------------------------------------------------------
-git clone https://github.com/Linutronix/elbe.git
-git checkout -b elbe-1.0 origin/devel/elbe-1.0
+$ git clone https://github.com/Linutronix/elbe.git
+Cloning into 'elbe'...
+remote: Counting objects: 5435, done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 5435 (delta 1), reused 0 (delta 0), pack-reused 5427
+Receiving objects: 100% (5435/5435), 1.94 MiB | 1.92 MiB/s, done.
+Resolving deltas: 100% (3943/3943), done.
+Checking connectivity... done.
+$ cd elbe
+$ git checkout -b elbe-1.0 origin/devel/elbe-1.0
+Branch elbe-1.0 set up to track remote branch devel/elbe-1.0 from origin.
+Switched to a new branch 'elbe-1.0'
+$ ls
+AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack  
+examples INSTALL    Makefile README  setup.py    test  THANKS TODO
 --------------------------------------------------------
 
 Please note, that the master branch is pointing to the old elbe version 0.5.x
@@ -86,7 +112,7 @@ generating root filesystems.
 
 This virtual machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
-using kvm for acceleration.
+using kvm for acceleration, which will accerlerate the build process a lot.
 
 To create the initvm you need a special elbe XML file that describes the
 initvm to create. The elbe-doc package includes an example that can be 
@@ -121,6 +147,13 @@ Saving to: ‘/tmp/tmpzlwx01/pkg.deb’
 2015-05-11 17:23:45 (7.88 MB/s) - ‘/tmp/tmpzlwx01/pkg.deb’ saved [18397860/18397860]
 ----------------------------------------------------------------------------------------------
 
+If you can only connect to the Internet via a Proxy Server, you can specify that on the commandline:
+
+----------------------------------------------------------------------------------------------
+$ elbe init --proxy=http://enterprise-proxy.de:8888/ --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+----------------------------------------------------------------------------------------------
+
+
 This creates an "initvm" subdirectory and puts all the necessary project
 files to build the initvm there.
 
@@ -146,7 +179,7 @@ $ make run-con
 This initvm will open port 8080 on localhost, and allows the elbe control Tool
 to communicate with it. Also the sshd inside the VM will be available via Port 5022.
 
-Add the following lines to your `~/.ssh/config`, so that you can access the VM 
+Add the following lines to the `~/.ssh/config` on your host , so that you can access the VM 
 easiely:
 
 ---------------------------------------
@@ -340,6 +373,92 @@ The updated archive File can then be inserted into the xml File:
 ----------------------------------------------------------------
 $ elbe set_archive fun.xml archive.tar.bz2
 ----------------------------------------------------------------
+
+During development and inside Version Control we use the following Makefile,
+to update the archive inside the xml File from a archive directory in the
+same folder.
+
+[source,Makefile]
+----------------------------------------------------------------
+all: update-archive
+
+.PHONY: archive.tar.bz2 update-archive
+
+archive.tar.bz2:
+	tar cvfj archive.tar.bz2 --owner=root --group=root -C archive/ .
+
+
+update-archive: archive.tar.bz2
+	elbe chg_archive fun.xml archive.tar.bz2
+----------------------------------------------------------------
+
+
+
+Adding Packages to the List of Installed Packages
+-------------------------------------------------
+
+The Xml File contains a List of Installed packages `<pkg-list>` in the `<target>` xml node.
+Inserting a line containing
+
+[source,xml]
+----------------------------------------------------
+<pkg>util-linux</pkg>
+----------------------------------------------------
+
+will add the `util-linux` package to the install.
+
+Using the finetuning rules
+--------------------------
+
+An elbe xml File can contain a set of finetuning rules. Here is an example 
+finetuning from `/usr/share/doc/elbe-doc/examples/elbe-desktop.xml`:
+
+[source,xml]
+---------------------------------------------------------------------------------
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
+		</finetuning>
+---------------------------------------------------------------------------------
+
+rm
+~~
+
+The `<rm>` Node removes Files from the root-filesystem.
+
+adduser
+~~~~~~~
+
+The adduser node allows to create a user.
+Our example creates the User `elbe` with the password `elbe`.
+
+Its also possible to specify groups the new user should be part of:
+
+
+[source,xml]
+---------------------------------------------------------------------------------
+	<adduser passwd="elbe" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
+---------------------------------------------------------------------------------
+
+Changing ownership of directories or files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is currently no special finetuning node for `chmod` and `chown`.
+These need to be specified via the command tag, which allows running any command,
+that is available in the built root filesystem.
+
+[source,xml]
+---------------------------------------------------------------------------------
+	<command>chown elbe:elbe /mnt</command>
+	<command>chmod 777 /mnt</command>
+---------------------------------------------------------------------------------
+
+Further Example
+~~~~~~~~~~~~~~~
+
+A more complete example can be found in the elbe overview docs in
+`/usr/share/doc/elbe-doc/elbeoverview-en.html`
+
 
 Source Code
 -----------
