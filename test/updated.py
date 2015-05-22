@@ -23,7 +23,7 @@ class MonitorService (SimpleWSGISoapApp):
 
 class MonitorThread (threading.Thread):
     def __init__ (self, port):
-        threading.Thread.__init__ (self)
+        threading.Thread.__init__ (self, name="MonitorThread")
         self.port = port
         self.server = None
 
