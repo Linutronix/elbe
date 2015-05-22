@@ -286,11 +286,21 @@ class AsyncWorker(Thread):
         self.queue = Queue()
         self.start()
 
+    def stop(self):
+        self.queue.put(None)
+        self.queue.join()
+        self.join()
+
     def enqueue (self, job):
         job.enqueue( self.queue, self.db )
 
     def run (self):
-        while True:
-            with savecwd():
-                job = self.queue.get()
-                job.execute( self.db )
+        loop = True
+        while loop:
+            job = self.queue.get()
+            if not job is None:
+                with savecwd():
+                    job.execute( self.db )
+            else:
+                loop = False
+            self.queue.task_done()
