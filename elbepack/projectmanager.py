@@ -70,6 +70,9 @@ class ProjectManager(object):
         self.builddir2userid = {}   # (builddir, userid) map of open projects
         self.lock = Lock()          # Lock protecting our data
 
+    def stop(self):
+        self.worker.stop()
+
     def create_project (self, userid, xml_file):
         subdir = str(uuid4())
         builddir = path.join( self.basepath, subdir )
