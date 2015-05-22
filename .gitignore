@@ -24,6 +24,8 @@ debian/elbe-buildenv
 debian/elbe-common/
 debian/elbe-doc/
 debian/elbe-updated/
+debian/elbe-control/
+debian/elbe-soap/
 debian/tmp/
 dist/
 elbe.egg-info/
