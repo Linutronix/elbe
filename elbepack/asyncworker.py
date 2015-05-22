@@ -281,7 +281,7 @@ def savecwd ():
 
 class AsyncWorker(Thread):
     def __init__ (self, db):
-        Thread.__init__( self )
+        Thread.__init__( self, name="AsyncWorker" )
         self.db = db
         self.queue = Queue()
         self.start()
