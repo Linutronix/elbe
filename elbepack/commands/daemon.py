@@ -58,7 +58,7 @@ def run_command( argv ):
                     module = "elbepack.daemons." + str(d)
                     mod = __import__(module)
                     cmdmod = sys.modules[module]
-                    cherrypy.tree.graft(cmdmod.get_app(), "/"+str(d))
+                    cherrypy.tree.graft(cmdmod.get_app(cherrypy.engine), "/"+str(d))
     if not active:
         print 'no daemon activated, use'
         for d in daemons:

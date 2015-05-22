@@ -25,6 +25,7 @@ import os
 from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
 from soaplib.serializers.primitive import String, Integer, Array
+from cherrypy.process.plugins import SimplePlugin
 
 from tempfile import NamedTemporaryFile
 
@@ -34,11 +35,16 @@ from elbepack.projectmanager import (ProjectManager, ProjectManagerError,
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
-class ESoap (SimpleWSGISoapApp):
+class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
-    def __init__ (self):
+    def __init__ (self,engine):
         SimpleWSGISoapApp.__init__ (self)
         self.pm = ProjectManager ("/var/cache/elbe")
+        SimplePlugin.__init__(self,engine)
+        self.subscribe()
+
+    def stop(self):
+        self.pm.stop()
 
     @soapmethod (_returns=String)
     def list_users (self):

@@ -18,5 +18,5 @@
 
 from esoap import ESoap
 
-def get_app():
-    return ESoap ()
+def get_app(engine):
+    return ESoap (engine)
