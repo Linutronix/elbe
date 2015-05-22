@@ -23,6 +23,7 @@ import sys
 
 from optparse import OptionParser
 from suds.client import Client
+from suds import WebFault
 
 from elbepack.soapclient import ClientAction
 
@@ -58,8 +59,15 @@ def run_command (argv):
         return
 
     try:
-        ClientAction (args[0]).execute (control, opt.user, opt.passwd, args[1:])
+        action = ClientAction (args[0])
     except KeyError:
         print 'elbe control - unknown subcommand'
         ClientAction.print_actions ()
+        return
+
+    try:
+        action.execute (control, opt.user, opt.passwd, args[1:])
+    except WebFault as e:
+        print "Soap Exception"
+        print e
         return
