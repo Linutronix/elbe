@@ -24,7 +24,10 @@ import os
 
 from soaplib.service import soapmethod
 from soaplib.wsgi_soap import SimpleWSGISoapApp
-from soaplib.serializers.primitive import String, Integer, Array
+from soaplibfix import String, Integer, Array
+from soaplib.serializers.clazz import ClassSerializer
+from soaplib.serializers.primitive import Fault, DateTime
+
 from cherrypy.process.plugins import SimplePlugin
 
 from tempfile import NamedTemporaryFile
@@ -34,6 +37,34 @@ from elbepack.projectmanager import (ProjectManager, ProjectManagerError,
 
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
+
+class SoapProject (ClassSerializer):
+    class types:
+        builddir = String
+        name = String
+        version = String
+        status = String
+        edit = DateTime
+
+    def __init__(self, prj):
+        self.builddir = prj.builddir
+        self.name = prj.name
+        self.version = prj.version
+        self.status = prj.status
+        self.edit = prj.edit
+
+class SoapFile (ClassSerializer):
+    class types:
+        name = String
+        description = String
+
+    def __init__(self, fi):
+        self.name = fi.name
+        self.description = fi.description
+
+class SoapElbeDBError( Fault ):
+    def __init__(self, dberr):
+        Fault.__init__(self, faultcode="ElbeDBError", faultstring=str(dberr))
 
 class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
@@ -46,58 +77,31 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     def stop(self):
         self.pm.stop()
 
-    @soapmethod (_returns=String)
+    @soapmethod (_returns=Array(String))
     def list_users (self):
-        # use comma seperated string because array of string triggers a bug in
-        # python suds :(
-        ret = ""
-        users = []
         try:
             users = self.pm.db.list_users ()
         except ElbeDBError as e:
-            return str (e)
-        if not users:
-            return ret
-        for u in users:
-            ret += u.name + ", "
-        return ret
+            raise SoapElbeDBError(e)
 
-    @soapmethod (_returns=String)
+        return [u.name for u in users]
+
+    @soapmethod (_returns=Array(SoapProject))
     def list_projects (self):
-        # use comma seperated string because array of string triggers a bug in
-        # python suds :(
-        ret = ""
-        projects = []
         try:
             projects = self.pm.db.list_projects ()
         except ElbeDBError as e:
-            return str (e)
-        if not projects:
-            return ret
-        for p in projects:
-            ret += p.builddir + "____" + str(p.name)
-            ret += "____" + str(p.version) + "____" + str(p.status)
-            ret += "____" + str(p.edit) + ", "
-        return ret
+            raise SoapElbeDBError(e)
 
-    @soapmethod (String, _returns=String)
+        return [SoapProject(p) for p in projects]
+
+    @soapmethod (String, _returns=Array(SoapFile))
     def get_files (self, builddir):
-        # use comma seperated string because array of string triggers a bug in
-        # python suds :(
-        ret = ""
-        files = []
         try:
             files = self.pm.db.get_project_files (builddir)
         except ElbeDBError as e:
-            return str(e)
-        if not files:
-            return ret
-        for f in files:
-            if f.description:
-                ret += "%s (%s), " % (f.name, f.description)
-            else:
-                ret += f.name + ", "
-        return ret
+            raise SoapElbeDBError(e)
+        return [SoapFile(f) for f in files]
 
     @soapmethod (String, String, Integer, _returns=String)
     def get_file (self, builddir, filename, part):

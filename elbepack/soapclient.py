@@ -20,51 +20,6 @@
 
 import binascii
 
-def list_users (client):
-    return client.service.list_users ()
-
-def list_projects (client):
-    return client.service.list_projects ()
-
-def get_files (client, builddir):
-    return client.service.get_files (builddir)
-
-def get_file (client, builddir, filename):
-    fp = file (filename, "w")
-    part = 0
-    while True:
-        ret = client.service.get_file (builddir, filename, part)
-        if ret == "FileNotFound":
-            return ret
-        if ret == "EndOfFile":
-            fp.close ()
-            return filename + " saved"
-
-        fp.write (binascii.a2b_base64 (ret))
-        part = part + 1
-
-    return filename + " unknown error"
-
-def build_project (client, user, passwd, builddir):
-    return client.service.build (user, passwd, builddir)
-
-def set_xml (client, user, passwd, builddir, filename):
-    print filename
-    with file (filename, "r") as fp:
-        return client.service.set_xml (user, passwd, builddir,
-                binascii.b2a_base64(fp.read ()))
-
-def del_project (client, user, passwd, builddir):
-    return client.service.del_project (user, passwd, builddir)
-
-def reset_project (client, user, passwd, builddir):
-    return client.service.reset_project (user, passwd, builddir)
-
-def create_project (client, user, passwd, filename):
-    with file (filename, "r") as fp:
-        return client.service.create_project (user, passwd,
-                binascii.b2a_base64(fp.read ()))
-
 class ClientAction(object):
     actiondict = {}
     @classmethod
@@ -89,12 +44,10 @@ class ListProjectsAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, user, passwd, args):
-        projects = list_projects (client)
-        if not projects:
-            return
-        projects = projects.split(', ')
-        for p in projects:
-            print p.replace('____', '\t')
+        projects = client.service.list_projects ()
+
+        for p in projects.SoapProject:
+            print p.builddir + '\t' + p.name + '\t' + p.version + '\t' + p.status + '\t' + str(p.edit)
 
 ClientAction.register(ListProjectsAction)
 
@@ -106,11 +59,9 @@ class ListUsersAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, user, passwd, args):
-        users = list_users (client)
-        if not users:
-            return
-        users = users.split(', ')
-        for u in users:
+        users = client.service.list_users (client)
+
+        for u in users.string:
             print u
 
 ClientAction.register(ListUsersAction)
@@ -127,7 +78,11 @@ class CreateProjectAction(ClientAction):
             print "usage: elbe control create_project <xmlfile>"
             return
 
-        print create_project (client, user, passwd, args[0])
+        filename = args[0]
+
+        with file (filename, "r") as fp:
+            print client.service.create_project (user, passwd,
+                    binascii.b2a_base64(fp.read ()))
 
 ClientAction.register(CreateProjectAction)
 
@@ -143,7 +98,8 @@ class ResetProjectAction(ClientAction):
             print "usage: elbe control reset_project <project_dir>"
             return
 
-        print reset_project (client, user, passwd, args[0])
+        builddir = args[0]
+        print client.service.reset_project (user, passwd, builddir)
 
 ClientAction.register(ResetProjectAction)
 
@@ -160,7 +116,8 @@ class DeleteProjectAction(ClientAction):
             print "usage: elbe control del_project <project_dir>"
             return
 
-        print del_project (client, user, passwd, args[0])
+        builddir = args[0]
+        print client.service.reset_project (user, passwd, builddir)
 
 ClientAction.register(DeleteProjectAction)
 
@@ -176,7 +133,11 @@ class SetXmlAction(ClientAction):
             print "usage: elbe control set_xml <project_dir> <xml>"
             return
 
-        print set_xml (client, user, passwd, args[0], args[1])
+        builddir = args[0]
+        filename = args[1]
+        with file (filename, "r") as fp:
+            print client.service.set_xml (user, passwd, builddir,
+                    binascii.b2a_base64(fp.read ()))
 
 ClientAction.register(SetXmlAction)
 
@@ -193,7 +154,8 @@ class BuildAction(ClientAction):
             print "usage: elbe control build <project_dir>"
             return
 
-        print build_project (client, user, passwd, args[0])
+        builddir = args[0]
+        print client.service.build (user, passwd, builddir)
 
 ClientAction.register(BuildAction)
 
@@ -210,7 +172,26 @@ class GetFileAction(ClientAction):
             print "usage: elbe control get_file <project_dir> <file>"
             return
 
-        print get_file (client, args[0], args[1])
+        builddir = args[0]
+        filename = args[1]
+
+        fp = file (filename, "w")
+        part = 0
+        while True:
+            ret = client.service.get_file (builddir, filename, part)
+            if ret == "FileNotFound":
+                print ret
+                return
+            if ret == "EndOfFile":
+                fp.close ()
+                print filename + " saved"
+                return
+
+            fp.write (binascii.a2b_base64 (ret))
+            part = part + 1
+
+        print filename + " unknown error"
+        return
 
 ClientAction.register(GetFileAction)
 
@@ -227,11 +208,13 @@ class GetFilesAction(ClientAction):
             print "usage: elbe control get_files <project_dir>"
             return
 
-        files = get_files (client, args[0])
-        if not files:
-            return
-        files = files.split(", ")
-        for f in files:
-            print f
+        builddir = args[0]
+        files = client.service.get_files (builddir)
+
+        for f in files.SoapFile:
+            if f.description:
+                print "%s \t(%s)" % (f.name, f.description)
+            else:
+                print "%s" % (f.name)
 
 ClientAction.register(GetFilesAction)
