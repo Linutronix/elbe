@@ -117,7 +117,7 @@ class DeleteProjectAction(ClientAction):
             return
 
         builddir = args[0]
-        print client.service.reset_project (user, passwd, builddir)
+        print client.service.del_project (user, passwd, builddir)
 
 ClientAction.register(DeleteProjectAction)
 
