@@ -46,6 +46,10 @@ def run_command (argv):
     oparser.add_option ("--debug", action="store_true",
                         dest="debug", default=False,
                         help="enable debug mode")
+
+    oparser.add_option ("--retries", dest="retries", default="10",
+                        help="how many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds)")
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
@@ -55,7 +59,7 @@ def run_command (argv):
         return
 
     try:
-        control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd, debug=opt.debug)
+        control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd, debug=opt.debug, retries=int(opt.retries))
     except socket.error as e:
         print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
         sys.exit(10)
