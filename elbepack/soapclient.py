@@ -46,10 +46,13 @@ class ElbeSoapClient(object):
 
         # Mess with suds logging, for debug, or squelch warnings
         set_suds_debug (debug)
+
+        # Attributes
         self.wsdl = "http://" + host + ":" + str(port) + "/soap/?wsdl"
         self.control = None
         self.retries = 0
 
+        # Loop and try to connect
         while self.control is None:
             self.retries += 1
             try:
