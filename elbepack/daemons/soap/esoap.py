@@ -23,10 +23,9 @@ import soaplib
 import os
 
 from soaplib.service import soapmethod
-from soaplib.wsgi_soap import SimpleWSGISoapApp
+from soaplib.wsgi_soap import SimpleWSGISoapApp, request
 from soaplibfix import String, Integer, Array
-from soaplib.serializers.clazz import ClassSerializer
-from soaplib.serializers.primitive import Fault, DateTime
+from soaplib.serializers.primitive import Boolean
 
 from cherrypy.process.plugins import SimplePlugin
 
@@ -39,7 +38,12 @@ from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
 
+from faults import SoapElbeDBError, SoapElbeNotAuthorized
+
 from datatypes import SoapProject, SoapFile
+from authentication import authenticated_admin, authenticated_uid
+
+
 
 class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
@@ -52,7 +56,21 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     def stop(self):
         self.pm.stop()
 
+    @soapmethod (String, String, _returns=Boolean )
+    def login(self, user, passwd):
+        s = request.environ['beaker.session']
+        try:
+            s['userid'] = self.pm.db.validate_login(user, passwd)
+        except InvalidLogin:
+            raise SoapElbeNotAuthorized()
+
+        s.save()
+
+        return True
+
+
     @soapmethod (_returns=Array(String))
+    @authenticated_admin
     def list_users (self):
         try:
             users = self.pm.db.list_users ()
@@ -62,6 +80,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         return [u.name for u in users]
 
     @soapmethod (_returns=Array(SoapProject))
+    @authenticated_admin
     def list_projects (self):
         try:
             projects = self.pm.db.list_projects ()
@@ -71,7 +90,8 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         return [SoapProject(p) for p in projects]
 
     @soapmethod (String, _returns=Array(SoapFile))
-    def get_files (self, builddir):
+    @authenticated_uid
+    def get_files (self, uid, builddir):
         try:
             files = self.pm.db.get_project_files (builddir)
         except ElbeDBError as e:
@@ -79,7 +99,8 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         return [SoapFile(f) for f in files]
 
     @soapmethod (String, String, Integer, _returns=String)
-    def get_file (self, builddir, filename, part):
+    @authenticated_uid
+    def get_file (self, uid, builddir, filename, part):
         size = 1024 * 1024 * 5
         pos = size * part
         file_name = builddir + "/" + filename
@@ -98,36 +119,28 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except:
                 return "EndOfFile"
 
-    @soapmethod (String, String, String, _returns=String)
-    def build (self, user, passwd, builddir):
+    @soapmethod (String, _returns=String)
+    @authenticated_uid
+    def build (self, uid, builddir):
         try:
-            userid = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin as e:
-            return str (e)
-
-        try:
-            self.pm.open_project (userid, builddir)
+            self.pm.open_project (uid, builddir)
         except ValidationError as e:
             return "old XML file is invalid - open project failed"
         except Exception as e:
             return str (e) + " - open project failed"
 
         try:
-            self.pm.build_current_project (userid)
+            self.pm.build_current_project (uid)
         except Exception as e:
             return str (e) + " - build project failed"
 
         return "OK"
 
-    @soapmethod (String, String, String, String, _returns=String)
-    def set_xml (self, user, passwd, builddir, xml):
+    @soapmethod (String, String, _returns=String)
+    @authenticated_uid
+    def set_xml (self, uid, builddir, xml):
         try:
-            userid = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin as e:
-            return str (e)
-
-        try:
-            self.pm.open_project (userid, builddir)
+            self.pm.open_project (uid, builddir)
         except ValidationError as e:
             return "old XML file is invalid - open project failed"
         except Exception as e:
@@ -151,13 +164,9 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
         return "OK"
 
-    @soapmethod (String, String, String, _returns=String)
-    def reset_project (self, user, passwd, builddir):
-        try:
-            userid = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin as e:
-            return str (e)
-
+    @soapmethod (String, _returns=String)
+    @authenticated_uid
+    def reset_project (self, uid, builddir):
         try:
             self.pm.db.reset_project (builddir, True)
         except Exception as e:
@@ -165,13 +174,9 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
         return "OK"
 
-    @soapmethod (String, String, String, _returns=String)
-    def del_project (self, user, passwd, builddir):
-        try:
-            userid = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin as e:
-            return str (e)
-
+    @soapmethod (String, _returns=String)
+    @authenticated_uid
+    def del_project (self, uid, builddir):
         try:
             self.pm.del_project (userid, builddir)
         except Exception as e:
@@ -179,18 +184,14 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
         return "OK"
 
-    @soapmethod (String, String, String, _returns=String)
-    def create_project (self, user, passwd, xml):
-        try:
-            userid = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin as e:
-            return str (e)
-
+    @soapmethod (String, _returns=String)
+    @authenticated_uid
+    def create_project (self, uid, xml):
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
             try:
-                self.pm.create_project (userid, fp.name)
+                self.pm.create_project (uid, fp.name)
             except ProjectManagerError as e:
                 return str (e)
             except ElbeDBError as e:
