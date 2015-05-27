@@ -70,7 +70,7 @@ all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
 % endif
 		-kernel .elbe-in/vmlinuz \
 		-initrd .elbe-gen/initrd-preseeded.gz \
-		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=newt' \
+		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' \
 		-no-reboot \
 		-nographic \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
