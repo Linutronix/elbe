@@ -59,7 +59,7 @@ class StartAction(InitVMAction):
     def execute(self, initvmdir, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession > /dev/null" )
         if have_session == 256:
-            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "sleep 100"' % initvmdir )
+            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
         else:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr) 
@@ -77,7 +77,7 @@ class EnsureAction(InitVMAction):
     def execute(self, initvmdir, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession > /dev/null" )
         if have_session == 256:
-            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "sleep 100"' % initvmdir )
+            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
 
 InitVMAction.register(EnsureAction)
 
