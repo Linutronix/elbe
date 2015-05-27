@@ -68,7 +68,7 @@ class ListProjectsAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         projects = client.service.list_projects ()
 
         for p in projects.SoapProject:
@@ -83,7 +83,7 @@ class ListUsersAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         users = client.service.list_users (client)
 
         for u in users.string:
@@ -98,7 +98,7 @@ class CreateProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 1:
             print "usage: elbe control create_project <xmlfile>"
             return
@@ -106,8 +106,8 @@ class CreateProjectAction(ClientAction):
         filename = args[0]
 
         with file (filename, "r") as fp:
-            print client.service.create_project (user, passwd,
-                    binascii.b2a_base64(fp.read ()))
+            xml_base64 = binascii.b2a_base64(fp.read ())
+            print client.service.create_project ( xml_base64 )
 
 ClientAction.register(CreateProjectAction)
 
@@ -118,13 +118,13 @@ class ResetProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 1:
             print "usage: elbe control reset_project <project_dir>"
             return
 
         builddir = args[0]
-        print client.service.reset_project (user, passwd, builddir)
+        print client.service.reset_project (builddir)
 
 ClientAction.register(ResetProjectAction)
 
@@ -136,13 +136,13 @@ class DeleteProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 1:
             print "usage: elbe control del_project <project_dir>"
             return
 
         builddir = args[0]
-        print client.service.del_project (user, passwd, builddir)
+        print client.service.del_project (builddir)
 
 ClientAction.register(DeleteProjectAction)
 
@@ -153,7 +153,7 @@ class SetXmlAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 2:
             print "usage: elbe control set_xml <project_dir> <xml>"
             return
@@ -161,8 +161,8 @@ class SetXmlAction(ClientAction):
         builddir = args[0]
         filename = args[1]
         with file (filename, "r") as fp:
-            print client.service.set_xml (user, passwd, builddir,
-                    binascii.b2a_base64(fp.read ()))
+            xml_base64 = binascii.b2a_base64(fp.read ())
+            print client.service.set_xml (builddir, xml_base64)
 
 ClientAction.register(SetXmlAction)
 
@@ -174,13 +174,13 @@ class BuildAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 1:
             print "usage: elbe control build <project_dir>"
             return
 
         builddir = args[0]
-        print client.service.build (user, passwd, builddir)
+        print client.service.build (builddir)
 
 ClientAction.register(BuildAction)
 
@@ -192,7 +192,7 @@ class GetFileAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 2:
             print "usage: elbe control get_file <project_dir> <file>"
             return
@@ -228,7 +228,7 @@ class GetFilesAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, user, passwd, args):
+    def execute(self, client, args):
         if len (args) != 1:
             print "usage: elbe control get_files <project_dir>"
             return

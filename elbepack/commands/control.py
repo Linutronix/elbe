@@ -78,7 +78,7 @@ def run_command (argv):
         return
 
     try:
-        action.execute (control, opt.user, opt.passwd, args[1:])
+        action.execute (control, args[1:])
     except WebFault as e:
         print "Soap Exception"
         print e
