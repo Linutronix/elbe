@@ -17,6 +17,8 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from esoap import ESoap
+from beaker.middleware import SessionMiddleware
 
 def get_app(engine):
-    return ESoap (engine)
+    esoap = ESoap (engine)
+    return SessionMiddleware(esoap)
