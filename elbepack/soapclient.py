@@ -26,8 +26,26 @@ import socket
 import time
 import sys
 
+def set_suds_debug(debug):
+    import logging
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+        logging.getLogger('suds.client').setLevel(logging.DEBUG)
+        logging.getLogger('suds.transport').setLevel(logging.DEBUG)
+        logging.getLogger('suds.xsd.schema').setLevel(logging.DEBUG)
+        logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
+        logging.getLogger('suds.resolver').setLevel(logging.DEBUG)
+        logging.getLogger('suds.umx.typed').setLevel(logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
+        logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
+        logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+
 class ElbeSoapClient(object):
-    def __init__(self, host, port, user, passwd, retries = 10):
+    def __init__(self, host, port, user, passwd, retries = 10, debug=False):
+
+        # Mess with suds logging, for debug, or squelch warnings
+        set_suds_debug (debug)
         self.wsdl = "http://" + host + ":" + str(port) + "/soap/?wsdl"
         self.control = None
         self.retries = 0

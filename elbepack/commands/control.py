@@ -28,20 +28,6 @@ from suds import WebFault
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
 
-import logging
-if False:
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger('suds.client').setLevel(logging.DEBUG)
-    logging.getLogger('suds.transport').setLevel(logging.DEBUG)
-    logging.getLogger('suds.xsd.schema').setLevel(logging.DEBUG)
-    logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
-    logging.getLogger('suds.resolver').setLevel(logging.DEBUG)
-    logging.getLogger('suds.umx.typed').setLevel(logging.DEBUG)
-else:
-    logging.basicConfig(level=logging.CRITICAL)
-    logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
-    logging.getLogger('suds.client').setLevel(logging.CRITICAL)
-
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
 
