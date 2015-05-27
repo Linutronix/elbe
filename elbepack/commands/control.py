@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import socket
 import sys
 
@@ -59,27 +61,27 @@ def run_command (argv):
     args = args[2:]
 
     if len(args) < 1:
-        print 'elbe control - no subcommand given'
+        print ('elbe control - no subcommand given', file=sys.stderr)
         ClientAction.print_actions ()
         return
 
     try:
         control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd)
     except socket.error as e:
-        print "Failed to connect to Soap server %s:%d\n" % (opt.host, opt.port)
-        return
+        print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
+        sys.exit(10)
 
 
     try:
         action = ClientAction (args[0])
     except KeyError:
-        print 'elbe control - unknown subcommand'
+        print ('elbe control - unknown subcommand', file=sys.stderr)
         ClientAction.print_actions ()
-        return
+        sys.exit(20)
 
     try:
         action.execute (control, args[1:])
     except WebFault as e:
-        print "Soap Exception"
-        print e
-        return
+        print ('Soap Exception', file=sys.stderr)
+        print (e, file=sys.stderr)
+        sys.exit(5)
