@@ -166,6 +166,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="key" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+	    URL of the Public Key used to sign this Repository e.g "http://myhost/key.pub" or "http://debian.linutronix.de/elbe-testing/elbe-repo.pub"
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
