@@ -191,7 +191,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
             try:
-                self.pm.create_project (uid, fp.name)
+                prjid = self.pm.create_project (uid, fp.name)
             except ProjectManagerError as e:
                 return str (e)
             except ElbeDBError as e:
@@ -201,4 +201,4 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except ValidationError as e:
                 return "Invalid XML file"
 
-        return "OK"
+        return prjid
