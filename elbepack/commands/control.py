@@ -24,7 +24,6 @@ import socket
 import sys
 
 from optparse import OptionParser
-from suds.client import Client
 from suds import WebFault
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
