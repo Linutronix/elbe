@@ -97,6 +97,8 @@ class ProjectManager(object):
             self.userid2project[ userid ] = ep
             self.builddir2userid[ builddir ] = userid
 
+        return builddir
+
     def open_project (self, userid, builddir):
         self._check_project_permission( userid, builddir )
 
