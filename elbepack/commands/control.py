@@ -25,7 +25,7 @@ from optparse import OptionParser
 from suds.client import Client
 from suds import WebFault
 
-from elbepack.soapclient import ClientAction
+from elbepack.soapclient import ClientAction, ElbeSoapClient
 
 import logging
 if False:
@@ -58,19 +58,17 @@ def run_command (argv):
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
-    wsdl = "http://" + opt.host + ":" + str(opt.port) + "/soap/?wsdl"
-    control = None
-
-    try:
-        control = Client (wsdl)
-    except socket.error as e:
-        print e, wsdl
-        return
-
     if len(args) < 1:
         print 'elbe control - no subcommand given'
         ClientAction.print_actions ()
         return
+
+    try:
+        control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd)
+    except socket.error as e:
+        print "Failed to connect to Soap server %s:%d\n" % (opt.host, opt.port)
+        return
+
 
     try:
         action = ClientAction (args[0])

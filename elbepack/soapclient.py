@@ -19,6 +19,31 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import binascii
+from suds.client import Client
+import socket
+import time
+
+class ElbeSoapClient(object):
+    def __init__(self, host, port, user, passwd, retries = 10):
+        self.wsdl = "http://" + host + ":" + str(port) + "/soap/?wsdl"
+        self.control = None
+        self.retries = 0
+
+        while self.control is None:
+            self.retries += 1
+            try:
+                self.control = Client (self.wsdl)
+            except socket.error as e:
+                if self.retries > retries:
+                    raise e
+                time.sleep(1)
+
+        # Make sure, that client.service still maps
+        # to the service object.
+        self.service = self.control.service
+
+        # We have a Connection, now login
+        self.service.login(user,passwd)
 
 class ClientAction(object):
     actiondict = {}
