@@ -43,7 +43,14 @@ from faults import SoapElbeDBError, SoapElbeNotAuthorized
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
-
+# Deactivate the FutureWarning from wsgi_soap:
+#
+# /usr/lib/pymodules/python2.7/soaplib/wsgi_soap.py:219: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
+#   if payload:
+#   /usr/lib/pymodules/python2.7/soaplib/wsgi_soap.py:236: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
+#     if payload:
+import warnings
+warnings.simplefilter(action = "ignore", category = FutureWarning)
 
 class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
