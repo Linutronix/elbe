@@ -38,33 +38,8 @@ from elbepack.projectmanager import (ProjectManager, ProjectManagerError,
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
-class SoapProject (ClassSerializer):
-    class types:
-        builddir = String
-        name = String
-        version = String
-        status = String
-        edit = DateTime
 
-    def __init__(self, prj):
-        self.builddir = prj.builddir
-        self.name = prj.name
-        self.version = prj.version
-        self.status = prj.status
-        self.edit = prj.edit
-
-class SoapFile (ClassSerializer):
-    class types:
-        name = String
-        description = String
-
-    def __init__(self, fi):
-        self.name = fi.name
-        self.description = fi.description
-
-class SoapElbeDBError( Fault ):
-    def __init__(self, dberr):
-        Fault.__init__(self, faultcode="ElbeDBError", faultstring=str(dberr))
+from datatypes import SoapProject, SoapFile
 
 class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
