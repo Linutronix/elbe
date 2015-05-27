@@ -42,6 +42,10 @@ def run_command (argv):
 
     oparser.add_option ("--user", dest="user", default="root",
                         help="username (default is root)")
+
+    oparser.add_option ("--debug", action="store_true",
+                        dest="debug", default=False,
+                        help="enable debug mode")
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
@@ -51,7 +55,7 @@ def run_command (argv):
         return
 
     try:
-        control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd)
+        control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd, debug=opt.debug)
     except socket.error as e:
         print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
         sys.exit(10)
