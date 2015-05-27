@@ -28,44 +28,12 @@ ln -s /target /buildenv
 
 mkdir -p /buildenv/var/cache/elbe
 cp source.xml /buildenv/var/cache/elbe/
-cp /etc/apt/apt.conf /buildenv/etc/apt/
-
-mkdir -p /buildenv/dev
-mount -o bind /dev /buildenv/dev
-
-mkdir -p /buildenv/sys
-mount -o bind /sys /buildenv/sys
-
-mkdir -p /buildenv/proc
-mount -o bind /proc /buildenv/proc
+cp /etc/apt/apt.conf /buildenv/etc/apt/apt.conf.d/50elbe
 
 % if opt.devel:
    mkdir /buildenv/var/cache/elbe/devel
    tar xvj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
+   echo "export PATH=/var/cache/elbe/devel:$$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
 % endif
-% if xml.has('target'):
-%   if opt.devel:
-chroot /buildenv /bin/sh -c "cd /var/cache/elbe/devel; ./elbe buildchroot \
-%  else:
-chroot /buildenv /bin/sh -c "elbe buildchroot \
-%  endif
-%  if opt.skip_validation:
-  --skip-validation \
-%  endif
-%  if opt.skip_cds:
-  --skip-cdrom \
-%  endif
-%  if opt.buildsources:
-  --build-sources \
-%  endif
-%  if opt.buildtype:
-  --buildtype=${buildtype} \
-%  endif
-  -t /var/cache/elbe/build \
-  -o /var/cache/elbe/elbe-report.log \
-  /var/cache/elbe/source.xml"
-% endif
-
-umount /buildenv/proc /buildenv/sys /buildenv/dev
 
 exit 0
