@@ -57,7 +57,7 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession > /dev/null" )
+        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
             os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
         else:
@@ -75,7 +75,7 @@ class EnsureAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession > /dev/null" )
+        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
             os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
 
@@ -89,7 +89,7 @@ class AttachAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession > /dev/null" )
+        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 0:
             if os.environ.has_key('TMUX'):
                 os.system( 'tmux link-window -s ElbeInitVMSession:initvm' )
