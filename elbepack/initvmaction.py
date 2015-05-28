@@ -54,7 +54,7 @@ class StartAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, args):
+    def execute(self, initvmdir, opt, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
             system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
@@ -72,7 +72,7 @@ class EnsureAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, args):
+    def execute(self, initvmdir, opt, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
             system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
@@ -86,7 +86,7 @@ class AttachAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, args):
+    def execute(self, initvmdir, opt, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 0:
             if os.environ.has_key('TMUX'):
@@ -107,7 +107,7 @@ class StartBuildAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, args):
+    def execute(self, initvmdir, opt, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
             system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make"' % initvmdir )
@@ -125,7 +125,7 @@ class CreateAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, args):
+    def execute(self, initvmdir, opt, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 0:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)

@@ -48,7 +48,7 @@ def run_command (argv):
         sys.exit(20)
 
     try:
-        action.execute (directory, args[1:])
+        action.execute (directory, opt, args[1:])
     except InitVMError as e:
         print ('InitVM Exception', file=sys.stderr)
         print (e, file=sys.stderr)
