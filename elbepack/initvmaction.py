@@ -95,7 +95,7 @@ class AttachAction(InitVMAction):
                 system( 'tmux attach -t ElbeInitVMSession' )
         else:
             print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
-            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr) 
+            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
             sys.exit(20)
 
 InitVMAction.register(AttachAction)
@@ -113,7 +113,7 @@ class StartBuildAction(InitVMAction):
             system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make"' % initvmdir )
         else:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
-            print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr) 
+            print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr)
             sys.exit(20)
 
 InitVMAction.register(StartBuildAction)
