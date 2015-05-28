@@ -23,9 +23,8 @@ import sys
 from pkgutil import iter_modules
 import elbepack.commands
 from elbepack.version import elbe_version
+from elbepack.directories import init_directories, get_cmdlist
 
-def get_cmdlist():
-    return [ x for _, x, _ in iter_modules(elbepack.commands.__path__) ]
 
 def usage():
     print 'elbe v' + elbe_version
@@ -34,6 +33,11 @@ def usage():
     for i in get_cmdlist():
         print '        * '+i
 
+# First initialise the directories module
+# so that it knows, where the current elbe
+# executable can be found.
+
+init_directories(__file__)
 
 if (len(sys.argv) < 2):
     usage()
