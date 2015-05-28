@@ -21,10 +21,22 @@ import os
 from pkgutil import iter_modules
 
 elbe_exe = None
+elbe_dir = None
+examples_dir = None
 
 def init_directories(elbe_relpath):
     global elbe_exe
+    global elbe_dir
+    global examples_dir
+
     elbe_exe = os.path.abspath(elbe_relpath)
+    elbe_dir = os.path.dirname(elbe_exe)
+
+    if elbe_exe.startswith ("/usr/bin/"):
+        examples_dir = "/usr/share/doc/elbe-doc/examples"
+    else:
+        examples_dir = os.path.join (elbe_dir, "examples")
+
 
 def get_cmdlist():
     return [ x for _, x, _ in iter_modules(elbepack.commands.__path__) ]
