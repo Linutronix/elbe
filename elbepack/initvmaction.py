@@ -180,3 +180,44 @@ class CreateAction(InitVMAction):
 
 InitVMAction.register(CreateAction)
 
+class SubmitAction(InitVMAction):
+
+    tag = 'submit'
+
+    def __init__(self, node):
+        InitVMAction.__init__(self, node)
+
+    def execute(self, initvmdir, opt, args):
+        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        if have_session == 256:
+            print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
+            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
+            sys.exit(20)
+
+        try:
+            system ('%s initvm ensure --directory "%s"' % (elbe_exe, initvmdir))
+        except CommandError:
+            print ("Starting the initvm Failed", file=sys.stderr)
+            print ("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        if len(args) == 1:
+            try:
+                prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, args[0]))
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            prjdir = prjdir.strip()
+            try:
+                system ('%s control build "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("now try to wait....")
+
+InitVMAction.register(SubmitAction)
+
