@@ -30,8 +30,10 @@ def get_cmdlist():
     return [ x for _, x, _ in iter_modules(elbepack.commands.__path__) ]
 
 pack_dir = elbepack.__path__[0]
-init_template_dir = os.path.join( pack_dir, "init" )
-mako_template_dir = os.path.join( pack_dir, "mako" )
 
-default_preseed = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
+init_template_dir = os.path.join (pack_dir, "init")
+mako_template_dir = os.path.join (pack_dir, "mako")
+
+default_preseed_fname    = os.path.join (pack_dir, "default-preseed.xml")
+xsdtoasciidoc_mako_fname = os.path.join (pack_dir, "xsdtoasciidoc.mako")
 
