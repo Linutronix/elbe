@@ -20,7 +20,6 @@
 
 import sys
 
-from pkgutil import iter_modules
 import elbepack.commands
 from elbepack.version import elbe_version
 from elbepack.directories import init_directories, get_cmdlist
