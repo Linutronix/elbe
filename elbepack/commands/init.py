@@ -30,13 +30,11 @@ from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
+from elbepack.directories import init_template_dir
 
 from optparse import OptionParser
 
 def run_command( argv ):
-    pack_dir = elbepack.__path__[0]
-    template_dir = os.path.join( pack_dir, "init" )
-
     oparser = OptionParser( usage="usage: %prog init [options] <filename>" )
 
     oparser.add_option( "--skip-validation", action="store_true",
@@ -151,7 +149,7 @@ def run_command( argv ):
         print "Check Mirror configuration"
         sys.exit(20)
 
-    templates = os.listdir( template_dir )
+    templates = os.listdir( init_template_dir )
 
     make_executable = [ "init-elbe.sh.mako",
                         "preseed.cfg.mako" ]
@@ -160,9 +158,9 @@ def run_command( argv ):
         o = t.replace( ".mako", "" )
 
         if t == "Makefile.mako":
-            write_template(os.path.join(path,o), os.path.join(template_dir, t), d )
+            write_template(os.path.join(path,o), os.path.join(init_template_dir, t), d )
         else:
-            write_template(os.path.join(out_path,o), os.path.join(template_dir, t), d )
+            write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d )
 
         if t in make_executable:
             os.chmod( os.path.join(out_path,o), 0755 )
