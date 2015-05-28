@@ -20,10 +20,8 @@
 
 from __future__ import print_function
 
-import binascii
-from suds.client import Client
-import socket
-import time
+from elbepack.directories import examples_dir, elbe_exe
+from elbepack.shellhelper import CommandError, system, system_out
 import sys
 
 import os
