@@ -25,6 +25,7 @@ import sys
 
 from optparse import OptionParser
 from suds import WebFault
+from urllib2 import URLError
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
 
@@ -62,6 +63,15 @@ def run_command (argv):
         control = ElbeSoapClient (opt.host, opt.port, opt.user, opt.passwd, debug=opt.debug, retries=int(opt.retries))
     except socket.error as e:
         print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
+        print ("", file=sys.stderr)
+        print ("Check, wether the Soap Server is running inside the initvm", file=sys.stderr)
+        print ("try 'elbe initvm attach'", file=sys.stderr)
+        sys.exit(10)
+    except URLError as e:
+        print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
+        print ("", file=sys.stderr)
+        print ("Check, wether the initvm is actually running.", file=sys.stderr)
+        print ("try 'elbe initvm --directory /path/to/initvm start'", file=sys.stderr)
         sys.exit(10)
 
 
