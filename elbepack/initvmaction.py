@@ -57,7 +57,7 @@ class StartAction(InitVMAction):
     def execute(self, initvmdir, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
-            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
         else:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr) 
@@ -75,7 +75,7 @@ class EnsureAction(InitVMAction):
     def execute(self, initvmdir, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
-            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
 
 InitVMAction.register(EnsureAction)
 
@@ -90,9 +90,9 @@ class AttachAction(InitVMAction):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 0:
             if os.environ.has_key('TMUX'):
-                os.system( 'tmux link-window -s ElbeInitVMSession:initvm' )
+                system( 'tmux link-window -s ElbeInitVMSession:initvm' )
             else:
-                os.system( 'tmux attach -t ElbeInitVMSession' )
+                system( 'tmux attach -t ElbeInitVMSession' )
         else:
             print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm start' to start the session.", file=sys.stderr) 
@@ -110,7 +110,7 @@ class StartBuildAction(InitVMAction):
     def execute(self, initvmdir, args):
         have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
         if have_session == 256:
-            os.system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make"' % initvmdir )
+            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make"' % initvmdir )
         else:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr) 
