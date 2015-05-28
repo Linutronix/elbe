@@ -47,6 +47,15 @@ def command_out(cmd, input=None):
 
     return p.returncode, output
 
+def system_out(cmd, input=None, allow_fail=False):
+    code, out = command_out(cmd,input)
+
+    if code != 0:
+        if not allow_fail:
+            raise CommandError(cmd, code)
+
+    return out
+
 def command_out_stderr(cmd, input=None):
     if input is None:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
@@ -57,3 +66,11 @@ def command_out_stderr(cmd, input=None):
 
     return p.returncode, output, stderr
 
+def system_out_stderr(cmd, input=None, allow_fail=False):
+    code, out, err = command_out(cmd,input)
+
+    if code != 0:
+        if not allow_fail:
+            raise CommandError(cmd, code)
+
+    return out, err
