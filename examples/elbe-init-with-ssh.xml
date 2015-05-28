@@ -19,6 +19,7 @@
 		<suite>wheezy</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
+			<pkg>python-beaker</pkg>
 		</pkg-list>
 		<portforwarding>
 			<forward>
