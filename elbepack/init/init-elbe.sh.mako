@@ -34,6 +34,7 @@ cp /etc/apt/apt.conf /buildenv/etc/apt/apt.conf.d/50elbe
    mkdir /buildenv/var/cache/elbe/devel
    tar xvj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
+   sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/etc/init.d/elbe-daemon
 % endif
 
 exit 0
