@@ -36,8 +36,6 @@ def template(fname, d):
 
 
 def run_command( argv ):
-    pack_dir = elbepack.__path__[0]
-
     oparser = OptionParser( usage="usage: %prog show [options] <filename>" )
 
     oparser.add_option( "--verbose", action="store_true", dest="verbose",
