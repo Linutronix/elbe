@@ -118,5 +118,61 @@ class StartBuildAction(InitVMAction):
 
 InitVMAction.register(StartBuildAction)
 
+class CreateAction(InitVMAction):
 
+    tag = 'create'
+
+    def __init__(self, node):
+        InitVMAction.__init__(self, node)
+
+    def execute(self, initvmdir, args):
+        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        if have_session == 0:
+            print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
+            print ("", file=sys.stderr)
+            print ("There can only exist a single ElbeInitVMSession, and this session", file=sys.stderr)
+            print ("can also be used to make your build.", file=sys.stderr)
+            print ("See 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
+            sys.exit(20)
+
+        exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+        try:
+            system ('%s init --directory "%s" "%s"' % (elbe_exe, initvmdir, exampl))
+        except CommandError:
+            print ("'elbe init' Failed", file=sys.stderr)
+            print ("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        try:
+            system ('cd "%s"; make' % (initvmdir))
+        except CommandError:
+            print ("Building the initvm Failed", file=sys.stderr)
+            print ("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        try:
+            system ('%s initvm start --directory "%s"' % (elbe_exe, initvmdir))
+        except CommandError:
+            print ("Starting the initvm Failed", file=sys.stderr)
+            print ("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        if len(args) == 1:
+            try:
+                prjdir = system_out ('%s control create_project "%s"' % (elbe_exe, args[0]))
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            try:
+                system ('%s control build "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("now try to wait....")
+
+InitVMAction.register(CreateAction)
 
