@@ -20,6 +20,7 @@ import elbepack
 import os
 
 from elbepack.treeutils import etree
+from elbepack.directories import mako_template_dir, default_preseed_fname
 
 from mako.template import Template
 from mako import exceptions
@@ -38,15 +39,13 @@ def write_template( outname, fname, d ):
     outfile.close()
 
 def write_pack_template( outname, fname, d ):
-    pack_dir = elbepack.__path__[0]
-    template_name = os.path.join( pack_dir, "mako", fname )
+    template_name = os.path.join( mako_template_dir, fname )
 
     write_template( outname, template_name, d )
 
 
 def get_preseed( xml ):
-    pack_dir = elbepack.__path__[0]
-    def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
+    def_xml = etree( default_preseed_fname )
 
     preseed = {}
     for c in def_xml.node("/preseed"):
@@ -67,8 +66,7 @@ def get_preseed( xml ):
     return preseed
 
 def get_initvm_preseed( xml ):
-    pack_dir = elbepack.__path__[0]
-    def_xml = etree( os.path.join( pack_dir, "default-preseed.xml" ) )
+    def_xml = etree( default_preseed_fname )
 
     preseed = {}
     for c in def_xml.node("/preseed"):
