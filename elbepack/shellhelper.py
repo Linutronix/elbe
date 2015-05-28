@@ -34,7 +34,7 @@ def system(cmd, allow_fail=False):
 
     if ret != 0:
         if not allow_fail:
-            raise CommandError(cmd, p.returncode)
+            raise CommandError(cmd, ret)
 
 
 def command_out(cmd, input=None):
