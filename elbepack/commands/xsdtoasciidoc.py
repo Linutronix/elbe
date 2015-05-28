@@ -21,31 +21,13 @@
 import os
 import sys
 
-from mako.template import Template
-from mako import exceptions
-
-import elbepack
 from elbepack.treeutils import etree
+from elbepack.directories import xsdtoasciidoc_mako_fname
+from elbepack.templates import write_template
 
 from optparse import OptionParser
 
-# Some more helpers
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-def write_template( outname, fname, d ):
-    outfile = file(outname, "w")
-    outfile.write( template( fname, d ) )
-    outfile.close()
-
 def run_command( argv ):
-    pack_dir = elbepack.__path__[0]
-    template_dir = os.path.join( pack_dir, "mako" )
-
     oparser = OptionParser(usage="usage: %prog xsdtoasciidoc [options] <xsdfile>")
 
     oparser.add_option( "--output", dest="out",
@@ -68,5 +50,5 @@ def run_command( argv ):
     d = {"opt": opt,
          "xml": xml }
 
-    write_template(opt.out, os.path.join(pack_dir, "xsdtoasciidoc.mako"), d )
+    write_template(opt.out, xsdtoasciidoc_mako_fname, d )
 
