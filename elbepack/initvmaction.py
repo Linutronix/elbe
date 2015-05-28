@@ -168,6 +168,7 @@ class CreateAction(InitVMAction):
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
+            prjdir = prjdir.strip()
             try:
                 system ('%s control build "%s"' % (elbe_exe, prjdir) )
             except CommandError:
