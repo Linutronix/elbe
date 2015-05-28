@@ -18,6 +18,7 @@
 
 import elbepack
 import os
+from pkgutil import iter_modules
 
 elbe_exe = None
 
