@@ -80,6 +80,8 @@ class RepoBase(object):
             fp.write( "Method: " + self.mirror + "\n" )
             fp.write( "VerifyRelease: blindtrust\n" )
             fp.write( "Components: \n" )
+            fp.write( "GetInRelease: no\n" )
+            fp.write( "Architectures: amd64\n" )
             fp.write ( "UDebComponents: main>main\n" )
 
             fp.close()
