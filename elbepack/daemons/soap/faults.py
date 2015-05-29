@@ -18,9 +18,14 @@
 
 from soaplib.serializers.primitive import Fault
 
+
 class SoapElbeDBError( Fault ):
     def __init__(self, dberr):
         Fault.__init__(self, faultcode="ElbeDBError", faultstring=str(dberr))
+
+class SoapElbeProjectError( Fault ):
+    def __init__(self, err):
+        Fault.__init__(self, faultcode="ElbeProjectError", faultstring=str(err))
 
 class SoapElbeAuthenticationFailed( Fault ):
     def __init__(self):
