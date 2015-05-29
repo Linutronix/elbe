@@ -25,6 +25,7 @@ from elbepack.shellhelper import CommandError, system, system_out
 import sys
 
 import os
+import time
 
 
 class InitVMError(Exception):
@@ -176,7 +177,26 @@ class CreateAction(InitVMAction):
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
-            print ("now try to wait....")
+            try:
+                system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("")
+            print ("Build finished, available files:")
+            print ("")
+
+            try:
+                system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("")
+            print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
 
 InitVMAction.register(CreateAction)
 
@@ -217,7 +237,28 @@ class SubmitAction(InitVMAction):
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
-            print ("now try to wait....")
+            print ("Build started, waiting till it finishes")
+
+            try:
+                system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("")
+            print ("Build finished, available files:")
+            print ("")
+
+            try:
+                system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            print ("")
+            print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
 
 InitVMAction.register(SubmitAction)
 
