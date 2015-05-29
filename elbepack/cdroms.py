@@ -66,15 +66,18 @@ def mk_source_cdrom(rfs, arch, codename, target, log, cdrom_size=CDROM_SIZE):
     for pkg in pkglist:
         try:
             p = cache[pkg.name]
-            pkgver = p.installed
+            if pkg.name == 'elbe-bootstrap':
+                pkgver = p.versions [0]
+            else:
+                pkgver = p.installed
 
             dsc = pkgver.fetch_source ('/var/cache/elbe/sources',
                              ElbeAcquireProgress (cb=None), unpack=False)
             repo.includedsc( dsc )
         except ValueError as ve:
-            log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+            log.printo( "No sources for Package " + pkg.name + "-" + str(pkg.installed_version) )
         except FetchError as fe:
-            log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+            log.printo( "Source for Package " + pkg.name + "-" + pkgver.version + " could not be downloaded" )
 
     repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
@@ -101,11 +104,11 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log, cdrom_size=CDROM_SIZE
                                             ElbeAcquireProgress (cb=None) )
                 repo.includedeb(deb, 'main')
             except ValueError as ve:
-                log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
+                log.printo( "No Package " + pkg.name + "-" + str(pkg.installed_version) )
             except FetchError as fe:
-                log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
+                log.printo( "Package " + pkg.name + "-" + pkgver.version + " could not be downloaded" )
             except TypeError as te:
-                log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
+                log.printo( "Package " + pkg.name + "-" + str(pkg.installed_version) + " missing name or version" )
 
         cache = get_rpcaptcache( rfs, "aptcache.log", arch )
         for p in xml.node("debootstrappkgs"):
