@@ -449,6 +449,11 @@ class ProjectManager(object):
             builddir = self._get_current_project( userid ).builddir
             return self.db.has_changes( builddir )
 
+    def current_project_is_busy (self, userid):
+        with self.lock:
+            builddir = self._get_current_project( userid ).builddir
+            return self.db.is_busy( builddir )
+
     def _get_current_project (self, userid):
         # Must be called with self.lock held
         if not userid in self.userid2project:
