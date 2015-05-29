@@ -84,7 +84,7 @@ class RepoBase(object):
 
             fp.close()
 
-            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update' )
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update', allow_fail=True )
 
 
     def includedeb( self, path, component="main"):
