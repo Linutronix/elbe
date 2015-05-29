@@ -272,3 +272,27 @@ class GetFilesAction(ClientAction):
                 print ("%s" % (f.name))
 
 ClientAction.register(GetFilesAction)
+
+class WaitProjectBusyAction(ClientAction):
+
+    tag = 'wait_busy'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, args):
+        if len (args) != 1:
+            print ("usage: elbe control wait_busy <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+
+        while True:
+            busy = client.service.get_project_busy (builddir)
+            if not busy:
+                break
+            else:
+                print ("project still busy, waiting")
+                time.sleep(5)
+
+ClientAction.register(WaitProjectBusyAction)
