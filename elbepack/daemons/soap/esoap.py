@@ -38,7 +38,7 @@ from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
 
-from faults import SoapElbeDBError, SoapElbeNotAuthorized
+from faults import SoapElbeDBError, SoapElbeNotAuthorized, SoapElbeProjectError
 
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
@@ -209,3 +209,19 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
                 return "Invalid XML file"
 
         return prjid
+
+    @soapmethod (String, _returns=Boolean)
+    @authenticated_uid
+    def get_project_busy (self, uid, builddir):
+        try:
+            self.pm.open_project (uid, builddir)
+        except ValidationError as e:
+            raise SoapElbeProjectError ("old XML file is invalid - open project failed")
+        except Exception as e:
+            raise SoapElbeProjectError (str (e) + " - open project failed")
+
+        try:
+            return self.pm.current_project_is_busy (uid)
+        except Exception as e:
+            raise SoapElbeProjectError (str (e) + " - open project failed")
+
