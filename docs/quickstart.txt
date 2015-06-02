@@ -188,6 +188,8 @@ Port 5022
 HostName localhost
 ---------------------------------------
 
+NOTE: Root Password is `root`
+
 
 Build Rootfilesystem
 --------------------
@@ -210,6 +212,8 @@ and the initvm is running:
 ----------------------------------------------------------------
 $ scp fun.xml root@vm:.
 ----------------------------------------------------------------
+
+NOTE: Root Password is `root`
 
 Then ssh into the VM using:
 
