@@ -222,7 +222,6 @@ class CdromSrcRepo(RepoBase):
                            repo_attrs,
                            "Elbe",
                            "Elbe Source Cdrom Repo",
-                           "main main/debian-installer",
                            maxsize)
 
 
