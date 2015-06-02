@@ -21,24 +21,50 @@ from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 
+class RepoAttributes(object):
+    def __init__ (self, codename, arch, components,
+            mirror='http://ftp.debian.org/debian' ):
+        self.codename = codename
+        if type (arch) is str:
+            self.arch = set ([arch])
+        else:
+            self.arch = set (arch)
+
+        if type(components) is str:
+            self.components = set ([components])
+        else:
+            self.components = set (components)
+
+        self.mirror = mirror
+
+    def __add__ (self, other):
+        if other.codename != self.codename:
+            return [self, other]
+        else:
+            assert self.mirror == other.mirror
+            ret_arch = self.arch.union (other.arch)
+            ret_comp = self.components.union (other.components)
+
+            return [ RepoAttributes (self.codename, ret_arch, ret_comp, self.mirror) ]
 
 
 class RepoBase(object):
-    def __init__( self, path, log, arch, codename, origin, description,
-            components="main", maxsize=None,
-            mirror='http://ftp.debian.org/debian' ):
+    def __init__( self, path, log, init_attr, repo_attr, origin, description, maxsize=None):
 
         self.vol_path = path
         self.volume_count = 0
 
         self.log = log
-        self.codename = codename
-        self.arch = arch
-        self.components = components
+        self.init_attr = init_attr
+        self.repo_attr = repo_attr
+        if self.init_attr is not None:
+            self.attrs = init_attr + repo_attr
+        else:
+            self.attrs = [repo_attr]
+
         self.origin = origin
         self.description = description
         self.maxsize = maxsize
-        self.mirror = mirror
         self.fs = self.get_volume_fs(self.volume_count)
 
         self.gen_repo_conf()
@@ -59,45 +85,56 @@ class RepoBase(object):
         self.fs.mkdir_p( "conf" )
         fp = self.fs.open( "conf/distributions", "w")
 
-        fp.write( "Origin: " + self.origin + "\n" )
-        fp.write( "Label: " + self.origin + "\n" )
-        fp.write( "Suite: " + codename2suite[ self.codename ] + "\n" )
-        fp.write( "Codename: " + self.codename + "\n" )
-        fp.write( "Architectures: " + self.arch + "\n" )
-        fp.write( "Components: " + self.components + "\n" )
-        fp.write( "Description: " + self.description + "\n" )
+        need_update = False
 
-        if 'main/debian-installer' in self.components:
-            fp.write( "Update: di\n" )
-            fp.write( "UDebComponents: main\n" )
+        for att in self.attrs:
+            fp.write( "Origin: " + self.origin + "\n" )
+            fp.write( "Label: " + self.origin + "\n" )
+            fp.write( "Suite: " + codename2suite[ att.codename ] + "\n" )
+            fp.write( "Codename: " + att.codename + "\n" )
+            fp.write( "Architectures: " + " ".join (att.arch) + "\n" )
+            fp.write( "Components: " + " ".join (att.components.difference (set (["main/debian-installer"]))) + "\n" )
+            fp.write( "Description: " + self.description + "\n" )
 
+            if 'main/debian-installer' in att.components:
+                fp.write( "Update: di\n" )
+                fp.write( "UDebComponents: main\n" )
+
+                ufp = self.fs.open( "conf/updates", "w" )
+
+                ufp.write( "Name: di\n" )
+                ufp.write( "Method: " + att.mirror + "\n" )
+                ufp.write( "VerifyRelease: blindtrust\n" )
+                ufp.write( "Components: \n" )
+                ufp.write( "GetInRelease: no\n" )
+                ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
+                ufp.write ( "UDebComponents: main>main\n" )
+                ufp.close()
+
+                need_update = True
+
+            fp.write( "\n" )
         fp.close()
 
-        if 'main/debian-installer' in self.components:
-            fp = self.fs.open( "conf/updates", "w" )
+        if need_update:
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update' )
 
-            fp.write( "Name: di\n" )
-            fp.write( "Method: " + self.mirror + "\n" )
-            fp.write( "VerifyRelease: blindtrust\n" )
-            fp.write( "Components: \n" )
-            fp.write( "GetInRelease: no\n" )
-            fp.write( "Architectures: amd64\n" )
-            fp.write ( "UDebComponents: main>main\n" )
-
-            fp.close()
-
-            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update', allow_fail=True )
-
-
-    def includedeb( self, path, component="main"):
+    def _includedeb( self, path, codename, component):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + os.path.getsize( path )
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        self.log.do( 'reprepro --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + self.codename + ' ' + path )
+        self.log.do( 'reprepro --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + codename + ' ' + path )
 
-    def includedsc( self, path, component="main"):
+    def includedeb (self, path, component="main"):
+        self._includedeb (path, self.repo_attr.codename, component)
+
+    def include_init_deb (self, path, component="main"):
+        self._includedeb (path, self.init_attr.codename, component)
+
+
+    def _includedsc( self, path, codename, component):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + get_dsc_size( path )
             if new_size > self.maxsize:
@@ -106,7 +143,13 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        self.log.do( 'reprepro --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + self.codename + ' ' + path ) 
+        self.log.do( 'reprepro --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + codename + ' ' + path )
+
+    def includedsc( self, path, component="main"):
+        self._includedsc (path, self.repo_attr.codename, component)
+
+    def include_init_dsc( self, path, component="main"):
+        self._includedsc (path, self.init_attr.codename, component)
 
     def buildiso( self, fname ):
         if self.volume_count == 0:
@@ -127,14 +170,15 @@ class UpdateRepo(RepoBase):
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
+        repo_attrs = RepoAttributes (codename, arch, "main")
+
         RepoBase.__init__( self,
                            path,
                            log,
-                           arch,
-                           codename,
+                           None,
+                           repo_attrs,
                            "Update",
-                           "Update",
-                           "main" )
+                           "Update")
 
 
 class CdromBinRepo(RepoBase):
@@ -144,44 +188,51 @@ class CdromBinRepo(RepoBase):
         arch = xml.text("project/arch", key="arch" )
         codename = xml.text("project/suite")
 
-        # add amd64 for initvm packages
-        if arch != 'amd64':
-            arch += ' amd64'
+        #init_codename = xml.text("init/suite")
+        #elbe init currently ignores suite setting
+        init_codename = "wheezy"
 
         mirror = xml.get_primary_mirror ("/media/cdrom")
 
+        repo_attrs = RepoAttributes (codename, arch, ["main", "added"], mirror)
+        init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
+
         RepoBase.__init__( self,
                            path,
                            log,
-                           arch,
-                           codename,
+                           init_attrs,
+                           repo_attrs,
                            "Elbe",
                            "Elbe Binary Cdrom Repo",
-                           "main main/debian-installer added",
-                           maxsize,
-                           mirror=mirror )
+                           maxsize )
 
 
 class CdromSrcRepo(RepoBase):
-    def __init__( self, codename, path, log, maxsize ):
+    def __init__( self, codename, init_codename, path, log, maxsize ):
+        repo_attrs = RepoAttributes (codename, "source", ["main", "added"])
+        if init_codename is not None:
+            init_attrs = RepoAttributes (init_codename, "source", ["main", "main/debian-installer"])
+        else:
+            init_attrs = None
+
         RepoBase.__init__( self,
                            path,
                            log,
-                           "source",
-                           codename,
+                           init_attrs,
+                           repo_attrs,
                            "Elbe",
                            "Elbe Source Cdrom Repo",
                            "main main/debian-installer",
-                           maxsize )
+                           maxsize)
 
 
 class ToolchainRepo(RepoBase):
     def __init__( self, arch, codename, path, log):
+        repo_attrs = RepoAttributes (codename, arch, "main")
         RepoBase.__init__( self,
                            path,
                            log,
-                           arch,
-                           codename,
+                           None,
+                           repo_attrs,
                            "toolchain",
-                           "Toolchain binary packages Repo",
-                           "main" )
+                           "Toolchain binary packages Repo" )
