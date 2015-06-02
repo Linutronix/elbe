@@ -106,7 +106,7 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log, cdrom_size=CDROM_SIZE
                     pkgver = p.installed
                 deb = pkgver.fetch_binary ('/var/cache/elbe/binaries/main',
                                             ElbeAcquireProgress (cb=None) )
-                repo.includedeb(deb, 'main')
+                repo.include_init_deb(deb, 'main')
             except ValueError as ve:
                 log.printo( "No Package " + pkg.name + "-" + str(pkg.installed_version) )
             except FetchError as fe:
