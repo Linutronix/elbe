@@ -39,12 +39,12 @@ def get_initvm_pkglist ():
     return pkglist
 
 
-def mk_source_cdrom(rfs, arch, codename, target, log, cdrom_size=CDROM_SIZE):
+def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=CDROM_SIZE):
 
     hostfs.mkdir_p( '/var/cache/elbe/sources' )
     rfs.mkdir_p( '/var/cache/elbe/sources' )
 
-    repo = CdromSrcRepo( codename,
+    repo = CdromSrcRepo( codename, init_codename,
                          os.path.join( target, "srcrepo" ),
                          log,
                          cdrom_size )
@@ -85,7 +85,7 @@ def mk_source_cdrom(rfs, arch, codename, target, log, cdrom_size=CDROM_SIZE):
     repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
 
-def mk_binary_cdrom(rfs, arch, codename, xml, target, log, cdrom_size=CDROM_SIZE):
+def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_size=CDROM_SIZE):
 
     rfs.mkdir_p( '/var/cache/elbe/binaries/added' )
     rfs.mkdir_p( '/var/cache/elbe/binaries/main' )
