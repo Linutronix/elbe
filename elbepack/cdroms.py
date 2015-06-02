@@ -24,10 +24,12 @@ from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
 from elbepack.aptpkgutils import XMLPackage, APTPackage
 from elbepack.aptprogress import ElbeAcquireProgress
+from elbepack.filesystem import Filesystem
 from apt import Cache
 
 CDROM_SIZE = 640*1000*1000
 
+hostfs = Filesystem( "/" )
 
 def get_initvm_pkglist ():
     cache = Cache ()
@@ -39,6 +41,7 @@ def get_initvm_pkglist ():
 
 def mk_source_cdrom(rfs, arch, codename, target, log, cdrom_size=CDROM_SIZE):
 
+    hostfs.mkdir_p( '/var/cache/elbe/sources' )
     rfs.mkdir_p( '/var/cache/elbe/sources' )
 
     repo = CdromSrcRepo( codename,
@@ -86,6 +89,7 @@ def mk_binary_cdrom(rfs, arch, codename, xml, target, log, cdrom_size=CDROM_SIZE
 
     rfs.mkdir_p( '/var/cache/elbe/binaries/added' )
     rfs.mkdir_p( '/var/cache/elbe/binaries/main' )
+    hostfs.mkdir_p( '/var/cache/elbe/binaries/main' )
 
     repo = CdromBinRepo(xml, os.path.join( target, "binrepo" ), log, cdrom_size)
 
