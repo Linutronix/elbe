@@ -14,7 +14,7 @@ MAN_HTML=$(patsubst %.txt,%.html,$(MAN_TXT))
 DOC_HTML=$(MAN_HTML)
 
 ARTICLES = elbe-schema-reference elbe-examples
-SP_ARTICLES= elbeoverview-en repobuilder-en
+SP_ARTICLES= elbeoverview-en repobuilder-en quickstart
 
 DOC_HTML+=$(patsubst %,%.html,$(ARTICLES) $(SP_ARTICLES))
 
@@ -115,6 +115,9 @@ $(patsubst %,%.html,$(ARTICLES)) : %.html : %.txt
 
 elbeoverview-en.html : elbeoverview-en.txt elbe-process.png emu-process.png
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbeoverview-en.txt
+
+quickstart.html : quickstart.txt
+	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 quickstart.txt
 
 elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) -a iconsdir=icons -o elbeoverview-en-ie.html -b xhtml11 elbeoverview-en.txt
