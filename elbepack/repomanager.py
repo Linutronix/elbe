@@ -38,6 +38,9 @@ class RepoAttributes(object):
         self.mirror = mirror
 
     def __add__ (self, other):
+        """ Over simplistic Add implementation only useful for
+            our current implementation"""
+
         if other.codename != self.codename:
             return [self, other]
         else:
