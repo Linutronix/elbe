@@ -38,7 +38,11 @@ from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDBError, InvalidLogin
 
 
-from faults import SoapElbeDBError, SoapElbeNotAuthorized, SoapElbeProjectError
+from faults import (SoapElbeDBError,
+                    SoapElbeNotAuthorized,
+                    SoapElbeProjectError,
+                    SoapElbeValidationError,
+                    SoapElbeInvalidState)
 
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
@@ -170,6 +174,63 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
                 return "Invalid XML file"
 
         return "OK"
+
+    @soapmethod (String)
+    @authenticated_uid
+    def start_cdrom (self, uid, builddir):
+        try:
+            self.pm.open_project (uid, builddir)
+        except ValidationError as e:
+            raise SoapElbeValidationError
+        except Exception as e:
+            raise SoapElbeProjectError (str (e) + " - open project failed")
+
+        cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
+
+        # Now write empty File
+        fp = open (cdrom_fname, "w")
+        fp.close()
+
+    @soapmethod (String, String)
+    @authenticated_uid
+    def append_cdrom (self, uid, builddir, data):
+        try:
+            self.pm.open_project (uid, builddir)
+        except ValidationError as e:
+            raise SoapElbeValidationError
+        except Exception as e:
+            raise SoapElbeProjectError (str (e) + " - open project failed")
+
+        cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
+
+        # Now write empty File
+        fp = open (cdrom_fname, "a")
+        fp.write (binascii.a2b_base64 (data))
+        fp.close()
+
+    @soapmethod (String)
+    @authenticated_uid
+    def finish_cdrom (self, uid, builddir):
+        try:
+            self.pm.open_project (uid, builddir)
+        except ValidationError as e:
+            raise SoapElbeValidationError ()
+        except Exception as e:
+            raise SoapElbeProjectError (str (e) + " - open project failed")
+
+        try:
+            #self.pm.set_current_project_cdrom (uid, fp.name)
+            pass
+        except ProjectManagerError as e:
+            raise SoapElbeProjectError (str (e))
+        except InvalidState as e:
+            raise SoapElbeInvalidState()
+        except ElbeDBError as e:
+            raise SoapElbeDBError (str (e))
+        except OSError as e:
+            raise SoapElbepProjectError ("OSError: " + str (e))
+        except ValidationError as e:
+            raise SoapElbeValidationError
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
