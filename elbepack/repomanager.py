@@ -107,7 +107,12 @@ class RepoBase(object):
                 ufp.write( "VerifyRelease: blindtrust\n" )
                 ufp.write( "Components: \n" )
                 ufp.write( "GetInRelease: no\n" )
-                ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
+                # It would be nicer, to use this
+                # ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
+                # But we end up with 'armel amd64' sometimes.
+                # So lets just use the init_attr...
+                ufp.write( "Architectures: " + " ".join (self.init_attr.arch) + "\n" )
+
                 ufp.write ( "UDebComponents: main>main\n" )
                 ufp.close()
 
