@@ -185,9 +185,18 @@ class CreateAction(InitVMAction):
                 sys.exit(20)
 
             print ("")
-            print ("Build finished, available files:")
+            print ("Build finished !")
             print ("")
+            try:
+                system ('%s control dump_file "%s" validation.txt' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
 
+            print ("")
+            print ("Listing vailable files:")
+            print ("")
             try:
                 system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
             except CommandError:
@@ -247,9 +256,18 @@ class SubmitAction(InitVMAction):
                 sys.exit(20)
 
             print ("")
-            print ("Build finished, available files:")
+            print ("Build finished !")
             print ("")
+            try:
+                system ('%s control dump_file "%s" validation.txt' % (elbe_exe, prjdir) )
+            except CommandError:
+                print ("elbe control Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
 
+            print ("")
+            print ("Listing vailable files:")
+            print ("")
             try:
                 system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
             except CommandError:
