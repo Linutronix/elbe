@@ -327,3 +327,32 @@ class WaitProjectBusyAction(ClientAction):
                 time.sleep(5)
 
 ClientAction.register(WaitProjectBusyAction)
+
+class SetCdromAction(ClientAction):
+
+    tag = 'set_cdrom'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, args):
+        size = 5 * 1024 * 1024
+
+        if len (args) != 2:
+            print ("usage: elbe control set_cdrom <project_dir> <cdrom file>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = args[1]
+
+        fp = file (filename, "r")
+        client.service.start_cdrom (builddir)
+        while True:
+            bindata = fp.read (size)
+            client.service.append_cdrom (builddir, binascii.b2a_base64 (bindata))
+            if len (bindata) != size:
+                break
+
+        client.service.finish_cdrom (builddir)
+
+ClientAction.register(GetFileAction)
