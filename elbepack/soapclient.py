@@ -249,6 +249,37 @@ class GetFileAction(ClientAction):
 
 ClientAction.register(GetFileAction)
 
+class DumpFileAction(ClientAction):
+
+    tag = 'dump_file'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, args):
+        if len (args) != 2:
+            print ("usage: elbe control dump_file <project_dir> <file>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = args[1]
+
+        part = 0
+        while True:
+            ret = client.service.get_file (builddir, filename, part)
+            if ret == "FileNotFound":
+                print (ret, file=sys.stderr)
+                sys.exit(20)
+            if ret == "EndOfFile":
+                return
+
+            sys.stdout.write (binascii.a2b_base64 (ret))
+            part = part + 1
+
+        print (filename + " unknown error", file=sys.stderr)
+        return
+
+ClientAction.register(DumpFileAction)
 
 class GetFilesAction(ClientAction):
 
