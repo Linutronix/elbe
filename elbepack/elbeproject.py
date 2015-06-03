@@ -177,13 +177,27 @@ class ElbeProject (object):
         # Build cdrom images
         arch = self.xml.text( "project/arch", key="arch" )
         codename = self.xml.text( "project/suite" )
+
+        self.repo_images = []
         with self.buildenv:
+            init_codename = self.xml.get_initvm_codename()
             if not skip_cdrom:
-                mk_binary_cdrom( self.buildenv.rfs, arch, codename, self.xml,
-                        self.builddir, self.log, cdrom_size=cdrom_size )
-                if build_sources:
-                    mk_source_cdrom( self.buildenv.rfs, arch, codename,
-                            self.builddir, self.log, cdrom_size=cdrom_size )
+                self.repo_images += mk_binary_cdrom( self.buildenv.rfs,
+                                                     arch,
+                                                     codename,
+                                                     init_codename,
+                                                     self.xml,
+                                                     self.builddir,
+                                                     self.log,
+                                                     cdrom_size=cdrom_size )
+            if not skip_cdrom and build_sources:
+                self.repo_images += mk_source_cdrom( self.buildenv.rfs,
+                                                     arch,
+                                                     codename,
+                                                     init_codename,
+                                                     self.builddir,
+                                                     self.log,
+                                                     cdrom_size=cdrom_size )
 
 
         if self.postbuild_file:
