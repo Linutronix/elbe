@@ -739,6 +739,12 @@ class ElbeDB(object):
             self._update_project_file( s, p.builddir, "log.txt",
                     "text/plain; charset=utf-8", "Log file" )
 
+            for img in ep.repo_images:
+                name = os.path.basename(img)
+                self._update_project_file( s, p.builddir, name,
+                        "application/octet-stream", "Repository IsoImage" )
+
+
     def _update_project_file (self, s, builddir, name, mime_type, description):
         filename = os.path.join( builddir, name )
         try:
