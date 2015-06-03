@@ -160,15 +160,20 @@ class RepoBase(object):
         self._includedsc (path, self.init_attr.codename, component)
 
     def buildiso( self, fname ):
+        files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
             self.log.do( "genisoimage -o %s -J -R %s" % (fname, new_path) )
+            files.append (fname)
         else:
             for i in range(self.volume_count+1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
                 self.log.do( "genisoimage -o %s -J -R %s" % (newname,
                                                              volfs.path) )
+                files.append (newname)
+
+        return files
 
 
 class UpdateRepo(RepoBase):
