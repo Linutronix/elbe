@@ -355,4 +355,4 @@ class SetCdromAction(ClientAction):
 
         client.service.finish_cdrom (builddir)
 
-ClientAction.register(GetFileAction)
+ClientAction.register(SetCdromAction)
