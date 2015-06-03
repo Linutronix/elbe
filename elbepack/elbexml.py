@@ -188,3 +188,9 @@ class ElbeXML(object):
             tree.append_treecopy( e )
 
         self.xml.set_child_position( tree, 0 )
+
+    def get_initvm_codename (self):
+        if self.has ("initvm/suite"):
+            return self.text ("initvm/suite")
+        else:
+            return None
