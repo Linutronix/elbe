@@ -39,3 +39,11 @@ class SoapElbeNotAuthorized( Fault ):
     def __init__(self):
         Fault.__init__(self, faultcode="ElbeNotAuthorized", faultstring="Not Authorized ! Cant let you perform this command.")
 
+class SoapElbeValidationError( Fault ):
+    def __init__(self):
+        Fault.__init__(self, faultcode="ElbeValidationError", faultstring="Error validating xml File")
+
+class SoapElbeInvalidState( Fault ):
+    def __init__(self):
+        Fault.__init__(self, faultcode="ElbeInvalidState", faultstring="Project is Busy ! Operation Invalid")
+
