@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 from optparse import OptionParser
 import sys
@@ -60,7 +61,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "wrong number of arguments"
+        print ("wrong number of arguments", file=sys.stderr)
         oparser.print_help()
         sys.exit(20)
 
@@ -70,7 +71,7 @@ def run_command( argv ):
                     override_buildtype=opt.buildtype,
                     skip_validate=opt.skip_validation )
         except ValidationError:
-            print "xml validation failed. Bailing out"
+            print ("xml validation failed. Bailing out", file=sys.stderr)
             sys.exit(20)
 
         builddir = project.builddir
@@ -92,12 +93,23 @@ def run_command( argv ):
         else:
             log = StdoutLog()
 
+    generated_files = []
     if opt.source:
         with rfs:
-            mk_source_cdrom( rfs, arch, codename, init_codename, builddir, log,
-                    opt.cdrom_size )
+            generated_files += mk_source_cdrom( rfs, arch, codename,
+                                                init_codename, builddir, log,
+                                                opt.cdrom_size )
 
     if opt.binary:
         with rfs:
-            mk_binary_cdrom( rfs, arch, codename, init_codename, xml, builddir, log,
+            generated_files += mk_binary_cdrom( rfs, arch, codename,
+                                                init_codename, xml, builddir, log,
                     opt.cdrom_size )
+
+    print ("")
+    print ("Image Build finished !")
+    print ("")
+    print ("Files generated:")
+    for f in generated_files:
+        print (" %s"%f)
+
