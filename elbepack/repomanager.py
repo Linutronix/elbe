@@ -182,20 +182,13 @@ class UpdateRepo(RepoBase):
 
 
 class CdromBinRepo(RepoBase):
-    def __init__( self, xml, path, log, maxsize ):
-        self.xml  = xml
-
-        arch = xml.text("project/arch", key="arch" )
-        codename = xml.text("project/suite")
-
-        #init_codename = xml.text("init/suite")
-        #elbe init currently ignores suite setting
-        init_codename = "wheezy"
-
-        mirror = xml.get_primary_mirror ("/media/cdrom")
+    def __init__( self, arch, codename, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):
 
         repo_attrs = RepoAttributes (codename, arch, ["main", "added"], mirror)
-        init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
+        if init_codename is not None:
+            init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
+        else:
+            init_attrs = None
 
         RepoBase.__init__( self,
                            path,
