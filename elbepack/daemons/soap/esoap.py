@@ -157,7 +157,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
             try:
-                self.pm.set_current_project_xml (userid, fp.name)
+                self.pm.set_current_project_xml (uid, fp.name)
             except ProjectManagerError as e:
                 return str (e)
             except InvalidState as e:
