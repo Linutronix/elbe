@@ -82,7 +82,7 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkgver.version + " could not be downloaded" )
 
-    repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
+    return repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_size=CDROM_SIZE):
@@ -152,4 +152,4 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
         except TypeError as te:
             log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
-    repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
+    return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
