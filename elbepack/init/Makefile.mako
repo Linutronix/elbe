@@ -35,7 +35,7 @@ nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
 %>
 
-all: .stamps/stamp-install-initial-image .elbe-gen/files-to-extract
+all: .stamps/stamp-install-initial-image
 
 .elbe-gen/initrd-preseeded.gz: .elbe-in/*
 	rm -rf tmp-tree
@@ -115,14 +115,6 @@ run-con:
 		-usb \
 		-nographic \
 		-smp $(SMP)
-
-.elbe-gen/files-to-extract: .stamps/stamp-install-initial-image
-	mkdir -p .elbe-gen
-% if xml.has("project"):
-	e2cp buildenv.img?offset=$(LOOP_OFFSET):/var/cache/elbe/build/files-to-extract .elbe-gen/
-	for f in `cat .elbe-gen/files-to-extract`; do e2cp buildenv.img?offset=$(LOOP_OFFSET):/var/cache/elbe/build/$$f . ; done
-	cat validation.txt
-% endif
 
 clean:
 	rm -fr .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
