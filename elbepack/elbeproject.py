@@ -194,20 +194,6 @@ class ElbeProject (object):
                             self.xml.text ("project/name")),
                          allow_fail=True)
 
-
-        # Write files to extract list
-        fte = open( os.path.join( self.builddir, "files-to-extract" ), "w+" )
-        # store each image only once
-        files = set( self.targetfs.images )
-        for img in files:
-            fte.write(img + '\n')
-        fte.write("source.xml\n")
-        fte.write("licence.txt\n")
-        fte.write("validation.txt\n")
-        fte.write("elbe-report.txt\n")
-        fte.write("../elbe-report.log\n")
-        fte.close()
-
         os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
 
     def get_rpcaptcache (self):
