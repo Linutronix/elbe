@@ -160,11 +160,7 @@ class ProjectManager(object):
 
     def open_current_project_file (self, userid, filename, mode = 'r'):
         with self.lock:
-            builddir = self._get_current_project( userid ).builddir
-            if self.db.is_busy( builddir ):
-                raise InvalidState(
-                        "cannot open file %s of busy project in %s" %
-                        ( filename, builddir ) )
+            builddir = self._get_current_project( userid, allow_busy=False ).builddir
 
             pfd = self.db.get_project_file( builddir, filename )
             return OpenProjectFile( pfd, mode )
@@ -183,54 +179,34 @@ class ProjectManager(object):
 
     def set_current_project_xml (self, userid, xml_file):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot change XML file for busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.db.set_xml( ep.builddir, xml_file )
 
     def set_current_project_postbuild (self, userid, postbuild_file):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot change pre.sh file for busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             f = self.db.set_postbuild( ep.builddir, postbuild_file )
             ep.postbuild_file = f
 
     def set_current_project_presh (self, userid, presh_file):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot change pre.sh file for busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             f = self.db.set_presh( ep.builddir, presh_file )
             ep.presh_file = f
 
     def set_current_project_postsh (self, userid, postsh_file):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot change post.sh file for busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             f = self.db.set_postsh( ep.builddir, postsh_file )
             ep.postsh_file = f
 
     def set_current_project_version( self, userid, new_version ):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot change version number for busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.db.set_project_version( ep.builddir, new_version )
             ep.xml.node( "/project/version" ).set_text( new_version )
@@ -242,19 +218,13 @@ class ProjectManager(object):
 
     def save_current_project_version( self, userid, description = None ):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep. builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.worker.enqueue( SaveVersionJob( ep, description ) )
 
     def checkout_project_version( self, userid, version ):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.worker.enqueue( CheckoutVersionJob( ep, version ) )
 
@@ -266,11 +236,7 @@ class ProjectManager(object):
 
     def del_current_project_version( self, userid, version ):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "cannot delete version of busy project in %s" %
-                        ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             name = ep.xml.text( "project/name" )
             self.db.del_version( ep.builddir, version )
@@ -286,10 +252,7 @@ class ProjectManager(object):
 
     def build_current_project (self, userid):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.worker.enqueue( BuildJob( ep ) )
 
@@ -307,19 +270,13 @@ class ProjectManager(object):
 
     def apt_update (self, userid):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.worker.enqueue( APTUpdateJob( ep ) )
 
     def apt_commit (self, userid):
         with self.lock:
-            ep = self._get_current_project( userid )
-            if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+            ep = self._get_current_project( userid, allow_busy=False )
 
             self.worker.enqueue( APTCommitJob( ep ) )
 
@@ -494,12 +451,7 @@ class ProjectManager(object):
 
     def _get_current_project_apt_cache( self, userid ):
         # Must be called with self.lock held
-        ep = self._get_current_project( userid )
-
-        if self.db.is_busy( ep.builddir ):
-            raise InvalidState(
-                    "project in directory %s is currently busy" %
-                    ep.builddir )
+        ep = self._get_current_project( userid, allow_busy=False )
 
         if not ep.has_full_buildenv():
             raise InvalidState(
