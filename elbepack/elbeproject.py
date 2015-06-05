@@ -60,6 +60,9 @@ class ElbeProject (object):
         self._rpcaptcache = None
         self.rpcaptcache_notifier = rpcaptcache_notifier
 
+        # Initialise Repo Images to Empty list.
+        self.repo_images = []
+
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
         if xmlpath:
