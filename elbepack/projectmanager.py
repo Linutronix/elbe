@@ -454,12 +454,19 @@ class ProjectManager(object):
             builddir = self._get_current_project( userid ).builddir
             return self.db.is_busy( builddir )
 
-    def _get_current_project (self, userid):
+    def _get_current_project (self, userid, allow_busy=True):
         # Must be called with self.lock held
         if not userid in self.userid2project:
             raise NoOpenProject()
 
-        return self.userid2project[ userid ]
+        ep = self.userid2project[ userid ]
+
+        if not allow_busy:
+            if self.db.is_busy( ep.builddir ):
+                raise InvalidState(
+                        "project %s is busy" % ep.builddir )
+
+        return ep
 
     def _close_current_project (self, userid):
         # Must be called with self.lock held
