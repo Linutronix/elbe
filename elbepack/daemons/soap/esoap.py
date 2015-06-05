@@ -111,16 +111,14 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except:
                 return "EndOfFile"
 
-    @soapmethod (String, _returns=String)
+    @soapmethod (String)
     @authenticated_uid
     @soap_faults
     def build (self, uid, builddir):
         self.pm.open_project (uid, builddir)
         self.pm.build_current_project (uid)
 
-        return "OK"
-
-    @soapmethod (String, String, _returns=String)
+    @soapmethod (String, String)
     @authenticated_uid
     @soap_faults
     def set_xml (self, uid, builddir, xml):
@@ -130,8 +128,6 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
             self.pm.set_current_project_xml (uid, fp.name)
-
-        return "OK"
 
     @soapmethod (String)
     @authenticated_uid
@@ -165,21 +161,17 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         self.pm.open_project (uid, builddir)
         self.pm.set_current_project_upload_cdrom (uid)
 
-    @soapmethod (String, _returns=String)
+    @soapmethod (String)
     @authenticated_uid
     @soap_faults
     def reset_project (self, uid, builddir):
         self.pm.db.reset_project (builddir, True)
 
-        return "OK"
-
-    @soapmethod (String, _returns=String)
+    @soapmethod (String)
     @authenticated_uid
     @soap_faults
     def del_project (self, uid, builddir):
         self.pm.del_project (userid, builddir)
-
-        return "OK"
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
