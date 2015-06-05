@@ -153,7 +153,7 @@ class ResetProjectAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
-        print (client.service.reset_project (builddir))
+        client.service.reset_project (builddir)
 
 ClientAction.register(ResetProjectAction)
 
@@ -171,7 +171,7 @@ class DeleteProjectAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
-        print (client.service.del_project (builddir), file=sys.stderr)
+        client.service.del_project (builddir)
 
 ClientAction.register(DeleteProjectAction)
 
@@ -191,7 +191,7 @@ class SetXmlAction(ClientAction):
         filename = args[1]
         with file (filename, "r") as fp:
             xml_base64 = binascii.b2a_base64(fp.read ())
-            print (client.service.set_xml (builddir, xml_base64))
+            client.service.set_xml (builddir, xml_base64)
 
 ClientAction.register(SetXmlAction)
 
@@ -209,7 +209,7 @@ class BuildAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
-        print (client.service.build (builddir))
+        client.service.build (builddir)
 
 ClientAction.register(BuildAction)
 
