@@ -183,6 +183,16 @@ class ProjectManager(object):
 
             self.db.set_xml( ep.builddir, xml_file )
 
+    def set_current_project_upload_cdrom (self, userid):
+        with self.lock:
+            ep = self._get_current_project( userid, allow_busy=False )
+
+            ep.xml.set_cdrom_mirror (path.join (ep.builddir, 'uploaded_cdrom.iso'))
+            ep.sync_xml_to_disk ()
+
+            # Make db reload the xml file
+            self.db.set_xml (ep.builddir, None)
+
     def set_current_project_postbuild (self, userid, postbuild_file):
         with self.lock:
             ep = self._get_current_project( userid, allow_busy=False )
