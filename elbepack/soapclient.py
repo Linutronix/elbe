@@ -244,9 +244,6 @@ class GetFileAction(ClientAction):
             fp.write (binascii.a2b_base64 (ret))
             part = part + 1
 
-        print (filename + " unknown error", file=sys.stderr)
-        return
-
 ClientAction.register(GetFileAction)
 
 class DumpFileAction(ClientAction):
@@ -275,9 +272,6 @@ class DumpFileAction(ClientAction):
 
             sys.stdout.write (binascii.a2b_base64 (ret))
             part = part + 1
-
-        print (filename + " unknown error", file=sys.stderr)
-        return
 
 ClientAction.register(DumpFileAction)
 
