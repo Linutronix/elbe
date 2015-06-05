@@ -217,6 +217,11 @@ class ElbeDB(object):
         if not os.path.exists (builddir):
             raise ElbeDBError( "project directory does not exist" )
 
+        srcxml_fname = os.path.join (builddir, "source.xml")
+
+        if xml_file is None:
+            xml_file = srcxml_fname
+
         with session_scope(self.session) as s:
             p = None
             try:
@@ -242,7 +247,9 @@ class ElbeDB(object):
             elif p.status == "build_done":
                 p.status = "has_changes"
 
-            copyfile (xml_file, builddir+"/source.xml");    #OSError
+            if xml_file != srcxml_fname:
+                copyfile (xml_file, srcxml_fname);    #OSError
+
             self._update_project_file( s, builddir, "source.xml",
                     "application/xml", "ELBE recipe of the project" )
 
