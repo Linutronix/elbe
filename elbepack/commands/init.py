@@ -49,6 +49,10 @@ def run_command( argv ):
                         help="Working directory (default is build)",
                         metavar="FILE" )
 
+    oparser.add_option( "--cdrom", dest="cdrom",
+                        help="Use FILE as cdrom iso, and use that to build the initvm",
+                        metavar="FILE" )
+
     oparser.add_option( "--build-sources", action="store_true",
                         dest="buildsources", default=False,
                         help="Build source cdrom" )
@@ -110,6 +114,12 @@ def run_command( argv ):
         http_proxy = opt.proxy
     elif xml.has("initvm/mirror/primary_proxy"):
         http_proxy = xml.text("initvm/mirror/primary_proxy")
+
+    if opt.cdrom:
+        mirror = xml.node ("initvm/mirror")
+        mirror.clear ()
+        cdrom = mirror.ensure_child ("cdrom")
+        cdrom.set_text (os.path.abspath (opt.cdrom))
 
     if not opt.directory:
         path = "./build"
