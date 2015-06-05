@@ -194,3 +194,10 @@ class ElbeXML(object):
             return self.text ("initvm/suite")
         else:
             return None
+
+    def set_cdrom_mirror (self, abspath):
+        mirror = self.node("project/mirror")
+        mirror.clear()
+        cdrom = mirror.ensure_child("cdrom")
+        cdrom.set_text( abspath )
+
