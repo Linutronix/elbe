@@ -92,7 +92,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     hostfs.mkdir_p( '/var/cache/elbe/binaries/main' )
 
     if not xml is None:
-        mirror = xml.get_primary_mirror ("/media/cdrom")
+        mirror = xml.get_primary_mirror (rfs.fname("cdrom"))
     else:
         mirror='http://ftp.debian.org/debian'
 
