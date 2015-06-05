@@ -41,10 +41,6 @@ def run_command( argv ):
                         dest="skip_validation", default=False,
                         help="Skip xml schema validation" )
 
-    oparser.add_option( "--skip-cds", action="store_true", dest="skip_cds",
-                        default=False,
-                        help="Skip cd generation" )
-
     oparser.add_option( "--directory", dest="directory",
                         help="Working directory (default is build)",
                         metavar="FILE" )
@@ -52,10 +48,6 @@ def run_command( argv ):
     oparser.add_option( "--cdrom", dest="cdrom",
                         help="Use FILE as cdrom iso, and use that to build the initvm",
                         metavar="FILE" )
-
-    oparser.add_option( "--build-sources", action="store_true",
-                        dest="buildsources", default=False,
-                        help="Build source cdrom" )
 
     oparser.add_option( "--proxy", dest="proxy",
                         help="Override the http Proxy" )
