@@ -44,6 +44,8 @@ from faults import (SoapElbeDBError,
                     SoapElbeValidationError,
                     SoapElbeInvalidState)
 
+from faults import soap_faults
+
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
@@ -68,13 +70,10 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         self.pm.stop()
 
     @soapmethod (String, String, _returns=Boolean )
+    @soap_faults
     def login(self, user, passwd):
         s = request.environ['beaker.session']
-        try:
-            s['userid'] = self.pm.db.validate_login(user, passwd)
-        except InvalidLogin:
-            raise SoapElbeNotAuthorized()
-
+        s['userid'] = self.pm.db.validate_login(user, passwd)
         s.save()
 
         return True
@@ -82,35 +81,28 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
     @soapmethod (_returns=Array(String))
     @authenticated_admin
+    @soap_faults
     def list_users (self):
-        try:
-            users = self.pm.db.list_users ()
-        except ElbeDBError as e:
-            raise SoapElbeDBError(e)
-
+        users = self.pm.db.list_users ()
         return [u.name for u in users]
 
     @soapmethod (_returns=Array(SoapProject))
     @authenticated_admin
+    @soap_faults
     def list_projects (self):
-        try:
-            projects = self.pm.db.list_projects ()
-        except ElbeDBError as e:
-            raise SoapElbeDBError(e)
-
+        projects = self.pm.db.list_projects ()
         return [SoapProject(p) for p in projects]
 
     @soapmethod (String, _returns=Array(SoapFile))
     @authenticated_uid
+    @soap_faults
     def get_files (self, uid, builddir):
-        try:
-            files = self.pm.db.get_project_files (builddir)
-        except ElbeDBError as e:
-            raise SoapElbeDBError(e)
+        files = self.pm.db.get_project_files (builddir)
         return [SoapFile(f) for f in files]
 
     @soapmethod (String, String, Integer, _returns=String)
     @authenticated_uid
+    @soap_faults
     def get_file (self, uid, builddir, filename, part):
         size = 1024 * 1024 * 5
         pos = size * part
@@ -132,58 +124,31 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
+    @soap_faults
     def build (self, uid, builddir):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            return "old XML file is invalid - open project failed"
-        except Exception as e:
-            return str (e) + " - open project failed"
-
-        try:
-            self.pm.build_current_project (uid)
-        except Exception as e:
-            return str (e) + " - build project failed"
+        self.pm.open_project (uid, builddir)
+        self.pm.build_current_project (uid)
 
         return "OK"
 
     @soapmethod (String, String, _returns=String)
     @authenticated_uid
+    @soap_faults
     def set_xml (self, uid, builddir, xml):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            return "old XML file is invalid - open project failed"
-        except Exception as e:
-            return str (e) + " - open project failed"
+        self.pm.open_project (uid, builddir)
 
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            try:
-                self.pm.set_current_project_xml (uid, fp.name)
-            except ProjectManagerError as e:
-                return str (e)
-            except InvalidState as e:
-                return str (e)
-            except ElbeDBError as e:
-                return str (e)
-            except OSError as e:
-                return str (e)
-            except ValidationError as e:
-                return "Invalid XML file"
+            self.pm.set_current_project_xml (uid, fp.name)
 
         return "OK"
 
     @soapmethod (String)
     @authenticated_uid
+    @soap_faults
     def start_cdrom (self, uid, builddir):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            raise SoapElbeValidationError
-        except Exception as e:
-            raise SoapElbeProjectError (str (e) + " - open project failed")
+        self.pm.open_project (uid, builddir)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -193,13 +158,9 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
     @soapmethod (String, String)
     @authenticated_uid
+    @soap_faults
     def append_cdrom (self, uid, builddir, data):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            raise SoapElbeValidationError
-        except Exception as e:
-            raise SoapElbeProjectError (str (e) + " - open project failed")
+        self.pm.open_project (uid, builddir)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -210,78 +171,43 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
     @soapmethod (String)
     @authenticated_uid
+    @soap_faults
     def finish_cdrom (self, uid, builddir):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            raise SoapElbeValidationError ()
-        except Exception as e:
-            raise SoapElbeProjectError (str (e) + " - open project failed")
-
-        try:
-            self.pm.set_current_project_upload_cdrom (uid)
-        except ProjectManagerError as e:
-            raise SoapElbeProjectError (str (e))
-        except InvalidState as e:
-            raise SoapElbeInvalidState()
-        except ElbeDBError as e:
-            raise SoapElbeDBError (str (e))
-        except OSError as e:
-            raise SoapElbepProjectError ("OSError: " + str (e))
-        except ValidationError as e:
-            raise SoapElbeValidationError
+        self.pm.open_project (uid, builddir)
+        self.pm.set_current_project_upload_cdrom (uid)
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
+    @soap_faults
     def reset_project (self, uid, builddir):
-        try:
-            self.pm.db.reset_project (builddir, True)
-        except Exception as e:
-            return str (e)
+        self.pm.db.reset_project (builddir, True)
 
         return "OK"
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
+    @soap_faults
     def del_project (self, uid, builddir):
-        try:
-            self.pm.del_project (userid, builddir)
-        except Exception as e:
-            return str (e)
+        self.pm.del_project (userid, builddir)
 
         return "OK"
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
+    @soap_faults
     def create_project (self, uid, xml):
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            try:
-                prjid = self.pm.create_project (uid, fp.name)
-            except ProjectManagerError as e:
-                return str (e)
-            except ElbeDBError as e:
-                return str (e)
-            except OSError as e:
-                return str (e)
-            except ValidationError as e:
-                return "Invalid XML file"
+            prjid = self.pm.create_project (uid, fp.name)
 
         return prjid
 
     @soapmethod (String, _returns=Boolean)
     @authenticated_uid
+    @soap_faults
     def get_project_busy (self, uid, builddir):
-        try:
-            self.pm.open_project (uid, builddir)
-        except ValidationError as e:
-            raise SoapElbeProjectError ("old XML file is invalid - open project failed")
-        except Exception as e:
-            raise SoapElbeProjectError (str (e) + " - open project failed")
+        self.pm.open_project (uid, builddir)
 
-        try:
-            return self.pm.current_project_is_busy (uid)
-        except Exception as e:
-            raise SoapElbeProjectError (str (e) + " - open project failed")
+        return self.pm.current_project_is_busy (uid)
 
