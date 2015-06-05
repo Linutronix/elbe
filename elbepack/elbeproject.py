@@ -213,6 +213,13 @@ class ElbeProject (object):
 
         os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
 
+    def sync_xml_to_disk (self):
+        try:
+            sourcexmlpath = os.path.join( self.builddir, "source.xml" )
+            self.xml.xml.write( sourcexmlpath )
+        except MemoryError:
+            self.log.printo( "write source.xml failed (archive to huge?)" )
+
     def get_rpcaptcache (self):
         if self._rpcaptcache is None:
             self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
