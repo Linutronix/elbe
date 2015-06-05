@@ -219,8 +219,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             raise SoapElbeProjectError (str (e) + " - open project failed")
 
         try:
-            #self.pm.set_current_project_cdrom (uid, fp.name)
-            pass
+            self.pm.set_current_project_upload_cdrom (uid)
         except ProjectManagerError as e:
             raise SoapElbeProjectError (str (e))
         except InvalidState as e:
