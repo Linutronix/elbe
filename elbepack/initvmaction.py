@@ -167,7 +167,7 @@ class CreateAction(InitVMAction):
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
-        if len(args) in [1,2]:
+        if len(args) == 1:
             try:
                 prjdir = system_out ('%s control create_project "%s"' % (elbe_exe, args[0]))
             except CommandError:
@@ -177,16 +177,17 @@ class CreateAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            if len(args) == 2:
+            if opt.cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
                 try:
-                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, args[1]) )
+                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, opt.cdrom) )
                 except CommandError:
                     print ("elbe control Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
                 print ("Upload finished")
+
             try:
                 system ('%s control build "%s"' % (elbe_exe, prjdir) )
             except CommandError:
@@ -247,7 +248,7 @@ class SubmitAction(InitVMAction):
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
-        if len(args) in [1,2]:
+        if len(args) == 1:
             try:
                 prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, args[0]))
             except CommandError:
@@ -257,10 +258,10 @@ class SubmitAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            if len(args) == 2:
+            if opt.cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
                 try:
-                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, args[1]) )
+                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, opt.cdrom) )
                 except CommandError:
                     print ("elbe control Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
