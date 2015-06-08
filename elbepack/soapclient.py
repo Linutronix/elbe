@@ -74,6 +74,21 @@ class ElbeSoapClient(object):
         # We have a Connection, now login
         self.service.login(user,passwd)
 
+    def download_file (self, builddir, filename, dst_fname):
+        fp = file (dst_fname, "w")
+        part = 0
+        while True:
+            ret = self.service.get_file (builddir, filename, part)
+            if ret == "FileNotFound":
+                print (ret, file=sys.stderr)
+                sys.exit(20)
+            if ret == "EndOfFile":
+                fp.close ()
+                return
+
+            fp.write (binascii.a2b_base64 (ret))
+            part = part + 1
+
 class ClientAction(object):
     actiondict = {}
     @classmethod
@@ -229,20 +244,8 @@ class GetFileAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = file (filename, "w")
-        part = 0
-        while True:
-            ret = client.service.get_file (builddir, filename, part)
-            if ret == "FileNotFound":
-                print (ret, file=sys.stderr)
-                sys.exit(20)
-            if ret == "EndOfFile":
-                fp.close ()
-                print (filename + " saved", file=sys.stderr)
-                return
-
-            fp.write (binascii.a2b_base64 (ret))
-            part = part + 1
+        client.download_file (builddir, filename, filename)
+        print (filename + " saved", file=sys.stderr)
 
 ClientAction.register(GetFileAction)
 
