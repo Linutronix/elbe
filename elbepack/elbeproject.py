@@ -97,7 +97,7 @@ class ElbeProject (object):
             self.targetfs = None
 
     def build (self, skip_debootstrap = False, skip_cdrom = False,
-            build_sources = False, cdrom_size = CDROM_SIZE, debug = False, skip_pkglist = False):
+            build_sources = False, cdrom_size = None, debug = False, skip_pkglist = False):
         # Write the log header
         self.write_log_header()
 
