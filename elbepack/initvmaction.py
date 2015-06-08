@@ -139,9 +139,15 @@ class CreateAction(InitVMAction):
         exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
         try:
             if opt.devel:
-                system ('%s init --devel --directory "%s" "%s"' % (elbe_exe, initvmdir, exampl))
+                devel = ' --devel'
             else:
-                system ('%s init --directory "%s" "%s"' % (elbe_exe, initvmdir, exampl))
+                devel = ''
+
+            if opt.cdrom:
+                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, devel, initvmdir, opt.cdrom, exampl))
+            else:
+                system ('%s init %s --directory "%s" "%s"' % (elbe_exe, devel, initvmdir, exampl))
+
         except CommandError:
             print ("'elbe init' Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)
