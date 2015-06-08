@@ -94,9 +94,6 @@ run:
 % endif
 		-m $(MEMSIZE) \
 		-usb \
-% if prj.has("mirror/cdrom"):
-		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=1 \
-% endif
 		-smp $(SMP)
 
 run-con:
