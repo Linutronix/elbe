@@ -97,7 +97,7 @@ class ListProjectsAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         projects = client.service.list_projects ()
 
         for p in projects.SoapProject:
@@ -112,7 +112,7 @@ class ListUsersAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         users = client.service.list_users (client)
 
         for u in users.string:
@@ -127,7 +127,7 @@ class CreateProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control create_project <xmlfile>", file=sys.stderr)
             sys.exit(20)
@@ -147,7 +147,7 @@ class ResetProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control reset_project <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -165,7 +165,7 @@ class DeleteProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control del_project <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -182,7 +182,7 @@ class SetXmlAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 2:
             print ("usage: elbe control set_xml <project_dir> <xml>", file=sys.stderr)
             sys.exit(20)
@@ -203,7 +203,7 @@ class BuildAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control build <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -221,7 +221,7 @@ class GetFileAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 2:
             print ("usage: elbe control get_file <project_dir> <file>", file=sys.stderr)
             sys.exit(20)
@@ -253,7 +253,7 @@ class DumpFileAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 2:
             print ("usage: elbe control dump_file <project_dir> <file>", file=sys.stderr)
             sys.exit(20)
@@ -282,7 +282,7 @@ class GetFilesAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control get_files <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -305,7 +305,7 @@ class WaitProjectBusyAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         if len (args) != 1:
             print ("usage: elbe control wait_busy <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -329,7 +329,7 @@ class SetCdromAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, args):
+    def execute(self, client, opt, args):
         size = 5 * 1024 * 1024
 
         if len (args) != 2:
