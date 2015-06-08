@@ -162,7 +162,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     repo_fs.write_file (".disk/base_components", 0644, "main\n")
     repo_fs.write_file (".disk/cd_type", 0644, "not_complete\n")
     repo_fs.write_file (".disk/info", 0644, "elbe inst cdrom - full cd\n")
-    repo_fs.symlink (".", "debian")
+    repo_fs.symlink (".", "debian", allow_exists=True)
     repo_fs.write_file ("md5sum.txt", 0644, "")
 
     return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
