@@ -26,7 +26,7 @@ CONSOLE?=ttyS0,115200n1
 LOOP_OFFSET?=1048576
 HD_TYPE?=virtio
 HD_NAME?=vda1
-CDROM_TYPE?=scsi
+CDROM_TYPE?=ide
 
 <%
 import string
@@ -66,7 +66,7 @@ all: .stamps/stamp-install-initial-image
 		-device virtio-rng-pci \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 % if prj.has("mirror/cdrom"):
-		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=1 \
+		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=0 \
 % endif
 		-kernel .elbe-in/vmlinuz \
 		-initrd .elbe-gen/initrd-preseeded.gz \
