@@ -51,6 +51,14 @@ def run_command (argv):
     oparser.add_option ("--retries", dest="retries", default="10",
                         help="how many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds)")
 
+    oparser.add_option( "--build-bin", action="store_true",
+                        dest="build_bin", default=False,
+                        help="Build Binary Repository CDROM, for exact Reproduction" )
+
+    oparser.add_option( "--build-sources", action="store_true",
+                        dest="build_sources", default=False,
+                        help="Build Source CD" )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
