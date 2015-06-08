@@ -260,11 +260,11 @@ class ProjectManager(object):
                 if e.errno != errno.ENOENT:
                     raise
 
-    def build_current_project (self, userid):
+    def build_current_project (self, userid, build_bin, build_src):
         with self.lock:
-            ep = self._get_current_project( userid, allow_busy=False )
+            ep = self._get_current_project (userid, allow_busy=False)
 
-            self.worker.enqueue( BuildJob( ep ) )
+            self.worker.enqueue (BuildJob (ep, build_bin, build_src))
 
     def build_update_package (self, userid, base_version):
         with self.lock:

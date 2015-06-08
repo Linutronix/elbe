@@ -96,7 +96,7 @@ class ElbeProject (object):
         else:
             self.targetfs = None
 
-    def build (self, skip_debootstrap = False, skip_cdrom = False,
+    def build (self, skip_debootstrap = False, build_bin = False,
             build_sources = False, cdrom_size = None, debug = False, skip_pkglist = False):
         # Write the log header
         self.write_log_header()
@@ -184,7 +184,7 @@ class ElbeProject (object):
         self.repo_images = []
         with self.buildenv:
             init_codename = self.xml.get_initvm_codename()
-            if not skip_cdrom:
+            if build_bin:
                 self.repo_images += mk_binary_cdrom( self.buildenv.rfs,
                                                      arch,
                                                      codename,
@@ -193,7 +193,7 @@ class ElbeProject (object):
                                                      self.builddir,
                                                      self.log,
                                                      cdrom_size=cdrom_size )
-            if not skip_cdrom and build_sources:
+            if build_sources:
                 self.repo_images += mk_source_cdrom( self.buildenv.rfs,
                                                      arch,
                                                      codename,

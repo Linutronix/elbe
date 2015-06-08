@@ -42,8 +42,10 @@ class AsyncWorkerJob(object):
 
 
 class BuildJob(AsyncWorkerJob):
-    def __init__ (self, project):
+    def __init__ (self, project, build_bin, build_src):
         AsyncWorkerJob.__init__( self, project )
+        self.build_bin = build_bin
+        self.build_src = build_src
 
     def enqueue (self, queue, db):
         db.set_busy( self.project.builddir,
@@ -55,7 +57,7 @@ class BuildJob(AsyncWorkerJob):
     def execute (self, db):
         try:
             self.project.log.printo( "Build started" )
-            self.project.build(skip_pkglist=True)
+            self.project.build(skip_pkglist=True, build_bin=self.build_bin, build_sources=self.build_src)
             db.update_project_files( self.project )
             self.project.log.printo( "Build finished successfully" )
             db.reset_busy( self.project.builddir, "build_done" )

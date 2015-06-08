@@ -48,7 +48,10 @@ def run_command( argv ):
                         help="ignore changes of the package list" )
     oparser.add_option( "--skip-cdrom", action="store_true",
                         dest="skip_cdrom", default=False,
-                        help="Skip cdrom iso generation" )
+                        help="(now obsolete) Skip cdrom iso generation" )
+    oparser.add_option( "--build-bin", action="store_true",
+                        dest="build_bin", default=False,
+                        help="Build Binary Repository CDROM, for exact Reproduction" )
     oparser.add_option( "--build-sources", action="store_true",
                         dest="build_sources", default=False,
                         help="Build Source CD" )
@@ -73,6 +76,9 @@ def run_command( argv ):
         print "No target specified"
         sys.exit(20)
 
+    if opt.skip_cdrom:
+        print "WARNING: Skip CDROMS is now the default, use --build-bin to build binary CDROM"
+
     try:
         project = ElbeProject( opt.target, args[0], opt.output, opt.name,
                 opt.buildtype, opt.skip_validation )
@@ -81,7 +87,7 @@ def run_command( argv ):
         sys.exit(20)
 
     try:
-        project.build( opt.skip_debootstrap, opt.skip_cdrom,
+        project.build( opt.skip_debootstrap, opt.build_bin,
                 opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist )
     except CommandError as ce:
         print "command in project build failed:", ce.cmd

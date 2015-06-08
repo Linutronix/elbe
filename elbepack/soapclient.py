@@ -209,7 +209,7 @@ class BuildAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
-        client.service.build (builddir)
+        client.service.build (builddir, opt.build_bin, opt.build_sources)
 
 ClientAction.register(BuildAction)
 
