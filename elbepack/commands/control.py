@@ -59,6 +59,10 @@ def run_command (argv):
                         dest="build_sources", default=False,
                         help="Build Source CD" )
 
+    oparser.add_option( "--output",
+                        dest="output", default=None,
+                        help="Output Files to <directory>" )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 

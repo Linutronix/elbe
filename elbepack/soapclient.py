@@ -26,6 +26,7 @@ from urllib2 import URLError
 import socket
 import time
 import sys
+import os
 
 def set_suds_debug(debug):
     import logging
@@ -298,6 +299,10 @@ class GetFilesAction(ClientAction):
                 print ("%s \t(%s)" % (f.name, f.description))
             else:
                 print ("%s" % (f.name))
+
+            if opt.output:
+                dst_fname = os.path.join (opt.output, f.name)
+                client.download_file (builddir, f.name, dst_fname)
 
 ClientAction.register(GetFilesAction)
 
