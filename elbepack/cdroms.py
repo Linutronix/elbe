@@ -96,8 +96,10 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     else:
         mirror='http://ftp.debian.org/debian'
 
+    repo_path = os.path.join (target, "binrepo")
+
     repo = CdromBinRepo (arch, codename, init_codename,
-            os.path.join (target, "binrepo"), log, cdrom_size, mirror)
+                         repo_path, log, cdrom_size, mirror)
 
     if not xml is None:
         pkglist = get_initvm_pkglist()
@@ -151,5 +153,16 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
             log.printo( "Package " + pkg.name + "-" + str (pkg.installed_version) + " could not be downloaded" )
         except TypeError as te:
             log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
+
+    # Mark the binary repo with the necessary Files
+    # to make the installer accept this as a CDRom
+    repo_fs = Filesystem( repo_path )
+    repo_fs.mkdir_p (".disk")
+    repo_fs.write_file (".disk/base_installable", 0644, "main\n")
+    repo_fs.write_file (".disk/base_components", 0644, "main\n")
+    repo_fs.write_file (".disk/cd_type", 0644, "not_complete\n")
+    repo_fs.write_file (".disk/info", 0644, "elbe inst cdrom - full cd\n")
+    repo_fs.symlink (".", "debian")
+    repo_fs.write_file ("md5sum.txt", 0644, "")
 
     return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
