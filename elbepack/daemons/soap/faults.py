@@ -73,7 +73,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
@@ -93,7 +93,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
@@ -113,7 +113,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
@@ -133,7 +133,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
@@ -153,7 +153,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
@@ -173,7 +173,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError (str (e))
             except OSError as e:
-                raise SoapElbepProjectError ("OSError: " + str (e))
+                raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
                 raise SoapElbeValidationError ()
             except InvalidLogin:
