@@ -60,6 +60,15 @@ class Filesystem(object):
     def mkdir(self, path):
         os.makedirs( self.fname(path) )
 
+    def symlink(self, src, path, allow_exists=False):
+        try:
+            os.symlink( src, self.fname(path) )
+        except OSError as e:
+            if e.errno != os.errno.EEXIST:
+                raise
+            elif not allow_exists:
+                raise
+
     def stat(self, path):
         return os.stat( self.fname(path) )
 
