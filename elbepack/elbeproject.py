@@ -301,7 +301,8 @@ class ElbeProject (object):
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
                 if self.buildenv.need_dumpdebootstrap:
-                    dump_debootstrappkgs( self.xml, self.get_rpcaptcache() )
+                    dump_debootstrappkgs (self.xml, self.get_rpcaptcache ())
+                    dump_initvmpkgs (self.xml)
                 self.buildenv.need_dumpdebootstrap = False
                 source = self.xml
                 try:
