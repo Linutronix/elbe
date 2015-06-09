@@ -382,21 +382,21 @@ class ElbeDB(object):
             postbuild = self.get_project_file (builddir, 'postbuild.sh')
             postbuild_file = postbuild.builddir + '/' + postbuild.name
         except ElbeDBError as e:
-            print str (e)
+            pass
 
         presh_file = None
         try:
             presh_handle = self.get_project_file (builddir, 'pre.sh')
             presh_file = presh_handle.builddir + '/' + presh_handle.name
         except ElbeDBError as e:
-            print str (e)
+            pass
 
         postsh_file = None
         try:
             postsh_handle = self.get_project_file (builddir, 'post.sh')
             postsh_file = postsh_handle.builddir + '/' + postsh_handle.name
         except ElbeDBError as e:
-            print str (e)
+            pass
 
         with session_scope(self.session) as s:
             try:
