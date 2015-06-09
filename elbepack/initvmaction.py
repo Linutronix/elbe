@@ -211,7 +211,7 @@ class CreateAction(InitVMAction):
 
         if len(args) == 1:
             try:
-                prjdir = system_out ('%s control create_project "%s"' % (elbe_exe, args[0]))
+                prjdir = system_out ('%s control create_project "%s"' % (elbe_exe, exampl))
             except CommandError:
                 print ("elbe control Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
@@ -355,7 +355,7 @@ class SubmitAction(InitVMAction):
                 sys.exit (20)
 
             try:
-                prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, args[0]))
+                prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, xmlfile))
             except CommandError:
                 print ("elbe control Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
