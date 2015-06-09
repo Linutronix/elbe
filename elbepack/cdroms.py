@@ -22,22 +22,13 @@ from apt.package import FetchError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
-from elbepack.aptpkgutils import XMLPackage, APTPackage
+from elbepack.aptpkgutils import XMLPackage
 from elbepack.aptprogress import ElbeAcquireProgress
-from elbepack.filesystem import Filesystem
+from elbepack.filesystem  import Filesystem, hostfs
+from elbepack.dump        import get_initvm_pkglist
 from apt import Cache
 
 CDROM_SIZE = 640*1000*1000
-
-hostfs = Filesystem( "/" )
-
-def get_initvm_pkglist ():
-    cache = Cache ()
-    cache.open ()
-    pkglist = [APTPackage (p) for p in cache if p.is_installed]
-    pkglist.append ( APTPackage( cache ['elbe-bootstrap'] ) )
-    return pkglist
-
 
 def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=CDROM_SIZE):
 

@@ -20,6 +20,16 @@ from elbepack.asciidoclog import ASCIIDocLog
 from datetime import datetime
 from elbepack.finetuning import do_finetuning
 
+from elbepack.aptpkgutils import APTPackage
+from apt import Cache
+
+def get_initvm_pkglist ():
+    cache = Cache ()
+    cache.open ()
+    pkglist = [APTPackage (p) for p in cache if p.is_installed]
+    pkglist.append ( APTPackage( cache ['elbe-bootstrap'] ) )
+    return pkglist
+
 def dump_fullpkgs( xml, rfs, cache ):
     xml.clear_full_pkglist()
 
