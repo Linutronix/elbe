@@ -157,11 +157,18 @@ class ElbeXML(object):
         tree = self.xml.ensure_child( 'debootstrappkgs' )
         tree.clear()
 
+    def clear_initvm_pkglist( self ):
+        tree = self.xml.ensure_child( 'initvmpkgs' )
+        tree.clear()
+
     def append_full_pkg( self, aptpkg ):
         self.append_pkg( aptpkg, 'fullpkgs' )
 
     def append_debootstrap_pkg( self, aptpkg ):
         self.append_pkg( aptpkg, 'debootstrappkgs' )
+
+    def append_initvm_pkg( self, aptpkg ):
+        self.append_pkg( aptpkg, 'initvmpkgs' )
 
     def archive_tmpfile( self ):
         fp = NamedTemporaryFile()
