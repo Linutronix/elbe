@@ -18,4 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from elbepack.directories import pack_dir
+
 elbe_version = "0.9.4"
+
+if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
+    is_devel = False
+else:
+    is_devel = True
