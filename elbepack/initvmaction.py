@@ -138,7 +138,13 @@ class CreateAction(InitVMAction):
             print ("See 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
             sys.exit(20)
 
-        exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+        if len(args) == 1:
+            # We have an xml file, use that for elbe init
+            exampl = args[0]
+        else:
+            # No xml File was specified, build the default elbe-init-with-ssh
+            exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+
         try:
             if opt.devel:
                 devel = ' --devel'
