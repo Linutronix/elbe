@@ -142,8 +142,13 @@ class ElbeXML(object):
         pak = tree.append( 'pkg' )
         pak.set_text( aptpkg.name )
         pak.et.tail = '\n'
-        pak.et.set( 'version', aptpkg.installed_version )
-        pak.et.set( 'md5', aptpkg.installed_md5 )
+        if aptpkg.installed_version is not None:
+            pak.et.set( 'version', aptpkg.installed_version )
+            pak.et.set( 'md5', aptpkg.installed_md5 )
+        else:
+            pak.et.set( 'version', aptpkg.candidate_version )
+            pak.et.set( 'md5', aptpkg.candidate_md5 )
+
         if aptpkg.is_auto_installed:
             pak.et.set( 'auto', 'true' )
         else:
