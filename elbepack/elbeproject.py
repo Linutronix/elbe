@@ -139,6 +139,8 @@ class ElbeProject (object):
                         self.get_rpcaptcache() )
             dump_fullpkgs( self.xml, self.buildenv.rfs, self.get_rpcaptcache() )
 
+            self.xml.dump_elbe_version ()
+
         self.targetfs.write_fstab (self.xml )
 
         # Dump ELBE version
