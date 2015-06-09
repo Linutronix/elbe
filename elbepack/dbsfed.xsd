@@ -61,6 +61,27 @@
           </documentation>
         </annotation>
       </element>
+      <element name="initvmpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            List of packages installed right after debootstrap
+          </documentation>
+        </annotation>
+      </element>
+      <element name="initvm_sources_list" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt sources list.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="initvm_apt_prefs" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt preferences list
+          </documentation>
+        </annotation>
+      </element>
       <element name="fullpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
