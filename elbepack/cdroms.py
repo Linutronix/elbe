@@ -165,4 +165,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     repo_fs.symlink (".", "debian", allow_exists=True)
     repo_fs.write_file ("md5sum.txt", 0644, "")
 
+    # write source xml onto cdrom
+    xml.xml.write (repo_fs.fname ('source.xml'))
+
     return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
