@@ -274,9 +274,6 @@ class CreateAction(InitVMAction):
                 print ("")
                 print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
             else:
-                print ("")
-                print ("Getting generated Files")
-                print ("")
 
                 # Create download directory with timestamp,
                 # if necessary
@@ -285,7 +282,9 @@ class CreateAction(InitVMAction):
                     wdfs.mkdir_p (builddir_name)
                     opt.outdir = wdfs.fname (builddir_name)
 
-                    print ("Saving generated Files to %s" % opt.outdir)
+                print ("")
+                print ("Saving generated Files to %s" % opt.outdir)
+                print ("")
 
                 try:
                     system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
@@ -328,6 +327,8 @@ class SubmitAction(InitVMAction):
                 # We have an iso image, extract xml from there.
                 tmp = TmpdirFilesystem ()
                 os.system ('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
+
+                print ('', file=sys.stderr)
 
                 if not tmp.isfile ('source.xml'):
                     print ('Iso image does not contain a source.xml file', file=sys.stderr)
