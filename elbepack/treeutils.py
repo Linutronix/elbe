@@ -107,6 +107,9 @@ class etree(ebase):
     def write( self, fname ):
         self.et.write(fname)
 
+    def tostring (self):
+        return self.et.tostring ()
+
     def ensure_child( self, tag ):
         retval = self.et.find("./"+tag)
         if not retval is None:
