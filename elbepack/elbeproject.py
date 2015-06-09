@@ -27,9 +27,12 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.filesystem import TargetFs
 from elbepack.filesystem import extract_target
-from elbepack.dump import elbe_report, dump_debootstrappkgs
-from elbepack.dump import dump_fullpkgs, check_full_pkgs
-from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
+
+from elbepack.dump import elbe_report
+from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs
+from elbepack.dump import check_full_pkgs
+
+from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 class IncompatibeArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
