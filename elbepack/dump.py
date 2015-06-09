@@ -19,6 +19,7 @@
 from elbepack.asciidoclog import ASCIIDocLog
 from datetime import datetime
 from elbepack.finetuning import do_finetuning
+from elbepack.filesystem import hostfs
 
 from elbepack.aptpkgutils import APTPackage
 from apt import Cache
@@ -47,13 +48,31 @@ def dump_fullpkgs( xml, rfs, cache ):
         preferences.set_text(prefs)
     except IOError:
         pass
-   
+
 def dump_debootstrappkgs( xml, cache ):
     xml.clear_debootstrap_pkglist()
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
         xml.append_debootstrap_pkg( p )
+
+def dump_initvmpkgs (xml):
+    xml.clear_initvm_pkglist ()
+
+    instpkgs = get_initvm_pkglist ()
+    for p in instpkgs:
+        xml.append_initvm_pkg( p )
+
+    sources_list = xml.xml.ensure_child( 'initvm_sources_list' )
+    slist = hostfs.read_file("etc/apt/sources.list")
+    sources_list.set_text( slist )
+
+    try:
+        preferences = xml.xml.ensure_child( 'initvm_apt_prefs' )
+        prefs = hostfs.read_file("etc/apt/preferences")
+        preferences.set_text(prefs)
+    except IOError:
+        pass
 
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     elog = ASCIIDocLog(errorname)
