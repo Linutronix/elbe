@@ -23,6 +23,7 @@ import shutil
 import subprocess
 
 from glob import glob
+from tempfile import mkdtemp
 
 from elbepack.asciidoclog import CommandError
 from elbepack.version import elbe_version
@@ -206,6 +207,14 @@ class Filesystem(object):
     def disk_usage(self, dirname=''):
         directory = self.fname(dirname)
         return self.__disk_usage(directory)
+
+class TmpdirFilesystem (Filesystem):
+    def __init__ (self):
+        tmpdir = mkdtemp()
+        Filesystem.__init__ (self, tmpdir)
+
+    def __del__ (self):
+        shutil.rmtree(self.path, True)
 
 def copy_filelist( src, filelist, dst ):
     for f in filelist:
