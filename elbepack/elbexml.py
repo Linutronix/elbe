@@ -223,3 +223,9 @@ class ElbeXML(object):
 
         version = self.xml.ensure_child ('elbe_version')
         version.set_text (ver_text)
+
+    def get_elbe_version (self):
+        if self.has ('elbe_version'):
+            return self.text ('elbe_version')
+        else:
+            return "no version"
