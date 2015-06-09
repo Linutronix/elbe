@@ -37,6 +37,14 @@ def run_command (argv):
                         dest="devel", default=False,
                         help="Install elbe Version from the current working into initvm" )
 
+    oparser.add_option( "--skip-download", action="store_true",
+                        dest="skip_download", default=False,
+                        help="Skip downloading generated Files" )
+
+    oparser.add_option ("--output", dest="outdir", default=None,
+                        help="directory where to save downloaded Files")
+
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 

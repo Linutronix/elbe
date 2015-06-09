@@ -22,10 +22,12 @@ from __future__ import print_function
 
 from elbepack.directories import examples_dir, elbe_exe
 from elbepack.shellhelper import CommandError, system, system_out
+from elbepack.filesystem  import wdfs
+
 import sys
 
 import os
-import time
+import datetime
 
 
 class InitVMError(Exception):
@@ -212,18 +214,39 @@ class CreateAction(InitVMAction):
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
-            print ("")
-            print ("Listing vailable files:")
-            print ("")
-            try:
-                system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
+            if opt.skip_download:
+                print ("")
+                print ("Listing vailable files:")
+                print ("")
+                try:
+                    system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
+                except CommandError:
+                    print ("elbe control Failed", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+                    sys.exit(20)
 
-            print ("")
-            print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
+                print ("")
+                print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
+            else:
+                print ("")
+                print ("Getting generated Files")
+                print ("")
+
+                # Create download directory with timestamp,
+                # if necessary
+                if opt.outdir is None:
+                    builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+                    wdfs.mkdir_p (builddir_name)
+                    opt.outdir = wdfs.fname (builddir_name)
+
+                    print ("Saving generated Files to %s" % opt.outdir)
+
+                try:
+                    system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
+                except CommandError:
+                    print ("elbe control Failed", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+                    sys.exit(20)
 
 InitVMAction.register(CreateAction)
 
@@ -295,18 +318,39 @@ class SubmitAction(InitVMAction):
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
-            print ("")
-            print ("Listing vailable files:")
-            print ("")
-            try:
-                system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
+            if opt.skip_download:
+                print ("")
+                print ("Listing vailable files:")
+                print ("")
+                try:
+                    system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
+                except CommandError:
+                    print ("elbe control Failed", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+                    sys.exit(20)
 
-            print ("")
-            print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
+                print ("")
+                print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
+            else:
+                print ("")
+                print ("Getting generated Files")
+                print ("")
+
+                # Create download directory with timestamp,
+                # if necessary
+                if opt.outdir is None:
+                    builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+                    wdfs.mkdir_p (builddir_name)
+                    opt.outdir = wdfs.fname (builddir_name)
+
+                    print ("Saving generated Files to %s" % opt.outdir)
+
+                try:
+                    system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
+                except CommandError:
+                    print ("elbe control Failed", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+                    sys.exit(20)
 
 InitVMAction.register(SubmitAction)
 
