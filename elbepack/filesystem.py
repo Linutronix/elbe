@@ -480,3 +480,7 @@ class BuildImgFs(ChRootFilesystem):
                         (os.path.join(dir, "copyright"), e.strerror))
             finally:
                 lic.close()
+
+
+hostfs = Filesystem ('/')
+wdfs   = Filesystem (os.getcwd())
