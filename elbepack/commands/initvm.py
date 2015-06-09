@@ -44,6 +44,13 @@ def run_command (argv):
     oparser.add_option ("--output", dest="outdir", default=None,
                         help="directory where to save downloaded Files")
 
+    oparser.add_option( "--build-bin", action="store_true",
+                        dest="build_bin", default=False,
+                        help="Build Binary Repository CDROM, for exact Reproduction" )
+
+    oparser.add_option( "--build-sources", action="store_true",
+                        dest="build_sources", default=False,
+                        help="Build Source CD" )
 
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]

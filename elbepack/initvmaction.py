@@ -22,13 +22,13 @@ from __future__ import print_function
 
 from elbepack.directories import examples_dir, elbe_exe
 from elbepack.shellhelper import CommandError, system, system_out
-from elbepack.filesystem  import wdfs
+from elbepack.filesystem  import wdfs, TmpdirFilesystem
+from elbepack.elbexml     import ElbeXML, ValidationError
 
 import sys
 
 import os
 import datetime
-
 
 class InitVMError(Exception):
     def __init__(self, str):
@@ -138,9 +138,43 @@ class CreateAction(InitVMAction):
             print ("See 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
             sys.exit(20)
 
+        # Init cdrom to None, if we detect it, we set it
+        cdrom = None
+
         if len(args) == 1:
-            # We have an xml file, use that for elbe init
-            exampl = args[0]
+            if args[0].endswith ('.xml'):
+                # We have an xml file, use that for elbe init
+                exampl = args[0]
+            elif args[0].endswith ('.iso'):
+                # We have an iso image, extract xml from there.
+                tmp = TmpdirFilesystem ()
+                os.system ('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
+
+                if not tmp.isfile ('source.xml'):
+                    print ('Iso image does not contain a source.xml file', file=sys.stderr)
+                    print ('This is not supported by "elbe initvm"', file=sys.stderr)
+                    print ('', file=sys.stderr)
+                    print ('Exiting !!!', file=sys.stderr)
+                    sys.exit (20)
+
+                try:
+                    exml = ElbeXML (tmp.fname ('source.xml'))
+                except ValidationError as e:
+                    print ('Iso image does contain a source.xml file.', file=sys.stderr)
+                    print ('But that xml does not validate correctly', file=sys.stderr)
+                    print ('', file=sys.stderr)
+                    print ('Exiting !!!', file=sys.stderr)
+                    sys.exit (20)
+
+
+                print ('Iso Image with valid source.xml detected !')
+                print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
+
+                exampl = tmp.fname ('source.xml')
+                cdrom = args[0]
+            else:
+                print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
+                sys.exit (20)
         else:
             # No xml File was specified, build the default elbe-init-with-ssh
             exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
@@ -151,8 +185,8 @@ class CreateAction(InitVMAction):
             else:
                 devel = ''
 
-            if opt.cdrom:
-                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, devel, initvmdir, opt.cdrom, exampl))
+            if cdrom:
+                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, devel, initvmdir, cdrom, exampl))
             else:
                 system ('%s init %s --directory "%s" "%s"' % (elbe_exe, devel, initvmdir, exampl))
 
@@ -185,10 +219,10 @@ class CreateAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            if opt.cdrom is not None:
+            if cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
                 try:
-                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, opt.cdrom) )
+                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, cdrom) )
                 except CommandError:
                     print ("elbe control Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
@@ -196,8 +230,14 @@ class CreateAction(InitVMAction):
 
                 print ("Upload finished")
 
+            build_opts = ''
+            if opt.build_bin:
+                build_opts += '--build-bin '
+            if opt.build_sources:
+                build_opts += '--build-sources '
+
             try:
-                system ('%s control build "%s"' % (elbe_exe, prjdir) )
+                system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
             except CommandError:
                 print ("elbe control Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
@@ -222,7 +262,7 @@ class CreateAction(InitVMAction):
 
             if opt.skip_download:
                 print ("")
-                print ("Listing vailable files:")
+                print ("Listing available files:")
                 print ("")
                 try:
                     system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
@@ -277,7 +317,43 @@ class SubmitAction(InitVMAction):
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
+        # Init cdrom to None, if we detect it, we set it
+        cdrom = None
+
         if len(args) == 1:
+            if args[0].endswith ('.xml'):
+                # We have an xml file, use that for elbe init
+                xmlfile = args[0]
+            elif args[0].endswith ('.iso'):
+                # We have an iso image, extract xml from there.
+                tmp = TmpdirFilesystem ()
+                os.system ('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
+
+                if not tmp.isfile ('source.xml'):
+                    print ('Iso image does not contain a source.xml file', file=sys.stderr)
+                    print ('This is not supported by "elbe initvm"', file=sys.stderr)
+                    print ('', file=sys.stderr)
+                    print ('Exiting !!!', file=sys.stderr)
+                    sys.exit (20)
+
+                try:
+                    exml = ElbeXML (tmp.fname ('source.xml'))
+                except ValidationError as e:
+                    print ('Iso image does contain a source.xml file.', file=sys.stderr)
+                    print ('But that xml does not validate correctly', file=sys.stderr)
+                    print ('', file=sys.stderr)
+                    print ('Exiting !!!', file=sys.stderr)
+                    sys.exit (20)
+
+                print ('Iso Image with valid source.xml detected !')
+                print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
+
+                xmlfile = tmp.fname ('source.xml')
+                cdrom = args[0]
+            else:
+                print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
+                sys.exit (20)
+
             try:
                 prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, args[0]))
             except CommandError:
@@ -287,10 +363,10 @@ class SubmitAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            if opt.cdrom is not None:
+            if cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
                 try:
-                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, opt.cdrom) )
+                    system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, cdrom) )
                 except CommandError:
                     print ("elbe control Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
@@ -298,8 +374,14 @@ class SubmitAction(InitVMAction):
 
                 print ("Upload finished")
 
+            build_opts = ''
+            if opt.build_bin:
+                build_opts += '--build-bin '
+            if opt.build_sources:
+                build_opts += '--build-sources '
+
             try:
-                system ('%s control build "%s"' % (elbe_exe, prjdir) )
+                system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
             except CommandError:
                 print ("elbe control Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
@@ -326,7 +408,7 @@ class SubmitAction(InitVMAction):
 
             if opt.skip_download:
                 print ("")
-                print ("Listing vailable files:")
+                print ("Listing available files:")
                 print ("")
                 try:
                     system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
