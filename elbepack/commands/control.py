@@ -33,35 +33,35 @@ def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
 
     oparser.add_option ("--host", dest="host", default="localhost",
-                        help="ip or hostname of elbe-daemon")
+                        help="Ip or hostname of elbe-daemon.")
 
     oparser.add_option ("--port", dest="port", default="8080",
-                        help="port of soap itf on elbe-daemon")
+                        help="Port of soap itf on elbe-daemon.")
 
     oparser.add_option ("--pass", dest="passwd", default="foo",
-                        help="password (default is foo)")
+                        help="Password (default is foo).")
 
     oparser.add_option ("--user", dest="user", default="root",
-                        help="username (default is root)")
+                        help="Username (default is root).")
 
     oparser.add_option ("--debug", action="store_true",
                         dest="debug", default=False,
-                        help="enable debug mode")
+                        help="Enable debug mode.")
 
     oparser.add_option ("--retries", dest="retries", default="10",
-                        help="how many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds)")
+                        help="How many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds).")
 
     oparser.add_option( "--build-bin", action="store_true",
                         dest="build_bin", default=False,
-                        help="Build Binary Repository CDROM, for exact Reproduction" )
+                        help="Build binary repository CDROM, for exact reproduction." )
 
     oparser.add_option( "--build-sources", action="store_true",
                         dest="build_sources", default=False,
-                        help="Build Source CD" )
+                        help="Build source CDROM" )
 
     oparser.add_option( "--output",
                         dest="output", default=None,
-                        help="Output Files to <directory>" )
+                        help="Output files to <directory>" )
 
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
