@@ -22,16 +22,24 @@ import errno
 from os import path, remove
 from shutil import rmtree, copyfile, copytree, move
 from apt.package import FetchError
-from elbepack.repomanager import RepoBase
+from elbepack.repomanager import RepoBase, RepoAttributes
 
 class ArchiveRepo(RepoBase):
     def __init__( self, xml, path, log, origin, description, components,
             maxsize=None ):
+
         arch = xml.text( "project/arch", key="arch" )
         codename = xml.text( "project/suite" )
 
-        RepoBase.__init__( self, path, log, arch, codename, origin,
-                description, components, maxsize )
+        repo_attrs = RepoAttributes (codename, arch, components)
+
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           None,
+                           repo_attrs,
+                           description,
+                           origin)
 
 def gen_binpkg_archive(ep, repodir):
     repopath = path.join( ep.builddir, repodir )
@@ -48,7 +56,7 @@ def gen_binpkg_archive(ep, repodir):
     try:
         # Repository containing all packages currently installed
         repo = ArchiveRepo( ep.xml, repopath, ep.log, "Elbe",
-                "Elbe package archive", "main" )
+                "Elbe package archive", ["main"] )
 
         c = ep.get_rpcaptcache()
         pkglist = c.get_installed_pkgs()
