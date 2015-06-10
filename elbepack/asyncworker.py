@@ -209,7 +209,7 @@ class SaveVersionJob(AsyncWorkerJob):
             gen_binpkg_archive( self.project, repodir )
             self.project.log.printo( "Version saved successfully" )
         except Exception as e:
-            db.del_version( self,project.builddir, self.version, force=True )
+            db.del_version( self.project.builddir, self.version, force=True )
             self.project.log.printo( "Saving version failed" )
             self.project.log.printo( str(e) )
         finally:
