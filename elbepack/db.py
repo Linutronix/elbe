@@ -377,6 +377,7 @@ class ElbeDB(object):
 
     def load_project (self, builddir, logpath = None):
 
+        # pass exceptions if hook-scripts can't be loaded (they're optional)
         postbuild_file = None
         try:
             postbuild = self.get_project_file (builddir, 'postbuild.sh')
