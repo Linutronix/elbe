@@ -199,13 +199,17 @@ class ElbeProject (object):
                                                      self.log,
                                                      cdrom_size=cdrom_size )
             if build_sources:
-                self.repo_images += mk_source_cdrom( self.buildenv.rfs,
-                                                     arch,
-                                                     codename,
-                                                     init_codename,
-                                                     self.builddir,
-                                                     self.log,
-                                                     cdrom_size=cdrom_size )
+                try:
+                    self.repo_images += mk_source_cdrom( self.buildenv.rfs,
+                                                        arch,
+                                                        codename,
+                                                        init_codename,
+                                                        self.builddir,
+                                                        self.log,
+                                                        cdrom_size=cdrom_size )
+                except SystemError as e:
+                    # e.g. no deb-src urls specified
+                    self.log.printo( str (e) )
 
 
         if self.postbuild_file:
