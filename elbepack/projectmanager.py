@@ -430,8 +430,7 @@ class ProjectManager(object):
 
         if not allow_busy:
             if self.db.is_busy( ep.builddir ):
-                raise InvalidState(
-                        "project %s is busy" % ep.builddir )
+                raise InvalidState( "project %s is busy" % ep.builddir )
 
         return ep
 
