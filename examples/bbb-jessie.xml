@@ -7,9 +7,17 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
+					<source>
+						http://ftp.debian.org/debian wheezy main
+					</source>
+				</url>
+				<url>
 					<binary>
 						http://debian.linutronix.de/elbe-testing wheezy main
 					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</source>
 				</url>
 			</url-list>
 		</mirror>
@@ -29,9 +37,9 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-testing jessie main
-					</binary>
+					<source>
+						http://ftp.debian.org/debian jessie main
+					</source>
 				</url>
 			</url-list>
 		</mirror>
