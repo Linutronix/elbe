@@ -135,7 +135,7 @@ class ElbeDB(object):
 
             if p.status == "busy":
                 raise ElbeDBError(
-                        "cannot set presh file while project %s is busy" %
+                        "cannot set postbuild file while project %s is busy" %
                         builddir )
 
             p.edit = datetime.utcnow ()
@@ -147,6 +147,39 @@ class ElbeDB(object):
 
             return self._update_project_file( s, builddir, "postbuild.sh",
                     "application/sh", "postbuild script" )
+
+    def set_savesh (self, builddir, savesh_file):
+        if not os.path.exists (builddir):
+            raise ElbeDBError( "project directory does not exist" )
+
+        with session_scope(self.session) as s:
+            p = None
+            try:
+                p = s.query (Project). \
+                        filter(Project.builddir == builddir).one()
+            except NoResultFound:
+                raise ElbeDBError(
+                        "project %s is not registered in the database" %
+                        builddir )
+
+            if p.status == "busy":
+                raise ElbeDBError(
+                        "cannot set savesh file while project %s is busy" %
+                        builddir )
+
+            p.edit = datetime.utcnow ()
+            if p.status == "empty_project" or p.status == "build_failed":
+                p.status = "needs_build"
+            elif p.status == "build_done":
+                p.status = "has_changes"
+
+            with open (builddir+"/save.sh", 'w') as dst:
+                copyfileobj (savesh_file, dst)
+
+            os.chmod (builddir+"/save.sh", 0755)
+
+            return self._update_project_file( s, builddir, "save.sh",
+                    "application/sh", "version save script" )
 
     def set_presh (self, builddir, presh_file):
         if not os.path.exists (builddir):
@@ -399,6 +432,13 @@ class ElbeDB(object):
         except ElbeDBError as e:
             pass
 
+        savesh_file = None
+        try:
+            savesh_handle = self.get_project_file (builddir, 'save.sh')
+            savesh_file = savesh_handle.builddir + '/' + savesh_handle.name
+        except ElbeDBError as e:
+            pass
+
         with session_scope(self.session) as s:
             try:
                 p = s.query(Project). \
@@ -406,7 +446,9 @@ class ElbeDB(object):
 
                 return ElbeProject (p.builddir, name=p.name, logpath=logpath,
                         postbuild_file=postbuild_file,
-                        presh_file=presh_file, postsh_file=postsh_file)
+                        presh_file=presh_file,
+                        postsh_file=postsh_file,
+                        savesh_file=savesh_file)
             except NoResultFound:
                 raise ElbeDBError(
                         "project %s is not registered in the database" %

@@ -44,7 +44,8 @@ class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
             rpcaptcache_notifier = None, private_data = None,
-            postbuild_file = None, presh_file = None, postsh_file = None):
+            postbuild_file = None, presh_file = None, postsh_file = None,
+            savesh_file = None):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -55,6 +56,7 @@ class ElbeProject (object):
         self.postbuild_file = postbuild_file
         self.presh_file = presh_file
         self.postsh_file = postsh_file
+        self.savesh_file = savesh_file
 
         self.private_data = private_data
 

@@ -198,6 +198,14 @@ class SaveVersionJob(AsyncWorkerJob):
             db.reset_busy( self.project.builddir, self.old_status )
             raise
 
+        if self.project.savesh_file:
+            self.project.log.h2 ("save version script:")
+            self.project.log.do (self.project.savesh_file + ' "%s %s %s"' % (
+                            self.project.builddir,
+                            self.project.xml.text ("project/version"),
+                            self.project.xml.text ("project/name")),
+                            allow_fail=True)
+
         self.project.log.printo( "Enqueueing project to save package archive" )
         AsyncWorkerJob.enqueue( self, queue, db )
 

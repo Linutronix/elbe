@@ -200,6 +200,13 @@ class ProjectManager(object):
             f = self.db.set_postbuild( ep.builddir, postbuild_file )
             ep.postbuild_file = f
 
+    def set_current_project_savesh (self, userid, savesh_file):
+        with self.lock:
+            ep = self._get_current_project( userid, allow_busy=False )
+
+            f = self.db.set_savesh( ep.builddir, savesh_file )
+            ep.savesh_file = f
+
     def set_current_project_presh (self, userid, presh_file):
         with self.lock:
             ep = self._get_current_project( userid, allow_busy=False )
