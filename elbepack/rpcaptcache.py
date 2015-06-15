@@ -184,6 +184,9 @@ class RPCAPTCache(InChRootObject):
     def get_pkg( self, pkgname ):
         return APTPackage( self.cache[pkgname] )
 
+    def get_pkgs( self, pkgname ):
+        return [APTPackage (self.cache[p]) for p in sorted (self.cache.keys()) if pkgname in p.lower()]
+
     def compare_versions( self, ver1, ver2 ):
         return version_compare( ver1, ver2 )
 

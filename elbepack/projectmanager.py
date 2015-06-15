@@ -395,6 +395,11 @@ class ProjectManager(object):
             c = self._get_current_project_apt_cache( userid )
             return c.get_pkg( term )
 
+    def apt_get_pkgs (self, userid, term):
+        with self.lock:
+            c = self._get_current_project_apt_cache( userid )
+            return c.get_pkgs( term )
+
     def apt_get_sections (self, userid):
         with self.lock:
             c = self._get_current_project_apt_cache( userid )
