@@ -91,6 +91,28 @@ class APTUpdateJob(AsyncWorkerJob):
             self.project.log.printo( str(e) )
             db.reset_busy( self.project.builddir, "build_failed" )
 
+class APTUpdUpgrJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir, [ "build_done", "has_changes" ] )
+        self.project.log.printo( "Enqueueing project for APT update & upgrade" )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            self.project.log.printo( "APT update started" )
+            with self.project.buildenv:
+                self.project.get_rpcaptcache().update()
+            self.project.log.printo( "APT update finished, upgrade started" )
+            self.project.get_rpcaptcache().upgrade ()
+            self.project.log.printo( "APT upgrade finished" )
+            db.reset_busy( self.project.builddir, "has_changes" )
+        except Exception as e:
+            self.project.log.printo( "APT update & upgrade failed" )
+            self.project.log.printo( str(e) )
+            db.reset_busy( self.project.builddir, "build_failed" )
 
 class APTCommitJob(AsyncWorkerJob):
     def __init__ (self, project):

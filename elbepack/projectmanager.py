@@ -30,6 +30,7 @@ from elbepack.db import ElbeDB, ElbeDBError, get_versioned_filename
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
+from elbepack.asyncworker import APTUpdUpgrJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -270,7 +271,6 @@ class ProjectManager(object):
     def build_current_project (self, userid, build_bin, build_src):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
-
             self.worker.enqueue (BuildJob (ep, build_bin, build_src))
 
     def build_update_package (self, userid, base_version):
@@ -282,19 +282,21 @@ class ProjectManager(object):
                         "please commit them first" )
 
             ep = self._get_current_project( userid )
-
             self.worker.enqueue( GenUpdateJob ( ep, base_version ) )
+
+    def apt_upd_upgr (self, userid):
+        with self.lock:
+            ep = self._get_current_project( userid, allow_busy=False )
+            self.worker.enqueue( APTUpdUpgrJob( ep ) )
 
     def apt_update (self, userid):
         with self.lock:
             ep = self._get_current_project( userid, allow_busy=False )
-
             self.worker.enqueue( APTUpdateJob( ep ) )
 
     def apt_commit (self, userid):
         with self.lock:
             ep = self._get_current_project( userid, allow_busy=False )
-
             self.worker.enqueue( APTCommitJob( ep ) )
 
     def apt_clear (self, userid):
