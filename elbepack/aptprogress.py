@@ -28,6 +28,7 @@ class ElbeInstallProgress (InstallProgress):
 
     def write (self, line):
         line = str (self.percent) + "% " + line
+        line.replace ('\f', '')
         if self.cb:
             self.cb (line)
         else:
@@ -62,6 +63,7 @@ class ElbeAcquireProgress (AcquireProgress):
         self.cb = cb
 
     def write (self, line):
+        line.replace ('\f', '')
         if self.cb:
             self.cb (line)
         else:
