@@ -27,6 +27,9 @@ class ElbeInstallProgress (InstallProgress):
         self.cb = cb
 
     def write (self, line):
+        if line == 'update finished':
+            self.percent = 100
+
         line = str (self.percent) + "% " + line
         line.replace ('\f', '')
         if self.cb:
