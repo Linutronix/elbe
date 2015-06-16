@@ -41,6 +41,7 @@ from sqlalchemy.exc import OperationalError
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import (ElbeXML, ValidationError)
+from elbepack.dosunix import dos2unix
 
 Base = declarative_base ()
 
@@ -144,6 +145,7 @@ class ElbeDB(object):
                 copyfileobj (postbuild_file, dst)
 
             os.chmod (builddir+"/postbuild.sh", 0755)
+            dos2unix (builddir+"/postbuild.sh")
 
             return self._update_project_file( s, builddir, "postbuild.sh",
                     "application/sh", "postbuild script" )
@@ -177,6 +179,7 @@ class ElbeDB(object):
                 copyfileobj (savesh_file, dst)
 
             os.chmod (builddir+"/save.sh", 0755)
+            dos2unix (builddir+"/save.sh")
 
             return self._update_project_file( s, builddir, "save.sh",
                     "application/sh", "version save script" )
@@ -209,6 +212,8 @@ class ElbeDB(object):
             with open (builddir+"/pre.sh", 'w') as dst:
                 copyfileobj (presh_file, dst)
 
+            dos2unix (builddir+"/pre.sh")
+
             return self._update_project_file( s, builddir, "pre.sh",
                     "application/sh", "pre install script" )
 
@@ -239,6 +244,8 @@ class ElbeDB(object):
 
             with open (builddir+"/post.sh", 'w') as dst:
                 copyfileobj (postsh_file, dst)
+
+            dos2unix (builddir+"/post.sh")
 
             return self._update_project_file( s, builddir, "post.sh",
                     "application/sh", "post install script" )
