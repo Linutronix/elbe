@@ -325,9 +325,10 @@ def mkdir_p(path):
         else: raise
 
 def execute (cmd, status):
-    status.log (subprocess.check_output (cmd,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True))
+    output = subprocess.check_output (cmd, stderr=subprocess.STDOUT)
+    for o in output.rstrip ().split ('\n'):
+        if o:
+            status.log (o)
 
 def pre_sh (current_version, target_version, status):
     if os.path.isfile('/var/cache/elbe/' + 'pre.sh'):
