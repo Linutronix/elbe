@@ -77,6 +77,8 @@ class UpdateStatus:
         self.write_status ('finished\t%s' % result)
 
     def log (self, msg):
+        if not msg.endswith ('\n'):
+            msg += '\n'
         msg = unix2dos_str (msg)
 
         # parse progress of apt from aptprogress output
