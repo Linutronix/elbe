@@ -41,7 +41,8 @@ from syslog import syslog
 from wsgiref.simple_server import make_server
 from zipfile import (ZipFile, BadZipfile)
 
-from elbepack.aptprogress import (ElbeInstallProgress, ElbeAcquireProgress)
+from elbepack.aptprogress import (ElbeInstallProgress,
+ ElbeAcquireProgress, ElbeOpProgress)
 from elbepack.gpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.xmldefaults import ElbeDefaults
@@ -258,7 +259,7 @@ def _apply_update (fname, status):
 
     status.log ("initialize apt")
     apt_pkg.init ()
-    cache = apt_pkg.Cache ()
+    cache = apt_pkg.Cache (progress=ElbeOpProgress (cb=status.log))
 
     status.set_progress (1)
     status.log ("updating package cache")
@@ -266,10 +267,10 @@ def _apply_update (fname, status):
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
     # the changed index files."
-    cache = apt_pkg.Cache ()
+    cache = apt_pkg.Cache (progress=ElbeOpProgress (cb=status.log))
     depcache = apt_pkg.DepCache (cache)
-    hl_cache = apt.cache.Cache ()
-    hl_cache.update ()
+    hl_cache = apt.cache.Cache (progress=ElbeOpProgress (cb=status.log))
+    hl_cache.update (fetch_progress=ElbeAcquireProgress (cb=status.log))
 
     # go through package cache, if a package is in the fullpkg list of the XML
     #  mark the package for installation (with the specified version)
