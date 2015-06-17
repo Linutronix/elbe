@@ -48,18 +48,40 @@ from elbepack.xmldefaults import ElbeDefaults
 
 
 class UpdateStatus:
-    monitor = None
-    observer = None
-    soapserver = None
-    stop = False
-    step = 0
-    nosign = False
-    verbose = False
-    repo_dir = ""
+    def __init__ (self):
+        self.monitor = None
+        self.observer = None
+        self.soapserver = None
+        self.stop = False
+        self.step = 0
+        self.nosign = False
+        self.verbose = False
+        self.repo_dir = ""
 
-status = UpdateStatus ()
+    def log (self, msg):
+        msg = unix2dos_str (msg)
+        if self.step:
+            msg = "(" + str (self.step) + "/3) " + msg
+        if self.monitor:
+            try:
+                self.monitor.service.msg (msg)
+            except:
+                print "logging to monitor failed, removing monitor connection"
+                self.monitor = None
+                print msg
+        try:
+            syslog (msg)
+        except:
+            print msg
+        if self.verbose:
+            print msg
+
 
 class UpdateService (SimpleWSGISoapApp):
+
+    def __init__ (self, status):
+        SimpleWSGISoapApp.__init__ (self)
+        self.status = status
 
     @soapmethod (_returns=String)
     def list_snapshots (self):
@@ -82,27 +104,27 @@ class UpdateService (SimpleWSGISoapApp):
         if version == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
-            fname = status.repo_dir + "/" + version + "/new.xml"
+            fname = self.status.repo_dir + "/" + version + "/new.xml"
 
         try:
-            apply_update (fname)
+            apply_update (fname, self.status)
         except Exception, err:
             print Exception, err
-            status.step = 0
+            self.status.step = 0
             return "apply snapshot %s failed" % version
 
-        status.step = 0
+        self.status.step = 0
         return "snapshot %s applied" % version
 
     @soapmethod (String)
     def register_monitor (self, wsdl_url):
-        status.monitor = Client (wsdl_url)
-        log ("connection established")
+        self.status.monitor = Client (wsdl_url)
+        self.status.log ("connection established")
 
 class rw_access_file:
-    def __init__ (self, filename):
+    def __init__ (self, filename, status):
         self.filename = filename
-        self.rw = rw_access (filename)
+        self.rw = rw_access (filename, status)
 
     def __enter__ (self):
         self.rw.__enter__ ()
@@ -115,20 +137,21 @@ class rw_access_file:
         self.rw.__exit__ (type, value, traceback)
 
 class rw_access:
-    def __init__ (self, directory):
+    def __init__ (self, directory, status):
+        self.status = status
         self.directory = directory
         self.mount = self.get_mount ()
         self.mount_orig = self.get_mount_status ()
 
     def __enter__ (self):
         if self.mount_orig == 'ro':
-            log ("remount %s read/writeable" % self.mount)
+            self.status.log ("remount %s read/writeable" % self.mount)
             cmd = "mount -o remount,rw %s" % self.mount
             os.system (cmd)
 
     def __exit__ (self, type, value, traceback):
         if self.mount_orig == 'ro':
-            log ("remount %s readonly" % self.mount)
+            self.status.log ("remount %s readonly" % self.mount)
             os.system ("sync")
             cmd = "mount -o remount,ro %s" % self.mount
             ret = os.system (cmd)
@@ -170,10 +193,10 @@ def fname_replace (s):
             res += '_'
     return res
 
-def update_sourceslist (xml, update_dir):
+def update_sourceslist (xml, update_dir, status):
     # only create sources list entry if repo is valid
     if not os.path.isdir (update_dir + '/dists'):
-        log ('invalid repository, not added to sources.list')
+        status.log ('invalid repository, not added to sources.list')
         return
 
     deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
@@ -183,19 +206,19 @@ def update_sourceslist (xml, update_dir):
     fname += fname_replace (xml.text ("/project/version"))
     fname += ".list"
 
-    with rw_access_file (fname) as f:
+    with rw_access_file (fname, status) as f:
         f.write (deb)
 
-def mark_install (depcache, pkg, version, auto):
+def mark_install (depcache, pkg, version, auto, status):
     for v in pkg.version_list:
         if v.ver_str == str (version):
             depcache.set_candidate_ver (pkg, v)
             depcache.mark_install (pkg, False, not auto)
             return
 
-    log ("ERROR: " + pkg.name + version + " is not available in the cache")
+    status.log ("ERROR: " + pkg.name + version + " is not available in the cache")
 
-def _apply_update (fname):
+def _apply_update (fname, status):
 
     try:
         xml = etree (fname)
@@ -207,13 +230,13 @@ def _apply_update (fname):
     sources = apt_pkg.SourceList ()
     sources.read_main_list ()
 
-    log ("initialize apt")
+    status.log ("initialize apt")
     apt_pkg.init ()
     cache = apt_pkg.Cache ()
 
     status.step = 1
-    log ("updating package cache")
-    cache.update (ElbeAcquireProgress (cb=log), sources)
+    status.log ("updating package cache")
+    cache.update (ElbeAcquireProgress (cb=status.log), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
     # the changed index files."
@@ -227,7 +250,7 @@ def _apply_update (fname):
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
     status.step = 2
-    log ("calculating packages to install/remove")
+    status.log ("calculating packages to install/remove")
     count = len (hl_cache)
     step = count / 10
     i = 0
@@ -236,7 +259,7 @@ def _apply_update (fname):
         i = i + 1
         if not (i % step):
             percent = percent + 10
-            log (str (percent) + "% - " + str (i) + "/" + str (count))
+            status.log (str (percent) + "% - " + str (i) + "/" + str (count))
 
         pkg = cache [p.name]
         marked = False
@@ -244,15 +267,17 @@ def _apply_update (fname):
             if pkg.name == fpi.et.text:
                 mark_install (depcache, pkg,
                             fpi.et.get('version'),
-                            fpi.et.get('auto'))
+                            fpi.et.get('auto'),
+                            status)
                 marked = True
 
         if not marked:
             depcache.mark_delete (pkg, True)
 
     status.step = 3
-    log ("applying snapshot")
-    depcache.commit (ElbeAcquireProgress (cb=log), ElbeInstallProgress (cb=log))
+    status.log ("applying snapshot")
+    depcache.commit (ElbeAcquireProgress (cb=status.log),
+                     ElbeInstallProgress (cb=status.log))
     del depcache
     del hl_cache
     del cache
@@ -271,18 +296,22 @@ def mkdir_p(path):
             pass
         else: raise
 
-def execute (cmd):
-    log (subprocess.check_output (cmd,
+def execute (cmd, status):
+    status.log (subprocess.check_output (cmd,
         stderr=subprocess.STDOUT,
         universal_newlines=True))
 
-def pre_sh (current_version, target_version):
+def pre_sh (current_version, target_version, status):
     if os.path.isfile('/var/cache/elbe/' + 'pre.sh'):
-        execute (['/var/cache/elbe/' + 'pre.sh', current_version, target_version])
+        execute (
+          ['/var/cache/elbe/' + 'pre.sh', current_version, target_version],
+          status)
 
-def post_sh (current_version, target_version):
+def post_sh (current_version, target_version, status):
     if os.path.isfile('/var/cache/elbe/' + 'post.sh'):
-        execute (['/var/cache/elbe/' + 'post.sh', current_version, target_version])
+        execute (
+          ['/var/cache/elbe/' + 'post.sh', current_version, target_version],
+          status)
 
 def get_target_version (fname):
     xml = etree (fname)
@@ -292,82 +321,59 @@ def get_current_version ():
     with open ("/etc/updated_version", "r") as version_file:
         return version_file.read ()
 
-def apply_update (fname):
+def apply_update (fname, status):
     # As soon as python-apt closes its opened files on object deletion
     # we can drop this fork workaround. As long as they keep their files
     # open, we run the code in an own fork, than the files are closed on
     # process termination an we can remount the filesystem readonly
     # without errors.
-    p = Process (target=_apply_update, args=(fname, ))
-    with rw_access ("/"):
+    p = Process (target=_apply_update, args=(fname, status))
+    with rw_access ("/", status):
         try:
             t_ver = get_target_version(fname)
         except:
-            log ('Reading xml-file failed!')
+            status.log ('Reading xml-file failed!')
             return
 
         try:
             c_ver = get_current_version()
         except IOError as e:
-            log ('get current version failed: ' + str (e))
+            status.log ('get current version failed: ' + str (e))
             c_ver = ""
 
-        pre_sh (c_ver, t_ver)
+        pre_sh (c_ver, t_ver, status)
         p.start ()
         p.join ()
-        log ("cleanup /var/cache/apt/archives")
+        status.log ("cleanup /var/cache/apt/archives")
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
         os.system ("apt-get clean")
-        post_sh (c_ver, t_ver)
+        post_sh (c_ver, t_ver, status)
 
-def log (msg):
+def action_select (upd_file, status):
 
-    global status
-
-    if status.step:
-        msg = "(" + str (status.step) + "/3) " + msg
-
-    if status.monitor:
-        try:
-            status.monitor.service.msg (msg)
-        except:
-            print "logging to monitor failed, removing monitor connection"
-            status.monitor = None
-            print msg
-    try:
-        syslog (msg)
-    except:
-        print msg
-    if status.verbose:
-        print msg
-
-def action_select (upd_file):
-
-    global status
-
-    log ( "updating: " + upd_file)
+    status.log ( "updating: " + upd_file)
 
     try:
         upd_file_z = ZipFile (upd_file)
     except BadZipfile:
-        log ("update aborted (bad zip file: %s)" % upd_file)
+        status.log ("update aborted (bad zip file: %s)" % upd_file)
         return
 
     if not "new.xml" in upd_file_z.namelist ():
-        log ("update invalid (new.xml missing)")
+        status.log ("update invalid (new.xml missing)")
         return
 
-    with rw_access ("/tmp"):
+    with rw_access ("/tmp", status):
         upd_file_z.extract ("new.xml", "/tmp/")
 
     xml = etree ("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
     prefix += "_" + fname_replace (xml.text ("/project/version")) + "/"
 
-    log ("preparing update: " + prefix)
+    status.log ("preparing update: " + prefix)
 
-    with rw_access (prefix):
+    with rw_access (prefix, status):
         for i in upd_file_z.namelist ():
 
             (dirname, filename) = os.path.split (i)
@@ -377,133 +383,132 @@ def action_select (upd_file):
                 upd_file_z.extract (zi, prefix)
                 os.chmod (prefix + '/' + i, zi.external_attr >> 16)
             except OSError:
-                log ("extraction failed: %s" % sys.exc_info () [1])
+                status.log ("extraction failed: %s" % sys.exc_info () [1])
                 return
 
-    with rw_access ("/var/cache/elbe"):
+    with rw_access ("/var/cache/elbe", status):
         if os.path.isfile(prefix + '/' + 'pre.sh'):
             try:
                 copy (prefix + '/' + 'pre.sh', '/var/cache/elbe/' + 'pre.sh')
             except OSError as e:
-                log ('presh-copy failed: ' + str (e))
+                status.log ('presh-copy failed: ' + str (e))
             except IOError as e:
-                log ('presh-copy failed: ' + str (e))
+                status.log ('presh-copy failed: ' + str (e))
 
         if os.path.isfile(prefix + '/' + 'post.sh'):
             try:
                 copy (prefix + '/' + 'post.sh', '/var/cache/elbe/' + 'post.sh')
             except OSError as e:
-                log ('postsh-copy failed: ' + str (e))
+                status.log ('postsh-copy failed: ' + str (e))
             except IOError as e:
-                log ('postsh-copy failed: ' + str (e))
+                status.log ('postsh-copy failed: ' + str (e))
 
     if os.path.isdir (prefix + "conf"):
-        log ("copying config files:")
+        status.log ("copying config files:")
         for path, pathname, filenames in os.walk (prefix + "conf"):
             dst = path[len(prefix + "conf"):]
-            with rw_access (dst):
+            with rw_access (dst, status):
                 for f in filenames:
                     src = os.path.join (path, f)
-                    log ("cp " + src + " " + dst)
+                    status.log ("cp " + src + " " + dst)
                     try:
                         mkdir_p (dst)
                         copyfile (src, dst + '/' + f)
                     except OSError as e:
-                        log ('failed: ' + str (e))
+                        status.log ('failed: ' + str (e))
                     except IOError as e:
-                        log ('failed: ' + str (e))
-        with rw_access (prefix + "conf"):
+                        status.log ('failed: ' + str (e))
+        with rw_access (prefix + "conf", status):
             rmtree (prefix + "conf")
 
     if os.path.isdir (prefix + "cmd"):
-        log ("executing scripts:")
+        status.log ("executing scripts:")
         for path, pathname, filenames in os.walk (prefix + "cmd"):
             for f in filenames:
                 cmd = os.path.join (path, f)
                 if os.path.isfile (cmd):
-                    log ('exec: ' + cmd)
+                    status.log ('exec: ' + cmd)
                     try:
-                        execute (cmd)
+                        execute (cmd, status)
                     except OSError as e:
-                        log ('exec: ' + cmd + ' - ' + str (e))
-        with rw_access (prefix + "cmd"):
+                        status.log ('exec: ' + cmd + ' - ' + str (e))
+        with rw_access (prefix + "cmd", status):
             rmtree (prefix + "cmd")
 
     if os.path.isdir (prefix + "repo"):
         try:
-            update_sourceslist (xml, prefix + "repo")
+            update_sourceslist (xml, prefix + "repo", status)
         except Exception, err:
-            log (str (err))
+            status.log (str (err))
             status.step = 0
-            log ("update apt sources list failed: " + prefix)
+            status.log ("update apt sources list failed: " + prefix)
             return
 
         try:
-            apply_update ("/tmp/new.xml")
+            apply_update ("/tmp/new.xml", status)
         except Exception, err:
-            log (str (err))
+            status.log (str (err))
             status.step = 0
-            log ("apply update failed: " + prefix)
+            status.log ("apply update failed: " + prefix)
             return
 
         status.step = 0
-        log ("update done: " + prefix)
+        status.log ("update done: " + prefix)
 
 
 class FileMonitor (pyinotify.ProcessEvent):
+
+    def __init__ (self, status):
+        pyinotify.ProcessEvent.__init__ (self)
+        self.status = status
+
     def process_IN_CLOSE_WRITE (self, event):
 
-        global status
-
-        log ("checking file: " + str(event.pathname))
+        self.status.log ("checking file: " + str(event.pathname))
         extension = event.pathname.split ('.') [-1]
 
         if extension == "gpg":
             fname = unsign_file (event.pathname)
             os.remove (event.pathname)
             if fname:
-                action_select (fname)
+                action_select (fname, self.status)
                 os.remove (fname)
             else:
-                log ("checking signature failed: " + event.pathname)
+                self.status.log ("checking signature failed: " + event.pathname)
 
-        elif status.nosign:
-            action_select (event.pathname)
+        elif self.status.nosign:
+            action_select (event.pathname, self.status)
             os.remove (event.pathname)
         else:
-            log ("ignore file: " + str(event.pathname))
+            self.status.log ("ignore file: " + str(event.pathname))
 
-def shutdown (signum, fname):
-
-    global status
-
+def shutdown (signum, fname, status):
     status.stop = True
     status.observer = None
 
 class ObserverThread (threading.Thread):
 
-    def __init__ (self):
+    def __init__ (self, status):
                 threading.Thread.__init__ (self, name="ObserverThread")
+                self.status = status
 
     def run (self):
 
-        global status
-
-        log ("monitoring updated dir")
+        self.status.log ("monitoring updated dir")
 
         while 1:
-            if status.observer.check_events (timeout=1000):
-                status.observer.read_events ()
-                status.observer.process_events ()
+            if self.status.observer.check_events (timeout=1000):
+                self.status.observer.read_events ()
+                self.status.observer.process_events ()
 
-            if status.stop:
-                if status.soapserver:
-                    status.soapserver.shutdown ()
+            if self.status.stop:
+                if self.status.soapserver:
+                    self.status.soapserver.shutdown ()
                 return
 
 def run_command (argv):
 
-    global status
+    status = UpdateStatus ()
 
     oparser = OptionParser (usage="usage: %prog updated [options] <filename>")
 
@@ -549,16 +554,18 @@ def run_command (argv):
 
     wm = pyinotify.WatchManager ()
     status.observer = pyinotify.Notifier (wm)
-    wm.add_watch (update_dir, pyinotify.IN_CLOSE_WRITE, proc_fun=FileMonitor ())
+    wm.add_watch (update_dir, pyinotify.IN_CLOSE_WRITE,
+                  proc_fun=FileMonitor (status))
     signal.signal (signal.SIGTERM, shutdown)
 
-    obs_thread = ObserverThread ()
+    obs_thread = ObserverThread (status)
     obs_thread.start ()
 
-    status.soapserver = make_server (opt.host, int (opt.port), UpdateService ())
+    status.soapserver = make_server (opt.host, int (opt.port),
+                                     UpdateService (status))
     try:
         status.soapserver.serve_forever ()
     except:
-        shutdown (1, "now")
+        shutdown (1, "now", status)
 
     obs_thread.join ()
