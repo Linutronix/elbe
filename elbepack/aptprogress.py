@@ -43,11 +43,11 @@ class ElbeInstallProgress (InstallProgress):
 
     def dpkg_status_change (self, pkg, status):
         InstallProgress.dpkg_status_change (self, pkg, status)
-        self.write (status)
+        self.write (pkg + " - " + status)
 
     def status_change (self, pkg, percent, status):
         InstallProgress.status_change (self, pkg, percent, status)
-        self.write (status)
+        self.write (pkg + " - " + status + " " + str (percent) + "%")
 
     def fork(self):
         retval = os.fork()
