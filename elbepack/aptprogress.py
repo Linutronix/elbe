@@ -38,15 +38,12 @@ class ElbeInstallProgress (InstallProgress):
             print line
 
     def processing (self, pkg, stage):
-        InstallProgress.processing (self, pkg, stage)
         self.write ("processing: " + pkg + " - " + stage)
 
     def dpkg_status_change (self, pkg, status):
-        InstallProgress.dpkg_status_change (self, pkg, status)
         self.write (pkg + " - " + status)
 
     def status_change (self, pkg, percent, status):
-        InstallProgress.status_change (self, pkg, percent, status)
         self.write (pkg + " - " + status + " " + str (percent) + "%")
 
     def fork(self):
