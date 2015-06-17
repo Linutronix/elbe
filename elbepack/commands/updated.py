@@ -57,9 +57,33 @@ class UpdateStatus:
         self.nosign = False
         self.verbose = False
         self.repo_dir = ""
+        self.status_file = '/var/cache/elbe/update_state.txt'
+        with rw_access_file (self.status_file, self) as f:
+            f.write ('ready')
+            f.truncate ()
+
+    def write_status (self, msg):
+        with rw_access_file (self.status_file, self) as f:
+            f.seek (0)
+            f.write (msg)
+            f.truncate ()
+
+    def set_progress (self, step, percent=''):
+        self.step = step
+        self.write_status ('in_progress\t%d\t%s' % (step, percent))
+
+    def set_finished (self, result):
+        self.step = 0
+        self.write_status ('finished\t%s' % result)
 
     def log (self, msg):
         msg = unix2dos_str (msg)
+
+        # parse progress of apt from aptprogress output
+        if self.step == 3:
+            msg_a = msg.split()
+            self.set_progress (3, msg_a [0])
+
         if self.step:
             msg = "(" + str (self.step) + "/3) " + msg
         if self.monitor:
@@ -110,10 +134,10 @@ class UpdateService (SimpleWSGISoapApp):
             apply_update (fname, self.status)
         except Exception, err:
             print Exception, err
-            self.status.step = 0
+            self.status.set_finished ('error')
             return "apply snapshot %s failed" % version
 
-        self.status.step = 0
+        self.status.set_finished ('OK')
         return "snapshot %s applied" % version
 
     @soapmethod (String)
@@ -234,7 +258,7 @@ def _apply_update (fname, status):
     apt_pkg.init ()
     cache = apt_pkg.Cache ()
 
-    status.step = 1
+    status.set_progress (1)
     status.log ("updating package cache")
     cache.update (ElbeAcquireProgress (cb=status.log), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
@@ -249,7 +273,7 @@ def _apply_update (fname, status):
     #  mark the package for installation (with the specified version)
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
-    status.step = 2
+    status.set_progress (2)
     status.log ("calculating packages to install/remove")
     count = len (hl_cache)
     step = count / 10
@@ -260,6 +284,7 @@ def _apply_update (fname, status):
         if not (i % step):
             percent = percent + 10
             status.log (str (percent) + "% - " + str (i) + "/" + str (count))
+            status.set_progress (2, str (percent) + "%")
 
         pkg = cache [p.name]
         marked = False
@@ -274,7 +299,7 @@ def _apply_update (fname, status):
         if not marked:
             depcache.mark_delete (pkg, True)
 
-    status.step = 3
+    status.set_progress (3)
     status.log ("applying snapshot")
     depcache.commit (ElbeAcquireProgress (cb=status.log),
                      ElbeInstallProgress (cb=status.log))
@@ -440,7 +465,7 @@ def action_select (upd_file, status):
             update_sourceslist (xml, prefix + "repo", status)
         except Exception, err:
             status.log (str (err))
-            status.step = 0
+            status.set_finished ('error')
             status.log ("update apt sources list failed: " + prefix)
             return
 
@@ -448,11 +473,11 @@ def action_select (upd_file, status):
             apply_update ("/tmp/new.xml", status)
         except Exception, err:
             status.log (str (err))
-            status.step = 0
+            status.set_finished ('error')
             status.log ("apply update failed: " + prefix)
             return
 
-        status.step = 0
+        status.set_finished ('OK')
         status.log ("update done: " + prefix)
 
 
