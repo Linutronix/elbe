@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from apt.progress.base import InstallProgress, AcquireProgress
+from apt.progress.base import InstallProgress, AcquireProgress, OpProgress
 from apt_pkg import size_to_str
 import os
 
@@ -95,3 +95,22 @@ class ElbeAcquireProgress (AcquireProgress):
 
     def pulse (self, owner):
         return True
+
+
+class ElbeOpProgress (AcquireProgress):
+
+    def __init__ (self, cb=None):
+        OpProgress.__init__ (self)
+        self._id = long(1)
+        self.cb = cb
+
+    def write (self, line):
+        line.replace ('\f', '')
+        if self.cb:
+            self.cb (line)
+        else:
+            print line
+    def update (self, percent=None):
+        pass
+    def done (self):
+        pass
