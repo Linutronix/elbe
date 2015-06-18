@@ -1,5 +1,8 @@
 ./usr/bin/*
-./usr/lib/python2.*/*-packages/elbepack/init/*
+./usr/lib/python2.*/*-packages/elbepack/init/Makefile.mako
+./usr/lib/python2.*/*-packages/elbepack/init/apt.conf.mako
+./usr/lib/python2.*/*-packages/elbepack/init/preseed.cfg.mako
+./usr/lib/python2.*/*-packages/elbepack/init/init-elbe.sh.mako
 ./usr/lib/python2.*/*-packages/elbepack/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/aptprogress.py
