@@ -13,8 +13,10 @@
 ./usr/lib/python2.*/*-packages/elbepack/elbexml.py
 ./usr/lib/python2.*/*-packages/elbepack/elbeproject.py
 ./usr/lib/python2.*/*-packages/elbepack/gpg.py
+./usr/lib/python2.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python2.*/*-packages/elbepack/pkgutils.py
 ./usr/lib/python2.*/*-packages/elbepack/templates.py
+./usr/lib/python2.*/*-packages/elbepack/toolchain.py
 ./usr/lib/python2.*/*-packages/elbepack/treeutils.py
 ./usr/lib/python2.*/*-packages/elbepack/validate.py
 ./usr/lib/python2.*/*-packages/elbepack/version.py

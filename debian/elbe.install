@@ -3,6 +3,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/diff.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/get_archive.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/init.py
+./usr/lib/python2.*/*-packages/elbepack/commands/initvm.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/initrdpack.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/pkgdiff.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/remove_sign.py
