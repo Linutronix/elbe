@@ -26,7 +26,7 @@ from elbepack.asciidoclog import StdoutLog
 from elbepack.rfs import BuildEnv
 from elbepack.elbexml import ElbeXML, ValidationError
 
-from elbepack.filesystem import BuildImgFs
+from elbepack.filesystem import Filesystem
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog genlicence [options] <rfs>")
@@ -42,7 +42,7 @@ def run_command( argv ):
 
     chroot = os.path.abspath(args[0])
 
-    rfs = BuildImgFs( chroot, None )
+    rfs = Filesystem( chroot )
     log = StdoutLog()
 
     if opt.output:

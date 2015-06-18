@@ -24,7 +24,7 @@ from shutil import rmtree
 from io import BytesIO
 
 from elbepack.aptpkgutils import XMLPackage
-from elbepack.filesystem import ChRootFilesystem
+from elbepack.efilesystem import ChRootFilesystem
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError

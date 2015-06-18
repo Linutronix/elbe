@@ -17,12 +17,12 @@
 ./usr/lib/python2.*/*-packages/elbepack/repomanager.py
 ./usr/lib/python2.*/*-packages/elbepack/finetuning.py
 ./usr/lib/python2.*/*-packages/elbepack/rfs.py
-./usr/lib/python2.*/*-packages/elbepack/filesystem.py
 ./usr/lib/python2.*/*-packages/elbepack/aptpkgutils.py
 ./usr/lib/python2.*/*-packages/elbepack/asciidoclog.py
 ./usr/lib/python2.*/*-packages/elbepack/cdroms.py
 ./usr/lib/python2.*/*-packages/elbepack/debianreleases.py
 ./usr/lib/python2.*/*-packages/elbepack/debpkg.py
+./usr/lib/python2.*/*-packages/elbepack/efilesystem.py
 ./usr/lib/python2.*/*-packages/elbepack/fstab.py
 ./usr/lib/python2.*/*-packages/elbepack/persistency.py
 ./usr/lib/python2.*/*-packages/elbepack/rpcaptcache.py

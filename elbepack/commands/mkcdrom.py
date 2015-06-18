@@ -25,7 +25,7 @@ import os
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.asciidoclog import StdoutLog, ASCIIDocLog
-from elbepack.filesystem import ChRootFilesystem
+from elbepack.efilesystem import ChRootFilesystem
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 

@@ -25,8 +25,8 @@ from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.filesystem import TargetFs
-from elbepack.filesystem import extract_target
+from elbepack.efilesystem import TargetFs
+from elbepack.efilesystem import extract_target
 
 from elbepack.dump import elbe_report
 from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs

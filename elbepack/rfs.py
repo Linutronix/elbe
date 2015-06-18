@@ -24,7 +24,7 @@ import urlparse
 import elbepack
 
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
-from elbepack.filesystem import BuildImgFs
+from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import write_pack_template, get_preseed, preseed_to_text
 
 
