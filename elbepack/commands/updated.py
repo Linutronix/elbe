@@ -80,7 +80,6 @@ class UpdateStatus:
     def log (self, msg):
         if not msg.endswith ('\n'):
             msg += '\n'
-        msg = unix2dos_str (msg)
 
         # parse progress of apt from aptprogress output
         if self.step == 3:
