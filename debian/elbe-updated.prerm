@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if which pyclean >/dev/null 2>&1; then
+	pyclean -p elbe-updated 
+else
+	dpkg -L elbe-updated | grep \.py$ | while read file
+	do
+		rm -f "${file}"[co] >/dev/null
+	done
+fi
