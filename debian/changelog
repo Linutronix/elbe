@@ -1,3 +1,11 @@
+elbe (0.9.5) unstable; urgency=medium
+
+  * introduce 'initvm' subcommand to ease usage of elbe for beginners
+  * fix generation of binary CDROMs
+  * minor improvements in updated syslog
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 24 Jun 2015 13:32:53 +0200
+
 elbe (0.9.4) unstable; urgency=medium
 
   * fix systemd/sysvinit login-console initialization
