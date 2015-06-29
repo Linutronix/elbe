@@ -79,27 +79,17 @@ For example:
 
 ---------------------------------------------------
 elbe <command>
-elbe init --directory /scratch/example example.xml
+elbe initvm create --directory /scratch/example example.xml
 elbe chg_archive example.xml archive.tar.bz2
 ---------------------------------------------------
 
 An Elbe project consists of an XML file that describes the project.
 
-The 'elbe init' command generates a project directory, which contains a hard
-disk image for a virtual build machine and a 'Makefile' to install the build
-VM and to work with it.
+This xml File is processed inside a virtual machine, because we need root
+privileges to create the Rootfilesystem.
+This virtual machine is called 'initvm' in the following text.
 
-During this process, 'elbe init' will search the package repos mentioned in the
-mirror section of the XML file for the elbe-bootstrap package, which includes
-the debian-installer. You can use the packages provided by Linutronix from
-http://debian.linutronix.de/elbe by adding this url to the mirror section.
-
-After 'elbe init' has generated the project directory, change to the
-project directory and run 'make'. This will start the installation of the
-build VM.
-
-After finishing the installation, if the XML file contains a 'target' section,
-Elbe will start the root filesystem generation process using the build VM:
+When an xml File is now submitted into the initvm, the following happens:
 
 - Debian's 'debootstrap' utility is used to setup a Debian base system.
 - The packages specified in the package list of the XML file are installed
@@ -137,6 +127,43 @@ cause problems during installation. This typically includes database
 application packages, which set up a database in their postinst script and
 rely on the database server to be already running.
 ******************************************************************************
+
+Create initvm and build a first xml file from the examples
+----------------------------------------------------------
+
+To create an initvm and make that initvm build a first Rootfilesystem,
+use the following command:
+
+----------------------------------------------------------------------------------------------------------
+elbe initvm create --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/mini-wheezy-nfsroot.xml
+----------------------------------------------------------------------------------------------------------
+
+This will take quite a while.
+
+.Note
+**********************************************************
+Only one initvm may run on a single computer.
+If an initvm is already running in the background, this
+command will exit with a failure notice.
+**********************************************************
+
+The initvm will keep on running, after this command. Further xml Files may be built using
+
+----------------------------------------------------------------------------------------------------------
+elbe initvm submit --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/mini-wheezy-nfsroot.xml
+----------------------------------------------------------------------------------------------------------
+
+.Note
+**********************************************************
+The initvm will not be restarted upon a reboot of the machine.
+**********************************************************
+
+If you need to start the initvm again, use
+
+----------------------------------------------------------------------------------------------------------
+elbe initvm start --directory ~/elbe-initvm
+----------------------------------------------------------------------------------------------------------
+
 
 Example XML Files
 ~~~~~~~~~~~~~~~~~
@@ -201,58 +228,16 @@ To generate the project directory from the XML file the following command is
 used:
 
 -----------------------------------------------------
-elbe init --directory /home/user/example example.xml
+elbe initvm submit --directory ~/elbe-initvm example.xml
 -----------------------------------------------------
 
-The project directory must not exist before calling this command.
-It will contain several scripts, files and a Makefile, which controls the
-creation of the root-filesystem.
+The directory `~/elbe-initvm` must contain a running initvm.
+If an initvm has not been created yet, use:
 
-Creation of the build system
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------
+elbe initvm create --directory ~/elbe-initvm example.xml
+-----------------------------------------------------
 
-Now change to the project directory and run
-
------------------------------------------------
-make
------------------------------------------------
-
-This will install the build VM and then start the root filesystem generation
-process inside the VM, using the settings specified in the XML file. An archive
-'nfsroot.tar.gz' will be generated, as well as a chroot environment to work
-with the build environment inside the build VM.
-
-.Note
-*******************************************************
-This takes a while.
-*******************************************************
-
-Working with the build environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-After successful installation, the build VM can be started:
-
--------------------------------------------
-make run
--------------------------------------------
-
-or without a graphical terminal:
-
--------------------------------------------
-make run-con
--------------------------------------------
-
-Now log in as root on the build VM, change to the project directory and enter
-the chroot environment:
-
-------------------------------------------
-elbe chroot
-------------------------------------------
-
-This can now be used to test the root filesystem and to build additional
-packages. If the root filesystem has been created for another architecture
-than amd64, then the binaries in the root filesystem will be executed via
-qemu automatically.
 
 Changing the subset that is extracted as the root filesystem
 ------------------------------------------------------------
@@ -918,4 +903,29 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A complete reference that is automatically generated from the schema file is
 also available.
+
+
+Elbe init (detailed Explanation)
+--------------------------------
+
+.Note
+**********************************************************
+`elbe init` is now considered a low-level command for advanced Users.
+Under normal circumstances `elbe initvm` should be used.
+This paragraph is kept for reference.
+**********************************************************
+
+The 'elbe init' command generates a project directory, which contains a hard
+disk image for a virtual build machine and a 'Makefile' to install the build
+VM and to work with it.
+
+During this process, 'elbe init' will search the package repos mentioned in the
+mirror section of the XML file for the elbe-bootstrap package, which includes
+the debian-installer. You can use the packages provided by Linutronix from
+http://debian.linutronix.de/elbe by adding this url to the mirror section.
+
+After 'elbe init' has generated the project directory, change to the
+project directory and run 'make'. This will start the installation of the
+build VM.
+
 
