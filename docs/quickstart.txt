@@ -104,79 +104,38 @@ elbe -> ./elbe
 --------------------------------------------------------
 
 
-Create initvm
--------------
+Create initvm and submit xml Files
+----------------------------------
 
 The first thing you need to do is set up a virtual machine for
 generating root filesystems. 
 
 This virtual machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
-using kvm for acceleration, which will accerlerate the build process a lot.
+using kvm for acceleration, which will accellerate the build process a lot.
 
-To create the initvm you need a special elbe XML file that describes the
-initvm to create. The elbe-doc package includes an example that can be 
-used "as is" if your workstation is x86_64: 
-
-----------------------------------------------------------------
-/usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
-----------------------------------------------------------------
-
-This installs the
-openssh-server on the initvm and sets up ssh port forwarding on local
-port 5022 so you can use ssh to connect to my running initvm.
-
-To create the initvm, first run this:
 
 ----------------------------------------------------------------------------------------------
-$ elbe init --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
-initvm
-Reading package lists... Done
-Building dependency tree... Done
-Reading package lists... DonetmpburdqJ/etc/apt/trusted.gpg.d/.No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.
-Building dependency tree... Done
-No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.No keyring installed in /tmp/tmpburdqJ/etc/apt/trusted.gpg.d/.--2015-05-11 17:23:42--  http://debian.linutronix.de/elbe-testing/pool/main/e/elbe-bootstrap/elbe-bootstrap_1.0_amd64.deb
-Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
-Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 18397860 (18M) [application/x-debian-package]
-Saving to: ‘/tmp/tmpzlwx01/pkg.deb’
-
-/tmp/tmpzlwx01/pkg.deb                100%[========================================================================>]  17.54M  7.88MB/s   in 2.2s   
-
-2015-05-11 17:23:45 (7.88 MB/s) - ‘/tmp/tmpzlwx01/pkg.deb’ saved [18397860/18397860]
-----------------------------------------------------------------------------------------------
-
-If you can only connect to the Internet via a Proxy Server, you can specify that on the commandline:
-
-----------------------------------------------------------------------------------------------
-$ elbe init --proxy=http://enterprise-proxy.de:8888/ --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+$ elbe initvm create --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
 ----------------------------------------------------------------------------------------------
 
 
-This creates an "initvm" subdirectory and puts all the necessary project
-files to build the initvm there.
+This creates an "initvm" subdirectory and builds the initvm inside this directory.
 
-Then the initvm is built with:
+Submitting an xml File
+----------------------
 
-----------------------------------------------------------------------------------------------
-$ cd initvm
-$ make
-----------------------------------------------------------------------------------------------
-
-NOTE: If you get error messages about "virtio-rng-pci" then your qemu is not
-      version 1.3 or higher. Make sure you use a newer qemu.
-
-Once this is finished, you now have an initvm that you can use to build
-whatever type and as many root filesystems as you want. You can start
-the initvm by running (from within the initvm directory):
+Once the initvm has been created and is running, you can submit xml Files using
 
 ----------------------------------------------------------------------------------------------
-$ make run-con
+$ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
 ----------------------------------------------------------------------------------------------
 
 
-This initvm will open port 8080 on localhost, and allows the elbe control Tool
+Ports opened by initvm
+----------------------
+
+The initvm will open port 8080 on localhost, and allows the elbe control Tool
 to communicate with it. Also the sshd inside the VM will be available via Port 5022.
 
 Add the following lines to the `~/.ssh/config` on your host , so that you can access the VM 
@@ -191,159 +150,6 @@ HostName localhost
 NOTE: Root Password is `root`
 
 
-Build Rootfilesystem
---------------------
-
-There are 2 ways to build the Rootfilesystem 
-
-. via ssh login into the initvm
-. via the elbe control tool
-
-
-Building via ssh and elbe buildchroot
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Once you have your XML file you need to copy it to your initvm. For
-example, if you have openssh-server and port forwarding in the initvm
-and the initvm is running:
-
-
-----------------------------------------------------------------
-$ scp fun.xml root@vm:.
-----------------------------------------------------------------
-
-NOTE: Root Password is `root`
-
-Then ssh into the VM using:
-
-----------------------------------------------------------------
-$ ssh root@vm
-----------------------------------------------------------------
-
-Everything else we do is now on the initvm as root. Any commands I now
-show will be from within the initvm.
-
-To build my "fun.xml" root filesystem:
-
-----------------------------------------------------------------
-# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
-----------------------------------------------------------------
-
-When this command finishes I will have a "fun" subdirectory (specified
-with the --target= argument) that contains all the generated rootfs
-files. I also have a file "fun.log" that saved the elbe build protocol
-for the root filesystem.
-
-If you want to do some primitive testing or looking inside your new root
-filesystem, you can chroot into it with:
-
-----------------------------------------------------------------
-# elbe chroot --target fun
-----------------------------------------------------------------
-
-Now you are inside your new root filesystem. Even though this filesystem
-may be for another architecture, elbe makes use of the qemu-*-static
-binaries to emulate the architecture so you can actually execute the
-binaries in that root filesystem. Obviously being in a chroot
-environment is not the same as a native boot, but is often sufficient to
-do some looking around. With "exit" you can exit the chroot and return
-to your initvm environment.
-
-NOTE: In the above command I used the --target option. This is important
-      if you want to switch to the target's generated root filesystem
-      (fun/target/). If you leave the --target option off, you will
-      chroot into a root filesystem that was used to build the target
-      filesystem (fun/chroot/).
-
-If you make changes to your XML file, you can regenerate your root
-filesystem using the same command as before:
-
-----------------------------------------------------------------
-# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
-----------------------------------------------------------------
-
-In this example elbe will see that a "fun" directory with existing root
-filesystem and attempt to efficiently make the necessary changes based
-on the XML changes you have made (elbe has a copy of the old XML file as
-fun/source.xml).
-
-However... this sometimes introduces problems or
-differences from generating from scratch. So it might make sense to 
-regenerate the root filesystem from scratch every time, the xml is changed.
-
-
-----------------------------------------------------------------
-# rm -rf fun fun.log
-# elbe buildchroot --target=fun --output=fun.log --skip-cdrom fun.xml
-----------------------------------------------------------------
-
-This will be fixed in elbe-1.0.
-
-Elbe has many other features. Refer to the installed documentation in
-the manpages and `/usr/share/doc/elbe-doc/elbeoverview-en.html`
-
-
-
-
-Elbe control Tool
-~~~~~~~~~~~~~~~~~
-
-elbe control allows to communicate with the elbe daemon inside the initvm.
-
-To create a Project based the XML File, which you received, do the following:
-
-----------------------------------------------------------------
-$ elbe control create_project example.xml
-OK
-----------------------------------------------------------------
-
-You can list the projects using:
-
-----------------------------------------------------------------
-$ elbe control list_projects
-/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   needs_build     2015-05-11 12:33:11.319908
-----------------------------------------------------------------
-
-Start the build via:
-
-----------------------------------------------------------------
-$ elbe control build /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9 
-OK
-----------------------------------------------------------------
-
-The Project will now build, which you can observe via:
-
-----------------------------------------------------------------
-$ elbe control list_projects                                                                                                                        
-/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   busy    2015-05-11 12:33:11.319908
-----------------------------------------------------------------
-
-Once it finishes, it will report:
-
-----------------------------------------------------------------
-$ elbe control list_projects                                                                                                                        
-/var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9    example   08.15   build_done      2015-05-11 12:33:11.319908
-----------------------------------------------------------------
-
-Once the build has finished, you can query which files got built:
-
-----------------------------------------------------------------
-$ elbe control get_files /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9
-source.xml (Current source.xml of the project)
-nfsroot.tar.gz (Image)
-sda.img (Image)
-validation.txt (Package list validation result)
-elbe-report.txt (Report)
-log.txt (Log file)
-----------------------------------------------------------------
-
-You can extract these files out of the VM:
-
-----------------------------------------------------------------
-$ elbe control get_file /var/cache/elbe/d316dd71-a1d4-4ef8-98f7-e8e671c714c9 sda.img                                                                
-sda.img saved
-----------------------------------------------------------------
 
 Elbe Archive
 ------------
@@ -375,7 +181,7 @@ $ tar cvfj archive.tar.bz2 --owner=root --group=root -C arch/ .
 The updated archive File can then be inserted into the xml File:
 
 ----------------------------------------------------------------
-$ elbe set_archive fun.xml archive.tar.bz2
+$ elbe chg_archive fun.xml archive.tar.bz2
 ----------------------------------------------------------------
 
 During development and inside Version Control we use the following Makefile,
