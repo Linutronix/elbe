@@ -1,2 +1,3 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/control.py
+./usr/lib/python2.*/*-packages/elbepack/commands/initvm.py
 ./usr/lib/python2.*/*-packages/elbepack/soapclient.py
