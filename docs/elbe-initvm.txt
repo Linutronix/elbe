@@ -1,0 +1,133 @@
+elbe-initvm(1)
+===============
+
+NAME
+----
+elbe-initvm - High Level Interface to the ELBE System.
+              Allows to create an initvm and directly build Rootfilesystems using ELBE.
+
+
+SYNOPSIS
+--------
+[verse]
+'elbe initvm' [options] 'attach' 
+'elbe initvm' [options] 'create' [<xmlfile> | <isoimage>]
+'elbe initvm' [options] 'submit' [<xmlfile> | <isoimage>]
+'elbe initvm' [options] 'start'
+'elbe initvm' [options] 'ensure' 
+'elbe initvm' [options] 'start_build'
+
+DESCRIPTION
+-----------
+
+This command allows to build and manage an initvm.
+It makes use of the tmux Terminal multiplexer.
+
+
+OPTIONS
+-------
+
+--directory <dir>::
+	Directory where the initvm resides, or is supposed to reside.
+	(Defaults to './build')
+
+--skip-download::
+	After the build has finished, the generated Files are downloaded from
+	the initvm to the host. This step is skipped, when this option is specified.
+
+--output <dir>::
+	Directoryname where the generated and downloaded Files should be saved.
+	The default is to generate a directory with a timestamp in the current working
+	directory.
+
+--user <username>::
+	Username to use for login (defaults to root).
+
+--pass <password>::
+	Password for login (defaults to 'foo').
+
+--retries <N>::
+	How many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds).
+
+--build-bin::
+	Build binary repository CDROM, for exact reproduction.
+
+--build-sources::
+	Build source CDROM.
+	
+--output <directory>::
+	Output downloaded files to <directory>.
+
+COMMANDS
+--------
+
+'attach'::
+
+Attach to the initvm running in a Background tmux session.
+When tmux is being used, it links the initvm window into the current tmux session.
+If tmux is not used, tmux is started and the Background session is attached.
+
+
+'create' [ <xmlfile> | <isoimage> ]::
+
+This command triggers a complete rebuild of the Elbe XML File.
+it also includes rebuilding the initvm. 
++
+If an initvm is already available, you should use the 'submit' command,
+which. Also note that only a single initvm can be running on your host.
++
+When a iso Image with the binaries has been built earlier, it can also
+be used to recreate the original image. The source.xml from the iso will
+be used, and all the binary packages available also.
+
+
+'submit' [ <xmlfile> | <isoimage> ]::
+
+This command triggers a complete rebuild of the Elbe XML File.
+It will however use an existing initvm.
++
+When a iso Image with the binaries has been built earlier, it can also
+be used to recreate the original image. The source.xml from the iso will
+be used, and all the binary packages available also.
+
+
+'start'::
+
+Start initvm in the Background.
+
+
+'ensure'::
+
+Make sure an initvm is running in the Background.
+
+
+'start_build'::
+
+Runs an initvm build in the Background. The build directory must have been
+created with `elbe init` beforehand.
+
+
+Examples
+--------
+
+* Build an initvm and on that build an elbe example:
++
+------------
+$ elbe initvm create /usr/share/doc/elbe-doc/examples/rescue.xml
+------------
+
+* Reuse the initvm built in the previous Step to build another example xml
++
+------------
+$ elbe initvm submit /usr/share/doc/elbe-doc/examples/elbe-desktop.xml
+------------
+
+
+SEE ALSO
+--------
+linkgit:elbe-control[1]
+linkgit:tmux[1]
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite
