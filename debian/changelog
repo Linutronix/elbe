@@ -1,3 +1,11 @@
+elbe (0.9.5.1) unstable; urgency=medium
+
+  * improve documentation and man-pages
+  * improve debian packaging
+  * also setup https_proxy if a primary_proxy is defined
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 30 Jun 2015 08:08:48 +0200
+
 elbe (0.9.5) unstable; urgency=medium
 
   * introduce 'initvm' subcommand to ease usage of elbe for beginners
