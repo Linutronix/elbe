@@ -142,6 +142,7 @@ def run_command( argv ):
 
     if http_proxy != "":
         os.putenv ("http_proxy", http_proxy)
+        os.putenv ("https_proxy", http_proxy)
         os.putenv ("no_proxy", "localhost,127.0.0.1")
 
     try:
