@@ -787,7 +787,7 @@ class ElbeDB(object):
             # Add other generated files
             self._update_project_file( s, p.builddir, "source.xml",
                     "application/xml", "Current source.xml of the project" )
-            self._update_project_file( s, p.builddir, "license.txt",
+            self._update_project_file( s, p.builddir, "licence.txt",
                     "text/plain; charset=utf-8", "License file" )
             self._update_project_file( s, p.builddir, "validation.txt",
                     "text/plain; charset=utf-8", "Package list validation result" )
