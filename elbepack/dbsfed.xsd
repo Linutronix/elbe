@@ -1537,7 +1537,11 @@
   <complexType name="adduser">
     <annotation>
       <documentation>
-        describes an additional user account
+        describes an additional user account, the following parameters are
+        available: 'shell' - the login shell for the user, 'passwd' - the
+        password for the user and 'groups' - a comma separated list of groups
+        the user is member of. The value of the tag describes the login name
+        for the account.
       </documentation>
     </annotation>
     <simpleContent>
