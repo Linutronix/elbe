@@ -43,7 +43,6 @@ Depends: ${misc:Depends},
   elbe-common (= ${binary:Version}),
   qemu-utils,
   qemu-system,
-  e2tools,
   python-mako,
   p7zip-full,
   make
