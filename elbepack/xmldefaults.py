@@ -175,6 +175,7 @@ class ElbeDefaults(object):
 
         self.defaults = defaults[build_type]
         self.defaults["nicmac"] = get_random_mac()
+        self.defaults["img"] = "raw"
 
         self.generic_defaults = archindep_defaults
 

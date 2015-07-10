@@ -16,7 +16,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
-IMGSIZE?=20G
 MEMSIZE?=1024
 SMP?=`nproc`
 INTERPRETER?=kvm
@@ -30,7 +29,8 @@ CDROM_TYPE?=ide
 
 <%
 import string
-
+img = prj.text('img', defaults=defs, key='img')
+imgsize = prj.text('size', defaults=defs, key='size')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
 %>
@@ -57,7 +57,7 @@ all: .stamps/stamp-install-initial-image
 	rm -rf tmp-tree
 
 .stamps/stamp-create-buildenv-img buildenv.img: .elbe-gen/initrd-preseeded.gz
-	qemu-img create -f raw buildenv.img $(IMGSIZE)
+	qemu-img create -f ${img} buildenv.img ${imgsize}
 	mkdir -p .stamps
 	touch .stamps/stamp-create-buildenv-img
 
