@@ -11,7 +11,8 @@ Build-Depends: dh-python,
   asciidoc,
   xmlto,
   lintian,
-  source-highlight
+  source-highlight,
+  git
 Standards-Version: 3.9.6
 Homepage: http://elbe-rfs.org
 
