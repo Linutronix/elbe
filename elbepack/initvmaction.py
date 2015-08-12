@@ -256,8 +256,14 @@ class CreateAction(InitVMAction):
             try:
                 system ('%s control dump_file "%s" validation.txt' % (elbe_exe, prjdir) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
+                print ("Project failed to generate validation.txt", file=sys.stderr)
+                print ("Getting log.txt", file=sys.stderr)
+                try:
+                    system ('%s control dump_file "%s" log.txt' % (elbe_exe, prjdir) )
+                except CommandError:
+
+                    print ("Failed to dump log.txt", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
             if opt.skip_download:
@@ -403,8 +409,14 @@ class SubmitAction(InitVMAction):
             try:
                 system ('%s control dump_file "%s" validation.txt' % (elbe_exe, prjdir) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
+                print ("Project failed to generate validation.txt", file=sys.stderr)
+                print ("Getting log.txt", file=sys.stderr)
+                try:
+                    system ('%s control dump_file "%s" log.txt' % (elbe_exe, prjdir) )
+                except CommandError:
+
+                    print ("Failed to dump log.txt", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
             if opt.skip_download:
