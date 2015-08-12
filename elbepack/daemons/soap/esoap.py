@@ -171,7 +171,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def del_project (self, uid, builddir):
-        self.pm.del_project (userid, builddir)
+        self.pm.del_project (uid, builddir)
 
     @soapmethod (String, _returns=String)
     @authenticated_uid
