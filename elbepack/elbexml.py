@@ -48,7 +48,7 @@ class NoInitvmNode(Exception):
     pass
 
 class ElbeXML(object):
-    def __init__(self, fname, buildtype=None, skip_validate=False):
+    def __init__(self, fname, buildtype=None, skip_validate=False, skip_urlcheck=False):
         if not skip_validate:
             validation = validate_xml (fname)
             if len (validation) != 0:
@@ -66,7 +66,8 @@ class ElbeXML(object):
             buildtype = "nodefaults"
         self.defs = ElbeDefaults(buildtype)
 
-        self.validate_apt_sources ()
+        if not skip_urlcheck:
+            self.validate_apt_sources ()
 
     def text(self, txt, key=None):
         if key:
