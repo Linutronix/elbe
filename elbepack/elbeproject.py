@@ -315,7 +315,7 @@ class ElbeProject (object):
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/var/cache/elbe/source.xml",
-                            skip_validate=self.skip_validate )
+                            skip_validate=self.skip_validate, skip_urlcheck=True )
                     self.xml.get_initvmnode_from( initxml )
                 except ValidationError as e:
                     self.log.printo( "/var/cache/elbe/source.xml validation failed" )
