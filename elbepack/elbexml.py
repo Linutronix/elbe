@@ -111,6 +111,9 @@ class ElbeXML(object):
 
     # XXX: maybe add cdrom path param ?
     def create_apt_sources_list (self):
+        if self.prj is None:
+            return "# No Project"
+
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
