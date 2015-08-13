@@ -26,11 +26,21 @@ from base64 import standard_b64decode
 from tempfile import NamedTemporaryFile
 
 class ValidationError(Exception):
-    def __init__(self):
+    def __init__(self, validation):
         Exception.__init__(self)
+        self.validation = validation
 
     def __repr__(self):
-        return "Elbe XML Validation Error"
+        rep = "Elbe XML Validation Error\n"
+        for v in self.validation:
+            rep += (v+'\n')
+        return rep
+
+    def __str__(self):
+        retval = ""
+        for v in self.validation:
+            retval += (v+'\n')
+        return retval
 
 class NoInitvmNode(Exception):
     pass
@@ -38,9 +48,9 @@ class NoInitvmNode(Exception):
 class ElbeXML(object):
     def __init__(self, fname, buildtype=None, skip_validate=False):
         if not skip_validate:
-            validation = validate_xml(fname)
-            if len(validation) != 0:
-                raise ValidationError
+            validation = validate_xml (fname)
+            if len (validation) != 0:
+                raise ValidationError (validation)
 
         self.xml = etree( fname )
         self.prj = self.xml.node("/project")

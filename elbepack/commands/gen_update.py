@@ -74,7 +74,8 @@ def run_command( argv ):
         project = ElbeProject (opt.target, name=opt.name,
                 override_buildtype=buildtype,
                 skip_validate=opt.skip_validation)
-    except ValidationError:
+    except ValidationError as e:
+        print str(e)
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
@@ -101,7 +102,8 @@ def run_command( argv ):
                 opt.skip_validation, opt.debug,
                 cfg_dir = opt.cfg_dir, cmd_dir = opt.cmd_dir )
 
-    except ValidationError:
+    except ValidationError es e:
+        print str(e)
         print "xml validation failed. Bailing out"
         sys.exit(20)
     except MissingData as e:

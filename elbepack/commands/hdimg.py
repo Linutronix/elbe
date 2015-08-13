@@ -71,7 +71,8 @@ def run_command( argv ):
         project = ElbeProject( opt.target, override_buildtype=opt.buildtype,
                 xmlpath=args[0], logpath=opt.output,
                 skip_validate=opt.skip_validation )
-    except ValidationError:
+    except ValidationError as e:
+        print str(e)
         print "xml validation failed. Bailing out"
         sys.exit(20)
 

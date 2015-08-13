@@ -317,8 +317,9 @@ class ElbeProject (object):
                     initxml = ElbeXML( "/var/cache/elbe/source.xml",
                             skip_validate=self.skip_validate )
                     self.xml.get_initvmnode_from( initxml )
-                except ValidationError:
+                except ValidationError as e:
                     self.log.printo( "/var/cache/elbe/source.xml validation failed" )
+                    self.log.printo( str(e) )
                     self.log.printo( "will not copy initvm node" )
                 except IOError:
                     self.log.printo( "/var/cache/elbe/source.xml not available" )
