@@ -249,7 +249,7 @@ class CreateAction(InitVMAction):
                 try:
                     system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, cdrom) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control set_cdrom Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
@@ -264,14 +264,14 @@ class CreateAction(InitVMAction):
             try:
                 system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+                print ("elbe control build Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
             try:
                 system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+                print ("elbe control wait_busy Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
@@ -320,7 +320,7 @@ class CreateAction(InitVMAction):
                 try:
                     system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
@@ -400,7 +400,7 @@ class SubmitAction(InitVMAction):
                 try:
                     system ('%s control set_cdrom "%s" "%s"' % (elbe_exe, prjdir, cdrom) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control set_cdrom Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
@@ -415,7 +415,7 @@ class SubmitAction(InitVMAction):
             try:
                 system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+                print ("elbe control build Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
@@ -424,7 +424,7 @@ class SubmitAction(InitVMAction):
             try:
                 system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
             except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+                print ("elbe control wait_busy Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
@@ -451,7 +451,7 @@ class SubmitAction(InitVMAction):
                 try:
                     system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
@@ -474,7 +474,7 @@ class SubmitAction(InitVMAction):
                 try:
                     system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
