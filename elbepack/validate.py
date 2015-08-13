@@ -32,20 +32,16 @@ def validate_xml(fname):
         xml = parse(fname,parser=parser)
 
         if schema.validate(xml):
-            return True
+            return []
     except etree.XMLSyntaxError:
-        print "XML Parse error"
-        print str(sys.exc_info()[1])
-        return False
+        return ["XML Parse error\n" + str(sys.exc_info()[1])]
     except:
-        print "Unknown Exception during validation"
-        print sys.exc_info()[1]
-        return False
+        return ["Unknown Exception during validation\n" + str(sys.exc_info()[1])]
 
-    # We have an error... lets print the log.
-
+    # We have errors, return them in string form...
+    errors = []
     for err in schema.error_log:
-        print "%s:%d error %s" % (err.filename, err.line, err.message)
+        errors.append ("%s:%d error %s" % (err.filename, err.line, err.message))
 
-    return False
+    return errors
 

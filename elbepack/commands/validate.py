@@ -30,10 +30,12 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    if validate_xml(args[0]):
-        sys.exit(0)
+    validation = validate_xml (args[0])
+    if len (validation) == 0:
+        sys.exit (0)
     else:
         print "validation failed"
+        for i in validation:
+            print i
         sys.exit(20)
-
 

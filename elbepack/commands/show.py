@@ -60,8 +60,11 @@ def run_command( argv ):
 
     try:
         if not opt.skip_validation:
-            if not validate_xml( args[0] ):
+            validation = validate_xml (args[0])
+            if len (validation) != 0:
                 print "xml validation failed. Bailing out"
+                for i in validation:
+                    print i
                 sys.exit(20)
 
         xml = etree( args[0] )

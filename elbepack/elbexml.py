@@ -38,7 +38,8 @@ class NoInitvmNode(Exception):
 class ElbeXML(object):
     def __init__(self, fname, buildtype=None, skip_validate=False):
         if not skip_validate:
-            if not validate_xml(fname):
+            validation = validate_xml(fname)
+            if len(validation) != 0:
                 raise ValidationError
 
         self.xml = etree( fname )
