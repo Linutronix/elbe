@@ -21,7 +21,7 @@
 from __future__ import print_function
 
 from elbepack.directories import examples_dir, elbe_exe
-from elbepack.shellhelper import CommandError, system, system_out
+from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem  import wdfs, TmpdirFilesystem
 from elbepack.elbexml     import ElbeXML, ValidationError
 
@@ -235,10 +235,10 @@ class CreateAction(InitVMAction):
             sys.exit(20)
 
         if len(args) == 1:
-            try:
-                prjdir = system_out ('%s control create_project "%s"' % (elbe_exe, exampl))
-            except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+            ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
+            if ret != 0:
+                print ("elbe control create_project failed.", file=sys.stderr)
+                print (err, file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
@@ -386,10 +386,10 @@ class SubmitAction(InitVMAction):
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
                 sys.exit (20)
 
-            try:
-                prjdir = system_out ('%s control create_project --retries 60 "%s"' % (elbe_exe, xmlfile))
-            except CommandError:
-                print ("elbe control Failed", file=sys.stderr)
+            ret, prjdir, err = command_out_stderr ('%s control create_project --retries 60 "%s"' % (elbe_exe, xmlfile))
+            if ret != 0:
+                print ("elbe control create_project failed.", file=sys.stderr)
+                print (err, file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
