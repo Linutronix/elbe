@@ -25,6 +25,8 @@ from elbepack.version import elbe_version, is_devel
 from base64 import standard_b64decode
 from tempfile import NamedTemporaryFile
 
+from urllib2 import urlopen, URLError
+
 class ValidationError(Exception):
     def __init__(self, validation):
         Exception.__init__(self)
@@ -63,6 +65,8 @@ class ElbeXML(object):
         else:
             buildtype = "nodefaults"
         self.defs = ElbeDefaults(buildtype)
+
+        self.validate_apt_sources ()
 
     def text(self, txt, key=None):
         if key:
@@ -126,6 +130,28 @@ class ElbeXML(object):
             mirror += "deb copy:///cdrom %s main added\n" % (self.prj.text("suite"))
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
+
+    def validate_apt_sources (self):
+        slist = self.create_apt_sources_list ()
+        sources_lines = slist.split ('\n')
+
+        urls = []
+        for l in sources_lines:
+            if l.startswith ("deb "):
+                lsplit = l.split (" ")
+                urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
+            elif l.startswith ("deb-src "):
+                lsplit = l.split (" ")
+                urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
+
+        for u in urls:
+            try:
+                fp = urlopen (u)
+                fp.read()
+                fp.close()
+            except URLError:
+                raise ValidationError (["Repository %s can not be validated" % u])
+
 
     def get_target_packages(self):
         return [p.et.text for p in self.xml.node("/target/pkg-list")]
