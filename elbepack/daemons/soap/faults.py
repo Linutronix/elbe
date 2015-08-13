@@ -49,8 +49,8 @@ class SoapElbeNotAuthorized( Fault ):
         Fault.__init__(self, faultcode="ElbeNotAuthorized", faultstring="Not Authorized ! Cant let you perform this command.")
 
 class SoapElbeValidationError( Fault ):
-    def __init__(self):
-        Fault.__init__(self, faultcode="ElbeValidationError", faultstring="Error validating xml File")
+    def __init__(self, exc):
+        Fault.__init__(self, faultcode="ElbeValidationError", faultstring=exc.__repr__())
 
 class SoapElbeInvalidState( Fault ):
     def __init__(self):
@@ -75,7 +75,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:
@@ -95,7 +95,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:
@@ -115,7 +115,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:
@@ -135,7 +135,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:
@@ -155,7 +155,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:
@@ -175,7 +175,7 @@ def soap_faults(func):
             except OSError as e:
                 raise SoapElbeProjectError ("OSError: " + str (e))
             except ValidationError as e:
-                raise SoapElbeValidationError ()
+                raise SoapElbeValidationError (e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
             except Exception as e:

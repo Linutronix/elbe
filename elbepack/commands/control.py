@@ -97,6 +97,10 @@ def run_command (argv):
     try:
         action.execute (control, opt, args[1:])
     except WebFault as e:
-        print ('Soap Exception', file=sys.stderr)
-        print (e, file=sys.stderr)
+        print ('Server returned error:', file=sys.stderr)
+        print ('', file=sys.stderr)
+        if hasattr (e.fault, 'faultstring'):
+            print (e.fault.faultstring, file=sys.stderr)
+        else:
+            print (e, file=sys.stderr)
         sys.exit(5)
