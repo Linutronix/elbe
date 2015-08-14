@@ -92,6 +92,9 @@ class Filesystem(object):
             if not noerr:
                 raise
 
+    def rmtree(self, path):
+        shutil.rmtree( self.fname(path) )
+
     def listdir(self, path='', ignore=[], skiplinks=False):
         retval = [os.path.join(self.path, path, x) for x in os.listdir( self.fname(path) ) if not x in ignore]
         if skiplinks:
