@@ -76,7 +76,18 @@ all: .stamps/stamp-install-initial-image
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
-		-usb
+		-usb \
+		|| ( echo; \
+		     echo "------------------------------------------------------------------"; \
+		     echo "kvm failed to start"; \
+		     echo "This is most likely the case, because /dev/kvm is not available."; \
+		     echo "To use KVM inside a VMWARE or other VM instance,"; \
+		     echo "nested KVM needs to be supported"; \
+		     echo "------------------------------------------------------------------"; \
+		     echo; \
+		     false \
+		)
+
 	mkdir -p .stamps
 	touch .stamps/stamp-install-initial-image
 
