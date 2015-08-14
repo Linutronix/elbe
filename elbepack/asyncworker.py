@@ -29,6 +29,9 @@ from elbepack.db import ElbeDBError, get_versioned_filename
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
 from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive
+from elbepack.rfs import DebootstrapException
+from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
+
 
 class AsyncWorkerJob(object):
     def __init__ (self, project):
@@ -61,6 +64,38 @@ class BuildJob(AsyncWorkerJob):
             db.update_project_files( self.project )
             self.project.log.printo( "Build finished successfully" )
             db.reset_busy( self.project.builddir, "build_done" )
+        except DebootstrapException as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "Build failed !!!" )
+            self.project.log.printo( "" )
+            self.project.log.printo( "Debootstrap failed to install the base rootfilesystem." )
+            self.project.log.printo( "Probable cause might be:" )
+            self.project.log.printo( "- Problems with Internet Connection" )
+            self.project.log.printo( "- Broken mirrors" )
+            self.project.log.printo( "" )
+            db.reset_busy( self.project.builddir, "build_failed" )
+        except AptCacheCommitError as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "Build failed !!!" )
+            self.project.log.printo( "" )
+            self.project.log.printo( "Failed to commit the AptCache changes." )
+            self.project.log.printo( "Most likely is, that packages failed to download." )
+            self.project.log.printo( "Probable cause might be:" )
+            self.project.log.printo( "- Problems with Internet Connection" )
+            self.project.log.printo( "- Broken mirrors" )
+            self.project.log.printo( "" )
+            db.reset_busy( self.project.builddir, "build_failed" )
+        except AptCacheUpdateError as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "Build failed !!!" )
+            self.project.log.printo( "" )
+            self.project.log.printo( "Failed to build the Apt Cache." )
+            self.project.log.printo( "Not all Mirror Index Files could be downloaded." )
+            self.project.log.printo( "Probable cause might be:" )
+            self.project.log.printo( "- Problems with Internet Connection" )
+            self.project.log.printo( "- Broken mirrors" )
+            self.project.log.printo( "" )
+            db.reset_busy( self.project.builddir, "build_failed" )
         except Exception as e:
             db.update_project_files( self.project )
             self.project.log.printo( "Build failed" )
