@@ -40,6 +40,14 @@ class IncompatibeArchitectureException(Exception):
             "Cannot change architecture from %s to %s in existing project" %
             (oldarch, newarch) )
 
+class AptCacheUpdateError(Exception):
+    def __init__ (self):
+        Exception.__init__ (self, "Error Updating rpcaptcache")
+
+class AptCacheCommitError(Exception):
+    def __init__ (self):
+        Exception.__init__ (self, "Error Committing rpcaptcache")
+
 class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
@@ -305,6 +313,7 @@ class ElbeProject (object):
                 self.get_rpcaptcache().update()
             except:
                 self.log.printo( "update cache failed" )
+                raise AptCacheUpdateError ()
 
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
@@ -372,3 +381,4 @@ class ElbeProject (object):
                 self.get_rpcaptcache().commit()
             except SystemError:
                 self.log.printo( "commiting changes failed" )
+                raise AptCacheCommitError ()
