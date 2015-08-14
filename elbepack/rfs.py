@@ -26,7 +26,11 @@ import elbepack
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import write_pack_template, get_preseed, preseed_to_text
+from elbepack.shellhelper import CommandError
 
+class DebootstrapException (Exception):
+    def __init__ (self):
+        Exception.__init__ (self, "Debootstrap Failed")
 
 class BuildEnv ():
     def __init__ (self, xml, log, path ):
@@ -75,6 +79,7 @@ class BuildEnv ():
 
     def debootstrap (self):
 
+        cleanup = False
         suite = self.xml.prj.text ("suite")
 
         primary_mirror = self.xml.get_primary_mirror(self.rfs.fname('cdrom') )
@@ -112,8 +117,13 @@ class BuildEnv ():
             try:
                 self.cdrom_mount()
                 self.log.do( cmd )
+            except CommandError:
+                cleanup = True
+                raise DebootstrapException ()
             finally:
                 self.cdrom_umount()
+                if cleanup:
+                    self.rfs.rmtree ("/")
 
             return
 
@@ -140,8 +150,13 @@ class BuildEnv ():
 
             self.log.chroot (self.rfs.path, 'dpkg --configure -a')
 
+        except CommandError:
+            cleanup = True
+            raise DebootstrapException ()
         finally:
             self.cdrom_umount()
+            if cleanup:
+                self.rfs.rmtree ("/")
 
 
     def virtapt_init_dirs(self):
