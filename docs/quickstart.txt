@@ -20,6 +20,10 @@ Steps necessary
 
 Steps 1 and 2 need only be performed once.
 
+NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
+      that nested KVM is working.
+
+
 Customisation of the build
 --------------------------
 
