@@ -32,6 +32,7 @@ from cherrypy.process.plugins import SimplePlugin
 from tempfile import NamedTemporaryFile
 
 from elbepack.projectmanager import ProjectManager
+from elbepack.shellhelper import system
 
 from faults import soap_faults
 
@@ -191,4 +192,10 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         self.pm.open_project (uid, builddir)
 
         return self.pm.current_project_is_busy (uid)
+
+    @soapmethod ()
+    @authenticated_uid
+    @soap_faults
+    def shutdown_initvm (self, uid):
+        system ("shutdown -h now")
 
