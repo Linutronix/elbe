@@ -152,8 +152,11 @@ def run_command( argv ):
 
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
-    except NoKinitrdException:
-        print "Failure to download kernel/initrd debian Package"
+    except NoKinitrdException as e:
+        print "Failure to download kernel/initrd debian Package:"
+        print
+        print e.message
+        print
         print "Check Mirror configuration"
         sys.exit(20)
 
