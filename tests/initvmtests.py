@@ -27,11 +27,10 @@ def setup():
 
         from elbepack.directories import examples_dir
         xml_name = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
-        system ('%s initvm create --devel --directory "%s" %s' % (exe_path, dname, xml_name))
+        system ('%s initvm create --devel --directory "%s"' % (exe_path, dname))
     except:
         teardown ()
         raise
-        
 
 def teardown():
 
@@ -45,8 +44,38 @@ def teardown():
 
 
 def test_submit ():
-    from elbepack.directories import examples_dir
-    xml_name = os.path.join (examples_dir, "rescue.xml")
+    tmpdir = os.getenv( "ELBE_TEST_DIR" )
+    assert tmpdir is not None
 
-    system ("%s initvm submit %s" % (exe_path, xml_name))
+    dname = os.path.join(tmpdir, "initvm_output")
+    system ('mkdir "%s"' % dname)
+    system ('mkdir "%s02"' % dname)
+
+    try:
+        from elbepack.directories import examples_dir
+        xml_name = os.path.join (examples_dir, "rescue.xml")
+
+        system ('%s initvm submit --build-bin --output "%s" "%s"' % (exe_path, dname, xml_name))
+
+        # Now submit the iso image
+        system ('%s initvm submit --output "%s02" "%s"' % (exe_path, dname, os.path.join (dname, "bin-repo.iso")))
+    finally:
+        shutil.rmtree (dname)
+
+def test_srcbuild ():
+    tmpdir = os.getenv( "ELBE_TEST_DIR" )
+    assert tmpdir is not None
+
+    dname = os.path.join(tmpdir, "initvm_output")
+    system ('mkdir "%s"' % dname)
+    system ('mkdir "%s02"' % dname)
+
+    try:
+        from elbepack.directories import examples_dir
+        xml_name = os.path.join (examples_dir, "rescue.xml")
+
+        system ('%s initvm submit --build-source --output "%s" "%s"' % (exe_path, dname, xml_name))
+    finally:
+        shutil.rmtree (dname)
+
 
