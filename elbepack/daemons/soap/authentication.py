@@ -33,7 +33,18 @@ def authenticated_uid(func):
             @authenticated_uid
             def get_files (self, uid, builddir): 
     """
-    if func.func_code.co_argcount == 3:
+    if func.func_code.co_argcount == 2:
+        @wraps(func)
+        def wrapped(self):
+            s = request.environ['beaker.session']
+            try:
+                uid = s['userid']
+            except KeyError:
+                raise SoapElbeNotLoggedIn()
+
+            return func(self,uid)
+        return wrapped
+    elif func.func_code.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1):
             s = request.environ['beaker.session']
