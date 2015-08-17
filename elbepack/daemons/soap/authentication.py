@@ -107,7 +107,7 @@ def authenticated_admin(func):
 
             return func(self)
         return wrapped
-    if func.func_code.co_argcount == 2:
+    elif func.func_code.co_argcount == 2:
         @wraps(func)
         def wrapped(self, arg1):
             s = request.environ['beaker.session']
