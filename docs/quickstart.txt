@@ -118,9 +118,40 @@ This virtual machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
 using kvm for acceleration, which will accellerate the build process a lot.
 
+----------------------------------------------------------------------------------------------
+$ elbe initvm create --directory=initvm
+/home/torbenh/elbe/elbe/initvm
+gpg: keyring `/tmp/tmpPfPXt4/secring.gpg' created
+gpg: keyring `/tmp/tmpPfPXt4/etc/apt/trusted.gpg.d/linutronix-elbe.gpg' created
+gpg: key 22BB8F84: public key "ELBE Devel (Linutronix Elbe developers) <elbe-devel@linutronix.de>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+--2015-08-17 15:26:26--  http://debian.linutronix.de/elbe-testing/elbe-repo.pub
+Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
+Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1763 (1.7K)
+Saving to: ‘/tmp/tmpPfPXt4/tmpkey.gpg’
+
+/tmp/tmpPfPXt4/tmpkey.gpg             100%[========================================================================>]   1.72K  --.-KB/s   in 0s
+
+2015-08-17 15:26:26 (346 MB/s) - ‘/tmp/tmpPfPXt4/tmpkey.gpg’ saved [1763/1763]
+----------------------------------------------------------------------------------------------
+
+.......
 
 ----------------------------------------------------------------------------------------------
-$ elbe initvm create --directory=initvm /usr/share/doc/elbe-doc/examples/elbe-init-with-ssh.xml
+Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%... 100%
+Configuring apt  ... 16%... 25%... 32%... 41%... 50%... 66%... 75%... 83%... 91%... 100%
+Select and install software  ... 10%... 26%... 31%... 40%... 50%... 61%... 70%... 80%... 90%... 100%
+Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
+The system is going down NOW!.. 14%... 23%... 33%... 42%... 52%... 61%... 71%... 80%... 90%
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system reboot
+[  589.432092] Restarting system.
+mkdir -p .stamps
+touch .stamps/stamp-install-initial-image
 ----------------------------------------------------------------------------------------------
 
 
@@ -133,6 +164,38 @@ Once the initvm has been created and is running, you can submit xml Files using
 
 ----------------------------------------------------------------------------------------------
 $ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
+Build started, waiting till it finishes
+project still busy, waiting
+project still busy, waiting
+----------------------------------------------------------------------------------------------
+
+.......
+
+----------------------------------------------------------------------------------------------
+project still busy, waiting
+project still busy, waiting
+project still busy, waiting
+
+Build finished !
+
+
+ELBE Package validation
+=======================
+
+
+Package List validation
+-----------------------
+
+No Errors found
+
+Getting generated Files
+
+Saving generated Files to /home/torbenh/elbe/elbe/elbe-build-20150817-155038
+source.xml      (Current source.xml of the project)
+rescue.cpio     (Image)
+validation.txt  (Package list validation result)
+elbe-report.txt         (Report)
+log.txt         (Log file)
 ----------------------------------------------------------------------------------------------
 
 
