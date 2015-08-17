@@ -22,6 +22,7 @@ import os
 
 from tempfile import mkdtemp
 import urllib2
+import hashlib
 
 try:
     from elbepack import virtapt
@@ -66,6 +67,17 @@ def get_sources_list( prj, defs ):
 
     return slist
 
+
+def get_key_list (prj):
+    retval = []
+    if prj.node("mirror/url-list"):
+        for n in prj.node("mirror/url-list"):
+            if n.has("key"):
+                tmp = n.text("key").replace("LOCALMACHINE", "localhost")
+                retval.append (tmp.strip ())
+
+    return retval
+
 def get_initrd_pkg( prj, defs ):
     initrdname = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
 
@@ -98,11 +110,12 @@ def get_initrd_uri( prj, defs, arch ):
 
     name  = prj.text("name", default=defs, key="name")
     apt_sources = get_sources_list(prj, defs)
+    apt_keys    = get_key_list (prj)
 
     target_pkg = get_initrd_pkg(prj, defs)
 
     if virtapt_imported:
-        v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
+        v = virtapt.VirtApt( name, arch, suite, apt_sources, "", apt_keys )
         d = virtapt.apt_pkg.DepCache(v.cache)
 
         pkg = v.cache[target_pkg]
@@ -113,7 +126,11 @@ def get_initrd_uri( prj, defs, arch ):
         r=virtapt.apt_pkg.PackageRecords(v.cache)
         r.lookup(c.file_list[0])
         uri = x.archive_uri(r.filename)
-        return uri
+
+        if not x.is_trusted:
+            raise NoKinitrdException( 'Did not find a trusted elbe-bootstrap Package' )
+
+        return r.sha1_hash, uri
     else:
         url = "%s://%s/%s" % (prj.text("mirror/primary_proto"),
           prj.text("mirror/primary_host"),
@@ -121,7 +138,7 @@ def get_initrd_uri( prj, defs, arch ):
         pkg = get_url ( arch, suite, target_pkg, url )
 
         if pkg:
-            return pkg
+            return "", pkg
 
         for n in prj.node("mirror/url-list"):
             url = n.text("binary")
@@ -130,9 +147,9 @@ def get_initrd_uri( prj, defs, arch ):
               urla[0].replace("BUILDHOST", "localhost") )
 
             if pkg:
-                return pkg
+                return "", pkg
 
-    return ""
+    return "", ""
 
 
 def get_dsc_size( fname ):
@@ -153,7 +170,7 @@ def get_dsc_size( fname ):
 
 def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     try:
-        uri = get_initrd_uri(prj, defs, arch)
+        sha1, uri = get_initrd_uri(prj, defs, arch)
     except KeyError:
         raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
         return
@@ -171,6 +188,23 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
         os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
     else:
         raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
+
+    if len(sha1) > 0:
+        m = hashlib.sha1()
+        with open (os.path.join(tmpdir, "pkg.deb"), "rb") as f:
+            buf = f.read(65536)
+            while len(buf)>0:
+                m.update( buf )
+                buf = f.read(65536)
+
+        if m.hexdigest() != sha1:
+            raise NoKinitrdException ('elbe-bootstrap failed to verify !!!')
+    else:
+        print "-----------------------------------------------------"
+        print "WARNING:"
+        print "Using untrusted elbe-bootstrap"
+        print "-----------------------------------------------------"
+
 
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 

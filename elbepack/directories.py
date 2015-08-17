@@ -48,4 +48,5 @@ mako_template_dir = os.path.join (pack_dir, "mako")
 
 default_preseed_fname    = os.path.join (pack_dir, "default-preseed.xml")
 xsdtoasciidoc_mako_fname = os.path.join (pack_dir, "xsdtoasciidoc.mako")
+elbe_pubkey_fname        = os.path.join (pack_dir, "elbe-repo.pub")
 

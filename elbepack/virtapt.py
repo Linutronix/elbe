@@ -23,16 +23,21 @@ import os
 import apt
 
 from tempfile import mkdtemp
+from elbepack.shellhelper import system
+from elbepack.directories import elbe_pubkey_fname
 
 
 class VirtApt:
-    def __init__ (self, name, arch, suite, sources, prefs):
+    def __init__ (self, name, arch, suite, sources, prefs, keylist=[]):
 
         self.projectpath = mkdtemp()
         self.initialize_dirs ()
 
         self.create_apt_sources_list (sources)
         self.create_apt_prefs        (prefs)
+        self.setup_gpg ()
+        for k in keylist:
+            self.add_pubkey_url (k)
 
         apt_pkg.config.set ("APT::Architecture", arch)
         apt_pkg.config.set ("Acquire::http::Proxy::127.0.0.1", "DIRECT")
@@ -46,7 +51,7 @@ class VirtApt:
         apt_pkg.config.set ("Dir::Cache", "cache")
         apt_pkg.config.set ("Dir::Etc", "etc/apt")
         apt_pkg.config.set ("Dir::Log", "log")
-        apt_pkg.config.set ("APT::Get::AllowUnauthenticated", "1")
+        apt_pkg.config.set ("APT::Get::AllowUnauthenticated", "0")
 
         apt_pkg.init_system()
 
@@ -105,10 +110,39 @@ class VirtApt:
     def initialize_dirs (self):
         self.mkdir_p (self.projectpath + "/cache/archives/partial")
         self.mkdir_p (self.projectpath + "/etc/apt/preferences.d")
+        self.mkdir_p (self.projectpath + "/etc/apt/trusted.gpg.d")
         self.mkdir_p (self.projectpath + "/db")
         self.mkdir_p (self.projectpath + "/log")
         self.mkdir_p (self.projectpath + "/state/lists/partial")
         self.touch   (self.projectpath + "/state/status")
+
+    def setup_gpg (self):
+        ring_path = self.projectpath + "/etc/apt/trusted.gpg.d"
+        system ('cp /etc/apt/trusted.gpg.d/* "%s"' % ring_path)
+
+        gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
+                os.path.join (ring_path, "linutronix-elbe.gpg"),
+                self.projectpath)
+
+        system ('gpg %s --import "%s"' % (
+                gpg_options,
+                elbe_pubkey_fname))
+
+    def add_pubkey_url (self, url):
+        ring_path = self.projectpath + "/etc/apt/trusted.gpg.d"
+        tmpkey_path = self.projectpath + "/tmpkey.gpg"
+        gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
+                os.path.join (ring_path, "linutronix-elbe.gpg"),
+                self.projectpath)
+
+        try:
+            system ('wget -O "%s" "%s"' % (tmpkey_path, url))
+            system ('gpg %s --import "%s"' % (
+                    gpg_options,
+                    tmpkey_path))
+        finally:
+            system ('rm "%s"' % tmpkey_path, allow_fail=True)
+
 
     def create_apt_sources_list (self, mirror):
         filename = self.projectpath + "/etc/apt/sources.list"
