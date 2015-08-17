@@ -105,7 +105,9 @@ def run_command( argv ):
     defs = ElbeDefaults( buildtype )
 
     http_proxy = ""
-    if opt.proxy:
+    if os.getenv ("http_proxy"):
+        http_proxy = os.getenv ("http_proxy")
+    elif opt.proxy:
         http_proxy = opt.proxy
     elif xml.has("initvm/mirror/primary_proxy"):
         http_proxy = xml.text("initvm/mirror/primary_proxy")
