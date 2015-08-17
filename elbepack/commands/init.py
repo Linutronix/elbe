@@ -30,7 +30,7 @@ from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
-from elbepack.directories import init_template_dir
+from elbepack.directories import init_template_dir, elbe_dir
 
 from optparse import OptionParser
 
@@ -77,7 +77,7 @@ def run_command( argv ):
         sys.exit(20)
 
     if opt.devel:
-        if not os.path.isdir("./elbepack" ):
+        if not os.path.isdir( os.path.join (elbe_dir, "elbepack")):
             print "Devel Mode only valid, when running from elbe checkout"
             sys.exit(20)
 
@@ -180,4 +180,4 @@ def run_command( argv ):
        os.path.join(out_path, "source.xml" ) )
 
     if opt.devel:
-        os.system( 'tar cvfj "%s" .' % os.path.join( out_path, "elbe-devel.tar.bz2" ) )
+        os.system ('tar cvfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))
