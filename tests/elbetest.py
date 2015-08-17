@@ -33,8 +33,10 @@ def init_example (xml_name):
 
     dname = os.path.join(tmpdir, "init_test")
 
-    system ('%s init --directory "%s" %s' % (exe_path, dname, xml_name))
-    shutil.rmtree (dname)
+    try:
+        system ('%s init --directory "%s" %s' % (exe_path, dname, xml_name))
+    finally:
+        shutil.rmtree (dname)
 
 def test_elbe_init ():
     from elbepack.directories import examples_dir
