@@ -358,3 +358,20 @@ class SetCdromAction(ClientAction):
         client.service.finish_cdrom (builddir)
 
 ClientAction.register(SetCdromAction)
+
+class ShutdownInitvmAction(ClientAction):
+
+    tag = 'shutdown_initvm'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 0:
+            print ("usage: elbe control shutdown_initvm", file=sys.stderr)
+            sys.exit(20)
+
+        client.service.shutdown_initvm ()
+
+ClientAction.register(ShutdownInitvmAction)
+
