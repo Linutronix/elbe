@@ -62,6 +62,9 @@ def run_command (argv):
 
     directory = opt.directory or os.getcwd()
 
+    # Use absolute Path
+    directory = os.path.abspath (directory)
+
     try:
         action = InitVMAction (args[0])
     except KeyError:
