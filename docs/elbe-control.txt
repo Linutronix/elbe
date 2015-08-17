@@ -21,6 +21,7 @@ SYNOPSIS
 'elbe control' [options] 'build' <build-dir>
 'elbe control' [options] 'get_file' <build-dir> <filename>
 'elbe control' [options] 'dump_file' <build-dir> <filename>
+'elbe control' [options] 'shutdown_initvm'
 
 DESCRIPTION
 -----------
@@ -132,6 +133,7 @@ Delete project in <build-dir>
 Trigger building the project.
 Status will change to busy.
 
+
 'get_file' <build-dir> <filename>::
 
 Download a single file from the project.
@@ -140,6 +142,11 @@ Download a single file from the project.
 'dump_file' <build-dir> <filename>::
 
 Dump a single File from the project to stdout.
+
+
+'shutdown_initvm'::
+
+Make the initvm shutdown. 
 
 
 
