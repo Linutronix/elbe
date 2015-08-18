@@ -61,6 +61,7 @@ def test_submit ():
         system ('%s initvm submit --output "%s02" "%s"' % (exe_path, dname, os.path.join (dname, "bin-cdrom.iso")))
     finally:
         shutil.rmtree (dname)
+        shutil.rmtree (dname+"02")
 
 def test_srcbuild ():
     tmpdir = os.getenv( "ELBE_TEST_DIR" )
@@ -77,5 +78,6 @@ def test_srcbuild ():
         system ('%s initvm submit --build-source --output "%s" "%s"' % (exe_path, dname, xml_name))
     finally:
         shutil.rmtree (dname)
+        shutil.rmtree (dname+"02")
 
 
