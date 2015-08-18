@@ -58,7 +58,7 @@ def test_submit ():
         system ('%s initvm submit --build-bin --output "%s" "%s"' % (exe_path, dname, xml_name))
 
         # Now submit the iso image
-        system ('%s initvm submit --output "%s02" "%s"' % (exe_path, dname, os.path.join (dname, "bin-repo.iso")))
+        system ('%s initvm submit --output "%s02" "%s"' % (exe_path, dname, os.path.join (dname, "bin-cdrom.iso")))
     finally:
         shutil.rmtree (dname)
 
