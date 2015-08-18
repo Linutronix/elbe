@@ -37,7 +37,6 @@ def test_initvm():
 
         dname = os.path.join(tmpdir, "initvm_test")
         shutil.rmtree (dname)
-        teardown ()
         raise
 
 
