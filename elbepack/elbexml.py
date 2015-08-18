@@ -141,7 +141,13 @@ class ElbeXML(object):
 
         urls = []
         for l in sources_lines:
-            if l.startswith ("deb "):
+            if l.startswith ("deb copy:"):
+                # This is a cdrom, we dont verify it
+                pass
+            elif l.startswith ("deb-src copy:"):
+                # This is a cdrom, we dont verify it
+                pass
+            elif l.startswith ("deb "):
                 lsplit = l.split (" ")
                 urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
             elif l.startswith ("deb-src "):
