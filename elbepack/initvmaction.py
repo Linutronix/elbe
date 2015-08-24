@@ -170,6 +170,11 @@ class CreateAction(InitVMAction):
             if args[0].endswith ('.xml'):
                 # We have an xml file, use that for elbe init
                 exampl = args[0]
+                xml = etree( exampl )
+                # Use default XML if no initvm was specified
+                if not xml.has( "initvm" ):
+                    exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+
             elif args[0].endswith ('.iso'):
                 # We have an iso image, extract xml from there.
                 tmp = TmpdirFilesystem ()
