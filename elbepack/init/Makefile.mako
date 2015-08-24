@@ -62,7 +62,8 @@ all: .stamps/stamp-install-initial-image
 	touch .stamps/stamp-create-buildenv-img
 
 .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
-	$(INTERPRETER) -M $(MACHINE) \
+	@ echo $(INTERPRETER)
+	@ $(INTERPRETER) -M $(MACHINE) \
 		-device virtio-rng-pci \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 % if prj.has("mirror/cdrom"):
