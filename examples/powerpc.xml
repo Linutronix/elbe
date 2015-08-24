@@ -1,26 +1,4 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
-	<initvm>
-		<buildtype>amd64</buildtype>
-		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
-			<primary_path>/debian</primary_path>
-			<primary_proto>http</primary_proto>
-			<url-list>
-				<url>
-					<binary>
-						http://debian.linutronix.de/elbe wheezy main
-					</binary>
-				</url>
-				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-testing wheezy main
-					</binary>
-				</url>
-			</url-list>
-		</mirror>
-		<noauth/>
-		<suite>wheezy</suite>
-	</initvm>
 	<project>
 		<name>powerpc example</name>
 		<version>6</version>
