@@ -20,7 +20,9 @@
 
 from __future__ import print_function
 
-from elbepack.directories import examples_dir, elbe_exe
+import elbepack
+from elbepack.treeutils   import etree
+from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem  import wdfs, TmpdirFilesystem
 from elbepack.elbexml     import ElbeXML, ValidationError
@@ -173,7 +175,7 @@ class CreateAction(InitVMAction):
                 xml = etree( exampl )
                 # Use default XML if no initvm was specified
                 if not xml.has( "initvm" ):
-                    exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+                    exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
 
             elif args[0].endswith ('.iso'):
                 # We have an iso image, extract xml from there.
@@ -207,7 +209,7 @@ class CreateAction(InitVMAction):
                 sys.exit (20)
         else:
             # No xml File was specified, build the default elbe-init-with-ssh
-            exampl = os.path.join (examples_dir, "elbe-init-with-ssh.xml")
+            exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
 
         try:
             if opt.devel:

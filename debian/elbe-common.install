@@ -1,4 +1,5 @@
 ./usr/bin/*
+./usr/lib/python2.*/*-packages/elbepack/init/default-init.xml
 ./usr/lib/python2.*/*-packages/elbepack/init/Makefile.mako
 ./usr/lib/python2.*/*-packages/elbepack/init/apt.conf.mako
 ./usr/lib/python2.*/*-packages/elbepack/init/preseed.cfg.mako
