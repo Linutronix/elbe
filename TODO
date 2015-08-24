@@ -1,26 +1,7 @@
 ELBE TODO LIST
 ==============
 author Manuel Traut <manut@linutronix.de>
-revision 20130111
-
-USED TERMS
-----------
-target image: elbe output, e.g. ubi image, nfsroot, cpio image
-
-buildenv/build environment: debian environment in which the target image is
-  generated
-
-elbe xml file: XML description to generate buildenv and target image
-
-remove buildchroot from preseed
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-and use elbe control after the initvm is created to create and build the
-project
-
-fix binary/source cd generation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-think about syncing the target part into the initvm / resource manager for
-loopback mounts / container ?
+revision 201508
 
 define multiple debian mirror groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -30,45 +11,26 @@ The output xml file includes only the used mirror groups. Groups can be for
 example 'official debian mirror', 'cdrom', 'local package cache', 'company
 mirror', 'project mirror', ..
 
-
 support swap fs/file in buildenv
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 A swap partition/file can be defined in the xml file. This may be needed to
 build huge software packages like firefox or qt.
-
-
 
 NEW ELBE TOOLS
 --------------
 
 host package cache
 ^^^^^^^^^^^^^^^^^^
-store all used debian packages in a package cache on the host system.
+store all used debian packages in a package cache on the host or initvm system.
 http://www.ehow.com/list_7499016_alternatives-aptproxy.html
-approx and apt-cacher may be used.
-
-
-elbe test suite
-^^^^^^^^^^^^^^^
-Currently some use cases of elbe are bricked by newly added features, because
-there is no test definition. So, all use cases of elbe should be stored as
-elbe xml file inside a test directory in the elbe source repository. Additional
-these files can be used as templates/examples for new elbe projects. The elbe
-xml files stored inside 'test' have to include a test tag. The test and the
-expected result is defined there. The newly created 'elbe test' application
-should try to build the target images of all elbe xml files stored inside
-'test'. If the generation of an image was successful the defined test set
-should be run. This could be: starting the target image inside qemu and check
-for the output of an installed application, or a checksum of the target image.
-
+approx and apt-cacher(ng) may be used.
 
 GUI
 ^^^
 Some thoughts about the GUI implementation/backend:
-
-* GUI users can't bootstrap the buildenv.
+* GUI users can't bootstrap the initvm.
 * The GUI is based on communication with the elbe daemon.
-* The elbe daemon needs to implement additional commands. E.g. one for listing
-		available debian packages
+* The elbe daemon needs to implement additional commands.
+		E.g. one for listing available debian packages
 * GUI generates/modifies elbe xml files and triggers image regeneration
 * GUI displays available updates/security issues for an elbe xml file
