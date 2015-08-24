@@ -242,7 +242,13 @@ class CreateAction(InitVMAction):
             sys.exit(20)
 
         if len(args) == 1:
-            ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
+            # if provided xml file has no initvm section exampl is set to a
+            # default initvm XML file. But we need the original file here
+            if args[0].endswith ('.xml'):
+                ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, args[0]))
+            else:
+                ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
+
             if ret != 0:
                 print ("elbe control create_project failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
