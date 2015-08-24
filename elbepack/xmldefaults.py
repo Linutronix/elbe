@@ -5,7 +5,6 @@ import sys
 
 armel_defaults = {
         "arch":         "armel",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
         "userinterpr":  "qemu-arm-static",
@@ -17,7 +16,6 @@ armel_defaults = {
 
 armel_linaro48_defaults = {
         "arch":         "armel",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
         "userinterpr":  "qemu-arm-static",
@@ -31,7 +29,6 @@ armel_linaro48_defaults = {
 
 armel_virtio_defaults = {
         "arch":         "armel",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm-virtio",
         "userinterpr":  "qemu-arm-static",
@@ -43,7 +40,6 @@ armel_virtio_defaults = {
 
 armhf_defaults = {
         "arch":         "armhf",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
         "userinterpr":  "qemu-arm-static",
@@ -55,7 +51,6 @@ armhf_defaults = {
 
 armhf_linaro48_defaults = {
         "arch":         "armhf",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm",
         "userinterpr":  "qemu-arm-static",
@@ -69,7 +64,6 @@ armhf_linaro48_defaults = {
 
 armhf_virtio_defaults = {
         "arch":         "armhf",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-arm-virtio",
         "userinterpr":  "qemu-arm-static",
@@ -81,7 +75,6 @@ armhf_virtio_defaults = {
 
 ppc_defaults = {
         "arch":         "powerpc",
-        "size":         "20G",
         "mem":          "256",
         "interpreter":  "qemu-system-ppc",
         "userinterpr":  "qemu-ppc-static",
@@ -93,7 +86,6 @@ ppc_defaults = {
 
 ppcspe_defaults = {
         "arch":         "powerpcspe",
-        "size":         "20G",
         "mem":          "512",
         "interpreter":  "qemu-system-ppc",
         "userinterpr":  "qemu-ppc-static",
@@ -105,7 +97,6 @@ ppcspe_defaults = {
 
 amd64_defaults = {
         "arch":         "amd64",
-        "size":         "20G",
         "mem":          "1024",
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
@@ -116,7 +107,6 @@ amd64_defaults = {
 
 i386_defaults = {
         "arch":         "i386",
-        "size":         "20G",
         "mem":          "1024",
         "interpreter":  "kvm",
         "console":      "ttyS0,115200n1",
@@ -127,7 +117,8 @@ i386_defaults = {
 
 archindep_defaults = {
         "kinitrd":      "elbe-bootstrap",
-        "name":         "elbe-buildenv"
+        "name":         "elbe-buildenv",
+        "size":         "20G",
 }
 
 defaults = { "armel": armel_defaults,
