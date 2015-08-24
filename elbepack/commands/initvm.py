@@ -52,6 +52,10 @@ def run_command (argv):
                         dest="build_sources", default=False,
                         help="Build Source CD" )
 
+    oparser.add_option( "--keep-files", action="store_true",
+                        dest="keep-files", default=False,
+                        help="don't delete elbe project files in initvm" )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 

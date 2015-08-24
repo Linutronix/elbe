@@ -478,5 +478,13 @@ class SubmitAction(InitVMAction):
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
+                if not opt.keep_files:
+                    try:
+                        system ('%s control del_project "%s"' % prjdir)
+                    except CommandError:
+                        print ("remove project from initvm failed",
+                                file=sys.stderr)
+                        sys.exit(20)
+
 InitVMAction.register(SubmitAction)
 
