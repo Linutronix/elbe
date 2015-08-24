@@ -162,7 +162,7 @@ class CreateAction(InitVMAction):
             print ("", file=sys.stderr)
             print ("There can only exist a single ElbeInitVMSession, and this session", file=sys.stderr)
             print ("can also be used to make your build.", file=sys.stderr)
-            print ("See 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
+            print ("See 'elbe initvm submit', 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
             sys.exit(20)
 
         # Init cdrom to None, if we detect it, we set it
