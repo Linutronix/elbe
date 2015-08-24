@@ -116,8 +116,11 @@ class ListProjectsAction(ClientAction):
     def execute(self, client, opt, args):
         projects = client.service.list_projects ()
 
-        for p in projects.SoapProject:
-            print (p.builddir + '\t' + p.name + '\t' + p.version + '\t' + p.status + '\t' + str(p.edit))
+        try:
+            for p in projects.SoapProject:
+                print (p.builddir + '\t' + p.name + '\t' + p.version + '\t' + p.status + '\t' + str(p.edit))
+        except AttributeError:
+            print ('No projects configured in initvm')
 
 ClientAction.register(ListProjectsAction)
 
