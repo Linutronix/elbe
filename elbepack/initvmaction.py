@@ -485,7 +485,8 @@ class SubmitAction(InitVMAction):
                     print ("Saving generated Files to %s" % opt.outdir)
 
                 try:
-                    system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
+                    system ('%s control get_files --output "%s" "%s"' % (
+                            elbe_exe, opt.outdir, prjdir ))
                 except CommandError:
                     print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
@@ -493,7 +494,8 @@ class SubmitAction(InitVMAction):
 
                 if not opt.keep_files:
                     try:
-                        system ('%s control del_project "%s"' % prjdir)
+                        system ('%s control del_project "%s"' % (
+                            elbe_exe, prjdir))
                     except CommandError:
                         print ("remove project from initvm failed",
                                 file=sys.stderr)
