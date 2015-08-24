@@ -119,6 +119,7 @@ archindep_defaults = {
         "kinitrd":      "elbe-bootstrap",
         "name":         "elbe-buildenv",
         "size":         "20G",
+        "img":          "qcow2",
 }
 
 defaults = { "armel": armel_defaults,
@@ -136,6 +137,7 @@ defaults = { "armel": armel_defaults,
 xml_field_path = {
         "arch":         "project/buildimage/arch",
         "size":         "project/buildimage/size",
+        "img":          "project/buildimage/img",
         "mem":          "project/buildimage/mem",
         "interpreter":  "project/buildimage/interpreter",
         "console":      "project/buildimage/console",
@@ -166,7 +168,6 @@ class ElbeDefaults(object):
 
         self.defaults = defaults[build_type]
         self.defaults["nicmac"] = get_random_mac()
-        self.defaults["img"] = "raw"
 
         self.generic_defaults = archindep_defaults
 
