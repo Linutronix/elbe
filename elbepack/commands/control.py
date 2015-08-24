@@ -35,7 +35,7 @@ def run_command (argv):
     oparser.add_option ("--host", dest="host", default="localhost",
                         help="Ip or hostname of elbe-daemon.")
 
-    oparser.add_option ("--port", dest="port", default="8080",
+    oparser.add_option ("--port", dest="port", default="7587",
                         help="Port of soap itf on elbe-daemon.")
 
     oparser.add_option ("--pass", dest="passwd", default="foo",

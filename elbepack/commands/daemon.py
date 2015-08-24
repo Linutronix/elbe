@@ -38,7 +38,7 @@ def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog")
     oparser.add_option( "--host", dest="host", default='0.0.0.0',
                         help="interface to host daemon" )
-    oparser.add_option( "--port", dest="port", default=8080,
+    oparser.add_option( "--port", dest="port", default=7587,
                         help="port to host daemon" )
 
     for d in daemons:

@@ -29,8 +29,8 @@
 			</forward>
 			<forward>
 				<proto>tcp</proto>
-				<buildenv>8080</buildenv>
-				<host>8080</host>
+				<buildenv>7587</buildenv>
+				<host>7587</host>
 			</forward>
 		</portforwarding>
 	</initvm>

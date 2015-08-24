@@ -202,7 +202,7 @@ log.txt         (Log file)
 Ports opened by initvm
 ----------------------
 
-The initvm will open port 8080 on localhost, and allows the elbe control Tool
+The initvm will open port 7587 on localhost, and allows the elbe control Tool
 to communicate with it. Also the sshd inside the VM will be available via Port 5022.
 
 Add the following lines to the `~/.ssh/config` on your host , so that you can access the VM 
