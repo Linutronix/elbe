@@ -42,13 +42,6 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    cmd = '/bin/bash'
-    if len(args) > 1:
-        cmd = ""
-        cmd2 = args[1:]
-        for c in cmd2:
-            cmd += (c + " ")
-
     try:
         project = ElbeProject(args[0], override_buildtype=opt.buildtype,
                 skip_validate=opt.skip_validation)
@@ -57,16 +50,23 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
+    os.environ["LANG"] = "C"
+    os.environ["LANGUAGE"] = "C"
+    os.environ["LC_ALL"] = "C"
+    # TODO: howto set env in chroot?
+    os.environ["PS1"] = project.xml.text ('project/name') + ': \w\$'
+
+    cmd = "/bin/bash"
+
+    if len(args) > 1:
+        cmd = ""
+        cmd2 = args[1:]
+        for c in cmd2:
+            cmd += (c + " ")
+
     if opt.target:
         with project.targetfs:
-            os.environ["LANG"] = "C"
-            os.environ["LANGUAGE"] = "C"
-            os.environ["LC_ALL"] = "C"
-            os.system( "chroot %s %s" % (project.targetpath, cmd) )
+            os.system( "/bin/bash chroot %s %s" % (project.targetpath, cmd) )
     else:
         with project.buildenv.rfs:
-            os.environ["LANG"] = "C"
-            os.environ["LANGUAGE"] = "C"
-            os.environ["LC_ALL"] = "C"
-            os.system( "chroot %s %s" % (project.chrootpath, cmd) )
-
+            os.system( "/bin/bash chroot %s %s" % (project.chrootpath, cmd) )
