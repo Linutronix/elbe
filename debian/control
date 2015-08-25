@@ -43,7 +43,7 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   elbe-common (= ${binary:Version}),
   qemu-utils,
-  qemu-system,
+  qemu-kvm (>= 1:2.1),
   python-mako,
   p7zip-full,
   make
