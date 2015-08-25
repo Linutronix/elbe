@@ -24,13 +24,15 @@ from tempfile import mkdtemp
 import urllib2
 import hashlib
 
+from elbepack.shellhelper import CommandError
+
 try:
     from elbepack import virtapt
     from apt_pkg import TagFile
     virtapt_imported = True
 except ImportError:
     print "WARNING - python-apt not available: if there are multiple versions of"
-    print " kinitrd packages on the mirror(s) elbe selects the first package it"
+    print " elbe-bootstrap packages on the mirror(s) elbe selects the first package it"
     print " has found. There is no guarantee that the latest package is used."
     print " To ensure this, the python-apt package needs to be installed."
     import urllib2
@@ -172,22 +174,29 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
     try:
         sha1, uri = get_initrd_uri(prj, defs, arch)
     except KeyError:
-        raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
+        raise NoKinitrdException ('no elbe-bootstrap package available')
         return
     except SystemError:
         raise NoKinitrdException ('a configured mirror is not reachable')
         return
+    except CommandError as e:
+        raise NoKinitrdException ("couldn't download elbe-bootstrap package")
+        return
 
     tmpdir = mkdtemp()
 
-    if uri.startswith("file://"):
-        os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
-    elif uri.startswith("http://"):
-        os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
-    elif uri.startswith("ftp://"):
-        os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
-    else:
-        raise NoKinitrdException ('no kinitrd/elbe-bootstrap package available')
+    try:
+        if uri.startswith("file://"):
+            os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
+        elif uri.startswith("http://"):
+            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+        elif uri.startswith("ftp://"):
+            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+        else:
+            raise NoKinitrdException ('no elbe-bootstrap package available')
+    except CommandError as e:
+        raise NoKinitrdException ("couldn't download elbe-bootstrap package")
+        return
 
     if len(sha1) > 0:
         m = hashlib.sha1()
