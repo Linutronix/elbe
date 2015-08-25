@@ -203,10 +203,13 @@ Ports opened by initvm
 ----------------------
 
 The initvm will open port 7587 on localhost, and allows the elbe control Tool
-to communicate with it. Also the sshd inside the VM will be available via Port 5022.
+to communicate with it.
 
-Add the following lines to the `~/.ssh/config` on your host , so that you can access the VM 
-easiely:
+There is an example XML file including ssh-portforwarding.
+The sshd inside the VM will be available via Port 5022 in this example.
+
+Add the following lines to the `~/.ssh/config` on your host ,
+so that you can access the VM easiely:
 
 ---------------------------------------
 Host vm
@@ -283,6 +286,7 @@ Inserting a line containing
 ----------------------------------------------------
 
 will add the `util-linux` package to the install.
+
 
 Using the finetuning rules
 --------------------------
