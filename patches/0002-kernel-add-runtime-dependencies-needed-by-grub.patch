@@ -1,0 +1,21 @@
+commit 7d1c168cbfce442df0b2766320350cb3940e4454
+Author: Manuel Traut <manut@linutronix.de>
+Date:   Tue Aug 25 15:58:25 2015 +0200
+
+    builddeb: add runtime dependencies to enable grub integration
+    
+    Signed-off-by: Manuel Traut <manut@linutronix.de>
+
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index c5b3c9f..4261581 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -294,7 +294,7 @@ else
+ 	cat <<EOF >> debian/control
+ 
+ Package: $packagename
+-Provides: linux-image, linux-image-2.6, linux-modules-$version
++Provides: linux-image, linux-image-2.6, linux-modules-$version, initramfs-tools, klibc-utils, kmod, libklibc, libuuid-perl, linux-base
+ Suggests: $fwpackagename
+ Architecture: any
+ Description: Linux kernel, version $version

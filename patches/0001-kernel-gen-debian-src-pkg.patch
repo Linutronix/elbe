@@ -1,0 +1,85 @@
+commit 2ea596b1b259b9428d00a37d953298534176a92d
+Author: Manuel Traut <manut@linutronix.de>
+Date:   Mon Jul 13 12:42:39 2015 +0200
+
+    build debian source package
+    
+    Signed-off-by: Manuel Traut <manut@linutronix.de>
+
+diff --git a/.gitignore b/.gitignore
+index acb6afe..badbc9b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -9,6 +9,7 @@
+ #
+ # Normal rules
+ #
++source
+ .*
+ *.o
+ *.o.*
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index 88dbf23..c5b3c9f 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -228,6 +228,12 @@ else
+         echo >&2 "Install lsb-release or set \$KDEB_CHANGELOG_DIST explicitly"
+ fi
+ 
++mkdir -p debian/source
++# Generate a source format template
++cat <<EOF > debian/source/format
++3.0 (git)
++EOF
++
+ # Generate a simple changelog template
+ cat <<EOF > debian/changelog
+ linux-upstream ($packageversion) $distribution; urgency=low
+@@ -331,7 +337,7 @@ if [ -e "$tmpdir/lib/firmware" ]; then
+ 	cat <<EOF >> debian/control
+ 
+ Package: $fwpackagename
+-Architecture: all
++Architecture: any
+ Description: Linux kernel firmware, version $version
+  This package contains firmware from the Linux kernel, version $version.
+ EOF
+@@ -339,6 +345,7 @@ EOF
+ 	create_package "$fwpackagename" "$fwdir"
+ fi
+ 
++
+ cat <<EOF >> debian/control
+ 
+ Package: $libc_headers_packagename
+@@ -383,4 +390,30 @@ EOF
+ 	create_package "$dbg_packagename" "$dbg_dir"
+ fi
+ 
++# create source package
++if [ ! -x source ] ; then
++	ln -s . source
++fi
++
++if [ ! -L source ] ; then
++	cp -a debian source
++	if [ ! -x source/.config ] ; then
++		cp .config source/
++	fi
++fi
++
++cd source
++git add -f debian .config
++git commit -sam "add current kernel config and debian directory"
++dpkg-source -b .
++
++if [ -x source ] ; then
++	cp .config config
++fi
++git reset --hard HEAD~1
++
++if [ -x source ] ; then
++	mv config .config
++fi
++
+ exit 0
