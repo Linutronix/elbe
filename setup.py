@@ -52,5 +52,6 @@ setup(name='elbe',
       data_files= [
           ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbe-schema-reference*")),
           ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbeoverview-en*")),
+          ('/usr/share/doc/elbe-doc/patches', glob.glob("patches/*patch")),
           ('/usr/share/doc/elbe-doc/examples', glob.glob("examples/*xml"))],
 )
