@@ -1,3 +1,28 @@
+elbe (0.9.6) unstable; urgency=medium
+
+  * retrive licence.txt from initvm
+  * remove e2tools dependency
+  * enable to specify initvm img format and size
+  * add git as build dependency
+  * initvm: dump log.txt, when validation.txt is not available
+  * fix elbe control del_project
+  * initvm: improve error handling and printing
+  * validate debian repos before using them
+  * handle error in case of debootstrap fails
+  * add some tests based on nosetest
+  * pkgutils, virtapt: Verify gpg signatures, when virtapt is available
+  * daemons soap: add method to shutdown initvm
+  * set qcow2 as default initvm img format
+  * delete project dirs in initvm after build (can be overridden)
+  * use 7587 as SOAP/http port instead of 8080
+  * initvm: use a default XML if no initvm tag was specified
+  * control: don't crash on list_projects if project list is empty
+  * add kernel patch for generating debian source pkg to elbe-doc
+  * add kernel patch that adds debian-binary dependencies needed by grub
+  * depend on at least qemu 1:2.1
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 26 Aug 2015 16:18:08 +0200
+
 elbe (0.9.5.1) unstable; urgency=medium
 
   * improve documentation and man-pages
