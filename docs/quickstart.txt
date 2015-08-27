@@ -1,83 +1,71 @@
-Embedded Linux Build Environment (elbe) Quickstart Guide
+Embedded Linux Build Environment (ELBE) Quickstart Guide
 ========================================================
+ELBE is a Debian based system to generate root-filesystems for embedded devices.
 
-Elbe is a
-Debian based system to generate root-filesystems for embedded devices.
-
-You have probably received a root-filesystem, which has been built with Elbe.
-Additionally you should have an xml File describing the root-filesystem.
+You have probably received a root-filesystem, which has been built with ELBE.
+Additionally you should have an XML file describing the root-filesystem.
 
 This quickstart guide describes the steps necessary to rebuild the
-root-filesystem from the xml File.
+root-filesystem from the XML file and to simple modifications.
 
 Steps necessary
 ---------------
-
-. Install Debian 8 (Jessie) on your Host
-. Install Elbe on Host Linux
-. Use elbe init to generate `initvm`
-. Build the root-filesystem
+. install Debian 8 (Jessie) on your Host
+. install ELBE on Host Linux
+. generate the `initvm` running the buildenvironment
+. build the root-filesystem inside the initvm
 
 Steps 1 and 2 need only be performed once.
 
 NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
       that nested KVM is working.
 
-
 Customisation of the build
 --------------------------
-
-The Elbe xml contains an archive, which can contain Configuration Files,
-and additional Software. This archive is extracted during onto the Image
-during the Buildprocess. It allows you to override any File, which needs to be
+The ELBE XML can contain an archive, which can contain configuration files,
+and additional software. This archive is extracted onto the target-image
+during the buildprocess. It allows you to override any file, which needs to be
 different from the default Debian Install.
 
-This guide also explains how the archive can be extracted from the xml File,
-and regenerated.
+This guide also explains how the archive can be extracted from the XML file,
+and vice versa.
 
-Elbe also allows to manipulate the generated root-filesystem through a set of
+ELBE allows to manipulate the generated root-filesystem through a set of
 `<finetuning>` rules. We also describe, how these can be used to add a user,
-change directory permissions, and remove Files from the root-filesystem.
+change directory permissions, and remove files from the root-filesystem.
 
-In the last chapter we describe, how sourcecode can be accessed.
-
-Installing Elbe
+Installing ELBE
 ---------------
-
-There are several possibilities to install Elbe.
+There are several possibilities to install ELBE.
 The simplest method is by installing prebuilt binary packages
-via linutronix package repository on a Debian 8 (Jessie) System.
+via Linutronix package repository on a Debian 8 (Jessie) system.
 
-But elbe can also be installed from git.
+But ELBE can also be installed from git.
 
-Binary Debian Packages
+Binary Debian packages
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The latest development packages for elbe reside in the following Repository
-
+The latest packages for elbe reside in the following repository
 --------------------------------------------------------
 http://debian.linutronix.de/elbe-testing
 --------------------------------------------------------
 
 Create the file `/etc/apt/sources.list.d/elbe-testing.list`
 with the following contents:
-
 --------------------------------------------------------
 deb http://debian.linutronix.de/elbe-testing jessie main
 --------------------------------------------------------
 
-Then as root run:
-
+Then run (as root):
 --------------------------------------------------------
 $ apt-get update
-$ apt-get install elbe elbe-control
+$ apt-get install elbe
 --------------------------------------------------------
 
 Git Version
 ~~~~~~~~~~~
-
 If you can not use Debian Jessie, you can also checkout the current
-Elbe sourcecode via git from github.
+ELBE source-code via git from github.
 
 --------------------------------------------------------
 $ git clone https://github.com/Linutronix/elbe.git
@@ -89,18 +77,12 @@ Receiving objects: 100% (5435/5435), 1.94 MiB | 1.92 MiB/s, done.
 Resolving deltas: 100% (3943/3943), done.
 Checking connectivity... done.
 $ cd elbe
-$ git checkout -b elbe-1.0 origin/devel/elbe-1.0
-Branch elbe-1.0 set up to track remote branch devel/elbe-1.0 from origin.
-Switched to a new branch 'elbe-1.0'
 $ ls
 AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack
 examples INSTALL    Makefile README  setup.py    test  THANKS TODO
 --------------------------------------------------------
 
-Please note, that the master branch is pointing to the old elbe version 0.5.x
-until elbe-1.0 is finalized.
-
-Elbe can run without being installed from the git checkout.
+ELBE can run without being installed from the git checkout.
 Just note that file paths are different under this situation.
 
 --------------------------------------------------------
@@ -109,22 +91,21 @@ elbe -> ./elbe
 --------------------------------------------------------
 
 
-Create initvm and submit xml Files
+Create initvm and submit XML files
 ----------------------------------
+The first thing you need to do is set up a virtual-machine for
+generating root-filesystems.
 
-The first thing you need to do is set up a virtual machine for
-generating root filesystems.
-
-This virtual machine is referred to as "initvm". You will want your
+This virtual-machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
-using kvm for acceleration, which will accellerate the build process a lot.
+using hardware accelerated virtualization implemented by kvm.
 
 -------------------------------------------------------------------------------
 $ elbe initvm create --directory=initvm
 /home/torbenh/elbe/elbe/initvm
 gpg: keyring `/tmp/tmpPfPXt4/secring.gpg' created
 gpg: keyring `/tmp/tmpPfPXt4/etc/apt/trusted.gpg.d/linutronix-elbe.gpg' created
-gpg: key 22BB8F84: public key "ELBE Devel (Linutronix Elbe developers) <elbe-devel@linutronix.de>" imported
+gpg: key 22BB8F84: public key "ELBE Devel (Linutronix ELBE developers) <elbe-devel@linutronix.de>" imported
 gpg: Total number processed: 1
 gpg:               imported: 1  (RSA: 1)
 --2015-08-17 15:26:26--  http://debian.linutronix.de/elbe-testing/elbe-repo.pub
@@ -156,11 +137,11 @@ touch .stamps/stamp-install-initial-image
 
 This creates an "initvm" subdirectory and builds the initvm inside this directory.
 
-Submitting an xml File
+Submitting an XML file
 ----------------------
 
-Submitting an xml File triggers an image build inside the initvm.
-Once the initvm has been created and is running, you can submit xml Files using
+Submitting an XML file triggers an image build inside the initvm.
+Once the initvm has been created and is running, you can submit XML files using
 
 -------------------------------------------------------------------------------
 $ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
@@ -196,55 +177,51 @@ elbe-report.txt         (Report)
 log.txt         (Log file)
 -------------------------------------------------------------------------------
 
+The result of the build is stored in elbe-build-<TIMESTAMP> below your current
+working directory.
 
 Ports opened by initvm
 ----------------------
-
-The initvm will open port 7587 on localhost, and allows the elbe control Tool
-to communicate with it.
+The initvm will open port 7587 on localhost. This is used by the elbe tools
+on your host to communicate with the initvm.
 
 Advanced usage
 --------------
 
-Elbe Archive
+ELBE Archive
 ~~~~~~~~~~~~
-
-The elbe xml file contains an Archive which is extracted into the
+The ELBE XML file contains an archive which is extracted into the
 root-filesystem during the image generation phase.
 
 It is acessed with the following commands:
-
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 $ elbe get_archive fun.xml archive.tar.bz2
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 
 Its a normal tar.bz2 which can be manipulated and regenerated using tar
-
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 $ mkdir arch
 $ tar xvfj archive.tar.bz2 -C arch
 $ echo hello > arch/hello
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 
 When regenerating the tar archive, be careful about file ownership inside the
 tar file.
-
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 $ tar cvfj archive.tar.bz2 --owner=root --group=root -C arch/ .
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 
-The updated archive File can then be inserted into the xml File:
-
-----------------------------------------------------------------
+The updated archive file can then be inserted into the XML file:
+------------------------------------------------------------------------------
 $ elbe chg_archive fun.xml archive.tar.bz2
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 
-During development and inside Version Control we use the following Makefile,
-to update the archive inside the xml File from a archive directory in the
-same folder.
+During development and inside version-control-systems the following
+Makefile can be used to update the archive inside the XML file from
+a archive directory in the same folder.
 
 [source,Makefile]
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 all: update-archive
 
 .PHONY: archive.tar.bz2 update-archive
@@ -255,70 +232,63 @@ archive.tar.bz2:
 
 update-archive: archive.tar.bz2
 	elbe chg_archive fun.xml archive.tar.bz2
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 
-
-
-Adding Packages to the List of installed Packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The Xml File contains a List of Installed packages `<pkg-list>` in the
-`<target>` xml node. Inserting a line containing
+Adding packages to the 'list of packages to install'
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The XML file contains a 'list of packages to install' `<pkg-list>` in the
+`<target>` XML node. Inserting a line containing
 
 [source,xml]
-----------------------------------------------------
+------------------------------------------------------------------------------
 <pkg>util-linux</pkg>
-----------------------------------------------------
+------------------------------------------------------------------------------
 
-will add the `util-linux` package to the install.
+will add the `util-linux` package to the target-rfs.
 
 
 Using the finetuning rules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-An elbe xml File can contain a set of finetuning rules. Finetuning is used to
-customize the target RFS, e.g. remove man-pages. Here is an example
+An ELBE XML file can contain a set of finetuning rules. Finetuning is used to
+customize the target-rfs, e.g. remove man-pages. Here is an example
 finetuning from `/usr/share/doc/elbe-doc/examples/elbe-desktop.xml`:
 
 [source,xml]
----------------------------------------------------------------------------------
-		<finetuning>
-			<rm>var/cache/apt/archives/*.deb</rm>
-			<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
-		</finetuning>
----------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+<finetuning>
+	<rm>var/cache/apt/archives/*.deb</rm>
+	<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
+</finetuning>
+------------------------------------------------------------------------------
 
 rm
 ^^
-The `<rm>` Node removes Files from the root-filesystem.
+The `<rm>` node removes files from the target-rfs.
 
 adduser
 ^^^^^^^
 The adduser node allows to create a user.
-Our example creates the User `elbe` with the password `elbe`.
+The following example creates the user `elbe` with the password `foo`.
 
-Its also possible to specify groups the new user should be part of:
-
-
+It is also possible to specify groups the new user should be part of:
 [source,xml]
----------------------------------------------------------------------------------
-	<adduser passwd="elbe" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
----------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+<adduser passwd="foo" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
+------------------------------------------------------------------------------
 
 Changing ownership of directories or files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 There is currently no special finetuning node for `chmod` and `chown`.
-These need to be specified via the command tag, which allows running any command,
-that is available in the built root filesystem.
+These commands needs to be specified via the command tag, which allows running
+any command that is available in the target-rfs.
 
 [source,xml]
----------------------------------------------------------------------------------
-	<command>chown elbe:elbe /mnt</command>
-	<command>chmod 777 /mnt</command>
----------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+<command>chown elbe:elbe /mnt</command>
+<command>chmod 777 /mnt</command>
+------------------------------------------------------------------------------
 
 Further Example
 ^^^^^^^^^^^^^^^
-A more complete example can be found in the elbe overview docs in
-`/usr/share/doc/elbe-doc/elbeoverview-en.html`
+A more complete example can be found in the ELBE overview document that is
+installed at `/usr/share/doc/elbe-doc/elbeoverview-en.html`
