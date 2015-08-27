@@ -66,7 +66,7 @@ def run_command( argv ):
 
     if opt.target:
         with project.targetfs:
-            os.system( "/bin/bash chroot %s %s" % (project.targetpath, cmd) )
+            os.system( "/usr/sbin/chroot %s %s" % (project.targetpath, cmd) )
     else:
         with project.buildenv.rfs:
-            os.system( "/bin/bash chroot %s %s" % (project.chrootpath, cmd) )
+            os.system( "/usr/sbin/chroot %s %s" % (project.chrootpath, cmd) )
