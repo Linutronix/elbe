@@ -7,7 +7,7 @@ Debian based system to generate root-filesystems for embedded devices.
 You have probably received a root-filesystem, which has been built with Elbe.
 Additionally you should have an xml File describing the root-filesystem.
 
-This quickstart guide describes the steps necessary to rebuild the 
+This quickstart guide describes the steps necessary to rebuild the
 root-filesystem from the xml File.
 
 Steps necessary
@@ -27,16 +27,17 @@ NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
 Customisation of the build
 --------------------------
 
-The Elbe xml contains an archive, which can contain Configuration Files, 
+The Elbe xml contains an archive, which can contain Configuration Files,
 and additional Software. This archive is extracted during onto the Image
-during the Buildprocess. It allows you to override any File, which needs to be different
-from the default Debian Install.
+during the Buildprocess. It allows you to override any File, which needs to be
+different from the default Debian Install.
 
-This guide also explains how the archive can be extracted from the xml File, and regenerated 
+This guide also explains how the archive can be extracted from the xml File,
+and regenerated.
 
 Elbe also allows to manipulate the generated root-filesystem through a set of
-`<finetuning>` rules. We also describe, how these can be used to add a user, change
-directory permissions, and remove Files from the root-filesystem.
+`<finetuning>` rules. We also describe, how these can be used to add a user,
+change directory permissions, and remove Files from the root-filesystem.
 
 In the last chapter we describe, how sourcecode can be accessed.
 
@@ -44,7 +45,7 @@ Installing Elbe
 ---------------
 
 There are several possibilities to install Elbe.
-The simplest method is by installing prebuilt binary packages 
+The simplest method is by installing prebuilt binary packages
 via linutronix package repository on a Debian 8 (Jessie) System.
 
 But elbe can also be installed from git.
@@ -92,7 +93,7 @@ $ git checkout -b elbe-1.0 origin/devel/elbe-1.0
 Branch elbe-1.0 set up to track remote branch devel/elbe-1.0 from origin.
 Switched to a new branch 'elbe-1.0'
 $ ls
-AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack  
+AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack
 examples INSTALL    Makefile README  setup.py    test  THANKS TODO
 --------------------------------------------------------
 
@@ -103,7 +104,7 @@ Elbe can run without being installed from the git checkout.
 Just note that file paths are different under this situation.
 
 --------------------------------------------------------
-elbe -> ./elbe 
+elbe -> ./elbe
 /usr/share/doc/elbe-doc/examples -> examples/
 --------------------------------------------------------
 
@@ -112,13 +113,13 @@ Create initvm and submit xml Files
 ----------------------------------
 
 The first thing you need to do is set up a virtual machine for
-generating root filesystems. 
+generating root filesystems.
 
 This virtual machine is referred to as "initvm". You will want your
 initvm to be the same architecture as your workstation. This allows
 using kvm for acceleration, which will accellerate the build process a lot.
 
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 $ elbe initvm create --directory=initvm
 /home/torbenh/elbe/elbe/initvm
 gpg: keyring `/tmp/tmpPfPXt4/secring.gpg' created
@@ -136,11 +137,11 @@ Saving to: ‘/tmp/tmpPfPXt4/tmpkey.gpg’
 /tmp/tmpPfPXt4/tmpkey.gpg             100%[========================================================================>]   1.72K  --.-KB/s   in 0s
 
 2015-08-17 15:26:26 (346 MB/s) - ‘/tmp/tmpPfPXt4/tmpkey.gpg’ saved [1763/1763]
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 .......
 
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%... 100%
 Configuring apt  ... 16%... 25%... 32%... 41%... 50%... 66%... 75%... 83%... 91%... 100%
 Select and install software  ... 10%... 26%... 31%... 40%... 50%... 61%... 70%... 80%... 90%... 100%
@@ -152,7 +153,7 @@ Requesting system reboot
 [  589.432092] Restarting system.
 mkdir -p .stamps
 touch .stamps/stamp-install-initial-image
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 This creates an "initvm" subdirectory and builds the initvm inside this directory.
@@ -160,18 +161,19 @@ This creates an "initvm" subdirectory and builds the initvm inside this director
 Submitting an xml File
 ----------------------
 
+Submitting an xml File triggers an image build inside the initvm.
 Once the initvm has been created and is running, you can submit xml Files using
 
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 $ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
 Build started, waiting till it finishes
 project still busy, waiting
 project still busy, waiting
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 .......
 
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 project still busy, waiting
 project still busy, waiting
 project still busy, waiting
@@ -196,7 +198,7 @@ rescue.cpio     (Image)
 validation.txt  (Package list validation result)
 elbe-report.txt         (Report)
 log.txt         (Log file)
-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 Ports opened by initvm
@@ -205,27 +207,14 @@ Ports opened by initvm
 The initvm will open port 7587 on localhost, and allows the elbe control Tool
 to communicate with it.
 
-There is an example XML file including ssh-portforwarding.
-The sshd inside the VM will be available via Port 5022 in this example.
-
-Add the following lines to the `~/.ssh/config` on your host ,
-so that you can access the VM easiely:
-
----------------------------------------
-Host vm
-Port 5022
-HostName localhost
----------------------------------------
-
-NOTE: Root Password is `root`
-
-
+Advanced usage
+--------------
 
 Elbe Archive
-------------
+~~~~~~~~~~~~
 
-The elbe xml file contains an Archive which is extracted into the root-filesystem during
-the image generation phase.
+The elbe xml file contains an Archive which is extracted into the
+root-filesystem during the image generation phase.
 
 It is acessed with the following commands:
 
@@ -274,11 +263,11 @@ update-archive: archive.tar.bz2
 
 
 
-Adding Packages to the List of Installed Packages
--------------------------------------------------
+Adding Packages to the List of installed Packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Xml File contains a List of Installed packages `<pkg-list>` in the `<target>` xml node.
-Inserting a line containing
+The Xml File contains a List of Installed packages `<pkg-list>` in the
+`<target>` xml node. Inserting a line containing
 
 [source,xml]
 ----------------------------------------------------
@@ -289,9 +278,10 @@ will add the `util-linux` package to the install.
 
 
 Using the finetuning rules
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An elbe xml File can contain a set of finetuning rules. Here is an example 
+An elbe xml File can contain a set of finetuning rules. Finetuning is used to
+customize the target RFS, e.g. remove man-pages. Here is an example
 finetuning from `/usr/share/doc/elbe-doc/examples/elbe-desktop.xml`:
 
 [source,xml]
@@ -303,13 +293,11 @@ finetuning from `/usr/share/doc/elbe-doc/examples/elbe-desktop.xml`:
 ---------------------------------------------------------------------------------
 
 rm
-~~
-
+^^
 The `<rm>` Node removes Files from the root-filesystem.
 
 adduser
-~~~~~~~
-
+^^^^^^^
 The adduser node allows to create a user.
 Our example creates the User `elbe` with the password `elbe`.
 
@@ -335,75 +323,6 @@ that is available in the built root filesystem.
 ---------------------------------------------------------------------------------
 
 Further Example
-~~~~~~~~~~~~~~~
-
+^^^^^^^^^^^^^^^
 A more complete example can be found in the elbe overview docs in
 `/usr/share/doc/elbe-doc/elbeoverview-en.html`
-
-
-Source Code
------------
-
-The generated root-filesystem is a full-featured Debian System under normal
-circumstances. So when the source Repositories are specified correctly,
-its always possible to download the source for any installed Package using 
-
-----------------------------------------------------------------------
-$ apt-get source <pkgname>
-----------------------------------------------------------------------
-
-For example on jessie:
-
-----------------------------------------------------------------------
-$ apt-get source util-linux
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-NOTICE: 'util-linux' packaging is maintained in the 'Git' version control system at:
-git://git.debian.org/git/collab-maint/pkg-util-linux.git
-Need to get 4,011 kB of source archives.
-Get:1 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (dsc) [3,443 B]
-Get:2 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (tar) [3,704 kB]
-Get:3 http://ftp.de.debian.org/debian/ jessie/main util-linux 2.25.2-6 (diff) [304 kB]
-Fetched 4,011 kB in 0s (5,879 kB/s) 
-dpkg-source: info: extracting util-linux in util-linux-2.25.2
-dpkg-source: info: unpacking util-linux_2.25.2.orig.tar.xz
-dpkg-source: info: unpacking util-linux_2.25.2-6.debian.tar.xz
-dpkg-source: info: applying Multiarch-support-in-util-linux-build.patch
-dpkg-source: info: applying cfdisk.8-mention-slang-next-to-curses.-Closes-295487.patch
-dpkg-source: info: applying man-page-tweaks-cleanup-my_dev_t.h-ancient-stuff.patch
-dpkg-source: info: applying Disable-the-fallback-clause-in-hwclock-when-dev-rtc-.patch
-dpkg-source: info: applying verbose-tests.patch
-dpkg-source: info: applying Update-POT-file.patch
-dpkg-source: info: applying Update-PO-files.patch
-dpkg-source: info: applying Update-German-translation.patch
-dpkg-source: info: applying Update-Spanish-translation.patch
-dpkg-source: info: applying Update-French-translation.patch
-dpkg-source: info: applying Update-Ukrainian-translation.patch
-dpkg-source: info: applying Update-Brazilian-Portuguese-translation.patch
-dpkg-source: info: applying Update-Chinese-simplified-translation.patch
-dpkg-source: info: applying Update-Danish-translation.patch
-dpkg-source: info: applying Update-Finnish-translation.patch
-dpkg-source: info: applying Update-Japanese-translation.patch
-dpkg-source: info: applying Update-Russian-translation.patch
-dpkg-source: info: applying Trivial-unfuzzy.patch
-dpkg-source: info: applying libblkid-care-about-unsafe-chars-in-cache.patch
-dpkg-source: info: applying unshare-Fix-map-root-user-to-work-on-new-kernels.patch
-----------------------------------------------------------------------
-
-You can now find the source here:
-
-----------------------------------------------------------------------
-$ ls
-util-linux-2.25.2  util-linux_2.25.2-6.debian.tar.xz  util-linux_2.25.2-6.dsc  util-linux_2.25.2.orig.tar.xz
-----------------------------------------------------------------------
-
-NOTE: This also works on the target.
-
-When elbe buildchroot builds the root-filesystem, it can be instructed to download all sourcecode
-and create a source cdrom.
-
-----------------------------------------------------------------
-# elbe buildchroot --target=fun --output=fun.log --build_sources fun.xml
-----------------------------------------------------------------
-
