@@ -44,12 +44,12 @@ def run_command (argv):
     oparser.add_option ("--output", dest="outdir", default=None,
                         help="directory where to save downloaded Files")
 
-    oparser.add_option( "--build-bin", action="store_true",
-                        dest="build_bin", default=False,
+    oparser.add_option( "--skip-build-bin", action="store_false",
+                        dest="build_bin", default=True,
                         help="Build Binary Repository CDROM, for exact Reproduction" )
 
-    oparser.add_option( "--build-sources", action="store_true",
-                        dest="build_sources", default=False,
+    oparser.add_option( "--skip-build-sources", action="store_false",
+                        dest="build_sources", default=True,
                         help="Build Source CD" )
 
     oparser.add_option( "--keep-files", action="store_true",
