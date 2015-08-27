@@ -1,3 +1,9 @@
+elbe (0.9.6.1) unstable; urgency=medium
+
+  * fix typo that breaks initvm creation
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 27 Aug 2015 09:29:43 +0200
+
 elbe (0.9.6) unstable; urgency=medium
 
   * retrive licence.txt from initvm
