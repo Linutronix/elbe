@@ -137,11 +137,9 @@ Saving to: ‘/tmp/tmpPfPXt4/tmpkey.gpg’
 /tmp/tmpPfPXt4/tmpkey.gpg             100%[========================================================================>]   1.72K  --.-KB/s   in 0s
 
 2015-08-17 15:26:26 (346 MB/s) - ‘/tmp/tmpPfPXt4/tmpkey.gpg’ saved [1763/1763]
--------------------------------------------------------------------------------
 
-.......
+...
 
--------------------------------------------------------------------------------
 Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%... 100%
 Configuring apt  ... 16%... 25%... 32%... 41%... 50%... 66%... 75%... 83%... 91%... 100%
 Select and install software  ... 10%... 26%... 31%... 40%... 50%... 61%... 70%... 80%... 90%... 100%
@@ -169,11 +167,9 @@ $ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.
 Build started, waiting till it finishes
 project still busy, waiting
 project still busy, waiting
--------------------------------------------------------------------------------
 
-.......
+...
 
--------------------------------------------------------------------------------
 project still busy, waiting
 project still busy, waiting
 project still busy, waiting
@@ -186,7 +182,7 @@ ELBE Package validation
 
 
 Package List validation
------------------------
+ ----------------------
 
 No Errors found
 
