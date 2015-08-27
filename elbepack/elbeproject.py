@@ -51,9 +51,9 @@ class AptCacheCommitError(Exception):
 class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
-            rpcaptcache_notifier = None, private_data = None,
-            postbuild_file = None, presh_file = None, postsh_file = None,
-            savesh_file = None):
+            skip_urlcheck = False, rpcaptcache_notifier = None,
+            private_data = None, postbuild_file = None, presh_file = None,
+            postsh_file = None, savesh_file = None):
         self.builddir = os.path.abspath(builddir)
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -61,6 +61,7 @@ class ElbeProject (object):
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
+        self.skip_urlcheck = skip_urlcheck
         self.postbuild_file = postbuild_file
         self.presh_file = presh_file
         self.postsh_file = postsh_file
@@ -80,11 +81,11 @@ class ElbeProject (object):
         # file of the project
         if xmlpath:
             self.xml = ElbeXML( xmlpath, buildtype=override_buildtype,
-                    skip_validate=skip_validate )
+                    skip_validate=skip_validate, skip_urlcheck=skip_urlcheck )
         else:
             sourcexmlpath = os.path.join( self.builddir, "source.xml" )
             self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
-                    skip_validate=skip_validate )
+                    skip_validate=skip_validate, skip_urlcheck=skip_urlcheck )
 
         # If logpath is given, use an AsciiDocLog instance, otherwise log
         # to stdout
@@ -270,7 +271,8 @@ class ElbeProject (object):
             xmlpath = os.path.join( self.builddir, "source.xml" )
 
         newxml = ElbeXML( xmlpath, buildtype=self.override_buildtype,
-                skip_validate=self.skip_validate )
+                skip_validate=self.skip_validate,
+                skip_urlcheck=self.skip_urlcheck )
 
         # New XML file has to have the same architecture
         oldarch = self.xml.text( "project/arch", key="arch" )
@@ -340,7 +342,8 @@ class ElbeProject (object):
                 sourcepath = os.path.join( self.builddir, "source.xml" )
                 source = ElbeXML( sourcepath,
                         buildtype=self.override_buildtype,
-                        skip_validate=self.skip_validate )
+                        skip_validate=self.skip_validate,
+                        skip_urlcheck=self.skip_urlcheck )
 
                 self.xml.get_debootstrappkgs_from( source )
                 try:
