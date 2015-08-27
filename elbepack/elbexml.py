@@ -26,6 +26,7 @@ from base64 import standard_b64decode
 from tempfile import NamedTemporaryFile
 
 from urllib2 import urlopen, URLError
+import os
 
 class ValidationError(Exception):
     def __init__(self, validation):
@@ -154,6 +155,8 @@ class ElbeXML(object):
                 lsplit = l.split (" ")
                 urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
 
+        if self.prj.has ("mirror/primary_proxy"):
+            os.environ ["http_proxy"] = self.prj.text ("mirror/primary_proxy").strip()
         for u in urls:
             try:
                 fp = urlopen (u)
