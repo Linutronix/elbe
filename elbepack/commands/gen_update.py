@@ -102,7 +102,7 @@ def run_command( argv ):
                 opt.skip_validation, opt.debug,
                 cfg_dir = opt.cfg_dir, cmd_dir = opt.cmd_dir )
 
-    except ValidationError es e:
+    except ValidationError as e:
         print str(e)
         print "xml validation failed. Bailing out"
         sys.exit(20)
