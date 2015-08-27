@@ -24,7 +24,7 @@ import elbepack
 from elbepack.treeutils   import etree
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
-from elbepack.filesystem  import wdfs, TmpdirFilesystem
+from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
 from elbepack.elbexml     import ElbeXML, ValidationError
 
 import sys
@@ -37,9 +37,11 @@ import datetime
 def ensure_outdir (wdfs, opt):
     if opt.outdir is None:
         builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        wdfs.mkdir_p (builddir_name)
         opt.outdir = wdfs.fname (builddir_name)
-        print ("Saving generated Files to %s" % opt.outdir)
+
+    fs = Filesystem ('/')
+    fs.mkdir_p (opt.outdir)
+    print ("Saving generated Files to %s" % opt.outdir)
 
 class InitVMError(Exception):
     def __init__(self, str):
