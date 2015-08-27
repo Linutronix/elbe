@@ -32,6 +32,15 @@ import sys
 import os
 import datetime
 
+# Create download directory with timestamp,
+# if necessary
+def ensure_outdir (wdfs, opt):
+    if opt.outdir is None:
+        builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        wdfs.mkdir_p (builddir_name)
+        opt.outdir = wdfs.fname (builddir_name)
+        print ("Saving generated Files to %s" % opt.outdir)
+
 class InitVMError(Exception):
     def __init__(self, str):
         Exception.__init__(self, str)
@@ -318,17 +327,7 @@ class CreateAction(InitVMAction):
                 print ("")
                 print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
             else:
-
-                # Create download directory with timestamp,
-                # if necessary
-                if opt.outdir is None:
-                    builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-                    wdfs.mkdir_p (builddir_name)
-                    opt.outdir = wdfs.fname (builddir_name)
-
-                print ("")
-                print ("Saving generated Files to %s" % opt.outdir)
-                print ("")
+                ensure_outdir (wdfs, opt)
 
                 try:
                     system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
@@ -475,14 +474,7 @@ class SubmitAction(InitVMAction):
                 print ("Getting generated Files")
                 print ("")
 
-                # Create download directory with timestamp,
-                # if necessary
-                if opt.outdir is None:
-                    builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-                    wdfs.mkdir_p (builddir_name)
-                    opt.outdir = wdfs.fname (builddir_name)
-
-                    print ("Saving generated Files to %s" % opt.outdir)
+                ensure_outdir (wdfs, opt)
 
                 try:
                     system ('%s control get_files --output "%s" "%s"' % (
