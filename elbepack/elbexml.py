@@ -55,9 +55,6 @@ class ElbeXML(object):
             if len (validation) != 0:
                 raise ValidationError (validation)
 
-            if not skip_urlcheck:
-                self.validate_apt_sources ()
-
         self.xml = etree( fname )
         self.prj = self.xml.node("/project")
         self.tgt = self.xml.node("/target")
@@ -69,6 +66,10 @@ class ElbeXML(object):
         else:
             buildtype = "nodefaults"
         self.defs = ElbeDefaults(buildtype)
+
+        if not skip_validate and not skip_urlcheck:
+                self.validate_apt_sources ()
+
 
     def text(self, txt, key=None):
         if key:
