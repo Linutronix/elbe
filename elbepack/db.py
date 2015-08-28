@@ -795,6 +795,8 @@ class ElbeDB(object):
                     "text/plain; charset=utf-8", "Report" )
             self._update_project_file( s, p.builddir, "log.txt",
                     "text/plain; charset=utf-8", "Log file" )
+            self._update_project_file( s, p.builddir, "sysroot.tar.xz",
+                    "application/x-xz-compressed-tar", "sysroot for cross-toolchains" )
 
             for img in ep.repo_images:
                 name = os.path.basename(img)
