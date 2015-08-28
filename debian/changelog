@@ -1,3 +1,9 @@
+elbe (0.9.6.3) unstable; urgency=medium
+
+  * fix urlcheck in elbexml
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 09:42:13 +0200
+
 elbe (0.9.6.2) unstable; urgency=medium
 
   * fix 'elbe chroot' command
