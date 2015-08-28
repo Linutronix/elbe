@@ -241,6 +241,7 @@ class BuildSysrootAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
+        print ("remember to have <pkg>symlinks</pkg> in your target <pkg-list>")
         if len (args) != 1:
             print ("usage: elbe control build-sysroot <project_dir>", file=sys.stderr)
             sys.exit(20)
