@@ -112,6 +112,13 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except:
                 return "EndOfFile"
 
+    @soapmethod (String)
+    @authenticated_uid
+    @soap_faults
+    def build_sysroot (self, uid, builddir):
+        self.pm.open_project (uid, builddir)
+        self.pm.build_sysroot (uid)
+
     @soapmethod (String, Boolean, Boolean)
     @authenticated_uid
     @soap_faults

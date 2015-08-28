@@ -233,6 +233,24 @@ class BuildAction(ClientAction):
 ClientAction.register(BuildAction)
 
 
+class BuildSysrootAction(ClientAction):
+
+    tag = 'build_sysroot'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control build-sysroot <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.build_sysroot (builddir)
+
+ClientAction.register(BuildSysrootAction)
+
+
 class GetFileAction(ClientAction):
 
     tag = 'get_file'
