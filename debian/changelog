@@ -1,3 +1,10 @@
+elbe (0.9.6.4) unstable; urgency=medium
+
+  * automaticly install -dev pkgs on 'elbe build_sysroot'
+  * export build_sysroot to soap interface / elbe control
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 15:16:51 +0200
+
 elbe (0.9.6.3) unstable; urgency=medium
 
   * fix urlcheck in elbexml
