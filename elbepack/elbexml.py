@@ -125,6 +125,9 @@ class ElbeXML(object):
             mirror += "deb " + self.get_primary_mirror (None)
             mirror += " " + self.prj.text("suite") + " main\n"
 
+            mirror += "deb-src " + self.get_primary_mirror (None)
+            mirror += " " + self.prj.text("suite") + " main\n"
+
             if self.prj.has("mirror/url-list"):
                 for url in self.prj.node("mirror/url-list"):
                     if url.has("binary"):
