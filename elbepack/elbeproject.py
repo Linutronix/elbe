@@ -112,6 +112,21 @@ class ElbeProject (object):
 
     def build_sysroot (self):
 
+        debootstrap_pkgs = [p.et.text for p in self.xml.node ("debootstrappkgs")]
+
+        with self.buildenv:
+            try:
+                self.get_rpcaptcache().mark_install_devpkgs(debootstrap_pkgs)
+            except KeyError:
+                self.log.printo( "No Package " + p )
+            except SystemError:
+                self.log.printo( "Unable to correct problems " + p )
+            try:
+                self.get_rpcaptcache().commit()
+            except SystemError:
+                self.log.printo( "commiting changes failed" )
+                raise AptCacheCommitError ()
+
         sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
 
         with self.buildenv.rfs:

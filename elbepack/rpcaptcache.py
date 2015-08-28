@@ -86,6 +86,17 @@ class RPCAPTCache(InChRootObject):
                 auto_inst = not nodeps,
                 from_user = from_user )
 
+    def mark_install_devpkgs( self, ignore_pkgs ):
+        # list all debian src packages of all installed packages that don't
+        # come from debootstrap
+        src_list = [p.candidate.source_name for p in self.cache if p.is_installed and p.name not in ignore_pkgs ]
+        # go through all packages, remember package if its source package
+        # matches one of the installed packages and the binary package is a
+        # '-dev' package
+        dev_list = [s for s in self.cache if (s.candidate.source_name in src_list and s.name.endswith ('-dev'))]
+        for p in dev_list:
+            p.mark_install ()
+
     def cleanup (self, exclude_pkgs):
         for p in self.cache:
             if (p.is_installed and not p.is_auto_installed) or p.is_auto_removable:
