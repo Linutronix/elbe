@@ -1,3 +1,14 @@
+elbe (0.9.6.2) unstable; urgency=medium
+
+  * fix 'elbe chroot' command
+  * 'elbe initvm' builds source and binary cd per default now
+  * docs/quickstart rework
+  * elbexml only verify urls if skip_validation is not set
+  * use proxy configuration for mirror validation
+  * 'elbe initvm' make output directory if it doesn't exist
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 08:37:26 +0200
+
 elbe (0.9.6.1) unstable; urgency=medium
 
   * fix typo that breaks initvm creation
