@@ -47,29 +47,4 @@ def run_command( argv ):
         print "xml validation failed. Bailing out"
         sys.exit(20)
 
-    sysrootfilelist = os.path.join(project.builddir, "sysroot-filelist")
-
-    with project.buildenv.rfs:
-        project.log.do( "chroot %s /usr/bin/symlinks -cr /usr/lib" %
-                project.chrootpath )
-
-    triplet = project.xml.defs["triplet"]
-
-
-    paths = [ './usr/include', './lib/*.so', './lib/*.so.*',
-            './lib/' + triplet, './usr/lib/*.so', './usr/lib/*.so',
-            './usr/lib/*.so.*', './usr/lib/' + triplet ]
-
-    
-    project.log.do( "rm %s" % sysrootfilelist, allow_fail=True)
-
-    os.chdir( project.chrootpath )
-
-
-    for p in paths:
-        project.log.do( 'find -path "%s" >> %s' % (p, sysrootfilelist) )
-    project.log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" %
-            (project.builddir, project.chrootpath, sysrootfilelist) )
-    
-    
-
+    project.build_sysroot ()

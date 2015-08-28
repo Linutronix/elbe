@@ -110,6 +110,30 @@ class ElbeProject (object):
         else:
             self.targetfs = None
 
+    def build_sysroot (self):
+
+        sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
+
+        with self.buildenv.rfs:
+            self.log.do( "chroot %s /usr/bin/symlinks -cr /usr/lib" %
+                         self.chrootpath )
+
+        triplet = self.xml.defs["triplet"]
+
+        paths = [ './usr/include', './lib/*.so', './lib/*.so.*',
+                './lib/' + triplet, './usr/lib/*.so', './usr/lib/*.so',
+                './usr/lib/*.so.*', './usr/lib/' + triplet ]
+
+        self.log.do( "rm %s" % sysrootfilelist, allow_fail=True)
+
+        os.chdir( self.chrootpath )
+        for p in paths:
+            self.log.do( 'find -path "%s" >> %s' % (p, sysrootfilelist) )
+
+        self.log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" %
+                (self.builddir, self.chrootpath, sysrootfilelist) )
+
+
     def build (self, skip_debootstrap = False, build_bin = False,
             build_sources = False, cdrom_size = None, debug = False, skip_pkglist = False):
         # Write the log header
