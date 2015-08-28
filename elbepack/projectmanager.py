@@ -30,7 +30,7 @@ from elbepack.db import ElbeDB, ElbeDBError, get_versioned_filename
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
-from elbepack.asyncworker import APTUpdUpgrJob
+from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -272,6 +272,11 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
             self.worker.enqueue (BuildJob (ep, build_bin, build_src))
+
+    def build_sysroot (self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            self.worker.enqueue (BuildSysrootJob (ep))
 
     def build_update_package (self, userid, base_version):
         with self.lock:
