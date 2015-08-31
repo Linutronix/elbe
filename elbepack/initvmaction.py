@@ -36,11 +36,10 @@ import datetime
 # if necessary
 def ensure_outdir (wdfs, opt):
     if opt.outdir is None:
-        builddir_name = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        opt.outdir = wdfs.fname (builddir_name)
+        opt.outdir = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     fs = Filesystem ('/')
-    fs.mkdir_p (opt.outdir)
+    fs.mkdir_p (wdfs.fname (opt.outdir))
     print ("Saving generated Files to %s" % opt.outdir)
 
 class InitVMError(Exception):
