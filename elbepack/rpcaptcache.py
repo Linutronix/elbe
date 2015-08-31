@@ -97,6 +97,9 @@ class RPCAPTCache(InChRootObject):
         dev_list = [s for s in self.cache if (s.candidate.source_name in src_list and s.name.endswith ('-dev'))]
         for p in dev_list:
             p.mark_install ()
+        # ensure that the symlinks package will be installed (it's needed for
+        # fixing links inside the sysroot
+        self.cache ['symlinks'].mark_install ()
 
     def cleanup (self, exclude_pkgs):
         for p in self.cache:
