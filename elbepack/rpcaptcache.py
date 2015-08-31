@@ -87,6 +87,7 @@ class RPCAPTCache(InChRootObject):
                 from_user = from_user )
 
     def mark_install_devpkgs( self, ignore_pkgs ):
+        ignore_pkgs.remove ('libc6') # we don't want to ignore libc
         # list all debian src packages of all installed packages that don't
         # come from debootstrap
         src_list = [p.candidate.source_name for p in self.cache if p.is_installed and p.name not in ignore_pkgs ]
