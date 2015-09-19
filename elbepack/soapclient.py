@@ -28,6 +28,8 @@ import time
 import sys
 import os
 
+from elbepack.filesystem import Filesystem
+
 def set_suds_debug(debug):
     import logging
     if debug:
@@ -265,9 +267,16 @@ class GetFileAction(ClientAction):
 
         builddir = args[0]
         filename = args[1]
+        dst_fname = filename
 
-        client.download_file (builddir, filename, filename)
-        print (filename + " saved", file=sys.stderr)
+        if opt.output:
+            fs = Filesystem ('/')
+            dst = os.path.abspath (opt.output)
+            fs.mkdir_p (dst)
+            dst_fname = str (os.path.join (dst, filename))
+
+        client.download_file (builddir, filename, dst_fname)
+        print (dst_fname + " saved", file=sys.stderr)
 
 ClientAction.register(GetFileAction)
 
@@ -322,7 +331,10 @@ class GetFilesAction(ClientAction):
                 print ("%s" % (f.name))
 
             if opt.output:
-                dst_fname = os.path.join (opt.output, f.name)
+                fs = Filesystem ('/')
+                dst = os.path.abspath (opt.output)
+                fs.mkdir_p (dst)
+                dst_fname = str (os.path.join (dst, f.name))
                 client.download_file (builddir, f.name, dst_fname)
 
 ClientAction.register(GetFilesAction)
