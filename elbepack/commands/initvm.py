@@ -28,7 +28,7 @@ def run_command (argv):
     oparser = OptionParser (usage="usage: elbe initvm [options] <command>")
 
     oparser.add_option ("--directory", dest="directory", default=None,
-                        help="directory, where the initvm resides")
+                        help="directory, where the initvm resides, default is ./initvm")
 
     oparser.add_option ("--cdrom", dest="cdrom", default=None,
                         help="iso image of Binary cdrom")
@@ -64,7 +64,7 @@ def run_command (argv):
         InitVMAction.print_actions ()
         return
 
-    directory = opt.directory or os.getcwd()
+    directory = opt.directory or os.getcwd() + '/initvm'
 
     # Use absolute Path
     directory = os.path.abspath (directory)
