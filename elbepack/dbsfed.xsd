@@ -302,7 +302,7 @@
         <annotation>
           <documentation>
             used for pinning of all packages
-            TODO: example??
+            TODO: example?
           </documentation>
         </annotation>
       </element>
@@ -407,7 +407,7 @@
         <annotation>
           <documentation>
             used for pinning of all packages
-            TODO: example??
+            TODO: example?
           </documentation>
         </annotation>
       </element>
@@ -415,7 +415,7 @@
         <annotation>
           <documentation>
             gets dedented and striped and is then written to /etc/apt/preferences
-            TODO: example??
+            TODO: example?
           </documentation>
         </annotation>
       </element>
