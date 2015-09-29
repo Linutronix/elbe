@@ -31,3 +31,5 @@ dist/
 elbe.egg-info/
 tags
 *.swp
+*~
+\#*#
