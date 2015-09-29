@@ -154,10 +154,16 @@ class ElbeXML(object):
                 pass
             elif l.startswith ("deb "):
                 lsplit = l.split (" ")
-                urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
+                if lsplit[2].endswith('/'):
+                    urls.append ("%s/%s/Release" % (lsplit[1], lsplit[2]))
+                else:
+                    urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
             elif l.startswith ("deb-src "):
                 lsplit = l.split (" ")
-                urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
+                if lsplit[2].endswith('/'):
+                    urls.append ("%s/%s/Release" % (lsplit[1], lsplit[2]))
+                else:
+                    urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
 
         if self.prj.has ("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
