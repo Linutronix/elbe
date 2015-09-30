@@ -47,8 +47,7 @@ Depends: ${misc:Depends},
   python-mako,
   p7zip-full,
   make
-Recommends: qemu-kvm,
-  elbe-doc (= ${binary:Version}),
+Recommends: elbe-doc (= ${binary:Version}),
   elbe-control (= ${binary:Version})
 Description: embedded linux build environment
  A flexible Root Filesystem builder.
