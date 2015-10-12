@@ -1,0 +1,25 @@
+ELBE TestSpec,,,,
+,,,,
+#,Component,Functional Requirement,Test,Expectation
+1,debianization,Debian binary and source packages,build packages with pbuilder,"same number of binary packages as in previous test, one source package"
+2,,Debian Repository,build Debian repository with reprepro or aptly,Repo including all necessary packages (don't forget elbe-bootstrap)
+3,initvm create,build an initvm image,use absolute path for –directory,Makefile and buildenv.img at specified path
+4,,,use relative path for –directory,Makefile and buildenv.img at specified path
+5,,,use elbe initvm create without any parameter,Makefile and buildenv.img at default locations
+6,,build a customized initvm,"provide a XML file with a <initvm> description, that installs an additional package","specified package is installed in initvm, elbe daemon is running in initvm"
+7,initvm start,start initvm,start initvm,can connect to elbe-daemon
+8,initvm attach,get console at initvm,login with root:root,get login prompt and shell
+9,initvm stop,stop initvm,stop initvm,"kvm process terminated, no connection to elbe-daemon"
+10,initvm submit,work with absoulte paths,Build an example XML using absolute path for –directory and –output,"Elbe-project img, source and binary iso is valid and at the specified destination, project was deleted from initvm"
+11,,work with relative paths,Build an example XML using relative path for –directory and –output,"Elbe-project img, source and binary iso is valid and at the specified destination, project was deleted from initvm"
+12,,guess paths,Build an example XML using no path for –directory and –output,"Elbe-project img, source and binary iso is valid and at elbe-build-<timestamp>, project was deleted from initvm"
+13,,keep projects in initvm,"Build an example XML using –directory, --skip-build-bin, --skip-build-sources, --skip-download –keep-files","Elbe-project img is valid and at elbe-build-<timestamp>, project is stored in initvm"
+14,,all provided examples are functional,"Build an example XML using –directory, --skip-build-bin, --skip-build-sources","Elbe-project images are valid and at the specified destinations, projects are deleted from initvm"
+15,,build from cdrom,elbe initvm submit binary-cdrom.iso,"Elbe initvm and project is generated from ISO image, created binary image is the same as the original image"
+16,,build from source.xml,rebuild an image from a source.xml (with an updated package on the mirror),The updated package needs to be reported in validation.xml
+17,,detect incomplete builds,build project with unavailable packages and finetuning rules that fail,error report should include informations about the failed build steps
+18,,Repo key verification,URLs to repo keys provide a key that don't belong to the specified repository,error should be reported
+19,initvm start_build,start build in background,start build in background and poll for termination using elbe control list_projects,build finishes and is stored in vm
+20,,build invalid project (RFS doesn't fit in IMG),"start build in background, after termination get report from initvm",build state is failed and error report available
+21,grub installation,grub is installed and working with debian kernel,Boot image produced by elbe-desktop.xml in kvm,ssh login is possible
+22,,grub is installed and working with latest stable kernel,"use ellbe/contrib' patches on latest stable kernel, build debian package, specify package in XML (no debian kernel in XML), build XML",ssh login is possible
