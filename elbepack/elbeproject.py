@@ -54,7 +54,7 @@ class ElbeProject (object):
             skip_urlcheck = False, rpcaptcache_notifier = None,
             private_data = None, postbuild_file = None, presh_file = None,
             postsh_file = None, savesh_file = None):
-        self.builddir = os.path.abspath(builddir)
+        self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
 
