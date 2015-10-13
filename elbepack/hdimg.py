@@ -220,6 +220,7 @@ class grubinstaller( object ):
             self.outf.do( "mount --bind /proc %s" % os.path.join( imagemnt, "proc" ) )
             self.outf.do( "mount --bind /sys %s" % os.path.join( imagemnt, "sys" ) )
 
+            self.outf.do( "chroot %s  update-initramfs -u -k all"  % imagemnt )
             self.outf.do( "chroot %s  update-grub2"  % imagemnt )
 
             self.outf.do( "grub-install --no-floppy --grub-mkdevicemap=%s/boot/grub/device.map --root-directory=%s /dev/loop0" % (imagemnt,imagemnt))
