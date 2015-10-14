@@ -105,6 +105,8 @@ class etree(ebase):
         ebase.__init__( self, ElementTree( file=fname ) )
 
     def write( self, fname ):
+        # Make sure, that we end with a newline
+        self.et.getroot().tail = '\n'
         self.et.write(fname)
 
     def tostring (self):
