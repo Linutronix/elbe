@@ -402,7 +402,7 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
             img_files.extend (imgs)
 
     gz_img_files = []
-    for i in img_files:
+    for i in set(img_files):
         outf.do ( 'gzip "%s"' % os.path.join (target, i))
         gz_img_files.append( i+".gz" )
 
