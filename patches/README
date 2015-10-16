@@ -1,9 +1,0 @@
-These patches can be applied on a linux kernel.
-
-The first patch can only be used if the kernel-source is maintained in a
-git repository. If the patch is applied 'make deb-pkg' also generates a
-'debian source package'.
-
-The second patch is needed if 'grub' should be used. The patch adds some
-runtime dependencies. The additional tools are needed by grub to generate
-a correct grub-menu entry for the kernel.
