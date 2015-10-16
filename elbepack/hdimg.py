@@ -401,4 +401,9 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
             imgs = build_image_mtd( outf, i, target )
             img_files.extend (imgs)
 
-    return img_files
+    gz_img_files = []
+    for i in img_files:
+        outf.do ( 'gzip "%s"' % os.path.join (target, i))
+        gz_img_files.append( i+".gz" )
+
+    return gz_img_files
