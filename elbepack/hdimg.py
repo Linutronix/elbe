@@ -403,7 +403,11 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
 
     gz_img_files = []
     for i in set(img_files):
-        outf.do ( 'gzip "%s"' % os.path.join (target, i))
-        gz_img_files.append( i+".gz" )
+        try:
+            outf.do ( 'gzip "%s"' % os.path.join (target, i))
+            # only add gz to gz_img_files, if no exception is thrown
+            gz_img_files.append( i+".gz" )
+        except CommandError:
+            pass
 
     return gz_img_files
