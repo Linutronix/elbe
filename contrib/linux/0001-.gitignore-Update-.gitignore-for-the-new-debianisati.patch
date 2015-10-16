@@ -1,0 +1,41 @@
+From 7aff9c5e32c25bc68f25e4840b1a500d77044ad4 Mon Sep 17 00:00:00 2001
+From: Torben Hohn <torbenh@linutronix.de>
+Date: Mon, 12 Oct 2015 14:46:48 +0200
+Subject: [PATCH 1/5] .gitignore: Update .gitignore, for the new debianisation
+ scheme
+
+Signed-off-by: Torben Hohn <torbenh@linutronix.de>
+---
+ .gitignore | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index 4ad4a98..c8d354c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -50,11 +50,6 @@ Module.symvers
+ /Module.markers
+ 
+ #
+-# Debian directory (make deb-pkg)
+-#
+-/debian/
+-
+-#
+ # tar directory (make tar*-pkg)
+ #
+ /tar-install/
+@@ -106,3 +101,10 @@ all.config
+ 
+ # Kdevelop4
+ *.kdev4
++
++# elbe debianisation
++/debian/build
++/debian/files
++
++# custom mk.sh script
++/mk.sh
+-- 
+2.1.4
+
