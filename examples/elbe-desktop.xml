@@ -10,7 +10,7 @@
 		</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>192.168.0.153</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
@@ -63,6 +63,9 @@
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
 			<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
+			<command>echo de_DE.UTF-8 > /etc/locale.gen</command>
+			<command>locale-gen</command>
+			<command>echo "GRUB_GFXPAYLOAD_LINUX=text" >> /etc/default/grub</command>
 		</finetuning>
 		<pkg-list>
 			<pkg>grub-pc</pkg>
