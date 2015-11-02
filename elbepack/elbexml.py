@@ -165,6 +165,9 @@ class ElbeXML(object):
                 else:
                     urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
 
+        if not self.prj:
+            return
+
         if self.prj.has ("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
             os.environ ["http_proxy"] = self.prj.text ("mirror/primary_proxy").strip()
