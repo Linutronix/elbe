@@ -180,7 +180,10 @@ class CreateAction(InitVMAction):
             if args[0].endswith ('.xml'):
                 # We have an xml file, use that for elbe init
                 exampl = args[0]
-                xml = etree( exampl )
+                try:
+                    xml = etree( exampl )
+                except ValidationError as e:
+                    print ('XML file is inavlid: ' + str(e))
                 # Use default XML if no initvm was specified
                 if not xml.has( "initvm" ):
                     exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
@@ -253,6 +256,16 @@ class CreateAction(InitVMAction):
             # if provided xml file has no initvm section exampl is set to a
             # default initvm XML file. But we need the original file here
             if args[0].endswith ('.xml'):
+                # stop here if no project node was specified
+                try:
+                    x = ElbeXML (args[0])
+                except ValidationError as e:
+                    print ('XML file is inavlid: ' + str(e))
+                    sys.exit(20)
+                if not x.has('project'):
+                    print ('elbe initvm ready: use "elbe initvm submit myproject.xml" to build a project');
+                    sys.exit(0)
+
                 ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, args[0]))
             else:
                 ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
