@@ -18,8 +18,9 @@ ELBE TestSpec,,,,
 15,,build from cdrom,elbe initvm submit binary-cdrom.iso,"Elbe initvm and project is generated from ISO image, created binary image is the same as the original image"
 16,,build from source.xml,rebuild an image from a source.xml (with an updated package on the mirror),The updated package needs to be reported in validation.xml
 17,,detect incomplete builds,build project with unavailable packages and finetuning rules that fail,error report should include informations about the failed build steps
-18,,Repo key verification,URLs to repo keys provide a key that don't belong to the specified repository,error should be reported
+18,,Repo key verification,URLs to repo keys provide a key that don't belong to the specified repository,error should be reported, also during 'initvm create'
 19,initvm start_build,start build in background,start build in background and poll for termination using elbe control list_projects,build finishes and is stored in vm
 20,,build invalid project (RFS doesn't fit in IMG),"start build in background, after termination get report from initvm",build state is failed and error report available
 21,grub installation,grub is installed and working with debian kernel,Boot image produced by elbe-desktop.xml in kvm,ssh login is possible
 22,,grub is installed and working with latest stable kernel,"use ellbe/contrib' patches on latest stable kernel, build debian package, specify package in XML (no debian kernel in XML), build XML",ssh login is possible
+23,Repo key verification,noauth isnt set and no pubkey is provided,error should be detected in xml validation
