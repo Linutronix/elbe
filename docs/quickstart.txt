@@ -198,40 +198,12 @@ It is acessed with the following commands:
 $ elbe get_archive fun.xml archive.tar.bz2
 ------------------------------------------------------------------------------
 
-Its a normal tar.bz2 which can be manipulated and regenerated using tar
+It is a normal tar.bz2 which can be manipulated and reinjected into the XML:
 ------------------------------------------------------------------------------
 $ mkdir arch
 $ tar xvfj archive.tar.bz2 -C arch
 $ echo hello > arch/hello
-------------------------------------------------------------------------------
-
-When regenerating the tar archive, be careful about file ownership inside the
-tar file.
-------------------------------------------------------------------------------
-$ tar cvfj archive.tar.bz2 --owner=root --group=root -C arch/ .
-------------------------------------------------------------------------------
-
-The updated archive file can then be inserted into the XML file:
-------------------------------------------------------------------------------
-$ elbe chg_archive fun.xml archive.tar.bz2
-------------------------------------------------------------------------------
-
-During development and inside version-control-systems the following
-Makefile can be used to update the archive inside the XML file from
-a archive directory in the same folder.
-
-[source,Makefile]
-------------------------------------------------------------------------------
-all: update-archive
-
-.PHONY: archive.tar.bz2 update-archive
-
-archive.tar.bz2:
-	tar cvfj archive.tar.bz2 --owner=root --group=root -C archive/ .
-
-
-update-archive: archive.tar.bz2
-	elbe chg_archive fun.xml archive.tar.bz2
+$ elbe chg_archive fun.xml arch
 ------------------------------------------------------------------------------
 
 Adding packages to the 'list of packages to install'
