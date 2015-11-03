@@ -19,7 +19,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-
+import os
 
 from base64 import standard_b64encode
 
@@ -43,7 +43,11 @@ def enbase( fname ):
 
 def run_command( argv ):
 
-    oparser = OptionParser( usage="usage: %prog chg_archive <xmlfile> <archive>")
+    oparser = OptionParser( usage="usage: %prog chg_archive [options] <xmlfile> [<archive>|<directory>]")
+    oparser.add_option ("--keep-attributes", action="store_true",
+                        help="keep file owners and groups, if not specified all files will belong to root:root",
+                        dest="keep_attributes", default=False)
+
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 2:
@@ -57,10 +61,20 @@ def run_command( argv ):
         print "Error reading xml file!"
         sys.exit(20)
 
+    if os.path.isdir (args[1]):
+        archive = '.archive.tbz'
+        if opt.keep_attributes:
+            cmd = 'tar cfj .archive.tbz -C '
+        else:
+            cmd = 'tar cjf .archive.tbz --owner=root --group=root -C '
+        cmd += args[1] + ' .'
+        os.system (cmd)
+    else:
+        archive = args[1]
 
     try:
         arch = xml.ensure_child( "archive" )
-        arch.set_text( enbase( args[1] ) )
+        arch.set_text( enbase( archive ) )
     except:
         print "Error reading archive"
         sys.exit(20)
@@ -71,4 +85,5 @@ def run_command( argv ):
         print "Unable to write new xml file"
         sys.exit(20)
 
-
+    if os.path.isdir (args[1]):
+        os.remove (archive)
