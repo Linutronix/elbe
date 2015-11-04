@@ -234,7 +234,7 @@ update-archive: archive.tar.bz2
 	elbe chg_archive fun.xml archive.tar.bz2
 ------------------------------------------------------------------------------
 
-Adding packages to the 'list of packages to install'
+Adding packages to the "list of packages to install"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The XML file contains a 'list of packages to install' `<pkg-list>` in the
 `<target>` XML node. Inserting a line containing
