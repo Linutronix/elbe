@@ -201,7 +201,7 @@ class CreateAction(InitVMAction):
                     sys.exit (20)
 
                 try:
-                    exml = ElbeXML (tmp.fname ('source.xml'))
+                    exml = ElbeXML (tmp.fname ('source.xml'), skip_urlcheck=True)
                 except ValidationError as e:
                     print ('Iso image does contain a source.xml file.', file=sys.stderr)
                     print ('But that xml does not validate correctly', file=sys.stderr)
@@ -393,7 +393,7 @@ class SubmitAction(InitVMAction):
                     sys.exit (20)
 
                 try:
-                    exml = ElbeXML (tmp.fname ('source.xml'))
+                    exml = ElbeXML (tmp.fname ('source.xml'), skip_urlcheck=True)
                 except ValidationError as e:
                     print ('Iso image does contain a source.xml file.', file=sys.stderr)
                     print ('But that xml does not validate correctly', file=sys.stderr)

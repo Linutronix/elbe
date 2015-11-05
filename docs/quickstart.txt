@@ -206,7 +206,7 @@ $ echo hello > arch/hello
 $ elbe chg_archive fun.xml arch
 ------------------------------------------------------------------------------
 
-Adding packages to the 'list of packages to install'
+Adding packages to the "list of packages to install"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The XML file contains a 'list of packages to install' `<pkg-list>` in the
 `<target>` XML node. Inserting a line containing
