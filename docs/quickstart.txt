@@ -199,12 +199,12 @@ $ elbe get_archive fun.xml archive.tar.bz2
 ------------------------------------------------------------------------------
 
 It is a normal tar.bz2 which can be manipulated and reinjected into the XML:
-------------------------------------------------------------------------------
+----------------------------------
 $ mkdir arch
 $ tar xvfj archive.tar.bz2 -C arch
 $ echo hello > arch/hello
 $ elbe chg_archive fun.xml arch
-------------------------------------------------------------------------------
+----------------------------------
 
 Adding packages to the "list of packages to install"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
