@@ -507,27 +507,30 @@ def is_update_file(upd_file):
     return True
 
 
+update_lock = threading.Lock()
+
 def handle_update_file(upd_file, status, remove=False):
-    status.log ("checking file: " + str(upd_file))
-    root, extension = os.path.splitext(upd_file)
+    with update_lock:
+        status.log ("checking file: " + str(upd_file))
+        root, extension = os.path.splitext(upd_file)
 
-    if extension == "gpg":
-        fname = unsign_file (upd_file)
-        if remove:
-            os.remove (upd_file)
-        if fname:
-            action_select (fname, status)
+        if extension == "gpg":
+            fname = unsign_file (upd_file)
             if remove:
-                os.remove (fname)
-        else:
-            status.log ("checking signature failed: " + str(upd_file))
+                os.remove (upd_file)
+            if fname:
+                action_select (fname, status)
+                if remove:
+                    os.remove (fname)
+            else:
+                status.log ("checking signature failed: " + str(upd_file))
 
-    elif status.nosign:
-        action_select (upd_file, status)
-        if remove:
-            os.remove (upd_file)
-    else:
-        status.log ("ignore file: " + str(upd_file))
+        elif status.nosign:
+            action_select (upd_file, status)
+            if remove:
+                os.remove (upd_file)
+        else:
+            status.log ("ignore file: " + str(upd_file))
 
 
 class UpdateMonitor(object):
