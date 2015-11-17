@@ -30,6 +30,12 @@ import sys
 import time
 import threading
 
+try:
+    import pyudev
+    udev_available = True
+except ImportError:
+    udev_available = False
+
 from multiprocessing import Process, Queue
 from optparse import OptionParser
 from shutil import copyfile, rmtree, copy
@@ -381,6 +387,7 @@ def apply_update (fname, status):
 def action_select (upd_file, status):
 
     status.log ( "updating: " + upd_file)
+    return
 
     try:
         upd_file_z = ZipFile (upd_file)
@@ -484,55 +491,178 @@ def action_select (upd_file, status):
         status.log ("update done: " + prefix)
 
 
-class FileMonitor (pyinotify.ProcessEvent):
+def is_update_file(upd_file):
+    root, extension = os.path.splitext(upd_file)
+    if extension == "gpg":
+        return True
 
-    def __init__ (self, status):
-        pyinotify.ProcessEvent.__init__ (self)
+    try:
+        upd_file_z = ZipFile (upd_file)
+    except BadZipfile:
+        return False
+
+    if not "new.xml" in upd_file_z.namelist ():
+        return False
+
+    return True
+
+
+def handle_update_file(upd_file, status, remove=False):
+    status.log ("checking file: " + str(upd_file))
+    root, extension = os.path.splitext(upd_file)
+
+    if extension == "gpg":
+        fname = unsign_file (upd_file)
+        if remove:
+            os.remove (upd_file)
+        if fname:
+            action_select (fname, status)
+            if remove:
+                os.remove (fname)
+        else:
+            status.log ("checking signature failed: " + str(upd_file))
+
+    elif status.nosign:
+        action_select (upd_file, status)
+        if remove:
+            os.remove (upd_file)
+    else:
+        status.log ("ignore file: " + str(upd_file))
+
+
+class UpdateMonitor(object):
+    def __init__(self, status):
         self.status = status
 
-    def process_IN_CLOSE_WRITE (self, event):
+    def start(self):
+        raise NotImplemented
 
-        self.status.log ("checking file: " + str(event.pathname))
-        extension = event.pathname.split ('.') [-1]
+    def stop(self):
+        raise NotImplemented
 
-        if extension == "gpg":
-            fname = unsign_file (event.pathname)
-            os.remove (event.pathname)
-            if fname:
-                action_select (fname, self.status)
-                os.remove (fname)
-            else:
-                self.status.log ("checking signature failed: " + event.pathname)
+    def join(self):
+        raise NotImplemented
 
-        elif self.status.nosign:
-            action_select (event.pathname, self.status)
-            os.remove (event.pathname)
-        else:
-            self.status.log ("ignore file: " + str(event.pathname))
+
+if udev_available:
+    def get_mountpoint_for_device(dev):
+        for line in file("/proc/mounts"):
+            fields = line.split()
+            try:
+                if fields[0] == dev:
+                    return fields[1]
+            except:
+                pass
+        return None
+
+
+    class USBMonitor (UpdateMonitor):
+        def __init__(self, status, recursive=False):
+            super(USBMonitor, self).__init__(status)
+            self.recursive = recursive
+            self.context = pyudev.Context()
+            self.monitor = pyudev.Monitor.from_netlink(self.context)
+            self.observer = pyudev.MonitorObserver(self.monitor, self.handle_event)
+
+        def handle_event(self, action, device):
+            if ( action == 'add'
+                 and device.get('ID_BUS') == 'usb'
+                 and device.get('DEVTYPE') == 'partition' ):
+
+                mnt = self.get_mountpoint_for_device(device.device_node)
+                if not mnt:
+                    self.status.log("Detected USB drive but it was not mounted.")
+                    return
+
+                for (dirpath, dirnames, filenames) in os.walk(mnt):
+                    # Make sure we process the files in alphabetical order
+                    # to get a deterministic behaviour
+                    dirnames.sort()
+                    filenames.sort()
+                    for f in filenames:
+                        upd_file = os.path.join(dirpath, f)
+                        if is_update_file(upd_file):
+                            self.status.log("Found update file '%s' on USB-Device."
+                                % upd_file)
+                            handle_update_file(upd_file, self.status, remove=False)
+                        if self.status.stop:
+                            break
+                    if (not self.recursive) or self.status.stop:
+                        break
+
+        def start(self):
+            self.status.log ("monitoring USB")
+            self.observer.start()
+
+        def stop(self):
+            self.observer.send_stop()
+
+        def join(self):
+            self.observer.join()
+
+        def get_mountpoint_for_device(self, dev):
+            for line in file("/proc/mounts"):
+                fields = line.split()
+                try:
+                    if fields[0] == dev:
+                        return fields[1]
+                except:
+                    pass
+            return None
+
+
+class FileMonitor (UpdateMonitor):
+
+    class EventHandler (pyinotify.ProcessEvent):
+        def __init__ (self, status):
+            pyinotify.ProcessEvent.__init__ (self)
+            self.status = status
+
+        def process_IN_CLOSE_WRITE (self, event):
+            handle_update_file(event.pathname, self.status, remove=True)
+
+    class ObserverThread (threading.Thread):
+        def __init__ (self, status, monitor):
+            threading.Thread.__init__ (self, name="ObserverThread")
+            self.status = status
+            self.monitor = monitor
+
+        def run (self):
+            self.status.log ("monitoring updated dir")
+
+            while 1:
+                if self.monitor.notifier.check_events (timeout=1000):
+                    self.monitor.notifier.read_events ()
+                    self.monitor.notifier.process_events ()
+
+                if self.status.stop:
+                    if self.status.soapserver:
+                        self.status.soapserver.shutdown ()
+                    return
+
+    def __init__(self, status, update_dir):
+        super(FileMonitor, self).__init__(status)
+        self.wm = pyinotify.WatchManager ()
+        self.notifier = pyinotify.Notifier (self.wm)
+        self.wm.add_watch (update_dir, pyinotify.IN_CLOSE_WRITE,
+                           proc_fun=FileMonitor.EventHandler (self.status))
+        self.observer = FileMonitor.ObserverThread (self.status, self)
+
+    def start(self):
+        self.observer.start()
+
+    def stop(self):
+        pass
+
+    def join(self):
+        self.observer.join()
+
 
 def shutdown (signum, fname, status):
     status.stop = True
-    status.observer = None
+    for mon in status.monitors:
+        mon.stop()
 
-class ObserverThread (threading.Thread):
-
-    def __init__ (self, status):
-                threading.Thread.__init__ (self, name="ObserverThread")
-                self.status = status
-
-    def run (self):
-
-        self.status.log ("monitoring updated dir")
-
-        while 1:
-            if self.status.observer.check_events (timeout=1000):
-                self.status.observer.read_events ()
-                self.status.observer.process_events ()
-
-            if self.status.stop:
-                if self.status.soapserver:
-                    self.status.soapserver.shutdown ()
-                return
 
 def run_command (argv):
 
@@ -562,6 +692,10 @@ def run_command (argv):
                         default=False,
                         help="force output to stdout instead of syslog")
 
+    oparser.add_option ("--usb", action="store_true", dest="use_usb",
+                        default=False,
+                        help="monitor USB devices")
+
     (opt,args) = oparser.parse_args(argv)
 
     status.nosign = opt.nosign
@@ -580,14 +714,23 @@ def run_command (argv):
     if not os.path.isdir (update_dir):
         os.makedirs (update_dir)
 
-    wm = pyinotify.WatchManager ()
-    status.observer = pyinotify.Notifier (wm)
-    wm.add_watch (update_dir, pyinotify.IN_CLOSE_WRITE,
-                  proc_fun=FileMonitor (status))
+    status.monitors = []
+
+    fm = FileMonitor(status, update_dir)
+    status.monitors.append(fm)
+    if opt.use_usb:
+        if udev_available:
+            um = USBMonitor(status, recursive=False)
+            status.monitors.append(um)
+        else:
+            status.log("USB Monitor has been requested. "
+                       "This requires pyudev module which could not be imported.")
+            sys.exit(1)
+
     signal.signal (signal.SIGTERM, shutdown)
 
-    obs_thread = ObserverThread (status)
-    obs_thread.start ()
+    for mon in status.monitors:
+        mon.start()
 
     status.soapserver = make_server (opt.host, int (opt.port),
                                      UpdateService (status))
@@ -596,4 +739,5 @@ def run_command (argv):
     except:
         shutdown (1, "now", status)
 
-    obs_thread.join ()
+    for mon in status.monitors:
+        mon.join()
