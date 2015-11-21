@@ -1,36 +1,55 @@
 # This Dockefile generate a image for the elbe buildsystem
 
 # baseimage is debian wheezy
-FROM debian:wheezy
+FROM debian:jessie
 
-# Maintainer
-MAINTAINER Silvio Fricke <silvio.fricke@gmail.com>
-
-# set debian/ubuntu config environment to noninteractive
-ENV DEBIAN_FRONTEND noninteractive
-
-# setup the initsystem
-RUN dpkg-divert --local --rename --add /sbin/initctl && ln -sf /bin/true /sbin/initctl
+ENV LANG C.UTF-8
 
 # update and upgrade
-RUN apt-get update -y && apt-get upgrade -y
-
-# development base installation
-RUN apt-get install -y git build-essential openssh-server vim supervisor sudo \
-		       cpio python-mako python-lxml python-apt wget qemu kvm \
-		       qemu-system qemu-kvm qemu-keymaps qemu-utils \
-		       libvirt-bin qemu-utils qemu-system qemu-user-static \
-		       e2tools python-mako python python-lxml python-apt \
-		       p7zip-full make python-parted
-
-# clean up
-RUN apt-get clean
+RUN export DEBIAN_FRONTEND noninteractive ;\
+    apt-get update -y ;\
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        cpio \
+        e2tools \
+        git \
+        kvm \
+        libvirt-bin \
+        make \
+        openssh-server \
+        p7zip-full \
+        python python-lxml \
+        python-apt \
+        python-apt \
+        python-lxml \
+        python-mako \
+        python-mako \
+        python-parted \
+        python-suds \
+        qemu \
+        qemu-keymaps \
+        qemu-kvm \
+        qemu-system \
+        qemu-system \
+        qemu-user-static \
+        qemu-utils \
+        qemu-utils \
+        sudo \
+        supervisor \
+        tmux \
+        vim \
+        wget \
+        ; \
+    apt-get clean -y ;\
+    rm -rf /var/lib/apt/lists/*
 
 # additions
 ADD adds/supervisord.conf /etc/supervisord.conf
 
 # create elbe user
-RUN useradd -d /home/elbe -U -G libvirt,kvm,libvirt-qemu -m -s /bin/bash -u 1000 elbe
+RUN groupadd -g 78 -o -r kvm78          # archlinux
+RUN useradd -d /home/elbe -U -G libvirt,kvm,kvm78,libvirt-qemu -m -s /bin/bash -u 1000 elbe
 RUN echo "root:elbe" | chpasswd
 RUN echo "elbe:elbe" | chpasswd
 
@@ -38,8 +57,9 @@ RUN echo "elbe:elbe" | chpasswd
 RUN echo "%elbe  ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/elbegrp
 RUN chmod 0440 /etc/sudoers.d/elbegrp
 
-# download git repository
-RUN su --login elbe -c "git clone https://github.com/Linutronix/elbe.git"
+# add sbc (https://github.com/turicas/sbc)
+ADD https://raw.githubusercontent.com/turicas/sbc/develop/sbc /usr/bin/sbc
+RUN chmod a+rx /usr/bin/sbc
 
 # ssh and startup configuration
 RUN mkdir -v /var/run/sshd
