@@ -130,7 +130,7 @@ def get_initrd_uri( prj, defs, arch ):
         uri = x.archive_uri(r.filename)
 
         if not x.is_trusted:
-            raise NoKinitrdException( 'Did not find a trusted elbe-bootstrap Package' )
+            return "", uri
 
         return r.sha1_hash, uri
     else:
