@@ -163,13 +163,13 @@ class RepoBase(object):
         files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
-            self.log.do( "genisoimage -o %s -J -R %s" % (fname, new_path) )
+            self.log.do( "genisoimage -o %s -J -joliet-long -R %s" % (fname, new_path) )
             files.append (fname)
         else:
             for i in range(self.volume_count+1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
-                self.log.do( "genisoimage -o %s -J -R %s" % (newname,
+                self.log.do( "genisoimage -o %s -J -joliet-long -R %s" % (newname,
                                                              volfs.path) )
                 files.append (newname)
 

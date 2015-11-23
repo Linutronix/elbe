@@ -157,7 +157,7 @@ class ElbeProject (object):
         # Create the build environment, if it does not exist yet
         if not self.buildenv:
             self.log.do( 'mkdir -p "%s"' % self.chrootpath )
-            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath, build_sources = build_sources )
             skip_pkglist = False
 
         # Install packages

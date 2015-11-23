@@ -33,7 +33,7 @@ class DebootstrapException (Exception):
         Exception.__init__ (self, "Debootstrap Failed")
 
 class BuildEnv ():
-    def __init__ (self, xml, log, path ):
+    def __init__ (self, xml, log, path, build_sources=False ):
 
         self.xml = xml
         self.log = log
@@ -54,7 +54,7 @@ class BuildEnv ():
             self.fresh_debootstrap = False
             self.need_dumpdebootstrap = False
 
-        self.initialize_dirs ()
+        self.initialize_dirs (build_sources=build_sources)
 
     def cdrom_umount(self):
         if self.xml.prj.has ("mirror/cdrom"):
@@ -167,8 +167,8 @@ class BuildEnv ():
         mkdir_p (self.rfs.path + "/state/lists/partial")
         touch_file (self.rfs.path + "/state/status")
 
-    def initialize_dirs (self):
-        mirror = self.xml.create_apt_sources_list ()
+    def initialize_dirs (self, build_sources=False):
+        mirror = self.xml.create_apt_sources_list (build_sources=build_sources)
 
         if self.rfs.exists("etc/apt/sources.list"):
             self.rfs.remove("etc/apt/sources.list")
