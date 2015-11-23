@@ -113,7 +113,7 @@ class ElbeXML(object):
 
 
     # XXX: maybe add cdrom path param ?
-    def create_apt_sources_list (self):
+    def create_apt_sources_list (self, build_sources=False):
         if self.prj is None:
             return "# No Project"
 
@@ -125,8 +125,9 @@ class ElbeXML(object):
             mirror += "deb " + self.get_primary_mirror (None)
             mirror += " " + self.prj.text("suite") + " main\n"
 
-            mirror += "deb-src " + self.get_primary_mirror (None)
-            mirror += " " + self.prj.text("suite") + " main\n"
+            if build_sources:
+                mirror += "deb-src " + self.get_primary_mirror (None)
+                mirror += " " + self.prj.text("suite") + " main\n"
 
             if self.prj.has("mirror/url-list"):
                 for url in self.prj.node("mirror/url-list"):
