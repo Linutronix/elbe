@@ -13,32 +13,27 @@ other than debian based.
 [doc]: https://www.docker.io "Docker Homepage"
 [elb]: http://elbe-rfs.org   "ELBE Homepage"
 
-## Depencies
+## Dependencies
 
-You need docker installed and a running docker service.
+You need docker installed, a running docker service and `make` installed.
 
-## Build image
 
-    % cd dockerfile
-    % docker build -t own-elbe-system .
+## usage
 
-## start
+A `Makefile` with some handy targets are provided. Per default the image name
+is `elbe-image` and a started container name is `elbe`. This names are
+changeable via `IMAGENAME` and `CONTAINERNAME` environment variables.
 
-Start a dettached docker session
+* `build`: build the image
+* `start` start a container, mounts the elbe git-archive to `/elbe` and gives
+  back the ip address
+* `stop`: stop a running container
+* `stoprm`: stop and remove the container
+* `getip`: return ip address of a running container
+* `connect`: connect via ssh to the container
+* `cleanssh`: remove the used ip address (see `getip`) from your `${HOME}/.ssh/known_host`
 
-    % docker run --privileged -d own-elbe-system
-
-You get a Container-ID like this one
-
-    a242543d614f8cd97729e8fe0c417897c769e6c381390d168f3fc39c0c497132
-
-## connect
-
-To connect to this container you get the ip with docker inspect.
-
-    % docker inspect a242543d614f8c | grep IPAddress
-    "IPAddress": "172.17.0.2",
-    % ssh root@172.17.0.2
+After `connect` you can find the elbe git repository under `/elbe`.
 
 ## passwords
 

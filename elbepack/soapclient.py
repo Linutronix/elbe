@@ -358,7 +358,8 @@ class WaitProjectBusyAction(ClientAction):
             if not busy:
                 break
             else:
-                print ("project still busy, waiting")
+                localtime = time.asctime(time.localtime(time.time()))
+                print (localtime + "-- project still busy, waiting")
                 time.sleep(5)
 
 ClientAction.register(WaitProjectBusyAction)
