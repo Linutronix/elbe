@@ -1,1 +1,3 @@
+./usr/lib/python2.*/*-packages/elbepack/updated.py
+./usr/lib/python2.*/*-packages/elbepack/updated_monitors.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/updated.py
