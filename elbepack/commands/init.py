@@ -132,8 +132,8 @@ def run_command( argv ):
     out_path = os.path.join(path,".elbe-in")
     try:
         os.makedirs(out_path)
-    except:
-        print 'unable to create subdirectory: %s' % out_path
+    except OSError, e:
+        print 'unable to create subdirectory: %s (%s)' % (out_path, e.strerror)
         sys.exit(30)
 
     d = {"elbe_version": elbe_version,
