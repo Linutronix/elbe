@@ -220,12 +220,22 @@ class ElbeProject (object):
         self.buildenv.rfs.write_licenses(f, self.log)
         f.close()
 
-        # Generate images
-        if self.get_rpcaptcache().is_installed( 'grub-pc' ):
-            grub_version = 2
+        # Read arch and codename from xml
+        arch = self.xml.text( "project/arch", key="arch" )
+        codename = self.xml.text( "project/suite" )
 
+        # Use some handwaving to determine grub version
+        # jessie and wheezy grubs are 2.0 but differ in behaviour
+        #
+        # We might also want support for legacy grub
+        if self.get_rpcaptcache().is_installed( 'grub-pc' ):
+            if codename == "jessie":
+                grub_version = 2
+            else:
+                grub_version = 1
         elif self.get_rpcaptcache().is_installed( 'grub-legacy' ):
-            grub_version = 1
+            self.log.printo( "package grub-legacy is installed, this is obsolete, skipping grub" )
+            grub_version = 0
         else:
             self.log.printo( "package grub-pc is not installed, skipping grub" )
             # version 0 == skip_grub
@@ -233,9 +243,6 @@ class ElbeProject (object):
         self.targetfs.part_target( self.builddir, grub_version )
 
         # Build cdrom images
-        arch = self.xml.text( "project/arch", key="arch" )
-        codename = self.xml.text( "project/suite" )
-
         self.repo_images = []
         with self.buildenv:
             init_codename = self.xml.get_initvm_codename()
