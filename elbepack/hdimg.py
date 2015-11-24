@@ -219,6 +219,7 @@ class grubinstaller2( grubinstaller_base ):
             devmap.write( "(hd0) /dev/poop0\n" )
             devmap.close()
 
+            self.outf.do( "chroot %s  update-initramfs -u -k all"  % imagemnt )
             self.outf.do( "chroot %s  update-grub2"  % imagemnt )
 
             self.outf.do( "chroot %s grub-install --no-floppy /dev/poop0" % (imagemnt))
