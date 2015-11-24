@@ -224,7 +224,7 @@ class grubinstaller2( grubinstaller_base ):
             self.outf.do( "chroot %s grub-install --no-floppy /dev/poop0" % (imagemnt))
 
         finally:
-            self.outf.do( "rm %s" % os.path.join( imagemnt, "boot/grub/device.map" ), allow_fail=True )
+            os.unlink( os.path.join( imagemnt, "boot/grub/device.map" ))
             self.outf.do( "umount %s" % os.path.join( imagemnt, "dev" ), allow_fail=True )
             self.outf.do( "umount %s" % os.path.join( imagemnt, "proc" ), allow_fail=True )
             self.outf.do( "umount %s" % os.path.join( imagemnt, "sys" ), allow_fail=True )
