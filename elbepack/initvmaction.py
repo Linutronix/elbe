@@ -32,6 +32,8 @@ import sys
 import os
 import datetime
 
+cmd_exists = lambda x: any(os.access(os.path.join(path, x), os.X_OK) for path in os.environ["PATH"].split(os.pathsep))
+
 # Create download directory with timestamp,
 # if necessary
 def ensure_outdir (wdfs, opt):
@@ -58,6 +60,9 @@ class InitVMAction(object):
         action = cls.actiondict[node]
         return object.__new__(action, node)
     def __init__(self, node):
+        if not cmd_exists('tmux'):
+            print ("We need tmux installed, please install it via \"sudo apt-get install -y tmux\"");
+            sys.exit(20)
         self.node = node
 
 def sanity_check_dir (initvmdir):
