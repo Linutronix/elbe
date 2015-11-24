@@ -7,12 +7,12 @@
 		</description>
 		<buildtype>ppc</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
 		<noauth/>
-		<suite>wheezy</suite>
+		<suite>jessie</suite>
 	</project>
 	<target>
 		<hostname>elbe-ppc</hostname>
@@ -21,7 +21,7 @@
 		<console>ttyPZ0,115200</console>
 		<images>
 			<msdoshd>
-				<name>sda.img</name>
+				<name>powerpc.img</name>
 				<size>1900MiB</size>
 				<grub-install/>
 				<partition>
@@ -51,7 +51,7 @@
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
-			<pkg>linux-image-2.6-powerpc</pkg>
+			<pkg>linux-image-powerpc</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>

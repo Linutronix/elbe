@@ -7,11 +7,10 @@
 		</description>
 		<buildtype>armel</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<noauth />
 		<suite>wheezy</suite>
 	</project>
 	<target>
@@ -24,11 +23,11 @@
 		</package>
 		<fstab>
 			<bydev>
-                                <source>none</source>
-                                <mountpoint>/sys/kernel/debug</mountpoint>
-                                <fs>
-                                        <type>debugfs</type>
-                                </fs>
+				<source>none</source>
+				<mountpoint>/sys/kernel/debug</mountpoint>
+				<fs>
+					<type>debugfs</type>
+				</fs>
 			</bydev>
 		</fstab>
 		<diet />

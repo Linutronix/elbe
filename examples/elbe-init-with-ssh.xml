@@ -7,19 +7,15 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-testing wheezy main
-					</binary>
-					<key>
-						http://debian.linutronix.de/elbe-testing/elbe-repo.pub
-					</key>
+					<binary>http://debian.linutronix.de/elbe-testing wheezy main</binary>
+					<source>http://debian.linutronix.de/elbe-testing wheezy main</source>
+					<key>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</key>
 				</url>
 			</url-list>
 		</mirror>
 		<suite>wheezy</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
-			<pkg>python-beaker</pkg>
 		</pkg-list>
 		<portforwarding>
 			<forward>

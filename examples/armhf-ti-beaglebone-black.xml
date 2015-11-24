@@ -7,18 +7,10 @@
 		</description>
 		<buildtype>armhf</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
-			<url-list>
-				<url>
-					<source>
-						http://ftp.debian.org/debian jessie main
-					</source>
-				</url>
-			</url-list>
 		</mirror>
-		<noauth />
 		<suite>jessie</suite>
 	</project>
 	<target>
@@ -71,7 +63,6 @@
 			<pkg>vim-nox</pkg>
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
-			<pkg>rt-tests</pkg>
 			<pkg>busybox</pkg>
 		</pkg-list>
 	</target>

@@ -17,20 +17,12 @@
 			# 	   root_sfs= is the image file within root.
 			$ qemu-system-i386 -kernel your_disk/vmlinuz-3.2.0-4-686-pae -initrd your_disk/initramfs.cpio.gz \
 				-append "root=/dev/sda1 root_sfs=root.sfs console=ttyS0" --nographic -hda fat:your_disk/ -m 512M
-
 		</description>
 		<buildtype>i386</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
-			<url-list>
-				<url>
-					<binary>
-						http://ftp.at.debian.org/debian/ wheezy main
-					</binary>
-				</url>
-			</url-list>
 		</mirror>
 		<suite>wheezy</suite>
 	</project>
@@ -57,10 +49,10 @@
 			<rm>/etc/init.d/urandom</rm>
 			<rm>/etc/init.d/checkfs.sh</rm>
 			<rm>/etc/init.d/checkroot-bootclean.sh</rm>
-                        <rm>/etc/init.d/mountall.sh</rm>
-                        <rm>/etc/init.d/mountnfs.sh</rm>
-                        <rm>/etc/init.d/mountall-bootclean.sh</rm>
-                        <rm>/etc/init.d/mountnfs-bootclean.sh</rm>
+			<rm>/etc/init.d/mountall.sh</rm>
+			<rm>/etc/init.d/mountnfs.sh</rm>
+			<rm>/etc/init.d/mountall-bootclean.sh</rm>
+			<rm>/etc/init.d/mountnfs-bootclean.sh</rm>
 			<rm>/var_debian/cache/*</rm>
 			<command>insserv -f -d -p /etc/init.d</command>
 			<command>/opt/gen_initrd/gen.sh /</command>

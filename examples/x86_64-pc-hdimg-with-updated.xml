@@ -13,14 +13,13 @@
 			<url-list>
 				<!-- for elbe updated -->
 				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-testing wheezy main
-					</binary>
+					<binary>http://debian.linutronix.de/elbe-testing jessie main</binary>
+					<source>http://debian.linutronix.de/elbe-testing jessie main</source>
+					<pubkey>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</pubkey>
 				</url>
 			</url-list>
 		</mirror>
-		<noauth/>
-		<suite>wheezy</suite>
+		<suite>jessie</suite>
 	</project>
 	<target>
 		<hostname>elbe-updated</hostname>
@@ -49,6 +48,7 @@
 			</bylabel>
 		</fstab>
 		<finetuning>
+			<!-- insert fingerprint from /var/cache/elbe/.gnupg keyring -->
 			<updated>F5895089CE6277157FE1B160FE5ACE0B0688D925</updated>
 		</finetuning>
 		<pkg-list>

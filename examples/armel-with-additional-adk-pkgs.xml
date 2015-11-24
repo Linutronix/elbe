@@ -8,11 +8,10 @@
 		</description>
 		<buildtype>armel</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<noauth />
 		<suite>wheezy</suite>
 		<buildimage>
 			<pkg-list>
@@ -33,11 +32,11 @@
 		<console>ttyS0,115200</console>
 		<images>
 			<mtd>
-				<name>full.img</name>
+				<name>nand.img</name>
 				<nr>0</nr>
 				<size>63MB</size>
 				<ubivg>
-					<label>full-nand</label>
+					<label>nand</label>
 					<miniosize>2048</miniosize>
 					<maxlogicaleraseblockcount>2047</maxlogicaleraseblockcount>
 					<logicaleraseblocksize>126976</logicaleraseblocksize>
@@ -51,16 +50,9 @@
 					</ubi>
 					<ubi>
 						<type>dynamic</type>
-						<label>rfs1</label>
+						<label>rfs</label>
 						<id>1</id>
-						<size>25MiB</size>
-					</ubi>
-					<ubi>
-						<type>dynamic</type>
-						<label>rfs2</label>
-						<id>2</id>
-						<size>25MiB</size>
-						<binary>/var/cache/elbe/build/rfs1.ubifs</binary>
+						<size>55MiB</size>
 					</ubi>
 					<ubi>
 						<type>dynamic</type>
@@ -68,62 +60,8 @@
 						<id>3</id>
 						<size>2MiB</size>
 					</ubi>
-					<ubi>
-						<type>static</type>
-						<label>prod_data</label>
-						<id>4</id>
-						<size>2MiB</size>
-						<binary>/target/opt/prod_data</binary>
-					</ubi>
 				</ubivg>
 			</mtd>
-			<mtd>
-				<name>initial.img</name>
-				<nr>1</nr>
-				<size>63MB</size>
-				<ubivg>
-					<label>initial-nand</label>
-					<miniosize>2048</miniosize>
-					<maxlogicaleraseblockcount>2047</maxlogicaleraseblockcount>
-					<logicaleraseblocksize>126976</logicaleraseblocksize>
-					<physicaleraseblocksize>128KiB</physicaleraseblocksize>
-					<ubi>
-						<type>static</type>
-						<label>kernel</label>
-						<id>0</id>
-						<size>3MiB</size>
-						<binary>/boot/vmlinuz-2.6.32-5-versatile</binary>
-					</ubi>
-					<ubi>
-						<type>dynamic</type>
-						<label>rfs1</label>
-						<id>1</id>
-						<size>25MiB</size>
-					</ubi>
-					<ubi>
-						<type>dynamic</type>
-						<label>rfs2</label>
-						<id>2</id>
-						<size>25MiB</size>
-						<empty/>
-					</ubi>
-					<ubi>
-						<type>dynamic</type>
-						<label>data</label>
-						<id>3</id>
-						<size>2MiB</size>
-						<empty/>
-					</ubi>
-					<ubi>
-						<type>static</type>
-						<label>prod_data</label>
-						<id>4</id>
-						<size>2MiB</size>
-						<empty/>
-					</ubi>
-				</ubivg>
-			</mtd>
-		</images>
 		<fstab>
 			<bylabel>
 				<label>data</label>
@@ -135,7 +73,7 @@
 				<options>ro</options>
 			</bylabel>
 			<bylabel>
-				<label>rfs1</label>
+				<label>rfs</label>
 				<mountpoint>/</mountpoint>
 				<fs>
 					<type>ubifs</type>
@@ -154,7 +92,6 @@
 		<tighten />
 		<finetuning>
 			<rm>boot</rm>
-			<rm>lib/modules/*versatile*</rm>
 			<rm>usr/lib/gconv</rm>
 			<rm>usr/lib/perl*</rm>
 			<rm>usr/share/doc</rm>

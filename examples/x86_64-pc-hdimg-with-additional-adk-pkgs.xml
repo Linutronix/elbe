@@ -1,45 +1,52 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>elbe desktop</name>
+		<name>x86 hdimage example</name>
 		<version>6</version>
 		<description>
-			can be used for elbe trainigs or starting experiments
-			with elbe within a virtual machine.
-			use this command to generate a vmware image:
-			qemu-img convert -O vmdk elbe.img elbe.vmdk
+			lightweight example
 		</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>192.168.0.153</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
-			<url-list>
-				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-testing wheezy main
-					</binary>
-					<source>
-						http://debian.linutronix.de/elbe-testing wheezy main
-					</source>
-				</url>
-			</url-list>
 		</mirror>
-		<noauth/>
-		<suite>wheezy</suite>
+		<suite>jessie</suite>
+		<buildimage>
+			<pkg-list>
+				<pkg>build-essential</pkg>
+				<pkg>devscripts</pkg>
+				<pkg>git</pkg>
+				<pkg>debhelper</pkg>
+			</pkg-list>
+		</buildimage>
 	</project>
 	<target>
-		<hostname>elbe-test</hostname>
+		<hostname>lxvm</hostname>
 		<domain>tec.linutronix.de</domain>
-		<passwd>elbe</passwd>
+		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>nfsroot.tar.gz</name>
+			</tar>
+		</package>
 		<images>
 			<msdoshd>
-				<name>elbe.img</name>
-				<size>8000MiB</size>
+				<name>lxvm.img</name>
+				<size>1900MiB</size>
 				<grub-install/>
 				<partition>
-					<size>remain</size>
-					<label>rfs</label>
+								<size>remain</size>
+								<label>rfs</label>
+				</partition>
+			</msdoshd>
+			<msdoshd>
+				<name>lxvm-data.img</name>
+				<size>40GiB</size>
+				<partition>
+								<size>remain</size>
+								<label>data</label>
 				</partition>
 			</msdoshd>
 		</images>
@@ -47,6 +54,14 @@
 			<bylabel>
 				<label>rfs</label>
 				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bylabel>
+				<label>data</label>
+				<mountpoint>/data</mountpoint>
 				<fs>
 					<type>ext4</type>
 					<tune2fs>-i 0</tune2fs>
@@ -62,26 +77,16 @@
 		</fstab>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
-			<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
-			<command>echo de_DE.UTF-8 > /etc/locale.gen</command>
-			<command>locale-gen</command>
-			<command>echo "GRUB_GFXPAYLOAD_LINUX=text" >> /etc/default/grub</command>
+			<mkdir>/data</mkdir>
 		</finetuning>
 		<pkg-list>
+			<pkg>linux-image-amd64</pkg>
 			<pkg>grub-pc</pkg>
-			<pkg>linux-image</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
 			<pkg>vim-nox</pkg>
-			<pkg>apache2</pkg>
-			<pkg>elbe</pkg>
-			<pkg>nfs-kernel-server</pkg>
-			<pkg>elbe</pkg>
-			<pkg>task-gnome-desktop</pkg>
-			<pkg>gdm3</pkg>
-			<pkg>reprepro</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>

@@ -7,16 +7,17 @@
 		</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>ftp.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
 					<binary>http://debian.linutronix.de/elbe-testing wheezy main</binary>
+					<source>http://debian.linutronix.de/elbe-testing wheezy main</source>
+					<pubkey>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</pubkey>
 				</url>
 			</url-list>
 		</mirror>
-		<noauth />
 		<suite>wheezy</suite>
 	</project>
 	<target>
@@ -31,7 +32,7 @@
 		</package>
 		<images>
 		<msdoshd>
-			<name>hd.img</name>
+			<name>readonly-hd.img</name>
 			<size>4G</size>
 			<grub-install/>
 			<partition>
