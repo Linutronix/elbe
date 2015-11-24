@@ -260,7 +260,7 @@ class grubinstaller1( grubinstaller_base ):
             self.outf.do( "mount --bind /sys %s" % os.path.join( imagemnt, "sys" ) )
 
             self.outf.do( "chroot %s  update-initramfs -u -k all"  % imagemnt )
-            self.outf.do( "chroot %s  update-grub2"  % imagemnt )
+            self.outf.do( "chroot %s  update-grub"  % imagemnt )
 
             # Lets call update-grub before setting up the device.map
             self.outf.do( 'mkdir -p "%s"' % os.path.join( imagemnt, "boot/grub" ))
