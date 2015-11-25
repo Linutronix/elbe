@@ -230,9 +230,9 @@ class ElbeProject (object):
         # We might also want support for legacy grub
         if self.get_rpcaptcache().is_installed( 'grub-pc' ):
             if codename == "jessie":
-                grub_version = 2
+                grub_version = 202
             else:
-                grub_version = 1
+                grub_version = 199
         elif self.get_rpcaptcache().is_installed( 'grub-legacy' ):
             self.log.printo( "package grub-legacy is installed, this is obsolete, skipping grub" )
             grub_version = 0

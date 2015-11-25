@@ -192,7 +192,7 @@ class grubinstaller_base( object ):
     def install( self, target ):
         pass
 
-class grubinstaller2( grubinstaller_base ):
+class grubinstaller202( grubinstaller_base ):
 
     def install( self, target ):
         if not self.root:
@@ -238,7 +238,7 @@ class grubinstaller2( grubinstaller_base ):
             self.outf.do( 'kpartx -d /dev/poop0', allow_fail=True );
             self.outf.do( "losetup -d /dev/poop0", allow_fail=True )
 
-class grubinstaller1( grubinstaller_base ):
+class grubinstaller199( grubinstaller_base ):
 
     def install( self, target ):
         if not self.root:
@@ -317,10 +317,10 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
     else:
         disk = parted.freshDisk(imag, "msdos" )
 
-    if grub_version == 1:
-        grub = grubinstaller1( outf )
-    elif grub_version == 2:
-        grub = grubinstaller2( outf )
+    if grub_version == 199:
+        grub = grubinstaller199( outf )
+    elif grub_version == 202:
+        grub = grubinstaller202( outf )
     else:
         grub = grubinstaller_base( outf );
 

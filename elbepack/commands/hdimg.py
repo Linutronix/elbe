@@ -44,8 +44,8 @@ def run_command( argv ):
                         dest="skip_grub", default=False,
                         help="Skip grub install" )
     oparser.add_option( "--grub-version", type="int",
-                        dest="grub_version", default=2,
-                        help="use specific grub version" )
+                        dest="grub_version", default=202,
+                        help="use specific grub version (possible values are 0, 199 and 202)" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -66,6 +66,11 @@ def run_command( argv ):
 
     if opt.skip_grub:
         opt.grub_version = 0
+
+    if opt.grub_version not in [0,199,202]:
+        print "invalid grub version"
+        oparser.print_help()
+        sys.exit(20)
 
     try:
         project = ElbeProject( opt.target, override_buildtype=opt.buildtype,
