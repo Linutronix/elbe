@@ -15,7 +15,7 @@
 				<url>
 					<binary>http://debian.linutronix.de/elbe-testing jessie main</binary>
 					<source>http://debian.linutronix.de/elbe-testing jessie main</source>
-					<pubkey>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</pubkey>
+					<key>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</key>
 				</url>
 			</url-list>
 		</mirror>
