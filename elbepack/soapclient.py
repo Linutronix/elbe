@@ -155,6 +155,10 @@ class CreateProjectAction(ClientAction):
 
         filename = args[0]
 
+        if not os.path.isfile (filename):
+            print ("%s doesn't exist" % filename, file=sys.stderr)
+            sys.exit (20)
+
         with file (filename, "r") as fp:
             xml_base64 = binascii.b2a_base64(fp.read ())
             print (client.service.create_project ( xml_base64 ))
