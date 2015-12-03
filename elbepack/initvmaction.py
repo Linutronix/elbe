@@ -84,7 +84,11 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session != 256:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr)
@@ -94,7 +98,11 @@ class StartAction(InitVMAction):
         sanity_check_dir (initvmdir)
 
         # Sanity check passed. start initvm session
-        system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+        try:
+            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
 
 InitVMAction.register(StartAction)
 
@@ -106,7 +114,11 @@ class EnsureAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session != 256:
             # other session exists... Good. exit
             sys.exit(0)
@@ -127,12 +139,16 @@ class AttachAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session == 0:
-            if os.environ.has_key('TMUX'):
-                system( 'tmux link-window -s ElbeInitVMSession:initvm' )
-            else:
-                system( 'tmux attach -t ElbeInitVMSession' )
+                if os.environ.has_key('TMUX'):
+                    system( 'tmux link-window -s ElbeInitVMSession:initvm' )
+                else:
+                    system( 'tmux attach -t ElbeInitVMSession' )
         else:
             print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
@@ -148,7 +164,11 @@ class StartBuildAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session != 256:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr)
@@ -169,7 +189,11 @@ class CreateAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session == 0:
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("", file=sys.stderr)
@@ -363,7 +387,11 @@ class SubmitAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
         if have_session == 256:
             print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
