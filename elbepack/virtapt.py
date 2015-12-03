@@ -118,6 +118,11 @@ class VirtApt:
 
     def setup_gpg (self):
         ring_path = self.projectpath + "/etc/apt/trusted.gpg.d"
+        if not os.path.isdir ("/etc/apt/trusted.gpg.d"):
+            print ("/etc/apt/trusted.gpg.d doesn't exist")
+            print ("apt-get install debian-archive-keyring may fix this problem")
+            sys.exit (20)
+
         system ('cp /etc/apt/trusted.gpg.d/* "%s"' % ring_path)
 
         gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
