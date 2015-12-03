@@ -25,7 +25,7 @@ from elbepack.version import elbe_version, is_devel
 from base64 import standard_b64decode
 from tempfile import NamedTemporaryFile
 
-from urllib2 import urlopen, URLError
+import urllib2
 import os
 
 class ValidationError(Exception):
@@ -153,16 +153,10 @@ class ElbeXML(object):
             elif l.startswith ("deb-src copy:"):
                 # This is a cdrom, we dont verify it
                 pass
-            elif l.startswith ("deb "):
+            elif l.startswith ("deb ") or l.startswith ("deb-src "):
                 lsplit = l.split (" ")
                 if lsplit[2].endswith('/'):
-                    urls.append ("%s/%s/Release" % (lsplit[1], lsplit[2]))
-                else:
-                    urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
-            elif l.startswith ("deb-src "):
-                lsplit = l.split (" ")
-                if lsplit[2].endswith('/'):
-                    urls.append ("%s/%s/Release" % (lsplit[1], lsplit[2]))
+                    urls.append ("%s/%sRelease" % (lsplit[1], lsplit[2]))
                 else:
                     urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
 
@@ -174,12 +168,27 @@ class ElbeXML(object):
             os.environ ["http_proxy"] = self.prj.text ("mirror/primary_proxy").strip()
             os.environ ["https_proxy"] = self.prj.text ("mirror/primary_proxy").strip()
 
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
+
         for u in urls:
+            if '@' in u:
+                t = u.split('@')
+                if '://' in t[0]:
+                    scheme, auth = t[0].split('://')
+                    scheme = scheme + '://'
+                else:
+                    scheme = ''
+                    auth = t[0]
+                u = scheme + t[1]
+                usr, passwd = auth.split(':')
+                passman.add_password(None, u, usr, passwd)
             try:
-                fp = urlopen (u)
-                fp.read()
+                fp = urllib2.urlopen (u)
                 fp.close()
-            except URLError:
+            except urllib2.URLError:
                 raise ValidationError (["Repository %s can not be validated" % u])
 
 
