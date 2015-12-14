@@ -7,4 +7,7 @@ echo "=============" >> $DEST
 echo "" >> $DEST
 for F in $FILES; do
 	../elbe show ../examples/$F >> $DEST
+	echo "" >> $DEST
 done
+
+cat $DEST | sed -e s?'../examples/'?''? > $DEST
