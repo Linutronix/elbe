@@ -282,6 +282,9 @@ class ProjectManager(object):
     def build_current_pdebuild (self, userid):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
+            if not path.isdir (path.join (ep.builddir, "pbuilder")):
+                raise InvalidState ('No pbuilder exists: run "elbe pbuilder create --project %s" first' % ep.builddir)
+
             self.worker.enqueue (PdebuildJob (ep))
 
     def build_sysroot (self, userid):
