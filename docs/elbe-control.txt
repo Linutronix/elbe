@@ -11,6 +11,8 @@ SYNOPSIS
 [verse]
 'elbe control' [options] 'list_projects'
 'elbe control' [options] 'create_project' <xmlfile>
+'elbe control' [options] 'build_sysroot' <build-dir>
+'elbe control' [options] 'set_pdebuild' <project-dir> <pdebuild file>
 'elbe control' [options] 'get_files' <build-dir>
 'elbe control' [options] 'set_cdrom' <build-dir> <iso-img>
 'elbe control' [options] 'reset_project' <build-dir>
@@ -18,6 +20,7 @@ SYNOPSIS
 'elbe control' [options] 'wait_busy' <build-dir>
 'elbe control' [options] 'set_xml' <build-dir> <xmlfile>
 'elbe control' [options] 'del_project' <build-dir>
+'elbe control' [options] 'build_pbuilder' <build-dir>
 'elbe control' [options] 'build' <build-dir>
 'elbe control' [options] 'get_file' <build-dir> <filename>
 'elbe control' [options] 'dump_file' <build-dir> <filename>
@@ -75,11 +78,30 @@ List projects available on the elbe daemon.
 
 'create_project' <xmlfile>::
 
-Creae a new project on soap server. <xmlfile> is uploaded,
+Create a new project on soap server. <xmlfile> is uploaded,
 and a new build-dir is created.
 +
 The name of the created <build-dir> is printed to stdout, for further
 reference in subsequent commands.
+
+
+'build_sysroot' <build-dir>::
+
+Build a sysroot for the specified project.
+
+The sysroot can be used with a toolchain for cross-compiles.
+
+
+'set_pdebuild' <build-dir> <pdebuild file>
+
+Build a Debian Project using a pbuilder.
+
+The pdebuild file needs to be a .tar.gz archive of a project
+containing a ./debian folder with a valid debianization.
++
+The generated debian packages are stored inside the initvm.
++
+Use get_files to retrieve them.
 
 
 'get_files' <build-dir>::
@@ -126,6 +148,11 @@ This is most likely going to change the status of the project to
 'del_project' <build-dir>::
 
 Delete project in <build-dir>
+
+
+'build_pbuilder' <build-dir>::
+
+Build a pbuilder environment for the given project <build-dir>.
 
 
 'build' <build-dir>::
