@@ -63,6 +63,10 @@ def run_command (argv):
                         dest="output", default=None,
                         help="Output files to <directory>" )
 
+    oparser.add_option( "--pbuilder-only", action="store_true",
+                        dest="pbuilder_only", default=False,
+                        help="Only list/download pbuilder Files" )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
