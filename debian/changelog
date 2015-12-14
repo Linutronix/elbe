@@ -1,3 +1,19 @@
+elbe (0.9.8) unstable; urgency=medium
+
+  * chg_archive accepts <directory> OR a .tar.gz file
+  * add pbuilder functionality
+  * fix several bugs in grub installation
+  * refactor updated and add a new 'usb monitor'
+  * allow basic HTTP auth in URLs
+  * cleanup examples directory
+  * add various checks if tmux exists in correct version
+  * improve dockerfile
+  * print date & time on 'wait busy'
+  * added patches to build elbe for ubuntu to 'contrib'
+  * allow XML files with no project tag
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 14 Dec 2015 17:49:37 +0100
+
 elbe (0.9.7) unstable; urgency=medium
 
   * build-sysroot: minor bugfixes

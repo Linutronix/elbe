@@ -27,5 +27,4 @@
 ./usr/lib/python2.*/*-packages/elbepack/persistency.py
 ./usr/lib/python2.*/*-packages/elbepack/rpcaptcache.py
 ./usr/lib/python2.*/*-packages/elbepack/updatepkg.py
-./usr/lib/python2.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python2.*/*-packages/elbepack/pbuilder.py
