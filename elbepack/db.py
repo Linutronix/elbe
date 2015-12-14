@@ -798,10 +798,18 @@ class ElbeDB(object):
             self._update_project_file( s, p.builddir, "sysroot.tar.xz",
                     "application/x-xz-compressed-tar", "sysroot for cross-toolchains" )
 
+            # Add Repository iso images
             for img in ep.repo_images:
                 name = os.path.basename(img)
                 self._update_project_file( s, p.builddir, name,
                         "application/octet-stream", "Repository IsoImage" )
+
+            # Scan pbuilder/build directory if that exists
+            pbresult_path = os.path.join (p.builddir, "pbuilder", "result")
+            if os.path.isdir (pbresult_path):
+                for f in os.listdir (pbresult_path):
+                    self._update_project_file (s, p.builddir, os.path.join ("pbuilder", "result", f),
+                            "application/octet-stream", "Pbuilder artifact")
 
 
     def _update_project_file (self, s, builddir, name, mime_type, description):
