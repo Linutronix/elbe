@@ -120,7 +120,7 @@ quickstart.html : quickstart.txt
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 quickstart.txt
 
 elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
-	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) -a iconsdir=icons -o elbeoverview-en-ie.html -b xhtml11 elbeoverview-en.txt
+	$(ASCIIDOC) -b html5 -a icons -a toc2 -a theme=flask -o elbeoverview-en.html elbeoverview-en.txt
 
 elbe-schema-reference.txt: ../elbepack/dbsfed.xsd ../elbepack/xsdtoasciidoc.mako
 	../elbe xsdtoasciidoc --output elbe-schema-reference.txt ../elbepack/dbsfed.xsd
