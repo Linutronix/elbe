@@ -413,3 +413,49 @@ class ShutdownInitvmAction(ClientAction):
 
 ClientAction.register(ShutdownInitvmAction)
 
+class SetPdebuilderAction(ClientAction):
+
+    tag = 'set_pdebuild'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        size = 5 * 1024 * 1024
+
+        if len (args) != 2:
+            print ("usage: elbe control set_pdebuild <project_dir> <pdebuild file>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = args[1]
+
+        fp = file (filename, "r")
+        client.service.start_pdebuild (builddir)
+        while True:
+            bindata = fp.read (size)
+            client.service.append_pdebuild (builddir, binascii.b2a_base64 (bindata))
+            if len (bindata) != size:
+                break
+
+        client.service.finish_pdebuild (builddir)
+
+ClientAction.register(SetPdebuilderAction)
+
+class BuildPbuilderAction(ClientAction):
+
+    tag = 'build_pbuilder'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control build_pbuilder <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.build_pbuilder (builddir)
+
+ClientAction.register(BuildPbuilderAction)
+

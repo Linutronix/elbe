@@ -34,6 +34,8 @@ from elbepack.dump import check_full_pkgs
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
+from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook
+
 class IncompatibeArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
         Exception.__init__(self,
@@ -278,6 +280,42 @@ class ElbeProject (object):
                          allow_fail=True)
 
         os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
+
+    def pdebuild (self):
+        # Remove pdebuilder directory, containing last build results
+        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir, "pdebuilder"))
+
+        # Remove pbuilder/result directory
+        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir, "pbuilder", "result"))
+
+        # Recreate the directories removed
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pbuilder", "result"))
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pdebuilder", "current"))
+
+        # Untar current_pdebuild.tar.gz into pdebuilder/current
+        self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir, "current_pdebuild.tar.gz"),
+                                                os.path.join (self.builddir, "pdebuilder", "current")))
+
+        # Run pdebuild
+        self.log.do ('cd "%s"; pdebuild --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+            os.path.join (self.builddir, "pdebuilder", "current"),
+            os.path.join (self.builddir, "pbuilderrc"),
+            os.path.join (self.builddir, "pbuilder", "result")))
+
+    def create_pbuilder (self):
+        # Remove old pbuilder directory, if it exists
+        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir, "pbuilder"))
+
+        # make hooks.d and pbuilder directory
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pbuilder", "hooks.d"))
+
+        # write config files
+        pbuilder_write_config (self.builddir, self.xml, self.log)
+        pbuilder_write_repo_hook (self.builddir, self.xml)
+        self.log.do ('chmod 755 "%s"' % os.path.join (self.builddir, "pbuilder", "hooks.d", "D10elbe_apt_sources"))
+
+        # Run pbuilder --create
+        self.log.do ('pbuilder --create --configfile "%s" --extrapackages git' % os.path.join (self.builddir, "pbuilderrc"))
 
     def sync_xml_to_disk (self):
         try:

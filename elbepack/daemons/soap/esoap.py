@@ -126,6 +126,13 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         self.pm.open_project (uid, builddir)
         self.pm.build_current_project (uid, build_bin, build_src)
 
+    @soapmethod (String)
+    @authenticated_uid
+    @soap_faults
+    def build_pbuilder (self, uid, builddir):
+        self.pm.open_project (uid, builddir)
+        self.pm.build_pbuilder (uid)
+
     @soapmethod (String, String)
     @authenticated_uid
     @soap_faults
@@ -168,6 +175,38 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     def finish_cdrom (self, uid, builddir):
         self.pm.open_project (uid, builddir)
         self.pm.set_current_project_upload_cdrom (uid)
+
+    @soapmethod (String)
+    @authenticated_uid
+    @soap_faults
+    def start_pdebuild (self, uid, builddir):
+        self.pm.open_project (uid, builddir)
+
+        pdebuild_fname = os.path.join (builddir, "current_pdebuild.tar.gz")
+
+        # Now write empty File
+        fp = open (pdebuild_fname, "w")
+        fp.close()
+
+    @soapmethod (String, String)
+    @authenticated_uid
+    @soap_faults
+    def append_pdebuild (self, uid, builddir, data):
+        self.pm.open_project (uid, builddir)
+
+        pdebuild_fname = os.path.join (builddir, "current_pdebuild.tar.gz")
+
+        # Now write empty File
+        fp = open (pdebuild_fname, "a")
+        fp.write (binascii.a2b_base64 (data))
+        fp.close()
+
+    @soapmethod (String)
+    @authenticated_uid
+    @soap_faults
+    def finish_pdebuild (self, uid, builddir):
+        self.pm.open_project (uid, builddir)
+        self.pm.build_current_pdebuild (uid)
 
     @soapmethod (String)
     @authenticated_uid

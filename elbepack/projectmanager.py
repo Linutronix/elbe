@@ -31,6 +31,7 @@ from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
+from elbepack.asyncworker import PdebuildJob, CreatePbuilderJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -272,6 +273,16 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
             self.worker.enqueue (BuildJob (ep, build_bin, build_src))
+
+    def build_pbuilder (self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            self.worker.enqueue (CreatePbuilderJob (ep))
+
+    def build_current_pdebuild (self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            self.worker.enqueue (PdebuildJob (ep))
 
     def build_sysroot (self, userid):
         with self.lock:

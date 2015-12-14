@@ -125,6 +125,53 @@ class BuildJob(AsyncWorkerJob):
             self.project.log.printo( traceback.format_exc() )
             db.reset_busy( self.project.builddir, "build_failed" )
 
+class PdebuildJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir,
+                [ "empty_project", "needs_build", "has_changes",
+                  "build_done", "build_failed" ] )
+        self.project.log.printo( "Enqueueing project for pdebuild" )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            self.project.log.printo( "Pdebuild started" )
+            self.project.pdebuild()
+            db.update_project_files( self.project )
+            self.project.log.printo( "Pdeb finished successfully" )
+            db.reset_busy( self.project.builddir, "build_done" )
+        except Exception as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "Pdebuild failed" )
+            self.project.log.printo( traceback.format_exc() )
+            db.reset_busy( self.project.builddir, "build_failed" )
+
+class CreatePbuilderJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir,
+                [ "empty_project", "needs_build", "has_changes",
+                  "build_done", "build_failed" ] )
+        self.project.log.printo( "Enqueueing project to have the pbuilder built" )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            self.project.log.printo( "Building pbuilder started" )
+            self.project.create_pbuilder()
+            db.update_project_files( self.project )
+            self.project.log.printo( "Pbuilder finished successfully" )
+            db.reset_busy( self.project.builddir, "build_done" )
+        except Exception as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "Pbuilder failed" )
+            self.project.log.printo( traceback.format_exc() )
+            db.reset_busy( self.project.builddir, "build_failed" )
 
 class APTUpdateJob(AsyncWorkerJob):
     def __init__ (self, project):
