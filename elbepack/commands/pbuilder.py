@@ -45,8 +45,8 @@ def run_command (argv):
     args = args[2:]
 
     if len(args) < 1:
-        print ('elbe initvm - no subcommand given', file=sys.stderr)
-        InitVMAction.print_actions ()
+        print ('elbe pbuilder - no subcommand given', file=sys.stderr)
+        PBuilderAction.print_actions ()
         return
 
     try:
