@@ -9,8 +9,8 @@ elbe-control - Low level interface to elbe Soap Daemon running in initvm
 SYNOPSIS
 --------
 [verse]
-'elbe control' [options] 'list_projects' 
-'elbe control' [options] 'create_project' <xmlfile> 
+'elbe control' [options] 'list_projects'
+'elbe control' [options] 'create_project' <xmlfile>
 'elbe control' [options] 'get_files' <build-dir>
 'elbe control' [options] 'set_cdrom' <build-dir> <iso-img>
 'elbe control' [options] 'reset_project' <build-dir>
@@ -26,7 +26,7 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-Low Level interface to 
+Low Level interface to
 control an elbe daemon running inside an initvm.
 It allows to submit xml files etc.
 
@@ -76,7 +76,7 @@ List projects available on the elbe daemon.
 'create_project' <xmlfile>::
 
 Creae a new project on soap server. <xmlfile> is uploaded,
-and a new build-dir is created. 
+and a new build-dir is created.
 +
 The name of the created <build-dir> is printed to stdout, for further
 reference in subsequent commands.
@@ -86,7 +86,7 @@ reference in subsequent commands.
 
 Get list of files in the <build-dir>.
 +
-If the --output option is specified, the files are downloaded to 
+If the --output option is specified, the files are downloaded to
 the directory specified in the option.
 
 
@@ -118,7 +118,7 @@ Wait, while <build-dir> is busy.
 
 'set_xml' <build-dir> <xmlfile>::
 
-Upload a new xml File into the given <build-dir>. 
+Upload a new xml File into the given <build-dir>.
 This is most likely going to change the status of the project to
 'needs_rebuild'.
 
@@ -146,7 +146,7 @@ Dump a single File from the project to stdout.
 
 'shutdown_initvm'::
 
-Make the initvm shutdown. 
+Make the initvm shutdown.
 
 
 
@@ -165,7 +165,7 @@ $ elbe control list_projects
 * Create a new Project, trigger build, and wait till it finishes.
 +
 ------------
-$ elbe control create_project examples/rescue.xml 
+$ elbe control create_project examples/rescue.xml
 /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f
 $ elbe control build /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f
 $ elbe control wait_busy /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f 
