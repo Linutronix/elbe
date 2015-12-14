@@ -157,7 +157,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
-        # Now write empty File
+        # Now append data to cdrom_file
         fp = open (cdrom_fname, "a")
         fp.write (binascii.a2b_base64 (data))
         fp.close()
