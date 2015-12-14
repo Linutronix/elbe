@@ -85,7 +85,9 @@ Depends: ${misc:Depends},
   reprepro,
   rsync,
   kpartx,
-  squashfs-tools
+  squashfs-tools,
+  sudo,
+  pbuilder
 Recommends: elbe-daemon (= ${binary:Version}),
   elbe-soap (= ${binary:Version})
 Description: ELBE build environment
