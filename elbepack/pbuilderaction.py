@@ -81,9 +81,9 @@ class CreateAction(PBuilderAction):
         print ("Creating pbuilder")
 
         try:
-            system ('%s control create_pbuilder "%s"' % (elbe_exe, prjdir))
+            system ('%s control build_pbuilder "%s"' % (elbe_exe, prjdir))
         except CommandError:
-            print ("elbe control create_pbuilder Failed", file=sys.stderr)
+            print ("elbe control build_pbuilder Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
@@ -142,9 +142,9 @@ class BuildAction(PBuilderAction):
             print ("Creating pbuilder")
 
             try:
-                system ('%s control create_pbuilder "%s"' % (elbe_exe, prjdir))
+                system ('%s control build_pbuilder "%s"' % (elbe_exe, prjdir))
             except CommandError:
-                print ("elbe control create_pbuilder Failed", file=sys.stderr)
+                print ("elbe control build_pbuilder Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
 
