@@ -22,6 +22,7 @@ import os
 import datetime
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
+from elbepack.shellhelper import CommandError
 from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -296,11 +297,17 @@ class ElbeProject (object):
         self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir, "current_pdebuild.tar.gz"),
                                                 os.path.join (self.builddir, "pdebuilder", "current")))
 
+
         # Run pdebuild
-        self.log.do ('cd "%s"; pdebuild --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
-            os.path.join (self.builddir, "pdebuilder", "current"),
-            os.path.join (self.builddir, "pbuilderrc"),
-            os.path.join (self.builddir, "pbuilder", "result")))
+        try:
+            self.log.do ('cd "%s"; pdebuild --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+                os.path.join (self.builddir, "pdebuilder", "current"),
+                os.path.join (self.builddir, "pbuilderrc"),
+                os.path.join (self.builddir, "pbuilder", "result")))
+        except CommandError as e:
+            self.log.printo ('')
+            self.log.printo ('Package fails to build.')
+            self.log.printo ('Please make sure, that the submitted package builds in pbuilder')
 
     def create_pbuilder (self):
         # Remove old pbuilder directory, if it exists
