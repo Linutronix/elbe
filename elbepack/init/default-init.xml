@@ -10,6 +10,9 @@
 					<binary>
 						http://debian.linutronix.de/elbe-testing wheezy main
 					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-testing wheezy main
+					</source>
 					<key>
 						http://debian.linutronix.de/elbe-testing/elbe-repo.pub
 					</key>
