@@ -28,7 +28,7 @@ from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
 from elbepack.elbexml     import ElbeXML, ValidationError
 
 import sys
-
+import time
 import os
 import datetime
 
@@ -99,7 +99,24 @@ class StartAction(InitVMAction):
 
         # Sanity check passed. start initvm session
         try:
-            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+            try:
+                os.remove (os.path.join (initvmdir, "run.log"))
+            except OSError:
+                pass
+            ret = system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con 2> %s"' % (
+                        initvmdir, str (os.path.join (initvmdir, "run.log"))))
+            for i in range (1, 5):
+                sys.stdout.write ("*")
+                sys.stdout.flush ()
+                time.sleep (1)
+            print ("*")
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+            if have_session:
+                print ("Maybe starting elbe initvm failed:", file=sys.stderr)
+                with open (os.path.join (initvmdir, "run.log"), 'r') as f:
+                    for l in f:
+                        print (l, file=sys.stderr)
+                os.remove (os.path.join (initvmdir, "run.log"))
         except CommandError as e:
             print ("tmux execution failed, tmux version 1.9 or higher is required")
             sys.exit(20)
