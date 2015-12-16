@@ -328,10 +328,13 @@ class GetFilesAction(ClientAction):
         builddir = args[0]
         files = client.service.get_files (builddir)
 
+        nfiles = 0
+
         for f in files.SoapFile:
             if opt.pbuilder_only and not f.name.startswith ('pbuilder'):
                 continue
 
+            nfiles += 1
             if f.description:
                 print ("%s \t(%s)" % (f.name, f.description))
             else:
@@ -343,6 +346,9 @@ class GetFilesAction(ClientAction):
                 fs.mkdir_p (dst)
                 dst_fname = str (os.path.join (dst, os.path.basename (f.name)))
                 client.download_file (builddir, f.name, dst_fname)
+
+        if nfiles == 0:
+            sys.exit (10)
 
 ClientAction.register(GetFilesAction)
 

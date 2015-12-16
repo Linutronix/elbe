@@ -194,7 +194,6 @@ class BuildAction(PBuilderAction):
         print ("Pdebuild finished !")
         print ("")
 
-
         if opt.skip_download:
             print ("")
             print ("Listing available files:")
@@ -203,7 +202,17 @@ class BuildAction(PBuilderAction):
                 system ('%s control --pbuilder-only get_files "%s"' % (elbe_exe, prjdir) )
             except CommandError:
                 print ("elbe control get_files Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
+                print ("", file=sys.stderr)
+                print ("dumping logfile", file=sys.stderr)
+
+                try:
+                    system ('%s control dump_file "%s" log.txt' % (
+                            elbe_exe, prjdir ))
+                except CommandError:
+                    print ("elbe control dump_file Failed", file=sys.stderr)
+                    print ("", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+
                 sys.exit(20)
 
             print ("")
@@ -220,7 +229,17 @@ class BuildAction(PBuilderAction):
                         elbe_exe, opt.outdir, prjdir ))
             except CommandError:
                 print ("elbe control get_files Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
+                print ("", file=sys.stderr)
+                print ("dumping logfile", file=sys.stderr)
+
+                try:
+                    system ('%s control dump_file "%s" log.txt' % (
+                            elbe_exe, prjdir ))
+                except CommandError:
+                    print ("elbe control dump_file Failed", file=sys.stderr)
+                    print ("", file=sys.stderr)
+                    print ("Giving up", file=sys.stderr)
+
                 sys.exit(20)
 
 PBuilderAction.register(BuildAction)
