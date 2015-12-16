@@ -25,7 +25,7 @@
 		<portforwarding>
 			<forward>
 				<proto>tcp</proto>
-				<buildenv>7587</buildenv>
+				<buildenv>7588</buildenv>
 				<host>7587</host>
 			</forward>
 		</portforwarding>
