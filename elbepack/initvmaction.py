@@ -104,7 +104,7 @@ class StartAction(InitVMAction):
             except OSError:
                 pass
             ret = system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con 2> %s"' % (
-                        initvmdir, str (os.path.join (initvmdir, "run.log"))))
+                        initvmdir, str(os.path.join (initvmdir, "run.log")).replace (' ', '\ ')))
             for i in range (1, 5):
                 sys.stdout.write ("*")
                 sys.stdout.flush ()
