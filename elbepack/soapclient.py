@@ -29,6 +29,7 @@ import sys
 import os
 
 from elbepack.filesystem import Filesystem
+from elbepack.elbexml import ElbeXML
 
 def set_suds_debug(debug):
     import logging
@@ -158,6 +159,12 @@ class CreateProjectAction(ClientAction):
         if not os.path.isfile (filename):
             print ("%s doesn't exist" % filename, file=sys.stderr)
             sys.exit (20)
+
+        x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
+        if not x.has ('target'):
+          print ("<target> is missing, this file can't be built in an initvm",
+                  file=sys.stderr)
+          sys.exit (20)
 
         with file (filename, "r") as fp:
             xml_base64 = binascii.b2a_base64(fp.read ())
