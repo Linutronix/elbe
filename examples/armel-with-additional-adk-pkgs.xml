@@ -62,6 +62,7 @@
 					</ubi>
 				</ubivg>
 			</mtd>
+		</images>
 		<fstab>
 			<bylabel>
 				<label>data</label>
