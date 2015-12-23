@@ -16,11 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
+
 import apt
+import apt_pkg
 
 from optparse import OptionParser
 
+from elbepack.elbexml import ElbeXML
 
 def run_command( argv ):
 
@@ -37,26 +41,41 @@ def run_command( argv ):
     gen_rfs = args[0]
     fix_rfs = args[1]
 
-    gen_cache = apt.cache.Cache( rootdir=gen_rfs, memonly=True )
-    fix_cache = apt.cache.Cache( rootdir=fix_rfs, memonly=True )
+    x = os.path.join(gen_rfs, 'etc/elbe_base.xml')
+    xml = ElbeXML (x, skip_validate=True, skip_urlcheck=True)
+    arch = xml.text ('project/arch', key='arch')
+
+    apt_pkg.init_config()
+    apt_pkg.config.set('RootDir', gen_rfs)
+    apt_pkg.config.set('APT::Architecture', arch)
+    apt_pkg.init_system()
+    gen_cache = apt_pkg.Cache(apt.progress.base.OpProgress())
+    gc = apt.Cache()
 
     gen_pkgs = {}
-    for p in gen_cache:
+    for p in gen_cache.packages:
         if opt.noauto:
-            if p.is_installed and not p.is_auto_installed and not p.essential:
-                gen_pkgs[p.name] = p.installed.version
+            if p.current_ver and not gc[p.name].is_auto_installed and not p.essential:
+                gen_pkgs[p.name] = p.current_ver
         else:
-            if p.is_installed and not p.essential:
-                gen_pkgs[p.name] = p.installed.version
+            if p.current_ver and not p.essential:
+                gen_pkgs[p.name] = p.current_ver
+
+    apt_pkg.init_config()
+    apt_pkg.config.set('RootDir', fix_rfs)
+    apt_pkg.config.set('APT::Architecture', arch)
+    apt_pkg.init_system()
+    fix_cache = apt_pkg.Cache(apt.progress.base.OpProgress())
+    fc = apt.Cache()
 
     fix_pkgs = {}
-    for p in fix_cache:
+    for p in fix_cache.packages:
         if opt.noauto:
-            if p.is_installed and not p.is_auto_installed and not p.essential:
-                fix_pkgs[p.name] = p.installed.version
+            if p.current_ver and not fc[p.name].is_auto_installed and not p.essential:
+                fix_pkgs[p.name] = p.current_ver
         else:
-            if p.is_installed and not p.essential:
-                fix_pkgs[p.name] = p.installed.version
+            if p.current_ver and not p.essential:
+                fix_pkgs[p.name] = p.current_ver
 
     for p in fix_pkgs.keys():
         if not p in gen_pkgs.keys():
