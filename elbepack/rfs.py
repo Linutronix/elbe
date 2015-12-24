@@ -233,9 +233,10 @@ class BuildEnv ():
         self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname )
         self.log.chroot( self.rfs.path, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" % (hostname, domain) )
 
-        serial_con, serial_baud = self.xml.text( "target/console" ).split(',')
-        if serial_baud:
-            self.log.chroot(self.rfs.path, """/bin/sh -c '[ -f /etc/inittab ] && echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud), allow_fail=True )
-            self.log.chroot(self.rfs.path, """/bin/sh -c '[ -f /lib/systemd/system/serial-getty@.service ] && ln -s /lib/systemd/system/serial-getty@.service /etc/systemd/system/getty.target.wants/serial-getty@%s.service'""" % serial_con, allow_fail=True )
-        else:
-            self.log.printo("parsing console tag failed, needs to be of '/dev/ttyS0,115200' format.")
+        if self.xml.has( "target/console" ):
+            serial_con, serial_baud = self.xml.text( "target/console" ).split(',')
+            if serial_baud:
+                self.log.chroot(self.rfs.path,"""/bin/sh -c '[ -f /etc/inittab ] && echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" % (serial_con, serial_baud), allow_fail=True )
+                self.log.chroot(self.rfs.path, """/bin/sh -c '[ -f /lib/systemd/system/serial-getty@.service ] && ln -s /lib/systemd/system/serial-getty@.service /etc/systemd/system/getty.target.wants/serial-getty@%s.service'""" % serial_con, allow_fail=True )
+            else:
+                self.log.printo("parsing console tag failed, needs to be of '/dev/ttyS0,115200' format.")
