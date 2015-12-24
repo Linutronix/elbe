@@ -26,15 +26,6 @@ from elbepack.validate import validate_xml
 
 from optparse import OptionParser
 
-# Some more helpers
-def template(fname, d):
-    try:
-        return Template(filename=fname).render(**d)
-    except:
-        print exceptions.text_error_template().render()
-        raise
-
-
 def run_command( argv ):
     oparser = OptionParser( usage="usage: %prog show [options] <filename>" )
 
@@ -86,12 +77,13 @@ def run_command( argv ):
               xml.text("./project/mirror/primary_proto"),
               xml.text("./project/mirror/primary_host"),
               xml.text("./project/mirror/primary_path"))
-        print 'additional mirrors:'
-        for url in xml.node("./project/mirror/url-list"):
-            if url.has("binary"):
-                print '    deb %s' % url.text("binary").strip()
-            if url.has("source"):
-                print '    deb-src %s' % url.text("source").strip()
+        if xml.has("./project/mirror/url-list"):
+            print 'additional mirrors:'
+            for url in xml.node("./project/mirror/url-list"):
+                if url.has("binary"):
+                    print '    deb %s' % url.text("binary").strip()
+                if url.has("source"):
+                    print '    deb-src %s' % url.text("source").strip()
         print 'packages:'
         for pkg in xml.node("./target/pkg-list"):
             print '    %s' % pkg.et.text
