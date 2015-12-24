@@ -27,3 +27,4 @@
 ./usr/lib/python2.*/*-packages/elbepack/version.py
 ./usr/lib/python2.*/*-packages/elbepack/virtapt.py
 ./usr/lib/python2.*/*-packages/elbepack/xmldefaults.py
+./usr/share/man/man1/elbe.1
