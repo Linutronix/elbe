@@ -51,7 +51,7 @@ Recommends: elbe-doc (= ${binary:Version})
 Description: Embedded Linux Build Environment
  A flexible Root Filesystem builder. ELBE uses Debian packages to build a RFS
  for (embedded) targets. A target is described with a single XML file. Besides
- the target image, licence informations, source cdroms, etc. are generated.
+ the target image, licence information, source cdroms, etc. are generated.
 
 Package: elbe-daemon
 Architecture: all
