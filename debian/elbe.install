@@ -5,7 +5,6 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/init.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/pkgdiff.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/remove_sign.py
-./usr/lib/python2.*/*-packages/elbepack/commands/setcdrom.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/setsel.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/show.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/sign.py
