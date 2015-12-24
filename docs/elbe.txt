@@ -39,7 +39,7 @@ linkgit:elbe-check_updates[1]::
 	check whether package updates are available for a given project.
 
 linkgit:elbe-chg_archive[1]::
-        insert a new config archive (.tbz) into a XML file.
+	insert a new config archive (.tbz) into a XML file.
 
 linkgit:elbe-chroot[1]::
 	enter a root filesystem with chroot.
@@ -55,7 +55,7 @@ linkgit:elbe-genlicence[1]::
 	project.
 
 linkgit:elbe-get_archive[1]::
-        extract a config archive (.tbz) from a XML file.
+	extract a config archive (.tbz) from a XML file.
 
 linkgit:elbe-hdimg[1]::
 	create a hard disk image from the given XML file.
@@ -63,12 +63,12 @@ linkgit:elbe-hdimg[1]::
 linkgit:elbe-init[1]::
 	create a project for an Elbe build virtual machine.
 
-linkgit:elbe-initrdpack[1]::
-	build the kernel/initrd package for elbe-init.
-
 linkgit:elbe-mkcdrom[1]::
 	create an ISO image containing all binary or source packages used in
 	the given project.
+
+linkgit:elbe-pbuilder[1]::
+	generate a pbuilder environment and build packages within it
 
 linkgit:elbe-pkgdiff[1]::
 	compare two root filesystems for differing packages.
@@ -76,14 +76,11 @@ linkgit:elbe-pkgdiff[1]::
 linkgit:elbe-remove_sign[1]::
 	verify a signed file and remove the signature.
 
-linkgit:elbe-setcdrom[1]::
-        set an iso image as local debian mirror.
-
 linkgit:elbe-setsel[1]::
-        update the packagelist from the output of dpkg-getselections.
+	update the packagelist from the output of dpkg-getselections.
 
 linkgit:elbe-show[1]::
-        show a textual information about the given XML file.
+	show a textual information about the given XML file.
 
 linkgit:elbe-sign[1]::
 	add a signature to the given file.
@@ -95,14 +92,14 @@ linkgit:elbe-validate[1]::
 	validate the given XML file against the Elbe XML Schema.
 
 linkgit:elbe-xsdtoasciidoc[1]::
-        create an asciidoc documentation from an annotated XML Schema file (xsd).
+	create an asciidoc documentation from an annotated XML Schema file (xsd).
 
 
 Authors
 -------
 elbe was first implemented as dbsfed by Benedikt Spranger <bene@linutronix.de>.
-This version is an new implementation in python from Torben Hohn <torbenh@linutronix.de>.
-
+Torben Hohn <torbenh@linutronix.de> did an reimplementation in python.
+This is currently maintained by Manuel Traut <manut@linutronix.de>.
 
 SEE ALSO
 --------
