@@ -1,7 +1,7 @@
 ELBE TODO LIST
 ==============
 author Manuel Traut <manut@linutronix.de>
-revision 201508
+revision 201512
 
 define multiple debian mirror groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,6 +16,33 @@ support swap fs/file in buildenv
 A swap partition/file can be defined in the xml file. This may be needed to
 build huge software packages like firefox or qt.
 
+use pbuilder to build / package and use own software
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<pkg-list>
+  <git commit=<sha1> pkgs=libbla1,libbla1-test>git://github.com/bla/libbla</git>
+  ...
+</pkg-list>
+
+will result in cloning the git repository, using the projects pbuilder to build
+debian packages (project needs to have a debianization) and adds the packages
+to a project specific debian repository. During Image build the project specific
+repository will be used and the packages specified in pkgs attribute will be
+added to the image and the binary cdrom. The debian source package (.dsc) will
+be added to the source cdrom.
+
+For rebuilding from cdroms, the binary packages should be used.
+
+improve logging
+^^^^^^^^^^^^^^^
+currently a big log file in asciidoc format is generated. However it is missing
+at least one important build step (installing the packages specified in
+pkg-list) because this is done in a forked process in the target chroot and
+we have no IPC into this process. Instead of implementing this logging IPC
+we would like to use log4py for logging into a database. We want to have
+loglevels, timestamps, build-step, user, .. in the logging database.
+Building log files from the database should be done, after a build terminates.
+
+
 NEW ELBE TOOLS
 --------------
 
@@ -24,13 +51,3 @@ host package cache
 store all used debian packages in a package cache on the host or initvm system.
 http://www.ehow.com/list_7499016_alternatives-aptproxy.html
 approx and apt-cacher(ng) may be used.
-
-GUI
-^^^
-Some thoughts about the GUI implementation/backend:
-* GUI users can't bootstrap the initvm.
-* The GUI is based on communication with the elbe daemon.
-* The elbe daemon needs to implement additional commands.
-		E.g. one for listing available debian packages
-* GUI generates/modifies elbe xml files and triggers image regeneration
-* GUI displays available updates/security issues for an elbe xml file
