@@ -160,12 +160,12 @@ class BuildEnv ():
 
 
     def virtapt_init_dirs(self):
-        mkdir_p (self.rfs.path + "/cache/archives/partial")
-        mkdir_p (self.rfs.path + "/etc/apt/preferences.d")
-        mkdir_p (self.rfs.path + "/db")
-        mkdir_p (self.rfs.path + "/log")
-        mkdir_p (self.rfs.path + "/state/lists/partial")
-        touch_file (self.rfs.path + "/state/status")
+        self.rfs.mkdir_p ("/cache/archives/partial")
+        self.rfs.mkdir_p ("/etc/apt/preferences.d")
+        self.rfs.mkdir_p ("/db")
+        self.rfs.mkdir_p ("/log")
+        self.rfs.mkdir_p ("/state/lists/partial")
+        self.rfs.touch_file ("/state/status")
 
     def initialize_dirs (self, build_sources=False):
         mirror = self.xml.create_apt_sources_list (build_sources=build_sources)
