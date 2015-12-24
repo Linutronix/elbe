@@ -20,11 +20,11 @@
 		<console>ttyS0,115200</console>
 		<images>
 			<mtd>
-				<name>full.img</name>
+				<name>nand.img</name>
 				<nr>0</nr>
 				<size>63MB</size>
 				<ubivg>
-					<label>full-nand</label>
+					<label>nand</label>
 					<miniosize>2048</miniosize>
 					<maxlogicaleraseblockcount>2047</maxlogicaleraseblockcount>
 					<logicaleraseblocksize>126976</logicaleraseblocksize>
@@ -34,7 +34,7 @@
 						<label>kernel</label>
 						<id>0</id>
 						<size>3MiB</size>
-						<binary>/boot/vmlinuz-2.6.32-5-versatile</binary>
+						<binary>/boot/vmlinuz-3.2.0-4-versatile</binary>
 					</ubi>
 					<ubi>
 						<type>dynamic</type>
@@ -47,13 +47,6 @@
 						<label>data</label>
 						<id>3</id>
 						<size>2MiB</size>
-					</ubi>
-					<ubi>
-						<type>static</type>
-						<label>prod_data</label>
-						<id>4</id>
-						<size>2MiB</size>
-						<binary>/target/opt/prod_data</binary>
 					</ubi>
 				</ubivg>
 			</mtd>
@@ -112,7 +105,6 @@
 			<pkg>libsepol1</pkg>
 			<pkg>libgcc1</pkg>
 			<pkg>lsb-base</pkg>
-			<pkg>libvolume-id0</pkg>
 			<pkg>libselinux1</pkg>
 			<pkg>ncurses-bin</pkg>
 			<pkg>sed</pkg>
@@ -125,7 +117,7 @@
 			<pkg>coreutils</pkg>
 			<pkg>libacl1</pkg>
 			<pkg>mount</pkg>
-			<pkg>libstdc++</pkg>
+			<pkg>libstdc++6</pkg>
 			<pkg>linux-image-versatile</pkg>
 		</pkg-list>
 	</target>
