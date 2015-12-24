@@ -56,7 +56,7 @@ def run_command( argv ):
         return 0
 
     defaults = ElbeDefaults( opt.buildtype )
-    
+
     toolchain = get_toolchain( defaults["toolchaintype"], opt.path, defaults["arch"] )
 
     tmpdir   = mkdtemp()
@@ -75,9 +75,5 @@ def run_command( argv ):
 
     for p in pkgs:
         repo.includedeb( os.path.join(tmpdir, p) )
-    
+
     os.system( 'rm -r "%s"' % tmpdir )
-        
-
-
-
