@@ -34,7 +34,7 @@
 						<label>kernel</label>
 						<id>0</id>
 						<size>3MiB</size>
-						<binary>/boot/vmlinuz-3.2.0-4-versatile</binary>
+						<binary>chroot/boot/vmlinuz-3.2.0-4-versatile</binary>
 					</ubi>
 					<ubi>
 						<type>dynamic</type>
