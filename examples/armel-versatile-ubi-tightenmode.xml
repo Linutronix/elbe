@@ -81,7 +81,6 @@
 		<tighten />
 		<finetuning>
 			<rm>boot</rm>
-			<rm>lib/modules/*versatile*</rm>
 			<rm>usr/lib/gconv</rm>
 			<rm>usr/lib/perl*</rm>
 			<rm>usr/share/doc</rm>
