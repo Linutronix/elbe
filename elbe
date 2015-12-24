@@ -27,7 +27,7 @@ from elbepack.directories import init_directories, get_cmdlist
 
 def usage():
     print 'elbe v' + elbe_version
-    print 'need a subcommand: e.g. \'elbe init\'. \n\
+    print 'need a subcommand: e.g. \'elbe initvm\'. \n\
     Available subcommands are: \n'
     for i in get_cmdlist():
         print '        * '+i
