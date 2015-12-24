@@ -37,13 +37,13 @@ class UpdateMonitor(object):
         self.status = status
 
     def start(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def stop(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def join(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 if udev_available:
