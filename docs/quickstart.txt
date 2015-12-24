@@ -47,13 +47,13 @@ Binary Debian packages
 
 The latest packages for elbe reside in the following repository
 --------------------------------------------------------
-http://debian.linutronix.de/elbe-testing
+http://debian.linutronix.de/elbe
 --------------------------------------------------------
 
-Create the file `/etc/apt/sources.list.d/elbe-testing.list`
+Create the file `/etc/apt/sources.list.d/elbe.list`
 with the following contents:
 --------------------------------------------------------
-deb http://debian.linutronix.de/elbe-testing jessie main
+deb http://debian.linutronix.de/elbe jessie main
 --------------------------------------------------------
 
 Then run (as root):
@@ -108,7 +108,7 @@ gpg: keyring `/tmp/tmpPfPXt4/etc/apt/trusted.gpg.d/linutronix-elbe.gpg' created
 gpg: key 22BB8F84: public key "ELBE Devel (Linutronix ELBE developers) <elbe-devel@linutronix.de>" imported
 gpg: Total number processed: 1
 gpg:               imported: 1  (RSA: 1)
---2015-08-17 15:26:26--  http://debian.linutronix.de/elbe-testing/elbe-repo.pub
+--2015-08-17 15:26:26--  http://debian.linutronix.de/elbe/elbe-repo.pub
 Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
 Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
 HTTP request sent, awaiting response... 200 OK

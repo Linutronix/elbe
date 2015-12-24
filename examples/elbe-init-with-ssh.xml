@@ -7,9 +7,14 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://debian.linutronix.de/elbe-testing wheezy main</binary>
-					<source>http://debian.linutronix.de/elbe-testing wheezy main</source>
-					<key>http://debian.linutronix.de/elbe-testing/elbe-repo.pub</key>
+					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
+					<source>http://debian.linutronix.de/elbe wheezy main</source>
+					<key>http://debian.linutronix.de/elbe/elbe-repo.pub</key>
+				</url>
+				<url>
+					<binary>http://debian.linutronix.de/elbe-common wheezy main</binary>
+					<source>http://debian.linutronix.de/elbe-common wheezy main</source>
+					<key>http://debian.linutronix.de/elbe-common/elbe-repo.pub</key>
 				</url>
 			</url-list>
 		</mirror>

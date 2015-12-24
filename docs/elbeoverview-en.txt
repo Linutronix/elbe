@@ -47,13 +47,13 @@ dependencies.
 Configure `/etc/apt/sources.list.d` appropriately:
 
 -----------------------------------------------------------------------------------
-echo 'deb http://debian.linutronix.de/elbe-testing jessie main' >> /etc/apt/sources.list.d/elbe.list
+echo 'deb http://debian.linutronix.de/elbe jessie main' >> /etc/apt/sources.list.d/elbe.list
 -----------------------------------------------------------------------------------
 
 Optionally the public key for the repo can be installed:
 
 -----------------------------------------------------------------------------------
-wget http://debian.linutronix.de/elbe-testing/elbe-repo.pub && apt-key add elbe-repo.pub
+wget http://debian.linutronix.de/elbe/elbe-repo.pub && apt-key add elbe-repo.pub
 -----------------------------------------------------------------------------------
 
 Update the package list:

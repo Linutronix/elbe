@@ -1,3 +1,9 @@
+elbe (1.0) unstable; urgency=medium
+
+  * several smaller bugfixes and improves
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 24 Dec 2015 12:50:44 +0100
+
 elbe (0.9.8) unstable; urgency=medium
 
   * chg_archive accepts <directory> OR a .tar.gz file
