@@ -46,7 +46,7 @@
 						<label>kernel</label>
 						<id>0</id>
 						<size>3MiB</size>
-						<binary>/boot/vmlinuz-2.6.32-5-versatile</binary>
+						<binary>chroot/boot/vmlinuz-3.2.0-4-versatile</binary>
 					</ubi>
 					<ubi>
 						<type>dynamic</type>
@@ -92,23 +92,24 @@
 		</fstab>
 		<tighten />
 		<finetuning>
-			<rm>boot</rm>
-			<rm>usr/lib/gconv</rm>
-			<rm>usr/lib/perl*</rm>
-			<rm>usr/share/doc</rm>
-			<rm>usr/share/man</rm>
-			<rm>usr/share/locale</rm>
-			<rm>usr/share/perl*</rm>
-			<rm>usr/share/i18n</rm>
-			<rm>var/cache/*</rm>
-			<rm>var/lib/apt*</rm>
-			<rm>var/lib/dpkg</rm>
-			<rm>etc/init.d/checkroot.sh</rm>
-			<rm>etc/init.d/checkfs.sh</rm>
+			<rm>/boot</rm>
+			<rm>/usr/lib/gconv</rm>
+			<rm>/usr/lib/perl*</rm>
+			<rm>/usr/share/doc</rm>
+			<rm>/usr/share/man</rm>
+			<rm>/usr/share/locale</rm>
+			<rm>/usr/share/perl*</rm>
+			<rm>/usr/share/i18n</rm>
+			<rm>/var/cache/*</rm>
+			<rm>/var/lib/apt*</rm>
+			<rm>/var/lib/dpkg</rm>
+			<rm>/etc/init.d/checkroot.sh</rm>
+			<rm>/etc/init.d/checkfs.sh</rm>
 			<rm>/etc/mtab</rm>
 			<command>ln -s /proc/mounts etc/mtab</command>
 		</finetuning>
 		<pkg-list>
+			<pkg>linux-image-versatile</pkg>
 			<pkg>util-linux</pkg>
 			<pkg>libblkid1</pkg>
 			<pkg>libattr1</pkg>
@@ -116,7 +117,6 @@
 			<pkg>libsepol1</pkg>
 			<pkg>libgcc1</pkg>
 			<pkg>lsb-base</pkg>
-			<pkg>libvolume-id0</pkg>
 			<pkg>libselinux1</pkg>
 			<pkg>ncurses-bin</pkg>
 			<pkg>sed</pkg>
@@ -129,7 +129,7 @@
 			<pkg>coreutils</pkg>
 			<pkg>libacl1</pkg>
 			<pkg>mount</pkg>
-			<pkg>libstdc++</pkg>
+			<pkg>libstdc++6</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
