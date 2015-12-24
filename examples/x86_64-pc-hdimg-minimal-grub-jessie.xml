@@ -1,8 +1,8 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>x86 hdimage example jessie</name>
-		<version>6</version>
-		<description>lightweight example</description>
+		<name>amd64-jessie</name>
+		<version>1.0</version>
+		<description>amd64 debian jessie mini RFS</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
 			<primary_host>httpredir.debian.org</primary_host>

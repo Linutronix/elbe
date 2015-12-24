@@ -1,7 +1,7 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
 		<name>beaglebone-black</name>
-		<version>2.0</version>
+		<version>1.0</version>
 		<description>
 			debian jessie rootfs for beaglebone black
 		</description>
