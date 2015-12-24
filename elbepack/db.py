@@ -767,7 +767,7 @@ class ElbeDB(object):
             except NoResultFound:
                 raise ElbeDBError(
                         "project %s is not registered in the database" %
-                        builddir )
+                        ep.builddir )
 
             # Delete no longer existing files from the database
             files = s.query( ProjectFile ).\
