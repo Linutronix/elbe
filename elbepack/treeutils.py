@@ -17,6 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from xml.etree.cElementTree import ElementTree, SubElement
+import copy
 
 # ElementTree helpers
 
@@ -31,6 +32,9 @@ class eiter(object):
         return elem(self.it.next())
 
 class ebase(object):
+    def __init__(self, et):
+        self.et = et
+
     def text( self, path, **args ):
         el = self.et.find("./"+path)
         if (el is None) and not args.has_key("default"):
@@ -70,11 +74,14 @@ class ebase(object):
     def clear( self ):
         self.et.clear()
 
+    def append_treecopy( self, other ):
+        self.et.append( copy.deepcopy( other.et ) )
+
+
 
 class elem(ebase):
     def __init__( self, el ):
-        ebase.__init__( self )
-        self.et = el
+        ebase.__init__( self, el )
 
     def ensure_child( self, tag ):
         retval = self.et.find("./"+tag)
@@ -88,19 +95,22 @@ class elem(ebase):
         retval.et.tail = '\n'
         return retval
 
-
-    def clear( self ):
-        self.et.clear()
-
+    def set_child_position( self, child, pos ):
+        self.et.remove( child.et )
+        self.et.insert( pos, child.et )
 
 
 class etree(ebase):
     def  __init__( self, fname ):
-        ebase.__init__( self )
-        self.et = ElementTree( file=fname )
+        ebase.__init__( self, ElementTree( file=fname ) )
 
     def write( self, fname ):
+        # Make sure, that we end with a newline
+        self.et.getroot().tail = '\n'
         self.et.write(fname)
+
+    def tostring (self):
+        return self.et.tostring ()
 
     def ensure_child( self, tag ):
         retval = self.et.find("./"+tag)
@@ -109,3 +119,7 @@ class etree(ebase):
         else:
             return elem( SubElement( self.et.getroot(), tag ) )
 
+    def set_child_position( self, child, pos ):
+        root = self.et.getroot()
+        root.remove( child.et )
+        root.insert( pos, child.et )

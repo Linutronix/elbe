@@ -18,27 +18,32 @@
 
 
 
-import sys
 import os
 
-from elbepack.treeutils import etree
-from elbepack.validate import validate_xml
-
 from tempfile import mkdtemp
+import urllib2
+import hashlib
+
+from elbepack.shellhelper import CommandError
 
 try:
-	from elbepack import virtapt
-except:
-	print "WARNING - python-apt not available: if there are multiple versions of"
-	print " kinitrd packages on the mirror(s) elbe selects the first package it"
-	print " has found. There is no guarantee that the latest package is used."
-	print " To ensure this, the python-apt package needs to be installed."
-	import urllib2
+    from elbepack import virtapt
+    from apt_pkg import TagFile
+    virtapt_imported = True
+except ImportError:
+    print "WARNING - python-apt not available: if there are multiple versions of"
+    print " elbe-bootstrap packages on the mirror(s) elbe selects the first package it"
+    print " has found. There is no guarantee that the latest package is used."
+    print " To ensure this, the python-apt package needs to be installed."
+    import urllib2
+    virtapt_imported = False
 
 
-def get_sources_list( xml ):
+class NoKinitrdException(Exception):
+    pass
 
-    prj = xml.node("/project")
+def get_sources_list( prj, defs ):
+
     suite = prj.text("suite")
 
     slist = ""
@@ -52,28 +57,39 @@ def get_sources_list( xml ):
 
     if prj.has("mirror/cdrom"):
         tmpdir = mkdtemp()
-        kinitrd = prj.text("buildimage/kinitrd")
+        kinitrd = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
         os.system( '7z x -o%s "%s" pool/main/%s/%s dists' % (tmpdir, prj.text("mirror/cdrom"), kinitrd[0], kinitrd) )
         slist += "deb file://%s %s main\n" % (tmpdir,suite)
 
     if prj.node("mirror/url-list"):
         for n in prj.node("mirror/url-list"):
-           if n.has("binary"):
-             tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
-             slist += "deb %s\n" % tmp.strip()
-           if n.has("source"):
-             tmp = n.text("source").replace("LOCALMACHINE", "localhost")
-             slist += "deb-src %s\n" % tmp.strip()
+            if n.has("binary"):
+                tmp = n.text("binary").replace("LOCALMACHINE", "localhost")
+                slist += "deb %s\n" % tmp.strip()
+            if n.has("source"):
+                tmp = n.text("source").replace("LOCALMACHINE", "localhost")
+                slist += "deb-src %s\n" % tmp.strip()
 
     return slist
 
-def get_initrd_pkg( xml ):
-    prj = xml.node("/project")
-    initrdname = prj.text("buildimage/kinitrd")
+
+def get_key_list (prj):
+    retval = []
+    if prj.node("mirror/url-list"):
+        for n in prj.node("mirror/url-list"):
+            if n.has("key"):
+                tmp = n.text("key").replace("LOCALMACHINE", "localhost")
+                retval.append (tmp.strip ())
+
+    return retval
+
+def get_initrd_pkg( prj, defs ):
+    initrdname = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
 
     return initrdname
 
-def get_url ( xml, arch, suite, target_pkg, mirror ):
+def get_url ( arch, suite, target_pkg, mirror ):
+    try:
         packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
           (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
 
@@ -81,27 +97,30 @@ def get_url ( xml, arch, suite, target_pkg, mirror ):
         packages = filter( lambda x: x.startswith( "Filename" ), packages )
         packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
 
-        try:
-            tmp = packages.pop()
-            urla = tmp.split()
-            url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
-        except:
-            url = ""
+        tmp = packages.pop()
+        urla = tmp.split()
+        url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
+    except IOError:
+        url = ""
+    except IndexError:
+        url = ""
 
-        return url
 
-def get_initrd_uri( xml, defs ):
+    return url
 
-    arch  = xml.text("project/buildimage/arch", default=defs, key="arch")
-    suite = xml.text("project/suite")
+def get_initrd_uri( prj, defs, arch ):
+    if arch == "default":
+        arch  = prj.text("buildimage/arch", default=defs, key="arch")
+    suite = prj.text("suite")
 
-    name  = xml.text("project/name")
-    apt_sources = get_sources_list(xml)
+    name  = prj.text("name", default=defs, key="name")
+    apt_sources = get_sources_list(prj, defs)
+    apt_keys    = get_key_list (prj)
 
-    target_pkg = get_initrd_pkg(xml)
+    target_pkg = get_initrd_pkg(prj, defs)
 
-    try:
-        v = virtapt.VirtApt( name, arch, suite, apt_sources, "" )
+    if virtapt_imported:
+        v = virtapt.VirtApt( name, arch, suite, apt_sources, "", apt_keys )
         d = virtapt.apt_pkg.DepCache(v.cache)
 
         pkg = v.cache[target_pkg]
@@ -112,55 +131,101 @@ def get_initrd_uri( xml, defs ):
         r=virtapt.apt_pkg.PackageRecords(v.cache)
         r.lookup(c.file_list[0])
         uri = x.archive_uri(r.filename)
-        return uri
-    except:
-        url = "%s://%s/%s" % (xml.text("project/mirror/primary_proto"),
-          xml.text("project/mirror/primary_host"),
-          xml.text("project/mirror/primary_path") )
-        pkg = get_url ( xml, arch, suite, target_pkg, url )
+
+        if not x.is_trusted:
+            return "", uri
+
+        return r.sha1_hash, uri
+    else:
+        url = "%s://%s/%s" % (prj.text("mirror/primary_proto"),
+          prj.text("mirror/primary_host"),
+          prj.text("mirror/primary_path") )
+        pkg = get_url ( arch, suite, target_pkg, url )
 
         if pkg:
-            return pkg
+            return "", pkg
 
-        for n in xml.node("project/mirror/url-list"):
+        for n in prj.node("mirror/url-list"):
             url = n.text("binary")
             urla = url.split()
-            pkg = get_url ( xml, arch, suite, target_pkg,
+            pkg = get_url ( arch, suite, target_pkg,
               urla[0].replace("BUILDHOST", "localhost") )
 
             if pkg:
-                return pkg
+                return "", pkg
 
-    return ""
+    return "", ""
 
 
+def get_dsc_size( fname ):
+    if not virtapt_imported:
+        return 0
 
-def copy_kinitrd( xml, target_dir, defs ):
-    prj = xml.node("/project")
-    uri = get_initrd_uri(xml, defs)
+    tf = TagFile( fname )
+
+    sz = os.path.getsize(fname)
+    for sect in tf:
+        if sect.has_key('Files'):
+            files = sect['Files'].split('\n')
+            files = [ f.strip().split(' ') for f in files ]
+            for f in files:
+                sz += int(f[1])
+
+    return sz
+
+def copy_kinitrd( prj, target_dir, defs, arch="default" ):
+    try:
+        sha1, uri = get_initrd_uri(prj, defs, arch)
+    except KeyError:
+        raise NoKinitrdException ('no elbe-bootstrap package available')
+        return
+    except SystemError:
+        raise NoKinitrdException ('a configured mirror is not reachable')
+        return
+    except CommandError as e:
+        raise NoKinitrdException ("couldn't download elbe-bootstrap package")
+        return
 
     tmpdir = mkdtemp()
 
-    if uri.startswith("file://"):
-        os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
-    elif uri.startswith("http://"):
-        os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
-    elif uri.startswith("ftp://"):
-        os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+    try:
+        if uri.startswith("file://"):
+            os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
+        elif uri.startswith("http://"):
+            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+        elif uri.startswith("ftp://"):
+            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+        else:
+            raise NoKinitrdException ('no elbe-bootstrap package available')
+    except CommandError as e:
+        raise NoKinitrdException ("couldn't download elbe-bootstrap package")
+        return
+
+    if len(sha1) > 0:
+        m = hashlib.sha1()
+        with open (os.path.join(tmpdir, "pkg.deb"), "rb") as f:
+            buf = f.read(65536)
+            while len(buf)>0:
+                m.update( buf )
+                buf = f.read(65536)
+
+        if m.hexdigest() != sha1:
+            raise NoKinitrdException ('elbe-bootstrap failed to verify !!!')
     else:
-        raise Exception ('no kinitrd package available')
+        print "-----------------------------------------------------"
+        print "WARNING:"
+        print "Using untrusted elbe-bootstrap"
+        print "-----------------------------------------------------"
+
 
     os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
     # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ
     if prj.has("mirror/cdrom"):
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
         os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
     else:
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
         os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
-    os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'opt', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
+
     os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
 
     os.system( 'rm -r "%s"' % tmpdir )
-

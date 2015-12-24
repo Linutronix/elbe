@@ -1,3 +1,303 @@
+elbe (1.0) unstable; urgency=medium
+
+  * several smaller bugfixes and improves
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 24 Dec 2015 12:50:44 +0100
+
+elbe (0.9.8) unstable; urgency=medium
+
+  * chg_archive accepts <directory> OR a .tar.gz file
+  * add pbuilder functionality
+  * fix several bugs in grub installation
+  * refactor updated and add a new 'usb monitor'
+  * allow basic HTTP auth in URLs
+  * cleanup examples directory
+  * add various checks if tmux exists in correct version
+  * improve dockerfile
+  * print date & time on 'wait busy'
+  * added patches to build elbe for ubuntu to 'contrib'
+  * allow XML files with no project tag
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 14 Dec 2015 17:49:37 +0100
+
+elbe (0.9.7) unstable; urgency=medium
+
+  * build-sysroot: minor bugfixes
+  * move patches and dockerfile into contrib
+  * rewrite of kernel debianization in contrib
+  * gziped images are created
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 16 Oct 2015 15:19:03 +0200
+
+elbe (0.9.6.4) unstable; urgency=medium
+
+  * automaticly install -dev pkgs on 'elbe build_sysroot'
+  * export build_sysroot to soap interface / elbe control
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 15:16:51 +0200
+
+elbe (0.9.6.3) unstable; urgency=medium
+
+  * fix urlcheck in elbexml
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 09:42:13 +0200
+
+elbe (0.9.6.2) unstable; urgency=medium
+
+  * fix 'elbe chroot' command
+  * 'elbe initvm' builds source and binary cd per default now
+  * docs/quickstart rework
+  * elbexml only verify urls if skip_validation is not set
+  * use proxy configuration for mirror validation
+  * 'elbe initvm' make output directory if it doesn't exist
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 28 Aug 2015 08:37:26 +0200
+
+elbe (0.9.6.1) unstable; urgency=medium
+
+  * fix typo that breaks initvm creation
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 27 Aug 2015 09:29:43 +0200
+
+elbe (0.9.6) unstable; urgency=medium
+
+  * retrive licence.txt from initvm
+  * remove e2tools dependency
+  * enable to specify initvm img format and size
+  * add git as build dependency
+  * initvm: dump log.txt, when validation.txt is not available
+  * fix elbe control del_project
+  * initvm: improve error handling and printing
+  * validate debian repos before using them
+  * handle error in case of debootstrap fails
+  * add some tests based on nosetest
+  * pkgutils, virtapt: Verify gpg signatures, when virtapt is available
+  * daemons soap: add method to shutdown initvm
+  * set qcow2 as default initvm img format
+  * delete project dirs in initvm after build (can be overridden)
+  * use 7587 as SOAP/http port instead of 8080
+  * initvm: use a default XML if no initvm tag was specified
+  * control: don't crash on list_projects if project list is empty
+  * add kernel patch for generating debian source pkg to elbe-doc
+  * add kernel patch that adds debian-binary dependencies needed by grub
+  * depend on at least qemu 1:2.1
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 26 Aug 2015 16:18:08 +0200
+
+elbe (0.9.5.1) unstable; urgency=medium
+
+  * improve documentation and man-pages
+  * improve debian packaging
+  * also setup https_proxy if a primary_proxy is defined
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 30 Jun 2015 08:08:48 +0200
+
+elbe (0.9.5) unstable; urgency=medium
+
+  * introduce 'initvm' subcommand to ease usage of elbe for beginners
+  * fix generation of binary CDROMs
+  * minor improvements in updated syslog
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 24 Jun 2015 13:32:53 +0200
+
+elbe (0.9.4) unstable; urgency=medium
+
+  * fix systemd/sysvinit login-console initialization
+  * fix beaglebone-black example
+  * remove reset calls form Makefile to allow automated builds
+  * allow specification of passno in fstab
+  * improve behaviour of incremental rebuilds
+  * finetuning: run ln action under 'with target'
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 12 Mar 2015 13:23:22 +0100
+
+elbe (0.9.3) unstable; urgency=medium
+
+  * finetuning/updated: enable automatic pubkey install
+  * elbe-init: add --devel parameter
+  * support systemd login console (needed for jessie)
+  * improve behaviour of incremental buildchroot calls
+  * multiple bugfixes in updated
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 29 Jan 2015 23:48:43 +0100
+
+elbe (0.9.2) unstable; urgency=medium
+
+  * fix bug in updated that is needed for running on r/o RFS
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 22 Dec 2014 13:03:36 +0100
+
+elbe (0.9.1) unstable; urgency=medium
+
+  * finetuning: add an updated finetuning rule
+  * gen_update/updated: added pre.sh and post.sh feature
+  * gen_update/updated: added conf and cmd features
+  * hdimg: fix mountdepth bug
+  * init-vm: forward host random number generator to vm
+  * db: add timestamp to projectversion
+  * updated: clean cache after update
+  * finetuning/adduser: fix bug in password setting
+  * ziptarchive: store file attributes in archive
+  * gpg: code cleanup
+  * lintian: fix warnings
+  * debian/control depend on same binary version between all elbe packages
+  * ProjectManager: Support version checkout
+  * projectmanager: add method to get debootstrap packages
+  * updated: write currently installed version into /etc/updated_version
+  * projectmanager: modify target pkg-list in xml, when modifying aptcache
+  * buildchroot: remove FutureWarning printed by etree.py
+  * dbsfed.xsd: make kinitrd optional
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 19 Dec 2014 15:40:48 +0100
+
+elbe (0.9.0~beta3) unstable; urgency=medium
+
+  * remove newlines from etc/apt/preferences to stop confusing apt
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 30 Oct 2014 12:14:59 +0100
+
+elbe (0.9.0~beta2) unstable; urgency=medium
+
+  * allow pinning of origins
+  * upated: various bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 24 Oct 2014 10:08:06 +0200
+
+elbe (0.9.0~beta1) unstable; urgency=medium
+
+  * make updated work on read-only RFS
+  * finetuning: added raw_cmd
+  * added dockerfile
+  * fixed quoting issue in finetuning 'command'
+  * finetuning fixed ln
+  * enabled btrfs support (not for /boot)
+  * buildchroot add option to skip pkg-list
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 16 Sep 2014 10:13:39 +0200
+
+elbe (0.8.1~beta2) unstable; urgency=medium
+
+  * fix grub install
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 29 Aug 2014 23:01:11 +0200
+
+elbe (0.8.1~beta1) unstable; urgency=medium
+
+  * fixed passwd finetuning rule
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 21 Aug 2014 10:37:58 +0200
+
+elbe (0.8.0~beta1) unstable; urgency=medium
+
+  * added packages for SOAP support
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 30 Jul 2014 11:05:55 +0200
+
+elbe (0.7.0~beta12) unstable; urgency=medium
+
+  * added support for grub1 (grub2 is still available)
+  * new subcommand toolchainextract
+  * distinguish between pkg-list for buildenv and target
+  * enable chroot subcommand to chroot into a target rfs
+  * set no_proxy for localhost and LOCALMACHINE
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 25 Jul 2014 09:50:01 +0200
+
+elbe (0.7.0~beta11) unstable; urgency=medium
+
+  * use apt.conf (generated by elbe init) in elbe init-vm and elbe chroots
+  * fix incremental build for removed packages
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 08 Jul 2014 15:06:39 +0200
+
+elbe (0.7.0~beta10) unstable; urgency=medium
+
+  * elbe chroot extended
+  * adduser/addgroup finetuning tags added
+  * dns fixes for finetuning / chroot
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 25 Jun 2014 15:01:45 +0200
+
+elbe (0.7.0~beta9) unstable; urgency=medium
+
+  * merge conflict resulted in an old debian package version; rerelease with
+      updated number
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 16 Jun 2014 17:53:56 +0200
+
+elbe (0.7.0~beta8) unstable; urgency=medium
+
+  * projectmanager updated
+  * new package elbe-bootup-check
+  * gen_update reworked
+  * added zedboard example
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 16 Jun 2014 17:42:52 +0200
+
+elbe (0.7.0~beta7) unstable; urgency=medium
+
+  * fix update package generation
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 21 May 2014 16:48:47 +0200
+
+elbe (0.7.0~beta6) unstable; urgency=medium
+
+  * rescue rfs example
+  * avoid perl warnings
+  * use qemu-elbe-user-static if available
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 21 May 2014 11:46:45 +0200
+
+elbe (0.7.0~beta5) unstable; urgency=medium
+
+  * fix bug that avoids that ElbeProject.build works
+  * don't require logging in 'elbe buildchroot'
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 13 May 2014 11:18:21 +0200
+
+elbe (0.7.0~beta4) unstable; urgency=medium
+
+  * AsyncBuilder
+  * ProjectManager
+  * DB improvementes
+  * use /var/cache/elbe, /var/lib/elbe instead of /opt/elbe
+  * this requires at least elbe-bootstrap_1.0
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 12 May 2014 20:35:37 +0200
+
+elbe (0.7.0~beta3) unstable; urgency=medium
+
+  * buildchroot: implement build of cdroms
+  * introduce initvm tag
+  * add man pages for all commands
+  * ElbeProject class for project handling
+  * basic db integration
+  * various bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 02 May 2014 12:41:11 +0200
+
+elbe (0.7.0~beta2) unstable; urgency=medium
+
+  * reworked packaging again
+  * elbe init should work now
+  * huge number of bugfixes
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 03 Apr 2014 16:20:19 +0200
+
+elbe (0.7.0~beta1) unstable; urgency=medium
+
+  * test release of elbe updated integration and buildchroot rework
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 13 Mar 2014 11:15:51 +0100
+
+elbe (0.6.0~wheezy) unstable; urgency=low
+
+  * reworked debian packaging
+  * bugfixes
+  * sign feature
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 28 Jan 2014 15:50:40 +0100
+
 elbe (0.5.8-wheezy) wheezy; urgency=medium
 
   * wheezy build
@@ -40,7 +340,7 @@ elbe (0.5.5-wheezy) wheezy; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:26:27 +0200
 
-elbe (0.5.5-squeeze) squeeze; urgency=low
+elbe (0.5.5~squeeze) unstable; urgency=low
 
   * enable mount options for bydev mounts
   * fix kernel location on armhf systems
@@ -51,26 +351,26 @@ elbe (0.5.5-squeeze) squeeze; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Wed, 23 Oct 2013 11:20:47 +0200
 
-elbe (0.5.4-wheezy) wheezy; urgency=low
+elbe (0.5.4~wheezy) unstable; urgency=low
 
   * wheezy build
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:24:13 +0200
 
-elbe (0.5.4-squeeze) squeeze; urgency=low
+elbe (0.5.4~squeeze) unstable; urgency=low
 
   * BUGFIX dump.py crashed because of missing version.py on target
   * add dump.py output to elbe-report.txt 
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:20:53 +0200
 
-elbe (0.5.3-wheezy) wheezy; urgency=low
+elbe (0.5.3~wheezy) unstable; urgency=low
 
   * 5.3 wheezy build
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:37:47 +0200
 
-elbe (0.5.3-squeeze) squeeze; urgency=low
+elbe (0.5.3~squeeze) unstable; urgency=low
 
   * target package list support
   * version support (elbe --version, version info in report and target)
@@ -78,13 +378,13 @@ elbe (0.5.3-squeeze) squeeze; urgency=low
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 27 Sep 2013 17:17:19 +0200
 
-elbe (0.5.2-wheezy) wheezy; urgency=low
+elbe (0.5.2~wheezy) unstable; urgency=low
 
   * build version for wheezy distribution
 
  -- Manuel Traut <manut@linutronix.de>  Fri, 23 Aug 2013 10:56:12 +0200
 
-elbe (0.5.2-squeeze) squeeze; urgency=low
+elbe (0.5.2~squeeze) unstable; urgency=low
 
   * build version for squeeze distribution
 
@@ -231,7 +531,6 @@ elbe (0.2) unstable; urgency=low
 
 elbe (0.1-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release
 
  -- Torben Hohn <torbenh@linutronix.de>  Mon, 01 Aug 2011 15:21:14 +0200
-

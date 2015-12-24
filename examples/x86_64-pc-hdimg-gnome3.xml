@@ -1,0 +1,72 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>elbe-gnome3</name>
+		<version>1.0</version>
+		<description>
+			use this command to generate a vmware image:
+			qemu-img convert -O vmdk debian-jessie-amd64-gnome3.img debian-jessie-amd64-gnome3.vmdk
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>httpredir.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<suite>jessie</suite>
+	</project>
+	<target>
+		<hostname>elbe-gnome</hostname>
+		<domain>tec.linutronix.de</domain>
+		<passwd>elbe</passwd>
+		<console>ttyS0,115200</console>
+		<images>
+			<msdoshd>
+				<name>debian-jessie-amd64-gnome3.img</name>
+				<size>8000MiB</size>
+				<grub-install/>
+				<partition>
+					<size>remain</size>
+					<label>rfs</label>
+				</partition>
+			</msdoshd>
+		</images>
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bydev>
+				<source>none</source>
+				<mountpoint>/sys/kernel/debug</mountpoint>
+				<fs>
+					<type>debugfs</type>
+				</fs>
+			</bydev>
+		</fstab>
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<adduser passwd="elbe" shell="/bin/zsh">elbe</adduser>
+			<command>echo de_DE.UTF-8 > /etc/locale.gen</command>
+			<command>locale-gen</command>
+			<command>echo "GRUB_GFXPAYLOAD_LINUX=text" >> /etc/default/grub</command>
+		</finetuning>
+		<pkg-list>
+			<pkg>grub-pc</pkg>
+			<pkg>linux-image-amd64</pkg>
+			<pkg>openssh-client</pkg>
+			<pkg>openssh-server</pkg>
+			<pkg>less</pkg>
+			<pkg>bash</pkg>
+			<pkg>zsh</pkg>
+			<pkg>vim-nox</pkg>
+			<pkg>apache2</pkg>
+			<pkg>nfs-kernel-server</pkg>
+			<pkg>task-gnome-desktop</pkg>
+			<pkg>gdm3</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>

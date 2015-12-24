@@ -1,0 +1,17 @@
+
+First tests using nosetests
+---------------------------
+
+how to run ?
+~~~~~~~~~~~~
+
+$ export ELBE_TEST_DIR=/some/path/where/initvms/might/reside
+$ nosetests -w tests/ --all-modules -v
+
+
+what is tested ?
+~~~~~~~~~~~~~~~~
+
+- uses elbe validate to validate all example files
+- uses elbe init to build examples starting with "elbe-init"
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+elbe db init --name=root --password=foo
+#DEBHELPER#

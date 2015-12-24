@@ -1,4 +1,14 @@
 #!/usr/bin/make -f
 
+override_dh_auto_configure:
+	cd docs && $(MAKE)
+
+override_dh_clean:
+	dh_clean
+	$(MAKE) -C docs clean
+
+override_dh_compress:
+	dh_compress -X.xml
+
 %:
 	dh --buildsystem=python_distutils --with python2 $@

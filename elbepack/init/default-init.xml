@@ -1,0 +1,44 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe wheezy main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe wheezy main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe/elbe-repo.pub
+					</key>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-common wheezy main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-common wheezy main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe-common/elbe-repo.pub
+					</key>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>wheezy</suite>
+		<size>80G</size>
+		<img>qcow2</img>
+		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>7588</buildenv>
+				<host>7587</host>
+			</forward>
+		</portforwarding>
+	</initvm>
+</ns0:RootFileSystem>

@@ -1,0 +1,109 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>squashfs</name>
+		<version>1.0</version>
+		<description>
+			i386 squashfs image with a squashfs aware initramfs
+
+			usage:
+			------
+			$ elbe buildchroot --skip-cdrom -t ~/sfs-example squashfs-root.xml
+			$ cd ~/sfs-example
+			$ mkdir your_disk
+			$ cp root.sfs your_disk/
+			$ cp chroot/initramfs.cpio.gz your_disk/
+			$ cp target/boot/vmlinuz-3.2.0-4-686-pae your_disk/
+			# testing: root= is the partition with your squashfs images.
+			# 	   root_sfs= is the image file within root.
+			$ qemu-system-i386 -kernel your_disk/vmlinuz-3.2.0-4-686-pae -initrd your_disk/initramfs.cpio.gz \
+				-append "root=/dev/sda1 root_sfs=root.sfs console=ttyS0" --nographic -hda fat:your_disk/ -m 512M
+		</description>
+		<buildtype>i386</buildtype>
+		<mirror>
+			<primary_host>httpredir.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<suite>wheezy</suite>
+	</project>
+	<target>
+		<hostname>wheezy-ro</hostname>
+		<domain />
+		<passwd>linux</passwd>
+		<console>ttyS0,115200</console>
+		<package>
+			<squashfs>
+				<name>root.sfs</name>
+			</squashfs>
+		</package>
+		<finetuning>
+			<mv path="/var">/var_debian</mv>
+			<mkdir>/var</mkdir>
+			<rm>/etc/mtab</rm>
+			<rm>/run</rm>
+			<command>ln -s /var/run /run</command>
+			<command>ln -s /proc/self/mounts /etc/mtab</command>
+			<rm>/etc/udev/rules.d/70-persistent-net.rules</rm>
+			<rm>/lib/udev/rules.d/75-persistent-net-generator.rules</rm>
+			<rm>/etc/init.d/checkroot.sh</rm>
+			<rm>/etc/init.d/urandom</rm>
+			<rm>/etc/init.d/checkfs.sh</rm>
+			<rm>/etc/init.d/checkroot-bootclean.sh</rm>
+			<rm>/etc/init.d/mountall.sh</rm>
+			<rm>/etc/init.d/mountnfs.sh</rm>
+			<rm>/etc/init.d/mountall-bootclean.sh</rm>
+			<rm>/etc/init.d/mountnfs-bootclean.sh</rm>
+			<rm>/var_debian/cache/*</rm>
+			<command>insserv -f -d -p /etc/init.d</command>
+			<command>/opt/gen_initrd/gen.sh /</command>
+			<t2b_cp path="/opt/gen_initrd/work/initramfs.cpio.gz">/</t2b_cp>
+			<rm>/opt/gen_initrd/work/</rm>
+			<rm>/vmlinuz</rm>
+			<rm>/initrd.img</rm>
+		</finetuning>
+		<pkg-list>
+			<pkg>openssh-client</pkg>
+			<pkg>openssh-server</pkg>
+			<pkg>bash</pkg>
+			<pkg>busybox-static</pkg>
+			<pkg>linux-image-686-pae</pkg>
+		</pkg-list>
+	</target>
+<archive>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
+dCA=
+</archive></ns0:RootFileSystem>

@@ -1,3 +1,4 @@
-
-deb:
-	dpkg-buildpackage -b -us -uc
+all:
+	./test/testdeb.sh
+	dpkg-buildpackage --source-option="-I .git"
+	lintian

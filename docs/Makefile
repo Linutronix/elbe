@@ -1,5 +1,4 @@
-
-ELBE_VERSION=0.4
+ELBE_VERSION=$(`../elbe --version | awk '{ print $2 }'`)
 
 MAN1_TXT= \
 	$(filter-out $(addsuffix .txt, $(ARTICLES) $(SP_ARTICLES)), \
@@ -8,7 +7,6 @@ MAN1_TXT= \
 MAN5_TXT=
 MAN7_TXT=
 
-
 MAN_TXT = $(MAN1_TXT) $(MAN5_TXT) $(MAN7_TXT)
 MAN_XML=$(patsubst %.txt,%.xml,$(MAN_TXT))
 MAN_HTML=$(patsubst %.txt,%.html,$(MAN_TXT))
@@ -16,7 +14,7 @@ MAN_HTML=$(patsubst %.txt,%.html,$(MAN_TXT))
 DOC_HTML=$(MAN_HTML)
 
 ARTICLES = elbe-schema-reference elbe-examples
-SP_ARTICLES= elbeoverview-en repobuilder-en
+SP_ARTICLES= elbeoverview-en repobuilder-en quickstart
 
 DOC_HTML+=$(patsubst %,%.html,$(ARTICLES) $(SP_ARTICLES))
 
@@ -63,7 +61,7 @@ install-man: man
 	$(INSTALL) -d -m 755 $(DESTDIR)$(man1dir)
 	$(INSTALL) -m 644 $(DOC_MAN1) $(DESTDIR)$(man1dir)
 
-install-html: 
+install-html:
 	$(INSTALL) -d -m 755 $(DESTDIR)$(htmldir)
 	$(INSTALL) -m 644 $(DOC_HTML) $(DESTDIR)$(htmldir)
 
@@ -118,11 +116,15 @@ $(patsubst %,%.html,$(ARTICLES)) : %.html : %.txt
 elbeoverview-en.html : elbeoverview-en.txt elbe-process.png emu-process.png
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbeoverview-en.txt
 
+quickstart.html : quickstart.txt
+	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 quickstart.txt
+
 elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
-	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) -a iconsdir=icons -o elbeoverview-en-ie.html -b xhtml11 elbeoverview-en.txt
+	$(ASCIIDOC) -b html5 -a icons -a toc2 -a theme=flask -o elbeoverview-en.html elbeoverview-en.txt
 
 elbe-schema-reference.txt: ../elbepack/dbsfed.xsd ../elbepack/xsdtoasciidoc.mako
 	../elbe xsdtoasciidoc --output elbe-schema-reference.txt ../elbepack/dbsfed.xsd
+	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbe-schema-reference.txt
 
 elbe-examples.txt:
 	./build-example-doc.sh
@@ -130,4 +132,3 @@ elbe-examples.txt:
 
 repobuilder-en.html : repobuilder-en.txt buildrepo.png repobuild-cycle.png
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 repobuilder-en.txt
-

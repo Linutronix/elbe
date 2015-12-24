@@ -21,7 +21,15 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="project" type="rfs:project">
+      <element name="initvm" type="rfs:initvm" minOccurs="0">
+        <annotation>
+          <documentation>
+            Configurations that are used for creating the initvm
+            e.g. the definition of the used debian mirrors, suite and buildtype
+          </documentation>
+        </annotation>
+      </element>
+      <element name="project" type="rfs:project" minOccurs="0">
         <annotation>
           <documentation>
             Configurations that are used for creating the buildenvironment and
@@ -30,7 +38,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="target" type="rfs:target">
+      <element name="target" type="rfs:target" minOccurs="0">
         <annotation>
           <documentation>
             Configurations that are used to create the target rootfilesystem
@@ -46,10 +54,38 @@
           </documentation>
         </annotation>
       </element>
+      <element name="debootstrappkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            List of packages installed right after debootstrap
+          </documentation>
+        </annotation>
+      </element>
+      <element name="initvmpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            List of packages installed right after debootstrap
+          </documentation>
+        </annotation>
+      </element>
+      <element name="initvm_sources_list" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt sources list.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="initvm_apt_prefs" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            apt preferences list
+          </documentation>
+        </annotation>
+      </element>
       <element name="fullpkgs" type="rfs:fullpkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            install the given packages into the rootfilesystem
+            List of packages with their versions installed on the RFS
           </documentation>
         </annotation>
       </element>
@@ -104,6 +140,32 @@
     </restriction>
   </simpleType>
 
+  <complexType name="binary-url">
+    <annotation>
+      <documentation>
+        e.g. "http://myhost/debian /" or "http://debian.org/debian main"
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="pin" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Pin-Priority of packages from this source.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="package" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Packages that should be pinned.
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
   <complexType name="url">
     <annotation>
       <documentation>
@@ -111,7 +173,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="binary" type="string">
+      <element name="binary" type="rfs:binary-url" minOccurs="0">
         <annotation>
           <documentation>
             e.g. "http://myhost/debian /" or "http://debian.org/debian main"
@@ -122,6 +184,13 @@
         <annotation>
           <documentation>
             e.g. "http://myhost/sources /" or "http://debian.org/debian main"
+          </documentation>
+        </annotation>
+      </element>
+      <element name="key" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+	    URL of the Public Key used to sign this Repository e.g "http://myhost/key.pub" or "http://debian.linutronix.de/elbe/elbe-repo.pub"
           </documentation>
         </annotation>
       </element>
@@ -201,6 +270,89 @@
     </sequence>
   </complexType>
 
+  <complexType name="initvm">
+    <annotation>
+      <documentation>
+        describes settings that apply to the creation of the initvm
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Default buildtype like armel, ppc, and in the future armel-virtio
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mirror" type="rfs:mirror">
+        <annotation>
+          <documentation>
+            used debian mirrors
+          </documentation>
+        </annotation>
+      </element>
+      <element name="noauth" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            allow installation of unsigned debian packages
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preference" type="rfs:preference" minOccurs="0">
+        <annotation>
+          <documentation>
+            used for pinning of all packages
+            TODO: example?
+          </documentation>
+        </annotation>
+      </element>
+      <element name="suite" type="string">
+        <annotation>
+          <documentation>
+            name of the debian suite that should be used to generate the initvm.
+            e.g. "lenny", "squeeze", "sid", ..
+          </documentation>
+        </annotation>
+      </element>
+      <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            additional packages that are installed into the initvm.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="preseed" type="rfs:preseed" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Custom preseeding Values for apt
+          </documentation>
+        </annotation>
+      </element>
+      <element name="size" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the virtual harddisk used to run the build environment
+          </documentation>
+        </annotation>
+      </element>
+      <element name="img" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            hd image backend format: raw, qcow, vmdk, ...
+          </documentation>
+        </annotation>
+      </element>
+      <element name="portforwarding" type="rfs:portforwarding" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            network ports of the buildenvironment that are forwarded to the
+            host machine
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
   <complexType name="project">
     <annotation>
       <documentation>
@@ -209,21 +361,21 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string">
+      <element name="name" type="string" minOccurs="0">
         <annotation>
           <documentation>
             name of the project this rootfilesystem is associated with
           </documentation>
         </annotation>
       </element>
-      <element name="version" type="string">
+      <element name="version" type="string" minOccurs="0">
         <annotation>
           <documentation>
             version of the rootfilesystem definition
           </documentation>
         </annotation>
       </element>
-      <element name="description" type="string">
+      <element name="description" type="string" minOccurs="0">
         <annotation>
           <documentation>
             human readable description of the project
@@ -255,7 +407,15 @@
         <annotation>
           <documentation>
             used for pinning of all packages
-            TODO: example??
+            TODO: example?
+          </documentation>
+        </annotation>
+      </element>
+      <element name="raw-preference" type="rfs:raw-preference" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            gets dedented and striped and is then written to /etc/apt/preferences
+            TODO: example?
           </documentation>
         </annotation>
       </element>
@@ -268,7 +428,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="buildimage" type="rfs:buildimage">
+      <element name="buildimage" type="rfs:buildimage" minOccurs="0">
         <annotation>
           <documentation>
             reference to the buildimage which is used to generate the
@@ -301,6 +461,18 @@
             </documentation>
           </annotation>
         </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="raw-preference">
+    <annotation>
+      <documentation>
+        content is directly written to /etc/apt/preferences.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
       </extension>
     </simpleContent>
   </complexType>
@@ -340,7 +512,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="kinitrd" type="string">
+      <element name="kinitrd" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             pkg name of the initrd/kernel package.
@@ -499,28 +671,28 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="hostname" type="string">
+      <element name="hostname" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             hostname of the system
           </documentation>
         </annotation>
       </element>
-      <element name="domain" type="string">
+      <element name="domain" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             domainname of the network the target system is part of
           </documentation>
         </annotation>
       </element>
-      <element name="passwd" type="string">
+      <element name="passwd" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             root password
           </documentation>
         </annotation>
       </element>
-      <element name="console" type="string" minOccurs="0">
+      <element name="console" type="string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             serial console for getty
@@ -530,7 +702,7 @@
       <element name="package" type="rfs:package" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            package rootfilesystem as a tarball or cpio image
+            package rootfilesystem as a tarball, cpio or a squashfs image
           </documentation>
         </annotation>
       </element>
@@ -610,17 +782,6 @@
     </restriction>
   </simpleType>
 
-  <simpleType name="ubi_size">
-    <annotation>
-      <documentation>
-        size pattern as needed by ubinize
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <pattern value="(\d+MiB)" />
-    </restriction>
-  </simpleType>
-
   <complexType name="ubi">
     <annotation>
       <documentation>
@@ -649,7 +810,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="rfs:ubi_size" minOccurs="1" maxOccurs="1">
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             size of the ubi volume
@@ -739,17 +900,6 @@
     </sequence>
   </complexType>
 
-  <simpleType name="mtd_size">
-    <annotation>
-      <documentation>
-         size pattern for mtd
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <pattern value="(\d+MB)" />
-    </restriction>
-  </simpleType>
-
   <complexType name="mtd">
     <annotation>
       <documentation>
@@ -771,7 +921,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="rfs:mtd_size" minOccurs="1" maxOccurs="1">
+      <element name="size" type="rfs:part_size" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              size of the mtd device
@@ -906,6 +1056,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="passno" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            passno order for fsck
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
@@ -934,6 +1091,13 @@
         <annotation>
           <documentation>
             options passed to the tune2fs command
+          </documentation>
+        </annotation>
+      </element>
+      <element name="passno" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            passno order for fsck
           </documentation>
         </annotation>
       </element>
@@ -1063,6 +1227,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="squashfs" type="rfs:squashfs" minOccurs="0">
+        <annotation>
+          <documentation>
+             squashfs image of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
@@ -1101,6 +1272,23 @@
         <annotation>
           <documentation>
              filename of the cpio package 
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="squashfs">
+    <annotation>
+      <documentation>
+         describes a squashfs image
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="name" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+             filename of the squashfs image
           </documentation>
         </annotation>
       </element>
@@ -1200,6 +1388,7 @@
       <enumeration value="proc" />
       <enumeration value="sysfs" />
       <enumeration value="vfat" />
+      <enumeration value="btrfs" />
     </restriction>
   </simpleType>
 
@@ -1222,6 +1411,20 @@
       </documentation>
     </annotation>
     <choice>
+      <element name="addgroup" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            add a group by name
+          </documentation>
+        </annotation>
+      </element>
+      <element name="adduser" type="rfs:adduser" minOccurs="0">
+        <annotation>
+          <documentation>
+            add a user account by login name
+          </documentation>
+        </annotation>
+      </element>
       <element name="rm" type="string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1236,7 +1439,42 @@
           </documentation>
         </annotation>
       </element>
+      <element name="ln" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a symbolic link
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv_cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="b2t_cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="t2b_cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
       <element name="mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv_mv" type="rfs:cpmv" minOccurs="0">
         <annotation>
           <documentation>
             move a file or directory
@@ -1250,6 +1488,20 @@
           </documentation>
         </annotation>
       </element>
+      <element name="buildenv_mkdir" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mknod" type="rfs:mknod" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
       <element name="purge" type="string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1257,15 +1509,56 @@
           </documentation>
         </annotation>
       </element>
-      <element name="command" type="string" minOccurs="0">
+      <element name="raw_cmd" type="string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command
           </documentation>
         </annotation>
       </element>
+      <element name="command" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command in /bin/sh
+          </documentation>
+        </annotation>
+      </element>
+      <element name="buildenv_command" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command
+          </documentation>
+        </annotation>
+      </element>
+      <element name="updated" type="string" minOccurs="0">
+        <annotation>
+          <documentation>
+            include the base debian repository in the target rfs to enable
+            downgrades via elbe-updated
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
+
+  <complexType name="adduser">
+    <annotation>
+      <documentation>
+        describes an additional user account, the following parameters are
+        available: 'shell' - the login shell for the user, 'passwd' - the
+        password for the user and 'groups' - a comma separated list of groups
+        the user is member of. The value of the tag describes the login name
+        for the account.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="shell" type="string" use="required" />
+        <attribute name="passwd" type="string" use="required" />
+        <attribute name="groups" type="string" use="optional" />
+      </extension>
+    </simpleContent>
+  </complexType>
 
   <complexType name="cpmv">
     <annotation>
@@ -1280,6 +1573,18 @@
     </simpleContent>
   </complexType>
 
+  <complexType name="mknod">
+    <annotation>
+      <documentation>
+        describes a mknod operaition in finetuning
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="opts" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
   <complexType name="git_src">
     <annotation>
       <documentation>

@@ -21,7 +21,6 @@ import sys
 import elbepack
 from lxml import etree
 from lxml.etree import XMLParser,parse
-from optparse import OptionParser
 
 def validate_xml(fname):
     schema_file = os.path.join( elbepack.__path__[0], "dbsfed.xsd" )
@@ -33,36 +32,16 @@ def validate_xml(fname):
         xml = parse(fname,parser=parser)
 
         if schema.validate(xml):
-            return True
+            return []
     except etree.XMLSyntaxError:
-        print "XML Parse error"
-        print str(sys.exc_info()[1])
-        return False
+        return ["XML Parse error\n" + str(sys.exc_info()[1])]
     except:
-        print "Unknown Exception during validation"
-        print sys.exc_info()[1]
-        return False
+        return ["Unknown Exception during validation\n" + str(sys.exc_info()[1])]
 
-    # We have an error... lets print the log.
-
+    # We have errors, return them in string form...
+    errors = []
     for err in schema.error_log:
-        print "%s:%d error %s" % (err.filename, err.line, err.message)
+        errors.append ("%s:%d error %s" % (err.filename, err.line, err.message))
 
-    return False
-
-def run_command( argv ):
-    oparser = OptionParser( usage="usage: %prog validate <xmlfile>")
-    (opt,args) = oparser.parse_args(argv)
-
-    if len(args) != 1:
-        print "Wrong number of arguments"
-        oparser.print_help()
-        sys.exit(20)
-
-    if validate_xml(args[0]):
-        sys.exit(0)
-    else:
-        print "validation failed"
-        sys.exit(20)
-
+    return errors
 

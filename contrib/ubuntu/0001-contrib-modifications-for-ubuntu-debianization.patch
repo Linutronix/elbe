@@ -1,0 +1,57 @@
+From 95ae14fb56722d32977ec0deff3d5f7248c8d6af Mon Sep 17 00:00:00 2001
+From: Jan Altenberg <jan@linutronix.de>
+Date: Tue, 3 Nov 2015 17:35:35 +0100
+Subject: [PATCH] contrib: modifications for ubuntu debianization
+
+current tmux version needs to be installed
+
+Signed-off-by: Manuel Traut <manut@linutronix.de>
+---
+ debian/control              | 2 +-
+ elbepack/init/Makefile.mako | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/debian/control b/debian/control
+index 4cfe1b1..28fe2d3 100644
+--- a/debian/control
++++ b/debian/control
+@@ -43,7 +43,7 @@ Depends: ${misc:Depends},
+   python (>= 2.7~),
+   elbe-common (= ${binary:Version}),
+   qemu-utils,
+-  qemu-kvm (>= 1:2.1),
++  qemu-kvm,
+   python-mako,
+   p7zip-full,
+   make
+diff --git a/elbepack/init/Makefile.mako b/elbepack/init/Makefile.mako
+index 9143210..4c48ec3 100644
+--- a/elbepack/init/Makefile.mako
++++ b/elbepack/init/Makefile.mako
+@@ -64,7 +64,6 @@ all: .stamps/stamp-install-initial-image
+ .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
+ 	@ echo $(INTERPRETER)
+ 	@ $(INTERPRETER) -M $(MACHINE) \
+-		-device virtio-rng-pci \
+ 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+ % if prj.has("mirror/cdrom"):
+ 		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=0 \
+@@ -94,7 +93,6 @@ all: .stamps/stamp-install-initial-image
+ 
+ run:
+ 	$(INTERPRETER) -M $(MACHINE) \
+-		-device virtio-rng-pci \
+ 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+ 		-no-reboot \
+ 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
+@@ -110,7 +108,6 @@ run:
+ 
+ run-con:
+ 	$(INTERPRETER) -M $(MACHINE) \
+-		-device virtio-rng-pci \
+ 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+ 		-no-reboot \
+ 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
+-- 
+2.6.2
+

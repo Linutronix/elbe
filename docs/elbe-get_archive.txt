@@ -1,5 +1,5 @@
-elbe-create(1)
-=============
+elbe-get_archive(1)
+===================
 
 NAME
 ----
@@ -30,10 +30,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* Extract the archive in 'mysqueeze.xml' to 'archive.tar.bz2'
+* Extract the archive in 'mywheezy.xml' to 'archive.tar.bz2'
 +
 ------------
-$ elbe get_archive mysqueeze.xml archive.tar.bz2
+$ elbe get_archive mywheezy.xml archive.tar.bz2
 ------------
 
 

@@ -1,0 +1,266 @@
+Embedded Linux Build Environment (ELBE) Quickstart Guide
+========================================================
+ELBE is a Debian based system to generate root-filesystems for embedded devices.
+
+You have probably received a root-filesystem, which has been built with ELBE.
+Additionally you should have an XML file describing the root-filesystem.
+
+This quickstart guide describes the steps necessary to rebuild the
+root-filesystem from the XML file and to simple modifications.
+
+Steps necessary
+---------------
+. install Debian 8 (Jessie) on your Host
+. install ELBE on Host Linux
+. generate the `initvm` running the buildenvironment
+. build the root-filesystem inside the initvm
+
+Steps 1 and 2 need only be performed once.
+
+NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
+      that nested KVM is working.
+
+Customisation of the build
+--------------------------
+The ELBE XML can contain an archive, which can contain configuration files,
+and additional software. This archive is extracted onto the target-image
+during the buildprocess. It allows you to override any file, which needs to be
+different from the default Debian Install.
+
+This guide also explains how the archive can be extracted from the XML file,
+and vice versa.
+
+ELBE allows to manipulate the generated root-filesystem through a set of
+`<finetuning>` rules. We also describe, how these can be used to add a user,
+change directory permissions, and remove files from the root-filesystem.
+
+Installing ELBE
+---------------
+There are several possibilities to install ELBE.
+The simplest method is by installing prebuilt binary packages
+via Linutronix package repository on a Debian 8 (Jessie) system.
+
+But ELBE can also be installed from git.
+
+Binary Debian packages
+~~~~~~~~~~~~~~~~~~~~~~
+
+The latest packages for elbe reside in the following repository
+--------------------------------------------------------
+http://debian.linutronix.de/elbe
+--------------------------------------------------------
+
+Create the file `/etc/apt/sources.list.d/elbe.list`
+with the following contents:
+--------------------------------------------------------
+deb http://debian.linutronix.de/elbe jessie main
+--------------------------------------------------------
+
+Then run (as root):
+--------------------------------------------------------
+$ apt-get update
+$ apt-get install elbe
+--------------------------------------------------------
+
+Git Version
+~~~~~~~~~~~
+If you can not use Debian Jessie, you can also checkout the current
+ELBE source-code via git from github.
+
+--------------------------------------------------------
+$ git clone https://github.com/Linutronix/elbe.git
+Cloning into 'elbe'...
+remote: Counting objects: 5435, done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 5435 (delta 1), reused 0 (delta 0), pack-reused 5427
+Receiving objects: 100% (5435/5435), 1.94 MiB | 1.92 MiB/s, done.
+Resolving deltas: 100% (3943/3943), done.
+Checking connectivity... done.
+$ cd elbe
+$ ls
+AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack
+examples INSTALL    Makefile README  setup.py    test  THANKS TODO
+--------------------------------------------------------
+
+ELBE can run without being installed from the git checkout.
+Just note that file paths are different under this situation.
+
+--------------------------------------------------------
+elbe -> ./elbe
+/usr/share/doc/elbe-doc/examples -> examples/
+--------------------------------------------------------
+
+
+Create initvm and submit XML files
+----------------------------------
+The first thing you need to do is set up a virtual-machine for
+generating root-filesystems.
+
+This virtual-machine is referred to as "initvm". You will want your
+initvm to be the same architecture as your workstation. This allows
+using hardware accelerated virtualization implemented by kvm.
+
+-------------------------------------------------------------------------------
+$ elbe initvm create --directory=initvm
+/home/torbenh/elbe/elbe/initvm
+gpg: keyring `/tmp/tmpPfPXt4/secring.gpg' created
+gpg: keyring `/tmp/tmpPfPXt4/etc/apt/trusted.gpg.d/linutronix-elbe.gpg' created
+gpg: key 22BB8F84: public key "ELBE Devel (Linutronix ELBE developers) <elbe-devel@linutronix.de>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+--2015-08-17 15:26:26--  http://debian.linutronix.de/elbe/elbe-repo.pub
+Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
+Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1763 (1.7K)
+Saving to: ‘/tmp/tmpPfPXt4/tmpkey.gpg’
+
+/tmp/tmpPfPXt4/tmpkey.gpg             100%[========================================================================>]   1.72K  --.-KB/s   in 0s
+
+2015-08-17 15:26:26 (346 MB/s) - ‘/tmp/tmpPfPXt4/tmpkey.gpg’ saved [1763/1763]
+
+...
+
+Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%... 100%
+Configuring apt  ... 16%... 25%... 32%... 41%... 50%... 66%... 75%... 83%... 91%... 100%
+Select and install software  ... 10%... 26%... 31%... 40%... 50%... 61%... 70%... 80%... 90%... 100%
+Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
+The system is going down NOW!.. 14%... 23%... 33%... 42%... 52%... 61%... 71%... 80%... 90%
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system reboot
+[  589.432092] Restarting system.
+mkdir -p .stamps
+touch .stamps/stamp-install-initial-image
+-------------------------------------------------------------------------------
+
+
+This creates an "initvm" subdirectory and builds the initvm inside this directory.
+
+Submitting an XML file
+----------------------
+
+Submitting an XML file triggers an image build inside the initvm.
+Once the initvm has been created and is running, you can submit XML files using
+
+-------------------------------------------------------------------------------
+$ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
+Build started, waiting till it finishes
+project still busy, waiting
+project still busy, waiting
+
+...
+
+project still busy, waiting
+project still busy, waiting
+project still busy, waiting
+
+Build finished !
+
+
+ELBE Package validation
+=======================
+
+
+Package List validation
+ ----------------------
+
+No Errors found
+
+Getting generated Files
+
+Saving generated Files to /home/torbenh/elbe/elbe/elbe-build-20150817-155038
+source.xml      (Current source.xml of the project)
+rescue.cpio     (Image)
+validation.txt  (Package list validation result)
+elbe-report.txt         (Report)
+log.txt         (Log file)
+-------------------------------------------------------------------------------
+
+The result of the build is stored in elbe-build-<TIMESTAMP> below your current
+working directory.
+
+Ports opened by initvm
+----------------------
+The initvm will open port 7587 on localhost. This is used by the elbe tools
+on your host to communicate with the initvm.
+
+Advanced usage
+--------------
+
+ELBE Archive
+~~~~~~~~~~~~
+The ELBE XML file contains an archive which is extracted into the
+root-filesystem during the image generation phase.
+
+It is acessed with the following commands:
+------------------------------------------------------------------------------
+$ elbe get_archive fun.xml archive.tar.bz2
+------------------------------------------------------------------------------
+
+It is a normal tar.bz2 which can be manipulated and reinjected into the XML:
+----------------------------------
+$ mkdir arch
+$ tar xvfj archive.tar.bz2 -C arch
+$ echo hello > arch/hello
+$ elbe chg_archive fun.xml arch
+----------------------------------
+
+Adding packages to the "list of packages to install"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The XML file contains a 'list of packages to install' `<pkg-list>` in the
+`<target>` XML node. Inserting a line containing
+
+[source,xml]
+------------------------------------------------------------------------------
+<pkg>util-linux</pkg>
+------------------------------------------------------------------------------
+
+will add the `util-linux` package to the target-rfs.
+
+
+Using the finetuning rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+An ELBE XML file can contain a set of finetuning rules. Finetuning is used to
+customize the target-rfs, e.g. remove man-pages. Here is an example
+finetuning from `/usr/share/doc/elbe-doc/examples/elbe-desktop.xml`:
+
+[source,xml]
+------------------------------------------------------------------------------
+<finetuning>
+	<rm>var/cache/apt/archives/*.deb</rm>
+	<adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
+</finetuning>
+------------------------------------------------------------------------------
+
+rm
+^^
+The `<rm>` node removes files from the target-rfs.
+
+adduser
+^^^^^^^
+The adduser node allows to create a user.
+The following example creates the user `elbe` with the password `foo`.
+
+It is also possible to specify groups the new user should be part of:
+[source,xml]
+------------------------------------------------------------------------------
+<adduser passwd="foo" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
+------------------------------------------------------------------------------
+
+Changing ownership of directories or files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+There is currently no special finetuning node for `chmod` and `chown`.
+These commands needs to be specified via the command tag, which allows running
+any command that is available in the target-rfs.
+
+[source,xml]
+------------------------------------------------------------------------------
+<command>chown elbe:elbe /mnt</command>
+<command>chmod 777 /mnt</command>
+------------------------------------------------------------------------------
+
+Further Example
+^^^^^^^^^^^^^^^
+A more complete example can be found in the ELBE overview document that is
+installed at `/usr/share/doc/elbe-doc/elbeoverview-en.html`

@@ -4,7 +4,7 @@ ELBE
 http://elbe-rfs.org
 
 ELBE is the 'E.mbedded L.inux B.uild E.nvironment'.
-It can be used to build embedded Linux Rootfilesystems.
+It can be used to build embedded Linux Rootfilesystems based on Debian packages.
 
 ELBE runs on Debian Linux Host Systems.
 
@@ -13,32 +13,27 @@ Crash Course
 1. use a Elbe XML file (e.g. from /usr/share/doc/elbe/examples or
    examples/ in the elbe source tree)
 
-2. run "./elbe create ./examples/i386-example.xml".
-   This command creates the build directory in the current working directory.
+2. run "./elbe initvm create ./examples/armhf-ti-beaglebone-black.xml
 
-3. go into the working directory "cd build", run "make" and wait.
+   * This command creates an initvm directory in the current working directory,
+   * installs and starts a virtual buildenvironemnt
+   * within this build environment the beaglebone-black image will be built
+   * after the build finished the build results will be copied into
+        elbe-build-<TIMESTAMP>
 
-4. run 'make run-con' to boot the ELBE Buildenvironment in qemu/kvm.
-   A stripped down and readonly target rootfilesystem is available within
-     'nfsroot.tar.gz'
-
-For further informations read ABOUT, INSTALL docs/elbeoverview-en.txt
-Or get a nicer HTML documentation and run 'make' at the docs folder.
+3. copy the rfs to a sdcard: 'sudo dd if=elbe-build*/sdcard.img of=/dev/mmcblk0'
 
 Report bugs or any other feedback
 ---------------------------------
-There is no bugtracking system at the moment.
-Please report bugs or success stories to <elbe-devel@linutronix.de>.
+Please use the Issue tracker on github, or report bugs or success stories to
+<elbe-devel@linutronix.de>.
 
 Development
 -----------
-There is a 'TODO' file that describes the next development steps.
-The project is hosted on github: https://github.com/linutronix/elbe
-If you are intrested in joining the elbe-devel team please send an email to
-<elbe-devel@linutronix.de>.
+The project is hosted on github:
+https://github.com/linutronix/elbe
 
-Port it to other systems
-------------------------
-It is possible to port it to other systems, but it has a dependency to
-python-apt. So either this dependency needs to be eliminated, or python-apt
-needs to be available on the target platform.
+To get the source use:
+git clone https://github.com/linutronix/elbe
+
+IRC: irc://irc.freenode.net/elbe

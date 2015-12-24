@@ -16,12 +16,26 @@
 ## You should have received a copy of the GNU General Public License
 ## along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 ##
+<%!
+    import textwrap
+    from textwrap import dedent
+%>
 % if prj.has("preference"):
 Package: *
 Pin: release o=${prj.text("preference")}
 Pin-Priority: ${prj.node("preference").et.attrib["pin"]}
-% endif
 
+% endif
+% for pref in prj.et.iter('raw-preference'):
+${textwrap.dedent(pref.text).strip()}
+
+% endfor
+% for porg in porgs:
+Package: ${porg['package']}
+Pin: origin ${porg['origin']}
+Pin-Priority: ${porg['pin']}
+
+% endfor
 % for n in pkgs:
 %  if "pin" in n.et.attrib.keys():
 Package: ${n.et.text}
