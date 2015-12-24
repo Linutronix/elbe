@@ -18,6 +18,7 @@
 
 import apt_pkg
 import os
+import sys
 
 # don't remove the apt import, it is really needed, due to some magic in apt_pkg
 import apt
