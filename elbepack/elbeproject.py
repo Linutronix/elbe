@@ -37,7 +37,7 @@ from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook
 
-class IncompatibeArchitectureException(Exception):
+class IncompatibleArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
         Exception.__init__(self,
             "Cannot change architecture from %s to %s in existing project" %
