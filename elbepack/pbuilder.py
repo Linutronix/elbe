@@ -49,7 +49,7 @@ def pbuilder_write_repo_hook (builddir, xml):
 
     mirror = "#!/bin/sh\n"
     if xml.prj.has("mirror/primary_host"):
-        mirror += 'echo "deb ' + xml.get_primary_mirror (None) + ' ' + xml.prj.text("suite") + ' main" >> /etc/apt/sources.list\n'
+        mirror += 'echo "deb ' + xml.get_primary_mirror (None) + ' ' + xml.prj.text("suite") + ' main" > /etc/apt/sources.list\n'
 
         if xml.prj.has("mirror/url-list"):
             for url in xml.prj.node("mirror/url-list"):
