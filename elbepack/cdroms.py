@@ -53,6 +53,8 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
+    repo.finalize ()
+
     pkglist = get_initvm_pkglist()
     cache = Cache ()
     cache.open ()
@@ -72,6 +74,8 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
             log.printo( "No sources for Package " + pkg.name + "-" + str(pkg.installed_version) )
         except FetchError as fe:
             log.printo( "Source for Package " + pkg.name + "-" + pkgver.version + " could not be downloaded" )
+
+    repo.finalize ()
 
     return repo.buildiso( os.path.join( target, "src-cdrom.iso" ) )
 
@@ -144,6 +148,8 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
             log.printo( "Package " + pkg.name + "-" + str (pkg.installed_version) + " could not be downloaded" )
         except TypeError as te:
             log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
+
+    repo.finalize ()
 
     # Mark the binary repo with the necessary Files
     # to make the installer accept this as a CDRom

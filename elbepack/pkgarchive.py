@@ -92,8 +92,12 @@ def gen_binpkg_archive(ep, repodir):
             # Add package to repository
             # XXX Use correct component
             repo.includedeb( abs_path, "main" )
+
+        repo.finalize()
+
     finally:
         rmtree( ep.buildenv.rfs.fname( 'var/cache/elbe/pkgarchive' ) )
+        repo.finalize()
 
 def checkout_binpkg_archive (ep, repodir):
     repopath = path.join( ep.builddir, repodir )

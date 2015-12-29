@@ -123,6 +123,7 @@ def gen_update_pkg (project, xml_filename, upd_filename,
             path = os.path.join( project.chrootpath, "var/cache/apt/archives", fname )
             repo.includedeb( path )
 
+        repo.finalize ()
 
         dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 

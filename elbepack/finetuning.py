@@ -328,6 +328,7 @@ class UpdatedAction(FinetuningAction):
 
         for d in buildenv.rfs.glob ('tmp/pkgs/*.deb'):
             r.includedeb (d, 'main')
+        r.finalize ()
 
         slist = target.path + '/etc/apt/sources.list.d/base.list'
         slist_txt = 'deb file:///var/cache/elbe/repos/base '

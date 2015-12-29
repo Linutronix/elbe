@@ -125,7 +125,10 @@ class RepoBase(object):
         fp.close()
 
         if need_update:
-            self.log.do( 'reprepro --basedir "' + self.fs.path + '" update' )
+            self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
+
+    def finalize( self ):
+        self.log.do( 'reprepro --basedir "' + self.fs.path + " " + self.init_attr.codename + '" export' )
 
     def _includedeb( self, path, codename, component):
         if self.maxsize:
@@ -133,7 +136,7 @@ class RepoBase(object):
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        self.log.do( 'reprepro --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + codename + ' ' + path )
+        self.log.do( 'reprepro --keepunreferencedfiles --export=never --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + codename + ' ' + path )
 
     def includedeb (self, path, component="main"):
         self._includedeb (path, self.repo_attr.codename, component)
@@ -151,7 +154,7 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        self.log.do( 'reprepro --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + codename + ' ' + path )
+        self.log.do( 'reprepro --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + codename + ' ' + path )
 
     def includedsc( self, path, component="main"):
         self._includedsc (path, self.repo_attr.codename, component)

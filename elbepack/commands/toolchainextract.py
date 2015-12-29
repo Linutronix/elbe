@@ -76,4 +76,5 @@ def run_command( argv ):
     for p in pkgs:
         repo.includedeb( os.path.join(tmpdir, p) )
 
+    repo.finalize ()
     os.system( 'rm -r "%s"' % tmpdir )
