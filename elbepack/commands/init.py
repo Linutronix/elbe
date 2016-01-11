@@ -169,9 +169,9 @@ def run_command( argv ):
         o = t.replace( ".mako", "" )
 
         if t == "Makefile.mako":
-            write_template(os.path.join(path,o), os.path.join(init_template_dir, t), d )
+            write_template(os.path.join(path,o), os.path.join(init_template_dir, t), d, linebreak=True )
         else:
-            write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d )
+            write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d, linebreak=True )
 
         if t in make_executable:
             os.chmod( os.path.join(out_path,o), 0755 )
