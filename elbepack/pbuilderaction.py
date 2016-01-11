@@ -121,27 +121,6 @@ class BuildAction(PBuilderAction):
             prjdir = prjdir.strip()
 
             try:
-                system ('%s control build "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control build Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print ("Build started, waiting till it finishes")
-
-            try:
-                system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control wait_busy Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print ("")
-            print ("Build finished !")
-            print ("")
-            print ("Creating pbuilder")
-
-            try:
                 system ('%s control build_pbuilder "%s"' % (elbe_exe, prjdir))
             except CommandError:
                 print ("elbe control build_pbuilder Failed", file=sys.stderr)
