@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.etree.cElementTree import ElementTree, SubElement
+from xml.etree.cElementTree import ElementTree, SubElement, Element
 import copy
 
 # ElementTree helpers
@@ -123,3 +123,9 @@ class etree(ebase):
         root = self.et.getroot()
         root.remove( child.et )
         root.insert( pos, child.et )
+
+    def setroot( self, tag ):
+        retval = elem( Element (tag) )
+        self.et._setroot( retval.et )
+        return retval
+
