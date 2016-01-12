@@ -121,7 +121,7 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   python-suds,
   elbe-common (= ${binary:Version}),
-  tmux
+  tmux (>= 1.9)
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
