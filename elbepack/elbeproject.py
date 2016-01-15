@@ -220,7 +220,7 @@ class ElbeProject (object):
 
         # Licenses
         f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
-        self.buildenv.rfs.write_licenses(f, self.log)
+        self.buildenv.rfs.write_licenses(f, self.log, os.path.join( self.builddir, "licence.xml"))
         f.close()
 
         # Read arch and codename from xml

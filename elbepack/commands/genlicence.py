@@ -21,9 +21,9 @@ from optparse import OptionParser
 import datetime
 import sys
 import os
+import io
 
 from elbepack.asciidoclog import StdoutLog
-from elbepack.rfs import BuildEnv
 from elbepack.elbexml import ElbeXML, ValidationError
 
 from elbepack.filesystem import Filesystem
@@ -32,6 +32,8 @@ def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog genlicence [options] <rfs>")
     oparser.add_option( "--output", dest="output",
                         help="outputfilename" )
+    oparser.add_option( "--xml", dest="xml", default=None,
+                        help="xml outputfilename" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -46,10 +48,10 @@ def run_command( argv ):
     log = StdoutLog()
 
     if opt.output:
-        f = open( opt.output, "w+" )
+        f = io.open( opt.output, "w+", encoding='utf-8' )
     else:
-        f = open( 'licence.txt', "w+" )
+        f = io.open( 'licence.txt', "w+", encoding='utf-8' )
 
-    rfs.write_licenses(f, log)
+    rfs.write_licenses(f, log, opt.xml)
     f.close()
 
