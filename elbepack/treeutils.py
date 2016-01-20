@@ -129,3 +129,6 @@ class etree(ebase):
         self.et._setroot( retval.et )
         return retval
 
+    @property
+    def root( self ):
+        return elem(self.et.getroot())
