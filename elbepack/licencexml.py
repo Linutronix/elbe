@@ -45,14 +45,12 @@ def do_heuristics (fp):
     else:
         return None
 
-
-def get_license_list (c):
+def get_heuristics_license_list (c):
     licenses = []
     for cc in c.all_license_paragraphs():
         licenses.append (cc.license.synopsis)
 
     return set(licenses)
-
 
 class copyright_xml (object):
     def __init__ (self):
@@ -68,13 +66,33 @@ class copyright_xml (object):
         bytesio = io.StringIO (txtnode.et.text)
         try:
             c = Copyright (bytesio)
-            lics = get_license_list (c)
+            files = []
+
+            for cc in c.all_files_paragraphs():
+                files.append ( (cc.files, cc.license.synopsis, cc.copyright) )
 
             xmlpkg.append('machinereadable')
             xmllic = xmlpkg.append('debian_licenses')
-            for i in lics:
-                l = xmllic.append('license')
-                l.et.text = i
+            seen = []
+            for f in files:
+                if f[1] in seen:
+                    continue
+                seen.append(f[1])
+                ll = xmllic.append ('license')
+                ll.et.text = f[1]
+
+            detailed = xmlpkg.append('detailed')
+            for f in files:
+                ff = detailed.append('files')
+                for g in f[0]:
+                    gg = ff.append ('glob')
+                    gg.et.text = g
+
+                ll = ff.append ('license')
+                ll.et.text = f[1]
+
+                cc = ff.append ('copyright')
+                cc.et.text = f[2]
 
             return
 
@@ -87,7 +105,7 @@ class copyright_xml (object):
         c = do_heuristics (bytesio)
 
         if not c is None:
-            lics = get_license_list (c)
+            lics = get_heuristics_license_list (c)
             xmlpkg.append('heuristics')
             xmllic = xmlpkg.append('debian_licenses')
             for i in lics:
