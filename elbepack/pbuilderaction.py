@@ -58,7 +58,7 @@ class PBuilderAction(object):
             print ('   ' + a, file=sys.stderr)
     def __new__(cls, node):
         action = cls.actiondict[node]
-        return object.__new__(action, node)
+        return object.__new__(action)
     def __init__(self, node):
         self.node = node
 

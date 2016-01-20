@@ -39,7 +39,7 @@ class FinetuningAction(object):
 
     def __new__(cls, node):
         action = cls.actiondict[node.tag]
-        return object.__new__(action, node)
+        return object.__new__(action)
 
     def __init__(self, node):
         self.node = node
