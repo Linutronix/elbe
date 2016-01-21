@@ -140,6 +140,12 @@ def run_command( argv ):
                         help="outputfilename" )
     oparser.add_option( "--mapping", dest="mapping",
                         help="mapping filename" )
+    oparser.add_option( "--use-nomos", action="store_true",
+                        dest="use_nomos", default=False,
+                        help="Use the external nomos tool on the copyright text, and record the ouput in out xml" )
+    oparser.add_option( "--errors-only", action="store_true",
+                        dest="only_errors", default=False,
+                        help="Only Output Packages with errors, needing a fix in the mapping file" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -155,10 +161,17 @@ def run_command( argv ):
     hr = 0
     err_pkg = 0
 
+    if not opt.mapping:
+        print "A mapping file is required"
+        oparser.print_help()
+        sys.exit(20)
+
     mapping = license_dep5_to_spdx (opt.mapping)
 
     unknown_licenses = []
-    for pkg in tree.root:
+    # Dont use direct iterator, because we might want to delete
+    # elements, when --errors-only is active
+    for pkg in list(tree.root):
         errors = []
 
         pkg_name = pkg.et.attrib['name']
@@ -191,7 +204,7 @@ def run_command( argv ):
                 errors.append ('empty mapped licenses in package "%s"' % pkg_name)
         else:
             if not mapping.have_override (pkg_name):
-                errors.append ('no debian_licenses and no overrid in package "%s"' % pkg_name)
+                errors.append ('no debian_licenses and no override in package "%s"' % pkg_name)
             else:
                 sp = pkg.ensure_child ('spdx_licenses')
                 sp.clear()
@@ -200,27 +213,27 @@ def run_command( argv ):
                     ll = sp.append('license')
                     ll.et.text=l
 
-        nomos_l = scan_nomos( pkg.text('text') )
-        if nomos_l[0] != 'No_license_found':
-            nomos_node = pkg.append ('nomos_licenses')
-            nomos_node.et.text='\n'
-            for l in nomos_l:
-                ll = nomos_node.append ('license')
-                ll.et.text = l
+        if opt.use_nomos:
+            nomos_l = scan_nomos( pkg.text('text') )
+            if nomos_l[0] != 'No_license_found':
+                nomos_node = pkg.append ('nomos_licenses')
+                nomos_node.et.text='\n'
+                for l in nomos_l:
+                    ll = nomos_node.append ('license')
+                    ll.et.text = l
 
         if len (errors) > 0:
             for e in errors:
                 ee = pkg.append ('error')
                 ee.et.text=e
             err_pkg += 1
+        elif opt.only_errors:
+            # No Errors, and only_errors is active
+            # Remove package node
+            tree.root.remove_child (pkg)
 
 
 
-    print
-    print "unknown_licenses"
-    print "-------------------------------------------------------------------------"
-    for l in set(unknown_licenses):
-        print l
 
     if not opt.output is None:
         tree.write (opt.output)
@@ -228,28 +241,6 @@ def run_command( argv ):
 
     print "staistics:"
     print 'num:%d mr:%d hr:%d err_pkg:%d' % (num_pkg, mr, hr, err_pkg)
-
-    return
-    for pkg in tree.root:
-        if pkg.has('machinereadable'):
-            print '-----------------------------------------------------'
-            print pkg.et.attrib['name']
-            for l in pkg.node('debian_licenses'):
-                print l.et.text
-            print scan_nomos( pkg.text('text') )
-
-
-    for pkg in tree.root:
-        if pkg.has('heuristics'):
-            print '-----------------------------------------------------'
-            print pkg.et.attrib['name']
-            for l in pkg.node('debian_licenses'):
-                print l.et.text
-            print scan_nomos( pkg.text('text') )
-
-
-    for pkg in tree.root:
-        pass
 
 
 
