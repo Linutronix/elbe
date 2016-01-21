@@ -92,7 +92,6 @@ class license_dep5_to_spdx (dict):
             ors.append (string.join (ands, u' AND '))
 
         retval = string.join (ors, u' OR ')
-        print retval
         return retval
 
 
