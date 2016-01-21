@@ -99,6 +99,10 @@ class elem(ebase):
         self.et.remove( child.et )
         self.et.insert( pos, child.et )
 
+    def remove_child( self, child ):
+        self.et.remove( child.et )
+
+
 
 class etree(ebase):
     def  __init__( self, fname ):
