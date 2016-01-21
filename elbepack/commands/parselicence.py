@@ -290,7 +290,7 @@ def run_command( argv ):
         tree.write (opt.output)
 
 
-    print "staistics:"
+    print "statistics:"
     print 'num:%d mr:%d hr:%d err_pkg:%d' % (num_pkg, mr, hr, err_pkg)
 
 
