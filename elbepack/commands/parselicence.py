@@ -18,7 +18,7 @@
 
 
 from optparse import OptionParser
-import datetime
+from datetime import datetime
 import sys
 import os
 import io
@@ -29,6 +29,7 @@ from tempfile import NamedTemporaryFile
 from elbepack.asciidoclog import StdoutLog
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.treeutils import etree
+from elbepack.version import elbe_version
 
 from elbepack.filesystem import Filesystem
 from elbepack.shellhelper import system_out
@@ -131,6 +132,20 @@ def scan_nomos ( license_text ):
     return licenses.split(',')
 
 
+def license_string (pkg):
+    if not pkg.has ('spdx_licenses'):
+        return 'NOASSERTION'
+
+    l_list = []
+    for ll in pkg.node('spdx_licenses'):
+        if ll.et.text.find (' OR ') != -1:
+            l_list.append ('('+ll.et.text+')')
+        else:
+            l_list.append (ll.et.text)
+
+    return string.join (l_list, ' AND ')
+
+
 
 
 
@@ -146,6 +161,8 @@ def run_command( argv ):
     oparser.add_option( "--errors-only", action="store_true",
                         dest="only_errors", default=False,
                         help="Only Output Packages with errors, needing a fix in the mapping file" )
+    oparser.add_option( "--tvout", dest="tagvalue",
+                        help="tag value output filename" )
 
     (opt,args) = oparser.parse_args(argv)
 
@@ -183,6 +200,9 @@ def run_command( argv ):
             hr += 1
             if not mapping.have_override (pkg_name):
                 errors.append ('no override for heuristics based package "%s"' % pkg_name)
+
+        if mapping.have_override (pkg_name):
+            pkg.append ('have_override')
 
         if pkg.has('debian_licenses'):
             sp = pkg.ensure_child ('spdx_licenses')
@@ -231,6 +251,37 @@ def run_command( argv ):
             # No Errors, and only_errors is active
             # Remove package node
             tree.root.remove_child (pkg)
+
+    if not opt.tagvalue is None:
+        with io.open (opt.tagvalue, "wt", encoding='utf-8') as fp:
+            fp.write (u'SPDXVersion: SPDX-1.2\n')
+            fp.write (u'DataLicense: CC0-1.0\n')
+            #fp.write (u'SPDXID: SPDXRef-DOCUMENT\n')
+            #fp.write (u'DocumentName: %s\n' % opt.tagvalue)
+            #fp.write (u'DocumentNamespace: %s\n' % some_uri_with_uuid )
+            fp.write (u'\n')
+            fp.write (u'## Creation Information\n')
+            fp.write (u'Creator: Tool: elbe-%s\n' % elbe_version )
+            fp.write (u'Created: %s\n' % datetime.now().isoformat() )
+            fp.write (u'\n' )
+            fp.write (u'\n' )
+            fp.write (u'## Package Information\n' )
+            fp.write (u'\n' )
+
+            for pkg in tree.root:
+                fp.write (u'## Package %s\n' % pkg.et.attrib['name'] )
+                fp.write (u'PackageName: %s\n' % pkg.et.attrib['name'])
+                fp.write (u'PackageDownloadLocation: NOASSERTION\n')
+                #fp.write (u'PackageVerificationCode: %s\n')
+                if pkg.has ('have_override'):
+                    fp.write (u'PackageLicenseConcluded: %s\n' % license_string (pkg))
+                    fp.write (u'PackageLicenseDeclared: NOASSERTION\n')
+
+                else:
+                    fp.write (u'PackageLicenseConcluded: NOASSERTION\n')
+                    fp.write (u'PackageLicenseDeclared: %s\n' % license_string (pkg))
+                fp.write (u'PackageLicenseInfoFromFiles: NOASSERTION\n')
+                fp.write (u'\n' )
 
 
 
