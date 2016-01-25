@@ -3,6 +3,8 @@ import random
 import string
 import sys
 
+from elbepack.kvm import find_kvm_exe
+
 armel_defaults = {
         "arch":         "armel",
         "mem":          "256",
@@ -98,7 +100,7 @@ ppcspe_defaults = {
 amd64_defaults = {
         "arch":         "amd64",
         "mem":          "1024",
-        "interpreter":  "kvm",
+        "interpreter":  find_kvm_exe (),
         "console":      "ttyS0,115200n1",
         "machine":      "pc",
         "nicmodel":     "virtio",
