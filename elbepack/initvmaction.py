@@ -103,7 +103,7 @@ class StartAction(InitVMAction):
                 os.remove (os.path.join (initvmdir, "run.log"))
             except OSError:
                 pass
-            system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con 2> %s"' % (
+            system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make run-con 2> %s"' % (
                         initvmdir, str(os.path.join (initvmdir, "run.log")).replace (' ', '\ ')))
             for i in range (1, 5):
                 sys.stdout.write ("*")
@@ -144,7 +144,7 @@ class EnsureAction(InitVMAction):
         sanity_check_dir (initvmdir)
 
         # Sanity check passed. start initvm session
-        system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make run-con"' % initvmdir )
+        system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make run-con"' % initvmdir )
 
 InitVMAction.register(EnsureAction)
 
@@ -194,7 +194,7 @@ class StartBuildAction(InitVMAction):
         # No other session exists, sanity check initvmdir
         sanity_check_dir (initvmdir)
 
-        system( 'TMUX= tmux new-session -d -c "%s" -s ElbeInitVMSession -n initvm "make"' % initvmdir )
+        system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make"' % initvmdir )
 
 InitVMAction.register(StartBuildAction)
 
