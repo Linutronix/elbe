@@ -30,6 +30,7 @@ from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
+from elbepack.licencexml import copyright_xml
 
 def copy_filelist( src, filelist, dst ):
     for f in filelist:
@@ -121,6 +122,36 @@ class ElbeFilesystem(Filesystem):
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
+
+    def write_licenses(self, f, log, xml_fname=None):
+        licence_xml = copyright_xml()
+        for dir in self.listdir("usr/share/doc/", skiplinks=True):
+            try:
+                with io.open(os.path.join(dir, "copyright"), "rb") as lic:
+                    lic_text = lic.read()
+            except IOError as e:
+                log.printo( "Error while processing license file %s: '%s'" %
+                        (os.path.join(dir, "copyright"), e.strerror))
+                lic_text = "Error while processing license file %s: '%s'" % (os.path.join(dir, "copyright"), e.strerror)
+
+            try:
+                lic_text = unicode (lic_text, encoding='utf-8')
+            except:
+                lic_text = unicode (lic_text, encoding='iso-8859-1')
+
+
+            if not f is None:
+                f.write(unicode(os.path.basename(dir)))
+                f.write(u":\n================================================================================")
+                f.write(u"\n")
+                f.write(lic_text)
+                f.write(u"\n\n")
+
+            if not xml_fname is None:
+                licence_xml.add_copyright_file (os.path.basename(dir), lic_text)
+
+        if not xml_fname is None:
+            licence_xml.write (xml_fname)
 
 
 class ChRootFilesystem(ElbeFilesystem):
