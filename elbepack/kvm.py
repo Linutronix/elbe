@@ -33,4 +33,4 @@ def find_kvm_exe ():
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
             return fname
 
-    raise NoExecutableFound('kvm')
+    return 'kvm_executable_not_found'
