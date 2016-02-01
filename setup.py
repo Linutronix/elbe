@@ -45,7 +45,7 @@ setup(name='elbe',
       url='http://elbe-rfs.org/',
       packages=['elbepack', \
 'elbepack.commands', 'elbepack.daemons', 'elbepack.daemons.soap', ],
-      package_data = {'elbepack': ["mako/*.mako", "init/*.mako", "init/*.xml", \
+      package_data = {'elbepack': ["makofiles/*.mako", "init/*.mako", "init/*.xml", \
 "*.pub", "dbsfed.xsd", "default-preseed.xml", "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
       cmdclass={"install": my_install},
