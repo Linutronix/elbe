@@ -30,7 +30,7 @@
 				</url>
 			</url-list>
 		</mirror>
-		<suite>wheezy</suite>
+		<suite>jessie</suite>
 		<size>80G</size>
 		<img>qcow2</img>
 		<portforwarding>
