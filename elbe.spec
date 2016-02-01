@@ -16,7 +16,7 @@ BuildRequires: python-setuptools
 BuildRequires: asciidoc
 BuildRequires: xmlto
 
-requires: qemu-kvm, python-lxml, tmux, python-mako, wget
+requires: qemu-kvm, python-lxml, tmux, python-mako, wget, python-suds
 
 %description
 ELBE (Embedded Linux Build Environment)
