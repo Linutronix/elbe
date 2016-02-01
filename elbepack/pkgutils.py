@@ -24,7 +24,7 @@ from tempfile import mkdtemp
 import urllib2
 import hashlib
 
-from elbepack.shellhelper import CommandError
+from elbepack.shellhelper import CommandError, system
 
 try:
     from elbepack import virtapt
@@ -58,7 +58,7 @@ def get_sources_list( prj, defs ):
     if prj.has("mirror/cdrom"):
         tmpdir = mkdtemp()
         kinitrd = prj.text("buildimage/kinitrd", default=defs, key="kinitrd")
-        os.system( '7z x -o%s "%s" pool/main/%s/%s dists' % (tmpdir, prj.text("mirror/cdrom"), kinitrd[0], kinitrd) )
+        system( '7z x -o%s "%s" pool/main/%s/%s dists' % (tmpdir, prj.text("mirror/cdrom"), kinitrd[0], kinitrd) )
         slist += "deb file://%s %s main\n" % (tmpdir,suite)
 
     if prj.node("mirror/url-list"):
@@ -186,46 +186,52 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
         raise NoKinitrdException ("couldn't download elbe-bootstrap package")
         return
 
-    tmpdir = mkdtemp()
-
     try:
-        if uri.startswith("file://"):
-            os.system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
-        elif uri.startswith("http://"):
-            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
-        elif uri.startswith("ftp://"):
-            os.system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
-        else:
-            raise NoKinitrdException ('no elbe-bootstrap package available')
-    except CommandError as e:
-        raise NoKinitrdException ("couldn't download elbe-bootstrap package")
-        return
+        tmpdir = mkdtemp()
 
-    if len(sha1) > 0:
-        m = hashlib.sha1()
-        with open (os.path.join(tmpdir, "pkg.deb"), "rb") as f:
-            buf = f.read(65536)
-            while len(buf)>0:
-                m.update( buf )
+        try:
+            if uri.startswith("file://"):
+                system( 'cp "%s" "%s"' % ( uri[len("file://"):], os.path.join(tmpdir, "pkg.deb") ) )
+            elif uri.startswith("http://"):
+                system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+            elif uri.startswith("ftp://"):
+                system( 'wget -O "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), uri ) )
+            else:
+                raise NoKinitrdException ('no elbe-bootstrap package available')
+        except CommandError as e:
+            raise NoKinitrdException ("couldn't download elbe-bootstrap package")
+            return
+
+        if len(sha1) > 0:
+            m = hashlib.sha1()
+            with open (os.path.join(tmpdir, "pkg.deb"), "rb") as f:
                 buf = f.read(65536)
+                while len(buf)>0:
+                    m.update( buf )
+                    buf = f.read(65536)
 
-        if m.hexdigest() != sha1:
-            raise NoKinitrdException ('elbe-bootstrap failed to verify !!!')
-    else:
-        print "-----------------------------------------------------"
-        print "WARNING:"
-        print "Using untrusted elbe-bootstrap"
-        print "-----------------------------------------------------"
+            if m.hexdigest() != sha1:
+                raise NoKinitrdException ('elbe-bootstrap failed to verify !!!')
+        else:
+            print "-----------------------------------------------------"
+            print "WARNING:"
+            print "Using untrusted elbe-bootstrap"
+            print "-----------------------------------------------------"
 
 
-    os.system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+        try:
+            system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+        except CommandError:
+            # dpkg did not work, try falling back to ar and tar
+            system( 'ar p "%s" data.tar.gz | tar xz -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
 
-    # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ
-    if prj.has("mirror/cdrom"):
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
-    else:
-        os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
 
-    os.system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
+        # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ
+        if prj.has("mirror/cdrom"):
+            system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd-cdrom.gz' ), os.path.join(target_dir, "initrd.gz") ) )
+        else:
+            system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'initrd.gz' ), os.path.join(target_dir, "initrd.gz") ) )
 
-    os.system( 'rm -r "%s"' % tmpdir )
+        system( 'cp "%s" "%s"' % ( os.path.join( tmpdir, 'var', 'lib', 'elbe', 'initrd', 'vmlinuz' ), os.path.join(target_dir, "vmlinuz") ) )
+    finally:
+        system( 'rm -rf "%s"' % tmpdir )

@@ -18,7 +18,7 @@
 ##
 MEMSIZE?=1024
 SMP?=`nproc`
-INTERPRETER?=kvm
+INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
 MACHINE?=pc
 NICMODEL?=virtio
 CONSOLE?=ttyS0,115200n1
