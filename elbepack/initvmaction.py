@@ -313,6 +313,8 @@ class CreateAction(InitVMAction):
                     sys.exit(0)
 
                 ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, args[0]))
+            elif cdrom is not None:
+                ret, prjdir, err = command_out_stderr ('%s control create_project --skip-urlcheck "%s"' % (elbe_exe, exampl))
             else:
                 ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
 
@@ -428,6 +430,7 @@ class SubmitAction(InitVMAction):
             if args[0].endswith ('.xml'):
                 # We have an xml file, use that for elbe init
                 xmlfile = args[0]
+                skip_urlcheck = ''
             elif args[0].endswith ('.iso'):
                 # We have an iso image, extract xml from there.
                 tmp = TmpdirFilesystem ()
@@ -455,12 +458,13 @@ class SubmitAction(InitVMAction):
                 print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
 
                 xmlfile = tmp.fname ('source.xml')
+                skip_urlcheck = '--skip-urlcheck'
                 cdrom = args[0]
             else:
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
                 sys.exit (20)
 
-            ret, prjdir, err = command_out_stderr ('%s control create_project --retries 60 "%s"' % (elbe_exe, xmlfile))
+            ret, prjdir, err = command_out_stderr ('%s control create_project --retries 60 %s "%s"' % (elbe_exe, skip_urlcheck, xmlfile))
             if ret != 0:
                 print ("elbe control create_project failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
