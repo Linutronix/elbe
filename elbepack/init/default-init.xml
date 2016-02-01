@@ -8,6 +8,17 @@
 			<url-list>
 				<url>
 					<binary>
+						http://192.168.0.1/custom/elbe jessie main
+					</binary>
+					<source>
+						http://192.168.0.1/custom/elbe jessie main
+					</source>
+					<key>
+						http://192.168.0.1/custom/elbe/torbenh.pub
+					</key>
+				</url>
+				<url>
+					<binary>
 						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 					<source>
