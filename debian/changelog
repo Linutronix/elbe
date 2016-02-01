@@ -1,3 +1,11 @@
+elbe (1.9.0) unstable; urgency=medium
+
+  * first version of elbe 2.0 testing builds
+  * added spdx feature
+  * added .spec file for centos
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 01 Feb 2016 18:40:48 +0100
+
 elbe (1.0) unstable; urgency=medium
 
   * several smaller bugfixes and improves
