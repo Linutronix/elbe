@@ -168,7 +168,7 @@ class CreateProjectAction(ClientAction):
 
         with file (filename, "r") as fp:
             xml_base64 = binascii.b2a_base64(fp.read ())
-            print (client.service.create_project ( xml_base64 ))
+            print (client.service.create_project ( xml_base64, opt.skip_urlcheck ))
 
 ClientAction.register(CreateProjectAction)
 
@@ -223,7 +223,7 @@ class SetXmlAction(ClientAction):
         filename = args[1]
         with file (filename, "r") as fp:
             xml_base64 = binascii.b2a_base64(fp.read ())
-            client.service.set_xml (builddir, xml_base64)
+            client.service.set_xml (builddir, xml_base64, opt.skip_urlcheck)
 
 ClientAction.register(SetXmlAction)
 

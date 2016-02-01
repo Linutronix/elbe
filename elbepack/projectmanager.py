@@ -75,7 +75,7 @@ class ProjectManager(object):
     def stop(self):
         self.worker.stop()
 
-    def create_project (self, userid, xml_file):
+    def create_project (self, userid, xml_file, skip_urlcheck=False):
         subdir = str(uuid4())
         builddir = path.join( self.basepath, subdir )
 
@@ -94,14 +94,14 @@ class ProjectManager(object):
 
             # Open the new project
             logpath = path.join( builddir, "log.txt" )
-            ep = self.db.load_project( builddir, logpath )
+            ep = self.db.load_project( builddir, logpath, skip_urlcheck=skip_urlcheck )
 
             self.userid2project[ userid ] = ep
             self.builddir2userid[ builddir ] = userid
 
         return builddir
 
-    def open_project (self, userid, builddir):
+    def open_project (self, userid, builddir, skip_urlcheck=False):
         self._check_project_permission( userid, builddir )
 
         with self.lock:
@@ -121,7 +121,7 @@ class ProjectManager(object):
 
             # Load project from the database
             logpath = path.join( builddir, "log.txt" )
-            ep = self.db.load_project( builddir, logpath )
+            ep = self.db.load_project( builddir, logpath, skip_urlcheck=skip_urlcheck )
 
             # Add project to our dictionaries
             self.userid2project[ userid ] = ep

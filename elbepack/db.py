@@ -277,7 +277,7 @@ class ElbeDB(object):
                         "cannot set XML file while project %s is busy" %
                         builddir )
 
-            xml = ElbeXML (xml_file)    #ValidationError
+            xml = ElbeXML (xml_file, skip_urlcheck=True)    #ValidationError
 
             p.name = xml.text ("project/name")
             p.version = xml.text ("project/version")
@@ -415,7 +415,7 @@ class ElbeDB(object):
                     project.xml = xml_str
 
 
-    def load_project (self, builddir, logpath = None):
+    def load_project (self, builddir, logpath = None, skip_urlcheck=False):
 
         # pass exceptions if hook-scripts can't be loaded (they're optional)
         postbuild_file = None
@@ -455,7 +455,8 @@ class ElbeDB(object):
                         postbuild_file=postbuild_file,
                         presh_file=presh_file,
                         postsh_file=postsh_file,
-                        savesh_file=savesh_file)
+                        savesh_file=savesh_file,
+                        skip_urlcheck=skip_urlcheck)
             except NoResultFound:
                 raise ElbeDBError(
                         "project %s is not registered in the database" %
@@ -569,7 +570,7 @@ class ElbeDB(object):
                         " invalid status: " + p.status )
 
             xmlpath = os.path.join( builddir, "source.xml" )
-            xml = ElbeXML( xmlpath )
+            xml = ElbeXML( xmlpath, skip_urlcheck=True )
 
             if not new_version is None:
                 xml.node( "/project/version" ).set_text( new_version )
@@ -603,7 +604,7 @@ class ElbeDB(object):
             assert p.status == "busy"
 
             sourcexmlpath = os.path.join( builddir, "source.xml" )
-            sourcexml = ElbeXML( sourcexmlpath )
+            sourcexml = ElbeXML( sourcexmlpath, skip_urlcheck=True )
 
             version = sourcexml.text( "project/version" )
             if s.query( ProjectVersion ).\

@@ -136,8 +136,8 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @soapmethod (String, String)
     @authenticated_uid
     @soap_faults
-    def set_xml (self, uid, builddir, xml):
-        self.pm.open_project (uid, builddir)
+    def set_xml (self, uid, builddir, xml, skip_urlcheck):
+        self.pm.open_project (uid, builddir, skip_urlcheck=skip_urlcheck)
 
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
@@ -148,7 +148,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def start_cdrom (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
+        self.pm.open_project (uid, builddir, skip_urlcheck=True)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -160,7 +160,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def append_cdrom (self, uid, builddir, data):
-        self.pm.open_project (uid, builddir)
+        self.pm.open_project (uid, builddir, skip_urlcheck=True)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -173,7 +173,7 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def finish_cdrom (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
+        self.pm.open_project (uid, builddir, skip_urlcheck=True)
         self.pm.set_current_project_upload_cdrom (uid)
 
     @soapmethod (String)
@@ -220,14 +220,14 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     def del_project (self, uid, builddir):
         self.pm.del_project (uid, builddir)
 
-    @soapmethod (String, _returns=String)
+    @soapmethod (String, Boolean, _returns=String)
     @authenticated_uid
     @soap_faults
-    def create_project (self, uid, xml):
+    def create_project (self, uid, xml, skip_urlcheck):
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            prjid = self.pm.create_project (uid, fp.name)
+            prjid = self.pm.create_project (uid, fp.name, skip_urlcheck=skip_urlcheck)
 
         return prjid
 
