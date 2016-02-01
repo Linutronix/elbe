@@ -20,6 +20,7 @@
 
 import os
 import datetime
+import io
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.shellhelper import CommandError
@@ -219,8 +220,8 @@ class ElbeProject (object):
                 reportpath, self.targetfs )
 
         # Licenses
-        f = open( os.path.join( self.builddir, "licence.txt" ), "w+" )
-        self.buildenv.rfs.write_licenses(f, self.log)
+        f = io.open( os.path.join( self.builddir, "licence.txt" ), "w+", encoding='utf-8' )
+        self.buildenv.rfs.write_licenses(f, self.log, os.path.join( self.builddir, "licence.xml"))
         f.close()
 
         # Read arch and codename from xml

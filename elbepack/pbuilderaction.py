@@ -58,7 +58,7 @@ class PBuilderAction(object):
             print ('   ' + a, file=sys.stderr)
     def __new__(cls, node):
         action = cls.actiondict[node]
-        return object.__new__(action, node)
+        return object.__new__(action)
     def __init__(self, node):
         self.node = node
 
@@ -119,27 +119,6 @@ class BuildAction(PBuilderAction):
                 sys.exit(20)
 
             prjdir = prjdir.strip()
-
-            try:
-                system ('%s control build "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control build Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print ("Build started, waiting till it finishes")
-
-            try:
-                system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
-            except CommandError:
-                print ("elbe control wait_busy Failed", file=sys.stderr)
-                print ("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print ("")
-            print ("Build finished !")
-            print ("")
-            print ("Creating pbuilder")
 
             try:
                 system ('%s control build_pbuilder "%s"' % (elbe_exe, prjdir))

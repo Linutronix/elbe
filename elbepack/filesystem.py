@@ -19,9 +19,11 @@
 
 import os
 import shutil
+import io
 
 from glob import glob
 from tempfile import mkdtemp
+from elbepack.licencexml import copyright_xml
 
 class Filesystem(object):
     def __init__(self, path, clean=False):
@@ -189,20 +191,36 @@ class Filesystem(object):
         directory = self.fname(dirname)
         return self.__disk_usage(directory)
 
-    def write_licenses(self, f, log):
+    def write_licenses(self, f, log, xml_fname=None):
+        licence_xml = copyright_xml()
         for dir in self.listdir("usr/share/doc/", skiplinks=True):
             try:
-                lic = open(os.path.join(dir, "copyright"), "r")
-                f.write(os.path.basename(dir))
-                f.write(":\n================================================================================")
-                f.write("\n")
-                f.write(lic.read())
-                f.write("\n\n")
+                with io.open(os.path.join(dir, "copyright"), "rb") as lic:
+                    lic_text = lic.read()
             except IOError as e:
                 log.printo( "Error while processing license file %s: '%s'" %
                         (os.path.join(dir, "copyright"), e.strerror))
-            finally:
-                lic.close()
+                lic_text = "Error while processing license file %s: '%s'" % (os.path.join(dir, "copyright"), e.strerror)
+
+            try:
+                lic_text = unicode (lic_text, encoding='utf-8')
+            except:
+                lic_text = unicode (lic_text, encoding='iso-8859-1')
+
+
+            if not f is None:
+                f.write(unicode(os.path.basename(dir)))
+                f.write(u":\n================================================================================")
+                f.write(u"\n")
+                f.write(lic_text)
+                f.write(u"\n\n")
+
+            if not xml_fname is None:
+                licence_xml.add_copyright_file (os.path.basename(dir), lic_text)
+
+        if not xml_fname is None:
+            licence_xml.write (xml_fname)
+
 
 
 class TmpdirFilesystem (Filesystem):

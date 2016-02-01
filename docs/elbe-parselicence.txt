@@ -1,0 +1,55 @@
+elbe-parselicence(1)
+===================
+
+NAME
+----
+elbe-parselicence - Generate a file containing the licences of the packages
+included in a project.
+
+SYNOPSIS
+--------
+[verse]
+'elbe parselicence' \
+	--mapping <mapping filename> \
+	[ --output <filename> \
+	[ --tvout <filename> \
+	[ --use-nomos ] \
+	[ --errors-only ] \
+	<licence.xml filename>
+
+
+DESCRIPTION
+-----------
+'elbe-parselicence' parses an xml file with licence information.
+This xml file is generated during an elbe build.
+SPDX Licenses information is generated using mappings and overrides found
+in the mapping file.
+
+This information is written to an output xml File, and to a tagvalue based
+SPDX File.
+
+OPTIONS
+-------
+--output <filename>::
+	Write the xml result to <filename>.
+
+--tvout <filename>::
+	Write the tagvalue result to <filename>.
+
+--use-nomos::
+	Also pipe licence text through nomos, and add this info
+	to xml Datastructures.
+
+--errors-only::
+	Only Output Packages with errors.
+	This is useful during the Phase where the mapping file is setup.
+
+<licence.xml filename>::
+	licence.xml File generated during elbe build.
+
+
+
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite

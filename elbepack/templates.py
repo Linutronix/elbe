@@ -18,6 +18,7 @@
 
 import elbepack
 import os
+import string
 
 from elbepack.treeutils import etree
 from elbepack.directories import mako_template_dir, default_preseed_fname
@@ -25,23 +26,28 @@ from elbepack.directories import mako_template_dir, default_preseed_fname
 from mako.template import Template
 from mako import exceptions
 
+def fix_linebreak_escapes (s):
+    return s.replace('\\\n', '${"\\\\"}\n')
 
-def template(fname, d):
+def template(fname, d, linebreak=False):
     try:
-        return Template(filename=fname).render(**d)
+        if linebreak:
+            return Template(filename=fname,preprocessor=fix_linebreak_escapes).render(**d)
+        else:
+            return Template(filename=fname).render(**d)
     except:
         print exceptions.text_error_template().render()
         raise
 
-def write_template( outname, fname, d ):
+def write_template( outname, fname, d, linebreak=False ):
     outfile = file(outname, "w")
-    outfile.write( template( fname, d ) )
+    outfile.write( template( fname, d, linebreak ) )
     outfile.close()
 
-def write_pack_template( outname, fname, d ):
+def write_pack_template( outname, fname, d, linebreak=False ):
     template_name = os.path.join( mako_template_dir, fname )
 
-    write_template( outname, template_name, d )
+    write_template( outname, template_name, d, linebreak )
 
 
 def get_preseed( xml ):

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.etree.cElementTree import ElementTree, SubElement
+from xml.etree.cElementTree import ElementTree, SubElement, Element
 import copy
 
 # ElementTree helpers
@@ -99,15 +99,19 @@ class elem(ebase):
         self.et.remove( child.et )
         self.et.insert( pos, child.et )
 
+    def remove_child( self, child ):
+        self.et.remove( child.et )
+
+
 
 class etree(ebase):
     def  __init__( self, fname ):
         ebase.__init__( self, ElementTree( file=fname ) )
 
-    def write( self, fname ):
+    def write( self, fname, encoding=None ):
         # Make sure, that we end with a newline
         self.et.getroot().tail = '\n'
-        self.et.write(fname)
+        self.et.write(fname, encoding=encoding)
 
     def tostring (self):
         return self.et.tostring ()
@@ -123,3 +127,12 @@ class etree(ebase):
         root = self.et.getroot()
         root.remove( child.et )
         root.insert( pos, child.et )
+
+    def setroot( self, tag ):
+        retval = elem( Element (tag) )
+        self.et._setroot( retval.et )
+        return retval
+
+    @property
+    def root( self ):
+        return elem(self.et.getroot())

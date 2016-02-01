@@ -63,66 +63,66 @@ all: .stamps/stamp-install-initial-image
 
 .stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
 	@ echo $(INTERPRETER)
-	@ $(INTERPRETER) -M $(MACHINE) ${"\\"}
-		-device virtio-rng-pci ${"\\"}
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 ${"\\"}
+	@ $(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
+		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 % if prj.has("mirror/cdrom"):
-		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=0 ${"\\"}
+		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=0 \
 % endif
-		-kernel .elbe-in/vmlinuz ${"\\"}
-		-initrd .elbe-gen/initrd-preseeded.gz ${"\\"}
-		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' ${"\\"}
-		-no-reboot ${"\\"}
-		-nographic ${"\\"}
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" ${"\\"}
-		-net user,vlan=1 ${"\\"}
-		-m $(MEMSIZE) ${"\\"}
-		-usb ${"\\"}
-		|| ( echo; ${"\\"}
-		     echo "------------------------------------------------------------------"; ${"\\"}
-		     echo "kvm failed to start"; ${"\\"}
-		     echo "This is most likely the case, because /dev/kvm is not available."; ${"\\"}
-		     echo "To use KVM inside a VMWARE or other VM instance,"; ${"\\"}
-		     echo "nested KVM needs to be supported"; ${"\\"}
-		     echo "------------------------------------------------------------------"; ${"\\"}
-		     echo; ${"\\"}
-		     false ${"\\"}
+		-kernel .elbe-in/vmlinuz \
+		-initrd .elbe-gen/initrd-preseeded.gz \
+		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' \
+		-no-reboot \
+		-nographic \
+		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
+		-net user,vlan=1 \
+		-m $(MEMSIZE) \
+		-usb \
+		|| ( echo; \
+		     echo "------------------------------------------------------------------"; \
+		     echo "kvm failed to start"; \
+		     echo "This is most likely the case, because /dev/kvm is not available."; \
+		     echo "To use KVM inside a VMWARE or other VM instance,"; \
+		     echo "nested KVM needs to be supported"; \
+		     echo "------------------------------------------------------------------"; \
+		     echo; \
+		     false \
 		)
 
 	mkdir -p .stamps
 	touch .stamps/stamp-install-initial-image
 
 run:
-	$(INTERPRETER) -M $(MACHINE) ${"\\"}
-		-device virtio-rng-pci ${"\\"}
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 ${"\\"}
-		-no-reboot ${"\\"}
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" ${"\\"}
-		-net user,vlan=1 ${"\\"}
+	$(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
+		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+		-no-reboot \
+		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
+		-net user,vlan=1 \
 % if prj.has("portforwarding"):
 % for f in prj.node("portforwarding"):
-		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} ${"\\"}
+		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
 % endfor
 % endif
-		-m $(MEMSIZE) ${"\\"}
-		-usb ${"\\"}
+		-m $(MEMSIZE) \
+		-usb \
 		-smp $(SMP)
 
 run-con:
-	$(INTERPRETER) -M $(MACHINE) ${"\\"}
-		-device virtio-rng-pci ${"\\"}
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 ${"\\"}
-		-no-reboot ${"\\"}
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" ${"\\"}
-		-net user,vlan=1 ${"\\"}
+	$(INTERPRETER) -M $(MACHINE) \
+		-device virtio-rng-pci \
+		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+		-no-reboot \
+		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
+		-net user,vlan=1 \
 % if prj.has("portforwarding"):
 % for f in prj.node("portforwarding"):
-		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} ${"\\"}
+		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
 % endfor
 % endif
-		-m $(MEMSIZE) ${"\\"}
-		-usb ${"\\"}
-		-nographic ${"\\"}
+		-m $(MEMSIZE) \
+		-usb \
+		-nographic \
 		-smp $(SMP)
 
 clean:
