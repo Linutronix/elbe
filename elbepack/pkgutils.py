@@ -217,8 +217,12 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
         try:
             system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
         except CommandError:
-            # dpkg did not work, try falling back to ar and tar
-            system( 'ar p "%s" data.tar.gz | tar xz -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+            try:
+                # dpkg did not work, try falling back to ar and tar
+                system( 'ar p "%s" data.tar.gz | tar xz -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+            except CommandError:
+                system( 'ar p "%s" data.tar.xz | tar xJ -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+
 
 
         # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ
