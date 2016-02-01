@@ -42,9 +42,17 @@
 			</url-list>
 		</mirror>
 		<suite>jessie</suite>
-		<size>80G</size>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+		</pkg-list>
+		<size>20G</size>
 		<img>qcow2</img>
 		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>22</buildenv>
+				<host>5022</host>
+			</forward>
 			<forward>
 				<proto>tcp</proto>
 				<buildenv>7588</buildenv>
