@@ -128,7 +128,7 @@ class RepoBase(object):
             self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
 
     def finalize( self ):
-        self.log.do( 'reprepro --basedir "' + self.fs.path + " " + self.init_attr.codename + '" export' )
+        self.log.do( 'reprepro --basedir "' + self.fs.path + '"' + self.init_attr.codename + ' export' )
 
     def _includedeb( self, path, codename, component):
         if self.maxsize:
