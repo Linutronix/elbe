@@ -196,6 +196,19 @@ class UpdateRepo(RepoBase):
                            "Update",
                            "Update")
 
+class CdromInitRepo(RepoBase):
+    def __init__( self, arch, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):
+
+        init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
+
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           None,
+                           init_attrs,
+                           "Elbe",
+                           "Elbe InitVM Cdrom Repo",
+                           maxsize )
 
 class CdromBinRepo(RepoBase):
     def __init__( self, arch, codename, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):
