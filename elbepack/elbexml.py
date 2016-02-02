@@ -137,7 +137,7 @@ class ElbeXML(object):
                         mirror += "deb-src "+url.text("source").strip()+"\n"
 
         if self.prj.has("mirror/cdrom"):
-            mirror += "deb copy:///cdrom %s main added\n" % (self.prj.text("suite"))
+            mirror += "deb copy:///cdrom/targetrepo %s main added\n" % (self.prj.text("suite"))
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 

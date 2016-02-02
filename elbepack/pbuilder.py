@@ -68,7 +68,7 @@ def pbuilder_write_repo_hook (builddir, xml):
 
 
     if xml.prj.has("mirror/cdrom"):
-        mirror += 'echo "deb copy:///cdrom %s main added" >> /etc/apt/sources.list' % (xml.prj.text("suite"))
+        mirror += 'echo "deb copy:///cdrom/targetrepo %s main added" >> /etc/apt/sources.list' % (xml.prj.text("suite"))
 
     mirror += 'apt-get update\n'
     mirror = mirror.replace("LOCALMACHINE", "10.0.2.2")
