@@ -114,7 +114,10 @@ class RepoBase(object):
                 # ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
                 # But we end up with 'armel amd64' sometimes.
                 # So lets just use the init_attr...
-                ufp.write( "Architectures: " + " ".join (self.init_attr.arch) + "\n" )
+                if self.init_attr:
+                    ufp.write( "Architectures: " + " ".join (self.init_attr.arch) + "\n" )
+                else:
+                    ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
 
                 ufp.write ( "UDebComponents: main>main\n" )
                 ufp.close()
@@ -128,7 +131,8 @@ class RepoBase(object):
             self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
 
     def finalize( self ):
-        self.log.do( 'reprepro --basedir "' + self.fs.path + '"' + self.init_attr.codename + ' export' )
+        for att in self.attrs:
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" export ' + att.codename )
 
     def _includedeb( self, path, codename, component):
         if self.maxsize:
