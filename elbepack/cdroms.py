@@ -22,6 +22,7 @@ from apt.package import FetchError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
+from elbepack.repomanager import CdromInitRepo
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem  import Filesystem, hostfs
@@ -113,7 +114,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
                     pkgver = p.installed
                 deb = pkgver.fetch_binary ('/var/cache/elbe/binaries/main',
                                             ElbeAcquireProgress (cb=None) )
-                repo.include_deb(deb, 'main')
+                repo.includedeb(deb, 'main')
             except ValueError as ve:
                 log.printo( "No Package " + pkg.name + "-" + str(pkg.installed_version) )
             except FetchError as fe:
