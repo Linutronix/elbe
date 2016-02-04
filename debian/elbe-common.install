@@ -18,6 +18,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/gpg.py
 ./usr/lib/python2.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python2.*/*-packages/elbepack/kvm.py
+./usr/lib/python2.*/*-packages/elbepack/licencexml.py
 ./usr/lib/python2.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python2.*/*-packages/elbepack/pkgutils.py
 ./usr/lib/python2.*/*-packages/elbepack/shellhelper.py
