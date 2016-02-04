@@ -1,3 +1,11 @@
+elbe (1.9.1) unstable; urgency=medium
+
+  * fix missing elbepack/kvm.py file
+  * cdrom bugfixes
+  * use jessie initvm
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 04 Feb 2016 17:29:30 +0100
+
 elbe (1.9.0) unstable; urgency=medium
 
   * first version of elbe 2.0 testing builds
