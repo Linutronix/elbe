@@ -88,10 +88,10 @@ def get_initrd_pkg( prj, defs ):
 
     return initrdname
 
-def get_url ( arch, suite, target_pkg, mirror ):
+def get_url ( arch, suite, target_pkg, mirror, comp='main' ):
     try:
-        packages = urllib2.urlopen("%s/dists/%s/main/binary-%s/Packages" %
-          (mirror.replace("LOCALMACHINE", "localhost"), suite, arch))
+        pack_url = "%s/dists/%s/%s/binary-%s/Packages" % (mirror.replace("LOCALMACHINE", "localhost"), suite, comp, arch)
+        packages = urllib2.urlopen(pack_url)
 
         packages = packages.readlines()
         packages = filter( lambda x: x.startswith( "Filename" ), packages )
@@ -137,22 +137,17 @@ def get_initrd_uri( prj, defs, arch ):
 
         return r.sha1_hash, uri
     else:
-        url = "%s://%s/%s" % (prj.text("mirror/primary_proto"),
-          prj.text("mirror/primary_host"),
-          prj.text("mirror/primary_path") )
-        pkg = get_url ( arch, suite, target_pkg, url )
+        for apts in apt_sources.splitlines():
+            apts_split = apts.strip().split(' ')
+            if apts_split[0] != 'deb':
+                continue
 
-        if pkg:
-            return "", pkg
+            for comp in apts_split[2:]:
+                pkg = get_url (arch, apts_split[2], target_pkg, apts_split[1], comp)
 
-        for n in prj.node("mirror/url-list"):
-            url = n.text("binary")
-            urla = url.split()
-            pkg = get_url ( arch, suite, target_pkg,
-              urla[0].replace("BUILDHOST", "localhost") )
+                if pkg:
+                    return "", pkg
 
-            if pkg:
-                return "", pkg
 
     return "", ""
 
@@ -222,8 +217,12 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
         try:
             system( 'dpkg -x "%s" "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
         except CommandError:
-            # dpkg did not work, try falling back to ar and tar
-            system( 'ar p "%s" data.tar.gz | tar xz -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+            try:
+                # dpkg did not work, try falling back to ar and tar
+                system( 'ar p "%s" data.tar.gz | tar xz -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+            except CommandError:
+                system( 'ar p "%s" data.tar.xz | tar xJ -C "%s"' % ( os.path.join(tmpdir, "pkg.deb"), tmpdir ) )
+
 
 
         # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9 differ

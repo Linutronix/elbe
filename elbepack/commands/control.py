@@ -67,6 +67,10 @@ def run_command (argv):
                         dest="pbuilder_only", default=False,
                         help="Only list/download pbuilder Files" )
 
+    oparser.add_option( "--skip-urlcheck", action="store_true",
+                        dest="skip_urlcheck", default=False,
+                        help="Skip URL Check inside initvm" )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 

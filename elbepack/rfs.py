@@ -82,7 +82,7 @@ class BuildEnv ():
         cleanup = False
         suite = self.xml.prj.text ("suite")
 
-        primary_mirror = self.xml.get_primary_mirror(self.rfs.fname('cdrom') )
+        primary_mirror = self.xml.get_primary_mirror(self.rfs.fname('/cdrom/targetrepo') )
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"

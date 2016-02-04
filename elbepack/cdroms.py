@@ -22,6 +22,7 @@ from apt.package import FetchError
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
+from elbepack.repomanager import CdromInitRepo
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem  import Filesystem, hostfs
@@ -92,9 +93,13 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
         mirror='http://ftp.debian.org/debian'
 
     repo_path = os.path.join (target, "binrepo")
+    target_repo_path = os.path.join (repo_path, 'targetrepo')
 
-    repo = CdromBinRepo (arch, codename, init_codename,
+    repo = CdromInitRepo (arch, init_codename,
                          repo_path, log, cdrom_size, mirror)
+
+    target_repo = CdromBinRepo (arch, codename, None,
+                         target_repo_path, log, cdrom_size, mirror)
 
     if not xml is None:
         pkglist = get_initvm_pkglist()
@@ -109,7 +114,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
                     pkgver = p.installed
                 deb = pkgver.fetch_binary ('/var/cache/elbe/binaries/main',
                                             ElbeAcquireProgress (cb=None) )
-                repo.include_init_deb(deb, 'main')
+                repo.includedeb(deb, 'main')
             except ValueError as ve:
                 log.printo( "No Package " + pkg.name + "-" + str(pkg.installed_version) )
             except FetchError as fe:
@@ -124,7 +129,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
                 deb = cache.download_binary( pkg.name,
                                              '/var/cache/elbe/binaries/main',
                                              pkg.installed_version )
-                repo.includedeb(deb, 'main')
+                target_repo.includedeb(deb, 'main')
             except ValueError as ve:
                 log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
             except FetchError as fe:
@@ -139,7 +144,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
             deb = cache.download_binary( pkg.name,
                                         '/var/cache/elbe/binaries/added',
                                         pkg.installed_version )
-            repo.includedeb(deb, 'added')
+            target_repo.includedeb(deb, 'added')
         except KeyError as ke:
             log.printo( str (ke) )
         except ValueError as ve:
@@ -149,7 +154,8 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
         except TypeError as te:
             log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
-    repo.finalize ()
+    repo.finalize()
+    target_repo.finalize ()
 
     # Mark the binary repo with the necessary Files
     # to make the installer accept this as a CDRom
@@ -164,5 +170,8 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
 
     # write source xml onto cdrom
     xml.xml.write (repo_fs.fname ('source.xml'))
+
+    target_repo_fs = Filesystem( target_repo_path )
+    target_repo_fs.write_file (".aptignr", 0644, "")
 
     return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )

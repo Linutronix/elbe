@@ -21,6 +21,7 @@ import os
 import time
 import shutil
 import subprocess
+import io
 
 from glob import glob
 from tempfile import mkdtemp

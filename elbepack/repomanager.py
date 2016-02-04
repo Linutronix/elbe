@@ -114,7 +114,10 @@ class RepoBase(object):
                 # ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
                 # But we end up with 'armel amd64' sometimes.
                 # So lets just use the init_attr...
-                ufp.write( "Architectures: " + " ".join (self.init_attr.arch) + "\n" )
+                if self.init_attr:
+                    ufp.write( "Architectures: " + " ".join (self.init_attr.arch) + "\n" )
+                else:
+                    ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
 
                 ufp.write ( "UDebComponents: main>main\n" )
                 ufp.close()
@@ -128,7 +131,8 @@ class RepoBase(object):
             self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
 
     def finalize( self ):
-        self.log.do( 'reprepro --basedir "' + self.fs.path + " " + self.init_attr.codename + '" export' )
+        for att in self.attrs:
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" export ' + att.codename )
 
     def _includedeb( self, path, codename, component):
         if self.maxsize:
@@ -196,6 +200,19 @@ class UpdateRepo(RepoBase):
                            "Update",
                            "Update")
 
+class CdromInitRepo(RepoBase):
+    def __init__( self, arch, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):
+
+        init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
+
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           None,
+                           init_attrs,
+                           "Elbe",
+                           "Elbe InitVM Cdrom Repo",
+                           maxsize )
 
 class CdromBinRepo(RepoBase):
     def __init__( self, arch, codename, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):

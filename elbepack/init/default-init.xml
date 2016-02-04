@@ -8,6 +8,17 @@
 			<url-list>
 				<url>
 					<binary>
+						http://192.168.0.1/custom/elbe jessie main
+					</binary>
+					<source>
+						http://192.168.0.1/custom/elbe jessie main
+					</source>
+					<key>
+						http://192.168.0.1/custom/elbe/torbenh.pub
+					</key>
+				</url>
+				<url>
+					<binary>
 						http://debian.linutronix.de/elbe wheezy main
 					</binary>
 					<source>
@@ -30,10 +41,21 @@
 				</url>
 			</url-list>
 		</mirror>
-		<suite>wheezy</suite>
-		<size>80G</size>
+		<suite>jessie</suite>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+		</pkg-list>
+		<preseed>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.net/debian"/>
+		</preseed>
+		<size>20G</size>
 		<img>qcow2</img>
 		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>22</buildenv>
+				<host>5022</host>
+			</forward>
 			<forward>
 				<proto>tcp</proto>
 				<buildenv>7588</buildenv>
