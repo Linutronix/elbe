@@ -37,7 +37,7 @@
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.net/debian"/>
 		</preseed>
-		<size>20G</size>
+		<size>80G</size>
 		<img>qcow2</img>
 		<portforwarding>
 			<forward>
