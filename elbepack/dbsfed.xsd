@@ -1481,6 +1481,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="t2p_mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file from the target to the project directory
+          </documentation>
+        </annotation>
+      </element>
       <element name="mkdir" type="string" minOccurs="0">
         <annotation>
           <documentation>

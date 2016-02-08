@@ -143,6 +143,22 @@ class T2BCpAction(FinetuningAction):
 
 FinetuningAction.register( T2BCpAction )
 
+class T2PMvAction(FinetuningAction):
+
+    tag = 't2p_mv'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, log, buildenv, target):
+        if self.node.et.text[0] == '/':
+            dest = self.node.et.text[1:]
+        else:
+            dest = self.node.et.text
+        log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + dest )
+
+FinetuningAction.register( T2PMvAction )
+
 class MvAction(FinetuningAction):
 
     tag = 'mv'
