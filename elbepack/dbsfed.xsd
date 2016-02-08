@@ -988,6 +988,25 @@
     </sequence>
   </complexType>
 
+  <complexType name="binaryblob">
+    <annotation>
+      <documentation>
+        a binary that is dd'ed to the specified offset
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="offset" type="int" use="optional">
+          <annotation>
+            <documentation>
+              byteoffset from the beginning of the image
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
   <complexType name="msdoshd">
     <annotation>
       <documentation>
@@ -1015,6 +1034,13 @@
           <documentation>
             human readable name of the harddisk, this will be used as name for
             the image file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="binary" type="rfs:binaryblob" minOccurs="0">
+        <annotation>
+          <documentation>
+            binary blob that is dd'ed to the specified offset
           </documentation>
         </annotation>
       </element>

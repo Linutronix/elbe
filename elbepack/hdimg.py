@@ -393,6 +393,33 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
     return hd.text("name")
 
+
+def add_binary_blob( outf, hd, target ):
+
+    imagename = os.path.join(target,hd.text("name"))
+
+    for binary in hd:
+        if binary.tag != "binary":
+            continue
+
+        try:
+            offset = binary.et.attrib["offset"]
+        except KeyError:
+            offset = 0
+
+        # use file from target/ dir if binary path starts with /
+        if (binary.et.text[0] == '/'):
+            bf = os.path.join(target, 'target', binary.et.text[1:])
+            print bf
+        # else use file from /var/cache/elbe/<uuid> project dir
+        else:
+            bf = binary.et.text
+
+        outf.do( 'dd if="%s" of="%s" seek="%s"' % (
+            bf,
+            imagename,
+            offset) )
+
 def do_hdimg(outf, xml, target, rfs, grub_version):
     # list of created files
     img_files = []
@@ -456,6 +483,11 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         if i.tag == "mtd":
             imgs = build_image_mtd( outf, i, target )
             img_files.extend (imgs)
+
+    # dd binary blobs onto images
+    for i in xml.tgt.node("images"):
+        if (i.tag == "msdoshd") or (i.tag == "gpt"):
+            add_binary_blob( outf, i, target )
 
     gz_img_files = []
     for i in set(img_files):
