@@ -82,6 +82,11 @@ class CreateAction(PBuilderAction):
 
             prjdir = prjdir.strip()
 
+            if opt.writeproject:
+                wpf = open (opt.writeproject, "w")
+                wpf.write (prjdir)
+                wpf.close()
+
         elif opt.project:
             prjdir = opt.project
         else:
