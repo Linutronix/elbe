@@ -291,6 +291,40 @@ class GetFileAction(ClientAction):
 
 ClientAction.register(GetFileAction)
 
+class GetBuildChrootAction(ClientAction):
+
+    tag = 'get_build_chroot_tarball'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control get_build_chroot_tarball <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        dst_fname = "build_chroot.tar.xz"
+
+        if opt.output:
+            fs = Filesystem ('/')
+            dst = os.path.abspath (opt.output)
+            fs.mkdir_p (dst)
+            dst_fname = str (os.path.join (dst, filename))
+
+        with file (dst_fname, "w") as fp:
+            part = 0
+            while True:
+                ret = client.service.get_build_chroot_tarball (builddir, part)
+                if ret == "EndOfFile":
+                    break
+
+                fp.write (binascii.a2b_base64 (ret))
+                part = part + 1
+        print (dst_fname + " saved", file=sys.stderr)
+
+ClientAction.register(GetBuildChrootAction)
+
 class DumpFileAction(ClientAction):
 
     tag = 'dump_file'
