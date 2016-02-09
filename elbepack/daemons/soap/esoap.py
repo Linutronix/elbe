@@ -112,6 +112,55 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except:
                 return "EndOfFile"
 
+    @soapmethod (String, Integer, _returns=String)
+    @authenticated_uid
+    @soap_faults
+    def get_build_chroot_tarball (self, uid, builddir, part):
+        from subprocess import Popen, PIPE
+
+        if not hasattr(self, 'tarball_creation_process'):
+            setattr(self,'tarball_creation_process', {})
+
+        token=uid
+
+        # One external process per token:
+        if token not in self.tarball_creation_process:
+            self.tarball_creation_process[token] = None
+
+        # If first part was requested but a tarball process is already
+        # running, kill it.
+        if self.tarball_creation_process[token] and part == 0:
+            self.tarball_creation_process[token].kill()
+            self.tarball_creation_process[token].wait()
+            self.tarball_creation_process[token] = None
+
+        # If no tarball creation process is currently running,
+        # create a new one.
+        if not self.tarball_creation_process[token]:
+            self.tarball_creation_process[token] = (
+                      Popen(["tar", "-cJ",
+                             "--exclude=./tmp/*",
+                             "--exclude=./dev/*",
+                             "--exclude=./run/*",
+                             "--exclude=./sys/*",
+                             "--exclude=./proc/*",
+                             "--exclude=./var/cache/*",
+                             "-C", os.path.join(builddir,"chroot"), "."],
+                             stdout=PIPE))
+
+        size = 1024 * 1024 * 5
+
+        try:
+            data = self.tarball_creation_process[token].stdout.read (size)
+            if not data:
+                raise Exception()
+            return binascii.b2a_base64 (data)
+        except:
+            self.tarball_creation_process[token].kill()
+            self.tarball_creation_process[token].wait()
+            self.tarball_creation_process[token] = None
+            return "EndOfFile"
+
     @soapmethod (String)
     @authenticated_uid
     @soap_faults
