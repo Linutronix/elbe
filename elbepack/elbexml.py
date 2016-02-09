@@ -206,8 +206,8 @@ class ElbeXML(object):
 
     def get_buildenv_packages(self):
         retval = []
-        if self.xml.has("./project/buildimage/pkg-list"):
-            retval = [p.et.text for p in self.xml.node("project/buildimage/pkg-list")]
+        if self.prj.has("buildimage/pkg-list"):
+            retval = [p.et.text for p in self.prj.node("buildimage/pkg-list")]
 
         return retval
 

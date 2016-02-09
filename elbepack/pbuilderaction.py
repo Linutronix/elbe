@@ -72,11 +72,27 @@ class CreateAction(PBuilderAction):
     def execute(self, opt, args):
         tmp = TmpdirFilesystem ()
 
-        if not opt.project:
+        if opt.xmlfile:
+            ret, prjdir, err = command_out_stderr ('%s control create_project --retries 60 "%s"' % (elbe_exe, opt.xmlfile))
+            if ret != 0:
+                print ("elbe control create_project failed.", file=sys.stderr)
+                print (err, file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
+            prjdir = prjdir.strip()
+
+            if opt.writeproject:
+                wpf = open (opt.writeproject, "w")
+                wpf.write (prjdir)
+                wpf.close()
+
+        elif opt.project:
+            prjdir = opt.project
+        else:
             print ('you need to specify --project option', file=sys.stderr)
             sys.exit(20)
 
-        prjdir = opt.project
 
         print ("Creating pbuilder")
 

@@ -31,6 +31,9 @@ def pbuilder_write_config (builddir, xml, log):
         fp.write ('DEBOOTSTRAP="qemu-debootstrap"\n')
         fp.write ('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--arch=$ARCHITECTURE")\n')
 
+    if xml.prj.has('noauth'):
+        fp.write ('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
+
 
     fp.close()
 

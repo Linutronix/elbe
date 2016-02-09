@@ -33,6 +33,9 @@ def run_command (argv):
     oparser.add_option ("--xmlfile", dest="xmlfile", default=None,
                         help="xmlfile to use")
 
+    oparser.add_option ("--writeproject", dest="writeproject", default=None,
+                        help="write project name to file")
+
     oparser.add_option( "--skip-download", action="store_true",
                         dest="skip_download", default=False,
                         help="Skip downloading generated Files" )
