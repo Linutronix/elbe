@@ -10,11 +10,11 @@ elbe-initvm - High Level Interface to the ELBE System.
 SYNOPSIS
 --------
 [verse]
-'elbe initvm' [options] 'attach' 
+'elbe initvm' [options] 'attach'
 'elbe initvm' [options] 'create' [<xmlfile> | <isoimage>]
 'elbe initvm' [options] 'submit' [<xmlfile> | <isoimage>]
 'elbe initvm' [options] 'start'
-'elbe initvm' [options] 'ensure' 
+'elbe initvm' [options] 'ensure'
 'elbe initvm' [options] 'start_build'
 
 DESCRIPTION
@@ -47,7 +47,8 @@ OPTIONS
 	Password for login (defaults to 'foo').
 
 --retries <N>::
-	How many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds).
+	How many times to retry the connection to the server before giving up
+	(default is 10 times, yielding 10 seconds).
 
 --build-bin::
 	Build binary repository CDROM, for exact reproduction.
@@ -75,10 +76,12 @@ If tmux is not used, tmux is started and the Background session is attached.
 'create' [ <xmlfile> | <isoimage> ]::
 
 This command triggers a complete rebuild of the Elbe XML File.
-it also includes rebuilding the initvm. 
+it also includes rebuilding the initvm.
 +
 If an initvm is already available, you should use the 'submit' command,
-which. Also note that only a single initvm can be running on your host.
+to build a project in an existing initvm.
++
+Note that only a single initvm can be running on your host.
 +
 When a iso Image with the binaries has been built earlier, it can also
 be used to recreate the original image. The source.xml from the iso will
