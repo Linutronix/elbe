@@ -243,5 +243,5 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def shutdown_initvm (self, uid):
-        system ("shutdown -h now")
+        system ("systemctl --no-block poweroff")
 
