@@ -413,7 +413,7 @@ def add_binary_blob( outf, hd, target ):
             print bf
         # else use file from /var/cache/elbe/<uuid> project dir
         else:
-            bf = binary.et.text
+            bf = os.path.join(target, binary.et.text)
 
         outf.do( 'dd if="%s" of="%s" seek="%s" conv=notrunc' % (
             bf,
