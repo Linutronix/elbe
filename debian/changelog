@@ -1,3 +1,14 @@
+elbe (1.9.2) unstable; urgency=medium
+
+  * care on 'noauth' flag inside pbuilder
+  * fix elbe control shutdown_initvm for jessie
+  * allow parallel builds inside pbuilder
+  * add an option to write a file including the project uuid
+  * hdimg: add binary blob support needed for e.g. allwinner u-boot on sdcard
+  * add a finetuning rule to mv files from the target to the project dir
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 10 Feb 2016 12:04:29 +0100
+
 elbe (1.9.1) unstable; urgency=medium
 
   * fix missing elbepack/kvm.py file
