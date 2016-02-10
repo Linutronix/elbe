@@ -301,7 +301,7 @@ class ElbeProject (object):
 
         # Run pdebuild
         try:
-            self.log.do ('cd "%s"; pdebuild --debbuildopts -Jauto --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+            self.log.do ('cd "%s"; pdebuild --debbuildopts -jauto --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
                 os.path.join (self.builddir, "pdebuilder", "current"),
                 os.path.join (self.builddir, "pbuilderrc"),
                 os.path.join (self.builddir, "pbuilder", "result")))
