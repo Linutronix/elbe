@@ -33,10 +33,32 @@ def pbuilder_write_config (builddir, xml, log):
 
     if xml.prj.has('noauth'):
         fp.write ('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
+        fp.write ('export ALLOWUNTRUSTED="yes"\n')
 
 
     fp.close()
 
+def pbuilder_write_apt_conf (builddir, xml):
+
+    # writing apt.conf is only necessary, when we have noauth
+    # return when its not set
+    if not xml.prj.has('noauth'):
+        return
+
+    # noauth is set
+    # create pbuilder/aptconfdir/apt.conf.d/16allowuntrusted
+    aptconf_dir = os.path.join (builddir, "aptconfdir", "apt.conf.d")
+    fp = open (os.path.join (aptconf_dir, "16allowuntrusted"), "w")
+
+    # Make apt-get use --force-yes which is not specified by pbuilder-satisfy-depends
+    fp.write ('APT::Get::force-yes "true";\n')
+
+    # Also for safety add this:
+    fp.write ('APT::Get::AllowUnauthenticated "true";\n')
+
+    # Make aptitude install untrusted packages without asking
+    fp.write ('Aptitude::CmdLine::Ignore-Trust-Violations "true";\n')
+    fp.close()
 
 def pbuilder_write_repo_hook (builddir, xml):
 

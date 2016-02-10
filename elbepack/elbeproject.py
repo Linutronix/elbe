@@ -36,7 +36,7 @@ from elbepack.dump import check_full_pkgs
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
-from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook
+from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook, pbuilder_write_apt_conf
 
 class IncompatibleArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
@@ -316,14 +316,17 @@ class ElbeProject (object):
 
         # make hooks.d and pbuilder directory
         self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pbuilder", "hooks.d"))
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "aptconfdir", "apt.conf.d"))
 
         # write config files
         pbuilder_write_config (self.builddir, self.xml, self.log)
+        pbuilder_write_apt_conf (self.builddir, self.xml)
         pbuilder_write_repo_hook (self.builddir, self.xml)
         self.log.do ('chmod 755 "%s"' % os.path.join (self.builddir, "pbuilder", "hooks.d", "D10elbe_apt_sources"))
 
         # Run pbuilder --create
-        self.log.do ('pbuilder --create --configfile "%s" --extrapackages git' % os.path.join (self.builddir, "pbuilderrc"))
+        self.log.do ('pbuilder --create --configfile "%s" --aptconfdir "%s" --extrapackages git' % (
+                     os.path.join (self.builddir, "pbuilderrc"), os.path.join (self.builddir, "aptconfdir")))
 
     def sync_xml_to_disk (self):
         try:
