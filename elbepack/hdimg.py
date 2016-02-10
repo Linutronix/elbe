@@ -415,7 +415,7 @@ def add_binary_blob( outf, hd, target ):
         else:
             bf = binary.et.text
 
-        outf.do( 'dd if="%s" of="%s" seek="%s"' % (
+        outf.do( 'dd if="%s" of="%s" seek="%s" conv=notrunc' % (
             bf,
             imagename,
             offset) )
