@@ -407,6 +407,11 @@ def add_binary_blob( outf, hd, target ):
         except KeyError:
             offset = 0
 
+        try:
+            bs = binary.et.attrib["blocksize"]
+        except KeyError:
+            bs = 1
+
         # use file from target/ dir if binary path starts with /
         if (binary.et.text[0] == '/'):
             bf = os.path.join(target, 'target', binary.et.text[1:])
@@ -415,10 +420,11 @@ def add_binary_blob( outf, hd, target ):
         else:
             bf = os.path.join(target, binary.et.text)
 
-        outf.do( 'dd if="%s" of="%s" seek="%s" conv=notrunc' % (
+        outf.do( 'dd if="%s" of="%s" seek="%s" bs="%s" conv=notrunc' % (
             bf,
             imagename,
-            offset) )
+            offset,
+            bs) )
 
 def do_hdimg(outf, xml, target, rfs, grub_version):
     # list of created files

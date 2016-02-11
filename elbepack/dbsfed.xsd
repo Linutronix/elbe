@@ -1003,6 +1003,13 @@
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="blocksize" type="int" use="optional">
+          <annotation>
+            <documentation>
+              blocksize in bytes for the bytewise copy (default 1)
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
