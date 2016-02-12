@@ -23,6 +23,7 @@ from __future__ import print_function
 import binascii
 from suds.client import Client
 from urllib2 import URLError
+from httplib import BadStatusLine
 import socket
 import time
 import sys
@@ -67,6 +68,10 @@ class ElbeSoapClient(object):
                     raise e
                 time.sleep(1)
             except URLError as e:
+                if self.retries > retries:
+                    raise e
+                time.sleep(1)
+            except BadStatusLine as e:
                 if self.retries > retries:
                     raise e
                 time.sleep(1)
