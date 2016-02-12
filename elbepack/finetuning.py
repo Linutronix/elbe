@@ -155,6 +155,7 @@ class T2PMvAction(FinetuningAction):
             dest = self.node.et.text[1:]
         else:
             dest = self.node.et.text
+        dest = os.path.join ('..', dest)
         log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + dest )
 
 FinetuningAction.register( T2PMvAction )
