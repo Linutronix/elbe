@@ -39,6 +39,8 @@ from faults import soap_faults
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
+from subprocess import Popen, PIPE
+
 # Deactivate the FutureWarning from wsgi_soap:
 #
 # /usr/lib/pymodules/python2.7/soaplib/wsgi_soap.py:219: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
@@ -116,7 +118,6 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
     @authenticated_uid
     @soap_faults
     def get_build_chroot_tarball (self, uid, builddir, part):
-        from subprocess import Popen, PIPE
 
         if not hasattr(self, 'tarball_creation_process'):
             setattr(self,'tarball_creation_process', {})
