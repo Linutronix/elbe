@@ -114,6 +114,13 @@ class ElbeProject (object):
         else:
             self.targetfs = None
 
+    def build_chroottarball (self):
+        self.log.do("tar cJf %s/chroot.tar.xz \
+                --exclude=./tmp/*  --exclude=./dev/* \
+                --exclude=./run/*  --exclude=./sys/* \
+                --exclude=./proc/* --exclude=./var/cache/* \
+                -C %s ." % (self.builddir, self.chrootpath))
+
     def build_sysroot (self):
 
         debootstrap_pkgs = [p.et.text for p in self.xml.node ("debootstrappkgs")]

@@ -800,6 +800,8 @@ class ElbeDB(object):
                     "text/plain; charset=utf-8", "Log file" )
             self._update_project_file( s, p.builddir, "sysroot.tar.xz",
                     "application/x-xz-compressed-tar", "sysroot for cross-toolchains" )
+            self._update_project_file( s, p.builddir, "chroot.tar.xz",
+                    "application/x-xz-compressed-tar", "chroot for 'native' development" )
 
             # Add Repository iso images
             for img in ep.repo_images:

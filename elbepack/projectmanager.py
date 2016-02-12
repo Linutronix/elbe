@@ -32,6 +32,7 @@ from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
 from elbepack.asyncworker import PdebuildJob, CreatePbuilderJob
+from elbepack.asyncworker import BuildChrootTarJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -286,6 +287,11 @@ class ProjectManager(object):
                 raise InvalidState ('No pbuilder exists: run "elbe pbuilder create --project %s" first' % ep.builddir)
 
             self.worker.enqueue (PdebuildJob (ep))
+
+    def build_chroot_tarball (self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            self.worker.enqueue (BuildChrootTarJob (ep))
 
     def build_sysroot (self, userid):
         with self.lock:
