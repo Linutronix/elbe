@@ -11,8 +11,8 @@ elbe-pbuilder - High Level Interface to the ELBE Package Build System.
 SYNOPSIS
 --------
 [verse]
-'elbe pbuilder' 'build' [--project <project> | --xmlfile <xmlfile>]
-'elbe pbuilder' 'create' --project <project>
+'elbe pbuilder' 'build'  [--project <project> | --xmlfile <xmlfile>]
+'elbe pbuilder' 'create' [--project <project> | --xmlfile <xmlfile>] [--writeproject <filename>]
 
 DESCRIPTION
 -----------
@@ -20,12 +20,18 @@ DESCRIPTION
 Creates a pbuilder for a specified project and builds the Debian package
 like pbuilder, but for the configured ELBE project.
 
+Currently only the source formats 3.0 (git) and 3.0 (native) are supported.
+3.0 (quilt) requires Files in the parent directory, which are not uploaded,
+because only the curent Workdirectory is uploaded.
+
 OPTIONS
 -------
 
 --project <dir>::
 	'key' (/var/cache/elbe/<uuid> for the project inside the initvm to use.
 	Use 'elbe control list_projects' to get a list of the available projects.
+	Another option would be to use the --writeproject option, when the
+	pbuilder is created.
 
 --xmlfile <xmlfile>::
 	This file is used to create a new ELBE project including the pbuilder
@@ -33,6 +39,11 @@ OPTIONS
 
 COMMANDS
 --------
+
+'create'::
+
+A pbuilder environment for the given project or xml File will be created.
+
 
 'build'::
 
@@ -43,15 +54,29 @@ environment will be created for the given ELBE XML File and the 'Debianized
 Project' in the current working directory will be build. The result of the
 package build is stored in ../ like pbuilder does.
 
-'create'::
+EXAMPLES
+--------
 
-A pbuilder environment for the given project will be created.
+* Build a pbuilder for 'myarm.xml'. Save project name into myarm.prj
++
+--------
+# elbe pbuilder create --xmlfile myarm.xml --writeproject myarm.prj 
+--------
+
+* Use the pbuilder we have built, to build 'program', using the prj
+  File generated in parent directory
++
+--------
+# cd program
+# elbe pbuilder build --project `cat ../myarm.prj`
+--------
 
 
 SEE ALSO
 --------
 linkgit:elbe-control[1]
-linkgit:pbuilder[1]
+linkgit:elbe-initvm[1]
+linkgit:pdebuild[1]
 
 ELBE
 ----

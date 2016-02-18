@@ -264,3 +264,33 @@ Further Example
 ^^^^^^^^^^^^^^^
 A more complete example can be found in the ELBE overview document that is
 installed at `/usr/share/doc/elbe-doc/elbeoverview-en.html`
+
+Using the Elbe Pbuilder Feature
+-------------------------------
+
+Since Version 1.9.2, elbe is able to create a pbuilder Environment.
+You can create a pbuilder for a specific xml File inside the initvm.
+
+The repositories and architecture specified in the xml File will be used
+to satisfy build dependencies.
+Pbuilder will only build debianised Software.
+
+NOTE: Currently only source formats `3.0 (native)` and `3.0 (git)` are supported
+      and tested. `3.0 (quilt)` does not work. 
+
+A pbuilder instance is always associated with a project inside the initvm.
+The `pbuilder create` command will write the project uuid to a file, if instructed to
+do so.
+
+`pbuilder build` works like `pdebuild`, in that it uploads the current working directory
+into the initvm pbuilder project, and then builds it using the pbuilder instance
+created earlier.
+
+Here is an example:
+
+---------------------------------------------------------
+$ elbe pbuilder create --xmlfile fun.xml --writeproject fun.prj
+$ cd program
+$ elbe pbuilder build --project `cat ../fun.prj` --output ../out
+---------------------------------------------------------
+
