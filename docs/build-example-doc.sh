@@ -1,7 +1,12 @@
 #!/bin/bash
+
 FILES=`ls -1 ../examples`
-DEST=elbe-examples.txt
+DEST=elbe-examples.tmp
+TXT=elbe-examples.txt
 rm -f $DEST
+
+echo $FILES
+
 echo "ELBE examples" >>$DEST
 echo "=============" >> $DEST
 echo "" >> $DEST
@@ -10,4 +15,4 @@ for F in $FILES; do
 	echo "" >> $DEST
 done
 
-cat $DEST | sed -e s?'../examples/'?''? > $DEST
+cat $DEST | sed -e s?'../examples/'?''? > $TXT
