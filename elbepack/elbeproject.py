@@ -146,9 +146,9 @@ class ElbeProject (object):
 
         triplet = self.xml.defs["triplet"]
 
-        paths = [ './usr/include', './lib/*.so', './lib/*.so.*',
-                './lib/' + triplet, './usr/lib/*.so', './usr/lib/*.so',
-                './usr/lib/*.so.*', './usr/lib/' + triplet ]
+        paths = [ './usr/include', './usr/include/' + triplet,
+                  './lib/*.so', './lib/*.so.*', './lib/' + triplet,
+                  './usr/lib/*.so', './usr/lib/*.so', './usr/lib/*.so.*', './usr/lib/' + triplet ]
 
         self.log.do( "rm %s" % sysrootfilelist, allow_fail=True)
 
