@@ -103,7 +103,8 @@ class RPCAPTCache(InChRootObject):
         # go through all packages, remember package if its source package
         # matches one of the installed packages and the binary package is a
         # '-dev' package
-        dev_list = [s for s in self.cache if (s.candidate.source_name in src_list and s.name.endswith ('-dev'))]
+        dev_list = [s for s in self.cache if (s.candidate.source_name in
+            src_list and (s.section == 'libdevel'))]
         for p in dev_list:
             p.mark_install ()
         # ensure that the symlinks package will be installed (it's needed for
