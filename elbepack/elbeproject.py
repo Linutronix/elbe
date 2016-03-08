@@ -157,6 +157,9 @@ class ElbeProject (object):
         self.log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" %
                 (self.builddir, self.chrootpath, sysrootfilelist) )
 
+        # chroot is invalid after adding all the -dev packages
+        # it shouldn't be used to create an incremental image
+        self.log.do( "rm -rf %s" % self.chrootpath )
 
     def build (self, skip_debootstrap = False, build_bin = False,
             build_sources = False, cdrom_size = None, debug = False, skip_pkglist = False):
