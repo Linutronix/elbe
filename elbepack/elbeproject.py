@@ -128,10 +128,8 @@ class ElbeProject (object):
         with self.buildenv:
             try:
                 self.get_rpcaptcache().mark_install_devpkgs(debootstrap_pkgs)
-            except KeyError:
-                self.log.printo( "No Package " + p )
-            except SystemError:
-                self.log.printo( "Unable to correct problems " + p )
+            except SystemError as e:
+                self.log.printo( "mark install devpkgs failed: %s" % str(e) )
             try:
                 self.get_rpcaptcache().commit()
             except SystemError:
