@@ -148,6 +148,8 @@ class RepoBase(object):
     def include_init_deb (self, path, component="main"):
         self._includedeb (path, self.init_attr.codename, component)
 
+    def _include( self, path, codename, component):
+        self.log.do( 'reprepro --ignore=wrongdistribution --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
 
     def _includedsc( self, path, codename, component):
         if self.maxsize:
@@ -162,6 +164,9 @@ class RepoBase(object):
 
     def includedsc( self, path, component="main"):
         self._includedsc (path, self.repo_attr.codename, component)
+
+    def include( self, path, component="main"):
+        self._include (path, self.repo_attr.codename, component)
 
     def include_init_dsc( self, path, component="main"):
         self._includedsc (path, self.init_attr.codename, component)
@@ -261,3 +266,14 @@ class ToolchainRepo(RepoBase):
                            repo_attrs,
                            "toolchain",
                            "Toolchain binary packages Repo" )
+
+class ProjectRepo(RepoBase):
+    def __init__( self, arch, codename, path, log):
+        repo_attrs = RepoAttributes (codename, arch + ' source', "main")
+        RepoBase.__init__( self,
+                           path,
+                           log,
+                           None,
+                           repo_attrs,
+                           "Local",
+                           "Self build packages Repo" )

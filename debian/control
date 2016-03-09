@@ -87,7 +87,9 @@ Depends: ${misc:Depends},
   kpartx,
   squashfs-tools,
   sudo,
-  pbuilder
+  pbuilder,
+  git,
+  subversion
 Recommends: elbe-daemon (= ${binary:Version}),
   elbe-soap (= ${binary:Version})
 Description: Embedded Linux Build Environment Server Component

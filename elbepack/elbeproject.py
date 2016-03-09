@@ -37,6 +37,7 @@ from elbepack.dump import check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook, pbuilder_write_apt_conf
+from elbepack.repomanager import ProjectRepo
 
 class IncompatibleArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
@@ -91,12 +92,18 @@ class ElbeProject (object):
             self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
                     skip_validate=skip_validate, skip_urlcheck=skip_urlcheck )
 
+        self.arch = self.xml.text( "project/arch", key="arch" )
+        self.codename = self.xml.text( "project/suite" )
+
         # If logpath is given, use an AsciiDocLog instance, otherwise log
         # to stdout
         if logpath:
             self.log = ASCIIDocLog( logpath )
         else:
             self.log = StdoutLog()
+
+        self.repo = ProjectRepo (self.arch, self.codename,
+                                 os.path.join(self.builddir, "repo"), self.log)
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
@@ -161,15 +168,39 @@ class ElbeProject (object):
         # it shouldn't be used to create an incremental image
         self.log.do( "rm -rf %s" % self.chrootpath )
 
+    def pbuild (self, p):
+        self.pdebuild_init ()
+        src_path = os.path.join (self.builddir, "pdebuilder", "current")
+
+        self.log.printo ("retrieve pbuild sources: %s" % p.text('.'))
+        if p.tag == 'git':
+            self.log.do ("git clone %s %s" % (p.text('.'), src_path))
+        elif p.tag == 'svn':
+            self.log.do ("svn co %s %s" % (p.text('.'), src_path))
+        else:
+            self.log.printo ("unknown pbuild source vcs: %s" % p.tag)
+
+        self.pdebuild_build ()
+
     def build (self, skip_debootstrap = False, build_bin = False,
-            build_sources = False, cdrom_size = None, debug = False, skip_pkglist = False):
+               build_sources = False, cdrom_size = None, debug = False,
+               skip_pkglist = False, skip_pbuild = False):
+
         # Write the log header
         self.write_log_header()
+
+        if (self.xml.has('target/pbuilder') and not skip_pbuild):
+            if not os.path.exists ( os.path.join (self.builddir, "pbuilder") ):
+                self.create_pbuilder ()
+            for p in self.xml.node ('target/pbuilder'):
+                self.pbuild (p)
+            self.repo.finalize ()
 
         # Create the build environment, if it does not exist yet
         if not self.buildenv:
             self.log.do( 'mkdir -p "%s"' % self.chrootpath )
-            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath, build_sources = build_sources )
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath,
+                                      build_sources = build_sources )
             skip_pkglist = False
 
         # Install packages
@@ -232,16 +263,12 @@ class ElbeProject (object):
         self.buildenv.rfs.write_licenses(f, self.log, os.path.join( self.builddir, "licence.xml"))
         f.close()
 
-        # Read arch and codename from xml
-        arch = self.xml.text( "project/arch", key="arch" )
-        codename = self.xml.text( "project/suite" )
-
         # Use some handwaving to determine grub version
         # jessie and wheezy grubs are 2.0 but differ in behaviour
         #
         # We might also want support for legacy grub
         if self.get_rpcaptcache().is_installed( 'grub-pc' ):
-            if codename == "jessie":
+            if self.codename == "jessie":
                 grub_version = 202
             else:
                 grub_version = 199
@@ -260,8 +287,8 @@ class ElbeProject (object):
             init_codename = self.xml.get_initvm_codename()
             if build_bin:
                 self.repo_images += mk_binary_cdrom( self.buildenv.rfs,
-                                                     arch,
-                                                     codename,
+                                                     self.arch,
+                                                     self.codename,
                                                      init_codename,
                                                      self.xml,
                                                      self.builddir,
@@ -269,9 +296,9 @@ class ElbeProject (object):
                                                      cdrom_size=cdrom_size )
             if build_sources:
                 try:
-                    self.repo_images += mk_source_cdrom( self.buildenv.rfs,
-                                                        arch,
-                                                        codename,
+                    self.repo_images += mk_source_cdrom(self.buildenv.rfs,
+                                                        self.arch,
+                                                        self.codename,
                                                         init_codename,
                                                         self.builddir,
                                                         self.log,
@@ -291,23 +318,36 @@ class ElbeProject (object):
 
         os.system( 'cat "%s"' % os.path.join( self.builddir, "validation.txt" ) )
 
-    def pdebuild (self):
+    def pdebuild_init (self):
         # Remove pdebuilder directory, containing last build results
-        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir, "pdebuilder"))
+        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir,
+                                                   "pdebuilder"))
 
         # Remove pbuilder/result directory
-        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir, "pbuilder", "result"))
+        self.log.do ('rm -rf "%s"' % os.path.join (self.builddir,
+                                                   "pbuilder", "result"))
 
         # Recreate the directories removed
-        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pbuilder", "result"))
-        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir, "pdebuilder", "current"))
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir,
+                                                     "pbuilder", "result"))
+
+    def pdebuild (self):
+        self.pdebuild_init ()
+
+        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir,
+                                                     "pdebuilder", "current"))
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
-        self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir, "current_pdebuild.tar.gz"),
-                                                os.path.join (self.builddir, "pdebuilder", "current")))
+        self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir,
+                                                  "current_pdebuild.tar.gz"),
+                                                os.path.join (self.builddir,
+                                                  "pdebuilder", "current")))
+
+        self.pdebuild_build ()
+        self.repo.finalize ()
 
 
-        # Run pdebuild
+    def pdebuild_build (self):
         try:
             self.log.do ('cd "%s"; pdebuild --debbuildopts -jauto --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
                 os.path.join (self.builddir, "pdebuilder", "current"),
@@ -317,6 +357,9 @@ class ElbeProject (object):
             self.log.printo ('')
             self.log.printo ('Package fails to build.')
             self.log.printo ('Please make sure, that the submitted package builds in pbuilder')
+
+        self.repo.include (os.path.join (self.builddir,
+            "pbuilder", "result", "*.changes"))
 
     def create_pbuilder (self):
         # Remove old pbuilder directory, if it exists
@@ -347,7 +390,7 @@ class ElbeProject (object):
         if self._rpcaptcache is None:
             self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
                     "aptcache.log",
-                    self.xml.text( "project/arch", key="arch" ),
+                    self.arch,
                     self.rpcaptcache_notifier )
         return self._rpcaptcache
 
@@ -466,6 +509,7 @@ class ElbeProject (object):
                 debootstrap_pkgs.append (p.et.text)
 
             pkgs = self.buildenv.xml.get_target_packages()
+
             if buildenv:
                 pkgs = pkgs + self.buildenv.xml.get_buildenv_packages()
 

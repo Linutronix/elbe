@@ -37,6 +37,7 @@ class BuildEnv ():
 
         self.xml = xml
         self.log = log
+        self.path = path
 
         self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
 
@@ -69,6 +70,11 @@ class BuildEnv ():
                % (self.xml.text("project/mirror/cdrom"), cdrompath ) )
 
     def __enter__(self):
+        self.log.do("mv %s/../repo %s" % (self.path, self.path))
+        self.log.do('echo "deb file:///repo %s main" > %s/etc/apt/sources.list.d/local.list' % (
+                    self.xml.text ("project/suite"), self.path))
+        self.log.do('echo "deb-src file:///repo %s main" >> %s/etc/apt/sources.list.d/local.list' % (
+                    self.xml.text ("project/suite"), self.path))
         self.cdrom_mount()
         self.rfs.__enter__()
         return self
@@ -76,6 +82,8 @@ class BuildEnv ():
     def __exit__(self, type, value, traceback):
         self.rfs.__exit__(type, value, traceback)
         self.cdrom_umount()
+        self.log.do("mv %s/repo %s/../" % (self.path, self.path))
+        self.log.do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
 
     def debootstrap (self):
 
