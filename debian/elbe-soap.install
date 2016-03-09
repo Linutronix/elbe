@@ -3,4 +3,3 @@
 ./usr/lib/python2.*/*-packages/elbepack/daemons/soap/datatypes.py
 ./usr/lib/python2.*/*-packages/elbepack/daemons/soap/faults.py
 ./usr/lib/python2.*/*-packages/elbepack/daemons/soap/esoap.py
-./usr/lib/python2.*/*-packages/elbepack/daemons/soap/soaplibfix.py
