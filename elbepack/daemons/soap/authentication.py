@@ -20,7 +20,6 @@
 
 from faults import SoapElbeDBError, SoapElbeAuthenticationFailed, SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 from functools import wraps
-from soaplib.wsgi_soap import request
 
 def authenticated_uid(func):
     """ decorator, which Checks, that the current session is logged in,
@@ -36,7 +35,7 @@ def authenticated_uid(func):
     if func.func_code.co_argcount == 2:
         @wraps(func)
         def wrapped(self):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
@@ -47,7 +46,7 @@ def authenticated_uid(func):
     elif func.func_code.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
@@ -58,7 +57,7 @@ def authenticated_uid(func):
     elif func.func_code.co_argcount == 4:
         @wraps(func)
         def wrapped(self, arg1, arg2):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
@@ -69,7 +68,7 @@ def authenticated_uid(func):
     elif func.func_code.co_argcount == 5:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
@@ -96,27 +95,26 @@ def authenticated_admin(func):
     if func.func_code.co_argcount == 1:
         @wraps(func)
         def wrapped(self):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            if not self.pm.db.is_admin(uid):
+            if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
-
             return func(self)
         return wrapped
     elif func.func_code.co_argcount == 2:
         @wraps(func)
         def wrapped(self, arg1):
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            if not self.pm.db.is_admin(uid):
+            if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
 
             return func(self,arg1)
@@ -124,19 +122,15 @@ def authenticated_admin(func):
     elif func.func_code.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1, arg2):
-
-            s = request.environ['beaker.session']
+            s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            if not self.pm.db.is_admin(uid):
+            if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
-
             return func(self,arg1,arg2)
-
-        print wrapped.func_name
         return wrapped
     else:
         raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )

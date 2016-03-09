@@ -17,8 +17,38 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from esoap import ESoap
+
 from beaker.middleware import SessionMiddleware
 
+from spyne import Application
+from spyne.protocol.soap import Soap11
+from spyne.server.wsgi import WsgiApplication
+
+from elbepack.projectmanager import ProjectManager
+
+class EsoapApp(Application):
+    def __init__ (self, *args, **kargs):
+        Application.__init__(self, *args, **kargs)
+        self.pm = ProjectManager ("/var/cache/elbe")
+
+class MySession (SessionMiddleware):
+    def __init__ (self, app, pm):
+        self.pm = pm
+        SessionMiddleware.__init__(self, app)
+    def __call__ (self, environ, start_response):
+        #example to hook into wsgi environment
+        if environ ['PATH_INFO'].startswith ('/FILE:'):
+            f = environ ['PATH_INFO'][6:]
+            #return f
+
+        return SessionMiddleware.__call__(self, environ, start_response)
+
+
 def get_app(engine):
-    esoap = ESoap (engine)
-    return SessionMiddleware(esoap)
+
+    app = EsoapApp ([ESoap], 'soap',
+                    in_protocol=Soap11(validator='lxml'),
+                    out_protocol=Soap11())
+
+    wsgi = WsgiApplication (app)
+    return MySession(wsgi, app.pm)

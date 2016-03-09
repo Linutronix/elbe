@@ -151,7 +151,7 @@ class ListUsersAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        users = client.service.list_users (client)
+        users = client.service.list_users ()
 
         for u in users.string:
             print (u)
@@ -371,7 +371,7 @@ class GetFilesAction(ClientAction):
 
         nfiles = 0
 
-        for f in files.SoapFile:
+        for f in files:
             if opt.pbuilder_only and not f.name.startswith ('pbuilder'):
                 continue
 

@@ -17,17 +17,17 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from soaplib.serializers.clazz import ClassSerializer
-from soaplibfix import String, Integer
-from soaplib.serializers.primitive import DateTime
+from spyne.model.complex import ComplexModel
+from spyne.model.primitive import Unicode, DateTime
 
-class SoapProject (ClassSerializer):
-    class types:
-        builddir = String
-        name = String
-        version = String
-        status = String
-        edit = DateTime
+class SoapProject (ComplexModel):
+    __namespace__ = 'soap'
+
+    builddir = Unicode()
+    name = Unicode()
+    version = Unicode()
+    status = Unicode()
+    edit = DateTime()
 
     def __init__(self, prj):
         self.builddir = prj.builddir
@@ -36,10 +36,11 @@ class SoapProject (ClassSerializer):
         self.status = prj.status
         self.edit = prj.edit
 
-class SoapFile (ClassSerializer):
-    class types:
-        name = String
-        description = String
+class SoapFile (ComplexModel):
+    __namespace__ = 'soap'
+
+    name = Unicode()
+    description = Unicode()
 
     def __init__(self, fi):
         self.name = fi.name

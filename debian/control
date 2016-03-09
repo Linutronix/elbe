@@ -110,7 +110,7 @@ Package: elbe-soap
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  python-soaplib,
+  python-spyne,
   elbe-buildenv (= ${binary:Version}),
   elbe-daemon (= ${binary:Version})
 Description: SOAP Interface for elbe buildenv
