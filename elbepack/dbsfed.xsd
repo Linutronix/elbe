@@ -760,7 +760,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="pbuilder" type="rfs:pbuilder">
+      <element name="pbuilder" type="rfs:pbuilder" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             build and optionaly install debianized sources
