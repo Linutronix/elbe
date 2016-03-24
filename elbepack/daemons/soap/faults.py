@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from soaplib.serializers.primitive import Fault
+from spyne.model.fault import Fault
 from traceback import format_exc
 
 from functools import wraps
