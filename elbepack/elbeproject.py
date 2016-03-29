@@ -152,6 +152,8 @@ class ElbeProject (object):
         triplet = self.xml.defs["triplet"]
 
         paths = [ './usr/include', './usr/include/' + triplet,
+                  './opt/*/lib/*.so', '/opt/*lib/*.so.*', './opt/*/include/',
+                  './opt/*/lib/' + triplet, './opt/*/include/' + triplet,
                   './lib/*.so', './lib/*.so.*', './lib/' + triplet,
                   './usr/lib/*.so', './usr/lib/*.so', './usr/lib/*.so.*', './usr/lib/' + triplet ]
 
