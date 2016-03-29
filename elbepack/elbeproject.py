@@ -194,7 +194,15 @@ class ElbeProject (object):
                 self.create_pbuilder ()
             for p in self.xml.node ('target/pbuilder'):
                 self.pbuild (p)
-            self.repo.finalize ()
+                # the package might be needed by a following pbuild, so update
+                # the project repo that it can be installed in as
+                # build-dependency
+                self.repo.finalize ()
+
+        # To avoid update cache errors, the project repo needs to have
+        # Release and Packages files, even if it's empty. So don't do this
+        # in the if case above!
+        self.repo.finalize ()
 
         # Create the build environment, if it does not exist yet
         if not self.buildenv:
