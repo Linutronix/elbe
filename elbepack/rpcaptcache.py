@@ -25,6 +25,7 @@ from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
 import os
+import sys
 import time
 import warnings
 
