@@ -24,11 +24,21 @@ from elbepack.filesystem import hostfs
 from elbepack.aptpkgutils import APTPackage
 from apt import Cache
 
+import warnings
+
 def get_initvm_pkglist ():
-    cache = Cache ()
-    cache.open ()
-    pkglist = [APTPackage (p) for p in cache if p.is_installed]
-    pkglist.append ( APTPackage( cache ['elbe-bootstrap'] ) )
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore",category=DeprecationWarning)
+        cache = Cache ()
+        cache.open ()
+        pkglist = [APTPackage (p) for p in cache if p.is_installed]
+        try:
+            eb = APTPackage( cache ['elbe-bootstrap'] )
+            pkglist.append (eb)
+        # elbe bootstrap is not installed on pc running elbe
+        except KeyError:
+            pass
+
     return pkglist
 
 def dump_fullpkgs( xml, rfs, cache ):

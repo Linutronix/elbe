@@ -26,6 +26,7 @@ from elbepack.aptpkgutils import getalldeps, APTPackage
 
 import os
 import time
+import warnings
 
 class InChRootObject(object):
     def __init__(self, rfs):
@@ -158,11 +159,16 @@ class RPCAPTCache(InChRootObject):
         return [APTPackage(p, cache=self.cache) for p in deps]
 
     def get_installed_pkgs( self, section='all' ):
-        if section == 'all':
-            return [APTPackage(p) for p in self.cache if p.is_installed]
-        else:
-            return [APTPackage(p) for p in self.cache if (p.section == section
-                and p.is_installed)]
+        # avoid DeprecationWarning: MD5Hash is deprecated, use Hashes instead
+        # triggerd by python-apt
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore",category=DeprecationWarning)
+            if section == 'all':
+                pl = [APTPackage(p) for p in self.cache if p.is_installed]
+            else:
+                pl = [APTPackage(p) for p in self.cache if (p.section == section
+                    and p.is_installed)]
+            return pl
 
     def get_fileindex( self ):
         index = {}
