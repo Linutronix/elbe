@@ -117,10 +117,10 @@ class BuildEnv ():
 
         if not self.xml.is_cross (host_arch):
             if self.xml.has("project/noauth"):
-                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
 
             try:
