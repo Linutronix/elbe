@@ -93,8 +93,7 @@ class ElbeAcquireProgress (AcquireProgress):
     def pulse (self, owner):
         return True
 
-
-class ElbeOpProgress (AcquireProgress):
+class ElbeOpProgress (OpProgress):
 
     def __init__ (self, cb=None):
         OpProgress.__init__ (self)
