@@ -60,10 +60,11 @@ class RepoBase(object):
         self.log = log
         self.init_attr = init_attr
         self.repo_attr = repo_attr
-        if self.init_attr is not None:
-            self.attrs = init_attr + repo_attr
-        else:
-            self.attrs = [repo_attr]
+        self.attrs = []
+        if init_attr is not None:
+            self.attrs.append (init_attr)
+        if repo_attr is not None:
+            self.attrs.append (repo_attr)
 
         self.origin = origin
         self.description = description
