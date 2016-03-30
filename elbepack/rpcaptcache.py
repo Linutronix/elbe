@@ -20,7 +20,7 @@ from multiprocessing.util import Finalize
 from apt_pkg import config, version_compare
 from apt import Cache
 from multiprocessing.managers import BaseManager
-from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
+from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress, ElbeOpProgress
 from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
@@ -35,10 +35,14 @@ class InChRootObject(object):
         self.finalizer = Finalize(self,self.rfs.leave_chroot,exitpriority=10)
 
 class RPCAPTCache(InChRootObject):
-    def __init__( self, rfs, logpath, arch, notifier=None, norecommend = False, noauth = True ):
-        self.log = ASCIIDocLog(logpath)
-        self.notifier = notifier
+    def __init__( self, rfs, log, arch, notifier=None, norecommend = False, noauth = True ):
+        sys.stdout   = open (log, 'a', buffering=0)
+        sys.stderr   = open (log, 'a', buffering=0)
+        self.logfile = open (log, 'a', buffering=0)
+
         InChRootObject.__init__(self, rfs)
+
+        self.notifier = notifier
         config.set ("APT::Architecture", arch)
         if norecommend:
             config.set ("APT::Install-Recommends", "1")
@@ -50,8 +54,8 @@ class RPCAPTCache(InChRootObject):
         else:
             config.set ("APT::Get::AllowUnauthenticated", "0")
 
-        self.cache = Cache()
-        self.cache.open()
+        self.cache = Cache(progress=ElbeOpProgress ())
+        self.cache.open(progress=ElbeOpProgress())
 
     def dbg_dump( self, filename ):
         ts = time.localtime ()
@@ -137,19 +141,15 @@ class RPCAPTCache(InChRootObject):
 
 
     def update( self ):
-        self.cache.update()
-        self.cache.open()
-
-    def co_cb(self, msg):
-        if self.notifier:
-            self.notifier.status (msg)
+        self.cache.update(fetch_progress=ElbeAcquireProgress())
+        self.cache.open(progress=ElbeOpProgress())
 
     def commit(self):
         os.environ["DEBIAN_FRONTEND"]="noninteractive"
         os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
-        self.cache.commit( ElbeAcquireProgress(cb=self.co_cb),
-                           ElbeInstallProgress(cb=self.co_cb) )
-        self.cache.open()
+        self.cache.commit( ElbeAcquireProgress(),
+                           ElbeInstallProgress(fileno=self.logfile.fileno()) )
+        self.cache.open(progress=ElbeOpProgress())
 
     def clear(self):
         self.cache.clear()
@@ -228,7 +228,7 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.versions[version]
 
         rel_filename = pkgver.fetch_binary(path,
-                ElbeAcquireProgress(cb=self.co_cb))
+                ElbeAcquireProgress())
         return self.rfs.fname( rel_filename )
 
     def download_source( self, pkgname, path, version=None ):
@@ -239,7 +239,7 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.versions[version]
 
         rel_filename = pkgver.fetch_source(path,
-                ElbeAcquireProgress(cb=self.co_cb), unpack=False)
+                                           ElbeAcquireProgress(), unpack=False)
         return self.rfs.fname( rel_filename )
 
 
@@ -248,8 +248,8 @@ class MyMan(BaseManager):
 
 MyMan.register( "RPCAPTCache", RPCAPTCache )
 
-def get_rpcaptcache(rfs, logpath, arch, notifier=None):
+def get_rpcaptcache(rfs, log, arch, notifier=None):
     mm = MyMan()
     mm.start()
 
-    return mm.RPCAPTCache(rfs, logpath, arch, notifier)
+    return mm.RPCAPTCache(rfs, log, arch, notifier)

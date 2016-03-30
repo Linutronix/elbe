@@ -50,8 +50,8 @@ class AptCacheUpdateError(Exception):
         Exception.__init__ (self, "Error Updating rpcaptcache")
 
 class AptCacheCommitError(Exception):
-    def __init__ (self):
-        Exception.__init__ (self, "Error Committing rpcaptcache")
+    def __init__ (self, msg=''):
+        Exception.__init__ (self, "Error Committing rpcaptcache %s" % msg)
 
 class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
@@ -139,9 +139,9 @@ class ElbeProject (object):
                 self.log.printo( "mark install devpkgs failed: %s" % str(e) )
             try:
                 self.get_rpcaptcache().commit()
-            except SystemError:
-                self.log.printo( "commiting changes failed" )
-                raise AptCacheCommitError ()
+            except SystemError as e:
+                self.log.printo( "commiting changes failed: %s" % str(e) )
+                raise AptCacheCommitError (str(e))
 
         sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
 
@@ -399,7 +399,7 @@ class ElbeProject (object):
     def get_rpcaptcache (self):
         if self._rpcaptcache is None:
             self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
-                    "aptcache.log",
+                    self.log.fp.name,
                     self.arch,
                     self.rpcaptcache_notifier )
         return self._rpcaptcache
@@ -469,8 +469,8 @@ class ElbeProject (object):
             # First update the apt cache
             try:
                 self.get_rpcaptcache().update()
-            except:
-                self.log.printo( "update cache failed" )
+            except Exception as e:
+                print( "update cache failed: %s" % str(e) )
                 raise AptCacheUpdateError ()
 
             # Then dump the debootstrap packages
@@ -539,6 +539,6 @@ class ElbeProject (object):
 
             try:
                 self.get_rpcaptcache().commit()
-            except SystemError:
-                self.log.printo( "commiting changes failed" )
-                raise AptCacheCommitError ()
+            except SystemError as e:
+                self.log.printo( "commiting changes failed: %s" % str(e) )
+                raise AptCacheCommitError (str(e))
