@@ -409,12 +409,12 @@ class WaitProjectBusyAction(ClientAction):
 
         while True:
             busy = client.service.get_project_busy (builddir)
-            if not busy:
+            if busy == 'FINISH':
                 break
             else:
                 localtime = time.asctime(time.localtime(time.time()))
-                print (localtime + "-- project still busy, waiting")
-                time.sleep(5)
+                print (localtime + " -- " + busy.replace('\n', ''))
+                time.sleep(1)
 
 ClientAction.register(WaitProjectBusyAction)
 

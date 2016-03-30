@@ -20,6 +20,7 @@
 
 
 import errno
+import os
 
 from os import path
 from threading import Lock
@@ -457,8 +458,11 @@ class ProjectManager(object):
 
     def current_project_is_busy (self, userid):
         with self.lock:
-            builddir = self._get_current_project( userid ).builddir
-            return self.db.is_busy( builddir )
+            ep = self._get_current_project( userid )
+            with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
+                for l in lf:
+                    pass
+            return self.db.is_busy( ep.builddir ), l
 
     def _get_current_project (self, userid, allow_busy=True):
         # Must be called with self.lock held
