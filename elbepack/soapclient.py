@@ -376,9 +376,9 @@ class GetFilesAction(ClientAction):
                 continue
 
             nfiles += 1
-            if f.description:
+            try:
                 print ("%s \t(%s)" % (f.name, f.description))
-            else:
+            except AttributeError:
                 print ("%s" % (f.name))
 
             if opt.output:
