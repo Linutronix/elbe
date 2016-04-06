@@ -459,7 +459,11 @@ class ShutdownInitvmAction(ClientAction):
             print ("usage: elbe control shutdown_initvm", file=sys.stderr)
             sys.exit(20)
 
-        client.service.shutdown_initvm ()
+        # if shutdown kills the daemon before it can answer the request
+        try:
+            client.service.shutdown_initvm ()
+        except BadStatusLine:
+            pass
 
 ClientAction.register(ShutdownInitvmAction)
 
