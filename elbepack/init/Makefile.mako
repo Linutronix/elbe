@@ -77,6 +77,7 @@ all: .stamps/stamp-install-initial-image
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
 		-net user,vlan=1 \
 		-m $(MEMSIZE) \
+		-smp $(SMP) \
 		-usb \
 		|| ( echo; \
 		     echo "------------------------------------------------------------------"; \
