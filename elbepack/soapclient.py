@@ -371,7 +371,7 @@ class GetFilesAction(ClientAction):
 
         nfiles = 0
 
-        for f in files:
+        for f in files[0]:
             if opt.pbuilder_only and not f.name.startswith ('pbuilder'):
                 continue
 
