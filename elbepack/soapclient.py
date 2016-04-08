@@ -404,15 +404,25 @@ class WaitProjectBusyAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
+        part = 1
 
         while True:
-            busy = client.service.get_project_busy (builddir)
+            busy = client.service.get_project_busy (builddir, part)
             if busy == 'FINISH':
                 break
             else:
-                localtime = time.asctime(time.localtime(time.time()))
-                print (localtime + " -- " + busy.replace('\n', ''))
-                time.sleep(1)
+                log = busy.split('###')
+
+                if part != int(log[0]):
+                    part = int(log[0])
+
+                    localtime = time.asctime(time.localtime(time.time()))
+                    try:
+                        print (localtime + " -- " + log[1].replace('\n', ''))
+                    except IndexError:
+                        pass
+                else:
+                    time.sleep(1)
 
 ClientAction.register(WaitProjectBusyAction)
 

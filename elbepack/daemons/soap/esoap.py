@@ -229,12 +229,12 @@ class ESoap (SimplePlugin, ServiceBase):
 
         return prjid
 
-    @rpc (String, _returns=String)
+    @rpc (String, Integer, _returns=String)
     @authenticated_uid
     @soap_faults
-    def get_project_busy (self, uid, builddir):
+    def get_project_busy (self, uid, builddir, part):
         self.app.pm.open_project (uid, builddir)
-        ret,log = self.app.pm.current_project_is_busy (uid)
+        ret,log = self.app.pm.current_project_is_busy (uid, part)
         if not ret:
             return 'FINISH'
         return log

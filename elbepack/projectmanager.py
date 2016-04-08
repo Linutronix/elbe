@@ -456,12 +456,17 @@ class ProjectManager(object):
             builddir = self._get_current_project( userid ).builddir
             return self.db.has_changes( builddir )
 
-    def current_project_is_busy (self, userid):
+    def current_project_is_busy (self, userid, part):
         with self.lock:
             ep = self._get_current_project( userid )
+            count = 0
             with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
                 for l in lf:
-                    pass
+                    if count == part:
+                        l = str(part+1) + '###' + l
+                        return self.db.is_busy( ep.builddir ), l
+                    count = count + 1
+            str(part) + '###' + l
             return self.db.is_busy( ep.builddir ), l
 
     def _get_current_project (self, userid, allow_busy=True):
