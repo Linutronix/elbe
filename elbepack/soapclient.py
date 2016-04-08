@@ -88,16 +88,14 @@ class ElbeSoapClient(object):
         part = 0
 
         while True:
-            retry = 5
-            while retry:
-                try:
-                    ret = self.service.get_file (builddir, filename, part)
-                except BadStatusLine as e:
-                    retry = retry - 1
-                    if not retry:
-                        fp.close ()
-                        print ("file transfer failed", file=sys.stderr)
-                        sys.exit(20)
+            try:
+                ret = self.service.get_file (builddir, filename, part)
+            except BadStatusLine as e:
+                retry = retry - 1
+                if not retry:
+                    fp.close ()
+                    print ("file transfer failed", file=sys.stderr)
+                    sys.exit(20)
 
             if ret == "FileNotFound":
                 print (ret, file=sys.stderr)
