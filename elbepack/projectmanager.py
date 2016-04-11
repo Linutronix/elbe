@@ -466,7 +466,7 @@ class ProjectManager(object):
                         l = str(part+1) + '###' + l
                         return self.db.is_busy( ep.builddir ), l
                     count = count + 1
-            str(part) + '###' + l
+            l = str(part) + '###' + l
             return self.db.is_busy( ep.builddir ), l
 
     def _get_current_project (self, userid, allow_busy=True):
