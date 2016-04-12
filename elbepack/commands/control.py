@@ -116,12 +116,13 @@ def run_command (argv):
             print ("elbe v%s is used in initvm, this is not compatible with \
 elbe v%s that is used on this machine. Please install same \
 versions of elbe in initvm and on your machine." % (v_server, elbe_version))
-        sys.exit (20)
+            sys.exit (20)
     except AttributeError:
         print ("the elbe installation inside the initvm doesn't provide a \
 get_version interface. Please create a new initvm or upgrade \
 elbe inside the existing initvm.")
         sys.exit (20)
+
 
     try:
         action.execute (control, opt, args[1:])
