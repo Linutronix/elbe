@@ -460,6 +460,11 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project( userid )
             count = 0
+
+            # function is called with part=None for elbe 1.0 clients
+            if part == None:
+                return self.db.is_busy( ep.builddir ), ""
+
             with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
                 for l in lf:
                     if count == part:

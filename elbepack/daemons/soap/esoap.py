@@ -241,6 +241,9 @@ class ESoap (SimplePlugin, ServiceBase):
     def get_project_busy (self, uid, builddir, part):
         self.app.pm.open_project (uid, builddir)
         ret,log = self.app.pm.current_project_is_busy (uid, part)
+        # return bool value to be compatible with elbe v1.0
+        if (part == None) and (log == "") and (not ret):
+            return ret
         if not ret:
             return 'FINISH'
         return log
