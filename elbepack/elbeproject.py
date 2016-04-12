@@ -130,11 +130,15 @@ class ElbeProject (object):
 
     def build_sysroot (self):
 
-        debootstrap_pkgs = [p.et.text for p in self.xml.node ("debootstrappkgs")]
+        # ignore packages from debootstrap
+        ignore_pkgs = [p.et.text for p in self.xml.node ("debootstrappkgs")]
+        ignore_dev_pkgs = []
+        if self.xml.has ('target/pkg-blacklist/sysroot'):
+            ignore_dev_pkgs = [p.et.text for p in self.xml.node ("target/pkg-blacklist/sysroot")]
 
         with self.buildenv:
             try:
-                self.get_rpcaptcache().mark_install_devpkgs(debootstrap_pkgs)
+                self.get_rpcaptcache().mark_install_devpkgs(ignore_pkgs, ignore_dev_pkgs)
             except SystemError as e:
                 self.log.printo( "mark install devpkgs failed: %s" % str(e) )
             try:

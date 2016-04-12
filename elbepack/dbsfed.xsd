@@ -774,6 +774,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="pkg-blacklist" type="rfs:blacklist" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            avoid installation of packages into sysroot or target
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
@@ -1744,6 +1751,30 @@
           </documentation>
         </annotation>
       </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="blacklist">
+    <annotation>
+      <documentation>
+        blacklists of debian packages
+      </documentation>
+    </annotation>
+    <sequence>
+        <element name="sysroot" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+              avoid installing the specified packages into the sysroot
+            </documentation>
+          </annotation>
+        </element>
+        <element name="target" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+              avoid installing the specified packages into the target
+            </documentation>
+          </annotation>
+        </element>
     </sequence>
   </complexType>
 

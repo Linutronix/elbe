@@ -43,6 +43,12 @@
 		<pkg-list>
 			<pkg>linux-image-686-pae</pkg>
 			<pkg>grub-pc</pkg>
+			<pkg>libcurl3</pkg>
 		</pkg-list>
+		<pkg-blacklist>
+			<sysroot>
+				<pkg>libcurl4-openssl-dev</pkg>
+			</sysroot>
+		</pkg-blacklist>
 	</target>
 </ns0:RootFileSystem>

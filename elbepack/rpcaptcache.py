@@ -92,7 +92,7 @@ class RPCAPTCache(InChRootObject):
                 auto_inst = not nodeps,
                 from_user = from_user )
 
-    def mark_install_devpkgs( self, ignore_pkgs ):
+    def mark_install_devpkgs( self, ignore_pkgs, ignore_dev_pkgs ):
         ignore_pkgs.remove ('libc6') # we don't want to ignore libc
         # we don't want to ignore libstdc++
         try:
@@ -111,7 +111,8 @@ class RPCAPTCache(InChRootObject):
         # '-dev' package
         dev_list = [s for s in self.cache if (s.candidate.source_name in src_list and s.name.endswith ('-dev'))]
         for p in dev_list:
-            p.mark_install ()
+            if p.name not in ignore_dev_pkgs:
+                p.mark_install ()
         # ensure that the symlinks package will be installed (it's needed for
         # fixing links inside the sysroot
         self.cache ['symlinks'].mark_install ()
