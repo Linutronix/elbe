@@ -26,6 +26,7 @@ from cherrypy.process.plugins import SimplePlugin
 from tempfile import NamedTemporaryFile
 
 from elbepack.shellhelper import system
+from elbepack.version import elbe_version
 
 from faults import soap_faults
 
@@ -52,6 +53,11 @@ class ESoap (SimplePlugin, ServiceBase):
 
     def stop(self):
         self.app.pm.stop()
+
+    @rpc (_returns=String )
+    @soap_faults
+    def get_version(self):
+        return elbe_version
 
     @rpc (String, String, _returns=Boolean )
     @soap_faults

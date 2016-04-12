@@ -29,6 +29,7 @@ from urllib2 import URLError
 from httplib import BadStatusLine
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
+from elbepack.version import elbe_version
 
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
@@ -108,6 +109,19 @@ def run_command (argv):
         print ('elbe control - unknown subcommand', file=sys.stderr)
         ClientAction.print_actions ()
         sys.exit(20)
+
+    try:
+        v_server = control.service.get_version ()
+        if v_server != elbe_version:
+            print ("elbe v%s is used in initvm, this is not compatible with \
+elbe v%s that is used on this machine. Please install same \
+versions of elbe in initvm and on your machine." % (v_server, elbe_version))
+        sys.exit (20)
+    except AttributeError:
+        print ("the elbe installation inside the initvm doesn't provide a \
+get_version interface. Please create a new initvm or upgrade \
+elbe inside the existing initvm.")
+        sys.exit (20)
 
     try:
         action.execute (control, opt, args[1:])
