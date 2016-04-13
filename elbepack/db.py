@@ -26,6 +26,7 @@ from datetime import datetime
 from shutil import (rmtree, copyfile, copyfileobj)
 from contextlib import contextmanager
 from urllib import quote
+from threading import Thread
 
 from passlib.hash import pbkdf2_sha512
 
@@ -347,7 +348,10 @@ class ElbeDB(object):
                         builddir )
 
             if os.path.exists (builddir):
-                rmtree (builddir)   # OSError
+                # delete project in background to avoid blocking caller for a
+                # long time if the project is huge
+                t = Thread (target=rmtree, args=[builddir])
+                t.start ()
 
             s.query( ProjectVersion ).\
                     filter( ProjectVersion.builddir == builddir ).delete()
