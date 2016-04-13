@@ -89,6 +89,7 @@ Depends: ${misc:Depends},
   sudo,
   pbuilder,
   git,
+  ca-certificates,
   subversion
 Recommends: elbe-daemon (= ${binary:Version}),
   elbe-soap (= ${binary:Version})
