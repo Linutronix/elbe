@@ -69,6 +69,7 @@
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
+			<pkg>libgpio1</pkg>
 		</pkg-list>
 	</target>
 <archive>QlpoOTFBWSZTWTw1f4UBc/B/////////////////////////////////////
