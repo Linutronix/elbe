@@ -760,10 +760,24 @@
           </documentation>
         </annotation>
       </element>
+      <element name="pbuilder" type="rfs:pbuilder" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            build and optionaly install debianized sources
+          </documentation>
+        </annotation>
+      </element>
       <element name="pkg-list" type="rfs:pkg-list">
         <annotation>
           <documentation>
             install the given packages into the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="pkg-blacklist" type="rfs:blacklist" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            avoid installation of packages into sysroot or target
           </documentation>
         </annotation>
       </element>
@@ -1608,7 +1622,7 @@
     </annotation>
     <simpleContent>
       <extension base="string">
-        <attribute name="path" type="string" use="required" />    
+        <attribute name="path" type="string" use="required" />
       </extension>
     </simpleContent>
   </complexType>
@@ -1625,52 +1639,31 @@
       </extension>
     </simpleContent>
   </complexType>
+
   <complexType name="git_src">
     <annotation>
       <documentation>
-        describes a git location of a debian source package
+        URI of the git repository, e.g. "git://myhost/myrepo.git"
       </documentation>
     </annotation>
-    <sequence>
-      <element name="url" type="string" minOccurs="1" maxOccurs="1">
-        <annotation>
-          <documentation>
-            url of the git repository, e.g. "git://myhost/myrepo.git"
-          </documentation>
-        </annotation>
-      </element>
-      <element name="tag" type="string" minOccurs="0" maxOccurs="1">
-        <annotation>
-          <documentation>
-            reference to a tag in the git tree
-          </documentation>
-        </annotation>
-      </element>
-    </sequence>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="revision" type="string" use="optional" />
+      </extension>
+    </simpleContent>
   </complexType>
 
   <complexType name="svn_src">
     <annotation>
       <documentation>
-        describes a svn location of a debian source package
+        URI of the svn repository, e.g. "svn://myhost/myrepo/tags/my_tag"
       </documentation>
     </annotation>
-    <sequence>
-      <element name="url" type="string" minOccurs="1" maxOccurs="1">
-        <annotation>
-          <documentation>
-            url of the svn repository, e.g. "svn://myhost/myrepo/tags/my_tag"
-          </documentation>
-        </annotation>
-      </element>
-      <element name="rev" type="integer" minOccurs="0" maxOccurs="1">
-        <annotation>
-          <documentation>
-            svn revision which should be checked out
-          </documentation>
-        </annotation>
-      </element>
-    </sequence>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="revision" type="string" use="optional" />
+      </extension>
+    </simpleContent>
   </complexType>
 
   <complexType name="pkg">
@@ -1713,6 +1706,36 @@
     </simpleContent>
   </complexType>
 
+  <complexType name="pbuilder">
+    <annotation>
+      <documentation>
+        reference to debian source packages
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="git" type="rfs:git_src" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a git tree hosting a debian source package. The source
+            will be build with a pbuilder before the image generation. Use the
+            'install' attribute to specify which binary packages should be
+            installed in the target image.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="svn" type="rfs:svn_src" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a svn repository hosting a debian source package. The
+            source will be build with a pbuilder before the image generation.
+            Use the 'install' attribute to specify which binary packages should
+            be installed in the target image.
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
   <complexType name="pkg-list">
     <annotation>
       <documentation>
@@ -1720,29 +1743,6 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="git-src" type="rfs:git_src" minOccurs="0" maxOccurs="unbounded">
-        <annotation>
-          <documentation>
-            reference to a git tree hosting a debian source package. The tree
-            will be cloned into the build environment and 'dpkg-buildpackage'
-            will be called. The resulting debian package will be installed into
-            the target rootfilesystem. Take care that all build dependencies
-            needs to be listed inside 'buildenv'/'pkg-list' at the moment.
-          </documentation>
-        </annotation>
-      </element>
-      <element name="svn-src" type="rfs:svn_src" minOccurs="0" maxOccurs="unbounded">
-        <annotation>
-          <documentation>
-            reference to a svn repository hosting a debian source package. The 
-            repository will be checked out into the build environment and
-            'dpkg-buildpackage' will be called. The resulting debian package
-            will be installed into the target rootfilesystem. Take care that
-            all build dependencies needs to be listed inside
-            'buildenv'/'pkg-list' at the moment.
-          </documentation>
-        </annotation>
-      </element>
       <element name="pkg" type="rfs:pkg" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
@@ -1751,6 +1751,30 @@
           </documentation>
         </annotation>
       </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="blacklist">
+    <annotation>
+      <documentation>
+        blacklists of debian packages
+      </documentation>
+    </annotation>
+    <sequence>
+        <element name="sysroot" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+              avoid installing the specified packages into the sysroot
+            </documentation>
+          </annotation>
+        </element>
+        <element name="target" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+              avoid installing the specified packages into the target
+            </documentation>
+          </annotation>
+        </element>
     </sequence>
   </complexType>
 

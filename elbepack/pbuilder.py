@@ -23,10 +23,7 @@ def pbuilder_write_config (builddir, xml, log):
     fp.write ('APTCACHE="%s"\n' % os.path.join (builddir, 'pbuilder', 'aptcache'))
     fp.write ('HOOKDIR="%s"\n' % os.path.join (builddir, 'pbuilder', 'hooks.d'))
 
-
-    host_arch = log.get_command_out("dpkg --print-architecture").strip ()
-
-    if xml.is_cross (host_arch):
+    if (xml.text( "project/arch", key="arch" ) != 'amd64'):
         fp.write ('ARCHITECTURE="%s"\n' % xml.text ("project/buildimage/arch", key="arch"))
         fp.write ('DEBOOTSTRAP="qemu-debootstrap"\n')
         fp.write ('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--arch=$ARCHITECTURE")\n')

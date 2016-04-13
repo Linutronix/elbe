@@ -62,12 +62,9 @@ class LogBase(object):
         else:
             self.printo( "running cmd +%s with STDIN %s+" % (cmd, input) )
 
-        ret, output = command_out(cmd, input=input)
-
-        if len(output) != 0:
-            self.verbatim_start()
-            self.print_raw( output )
-            self.verbatim_end()
+        self.verbatim_start()
+        ret, out = command_out(cmd, input=input, output=self.fp)
+        self.verbatim_end()
 
         if ret != 0:
             self.printo( "Command failed with errorcode %d" % ret )
@@ -104,7 +101,7 @@ class ASCIIDocLog (LogBase):
     def __init__(self, fname):
         if os.path.isfile(fname):
             os.unlink(fname)
-        fp = file(fname, "w", 1)
+        fp = file(fname, "w", 0)
 
         LogBase.__init__(self, fp)
 

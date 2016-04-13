@@ -22,9 +22,10 @@ import os
 
 class ElbeInstallProgress (InstallProgress):
 
-    def __init__ (self, cb=None):
+    def __init__ (self, cb=None, fileno=2):
         InstallProgress.__init__ (self)
         self.cb = cb
+        self.fileno = fileno
 
     def write (self, line):
         if line == 'update finished':
@@ -45,6 +46,14 @@ class ElbeInstallProgress (InstallProgress):
 
     def status_change (self, pkg, percent, status):
         self.write (pkg + " - " + status + " " + str (percent) + "%")
+
+    def run (self, obj):
+        try:
+            obj.do_install (self.fileno)
+        except AttributeError:
+            print 'installing .deb files is not supported by elbe progress'
+            raise SystemError
+        return 0
 
     def fork(self):
         retval = os.fork()
@@ -93,8 +102,7 @@ class ElbeAcquireProgress (AcquireProgress):
     def pulse (self, owner):
         return True
 
-
-class ElbeOpProgress (AcquireProgress):
+class ElbeOpProgress (OpProgress):
 
     def __init__ (self, cb=None):
         OpProgress.__init__ (self)

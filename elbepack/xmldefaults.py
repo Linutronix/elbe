@@ -75,6 +75,17 @@ armhf_virtio_defaults = {
         "triplet":      "arm-linux-gnueabihf"
 }
 
+aarch64_defaults = {
+        "arch":         "arm64",
+        "mem":          "256",
+        "interpreter":  "qemu-system-aarch64",
+        "userinterpr":  "qemu-aarch64-static",
+        "console":      "ttyAMA0,115200n1",
+        "machine":      "virt -cpu cortex-a57",
+        "nicmodel":     "virtio",
+        "triplet":      "aarch64-linux-gnu"
+}
+
 ppc_defaults = {
         "arch":         "powerpc",
         "mem":          "256",
@@ -130,6 +141,7 @@ defaults = { "armel": armel_defaults,
              "armhf": armhf_defaults,
              "armhf-linaro48": armhf_linaro48_defaults,
              "armhf-virtio": armhf_virtio_defaults,
+             "aarch64": aarch64_defaults,
              "ppc": ppc_defaults,
              "ppcspe": ppcspe_defaults,
              "amd64": amd64_defaults,

@@ -37,11 +37,13 @@ class BuildEnv ():
 
         self.xml = xml
         self.log = log
+        self.path = path
 
         self.rfs = BuildImgFs (path, xml.defs["userinterpr"])
 
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile( "etc/elbe_version" ):
+            self.rfs.rmtree("")
             # avoid starting daemons inside the buildenv
             self.rfs.mkdir_p ("usr/sbin")
             self.rfs.write_file ("usr/sbin/policy-rc.d",
@@ -69,6 +71,12 @@ class BuildEnv ():
                % (self.xml.text("project/mirror/cdrom"), cdrompath ) )
 
     def __enter__(self):
+        if os.path.exists (self.path+'/../repo/pool'):
+            self.log.do("mv %s/../repo %s" % (self.path, self.path))
+            self.log.do('echo "deb file:///repo %s main" > %s/etc/apt/sources.list.d/local.list' % (
+                        self.xml.text ("project/suite"), self.path))
+            self.log.do('echo "deb-src file:///repo %s main" >> %s/etc/apt/sources.list.d/local.list' % (
+                        self.xml.text ("project/suite"), self.path))
         self.cdrom_mount()
         self.rfs.__enter__()
         return self
@@ -76,6 +84,9 @@ class BuildEnv ():
     def __exit__(self, type, value, traceback):
         self.rfs.__exit__(type, value, traceback)
         self.cdrom_umount()
+        if os.path.exists (self.path+'/repo'):
+            self.log.do("mv %s/repo %s/../" % (self.path, self.path))
+            self.log.do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
 
     def debootstrap (self):
 
@@ -108,10 +119,10 @@ class BuildEnv ():
 
         if not self.xml.is_cross (host_arch):
             if self.xml.has("project/noauth"):
-                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
 
             try:

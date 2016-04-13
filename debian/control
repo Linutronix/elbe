@@ -87,7 +87,9 @@ Depends: ${misc:Depends},
   kpartx,
   squashfs-tools,
   sudo,
-  pbuilder
+  pbuilder,
+  git,
+  subversion
 Recommends: elbe-daemon (= ${binary:Version}),
   elbe-soap (= ${binary:Version})
 Description: Embedded Linux Build Environment Server Component
@@ -110,7 +112,7 @@ Package: elbe-soap
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  python-soaplib,
+  python-spyne,
   elbe-buildenv (= ${binary:Version}),
   elbe-daemon (= ${binary:Version})
 Description: SOAP Interface for elbe buildenv

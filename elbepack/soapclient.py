@@ -86,8 +86,17 @@ class ElbeSoapClient(object):
     def download_file (self, builddir, filename, dst_fname):
         fp = file (dst_fname, "w")
         part = 0
+
         while True:
-            ret = self.service.get_file (builddir, filename, part)
+            try:
+                ret = self.service.get_file (builddir, filename, part)
+            except BadStatusLine as e:
+                retry = retry - 1
+                if not retry:
+                    fp.close ()
+                    print ("file transfer failed", file=sys.stderr)
+                    sys.exit(20)
+
             if ret == "FileNotFound":
                 print (ret, file=sys.stderr)
                 sys.exit(20)
@@ -140,7 +149,7 @@ class ListUsersAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        users = client.service.list_users (client)
+        users = client.service.list_users ()
 
         for u in users.string:
             print (u)
@@ -296,6 +305,24 @@ class GetFileAction(ClientAction):
 
 ClientAction.register(GetFileAction)
 
+class BuildChrootAction(ClientAction):
+
+    tag = 'build_chroot_tarball'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control build_chroot_tarball <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+
+        client.service.build_chroot_tarball (builddir)
+
+ClientAction.register(BuildChrootAction)
+
 class DumpFileAction(ClientAction):
 
     tag = 'dump_file'
@@ -342,14 +369,14 @@ class GetFilesAction(ClientAction):
 
         nfiles = 0
 
-        for f in files.SoapFile:
+        for f in files[0]:
             if opt.pbuilder_only and not f.name.startswith ('pbuilder'):
                 continue
 
             nfiles += 1
-            if f.description:
+            try:
                 print ("%s \t(%s)" % (f.name, f.description))
-            else:
+            except AttributeError:
                 print ("%s" % (f.name))
 
             if opt.output:
@@ -377,15 +404,25 @@ class WaitProjectBusyAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
+        part = 1
 
         while True:
-            busy = client.service.get_project_busy (builddir)
-            if not busy:
+            busy = client.service.get_project_busy (builddir, part)
+            if busy == 'FINISH':
                 break
             else:
-                localtime = time.asctime(time.localtime(time.time()))
-                print (localtime + "-- project still busy, waiting")
-                time.sleep(5)
+                log = busy.split('###')
+
+                if part != int(log[0]):
+                    part = int(log[0])
+
+                    localtime = time.asctime(time.localtime(time.time()))
+                    try:
+                        print (localtime + " -- " + log[1].replace('\n', ''))
+                    except IndexError:
+                        pass
+                else:
+                    time.sleep(1)
 
 ClientAction.register(WaitProjectBusyAction)
 
@@ -430,7 +467,11 @@ class ShutdownInitvmAction(ClientAction):
             print ("usage: elbe control shutdown_initvm", file=sys.stderr)
             sys.exit(20)
 
-        client.service.shutdown_initvm ()
+        # if shutdown kills the daemon before it can answer the request
+        try:
+            client.service.shutdown_initvm ()
+        except BadStatusLine:
+            pass
 
 ClientAction.register(ShutdownInitvmAction)
 
@@ -442,7 +483,7 @@ class SetPdebuilderAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        size = 5 * 1024 * 1024
+        size = 1024 * 1024
 
         if len (args) != 2:
             print ("usage: elbe control set_pdebuild <project_dir> <pdebuild file>", file=sys.stderr)

@@ -20,6 +20,7 @@
 
 
 import errno
+import os
 
 from os import path
 from threading import Lock
@@ -32,6 +33,7 @@ from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
 from elbepack.asyncworker import PdebuildJob, CreatePbuilderJob
+from elbepack.asyncworker import BuildChrootTarJob
 
 class ProjectManagerError(Exception):
     def __init__ (self, message):
@@ -287,6 +289,11 @@ class ProjectManager(object):
 
             self.worker.enqueue (PdebuildJob (ep))
 
+    def build_chroot_tarball (self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            self.worker.enqueue (BuildChrootTarJob (ep))
+
     def build_sysroot (self, userid):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
@@ -449,10 +456,23 @@ class ProjectManager(object):
             builddir = self._get_current_project( userid ).builddir
             return self.db.has_changes( builddir )
 
-    def current_project_is_busy (self, userid):
+    def current_project_is_busy (self, userid, part):
         with self.lock:
-            builddir = self._get_current_project( userid ).builddir
-            return self.db.is_busy( builddir )
+            ep = self._get_current_project( userid )
+            count = 0
+
+            # function is called with part=None for elbe 1.0 clients
+            if part == None:
+                return self.db.is_busy( ep.builddir ), ""
+
+            with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
+                for l in lf:
+                    if count == part:
+                        l = str(part+1) + '###' + l
+                        return self.db.is_busy( ep.builddir ), l
+                    count = count + 1
+            l = str(part) + '###' + l
+            return self.db.is_busy( ep.builddir ), l
 
     def _get_current_project (self, userid, allow_busy=True):
         # Must be called with self.lock held

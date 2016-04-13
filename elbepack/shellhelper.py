@@ -37,15 +37,15 @@ def system(cmd, allow_fail=False):
             raise CommandError(cmd, ret)
 
 
-def command_out(cmd, input=None):
+def command_out(cmd, input=None, output=PIPE):
     if input is None:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT )
-        output, stderr = p.communicate()
+        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT )
+        out, stderr = p.communicate()
     else:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
-        output, stderr = p.communicate(input=input)
+        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT, stdin=PIPE)
+        out, stderr = p.communicate(input=input)
 
-    return p.returncode, output
+    return p.returncode, out
 
 def system_out(cmd, input=None, allow_fail=False):
     code, out = command_out(cmd,input)

@@ -62,7 +62,7 @@ def run_command (argv):
     if len(args) < 1:
         print ('elbe initvm - no subcommand given', file=sys.stderr)
         InitVMAction.print_actions ()
-        return
+        sys.exit(20)
 
     directory = opt.directory or os.getcwd() + '/initvm'
 

@@ -19,78 +19,75 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import binascii
-import soaplib
 import os
-
-from soaplib.service import soapmethod
-from soaplib.wsgi_soap import SimpleWSGISoapApp, request
-from soaplibfix import String, Integer, Array
-from soaplib.serializers.primitive import Boolean
 
 from cherrypy.process.plugins import SimplePlugin
 
 from tempfile import NamedTemporaryFile
 
-from elbepack.projectmanager import ProjectManager
 from elbepack.shellhelper import system
+from elbepack.version import elbe_version
 
 from faults import soap_faults
 
+from elbepack.db import Project, User
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
-# Deactivate the FutureWarning from wsgi_soap:
-#
-# /usr/lib/pymodules/python2.7/soaplib/wsgi_soap.py:219: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
-#   if payload:
-#   /usr/lib/pymodules/python2.7/soaplib/wsgi_soap.py:236: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
-#     if payload:
-import warnings
-warnings.simplefilter(action = "ignore", category = FutureWarning)
+from subprocess import Popen, PIPE
 
-class ESoap (SimpleWSGISoapApp, SimplePlugin):
+from spyne.service import ServiceBase
+from spyne.decorator import rpc
+from spyne.model.primitive import String, Boolean, Integer
+from spyne.model.complex import Array, Iterable
+
+from threading import local
+
+class ESoap (SimplePlugin, ServiceBase):
+
+    __name__ = 'soap'
 
     def __init__ (self,engine):
-        SimpleWSGISoapApp.__init__ (self)
-        self.pm = ProjectManager ("/var/cache/elbe")
         SimplePlugin.__init__(self,engine)
         self.subscribe()
 
     def stop(self):
-        self.pm.stop()
+        self.app.pm.stop()
 
-    @soapmethod (String, String, _returns=Boolean )
+    @rpc (_returns=String )
+    @soap_faults
+    def get_version(self):
+        return elbe_version
+
+    @rpc (String, String, _returns=Boolean )
     @soap_faults
     def login(self, user, passwd):
-        s = request.environ['beaker.session']
-        s['userid'] = self.pm.db.validate_login(user, passwd)
+        s = self.transport.req_env['beaker.session']
+        s['userid'] = self.app.pm.db.validate_login(user, passwd)
         s.save()
-
         return True
 
 
-    @soapmethod (_returns=Array(String))
-    @authenticated_admin
+    @rpc (_returns=Array(String))
     @soap_faults
-    def list_users (self):
-        users = self.pm.db.list_users ()
-        return [u.name for u in users]
-
-    @soapmethod (_returns=Array(SoapProject))
     @authenticated_admin
-    @soap_faults
-    def list_projects (self):
-        projects = self.pm.db.list_projects ()
-        return [SoapProject(p) for p in projects]
+    def list_users (ctx):
+        return [u.name for u in ctx.app.pm.db.list_users ()]
 
-    @soapmethod (String, _returns=Array(SoapFile))
+    @rpc (_returns=Array(SoapProject))
+    @soap_faults
+    @authenticated_admin
+    def list_projects (ctx):
+        return ctx.app.pm.db.list_projects()
+
+    @rpc (String, String, _returns=Array(SoapFile))
     @authenticated_uid
     @soap_faults
-    def get_files (self, uid, builddir):
-        files = self.pm.db.get_project_files (builddir)
+    def get_files (self, uid, builddir, _returns=Array(SoapFile)):
+        files = self.app.pm.db.get_project_files (builddir)
         return [SoapFile(f) for f in files]
 
-    @soapmethod (String, String, Integer, _returns=String)
+    @rpc (String, String, Integer, _returns=String)
     @authenticated_uid
     @soap_faults
     def get_file (self, uid, builddir, filename, part):
@@ -112,43 +109,50 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
             except:
                 return "EndOfFile"
 
-    @soapmethod (String)
+    @rpc (String)
+    @authenticated_uid
+    @soap_faults
+    def build_chroot_tarball (self, uid, builddir):
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.build_chroot_tarball (uid)
+
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def build_sysroot (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
-        self.pm.build_sysroot (uid)
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.build_sysroot (uid)
 
-    @soapmethod (String, Boolean, Boolean)
+    @rpc (String, Boolean, Boolean)
     @authenticated_uid
     @soap_faults
     def build (self, uid, builddir, build_bin, build_src):
-        self.pm.open_project (uid, builddir)
-        self.pm.build_current_project (uid, build_bin, build_src)
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.build_current_project (uid, build_bin, build_src)
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def build_pbuilder (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
-        self.pm.build_pbuilder (uid)
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.build_pbuilder (uid)
 
-    @soapmethod (String, String)
+    @rpc (String, String, Boolean)
     @authenticated_uid
     @soap_faults
     def set_xml (self, uid, builddir, xml, skip_urlcheck):
-        self.pm.open_project (uid, builddir, skip_urlcheck=skip_urlcheck)
+        self.app.pm.open_project (uid, builddir, skip_urlcheck=skip_urlcheck)
 
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            self.pm.set_current_project_xml (uid, fp.name)
+            self.app.pm.set_current_project_xml (uid, fp.name)
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def start_cdrom (self, uid, builddir):
-        self.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -156,11 +160,11 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         fp = open (cdrom_fname, "w")
         fp.close()
 
-    @soapmethod (String, String)
+    @rpc (String, String)
     @authenticated_uid
     @soap_faults
     def append_cdrom (self, uid, builddir, data):
-        self.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -169,18 +173,18 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         fp.write (binascii.a2b_base64 (data))
         fp.close()
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def finish_cdrom (self, uid, builddir):
-        self.pm.open_project (uid, builddir, skip_urlcheck=True)
-        self.pm.set_current_project_upload_cdrom (uid)
+        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.set_current_project_upload_cdrom (uid)
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def start_pdebuild (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
+        self.app.pm.open_project (uid, builddir)
 
         pdebuild_fname = os.path.join (builddir, "current_pdebuild.tar.gz")
 
@@ -188,11 +192,11 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         fp = open (pdebuild_fname, "w")
         fp.close()
 
-    @soapmethod (String, String)
+    @rpc (String, String)
     @authenticated_uid
     @soap_faults
     def append_pdebuild (self, uid, builddir, data):
-        self.pm.open_project (uid, builddir)
+        self.app.pm.open_project (uid, builddir)
 
         pdebuild_fname = os.path.join (builddir, "current_pdebuild.tar.gz")
 
@@ -201,45 +205,50 @@ class ESoap (SimpleWSGISoapApp, SimplePlugin):
         fp.write (binascii.a2b_base64 (data))
         fp.close()
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def finish_pdebuild (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
-        self.pm.build_current_pdebuild (uid)
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.build_current_pdebuild (uid)
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def reset_project (self, uid, builddir):
-        self.pm.db.reset_project (builddir, True)
+        self.app.pm.db.reset_project (builddir, True)
 
-    @soapmethod (String)
+    @rpc (String)
     @authenticated_uid
     @soap_faults
     def del_project (self, uid, builddir):
-        self.pm.del_project (uid, builddir)
+        self.app.pm.del_project (uid, builddir)
 
-    @soapmethod (String, Boolean, _returns=String)
+    @rpc(String, Boolean, _returns=String)
     @authenticated_uid
     @soap_faults
     def create_project (self, uid, xml, skip_urlcheck):
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            prjid = self.pm.create_project (uid, fp.name, skip_urlcheck=skip_urlcheck)
+            prjid = self.app.pm.create_project (uid, fp.name, skip_urlcheck=skip_urlcheck)
 
         return prjid
 
-    @soapmethod (String, _returns=Boolean)
+    @rpc (String, Integer, _returns=String)
     @authenticated_uid
     @soap_faults
-    def get_project_busy (self, uid, builddir):
-        self.pm.open_project (uid, builddir)
+    def get_project_busy (self, uid, builddir, part):
+        self.app.pm.open_project (uid, builddir)
+        ret,log = self.app.pm.current_project_is_busy (uid, part)
+        # return bool value to be compatible with elbe v1.0
+        if (part == None) and (log == "") and (not ret):
+            return ret
+        if not ret:
+            return 'FINISH'
+        return log
 
-        return self.pm.current_project_is_busy (uid)
-
-    @soapmethod ()
+    @rpc ()
     @authenticated_uid
     @soap_faults
     def shutdown_initvm (self, uid):

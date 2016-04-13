@@ -55,6 +55,11 @@
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<cp path="/usr/lib/linux-image-3.16.0-4-armmp/am335x-boneblack.dtb">/boot/dtb-3.16.0-4-armmp</cp>
 		</finetuning>
+		<pbuilder>
+			<git revision='a15a83e2649765736aa6bfe9c490a39a417cf69b'>
+				https://github.com/Linutronix/libgpio.git
+			</git>
+		</pbuilder>
 		<pkg-list>
 			<pkg>linux-image-3.16.0-4-armmp</pkg>
 			<pkg>openssh-server</pkg>
@@ -64,6 +69,7 @@
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
+			<pkg>libgpio1</pkg>
 		</pkg-list>
 	</target>
 <archive>QlpoOTFBWSZTWTw1f4UBc/B/////////////////////////////////////

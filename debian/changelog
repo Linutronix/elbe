@@ -1,3 +1,18 @@
+elbe (1.9.3) unstable; urgency=medium
+
+  * automaticly build own software with pbuild and image integration
+  * improve sysroot generation
+  * move from unmaintained soaplib to spyne for the soap daemon
+  * hdimg: add blocksize attribute for binary blob
+  * hdimg: bugfix - don't truncate file during dd of a blob
+  * hdimg: some ubi/mtd bugfixes
+  * enable extraction of chroot via soap
+  * added pbuilder documentation
+  * added aarch64 aka arm64 support
+  * RFC: unittest infrastructure
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 09 Mar 2016 18:53:42 +0100
+
 elbe (1.9.2) unstable; urgency=medium
 
   * care on 'noauth' flag inside pbuilder

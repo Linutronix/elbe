@@ -23,12 +23,13 @@ from __future__ import print_function
 import socket
 import sys
 
-from optparse import OptionParser
+from optparse import (OptionParser, OptionGroup)
 from suds import WebFault
 from urllib2 import URLError
 from httplib import BadStatusLine
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
+from elbepack.version import elbe_version
 
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
@@ -44,10 +45,6 @@ def run_command (argv):
 
     oparser.add_option ("--user", dest="user", default="root",
                         help="Username (default is root).")
-
-    oparser.add_option ("--debug", action="store_true",
-                        dest="debug", default=False,
-                        help="Enable debug mode.")
 
     oparser.add_option ("--retries", dest="retries", default="10",
                         help="How many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds).")
@@ -68,9 +65,21 @@ def run_command (argv):
                         dest="pbuilder_only", default=False,
                         help="Only list/download pbuilder Files" )
 
-    oparser.add_option( "--skip-urlcheck", action="store_true",
-                        dest="skip_urlcheck", default=False,
-                        help="Skip URL Check inside initvm" )
+    devel = OptionGroup(oparser, "options for elbe developers",
+            "Caution: Don't use these options in a productive environment")
+    devel.add_option( "--skip-urlcheck", action="store_true",
+                 dest="skip_urlcheck", default=False,
+                 help="Skip URL Check inside initvm" )
+
+    devel.add_option ("--debug", action="store_true",
+                 dest="debug", default=False,
+                 help="Enable debug mode.")
+
+    devel.add_option ("--ignore-version-diff", action="store_true",
+                        dest="ignore_version", default=False,
+                        help="allow different elbe version on host and initvm")
+    oparser.add_option_group (devel)
+
 
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
@@ -108,6 +117,22 @@ def run_command (argv):
         print ('elbe control - unknown subcommand', file=sys.stderr)
         ClientAction.print_actions ()
         sys.exit(20)
+
+    try:
+        v_server = control.service.get_version ()
+        if v_server != elbe_version:
+            print ("elbe v%s is used in initvm, this is not compatible with \
+elbe v%s that is used on this machine. Please install same \
+versions of elbe in initvm and on your machine." % (v_server, elbe_version))
+            if not (opt.ignore_version):
+                sys.exit (20)
+    except AttributeError:
+        print ("the elbe installation inside the initvm doesn't provide a \
+get_version interface. Please create a new initvm or upgrade \
+elbe inside the existing initvm.")
+        if not (opt.ignore_version):
+            sys.exit (20)
+
 
     try:
         action.execute (control, opt, args[1:])

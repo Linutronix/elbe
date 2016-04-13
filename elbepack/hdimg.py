@@ -42,10 +42,6 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
             continue
 
         if v.has("binary"):
-            # allow_fail is set that the generation of other images is done,
-            # even if this step fails
-            outf.do( "cp %s %s" % ( rfs.fname( v.text("binary") ), target ),
-                        allow_fail=True)
             continue
 
         label = v.text("label")
@@ -87,17 +83,15 @@ def build_image_mtd( outf, mtd, target ):
             if not vol.has("empty"):
                 if vol.has("binary"):
                     tmp = ""
-                    # copy from target if path starts with /
+                    # copy from buildenv if path starts with /
                     if vol.text("binary")[0] == '/':
-                        tmp = "target" + vol.text("binary")
-                        img_files.append (tmp)
-                        # img_files needs path relative to project dir
-                        # ubinize cfg file needs absolute path
-                        tmp = target + "/" + tmp
+                        tmp = target + "/" + "chroot" + vol.text("binary")
                     # copy from project directory
                     else:
                         tmp = target + "/" + vol.text("binary")
-                    fp.write( "image=%s\n" % tmp )
+                    outf.do( "cp %s %s/%s.ubibin" % ( tmp, target, vol.text("label") ) )
+                    img_files.append( vol.text("label") + ".ubibin" )
+                    fp.write( "image=%s.ubibin\n" % os.path.join( target, vol.text("label") ) )
                 else:
                     fp.write( "image=%s.ubifs\n" % os.path.join(target,
                         vol.text("label")) )

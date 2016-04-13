@@ -41,6 +41,10 @@ def run_command( argv ):
     oparser.add_option( "-n", "--name", dest="name",
                         help="name of the project (included in the report)" )
 
+    oparser.add_option( "--skip-pbuild", action="store_true",
+                        dest="skip_pbuild", default=False,
+                        help="skip building packages from <pbuilder> list" )
+
     oparser.add_option( "--build-bin", action="store_true",
                         dest="build_bin", default=False,
                         help="Build Binary Repository CDROM, for exact Reproduction" )
@@ -102,7 +106,8 @@ def run_command( argv ):
 
     try:
         project.build( opt.skip_debootstrap, opt.build_bin,
-                opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist )
+                opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist,
+                opt.skip_pbuild )
     except CommandError as ce:
         print "command in project build failed:", ce.cmd
         sys.exit(20)
