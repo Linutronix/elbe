@@ -183,7 +183,7 @@ class ElbeProject (object):
         if p.tag == 'git':
             self.log.do ("git clone %s %s" % (p.text('.').strip(), src_path))
             try:
-                self.log.do ("cd %s; git reset --hard %s" % (src_path, p.attrib['revision']))
+                self.log.do ("cd %s; git reset --hard %s" % (src_path, p.et.attrib['revision']))
             except IndexError:
                 pass
         elif p.tag == 'svn':
