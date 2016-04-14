@@ -20,7 +20,7 @@
 
 from elbepack.directories import pack_dir
 
-elbe_version = "1.9.3"
+elbe_version = "1.9.4"
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
     is_devel = False
