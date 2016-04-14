@@ -73,9 +73,9 @@ class BuildEnv ():
     def __enter__(self):
         if os.path.exists (self.path+'/../repo/pool'):
             self.log.do("mv %s/../repo %s" % (self.path, self.path))
-            self.log.do('echo "deb file:///repo %s main" > %s/etc/apt/sources.list.d/local.list' % (
+            self.log.do('echo "deb copy:///repo %s main" > %s/etc/apt/sources.list.d/local.list' % (
                         self.xml.text ("project/suite"), self.path))
-            self.log.do('echo "deb-src file:///repo %s main" >> %s/etc/apt/sources.list.d/local.list' % (
+            self.log.do('echo "deb-src copy:///repo %s main" >> %s/etc/apt/sources.list.d/local.list' % (
                         self.xml.text ("project/suite"), self.path))
         self.cdrom_mount()
         self.rfs.__enter__()
