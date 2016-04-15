@@ -20,6 +20,7 @@ from elbepack.asciidoclog import ASCIIDocLog
 from datetime import datetime
 from elbepack.finetuning import do_finetuning
 from elbepack.filesystem import hostfs
+from elbepack.version import elbe_version
 
 from elbepack.aptpkgutils import APTPackage
 from apt import Cache
@@ -159,6 +160,7 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
     outf.h1( "ELBE Report for Project " + xml.text("project/name") )
 
     outf.printo( "report timestamp: "+datetime.now().strftime("%Y%m%d-%H%M%S") )
+    outf.printo( "elbe: %s" % str(elbe_version) )
 
     slist = rfs.read_file('etc/apt/sources.list')
     outf.h2( "Apt Sources dump" )
