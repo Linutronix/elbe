@@ -63,9 +63,9 @@ class RepoBase(object):
 
         if init_attr is not None and repo_attr is not None:
             self.attrs = init_attr + repo_attr
-        else if repo_attr is not None:
+        elif repo_attr is not None:
             self.attrs = [repo_attr]
-        else if init_attr is not None:
+        elif init_attr is not None:
             self.attrs = [init_attr]
 
         self.origin = origin
