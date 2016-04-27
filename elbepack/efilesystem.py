@@ -123,6 +123,7 @@ class ElbeFilesystem(Filesystem):
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
+        os.chmod("etc/elbe_base.xml", stat.S_IREAD)
 
     def write_licenses(self, f, log, xml_fname=None):
         licence_xml = copyright_xml()
