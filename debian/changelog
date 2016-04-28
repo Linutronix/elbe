@@ -1,3 +1,9 @@
+elbe (1.1) unstable; urgency=medium
+
+  * don't publish elbe_base.xml with 0644 access it includes root passwd
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 28 Apr 2016 17:25:08 +0200
+
 elbe (1.0) unstable; urgency=medium
 
   * several smaller bugfixes and improves
