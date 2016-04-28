@@ -21,6 +21,7 @@ import os
 import time
 import shutil
 import subprocess
+import stat
 
 from glob import glob
 from tempfile import mkdtemp
@@ -121,7 +122,7 @@ class ElbeFilesystem(Filesystem):
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
-        os.chmod("etc/elbe_base.xml", stat.S_IREAD)
+        self.chmod("etc/elbe_base.xml", stat.S_IREAD)
 
 
 class ChRootFilesystem(ElbeFilesystem):
