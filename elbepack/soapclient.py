@@ -411,18 +411,25 @@ class WaitProjectBusyAction(ClientAction):
             if busy == 'FINISH':
                 break
             else:
-                log = busy.split('###')
+                # for some reasons lines containing e.g. ^H result in a None
+                # object here. let's just skip those strange lines for the
+                # moment
+                if (busy):
+                    log = busy.split('###')
 
-                if part != int(log[0]):
-                    part = int(log[0])
+                    if part != int(log[0]):
+                        part = int(log[0])
 
-                    localtime = time.asctime(time.localtime(time.time()))
-                    try:
-                        print (localtime + " -- " + log[1].replace('\n', ''))
-                    except IndexError:
-                        pass
+                        localtime = time.asctime(time.localtime(time.time()))
+                        try:
+                            print (localtime + " -- " + log[1].replace('\n', ''))
+                        except IndexError:
+                            pass
+                    else:
+                        time.sleep(1)
                 else:
-                    time.sleep(1)
+                    print ("strange part: %d (skipped)" % part)
+                    part = part+1
 
 ClientAction.register(WaitProjectBusyAction)
 

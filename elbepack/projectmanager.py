@@ -468,10 +468,13 @@ class ProjectManager(object):
             with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
                 for l in lf:
                     if count == part:
-                        l = str(part+1) + '###' + l
-                        return self.db.is_busy( ep.builddir ), l
+                        l = str(part+1) + '###' + str(l)
+                        return self.db.is_busy( ep.builddir ), str(l)
                     count = count + 1
-            l = str(part) + '###' + l
+            # don't crash if logfile doesn't exist
+            if not l:
+                l = None
+            l = str(part) + '###' + str(l)
             return self.db.is_busy( ep.builddir ), l
 
     def _get_current_project (self, userid, allow_busy=True):
