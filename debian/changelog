@@ -1,3 +1,12 @@
+elbe (1.9.5) unstable; urgency=medium
+
+  * security: don't provide other and group read access to /etc/elbe_base.xml
+  * add elbe version to logfile
+  * fix building of elbe source cdrom
+  * wait_busy: make build output viewer more robust
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 18 May 2016 08:43:57 +0200
+
 elbe (1.9.4) unstable; urgency=medium
 
   * display build log instead of wait project is busy during elbe initvm subm.
