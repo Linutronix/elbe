@@ -353,14 +353,19 @@ class ElbeProject (object):
     def pdebuild (self):
         self.pdebuild_init ()
 
-        self.log.do ('mkdir -p "%s"' % os.path.join (self.builddir,
-                                                     "pdebuilder", "current"))
+        pbdir = os.path.join (self.builddir, "pdebuilder", "current")
+        self.log.do ('mkdir -p "%s"' % os.path.join (pbdir))
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
         self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir,
                                                   "current_pdebuild.tar.gz"),
-                                                os.path.join (self.builddir,
-                                                  "pdebuilder", "current")))
+                                                pbdir))
+
+        # generate an increasing debian package version and set correct suite
+        self.log.do ("cd %s; dch -v `date +'%y%m%d%H%M%S'` elbe pbuilder build" % pbdir)
+        self.log.do ("cd %s; dch -D %s" % (pbdir, self.suite))
+        self.log.do ("cd %s; dch -D %s" % (pbdir, self.suite))
+        self.log.do ("cd %s; git commit -sam 'version bump %s by elbe pbuilder'" % (pbdir, self.suite))
 
         self.pdebuild_build ()
         self.repo.finalize ()
