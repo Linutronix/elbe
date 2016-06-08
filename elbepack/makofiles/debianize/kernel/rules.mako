@@ -8,10 +8,10 @@ KDEB_PKGVERSION=${k_debversion} \
 KERNELRELEASE=${k_name}-${k_version} \
 LOADADDR=${loadaddr} \
 O=debian/build \
-INSTALL_MOD_PATH=`pwd`/debian/tmp \
-INSTALL_FW_PATH=`pwd`/debian/tmp \
-INSTALL_HDR_PATH=`pwd`/debian/tmp \
-INSTALL_PATH=`pwd`/debian/tmp
+INSTALL_MOD_PATH=`pwd`/debian/tmp/boot \
+INSTALL_FW_PATH=`pwd`/debian/tmp/lib/firmware \
+INSTALL_HDR_PATH=`pwd`/debian/tmp/usr/include \
+INSTALL_PATH=`pwd`/debian/tmp/boot
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
        NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
