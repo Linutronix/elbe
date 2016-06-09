@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+MOD_PATH=`pwd`/debian/tmp/lib/modules/${k_version}
+FW_PATH=`pwd`/debian/tmp/lib/firmware
+HDR_PATH=`pwd`/debian/tmp/usr/include
+KERNEL_PATH=`pwd`/debian/tmp/boot
+
 MAKE_OPTS= \
 ARCH=${k_arch} \
 CROSS_COMPILE=${cross_compile} \
@@ -8,10 +13,10 @@ KDEB_PKGVERSION=${k_debversion} \
 KERNELRELEASE=${k_name}-${k_version} \
 LOADADDR=${loadaddr} \
 O=debian/build \
-INSTALL_MOD_PATH=`pwd`/debian/tmp/lib/modules/${k_version} \
-INSTALL_FW_PATH=`pwd`/debian/tmp/lib/firmware \
-INSTALL_HDR_PATH=`pwd`/debian/tmp/usr/include \
-INSTALL_PATH=`pwd`/debian/tmp/boot
+INSTALL_MOD_PATH=$(MOD_PATH) \
+INSTALL_FW_PATH=$(FW_PATH) \
+INSTALL_HDR_PATH=$(HDR_PATH) \
+INSTALL_PATH=$(KERNEL_PATH)
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
        NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -19,7 +24,7 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 endif
 
 clean:
-	mkdir -p debian/build
+	mkdir -p $(MOD_PATH) $(FW_PATH) $(HDR_PATH) $(KERNEL_PATH)
 	rm -f debian/files
 	rm -rf debian/tmp
 	make $(MAKE_OPTS) clean
