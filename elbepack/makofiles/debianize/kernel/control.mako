@@ -10,14 +10,14 @@ Package: linux-image-${k_name}-${k_version}
 Depends: kmod | module-init-tools, linux-base (>= 3~), debconf (>= 0.5) | debconf-2.0, initramfs-tools (>= 0.99~) | linux-initramfs-tool, busybox
 Pre-Depends: debconf | debconf-2.0
 Provides: linux-image, linux-image-2.6
-Architecture: any
+Architecture: ${k_debarch}
 Description: Linux kernel, version ${k_name} ${k_version}
  This package contains the Linux kernel, modules and corresponding other
  files
 
 Package: linux-headers-${k_name}-${k_version}
 Provides: linux-headers, linux-headers-2.6
-Architecture: any
+Architecture: ${k_debarch}
 Description: Linux kernel headers
  This package provides kernel header files
  .
