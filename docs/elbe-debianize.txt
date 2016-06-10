@@ -1,0 +1,46 @@
+elbe-debianize(1)
+=================
+
+NAME
+----
+elbe-debianize - generate a debianization
+
+
+SYNOPSIS
+--------
+[verse]
+'elbe debianize'
+
+DESCRIPTION
+-----------
+'elbe debianize' generates a 'debian' folder inside e.g. a kernel source tree.
+This contains the informations needed to transfer the source into debian source
+and binary packages.
+
+EXAMPLES
+--------
+to debianize a stable kernel for an armhf system use the following commands.
++
+------------
+$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+$ cd linux-stable
+$ elbe debianize
+$ git add -f debian
+$ git commit -sm 'add the elbe generated debianization'
+------------
+
+if you selected a cross compiler, the package could be build with
++
+------------
+$ dpkg-buildpackage -a armhf
+------------
+
+otherwise use 'elbe-pbuilder'
++
+------------
+$ elbe pbuilder build /var/cache/elbe/<uuid>
+------------
+
+ELBE
+----
+Part of the linkgit:elbe[1] suite

@@ -21,22 +21,23 @@
 import os
 import sys
 
-from elbepack.debianize.debianize import files, debianizer, Debianize
+from npyscreen import TitleText, TitleSelectOne
 
-def run_command ( args ):
-    if os.path.exists ('debian'):
-        print 'debian folder already exists, nothing to do'
-        sys.exit (-1)
+from shutil import copyfile
 
-    for key in files.keys ():
-       match = True
-       for f in files[key]:
-           if not os.path.exists (f):
-               match = False
-       if match:
-           Debianize (debianizer[key]).run ()
-           sys.exit(-1)
+from elbepack.directories import mako_template_dir
+from elbepack.debianize.base import DebianizeBase, template
 
-    print ("this creates a debinization of a kernel source")
-    print ("please run the command from kernel source dir")
-    sys.exit (-2)
+# this is just a template to show how debianizing another component should work
+
+class UBoot (DebianizeBase):
+    def __init__ (self):
+        print ("debianization of uboot is not supported at the moment")
+        sys.exit (-2)
+        DebianizeBase.__init__ (self)
+
+    def gui (self):
+        pass
+
+    def debianize (self):
+        pass

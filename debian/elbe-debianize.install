@@ -1,0 +1,13 @@
+./usr/lib/python2.*/*-packages/elbepack/commands/debianize.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/uboot.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/base.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/kernel.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/__init__.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/debianize.py
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/rules.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/linux-image.install
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/copyright
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/control.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/format.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/linux-headers.install

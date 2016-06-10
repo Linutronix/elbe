@@ -44,9 +44,20 @@ setup(name='elbe',
       author_email='torbenh@linutronix.de',
       url='http://elbe-rfs.org/',
       packages=['elbepack', \
-'elbepack.commands', 'elbepack.daemons', 'elbepack.daemons.soap', ],
-      package_data = {'elbepack': ["makofiles/*.mako", "init/*.mako", "init/*.xml", \
-"*.pub", "dbsfed.xsd", "default-preseed.xml", "xsdtoasciidoc.mako"] },
+                'elbepack.commands', \
+                'elbepack.daemons', \
+                'elbepack.daemons.soap', \
+                'elbepack.debianize' ],
+      package_data = {'elbepack': ["makofiles/*.mako", \
+                                   "makofiles/debianize/*/*.mako", \
+                                   "makofiles/debianize/*/*.install", \
+                                   "makofiles/debianize/*/copyright", \
+                                   "init/*.mako", \
+                                   "init/*.xml", \
+                                   "*.pub", \
+                                   "dbsfed.xsd", \
+                                   "default-preseed.xml", \
+                                   "xsdtoasciidoc.mako"] },
       scripts=['elbe'],
       cmdclass={"install": my_install},
       data_files= [
