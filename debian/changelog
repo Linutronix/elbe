@@ -1,3 +1,9 @@
+elbe (1.9.6) unstable; urgency=medium
+
+  * new subcommand 'elbe debianize'
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 10 Jun 2016 14:49:08 +0200
+
 elbe (1.9.5) unstable; urgency=medium
 
   * security: don't provide other and group read access to /etc/elbe_base.xml
