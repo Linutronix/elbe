@@ -29,7 +29,7 @@ override_dh_auto_configure:
 	make $(MAKE_OPTS) ${defconfig}
 
 override_dh_auto_build:
-	rmdir include/config
+	-rmdir include/config
 	make $(MAKE_OPTS) ${imgtype} modules
 
 override_dh_auto_install:
