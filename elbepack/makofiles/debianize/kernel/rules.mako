@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-MOD_PATH=`pwd`/debian/tmp/lib/modules/${k_version}
+MOD_PATH=`pwd`/debian/tmp
 FW_PATH=`pwd`/debian/tmp/lib/firmware
 HDR_PATH=`pwd`/debian/tmp/usr
 KERNEL_PATH=`pwd`/debian/tmp/boot
