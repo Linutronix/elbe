@@ -30,7 +30,7 @@ from elbepack.debianize.base import DebianizeBase, template
 
 class Kernel (DebianizeBase):
     def __init__ (self):
-        self.imgtypes = ["zImage", "uImage", "Image"]
+        self.imgtypes = ["bzImage", "zImage", "uImage", "Image"]
         DebianizeBase.__init__ (self)
 
     def gui (self):
