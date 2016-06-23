@@ -36,7 +36,7 @@ class DebianizeBase (FormMultiPage):
         self.deb = { }
         self.tmpl_dir = None
 
-        self.archs = ["armhf", "armel", "amd64", "i586", "powerpc"]
+        self.archs = ["armhf", "armel", "amd64", "i386", "powerpc"]
         self.formats = ["native", "git", "quilt"]
         self.releases = ["stable", "oldstable", "testing", "unstable", "experimental"]
 
