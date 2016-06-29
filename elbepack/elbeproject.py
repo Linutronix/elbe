@@ -46,8 +46,8 @@ class IncompatibleArchitectureException(Exception):
             (oldarch, newarch) )
 
 class AptCacheUpdateError(Exception):
-    def __init__ (self):
-        Exception.__init__ (self, "Error Updating rpcaptcache")
+    def __init__ (self, e):
+        Exception.__init__ (self, "Error Updating rpcaptcache: " + str(e))
 
 class AptCacheCommitError(Exception):
     def __init__ (self, msg=''):
@@ -484,8 +484,7 @@ class ElbeProject (object):
             try:
                 self.get_rpcaptcache().update()
             except Exception as e:
-                print( "update cache failed: %s" % str(e) )
-                raise AptCacheUpdateError ()
+                raise AptCacheUpdateError (e)
 
             # Then dump the debootstrap packages
             if self.buildenv.fresh_debootstrap:
