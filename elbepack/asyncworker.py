@@ -122,6 +122,9 @@ class BuildJob(AsyncWorkerJob):
             self.project.log.printo( "- Problems with Internet Connection" )
             self.project.log.printo( "- Broken mirrors" )
             self.project.log.printo( "" )
+            self.project.log.printo( "Message from apt:" )
+            self.project.log.printo( str(e) )
+            self.project.log.printo( "" )
             db.reset_busy( self.project.builddir, "build_failed" )
         except AptCacheCommitError as e:
             db.update_project_files( self.project )
@@ -132,6 +135,9 @@ class BuildJob(AsyncWorkerJob):
             self.project.log.printo( "Probable cause might be:" )
             self.project.log.printo( "- Problems with Internet Connection" )
             self.project.log.printo( "- Broken mirrors" )
+            self.project.log.printo( "" )
+            self.project.log.printo( "Message from apt:" )
+            self.project.log.printo( str(e) )
             self.project.log.printo( "" )
             db.reset_busy( self.project.builddir, "build_failed" )
         except AptCacheUpdateError as e:
@@ -144,11 +150,18 @@ class BuildJob(AsyncWorkerJob):
             self.project.log.printo( "- Problems with Internet Connection" )
             self.project.log.printo( "- Broken mirrors" )
             self.project.log.printo( "" )
+            self.project.log.printo( "Message from apt:" )
+            self.project.log.printo( str(e) )
+            self.project.log.printo( "" )
             db.reset_busy( self.project.builddir, "build_failed" )
         except Exception as e:
             db.update_project_files( self.project )
             self.project.log.printo( "Build failed" )
             self.project.log.printo( traceback.format_exc() )
+            self.project.log.printo( "" )
+            self.project.log.printo( "Exception:" )
+            self.project.log.printo( str(e) )
+            self.project.log.printo( "" )
             db.reset_busy( self.project.builddir, "build_failed" )
 
 class PdebuildJob(AsyncWorkerJob):
