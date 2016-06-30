@@ -20,8 +20,7 @@ O=debian/build
 
 override_dh_auto_clean:
 	mkdir -p debian/build
-	rm -f debian/files
-	rm -rf debian/tmp
+	rm -f debian/files debian/tmp
 	make $(MAKE_OPTS) clean
 
 override_dh_auto_configure:
@@ -30,12 +29,12 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -rf include/config
-	make $(MAKE_OPTS) ${imgtype} modules
+	make -j`nproc` $(MAKE_OPTS) ${imgtype} modules
 
 override_dh_auto_install:
 	mkdir -p $(MOD_PATH) $(FW_PATH) $(HDR_PATH) $(KERNEL_PATH)
 	make $(MAKE_OPTS) install
-	make $(MAKE_OPTS) modules_install
+	make $(MAKE_OPTS) INSTALL_MOD_STRIP=1 modules_install
 	make $(MAKE_OPTS) firmware_install
 	make $(MAKE_OPTS) headers_install
 
