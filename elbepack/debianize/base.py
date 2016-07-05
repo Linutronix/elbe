@@ -21,8 +21,10 @@
 import os
 import sys
 
+from time import sleep
+
 from npyscreen import FormMultiPage
-from npyscreen import TitleText, TitleSelectOne, ButtonPress
+from npyscreen import TitleText, TitleSelectOne, ButtonPress, notify
 
 from shutil import copyfile
 
@@ -103,6 +105,10 @@ class DebianizeBase (FormMultiPage):
         copyfile (os.path.join(self.tmpl_dir, 'copyright'), 'debian/copyright')
         with open ('debian/compat', 'w') as f:
             f.write ('9')
+
+        if self.hint:
+            notify (self.hint, title='Hint')
+            sleep (10)
 
         sys.exit (0)
 
