@@ -96,15 +96,16 @@ def extract_target( src, xml, dst, log, cache ):
         pass
 
     if xml.tgt.has("setsel"):
-        log.do("mount -o bind /proc %s" %(dst.fname('proc')))
-        log.do("mount -o bind /sys %s" %(dst.fname('sys')))
+        pkglist = [ n.et.text for n in xml.node ('target/pkg-list') if n.tag == 'pkg' ]
+        psel = 'var/cache/elbe/pkg-selections'
 
-        log.do("chroot %s dpkg --clear-selections" %(dst.fname('')))
-        log.do("chroot %s dpkg --set-selections <var/cache/elbe/pkg-selections" %(dst.fname('')))
-        log.do("chroot %s dpkg --purge -a" %(dst.fname('')))
+        with open (dst.fname (psel), 'w+') as f:
+            for item in pkglist:
+                f.write("%s  install\n" % item)
 
-        log.do("umount %s" %(dst.fname('sys')))
-        log.do("umount %s" %(dst.fname('proc')))
+        log.chroot (dst, "dpkg --clear-selections")
+        log.chroot (dst, "dpkg --set-selections < %s " % dst.fname (psel))
+        log.chroot (dst, "dpkg --purge -a")
 
 
 class ElbeFilesystem(Filesystem):
