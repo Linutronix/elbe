@@ -53,7 +53,7 @@ class RmAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "rm -rvf " + target.fname( self.node.et.text ) )
+        log.do( "rm -rvf '%s'" % target.fname( self.node.et.text ) )
 
 FinetuningAction.register( RmAction )
 
@@ -66,7 +66,7 @@ class MkdirAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mkdir -p " + target.fname( self.node.et.text ) )
+        log.do( "mkdir -p '%s'" % target.fname( self.node.et.text ) )
 
 FinetuningAction.register( MkdirAction )
 
@@ -78,7 +78,7 @@ class MknodAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mknod " + target.fname( self.node.et.text ) + " " + self.node.et.attrib['opts'] )
+        log.do( "mknod '%s'" % target.fname( self.node.et.text ) + " " + self.node.et.attrib['opts'] )
 
 FinetuningAction.register( MknodAction )
 
@@ -90,7 +90,7 @@ class BuildenvMkdirAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mkdir -p " + buildenv.rfs.fname( self.node.et.text ) )
+        log.do( "mkdir -p '%s' " % buildenv.rfs.fname( self.node.et.text ) )
 
 FinetuningAction.register( BuildenvMkdirAction )
 
@@ -103,7 +103,9 @@ class CpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+        log.do( "cp -av '%s' '%s'" % (
+            target.fname( self.node.et.attrib['path'] ),
+            target.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( CpAction )
 
@@ -115,7 +117,9 @@ class BuildenvCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
+        log.do( "cp -av '%s' '%s'" % (
+            buildenv.rfs.fname( self.node.et.attrib['path'] ),
+            buildenv.rfs.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( BuildenvCpAction )
 
@@ -127,7 +131,9 @@ class B2TCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+        log.do( "cp -av '%s' '%s'" % (
+            buildenv.rfs.fname( self.node.et.attrib['path'] ),
+            target.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( B2TCpAction )
 
@@ -139,7 +145,9 @@ class T2BCpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
+        log.do( "cp -av '%s' '%s'" % (
+            target.fname( self.node.et.attrib['path'] ),
+            buildenv.rfs.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( T2BCpAction )
 
@@ -156,7 +164,9 @@ class T2PMvAction(FinetuningAction):
         else:
             dest = self.node.et.text
         dest = os.path.join ('..', dest)
-        log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + dest )
+        log.do( "mv -v '%s' '%s'" % (
+            target.fname( self.node.et.attrib['path'] ),
+            dest ) )
 
 FinetuningAction.register( T2PMvAction )
 
@@ -168,7 +178,9 @@ class MvAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
+        log.do( "mv -v '%s' '%s'" % (
+            target.fname( self.node.et.attrib['path'] ),
+            target.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( MvAction )
 
@@ -181,8 +193,9 @@ class LnAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            log.chroot (target.path, """/bin/sh -c 'ln -s %s "%s"' """ % (self.node.et.attrib['path'],
-                                                      self.node.et.text))
+            log.chroot (target.path, """/bin/sh -c 'ln -s %s "%s"' """ % (
+                self.node.et.attrib['path'],
+                self.node.et.text))
 
 FinetuningAction.register( LnAction )
 
@@ -195,7 +208,9 @@ class BuildenvMvAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "mv -v " + buildenv.rfs.fname( self.node.et.attrib['path'] ) + " " + buildenv.rfs.fname( self.node.et.text ) )
+        log.do( "mv -v '%s' '%s' " % (
+            buildenv.rfs.fname( self.node.et.attrib['path'] ),
+            buildenv.rfs.fname( self.node.et.text ) ) )
 
 FinetuningAction.register( BuildenvMvAction )
 
