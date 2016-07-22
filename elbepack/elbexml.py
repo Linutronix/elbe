@@ -186,7 +186,7 @@ class ElbeXML(object):
                 usr, passwd = auth.split(':')
                 passman.add_password(None, u, usr, passwd)
             try:
-                fp = urllib2.urlopen (u)
+                fp = urllib2.urlopen(u, None, 10)
                 fp.close()
             except urllib2.URLError:
                 raise ValidationError (["Repository %s can not be validated" % u])

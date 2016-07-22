@@ -80,7 +80,7 @@ def pbuilder_write_repo_hook (builddir, xml):
                 if url.has("key"):
                     key_url = url.text("key").strip()
                     key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
-                    key_conn = urllib2.urlopen( key_url )
+                    key_conn = urllib2.urlopen(key_url, None, 10)
                     key_text = key_conn.read()
                     key_conn.close()
 

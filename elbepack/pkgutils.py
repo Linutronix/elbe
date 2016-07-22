@@ -91,7 +91,7 @@ def get_initrd_pkg( prj, defs ):
 def get_url ( arch, suite, target_pkg, mirror, comp='main' ):
     try:
         pack_url = "%s/dists/%s/%s/binary-%s/Packages" % (mirror.replace("LOCALMACHINE", "localhost"), suite, comp, arch)
-        packages = urllib2.urlopen(pack_url)
+        packages = urllib2.urlopen(pack_url, None, 10)
 
         packages = packages.readlines()
         packages = filter( lambda x: x.startswith( "Filename" ), packages )
