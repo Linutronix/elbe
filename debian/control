@@ -40,6 +40,7 @@ Package: elbe-debianize
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
+  devscripts,
   elbe-common (= ${binary:Version}),
   python-mako,
   python-npyscreen
