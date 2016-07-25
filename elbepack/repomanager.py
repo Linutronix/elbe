@@ -20,6 +20,7 @@ import os
 from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
+from debian.deb822 import Deb822
 
 class RepoAttributes(object):
     def __init__ (self, codename, arch, components,
@@ -154,6 +155,13 @@ class RepoBase(object):
     def _include( self, path, codename, component):
         self.log.do( 'reprepro --ignore=wrongdistribution --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
 
+    def _remove( self, path, codename, component):
+        for p in Deb822.iter_paragraphs(file(path)):
+            if 'Source' in p:
+                self.log.do( "reprepro --basedir %s removesrc %s %s" % (self.fs.path, codename, p['Source']))
+            elif 'Package' in p:
+                self.log.do( "reprepro --basedir %s remove %s %s" % (self.fs.path, codename, p['Package']))
+
     def _includedsc( self, path, codename, component):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + get_dsc_size( path )
@@ -170,6 +178,9 @@ class RepoBase(object):
 
     def include( self, path, component="main"):
         self._include (path, self.repo_attr.codename, component)
+
+    def remove( self, path, component="main"):
+        self._remove (path, self.repo_attr.codename, component)
 
     def include_init_dsc( self, path, component="main"):
         self._includedsc (path, self.init_attr.codename, component)
