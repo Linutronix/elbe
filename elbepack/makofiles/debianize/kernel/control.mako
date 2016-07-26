@@ -2,7 +2,7 @@ Source: linux-${p_name}-${k_version}
 Section: kernel
 Priority: optional
 Maintainer: ${m_name} <${m_mail}>
-Build-Depends: bc
+Build-Depends: debhelper (>= 9), bc
 Standards-Version: 3.8.4
 Homepage: http://www.kernel.org/
 
