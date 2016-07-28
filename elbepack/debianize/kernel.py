@@ -68,7 +68,7 @@ class Kernel (DebianizeBase):
         self.tmpl_dir = os.path.join(mako_template_dir, 'debianize/kernel')
         pkg_name = self.deb['p_name']+'-'+self.deb['k_version']
 
-        for tmpl in ['control', 'rules']:
+        for tmpl in ['control', 'rules', 'preinst', 'postinst', 'prerm', 'postrm']:
             with open (os.path.join('debian/', tmpl), 'w') as f:
                 mako = os.path.join(self.tmpl_dir, tmpl+'.mako')
                 f.write (template(self.deb, mako))

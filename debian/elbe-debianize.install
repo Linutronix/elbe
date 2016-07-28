@@ -11,3 +11,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/control.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/format.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/linux-headers.install
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/preinst.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/postinst.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/prerm.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/postrm.mako
