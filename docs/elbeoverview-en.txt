@@ -135,7 +135,7 @@ To create an initvm and make that initvm build a first Rootfilesystem,
 use the following command:
 
 ----------------------------------------------------------------------------------------------------------
-elbe initvm create --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/mini-wheezy-nfsroot.xml
+elbe initvm create --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-wheezy.xml
 ----------------------------------------------------------------------------------------------------------
 
 This will take quite a while.
@@ -150,7 +150,7 @@ command will exit with a failure notice.
 The initvm will keep on running, after this command. Further xml Files may be built using
 
 ----------------------------------------------------------------------------------------------------------
-elbe initvm submit --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/mini-wheezy-nfsroot.xml
+elbe initvm submit --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-wheezy.xml
 ----------------------------------------------------------------------------------------------------------
 
 .Note
