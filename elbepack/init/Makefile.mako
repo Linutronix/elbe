@@ -33,6 +33,13 @@ img = prj.text('img', default=defs, key='img')
 imgsize = prj.text('size', default=defs, key='size')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
+
+fwd = ""
+if prj.has("portforwarding"):
+	for f in prj.node("portforwarding"):
+		fwd += ",hostfwd=%s::%s-:%s" % (f.text("proto"),
+																		f.text("host"),
+																		f.text("buildenv"))
 %>
 
 all: .stamps/stamp-install-initial-image
@@ -96,15 +103,10 @@ all: .stamps/stamp-install-initial-image
 run:
 	$(INTERPRETER) -M $(MACHINE) \
 		-device virtio-rng-pci \
+		-device virtio-net-pci,netdev=user.0 \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
-		-net user,vlan=1 \
-% if prj.has("portforwarding"):
-% for f in prj.node("portforwarding"):
-		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
-% endfor
-% endif
+		-netdev user,id=user.0${fwd} \
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
@@ -112,15 +114,10 @@ run:
 run-con:
 	$(INTERPRETER) -M $(MACHINE) \
 		-device virtio-rng-pci \
+		-device virtio-net-pci,netdev=user.0 \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
-		-net user,vlan=1 \
-% if prj.has("portforwarding"):
-% for f in prj.node("portforwarding"):
-		-redir ${f.text("proto")}:${f.text("host")}::${f.text("buildenv")} \
-% endfor
-% endif
+		-netdev user,id=user.0${fwd} \
 		-m $(MEMSIZE) \
 		-usb \
 		-nographic \
