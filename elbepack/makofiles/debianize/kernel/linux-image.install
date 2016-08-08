@@ -1,3 +1,4 @@
 ./boot/*
 ./lib/modules/*
 ./lib/firmware/*
+./usr/lib/*
