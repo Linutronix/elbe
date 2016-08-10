@@ -22,6 +22,7 @@ def pbuilder_write_config (builddir, xml, log):
     fp.write ('BUILDRESULT="%s"\n' % os.path.join (builddir, 'pbuilder', 'result'))
     fp.write ('APTCACHE="%s"\n' % os.path.join (builddir, 'pbuilder', 'aptcache'))
     fp.write ('HOOKDIR="%s"\n' % os.path.join (builddir, 'pbuilder', 'hooks.d'))
+    fp.write ('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
 
     if (xml.text( "project/arch", key="arch" ) != 'amd64'):
         fp.write ('ARCHITECTURE="%s"\n' % xml.text ("project/buildimage/arch", key="arch"))
