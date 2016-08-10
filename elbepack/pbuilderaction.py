@@ -163,7 +163,7 @@ class BuildAction(PBuilderAction):
         print ("Packing Source into tmp archive")
         print ("")
         try:
-            system ('tar cvfz "%s" .' % (tmp.fname ("pdebuild.tar.gz")))
+            system ('tar cfz "%s" .' % (tmp.fname ("pdebuild.tar.gz")))
         except CommandError:
             print ("tar Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)

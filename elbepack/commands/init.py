@@ -180,4 +180,4 @@ def run_command( argv ):
        os.path.join(out_path, "source.xml" ) )
 
     if opt.devel:
-        os.system ('tar cvfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))
+        os.system ('tar cfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))

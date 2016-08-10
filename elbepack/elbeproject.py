@@ -168,7 +168,7 @@ class ElbeProject (object):
         for p in paths:
             self.log.do( 'find -path "%s" >> %s' % (p, sysrootfilelist) )
 
-        self.log.do( "tar cvfJ %s/sysroot.tar.xz -C %s -T %s" %
+        self.log.do( "tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
                 (self.builddir, self.chrootpath, sysrootfilelist) )
 
         # chroot is invalid after adding all the -dev packages
@@ -357,7 +357,7 @@ class ElbeProject (object):
         self.log.do ('mkdir -p "%s"' % os.path.join (pbdir))
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
-        self.log.do ('tar xvfz "%s" -C "%s"' % (os.path.join (self.builddir,
+        self.log.do ('tar xfz "%s" -C "%s"' % (os.path.join (self.builddir,
                                                   "current_pdebuild.tar.gz"),
                                                 pbdir))
 

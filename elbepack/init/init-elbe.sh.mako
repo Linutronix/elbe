@@ -37,7 +37,7 @@ ln -s /lib/systemd/system/serial-getty@.service /buildenv/etc/systemd/system/get
 
 % if opt.devel:
    mkdir /buildenv/var/cache/elbe/devel
-   tar xvj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
+   tar xj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
    sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/etc/init.d/elbe-daemon
 % endif
