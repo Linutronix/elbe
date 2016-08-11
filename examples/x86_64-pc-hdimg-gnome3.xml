@@ -25,15 +25,30 @@
 				<size>8000MiB</size>
 				<grub-install/>
 				<partition>
-					<size>remain</size>
+					<size>6GiB</size>
 					<label>rfs</label>
 				</partition>
+				<extended>
+					<size>remain</size>
+					<logical>
+						<size>remain</size>
+						<label>home</label>
+					</logical>
+				</extended>
 			</msdoshd>
 		</images>
 		<fstab>
 			<bylabel>
 				<label>rfs</label>
 				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bylabel>
+				<label>home</label>
+				<mountpoint>/home</mountpoint>
 				<fs>
 					<type>ext4</type>
 					<tune2fs>-i 0</tune2fs>
