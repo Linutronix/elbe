@@ -290,10 +290,79 @@ class simple_fstype(object):
     def __init__(self, typ):
         self.type = typ
 
-def do_image_hd( outf, hd, fslabel, target, grub_version ):
+def create_partition(disk, part, ptype, fslabel, size_in_sectors, current_sector):
 
-    # Init to 0 because we increment before using it
-    partition_number = 0
+    sector_size = 512
+    if part.text("size") == "remain" and disk.type == "gpt":
+        sz = size_in_sectors - 35 - current_sector
+    elif part.text("size") == "remain":
+        sz = size_in_sectors - current_sector
+    else:
+        sz = size_to_int(part.text("size"))/sector_size
+
+    g = parted.Geometry(device=disk.device, start=current_sector, length=sz)
+    if ptype != parted.PARTITION_EXTENDED and fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat":
+        fs = simple_fstype("fat32")
+        ppart = parted.Partition(disk, ptype, fs, geometry=g)
+        ppart.setFlag(_ped.PARTITION_LBA)
+    else:
+        ppart = parted.Partition(disk, ptype, geometry=g)
+
+    cons = parted.Constraint(exactGeom=g)
+    disk.addPartition(ppart, cons)
+
+    if part.has("bootable"):
+        ppart.setFlag(_ped.PARTITION_BOOT)
+
+    if part.has("biosgrub"):
+        ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
+
+    return ppart
+
+
+def create_label(outf, disk, part, ppart, fslabel, target, grub):
+
+    sector_size = 512
+    partition_number = ppart.number
+    entry = fslabel[part.text("label")]
+    entry.offset = ppart.geometry.start * sector_size
+    entry.size   = ppart.getLength() * sector_size
+    entry.filename = disk.device.path
+    entry.partnum = partition_number
+    entry.number = '{}{}'.format(disk.type, partition_number)
+
+    if entry.mountpoint == "/":
+        grub.set_root_entry( entry )
+    elif entry.mountpoint == "/boot":
+        grub.set_boot_entry( entry )
+
+    entry.losetup( outf, "loop0" )
+    outf.do( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
+
+    outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
+    outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
+    outf.do( 'umount /dev/loop0' )
+    outf.do( 'losetup -d /dev/loop0' )
+
+    return ppart
+
+def create_logical_partitions(outf, disk, extended, epart, fslabel, target, grub):
+
+    current_sector = epart.geometry.start
+    size_in_sectors = current_sector + epart.geometry.length
+
+    for logical in extended:
+        if logical.tag != "logical":
+            continue
+
+        current_sector += 2048
+        lpart = create_partition(disk, logical, parted.PARTITION_LOGICAL, fslabel, size_in_sectors, current_sector)
+        if logical.has("label") and fslabel.has_key(logical.text("label")):
+            create_label(outf, disk, logical, lpart, fslabel, target, grub)
+
+        current_sector += lpart.getLength();
+
+def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
     sector_size = 512
     s=size_to_int(hd.text("size"))
@@ -321,64 +390,17 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
     current_sector = 2048
     for part in hd:
 
-        if part.tag != "partition":
+        if part.tag == "partition":
+            ppart = create_partition(disk, part, parted.PARTITION_NORMAL, fslabel, size_in_sectors, current_sector)
+            if fslabel.has_key(part.text("label")):
+                create_label(outf, disk, part, ppart, fslabel, target, grub)
+        elif part.tag == "extended":
+            ppart = create_partition(disk, part, parted.PARTITION_EXTENDED, fslabel, size_in_sectors, current_sector)
+            create_logical_partitions(outf, disk, part, ppart, fslabel, target, grub)
+        else:
             continue
 
-        if part.text("size") == "remain" and hd.tag == "gpthd":
-            sz = size_in_sectors - 35 - current_sector
-        elif part.text("size") == "remain":
-            sz = size_in_sectors - current_sector
-        else:
-            sz = size_to_int(part.text("size"))/sector_size
-
-        g = parted.Geometry (device=imag,start=current_sector,length=sz)
-        if fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat": 
-            fs = simple_fstype("fat32")
-            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, fs, geometry=g)
-            ppart.setFlag(_ped.PARTITION_LBA)
-        else:
-            ppart = parted.Partition(disk, parted.PARTITION_NORMAL, geometry=g)
-
-        cons = parted.Constraint(exactGeom=g)
-        disk.addPartition(ppart, cons)
-
-        if part.has("bootable"):
-            ppart.setFlag(_ped.PARTITION_BOOT)
-
-        if part.has("biosgrub"):
-            ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
-
-        partition_number += 1
-
-        if not fslabel.has_key(part.text("label")):
-            current_sector += sz
-            continue
-
-        entry = fslabel[part.text("label")]
-        entry.offset = current_sector*sector_size
-        entry.size   = sz * sector_size
-        entry.filename = imagename
-        entry.partnum = partition_number
-        if hd.tag == "gpthd":
-            entry.number = "gpt%d" % partition_number
-        else:
-            entry.number = "msdos%d" % partition_number
-
-
-        if entry.mountpoint == "/":
-            grub.set_root_entry( entry )
-        elif entry.mountpoint == "/boot":
-            grub.set_boot_entry( entry )
-
-        entry.losetup( outf, "loop0" )
-        outf.do( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
-
-        outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
-        outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
-        outf.do( 'umount /dev/loop0' )
-        outf.do( 'losetup -d /dev/loop0' )
-
-        current_sector += sz
+        current_sector += ppart.getLength()
 
     disk.commit()
 

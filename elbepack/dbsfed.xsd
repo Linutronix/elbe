@@ -1072,6 +1072,20 @@
           </documentation>
         </annotation>
       </element>
+      <element name="extended" type="rfs:extended" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Extended Partition Entries of this harddisk (max: 1)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="partition" type="rfs:partition" minOccurs="0" maxOccurs="3">
+        <annotation>
+          <documentation>
+            Partition Entries of this harddisk (max: 3)
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
@@ -1375,6 +1389,30 @@
         <annotation>
           <documentation>
              Whether this partition is marked as biosgrub partition.
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="extended">
+    <annotation>
+      <documentation>
+         describes a extended partition of a harddisk
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="size" type="rfs:part_size">
+        <annotation>
+          <documentation>
+             size of the partition
+          </documentation>
+        </annotation>
+      </element>
+      <element name="logical" type="rfs:partition" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+             logical partition of this extended partition
           </documentation>
         </annotation>
       </element>
