@@ -1356,7 +1356,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="label" type="string" minOccurs="0">
+      <element name="label" type="string" minOccurs="1">
         <annotation>
           <documentation>
              human readable label of the partition used for mount by label and
