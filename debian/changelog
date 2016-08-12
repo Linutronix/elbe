@@ -1,3 +1,16 @@
+elbe (1.9.7) unstable; urgency=medium
+
+  * various elbe debianize improvements and bugfixes
+  * export rpcaptcache errors into the logfile
+  * add patch to contrib to build 'elbe debianize'd kernels on jessie
+      (with pbuilder)
+  * report problems with broken repos to the user
+  * allow multiple builds of the same package within pbuilder
+  * added extended partitions support for msdoshd
+  * make elbe pbuilder to use the qemu-static shipped via elbe-common repo
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 12 Aug 2016 11:04:23 +0200
+
 elbe (1.9.6) unstable; urgency=medium
 
   * new subcommand 'elbe debianize'
