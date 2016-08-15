@@ -31,7 +31,7 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -rf include/config
-	make -j`nproc` $(MAKE_OPTS) ${imgtype} modules dtbs
+	make -j`nproc` $(MAKE_OPTS) ${imgtype} modules
 	test ${k_arch} = arm && make -j`nproc` $(MAKE_OPTS) dtbs || true
 
 override_dh_auto_install:
@@ -40,8 +40,6 @@ override_dh_auto_install:
 	make $(MAKE_OPTS) INSTALL_MOD_STRIP=1 modules_install
 	make $(MAKE_OPTS) firmware_install
 	make $(MAKE_OPTS) headers_install
-	mkdir -p debian/tmp/usr/lib/linux-image-$(KERNELRELEASE)/
-	cp arch/*/boot/dts/*.dtb debian/tmp/usr/lib/linux-image-$(KERNELRELEASE)/
 	test ${k_arch} = arm && make $(MAKE_OPTS) dtbs_install || true
 
 %%:
