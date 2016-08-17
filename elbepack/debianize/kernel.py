@@ -56,6 +56,8 @@ class Kernel (DebianizeBase):
             self.deb['k_arch'] = 'arm'
         elif self.deb['p_arch'] == 'armel':
             self.deb['k_arch'] = 'arm'
+        elif self.deb['p_arch'] == 'amd64':
+            self.deb['k_arch'] = 'x86_64'
         else:
             self.deb['k_arch'] = self.deb['p_arch']
 
