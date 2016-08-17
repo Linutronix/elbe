@@ -22,7 +22,8 @@ O=debian/build
 
 override_dh_auto_clean:
 	mkdir -p debian/build
-	rm -f debian/files debian/tmp
+	rm -f debian/files
+	rm -rf debian/tmp
 	make $(MAKE_OPTS) clean
 
 override_dh_auto_configure:
