@@ -101,11 +101,11 @@ class RepoBase(object):
             fp.write( "Codename: " + att.codename + "\n" )
             fp.write( "Architectures: " + " ".join (att.arch) + "\n" )
             fp.write( "Components: " + " ".join (att.components.difference (set (["main/debian-installer"]))) + "\n" )
+            fp.write( "UDebComponents: " + " ".join (att.components.difference (set (["main/debian-installer"]))) + "\n" )
             fp.write( "Description: " + self.description + "\n" )
 
             if 'main/debian-installer' in att.components:
                 fp.write( "Update: di\n" )
-                fp.write( "UDebComponents: main\n" )
 
                 ufp = self.fs.open( "conf/updates", "w" )
 
