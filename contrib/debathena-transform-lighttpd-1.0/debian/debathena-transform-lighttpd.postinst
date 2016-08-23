@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#DEBHELPER#
+/etc/init.d/lighttpd stop
+/etc/init.d/lighttpd start

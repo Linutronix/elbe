@@ -1,0 +1,5 @@
+debathena-transform-lighttpd (1.0) unstable; urgency=low
+
+  * Initial release.
+
+ -- John Ogness <john.ogness@linutronix.de>  Tue, 23 Aug 2016 22:28:16 +0200

@@ -1,0 +1,15 @@
+Source: debathena-transform-lighttpd
+Section: config
+Priority: extra
+Maintainer: John Ogness <john.ogness@linutronix.de>
+Build-Depends: debhelper (>= 7.0.0~), config-package-dev (>= 4.15), lighttpd
+Standards-Version: 3.9.2
+
+Package: debathena-transform-lighttpd
+Architecture: all
+Depends: ${misc:Depends}, lighttpd
+Provides: ${diverted-files}
+Conflicts: ${diverted-files}
+Description: lighttpd config-package-dev package
+ This config-package-dev package updates the lighttpd configuration for
+ use within the elbe initvm.

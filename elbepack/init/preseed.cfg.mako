@@ -104,6 +104,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools btrfs-tools openssh-client \
+debathena-transform-lighttpd \
 elbe-soap elbe-buildenv qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":

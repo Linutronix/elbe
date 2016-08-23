@@ -133,6 +133,8 @@ class RepoBase(object):
 
         if need_update:
             self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
+        else:
+            self.log.do( 'reprepro --basedir "' + self.fs.path + '" export ' + att.codename )
 
     def finalize( self ):
         for att in self.attrs:

@@ -15,6 +15,7 @@ def pbuilder_write_config (builddir, xml, log):
     fp.write ('#!/bin/sh\n')
     fp.write ('set -e\n')
     fp.write ('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False))
+    fp.write ('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo jessie main"\n' % builddir)
     fp.write ('BASETGZ="%s"\n' % os.path.join (builddir, 'pbuilder', 'base.tgz'))
 
     fp.write ('DISTRIBUTION="%s"\n' % xml.prj.text ('suite'))
@@ -71,8 +72,11 @@ def pbuilder_write_repo_hook (builddir, xml):
         return "# no mirrors configured"
 
     mirror = "#!/bin/sh\n"
+
+    mirror += 'echo "deb http://127.0.0.1:8080' + builddir + '/repo ' + xml.prj.text("suite") + ' main" > /etc/apt/sources.list\n'
+
     if xml.prj.has("mirror/primary_host"):
-        mirror += 'echo "deb ' + xml.get_primary_mirror (None) + ' ' + xml.prj.text("suite") + ' main" > /etc/apt/sources.list\n'
+        mirror += 'echo "deb ' + xml.get_primary_mirror (None) + ' ' + xml.prj.text("suite") + ' main" >> /etc/apt/sources.list\n'
 
         if xml.prj.has("mirror/url-list"):
             for url in xml.prj.node("mirror/url-list"):
