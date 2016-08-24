@@ -1,3 +1,9 @@
+debathena-transform-lighttpd (1.1) unstable; urgency=medium
+
+  * add path for invoke.rc.d
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 24 Aug 2016 19:29:21 +0200
+
 debathena-transform-lighttpd (1.0) unstable; urgency=low
 
   * Initial release.
