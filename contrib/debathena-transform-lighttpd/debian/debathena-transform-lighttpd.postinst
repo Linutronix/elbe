@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#DEBHELPER#
+invoke.rc.d lighttpd stop
+invoke.rc.d lighttpd start
