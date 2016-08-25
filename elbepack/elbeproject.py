@@ -38,6 +38,7 @@ from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook, pbuilder_write_apt_conf
 from elbepack.repomanager import ProjectRepo
+from elbepack.config import cfg
 
 class IncompatibleArchitectureException(Exception):
     def __init__ (self, oldarch, newarch):
@@ -374,7 +375,8 @@ class ElbeProject (object):
 
     def pdebuild_build (self):
         try:
-            self.log.do ('cd "%s"; pdebuild --debbuildopts -jauto --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+            self.log.do ('cd "%s"; pdebuild --debbuildopts "-j%s" --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+                cfg['pbuilder_jobs'],
                 os.path.join (self.builddir, "pdebuilder", "current"),
                 os.path.join (self.builddir, "pbuilderrc"),
                 os.path.join (self.builddir, "pbuilder", "result")))
