@@ -212,6 +212,43 @@ class ESoap (SimplePlugin, ServiceBase):
         self.app.pm.open_project (uid, builddir)
         self.app.pm.build_current_pdebuild (uid)
 
+    @rpc (String, String)
+    @authenticated_uid
+    @soap_faults
+    def start_upload_orig (self, uid, builddir, fname):
+        self.app.pm.open_project (uid, builddir)
+
+        orig_fname = os.path.join (builddir, fname)
+
+        # Now write empty File
+        fp = open (orig_fname, "w")
+        fp.close()
+
+        self.app.pm.set_orig_fname(uid, fname)
+
+
+    @rpc (String, String)
+    @authenticated_uid
+    @soap_faults
+    def append_upload_orig (self, uid, builddir, data):
+        self.app.pm.open_project (uid, builddir)
+
+        orig_fname = os.path.join (builddir, self.app.pm.get_orig_fname(uid))
+
+        # Now append to File
+        fp = open (orig_fname, "a")
+        fp.write (binascii.a2b_base64 (data))
+        fp.close()
+
+    @rpc (String)
+    @authenticated_uid
+    @soap_faults
+    def finish_upload_orig (self, uid, builddir):
+        # If we support more than one orig, we need to put the orig_files into some
+        # list here.
+        # We still need the notion of a "current" orig during file upload.
+        pass
+
     @rpc (String)
     @authenticated_uid
     @soap_faults

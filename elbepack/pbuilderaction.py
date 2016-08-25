@@ -169,6 +169,17 @@ class BuildAction(PBuilderAction):
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
+        if opt.origfile:
+            print ("")
+            print ("Pushing orig file into pbuilder")
+            print ("")
+            try:
+                system ('%s control set_orig "%s" "%s"' % (elbe_exe, prjdir, opt.origfile))
+            except CommandError:
+                print ("elbe control set_orig Failed", file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+
         print ("")
         print ("Pushing source into pbuilder")
         print ("")

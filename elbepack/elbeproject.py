@@ -82,6 +82,8 @@ class ElbeProject (object):
         # Initialise Repo Images to Empty list.
         self.repo_images = []
 
+        self.orig_fname = None
+
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
         if xmlpath:
@@ -355,6 +357,11 @@ class ElbeProject (object):
 
         pbdir = os.path.join (self.builddir, "pdebuilder", "current")
         self.log.do ('mkdir -p "%s"' % os.path.join (pbdir))
+
+        if self.orig_fname:
+            ofname = os.path.join (self.builddir, self.orig_fname)
+            self.log.do ('mv "%s" "%s"' % (ofname, os.path.join(self.builddir, "pdebuilder")))
+            self.orig_fname = None
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
         self.log.do ('tar xfz "%s" -C "%s"' % (os.path.join (self.builddir,

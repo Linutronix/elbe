@@ -40,6 +40,9 @@ def run_command (argv):
                         dest="skip_download", default=False,
                         help="Skip downloading generated Files" )
 
+    oparser.add_option ("--origfile", dest="origfile", default=None,
+                        help="upload orig file")
+
     oparser.add_option ("--output", dest="outdir", default=None,
                         help="directory where to save downloaded Files")
 

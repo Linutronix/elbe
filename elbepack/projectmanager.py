@@ -289,6 +289,23 @@ class ProjectManager(object):
 
             self.worker.enqueue (PdebuildJob (ep))
 
+    def set_orig_fname(self, userid, fname):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            if not path.isdir (path.join (ep.builddir, "pbuilder")):
+                raise InvalidState ('No pbuilder exists: run "elbe pbuilder create --project %s" first' % ep.builddir)
+
+            ep.orig_fname = fname
+
+    def get_orig_fname(self, userid):
+        with self.lock:
+            ep = self._get_current_project (userid, allow_busy=False)
+            if not path.isdir (path.join (ep.builddir, "pbuilder")):
+                raise InvalidState ('No pbuilder exists: run "elbe pbuilder create --project %s" first' % ep.builddir)
+
+            return ep.orig_fname
+
+
     def build_chroot_tarball (self, userid):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)

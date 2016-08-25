@@ -462,6 +462,35 @@ class SetCdromAction(ClientAction):
 
 ClientAction.register(SetCdromAction)
 
+class SetOrigAction(ClientAction):
+
+    tag = 'set_orig'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        size =  1024 * 1024
+
+        if len (args) != 2:
+            print ("usage: elbe control set_orig <project_dir> <orig file>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = args[1]
+
+        fp = file (filename, "r")
+        client.service.start_upload_orig (builddir, os.path.basename(filename))
+        while True:
+            bindata = fp.read (size)
+            client.service.append_upload_orig (builddir, binascii.b2a_base64 (bindata))
+            if len (bindata) != size:
+                break
+
+        client.service.finish_upload_orig (builddir)
+
+ClientAction.register(SetOrigAction)
+
 class ShutdownInitvmAction(ClientAction):
 
     tag = 'shutdown_initvm'
