@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 class Config(dict):
     def __init__(self):
         self['soapport'] = "7587"
