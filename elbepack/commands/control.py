@@ -30,6 +30,7 @@ from httplib import BadStatusLine
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
 from elbepack.version import elbe_version
+from elbepack.config import cfg
 
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
@@ -37,7 +38,7 @@ def run_command (argv):
     oparser.add_option ("--host", dest="host", default="localhost",
                         help="Ip or hostname of elbe-daemon.")
 
-    oparser.add_option ("--port", dest="port", default="7587",
+    oparser.add_option ("--port", dest="port", default=cfg['soapport'],
                         help="Port of soap itf on elbe-daemon.")
 
     oparser.add_option ("--pass", dest="passwd", default="foo",
