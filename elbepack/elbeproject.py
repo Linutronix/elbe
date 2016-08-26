@@ -380,15 +380,15 @@ class ElbeProject (object):
                 cfg['pbuilder_jobs'],
                 os.path.join (self.builddir, "pbuilderrc"),
                 os.path.join (self.builddir, "pbuilder", "result")))
+            self.repo.remove (os.path.join (self.builddir, "pdebuilder", "current", "debian", "control"))
+
+            self.repo.include (os.path.join (self.builddir,
+                "pbuilder", "result", "*.changes"))
         except CommandError as e:
             self.log.printo ('')
             self.log.printo ('Package fails to build.')
             self.log.printo ('Please make sure, that the submitted package builds in pbuilder')
 
-        self.repo.remove (os.path.join (self.builddir, "pdebuilder", "current", "debian", "control"))
-
-        self.repo.include (os.path.join (self.builddir,
-            "pbuilder", "result", "*.changes"))
 
     def create_pbuilder (self):
         # Remove old pbuilder directory, if it exists
