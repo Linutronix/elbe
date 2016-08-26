@@ -1,3 +1,13 @@
+elbe (1.9.8) unstable; urgency=medium
+
+  * debianize: various bugfixes
+  * pbuilder: add local repo support to enable build dependecies on self build
+      packages
+  * pbuilder: add --origfile switch to support quilt source format
+  * introduce envvars for e.g. port used to connect to elbe daemon
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 26 Aug 2016 11:30:59 +0200
+
 elbe (1.9.7) unstable; urgency=medium
 
   * various elbe debianize improvements and bugfixes
