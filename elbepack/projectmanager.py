@@ -482,6 +482,7 @@ class ProjectManager(object):
             if part == None:
                 return self.db.is_busy( ep.builddir ), ""
 
+            l = None
             with open (os.path.join (ep.builddir, 'log.txt'), 'r', 0) as lf:
                 for l in lf:
                     if count == part:
