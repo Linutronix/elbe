@@ -21,6 +21,7 @@ from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 from debian.deb822 import Deb822
+from elbepack.gpg import generate_elbe_internal_key, export_key
 
 class RepoAttributes(object):
     def __init__ (self, codename, arch, components,
@@ -73,6 +74,7 @@ class RepoBase(object):
         self.description = description
         self.maxsize = maxsize
         self.fs = self.get_volume_fs(self.volume_count)
+        self.keyid = generate_elbe_internal_key()
 
         self.gen_repo_conf()
 
@@ -103,6 +105,7 @@ class RepoBase(object):
             fp.write( "Components: " + " ".join (att.components.difference (set (["main/debian-installer"]))) + "\n" )
             fp.write( "UDebComponents: " + " ".join (att.components.difference (set (["main/debian-installer"]))) + "\n" )
             fp.write( "Description: " + self.description + "\n" )
+            fp.write( "SignWith: " + self.keyid + "\n" )
 
             if 'main/debian-installer' in att.components:
                 fp.write( "Update: di\n" )
@@ -131,12 +134,16 @@ class RepoBase(object):
             fp.write( "\n" )
         fp.close()
 
+        with self.fs.open("repo.pub", "w") as pubkey_fp:
+            export_key(self.keyid, pubkey_fp)
+
         if need_update:
             self.log.do( 'reprepro --export=force --basedir "' + self.fs.path + '" update' )
         else:
             self.log.do( 'reprepro --basedir "' + self.fs.path + '" export ' + att.codename )
 
     def finalize( self ):
+        os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
         for att in self.attrs:
             self.log.do( 'reprepro --basedir "' + self.fs.path + '" export ' + att.codename )
 
@@ -158,6 +165,7 @@ class RepoBase(object):
         self.log.do( 'reprepro --ignore=wrongdistribution --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
 
     def _remove( self, path, codename, component):
+        os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
         for p in Deb822.iter_paragraphs(file(path)):
             if 'Source' in p:
                 self.log.do( "reprepro --basedir %s removesrc %s %s" % (self.fs.path, codename, p['Source']))
