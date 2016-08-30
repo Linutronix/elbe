@@ -375,7 +375,7 @@ class ElbeProject (object):
 
     def pdebuild_build (self):
         try:
-            self.log.do ('cd "%s"; pdebuild --debbuildopts "-j%s" --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
+            self.log.do ('cd "%s"; pdebuild --debbuildopts "-j%s -sa" --configfile "%s" --use-pdebuild-internal --buildresult "%s"' % (
                 os.path.join (self.builddir, "pdebuilder", "current"),
                 cfg['pbuilder_jobs'],
                 os.path.join (self.builddir, "pbuilderrc"),
