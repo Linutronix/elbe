@@ -174,7 +174,10 @@ class ElbeProject (object):
 
         # chroot is invalid after adding all the -dev packages
         # it shouldn't be used to create an incremental image
-        self.log.do( "rm -rf %s" % self.chrootpath )
+        # 
+        # We only remove /etc/elbe_version here.
+        # So we can still elbe chroot into the fs
+        self.buildenv.remove( "/etc/elbe_version", noerr=True )
 
 
     def pbuild (self, p):
