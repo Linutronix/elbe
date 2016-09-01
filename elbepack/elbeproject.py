@@ -110,12 +110,10 @@ class ElbeProject (object):
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
-        if self.has_full_buildenv():
-            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+        if os.path.exists( self.chrootpath ):
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath, clean=False )
         else:
             self.buildenv = None
-            self.targetfs = None
-            return
 
         # Create TargetFs instance, if the target directory exists
         if os.path.exists( self.targetpath ):
@@ -178,6 +176,7 @@ class ElbeProject (object):
         # it shouldn't be used to create an incremental image
         self.log.do( "rm -rf %s" % self.chrootpath )
 
+
     def pbuild (self, p):
         self.pdebuild_init ()
         src_path = os.path.join (self.builddir, "pdebuilder", "current")
@@ -218,11 +217,14 @@ class ElbeProject (object):
         # in the if case above!
         self.repo.finalize ()
 
-        # Create the build environment, if it does not exist yet
-        if not self.buildenv:
+        # Create the build environment, if it does not a valid one
+        # self.buildenv might be set when we come here.
+        # However, if its not a full_buildenv, we specify clean here,
+        # so it gets rebuilt properly.
+        if not self.has_full_buildenv():
             self.log.do( 'mkdir -p "%s"' % self.chrootpath )
             self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath,
-                                      build_sources = build_sources )
+                                      build_sources = build_sources, clean = True )
             skip_pkglist = False
 
         # Install packages
@@ -464,14 +466,14 @@ class ElbeProject (object):
 
         # Create a new BuildEnv instance, if we have a build directory
         if self.has_full_buildenv():
-            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath )
+            self.buildenv = BuildEnv( self.xml, self.log, self.chrootpath, clean = False )
 
         # Create TargetFs instance, if the target directory exists.
         # We use the old content of the directory if no rebuild is done, so
         # don't clean it (yet).
         if os.path.exists( self.targetpath ):
             self.targetfs = TargetFs( self.targetpath, self.log,
-                    self.buildenv.xml, clean=False )
+                    self.xml, clean=False )
         else:
             self.targetfs = None
 
