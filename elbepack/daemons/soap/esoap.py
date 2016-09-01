@@ -21,8 +21,6 @@
 import binascii
 import os
 
-from cherrypy.process.plugins import SimplePlugin
-
 from tempfile import NamedTemporaryFile
 
 from elbepack.shellhelper import system
@@ -43,16 +41,9 @@ from spyne.model.complex import Array, Iterable
 
 from threading import local
 
-class ESoap (SimplePlugin, ServiceBase):
+class ESoap (ServiceBase):
 
     __name__ = 'soap'
-
-    def __init__ (self,engine):
-        SimplePlugin.__init__(self,engine)
-        self.subscribe()
-
-    def stop(self):
-        self.app.pm.stop()
 
     @rpc (_returns=String )
     @soap_faults

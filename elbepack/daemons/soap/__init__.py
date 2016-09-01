@@ -24,6 +24,8 @@ from spyne import Application
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
+from cherrypy.process.plugins import SimplePlugin
+
 from elbepack.projectmanager import ProjectManager
 
 class EsoapApp(Application):
@@ -31,10 +33,17 @@ class EsoapApp(Application):
         Application.__init__(self, *args, **kargs)
         self.pm = ProjectManager ("/var/cache/elbe")
 
-class MySession (SessionMiddleware):
-    def __init__ (self, app, pm):
+class MySession (SessionMiddleware, SimplePlugin):
+    def __init__ (self, app, pm, engine):
         self.pm = pm
         SessionMiddleware.__init__(self, app)
+
+        SimplePlugin.__init__(self,engine)
+        self.subscribe()
+
+    def stop(self):
+        self.pm.stop()
+
     def __call__ (self, environ, start_response):
         #example to hook into wsgi environment
         if environ ['PATH_INFO'].startswith ('/FILE:'):
@@ -51,4 +60,4 @@ def get_app(engine):
                     out_protocol=Soap11())
 
     wsgi = WsgiApplication (app)
-    return MySession(wsgi, app.pm)
+    return MySession(wsgi, app.pm, engine)
