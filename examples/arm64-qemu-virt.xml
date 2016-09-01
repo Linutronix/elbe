@@ -19,7 +19,7 @@
 		</description>
 		<buildtype>aarch64</buildtype>
 		<mirror>
-			<primary_host>httpredir.debian.org</primary_host>
+			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>

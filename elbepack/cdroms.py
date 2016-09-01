@@ -90,7 +90,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     if not xml is None:
         mirror = xml.get_primary_mirror (rfs.fname("cdrom"))
     else:
-        mirror='http://ftp.debian.org/debian'
+        mirror='http://ftp.de.debian.org/debian'
 
     repo_path = os.path.join (target, "binrepo")
     target_repo_path = os.path.join (repo_path, 'targetrepo')

@@ -24,7 +24,7 @@ from debian.deb822 import Deb822
 
 class RepoAttributes(object):
     def __init__ (self, codename, arch, components,
-            mirror='http://ftp.debian.org/debian' ):
+            mirror='http://ftp.de.debian.org/debian' ):
         self.codename = codename
         if type (arch) is str:
             self.arch = set ([arch])
@@ -222,7 +222,7 @@ class UpdateRepo(RepoBase):
                            "Update")
 
 class CdromInitRepo(RepoBase):
-    def __init__( self, arch, init_codename, path, log, maxsize, mirror='http://ftp.debian.org/debian'  ):
+    def __init__( self, arch, init_codename, path, log, maxsize, mirror='http://ftp.de.debian.org/debian'  ):
 
         init_attrs = RepoAttributes (init_codename, "amd64", ["main", "main/debian-installer"], mirror)
 
