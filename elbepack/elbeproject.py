@@ -177,7 +177,7 @@ class ElbeProject (object):
         # 
         # We only remove /etc/elbe_version here.
         # So we can still elbe chroot into the fs
-        self.buildenv.remove( "/etc/elbe_version", noerr=True )
+        self.buildenv.rfs.remove( "/etc/elbe_version", noerr=True )
 
 
     def pbuild (self, p):
