@@ -74,9 +74,13 @@ class RepoBase(object):
         self.description = description
         self.maxsize = maxsize
         self.fs = self.get_volume_fs(self.volume_count)
-        self.keyid = generate_elbe_internal_key()
 
-        self.gen_repo_conf()
+        # check whether the repository already exists
+        # if this is the case, we dont generate a new
+        # key, and dont touch den repository config
+        if not self.fs.isdir("/"):
+            self.keyid = generate_elbe_internal_key()
+            self.gen_repo_conf()
 
     def get_volume_fs( self, volume ):
         if self.maxsize:
