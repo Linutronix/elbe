@@ -27,6 +27,7 @@ from tempfile import NamedTemporaryFile
 
 import urllib2
 import os
+import re
 
 class ValidationError(Exception):
     def __init__(self, validation):
@@ -147,6 +148,7 @@ class ElbeXML(object):
 
         urls = []
         for l in sources_lines:
+            l = re.sub(r'\[.*\] ','',l)
             if l.startswith ("deb copy:"):
                 # This is a cdrom, we dont verify it
                 pass
