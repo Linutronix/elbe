@@ -296,6 +296,7 @@ class ProjectManager(object):
                 raise InvalidState ('No pbuilder exists: run "elbe pbuilder create --project %s" first' % ep.builddir)
 
             ep.orig_fname = fname
+            ep.orig_files.append(fname)
 
     def get_orig_fname(self, userid):
         with self.lock:
