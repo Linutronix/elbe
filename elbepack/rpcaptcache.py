@@ -117,6 +117,9 @@ class RPCAPTCache(InChRootObject):
         # fixing links inside the sysroot
         self.cache ['symlinks'].mark_install ()
 
+        for p in ignore_dev_pkgs:
+            self.cache [p].mark_delete ()
+
     def cleanup (self, exclude_pkgs):
         for p in self.cache:
             if (p.is_installed and not p.is_auto_installed) or p.is_auto_removable:
