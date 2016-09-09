@@ -99,16 +99,30 @@ class LogBase(object):
 
 class ASCIIDocLog (LogBase):
     def __init__(self, fname):
+        self.fname = fname
         if os.path.isfile(fname):
             os.unlink(fname)
         fp = file(fname, "w", 0)
 
         LogBase.__init__(self, fp)
 
+    def reset(self):
+        self.fp.close()
+        if os.path.isfile(self.fname):
+            os.unlink(self.fname)
+        self.fp = file(self.fname, "w", 0)
+
+
 class StdoutLog(LogBase):
     def __init__(self):
         LogBase.__init__(self, sys.stdout)
 
+    def reset(self):
+        pass
+
 class StderrLog(LogBase):
     def __init__(self):
         LogBase.__init__(self, sys.stderr)
+
+    def reset(self):
+        pass
