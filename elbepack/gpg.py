@@ -22,6 +22,18 @@ import gpgme
 import os
 import sys
 
+elbe_internal_key_param = """
+<GnupgKeyParms format="internal">
+  Key-Type: RSA
+  Key-Usage: sign
+  Key-Length: 2048
+  Name-Real: Elbe Internal Repo
+  Name-Comment: Automatically generated
+  Name-Email: root@elbe-daemon.de
+  Expire-Date: 0
+</GnupgKeyParms>
+"""
+
 class OverallStatus:
 
     def __init__(self):
@@ -178,3 +190,20 @@ def get_fingerprints ():
     for k in keys:
         fingerprints.append (k.subkeys[0].fpr)
     return fingerprints
+
+def generate_elbe_internal_key ():
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = gpgme.Context ()
+    key = ctx.genkey(elbe_internal_key_param)
+
+    return key.fpr
+
+def export_key (fingerprint, outfile):
+    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = gpgme.Context ()
+    ctx.armor = True
+
+    try:
+        ctx.export(fingerprint, outfile)
+    except Exception as ex:
+        print 'Error exporting key %s' % (fingerprint)
