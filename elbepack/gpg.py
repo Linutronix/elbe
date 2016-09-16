@@ -22,6 +22,8 @@ import gpgme
 import os
 import sys
 
+from elbepack.filesystem import hostfs
+
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">
   Key-Type: RSA
@@ -192,6 +194,7 @@ def get_fingerprints ():
     return fingerprints
 
 def generate_elbe_internal_key ():
+    hostfs.mkdir_p("/var/cache/elbe/gnupg")
     os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context ()
     key = ctx.genkey(elbe_internal_key_param)
