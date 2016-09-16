@@ -1,7 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           elbe
-Version:        1.9.2
+Version:        1.9.10
 Release:        1
 Summary:        Elbe (Embedded Linux Build Environment)
 
@@ -37,7 +37,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING 
+%doc COPYING
 %docdir /usr/share/doc/elbe-doc
 %docdir /usr/share/man
 /usr/share/doc/elbe-doc/*
@@ -47,11 +47,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Feb 10 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.2-1 
+* Fri Sep 16 2016 Manuel Traut <manut@linutronix.de> - 1.9.10-1
 - bump to 1.9.2-1
-* Mon Feb 8 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.1-1 
+* Wed Feb 10 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.2-1
+- bump to 1.9.2-1
+* Mon Feb 8 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.1-1
 - bump to 1.9.1-1
-* Mon Feb 1 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.0-1 
+* Mon Feb 1 2016 Torben Hohn <torbenh@linutronix.de> - 1.9.0-1
 - bump to 1.9.0-1
-* Tue Jan 26 2016 Torben Hohn <torbenh@linutronix.de> - 1.0-1 
+* Tue Jan 26 2016 Torben Hohn <torbenh@linutronix.de> - 1.0-1
 - Initial build

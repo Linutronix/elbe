@@ -1,3 +1,9 @@
+elbe (1.9.10) unstable; urgency=medium
+
+  * fix enthropy sources
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 16 Sep 2016 16:47:54 +0200
+
 elbe (1.9.9) unstable; urgency=medium
 
   * build_sysroot: mark blacklisted packages for deletion
