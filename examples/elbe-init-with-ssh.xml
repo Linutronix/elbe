@@ -21,7 +21,6 @@
 		<suite>jessie</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
-			<pkg>debathena-transform-rng-tools</pkg>
 		</pkg-list>
 		<portforwarding>
 			<forward>

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-#DEBHELPER#
-/usr/sbin/invoke-rc.d rng-tools stop
-/usr/sbin/invoke-rc.d rng-tools start
