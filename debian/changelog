@@ -1,3 +1,9 @@
+elbe (1.9.11) unstable; urgency=medium
+
+  * fix upload of cdrom image  'elbe control setcdrom'
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 19 Sep 2016 15:20:01 +0200
+
 elbe (1.9.10) unstable; urgency=medium
 
   * fix enthropy sources
