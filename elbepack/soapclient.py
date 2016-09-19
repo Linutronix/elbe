@@ -441,7 +441,7 @@ class SetCdromAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        size = 5 * 1024 * 1024
+        size = 1024 * 1024
 
         if len (args) != 2:
             print ("usage: elbe control set_cdrom <project_dir> <cdrom file>", file=sys.stderr)
