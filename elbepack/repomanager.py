@@ -168,13 +168,27 @@ class RepoBase(object):
     def _include( self, path, codename, component):
         self.log.do( 'reprepro --ignore=wrongdistribution --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
 
+    def _removedeb(self, pkgname, codename, component):
+        self.log.do( "reprepro --basedir %s remove %s %s" % (self.fs.path, codename, pkgname))
+
+    def removedeb(self, pkgname, component="main"):
+        self._removedeb (pkgname, self.repo_attr.codename, component)
+
+    def _removesrc(self, srcname, codename, component):
+        self.log.do( "reprepro --basedir %s removesrc %s %s" % (self.fs.path, codename, srcname))
+
+    def removesrc(self, path, component="main"):
+        for p in Deb822.iter_paragraphs(file(path)):
+            if 'Source' in p:
+                self._removesrc(p['Source'], self.repo_attr.codename, component)
+
     def _remove( self, path, codename, component):
         os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
         for p in Deb822.iter_paragraphs(file(path)):
             if 'Source' in p:
-                self.log.do( "reprepro --basedir %s removesrc %s %s" % (self.fs.path, codename, p['Source']))
+                self._removesrc(p['Source'], codename, component)
             elif 'Package' in p:
-                self.log.do( "reprepro --basedir %s remove %s %s" % (self.fs.path, codename, p['Package']))
+                self._removedeb(p['Package'], codename, component)
 
     def _includedsc( self, path, codename, component):
         if self.maxsize:
