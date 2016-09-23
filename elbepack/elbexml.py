@@ -197,6 +197,18 @@ class ElbeXML(object):
     def get_target_packages(self):
         return [p.et.text for p in self.xml.node("/target/pkg-list")]
 
+    def add_target_package(self, pkg):
+        plist = self.xml.ensure_child("/target/pkg-list")
+
+        # only add package once
+        for p in plist:
+            if p.et.text == pkg:
+                return
+
+        pak = plist.append('pkg')
+        pak.set_text( pkg )
+        pak.et.tail = '\n'
+
     def set_target_packages(self, pkglist):
         plist = self.xml.ensure_child("/target/pkg-list")
         plist.clear()
