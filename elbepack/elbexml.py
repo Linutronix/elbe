@@ -265,6 +265,9 @@ class ElbeXML(object):
         tree = self.xml.ensure_child( 'debootstrappkgs' )
         tree.clear()
 
+        if not other.has ( 'debootstrappkgs' ):
+            return
+
         for e in other.node( 'debootstrappkgs' ):
             tree.append_treecopy( e )
 

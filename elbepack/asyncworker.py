@@ -109,7 +109,7 @@ class BuildJob(AsyncWorkerJob):
     def execute (self, db):
         try:
             self.project.log.printo( "Build started" )
-            self.project.build(skip_pkglist=True, build_bin=self.build_bin, build_sources=self.build_src)
+            self.project.build(skip_pkglist=False, build_bin=self.build_bin, build_sources=self.build_src)
             db.update_project_files( self.project )
             self.project.log.printo( "Build finished successfully" )
             db.reset_busy( self.project.builddir, "build_done" )
