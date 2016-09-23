@@ -56,6 +56,9 @@ def run_command (argv):
                         dest="keep_files", default=False,
                         help="don't delete elbe project files in initvm" )
 
+    oparser.add_option ("--writeproject", dest="writeproject", default=None,
+                        help="write project name to file")
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 

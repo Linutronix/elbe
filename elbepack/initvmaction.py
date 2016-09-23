@@ -326,6 +326,11 @@ class CreateAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
+            if opt.writeproject:
+                wpf = open (opt.writeproject, "w")
+                wpf.write (prjdir)
+                wpf.close()
+
             if cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
                 try:
