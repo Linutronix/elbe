@@ -27,7 +27,6 @@ from elbepack.aptpkgutils import XMLPackage
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem  import Filesystem, hostfs
 from elbepack.dump        import get_initvm_pkglist
-from elbepack.shellhelper import CommandError
 from apt import Cache
 
 CDROM_SIZE = 640*1000*1000
@@ -47,22 +46,13 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
     pkglist = cache.get_installed_pkgs()
 
     for pkg in pkglist:
-        retried = False
-        while True:
-            try:
-                dsc = cache.download_source( pkg.name, '/var/cache/elbe/sources' )
-                repo.includedsc( dsc )
-            except ValueError as ve:
-                log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
-            except FetchError as fe:
-                log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
-            except CommandError as ce:
-                if retried:
-                    raise ce
-                repo.removesrc(dsc)
-                retried = True
-                continue
-            break
+        try:
+            dsc = cache.download_source( pkg.name, '/var/cache/elbe/sources' )
+            repo.includedsc( dsc, force=True )
+        except ValueError as ve:
+            log.printo( "No sources for Package " + pkg.name + "-" + pkg.installed_version )
+        except FetchError as fe:
+            log.printo( "Source for Package " + pkg.name + "-" + pkg.installed_version + " could not be downloaded" )
 
     repo.finalize ()
 
@@ -150,28 +140,19 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     cache = get_rpcaptcache( rfs, "aptcache.log", arch )
     pkglist = cache.get_installed_pkgs ()
     for pkg in pkglist:
-        retried = False
-        while True:
-            try:
-                deb = cache.download_binary( pkg.name,
-                                            '/var/cache/elbe/binaries/added',
-                                            pkg.installed_version )
-                target_repo.includedeb(deb, 'added')
-            except KeyError as ke:
-                log.printo( str (ke) )
-            except ValueError as ve:
-                log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
-            except FetchError as fe:
-                log.printo( "Package " + pkg.name + "-" + str (pkg.installed_version) + " could not be downloaded" )
-            except TypeError as te:
-                log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
-            except CommandError as ce:
-                if retried:
-                    raise ce
-                target_repo.removedeb(pkg.name, 'added')
-                retried = True
-                continue
-            break
+        try:
+            deb = cache.download_binary( pkg.name,
+                                        '/var/cache/elbe/binaries/added',
+                                        pkg.installed_version )
+            target_repo.includedeb(deb, 'added', pkg.name, True)
+        except KeyError as ke:
+            log.printo( str (ke) )
+        except ValueError as ve:
+            log.printo( "No Package " + pkg.name + "-" + pkg.installed_version )
+        except FetchError as fe:
+            log.printo( "Package " + pkg.name + "-" + str (pkg.installed_version) + " could not be downloaded" )
+        except TypeError as te:
+            log.printo( "Package " + pkg.name + "-" + pkg.installed_version + " missing name or version" )
 
     repo.finalize()
     target_repo.finalize ()

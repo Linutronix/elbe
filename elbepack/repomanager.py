@@ -22,6 +22,7 @@ from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 from debian.deb822 import Deb822
 from elbepack.gpg import generate_elbe_internal_key, export_key
+from elbepack.shellhelper import CommandError
 
 class RepoAttributes(object):
     def __init__ (self, codename, arch, components,
@@ -159,8 +160,21 @@ class RepoBase(object):
 
         self.log.do( 'reprepro --keepunreferencedfiles --export=never --basedir "' + self.fs.path + '" -C ' + component + ' includedeb ' + codename + ' ' + path )
 
-    def includedeb (self, path, component="main"):
-        self._includedeb (path, self.repo_attr.codename, component)
+    def includedeb (self, path, component="main", pkgname=None, force=False):
+        # pkgname needs only to be specified if force is enabled
+        try:
+            self._includedeb (path, self.repo_attr.codename, component)
+        except CommandError as ce:
+            if force and not pkgname is None:
+                # Including deb did not work.
+                # Maybe we have the same Version with a
+                # different md5 already.
+                #
+                # Try remove, and add again.
+                self.removedeb(pkgname, component)
+                self._includedeb (path, self.repo_attr.codename, component)
+            else:
+                raise ce
 
     def include_init_deb (self, path, component="main"):
         self._includedeb (path, self.init_attr.codename, component)
@@ -201,8 +215,20 @@ class RepoBase(object):
 
         self.log.do( 'reprepro --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc includedsc ' + codename + ' ' + path )
 
-    def includedsc( self, path, component="main"):
-        self._includedsc (path, self.repo_attr.codename, component)
+    def includedsc( self, path, component="main", force=False):
+        try:
+            self._includedsc (path, self.repo_attr.codename, component)
+        except CommandError as ce:
+            if force:
+                # Including dsc did not work.
+                # Maybe we have the same Version with a
+                # different md5 already.
+                #
+                # Try remove, and add again.
+                self.removesrc(path, component)
+                self._includedsc (path, self.repo_attr.codename, component)
+            else:
+                raise ce
 
     def include( self, path, component="main"):
         self._include (path, self.repo_attr.codename, component)
