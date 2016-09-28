@@ -180,7 +180,7 @@ class RepoBase(object):
         self._includedeb (path, self.init_attr.codename, component)
 
     def _include( self, path, codename, component):
-        self.log.do( 'reprepro --ignore=wrongdistribution --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
+        self.log.do( 'reprepro --ignore=wrongdistribution --ignore=surprisingbinary --keepunreferencedfiles --export=never --basedir "' + self.fs.path  + '" -C ' + component + ' -P normal -S misc include ' + codename + ' ' + path )
 
     def _removedeb(self, pkgname, codename, component):
         self.log.do( "reprepro --basedir %s remove %s %s" % (self.fs.path, codename, pkgname))

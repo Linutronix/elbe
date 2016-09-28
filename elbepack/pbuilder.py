@@ -9,16 +9,17 @@ def pbuilder_ensure_chroot (builddir):
 
 
 def pbuilder_write_config (builddir, xml, log):
+    distname = xml.prj.text ('suite')
     pbuilderrc_fname = os.path.join (builddir, "pbuilderrc")
     fp = open (pbuilderrc_fname, "w")
 
     fp.write ('#!/bin/sh\n')
     fp.write ('set -e\n')
     fp.write ('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False))
-    fp.write ('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo jessie main"\n' % builddir)
+    fp.write ('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo %s main"\n' % (builddir, distname))
     fp.write ('BASETGZ="%s"\n' % os.path.join (builddir, 'pbuilder', 'base.tgz'))
 
-    fp.write ('DISTRIBUTION="%s"\n' % xml.prj.text ('suite'))
+    fp.write ('DISTRIBUTION="%s"\n' % distname)
 
     fp.write ('BUILDRESULT="%s"\n' % os.path.join (builddir, 'pbuilder', 'result'))
     fp.write ('APTCACHE="%s"\n' % os.path.join (builddir, 'pbuilder', 'aptcache'))
