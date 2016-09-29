@@ -52,11 +52,13 @@
 		</fstab>
 		<norecommend />
 		<finetuning>
-			<rm>/var/cache/apt/archives/*.deb</rm>
 			<cp path="/usr/lib/linux-image-3.16.0-4-armmp/am335x-boneblack.dtb">/boot/dtb-3.16.0-4-armmp</cp>
 			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
 			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
 			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-3.16.0-4-armmp;load mmc 0:1 0x82000000 dtb-3.16.0-4-armmp;load mmc 0:1 0x88000000 initrd.img-3.16.0-4-armmp;bootz 0x84000000 0x88000000:${filesize} 0x82000000" > /boot/uEnv.txt</command>
+			<rm>/var/cache/apt/archives/*.deb</rm>
+			<rm>/var/cache/apt/*.bin</rm>
+			<rm>/var/lib/apt/lists/ftp*</rm>
 		</finetuning>
 		<pbuilder>
 			<git revision='a15a83e2649765736aa6bfe9c490a39a417cf69b'>
@@ -69,7 +71,7 @@
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
-			<pkg>vim-nox</pkg>
+			<pkg>vim-tiny</pkg>
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
