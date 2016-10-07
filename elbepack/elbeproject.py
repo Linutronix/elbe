@@ -193,7 +193,7 @@ class ElbeProject (object):
             except IndexError:
                 pass
         elif p.tag == 'svn':
-            self.log.do ("svn co %s %s" % (p.text('.').strip(), src_path))
+            self.log.do ("svn co --non-interactive %s %s" % (p.text('.').strip(), src_path))
         else:
             self.log.printo ("unknown pbuild source vcs: %s" % p.tag)
 
