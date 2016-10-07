@@ -327,7 +327,7 @@ class CreateAction(InitVMAction):
             prjdir = prjdir.strip()
 
             if opt.writeproject:
-                with open (opt.writeproject, "w") as wpf
+                with open (opt.writeproject, "w") as wpf:
                 wpf.write (prjdir)
 
             if cdrom is not None:
@@ -478,7 +478,7 @@ class SubmitAction(InitVMAction):
             prjdir = prjdir.strip()
 
             if opt.writeproject:
-                with open (opt.writeproject, "w") as wpf
+                with open (opt.writeproject, "w") as wpf:
                 wpf.write (prjdir)
 
             if cdrom is not None:
