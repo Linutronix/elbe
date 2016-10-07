@@ -328,7 +328,7 @@ class CreateAction(InitVMAction):
 
             if opt.writeproject:
                 with open (opt.writeproject, "w") as wpf:
-                wpf.write (prjdir)
+                    wpf.write (prjdir)
 
             if cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
@@ -479,7 +479,7 @@ class SubmitAction(InitVMAction):
 
             if opt.writeproject:
                 with open (opt.writeproject, "w") as wpf:
-                wpf.write (prjdir)
+                    wpf.write (prjdir)
 
             if cdrom is not None:
                 print ("Uploading CDROM. This might take a while")
