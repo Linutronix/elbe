@@ -94,10 +94,11 @@ class BuildChrootTarJob(AsyncWorkerJob):
 
 
 class BuildJob(AsyncWorkerJob):
-    def __init__ (self, project, build_bin, build_src):
+    def __init__ (self, project, build_bin, build_src, skip_pbuilder):
         AsyncWorkerJob.__init__( self, project )
         self.build_bin = build_bin
         self.build_src = build_src
+        self.skip_pbuilder = skip_pbuilder
 
     def enqueue (self, queue, db):
         db.set_busy( self.project.builddir,
@@ -109,7 +110,10 @@ class BuildJob(AsyncWorkerJob):
     def execute (self, db):
         try:
             self.project.log.printo( "Build started" )
-            self.project.build(skip_pkglist=False, build_bin=self.build_bin, build_sources=self.build_src)
+            self.project.build(skip_pkglist=False,
+                               build_bin=self.build_bin,
+                               build_sources=self.build_src,
+                               skip_pbuild=self.skip_pbuilder)
             db.update_project_files( self.project )
             self.project.log.printo( "Build finished successfully" )
             db.reset_busy( self.project.builddir, "build_done" )

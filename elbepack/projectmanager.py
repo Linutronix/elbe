@@ -271,10 +271,11 @@ class ProjectManager(object):
                 if e.errno != errno.ENOENT:
                     raise
 
-    def build_current_project (self, userid, build_bin, build_src):
+    def build_current_project (self, userid, build_bin, build_src, skip_pbuilder):
         with self.lock:
             ep = self._get_current_project (userid, allow_busy=False)
-            self.worker.enqueue (BuildJob (ep, build_bin, build_src))
+            self.worker.enqueue (BuildJob (ep, build_bin, build_src,
+                skip_pbuilder))
 
     def build_pbuilder (self, userid):
         with self.lock:

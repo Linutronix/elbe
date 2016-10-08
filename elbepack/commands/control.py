@@ -58,6 +58,10 @@ def run_command (argv):
                         dest="build_sources", default=False,
                         help="Build source CDROM" )
 
+    oparser.add_option( "--skip-pbuilder", action="store_true",
+                        dest="skip_pbuilder", default=False,
+                        help="skip pbuilder section of XML (dont build packages)" )
+
     oparser.add_option( "--output",
                         dest="output", default=None,
                         help="Output files to <directory>" )
