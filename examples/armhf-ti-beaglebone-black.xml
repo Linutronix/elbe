@@ -18,6 +18,11 @@
 		<domain>linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyO0,115200</console>
+		<package>
+			<tar>
+				<name>bbb.tgz</name>
+			</tar>
+		</package>
 		<images>
 			<msdoshd>
 				<name>sdcard.img</name>
