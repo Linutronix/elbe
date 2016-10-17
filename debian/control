@@ -70,7 +70,7 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   elbe-common (= ${binary:Version}),
   elbe-buildenv (= ${binary:Version}),
-  python-cherrypy3, python-beaker, openssh-server
+  python-cherrypy3, python-beaker, openssh-server, lsb-base (>= 3.0-6)
 Description: wsgi daemon interface
  subcommand to start wsgi services.
 
@@ -116,7 +116,7 @@ Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
   elbe-common (= ${binary:Version}),
-  python-apt
+  python-apt, lsb-base (>= 3.0-6)
 Description: bootup checker
  This package is typically installed on a embedded system. The bootup checker
  shows some information about the installed software on the embedded device.
@@ -151,7 +151,8 @@ Depends: ${misc:Depends},
   python-pyinotify,
   python-apt,
   python-suds,
-  python-soaplib
+  python-soaplib,
+  lsb-base (>= 3.0-6)
 Suggests: python-pyudev,
   usbmount
 Description: update daemon for embedded systems
