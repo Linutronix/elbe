@@ -1,3 +1,12 @@
+elbe (1.9.12) unstable; urgency=medium
+
+  * enable write uuid file for elbe initvm submit
+  * install haveged into initvm to avoid timeouts during elbe control
+     create_project
+  * add option to skip pbuilder step in 'elbe control build'
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 17 Oct 2016 09:56:10 +0200
+
 elbe (1.9.11) unstable; urgency=medium
 
   * fix upload of cdrom image  'elbe control setcdrom'

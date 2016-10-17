@@ -47,6 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 17 2016 Manuel Traut <manut@linutronix.de> - 1.9.12-1
+- bump to 1.9.12-1
 * Mon Sep 19 2016 Manuel Traut <manut@linutronix.de> - 1.9.11-1
 - bump to 1.9.11-1
 * Fri Sep 16 2016 Manuel Traut <manut@linutronix.de> - 1.9.10-1
