@@ -46,11 +46,11 @@ def run_command (argv):
 
     oparser.add_option( "--skip-build-bin", action="store_false",
                         dest="build_bin", default=True,
-                        help="Build Binary Repository CDROM, for exact Reproduction" )
+                        help="Skip building Binary Repository CDROM, for exact Reproduction" )
 
     oparser.add_option( "--skip-build-sources", action="store_false",
                         dest="build_sources", default=True,
-                        help="Build Source CD" )
+                        help="Skip building Source CDROM" )
 
     oparser.add_option( "--keep-files", action="store_true",
                         dest="keep_files", default=False,
