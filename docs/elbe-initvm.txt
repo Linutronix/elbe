@@ -50,11 +50,11 @@ OPTIONS
 	How many times to retry the connection to the server before giving up
 	(default is 10 times, yielding 10 seconds).
 
---build-bin::
-	Build binary repository CDROM, for exact reproduction.
+--skip-build-bin::
+	Skip building binary repository CDROM, for exact reproduction.
 
---build-sources::
-	Build source CDROM.
+--skip-build-sources::
+	Skip building source CDROM.
 	
 --output <directory>::
 	Output downloaded files to <directory>.
