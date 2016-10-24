@@ -429,7 +429,9 @@ class ElbeProject (object):
             self._rpcaptcache = get_rpcaptcache( self.buildenv.rfs,
                     self.log.fp.name,
                     self.arch,
-                    self.rpcaptcache_notifier )
+                    self.rpcaptcache_notifier,
+                    self.xml.prj.has('norecommend'),
+                    self.xml.prj.has('noauth'))
         return self._rpcaptcache
 
     def drop_rpcaptcache (self):

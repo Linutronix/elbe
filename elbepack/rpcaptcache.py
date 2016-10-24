@@ -253,8 +253,8 @@ class MyMan(BaseManager):
 
 MyMan.register( "RPCAPTCache", RPCAPTCache )
 
-def get_rpcaptcache(rfs, log, arch, notifier=None):
+def get_rpcaptcache(rfs, log, arch, notifier=None, norecommend=False, noauth=True):
     mm = MyMan()
     mm.start()
 
-    return mm.RPCAPTCache(rfs, log, arch, notifier)
+    return mm.RPCAPTCache(rfs, log, arch, notifier, norecommend, noauth)
