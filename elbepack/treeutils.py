@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.etree.cElementTree import ElementTree, SubElement, Element
+from lxml.etree import ElementTree, SubElement, Element
+from lxml.etree import XMLParser,parse
 import copy
 
 # ElementTree helpers
@@ -106,7 +107,9 @@ class elem(ebase):
 
 class etree(ebase):
     def  __init__( self, fname ):
-        ebase.__init__( self, ElementTree( file=fname ) )
+        parser = XMLParser(huge_tree=True, remove_comments=False)
+        et = parse (fname, parser=parser)
+        ebase.__init__( self, et )
 
     def write( self, fname, encoding=None ):
         # Make sure, that we end with a newline
