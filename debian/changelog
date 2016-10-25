@@ -1,3 +1,10 @@
+elbe (1.9.13) unstable; urgency=medium
+
+  * dont remove comments from XML
+  * new subcommand pin_versions
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 25 Oct 2016 18:18:32 +0200
+
 elbe (1.9.12) unstable; urgency=medium
 
   * enable write uuid file for elbe initvm submit
