@@ -121,10 +121,10 @@ class BuildEnv ():
 
         if not self.xml.is_cross (host_arch):
             if self.xml.has("project/noauth"):
-                cmd = 'debootstrap --include=apt-listchanges --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges,debian-archive-keyring --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --include=apt-listchanges --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-listchanges,debian-archive-keyring --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
 
             try:
@@ -141,10 +141,10 @@ class BuildEnv ():
             return
 
         if self.xml.has("project/noauth"):
-            cmd = 'debootstrap --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
+            cmd = 'debootstrap --include=debian-archive-keyring --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
                 arch, suite, self.rfs.path, primary_mirror)
         else:
-            cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
+            cmd = 'debootstrap --include=debian-archive-keyring --foreign --arch=%s "%s" "%s" "%s"' % (
                 arch, suite, self.rfs.path, primary_mirror)
 
         try:
