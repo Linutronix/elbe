@@ -114,8 +114,12 @@ class elem(ebase):
 
 class etree(ebase):
     def  __init__( self, fname ):
-        parser = XMLParser(huge_tree=True, remove_comments=False)
-        et = parse (fname, parser=parser)
+        if not fname is None:
+            parser = XMLParser(huge_tree=True, remove_comments=False)
+            et = parse (fname, parser=parser)
+        else:
+            et = ElementTree( file=None )
+
         ebase.__init__( self, et )
 
     def write( self, fname, encoding=None ):
