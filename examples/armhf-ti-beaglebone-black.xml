@@ -1,34 +1,47 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
+		<!-- human readable description of the project -->
 		<name>beaglebone-black</name>
 		<version>1.0</version>
 		<description>
 			debian jessie rootfs for beaglebone black
 		</description>
+		<!-- buildtype is used to configure qemu-user and debian arch -->
 		<buildtype>armhf</buildtype>
 		<mirror>
+			<!-- primary mirror is used by debootstrap -->
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
+		<!-- debian testing? stable? unstable?? -->
 		<suite>jessie</suite>
 	</project>
 	<target>
+		<!-- content for /etc/hostname -->
 		<hostname>lxbbb</hostname>
+		<!-- content for /etc/domainname -->
 		<domain>linutronix.de</domain>
+		<!-- root password -->
 		<passwd>foo</passwd>
+		<!-- run a getty here: -->
 		<console>ttyO0,115200</console>
 		<package>
+			<!-- build a tarball of the target image -->
 			<tar>
 				<name>bbb.tgz</name>
 			</tar>
 		</package>
+		<!-- define an sdcard image -->
 		<images>
 			<msdoshd>
+				<!-- name of the image file -->
 				<name>sdcard.img</name>
 				<size>1500MiB</size>
+					<!-- partition layout -->
 					<partition>
 						<size>50MiB</size>
+						<!-- label needs to match with the fstab entry below -->
 						<label>boot</label>
 						<bootable />
 					</partition>
@@ -40,9 +53,11 @@
 		</images>
 		<fstab>
 			<bylabel>
+				<!-- label needs to match with an image entry aboth -->
 				<label>rfs</label>
 				<mountpoint>/</mountpoint>
 				<fs>
+					<!-- fs type and options -->
 					<type>ext2</type>
 					<tune2fs>-i 0</tune2fs>
 				</fs>
@@ -55,17 +70,25 @@
 				</fs>
 			</bylabel>
 		</fstab>
+		<!-- don't auto install recommended packages -->
 		<norecommend />
 		<finetuning>
-			<cp path="/usr/lib/linux-image-3.16.0-4-armmp/am335x-boneblack.dtb">/boot/dtb-3.16.0-4-armmp</cp>
-			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
+			<!-- move the 1st stage bootloader to the path where the bootrom excpets it -->
 			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
+			<!-- move the 2nd stage bootloader to the path where the 1 stage excpets it -->
+			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
+			<!-- move the devicetree to the path where the bootloader excpets it -->
+			<cp path="/usr/lib/linux-image-3.16.0-4-armmp/am335x-boneblack.dtb">/boot/dtb-3.16.0-4-armmp</cp>
+			<!-- set a proper u-boot environment -->
 			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-3.16.0-4-armmp;load mmc 0:1 0x82000000 dtb-3.16.0-4-armmp;load mmc 0:1 0x88000000 initrd.img-3.16.0-4-armmp;bootz 0x84000000 0x88000000:${filesize} 0x82000000" > /boot/uEnv.txt</command>
+			<!-- shrink target image -->
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
 		</finetuning>
+		<!-- generate a pbuilder environment (before image will be build) -->
 		<pbuilder>
+			<!-- build the libgpio from github -->
 			<git revision='a15a83e2649765736aa6bfe9c490a39a417cf69b'>
 				https://github.com/Linutronix/libgpio.git
 			</git>
@@ -80,6 +103,7 @@
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
+			<!-- install the libgpio built by pbuilder  -->
 			<pkg>libgpio1</pkg>
 		</pkg-list>
 	</target>
