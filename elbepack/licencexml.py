@@ -63,7 +63,7 @@ class copyright_xml (object):
         txtnode = xmlpkg.append ('text')
         txtnode.et.text = copyright
 
-        bytesio = io.StringIO (txtnode.et.text)
+        bytesio = io.StringIO (unicode(txtnode.et.text))
         try:
             c = Copyright (bytesio)
             files = []
