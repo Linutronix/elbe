@@ -30,7 +30,14 @@ class eiter(object):
         return self
 
     def next(self):
-        return elem(self.it.next())
+        while True:
+            n = self.it.next()
+            # A Comment has a callable tag
+            # A better way for this predicate would be nice
+            if not callable(n.tag):
+                break
+
+        return elem(n)
 
 class ebase(object):
     def __init__(self, et):
