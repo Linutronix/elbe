@@ -158,8 +158,13 @@ class BuildEnv ():
 
             self.log.do ('cp %s %s' % (ui, self.rfs.fname( "usr/bin" )))
 
-            self.log.chroot (self.rfs.path,
-                             '/debootstrap/debootstrap --second-stage')
+            if self.xml.has("project/noauth"):
+                self.log.chroot (self.rfs.path,
+                                 '/debootstrap/debootstrap --no-check-gpg --second-stage')
+            else:
+                self.log.chroot (self.rfs.path,
+                                 '/debootstrap/debootstrap --second-stage')
+
 
             self.log.chroot (self.rfs.path, 'dpkg --configure -a')
 
