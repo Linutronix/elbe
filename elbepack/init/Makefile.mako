@@ -82,7 +82,7 @@ all: .stamps/stamp-install-initial-image
 		-no-reboot \
 		-nographic \
 		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
-		-net user,vlan=1 \
+		-net user,ipv4,vlan=1 \
 		-m $(MEMSIZE) \
 		-smp $(SMP) \
 		-usb \
@@ -106,7 +106,7 @@ run:
 		-device virtio-net-pci,netdev=user.0 \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-		-netdev user,id=user.0${fwd} \
+		-netdev user,ipv4,id=user.0${fwd} \
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
@@ -117,7 +117,7 @@ run-con:
 		-device virtio-net-pci,netdev=user.0 \
 		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-		-netdev user,id=user.0${fwd} \
+		-netdev user,ipv4,id=user.0${fwd} \
 		-m $(MEMSIZE) \
 		-usb \
 		-nographic \
