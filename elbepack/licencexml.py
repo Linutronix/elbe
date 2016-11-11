@@ -24,10 +24,13 @@ from debian.copyright import Copyright, NotMachineReadableError, LicenseParagrap
 import os
 import sys
 import io
+import re
 
 import warnings
 
 warnings.simplefilter('error')
+
+remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 
 def do_heuristics (fp):
     c = Copyright()
@@ -58,6 +61,10 @@ class copyright_xml (object):
         self.pkglist = self.outxml.setroot('pkglicenses')
 
     def add_copyright_file (self, pkg_name, copyright):
+
+        # remove illegal characters from copyright
+        copyright, _ = remove_re.subn ('', copyright)
+
         xmlpkg = self.pkglist.append('pkglicense')
         xmlpkg.et.attrib['name'] = pkg_name
         txtnode = xmlpkg.append ('text')
