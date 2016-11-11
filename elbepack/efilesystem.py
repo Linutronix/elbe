@@ -103,9 +103,9 @@ def extract_target( src, xml, dst, log, cache ):
             for item in pkglist:
                 f.write("%s  install\n" % item)
 
-        log.chroot (dst, "dpkg --clear-selections")
-        log.chroot (dst, "dpkg --set-selections < %s " % dst.fname (psel))
-        log.chroot (dst, "dpkg --purge -a")
+        log.chroot (dst.path, "dpkg --clear-selections")
+        log.chroot (dst.path, "dpkg --set-selections < %s " % dst.fname (psel))
+        log.chroot (dst.path, "dpkg --purge -a")
 
 
 class ElbeFilesystem(Filesystem):
