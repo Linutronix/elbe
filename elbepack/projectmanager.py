@@ -77,6 +77,12 @@ class ProjectManager(object):
     def stop(self):
         self.worker.stop()
 
+    def new_project (self, userid):
+        subdir = str(uuid4())
+        builddir = path.join( self.basepath, subdir )
+        self.db.create_project( builddir, owner_id=userid )
+        return builddir
+
     def create_project (self, userid, xml_file, skip_urlcheck=False):
         subdir = str(uuid4())
         builddir = path.join( self.basepath, subdir )

@@ -78,6 +78,35 @@ class ESoap (ServiceBase):
         files = self.app.pm.db.get_project_files (builddir)
         return [SoapFile(f) for f in files]
 
+    @rpc (String, String, String, Integer, _returns=Integer)
+    @authenticated_uid
+    @soap_faults
+    def upload_file (self, uid, builddir, fname, blob, part):
+        fn = os.path.join (builddir, fname)
+        if (part == 0):
+            if self.app.pm.db.is_busy (builddir):
+                return -1
+            self.app.pm.db.set_busy (builddir,
+                [ "empty_project", "needs_build", "has_changes",
+                  "build_done", "build_failed" ] )
+            #truncate file
+            with open (fn, 'w') as fp:
+                fp.write ('')
+
+        if part == -1:
+            with open (fn, 'a') as fp:
+                fp.flush ()
+            self.app.pm.db.reset_busy (builddir, "has_changes")
+            if (fname == "source.xml"):
+                self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+                self.app.pm.set_current_project_xml (uid, fn)
+            return -2
+
+        with open (fn, 'a') as fp:
+            fp.write (binascii.a2b_base64 (blob))
+
+        return part+1
+
     @rpc (String, String, Integer, _returns=String)
     @authenticated_uid
     @soap_faults
@@ -128,17 +157,6 @@ class ESoap (ServiceBase):
     def build_pbuilder (self, uid, builddir):
         self.app.pm.open_project (uid, builddir)
         self.app.pm.build_pbuilder (uid)
-
-    @rpc (String, String, Boolean)
-    @authenticated_uid
-    @soap_faults
-    def set_xml (self, uid, builddir, xml, skip_urlcheck):
-        self.app.pm.open_project (uid, builddir, skip_urlcheck=skip_urlcheck)
-
-        with NamedTemporaryFile() as fp:
-            fp.write (binascii.a2b_base64 (xml))
-            fp.flush ()
-            self.app.pm.set_current_project_xml (uid, fp.name)
 
     @rpc (String)
     @authenticated_uid
@@ -253,7 +271,7 @@ class ESoap (ServiceBase):
     def del_project (self, uid, builddir):
         self.app.pm.del_project (uid, builddir)
 
-    @rpc(String, Boolean, _returns=String)
+    @rpc(String, String, _returns=String)
     @authenticated_uid
     @soap_faults
     def create_project (self, uid, xml, skip_urlcheck):
@@ -263,6 +281,12 @@ class ESoap (ServiceBase):
             prjid = self.app.pm.create_project (uid, fp.name, skip_urlcheck=skip_urlcheck)
 
         return prjid
+
+    @rpc(String, _returns=String)
+    @authenticated_uid
+    @soap_faults
+    def new_project (self, uid, skip_urlcheck):
+        return self.app.pm.new_project (uid)
 
     @rpc (String, Integer, _returns=String)
     @authenticated_uid

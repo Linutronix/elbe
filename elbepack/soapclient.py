@@ -180,9 +180,31 @@ class CreateProjectAction(ClientAction):
                   file=sys.stderr)
           sys.exit (20)
 
+        uuid = client.service.new_project ()
+
+        size = 1024 * 1024
+        part = 0
         with file (filename, "r") as fp:
-            xml_base64 = binascii.b2a_base64(fp.read ())
-            print (client.service.create_project ( xml_base64, opt.skip_urlcheck ))
+            while (True):
+                xml_base64 = binascii.b2a_base64(fp.read (size))
+                # finish upload
+                if len (xml_base64) == 1:
+                    part = client.service.upload_file (uuid,
+                                                       "source.xml",
+                                                       xml_base64,
+                                                       -1)
+                else:
+                    part = client.service.upload_file (uuid,
+                                                       "source.xml",
+                                                       xml_base64,
+                                                       part)
+                if part == -1:
+                    print ("project busy, upload not allowed")
+                    return part
+                if part == -2:
+                    print ("create project finished")
+                    print (uuid)
+                    return uuid
 
 ClientAction.register(CreateProjectAction)
 
@@ -235,9 +257,36 @@ class SetXmlAction(ClientAction):
 
         builddir = args[0]
         filename = args[1]
+
+        x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
+        if not x.has ('target'):
+          print ("<target> is missing, this file can't be built in an initvm",
+                  file=sys.stderr)
+          sys.exit (20)
+
+        size = 1024 * 1024
+        part = 0
         with file (filename, "r") as fp:
-            xml_base64 = binascii.b2a_base64(fp.read ())
-            client.service.set_xml (builddir, xml_base64, opt.skip_urlcheck)
+            while (True):
+                xml_base64 = binascii.b2a_base64(fp.read (size))
+                # finish upload
+                if len (xml_base64) == 1:
+                    part = client.service.upload_file (builddir,
+                                                       "source.xml",
+                                                       xml_base64,
+                                                       -1)
+                else:
+                    part = client.service.upload_file (builddir,
+                                                       "source.xml",
+                                                       xml_base64,
+                                                       part)
+                if part == -1:
+                    print ("project busy, upload not allowed")
+                    return part
+                if part == -2:
+                    print ("upload of xml finished")
+                    return 0
+
 
 ClientAction.register(SetXmlAction)
 
