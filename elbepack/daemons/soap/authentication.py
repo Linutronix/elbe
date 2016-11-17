@@ -87,6 +87,17 @@ def authenticated_uid(func):
 
             return func(self,uid,arg1,arg2,arg3,arg4)
         return wrapped
+    elif func.func_code.co_argcount == 7:
+        @wraps(func)
+        def wrapped(self, arg1, arg2, arg3, arg4, arg5):
+            s = self.transport.req_env['beaker.session']
+            try:
+                uid = s['userid']
+            except KeyError:
+                raise SoapElbeNotLoggedIn()
+
+            return func(self,uid,arg1,arg2,arg3,arg4,arg5)
+        return wrapped
     else:
         raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )
 

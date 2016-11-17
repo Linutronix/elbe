@@ -181,6 +181,26 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
+    if func.func_code.co_argcount == 7:
+        @wraps (func)
+        def wrapped (self, arg1, arg2, arg3, arg4, arg5, arg6):
+            try:
+                return func (self,arg1,arg2, arg3, arg4, arg5, arg6)
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError (str (e))
+            except InvalidState as e:
+                raise SoapElbeInvalidState ()
+            except ElbeDBError as e:
+                raise SoapElbeDBError (str (e))
+            except OSError as e:
+                raise SoapElbeProjectError ("OSError: " + str (e))
+            except ValidationError as e:
+                raise SoapElbeValidationError (e)
+            except InvalidLogin:
+                raise SoapElbeNotAuthorized()
+            except Exception as e:
+                raise SoapElbeProjectError (format_exc ())
+        return wrapped
     else:
         raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )
 
