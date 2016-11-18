@@ -5,15 +5,15 @@
 		<description>for testing 32bit with grub2</description>
 		<buildtype>i386</buildtype>
 		<mirror>
-			<primary_host>boxy.tec.linutronix.de</primary_host>
+			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
 		<suite>stretch</suite>
 	</project>
 	<target>
-		<hostname>lxvm</hostname>
-		<domain>tec.linutronix.de</domain>
+		<hostname>i386-stretch</hostname>
+		<domain>elbe-rfs.org</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
 		<images>
