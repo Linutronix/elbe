@@ -348,7 +348,7 @@ class CreateAction(InitVMAction):
                 build_opts += '--build-sources '
 
             try:
-                system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
+                system ('sleep 5; %s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
             except CommandError:
                 print ("elbe control build Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
