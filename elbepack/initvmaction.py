@@ -312,11 +312,12 @@ class CreateAction(InitVMAction):
                     print ('elbe initvm ready: use "elbe initvm submit myproject.xml" to build a project');
                     sys.exit(0)
 
-                ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, args[0]))
+                ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
+                exampl = args[0]
             elif cdrom is not None:
-                ret, prjdir, err = command_out_stderr ('%s control create_project --skip-urlcheck "%s"' % (elbe_exe, exampl))
+                ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
             else:
-                ret, prjdir, err = command_out_stderr ('%s control create_project "%s"' % (elbe_exe, exampl))
+                ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
 
             if ret != 0:
                 print ("elbe control create_project failed.", file=sys.stderr)
@@ -325,6 +326,13 @@ class CreateAction(InitVMAction):
                 sys.exit(20)
 
             prjdir = prjdir.strip()
+
+            ret, msg, err = command_out_stderr ('%s control set_xml "%s %s"' % (elbe_exe, prjdir, exampl))
+            if ret != 0:
+                print ("elbe control set_xml failed.", file=sys.stderr)
+                print (err, file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
 
             if opt.writeproject:
                 with open (opt.writeproject, "w") as wpf:
@@ -468,7 +476,7 @@ class SubmitAction(InitVMAction):
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
                 sys.exit (20)
 
-            ret, prjdir, err = command_out_stderr ('%s control create_project --retries 60 %s "%s"' % (elbe_exe, skip_urlcheck, xmlfile))
+            ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
             if ret != 0:
                 print ("elbe control create_project failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
@@ -476,6 +484,14 @@ class SubmitAction(InitVMAction):
                 sys.exit(20)
 
             prjdir = prjdir.strip()
+
+            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+            ret, msg, err = command_out_stderr (cmd)
+            if ret != 0:
+                print ("elbe control set_xml failed2", file=sys.stderr)
+                print (err, file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
 
             if opt.writeproject:
                 with open (opt.writeproject, "w") as wpf:

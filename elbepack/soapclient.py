@@ -164,47 +164,9 @@ class CreateProjectAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        if len (args) != 1:
-            print ("usage: elbe control create_project <xmlfile>", file=sys.stderr)
-            sys.exit(20)
-
-        filename = args[0]
-
-        if not os.path.isfile (filename):
-            print ("%s doesn't exist" % filename, file=sys.stderr)
-            sys.exit (20)
-
-        x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
-        if not x.has ('target'):
-          print ("<target> is missing, this file can't be built in an initvm",
-                  file=sys.stderr)
-          sys.exit (20)
 
         uuid = client.service.new_project ()
-
-        size = 1024 * 1024
-        part = 0
-        with file (filename, "r") as fp:
-            while (True):
-                xml_base64 = binascii.b2a_base64(fp.read (size))
-                # finish upload
-                if len (xml_base64) == 1:
-                    part = client.service.upload_file (uuid,
-                                                       "source.xml",
-                                                       xml_base64,
-                                                       -1)
-                else:
-                    part = client.service.upload_file (uuid,
-                                                       "source.xml",
-                                                       xml_base64,
-                                                       part)
-                if part == -1:
-                    print ("project busy, upload not allowed")
-                    return part
-                if part == -2:
-                    print ("create project finished")
-                    print (uuid)
-                    return uuid
+        print (uuid)
 
 ClientAction.register(CreateProjectAction)
 

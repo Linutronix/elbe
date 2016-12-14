@@ -10,7 +10,7 @@ SYNOPSIS
 --------
 [verse]
 'elbe control' [options] 'list_projects'
-'elbe control' [options] 'create_project' <xmlfile>
+'elbe control' [options] 'create_project'
 'elbe control' [options] 'build_sysroot' <build-dir>
 'elbe control' [options] 'set_pdebuild' <project-dir> <pdebuild file>
 'elbe control' [options] 'get_files' <build-dir>
@@ -76,10 +76,10 @@ COMMANDS
 
 List projects available on the elbe daemon.
 
-'create_project' <xmlfile>::
+'create_project'::
 
-Create a new project on soap server. <xmlfile> is uploaded,
-and a new build-dir is created.
+Create a new project on soap server.
+a new build-dir is created.
 +
 The name of the created <build-dir> is printed to stdout, for further
 reference in subsequent commands.
