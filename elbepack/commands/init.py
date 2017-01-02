@@ -179,5 +179,8 @@ def run_command( argv ):
     shutil.copyfile( args[0],
        os.path.join(out_path, "source.xml" ) )
 
+    shutil.copyfile( "elbe-keyring.gpg",
+       os.path.join(out_path, "elbe-keyring.gpg" ) )
+
     if opt.devel:
         os.system ('tar cfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))

@@ -54,6 +54,8 @@ all: .stamps/stamp-install-initial-image
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/init-elbe.sh tmp-tree/
 	cp .elbe-in/source.xml tmp-tree/
+	mkdir -p tmp-tree/usr/share/keyrings
+	cp .elbe-in/*.gpg tmp-tree/usr/share/keyrings
 % if opt.devel:
 	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
 % endif
