@@ -108,6 +108,19 @@ def get_url ( arch, suite, target_pkg, mirror, comp='main' ):
 
     return url
 
+
+def get_initrd_uri_nonvirtapt ( apt_sources, target_pkg, arch ):
+    for apts in apt_sources.splitlines():
+        apts_split = apts.strip().split(' ')
+        if apts_split[0] != 'deb':
+            continue
+
+        for comp in apts_split[2:]:
+            pkg = get_url (arch, apts_split[2], target_pkg, apts_split[1], comp)
+
+            if pkg:
+                return "", pkg
+
 def get_initrd_uri( prj, defs, arch ):
     if arch == "default":
         arch  = prj.text("buildimage/arch", default=defs, key="arch")
@@ -116,13 +129,15 @@ def get_initrd_uri( prj, defs, arch ):
     name  = prj.text("name", default=defs, key="name")
     apt_sources = get_sources_list(prj, defs)
     apt_keys    = get_key_list (prj)
-
-    target_pkg = get_initrd_pkg(prj, defs)
+    target_pkg  = get_initrd_pkg(prj, defs)
 
     if virtapt_imported:
-        v = virtapt.VirtApt( name, arch, suite, apt_sources, "", apt_keys )
-        d = virtapt.apt_pkg.DepCache(v.cache)
+        try:
+            v = virtapt.VirtApt( name, arch, suite, apt_sources, "", apt_keys )
+        except Exception as e:
+            return get_initrd_uri_nonvirtapt (apt_sources, target_pkg, arch)
 
+        d = virtapt.apt_pkg.DepCache(v.cache)
         pkg = v.cache[target_pkg]
 
         c=d.get_candidate_ver(pkg)
@@ -137,16 +152,7 @@ def get_initrd_uri( prj, defs, arch ):
 
         return r.sha1_hash, uri
     else:
-        for apts in apt_sources.splitlines():
-            apts_split = apts.strip().split(' ')
-            if apts_split[0] != 'deb':
-                continue
-
-            for comp in apts_split[2:]:
-                pkg = get_url (arch, apts_split[2], target_pkg, apts_split[1], comp)
-
-                if pkg:
-                    return "", pkg
+        return get_initrd_uri_nonvirtapt ( apt_sources, target_pkg, arch )
 
 
     return "", ""
