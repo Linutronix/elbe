@@ -210,3 +210,5 @@ def export_key (fingerprint, outfile):
         ctx.export(fingerprint, outfile)
     except Exception as ex:
         print 'Error exporting key %s' % (fingerprint)
+
+    return '/var/cache/elbe/gnupg/pubring.gpg'
