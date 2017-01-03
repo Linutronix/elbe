@@ -16,22 +16,6 @@ support swap fs/file in buildenv
 A swap partition/file can be defined in the xml file. This may be needed to
 build huge software packages like firefox or qt.
 
-use pbuilder to build / package and use own software
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-<pkg-list>
-  <git commit=<sha1> pkgs=libbla1,libbla1-test>git://github.com/bla/libbla</git>
-  ...
-</pkg-list>
-
-will result in cloning the git repository, using the projects pbuilder to build
-debian packages (project needs to have a debianization) and adds the packages
-to a project specific debian repository. During Image build the project specific
-repository will be used and the packages specified in pkgs attribute will be
-added to the image and the binary cdrom. The debian source package (.dsc) will
-be added to the source cdrom.
-
-For rebuilding from cdroms, the binary packages should be used.
-
 improve logging
 ^^^^^^^^^^^^^^^
 currently a big log file in asciidoc format is generated. However it is missing
