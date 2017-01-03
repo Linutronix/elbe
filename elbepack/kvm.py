@@ -17,6 +17,7 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import subprocess
 
 class NoExecutableFound (Exception):
     def __init__ (self, exe_fname):
@@ -31,6 +32,12 @@ kvm_exe_list = [
 def find_kvm_exe ():
     for fname in kvm_exe_list:
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
-            return fname
+            # determine kvm version
+            cmd = subprocess.Popen (fname + ' --version', shell=True, stdout=subprocess.PIPE)
+            for line in cmd.stdout:
+                if "version" in line:
+                    version = line.split()[3].split('(')[0].strip()
+
+            return fname, version
 
     return 'kvm_executable_not_found'

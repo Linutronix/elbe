@@ -512,6 +512,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="interpreterversion" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            virtual machine interpreter version, e.g. "2.8.0", "1.4.7", ...
+          </documentation>
+        </annotation>
+      </element>
       <element name="kinitrd" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
