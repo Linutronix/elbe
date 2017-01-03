@@ -19,8 +19,10 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from elbepack.directories import pack_dir
+from platform import linux_distribution
 
 elbe_version = "1.9.15"
+running_os = linux_distribution ()
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
     is_devel = False
