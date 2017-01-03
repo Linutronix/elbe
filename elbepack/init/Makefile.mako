@@ -34,13 +34,13 @@ imgsize = prj.text('size', default=defs, key='size')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
 
-interpreter_v_major = prj.text('interpreterversion',
-                               default=defs,
-                               key='interpreterversion').split('.')[0]
+interpreter_v_major = int(prj.text('interpreterversion',
+                                   default=defs,
+                                   key='interpreterversion').split('.')[0])
 
-interpreter_v_minor = prj.text('interpreterversion',
-                               default=defs,
-                               key='interpreterversion').split('.')[1]
+interpreter_v_minor = int(prj.text('interpreterversion',
+                                   default=defs,
+                                   key='interpreterversion').split('.')[1])
 fwd = ""
 if prj.has("portforwarding"):
 	for f in prj.node("portforwarding"):
