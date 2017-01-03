@@ -220,7 +220,12 @@ class SetXmlAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
+        try:
+            x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
+        except IOError as e:
+            print ("%s is not a valid elbe xml file" % filename)
+            sys.exit (20)
+
         if not x.has ('target'):
           print ("<target> is missing, this file can't be built in an initvm",
                   file=sys.stderr)
