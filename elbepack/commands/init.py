@@ -180,8 +180,7 @@ def run_command( argv ):
        os.path.join(out_path, "source.xml" ) )
 
     if opt.cdrom:
-        shutil.copyfile( "elbe-keyring.gpg",
-            os.path.join(out_path, "elbe-keyring.gpg" ) )
+        shutil.move( "/tmp/elbe-keyring.gpg", os.path.join(out_path, "elbe-keyring.gpg" ) )
 
     if opt.devel:
         os.system ('tar cfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))

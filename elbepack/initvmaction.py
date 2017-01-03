@@ -259,6 +259,11 @@ class CreateAction(InitVMAction):
                 print ('Iso Image with valid source.xml detected !')
                 print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
 
+                os.system ('7z x -o%s "%s" elbe-keyring.gpg' % ('/tmp', args[0]))
+
+                if tmp.isfile ('elbe-keyring.gpg'):
+                    print ('Iso image contains a elbe-kerying')
+
                 exampl = tmp.fname ('source.xml')
                 cdrom = args[0]
             else:

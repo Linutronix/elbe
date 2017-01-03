@@ -66,6 +66,11 @@ all: .stamps/stamp-install-initial-image
 % if opt.devel:
 	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
 % endif
+% if opt.cdrom:
+	mkdir -p tmp-tree/usr/lib/base-installer.d
+	echo 'mkdir -p /target/etc/apt/trusted.gpg.d/; cp /usr/share/keyrings/elbe-keyring.gpg /target/etc/apt/trusted.gpg.d/' > tmp-tree/usr/lib/base-installer.d/10copyelbekeyring
+	chmod 755 tmp-tree/usr/lib/base-installer.d/*
+% endif
 	mkdir -p .elbe-gen
 	gzip -cd .elbe-in/initrd.gz >.elbe-gen/initrd-preseeded
 	cd tmp-tree && find . | cpio -H newc -o --append -F ../.elbe-gen/initrd-preseeded
