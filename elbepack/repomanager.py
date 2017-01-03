@@ -17,6 +17,8 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
+
 from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
