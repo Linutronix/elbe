@@ -321,6 +321,7 @@ class CreateAction(InitVMAction):
                 exampl = args[0]
             elif cdrom is not None:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
+                exampl = 'source.xml'
             else:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
 
