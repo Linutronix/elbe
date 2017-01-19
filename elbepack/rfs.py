@@ -120,7 +120,10 @@ class BuildEnv ():
                 "dpkg --print-architecture").strip ()
 
         if not self.xml.is_cross (host_arch):
-            if self.xml.has("project/noauth"):
+            # ignore gpg verification if install from cdrom, cause debootstrap
+            # seems to ignore /etc/apt/trusted.gpg.d/elbe-keyring.gpg
+            # 01/2017 manut
+            if self.xml.has("project/noauth") or self.xml.has("project/mirror/cdrom"):
                 cmd = 'debootstrap --include=apt-listchanges --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
             else:
