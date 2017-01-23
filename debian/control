@@ -41,6 +41,8 @@ Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
   devscripts,
+  libdistro-info-perl,
+  libparse-debcontrol-perl,
   elbe-common (= ${binary:Version}),
   python-mako,
   python-npyscreen
