@@ -1,6 +1,6 @@
-From bb51d42f16a9a9a6eaa9a9465e2a8e0a03e02e3f Mon Sep 17 00:00:00 2001
-From: Manuel Traut <manut@linutronix.de>
-Date: Wed, 29 Jun 2016 17:48:50 +0200
+From 32c89a7b87523247067ac2c2bc4ae893532e970c Mon Sep 17 00:00:00 2001
+From: John Ogness <john.ogness@linutronix.de>
+Date: Mon, 23 Jan 2017 21:00:44 +0100
 Subject: [PATCH] debian: workaround broken installkernel in jessie
 
 see: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=812266
@@ -8,34 +8,71 @@ for details.
 
 This adds the installkernel script from debianutils-4.7 to
 the root directory of the kernelsource and adds a calling
-hook to arch/x86/boot/install.sh
+hook to the install.sh script of the supported platforms.
 
-Signed-off-by: Manuel Traut <manut@linutronix.de>
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- arch/x86/boot/install.sh |  3 +-
- installkernel            | 89 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 91 insertions(+), 1 deletion(-)
- create mode 100755 installkernel
+ arch/arm/boot/install.sh     |  1 +
+ arch/arm64/boot/install.sh   |  1 +
+ arch/powerpc/boot/install.sh |  1 +
+ arch/x86/boot/install.sh     |  1 +
+ elbe_installkernel           | 89 ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 93 insertions(+)
+ create mode 100644 elbe_installkernel
 
-diff --git a/arch/x86/boot/install.sh b/arch/x86/boot/install.sh
-index d13ec1c..bab64d8 100644
---- a/arch/x86/boot/install.sh
-+++ b/arch/x86/boot/install.sh
-@@ -34,7 +34,8 @@ verify "$3"
+diff --git a/arch/arm/boot/install.sh b/arch/arm/boot/install.sh
+index 2a45092..991f065 100644
+--- a/arch/arm/boot/install.sh
++++ b/arch/arm/boot/install.sh
+@@ -36,6 +36,7 @@ verify "$3"
+ 
+ # User may have a custom install script
+ if [ -x ~/bin/${INSTALLKERNEL} ]; then exec ~/bin/${INSTALLKERNEL} "$@"; fi
++if [ -f ../../elbe_installkernel ]; then exec sh ../../elbe_installkernel "$@"; fi
+ if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
+ 
+ if [ "$(basename $2)" = "zImage" ]; then
+diff --git a/arch/arm64/boot/install.sh b/arch/arm64/boot/install.sh
+index d91e1f0..789cd1e 100644
+--- a/arch/arm64/boot/install.sh
++++ b/arch/arm64/boot/install.sh
+@@ -36,6 +36,7 @@ verify "$3"
+ 
+ # User may have a custom install script
+ if [ -x ~/bin/${INSTALLKERNEL} ]; then exec ~/bin/${INSTALLKERNEL} "$@"; fi
++if [ -f ../../elbe_installkernel ]; then exec sh ../../elbe_installkernel "$@"; fi
+ if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
+ 
+ if [ "$(basename $2)" = "Image.gz" ]; then
+diff --git a/arch/powerpc/boot/install.sh b/arch/powerpc/boot/install.sh
+index b6a256b..472da56 100644
+--- a/arch/powerpc/boot/install.sh
++++ b/arch/powerpc/boot/install.sh
+@@ -24,6 +24,7 @@ set -e
  # User may have a custom install script
  
  if [ -x ~/bin/${INSTALLKERNEL} ]; then exec ~/bin/${INSTALLKERNEL} "$@"; fi
--if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
-+if [ -x ../../installkernel ]; then exec ../../installkernel "$@"; fi
-+#if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
++if [ -f ../../elbe_installkernel ]; then exec sh ../../elbe_installkernel "$@"; fi
+ if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
+ 
+ # Default install
+diff --git a/arch/x86/boot/install.sh b/arch/x86/boot/install.sh
+index d13ec1c..7c5263b 100644
+--- a/arch/x86/boot/install.sh
++++ b/arch/x86/boot/install.sh
+@@ -34,6 +34,7 @@ verify "$3"
+ # User may have a custom install script
+ 
+ if [ -x ~/bin/${INSTALLKERNEL} ]; then exec ~/bin/${INSTALLKERNEL} "$@"; fi
++if [ -f ../../elbe_installkernel ]; then exec sh ../../elbe_installkernel "$@"; fi
+ if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
  
  # Default install - same as make zlilo
- 
-diff --git a/installkernel b/installkernel
-new file mode 100755
+diff --git a/elbe_installkernel b/elbe_installkernel
+new file mode 100644
 index 0000000..3aef978
 --- /dev/null
-+++ b/installkernel
++++ b/elbe_installkernel
 @@ -0,0 +1,89 @@
 +#!/bin/sh
 +# 
@@ -127,5 +164,5 @@ index 0000000..3aef978
 + 
 +exit 0
 -- 
-2.8.1
+2.1.4
 
