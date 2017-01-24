@@ -139,7 +139,7 @@ index 0000000..3aef978
 +  fi
 +}
 +
-+if [ "$(basename $img)" = "vmlinux" ] ; then
++if [ "$(basename $img)" = "vmlinux" -o "$(basename $img)" = "Image" ] ; then
 +  img_dest=vmlinux
 +else
 +  img_dest=vmlinuz

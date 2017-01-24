@@ -37,7 +37,7 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	mkdir -p $(MOD_PATH) $(FW_PATH) $(HDR_PATH) $(KERNEL_PATH) $(DTBS_PATH)
-	make $(MAKE_OPTS) install
+	make $(MAKE_OPTS) ${imgtype_install}
 	make $(MAKE_OPTS) INSTALL_MOD_STRIP=1 modules_install
 	make $(MAKE_OPTS) firmware_install
 	make $(MAKE_OPTS) headers_install
