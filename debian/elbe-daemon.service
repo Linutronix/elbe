@@ -1,0 +1,7 @@
+[Unit]
+Description=ELBE Daemon
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/elbe-daemon
+ExecStart=/usr/bin/elbe $DAEMON_ARGS
