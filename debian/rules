@@ -10,5 +10,8 @@ override_dh_clean:
 override_dh_compress:
 	dh_compress -X.xml
 
+override_dh_systemd_start:
+	dh_systemd_start --no-package=elbe
+
 %:
-	dh --buildsystem=python_distutils --with python2 $@
+	dh --with systemd --buildsystem=python_distutils --with python2 $@

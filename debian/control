@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Manuel Traut <manut@linutronix.de>
 Build-Depends: dh-python,
   debhelper (>= 7),
+  dh-systemd (>= 1.5),
   python (>= 2.7~),
   python-mako,
   python-lxml,

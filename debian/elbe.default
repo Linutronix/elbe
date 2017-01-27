@@ -1,0 +1,3 @@
+# path to elbe initvm
+
+INITVMDIR = "/scratch/elbe"
