@@ -35,6 +35,7 @@ from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs
 from elbepack.dump import check_full_pkgs
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
+from elbepack.spdx import get_spdx
 
 from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook, pbuilder_write_apt_conf
 from elbepack.repomanager import ProjectRepo
@@ -331,6 +332,9 @@ class ElbeProject (object):
                                                         self.builddir,
                                                         self.log,
                                                         cdrom_size=cdrom_size )
+                    self.repo_images += get_spdx(self.builddir,
+                                                 self.xml,
+                                                 self.log)
                 except SystemError as e:
                     # e.g. no deb-src urls specified
                     self.log.printo( str (e) )
