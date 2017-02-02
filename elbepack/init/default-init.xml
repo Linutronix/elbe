@@ -28,6 +28,14 @@
 						http://debian.linutronix.de/elbe-common/elbe-repo.pub
 					</key>
 				</url>
+				<url>
+					<binary>
+						http://ftp.debian.org/debian jessie-backports main
+					</binary>
+					<source>
+						http://ftp.debian.org/debian jessie-backports main
+					</source>
+				</url>
 			</url-list>
 		</mirror>
 		<suite>jessie</suite>
