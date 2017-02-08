@@ -1,3 +1,19 @@
+elbe (1.9.16) unstable; urgency=medium
+
+  * control-create_project: creates an empty project now, than control-set_xml
+     needs to be used to upload a project-description
+  * add support for using debian/sid on targets
+  * control-set_xml accepts large XML files now
+  * finetuning: bugfix to avoid deleting/moving files from initvm
+  * systemd service files for elbe-daemon and elbe-initvm
+  * elbe-debianize: fixes z/uImage install target
+  * initvm-create: bufixes enabling rebuilding from bin-cdrom.iso
+  * contrib/linux: make the patch also work for !x86 architectures
+  * elbe-debianize: fix runtime dependencies
+  * initvm-start: use ipv4 on newer qemu versions
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 08 Feb 2017 06:03:18 +0100
+
 elbe (1.9.15) unstable; urgency=medium
 
   * fix second stage debootstrap for noauth case

@@ -21,7 +21,7 @@
 from elbepack.directories import pack_dir
 from platform import linux_distribution
 
-elbe_version = "1.9.15"
+elbe_version = "1.9.16"
 running_os = linux_distribution ()
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
