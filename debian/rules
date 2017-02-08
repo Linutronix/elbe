@@ -13,5 +13,8 @@ override_dh_compress:
 override_dh_systemd_start:
 	dh_systemd_start --no-package=elbe
 
+override_dh_systemd_stop:
+	dh_systemd_stop --no-package=elbe
+
 %:
 	dh --with systemd --buildsystem=python_distutils --with python2 $@
