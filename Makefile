@@ -1,6 +1,6 @@
 all:
 	./test/testdeb.sh
-	dpkg-buildpackage --source-option="-I .git"
+	dpkg-buildpackage
 	lintian
 	cd contrib/debathena-transform-lighttpd && \
 		dpkg-buildpackage -uc -us && \
