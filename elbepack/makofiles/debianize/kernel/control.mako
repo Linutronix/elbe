@@ -17,6 +17,7 @@ Description: Linux kernel, version ${p_name} ${k_version}
 
 Package: linux-headers-${p_name}-${k_version}
 Provides: linux-headers, linux-headers-2.6
+Replaces: linux-libc-dev
 Architecture: ${p_arch}
 Description: Linux kernel headers
  This package provides kernel header files
