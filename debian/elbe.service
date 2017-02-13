@@ -6,3 +6,6 @@ Type=forking
 EnvironmentFile=/etc/default/elbe
 ExecStart=/usr/bin/elbe initvm --directory ${INITVMDIR} start
 ExecStop=/usr/bin/elbe control shutdown_initvm
+
+[Install]
+WantedBy=multi-user.target
