@@ -1,4 +1,6 @@
 #!/bin/sh
 set -e
 # this is needed for jessie, in stretch/sid it is already go readable
-chmod go+r /etc/apt/trusted.gpg
+if [ -f /etc/apt/trusted.gpg ]; then
+	chmod go+r /etc/apt/trusted.gpg
+fi
