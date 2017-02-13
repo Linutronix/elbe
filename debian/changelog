@@ -1,3 +1,11 @@
+elbe (1.9.17) unstable; urgency=medium
+
+  * add [install] section to systemd service files
+  * bugfix: avoid change /etc/apt/trusted.gpg permissions if not exists
+  * elbe-debianize: allow kernel-header package overwrite *.h files of libc-dev
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 13 Feb 2017 10:26:02 +0100
+
 elbe (1.9.16) unstable; urgency=medium
 
   * control-create_project: creates an empty project now, than control-set_xml
