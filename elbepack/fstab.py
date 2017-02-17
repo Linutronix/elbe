@@ -46,9 +46,41 @@ def get_devicelabel( xml, node ):
   else:
     return "LABEL=" + node.text("label")
 
+class mountpoint_dict (dict):
+    def __init__(self):
+        self.id_count = 0
+
+    def register (self, fstabentry):
+        mp = fstabentry.mountpoint
+
+        if self.has_key (mp):
+            fstabentry.id = self[mp].id
+        else:
+            fstabentry.id = str(self.id_count)
+            self[mp] = fstabentry
+            self.id_count += 1
+
+    @staticmethod
+    def mountdepth(mp):
+        depth = 0
+
+        while True:
+            mp, t = os.path.split(mp)
+            if t=='':
+                return depth
+            depth += 1
+
+    def depthlist (self):
+        mplist = self.keys()
+        mplist.sort (key=mountpoint_dict.mountdepth)
+
+        return [self[x] for x in mplist]
+
+
+
 
 class fstabentry(object):
-    def __init__(self, xml, entry):
+    def __init__(self, xml, entry, id=0):
         if entry.has("source"):
             self.source = entry.text("source")
         else:
@@ -66,6 +98,8 @@ class fstabentry(object):
             self.passno = entry.text("passno")
         else:
             self.passno = "0"
+
+        self.id = str(id)
 
     def get_str(self):
         return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint, self.fstype, self.options, self.passno)
