@@ -73,7 +73,7 @@ class CreateAction(PBuilderAction):
         tmp = TmpdirFilesystem ()
 
         if opt.xmlfile:
-            ret, prjdir, err = command_out_stderr ('%s control create_project"' % (elbe_exe))
+            ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
             if ret != 0:
                 print ("elbe control create_project failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
@@ -81,8 +81,8 @@ class CreateAction(PBuilderAction):
                 sys.exit(20)
 
             prjdir = prjdir.strip()
+            ret, msg, err = command_out_stderr ('%s control set_xml "%s" "%s"' % (elbe_exe, prjdir, opt.xmlfile))
 
-            ret, msg, err = command_out_stderr ('%s control set_xml "%s %s"' % (elbe_exe, prjdir, opt.xmlfile))
             if ret != 0:
                 print ("elbe control set_xml failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
