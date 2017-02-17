@@ -148,6 +148,30 @@ class EnsureAction(InitVMAction):
 
 InitVMAction.register(EnsureAction)
 
+
+class StopAction(InitVMAction):
+
+    tag = 'stop'
+
+    def __init__(self, node):
+        InitVMAction.__init__(self, node)
+
+    def execute(self, initvmdir, opt, args):
+        try:
+            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
+        except CommandError as e:
+            print ("tmux execution failed, tmux version 1.9 or higher is required")
+            sys.exit(20)
+        if have_session == 0:
+            os.system( '%s control shutdown_initvm' % elbe_exe )
+        else:
+            print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
+            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
+            sys.exit(20)
+
+InitVMAction.register(StopAction)
+
+
 class AttachAction(InitVMAction):
 
     tag = 'attach'
