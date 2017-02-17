@@ -22,7 +22,7 @@ from string import digits
 import parted
 import _ped
 
-from elbepack.fstab import fstabentry
+from elbepack.fstab import fstabentry, mountpoint_dict
 from elbepack.asciidoclog import CommandError
 
 def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
@@ -50,7 +50,7 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
 
         try:
             outf.do( "mkfs.ubifs -r %s -o %s.ubifs -m %s -e %s -c %s %s" % (
-                os.path.join(target,"filesystems",label),
+                os.path.join(target,"filesystems",fslabel[label].id),
                 os.path.join(target,label),
                 ubivg.text("miniosize"),
                 ubivg.text("logicaleraseblocksize"),
@@ -340,7 +340,7 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
     outf.do( 'mkfs.%s %s %s /dev/loop0' % ( entry.fstype, entry.mkfsopt, entry.get_label_opt() ) )
 
     outf.do( 'mount /dev/loop0 %s' % os.path.join(target, "imagemnt" ) )
-    outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.label ), os.path.join(target, "imagemnt") ), allow_fail=True )
+    outf.do( 'cp -a "%s"/* "%s"' % ( os.path.join( target, "filesystems", entry.id ), os.path.join(target, "imagemnt") ), allow_fail=True )
     outf.do( 'umount /dev/loop0' )
     outf.do( 'losetup -d /dev/loop0' )
 
@@ -452,31 +452,40 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
 
     # Build a dictonary of mount points
     fslabel = {}
+    mountpoints = mountpoint_dict ()
+
     for fs in xml.tgt.node("fstab"):
         if fs.tag != "bylabel":
             continue
 
-        fslabel[fs.text("label")] = fstabentry(xml, fs)
+        # Create fstabentry Object
+        e = fstabentry(xml, fs)
 
-    # Build a sorted list of mountpoints
-    fslist = fslabel.values()
-    fslist.sort( key = lambda x: x.mountdepth() )
+        # register it with mountpoints,
+        # this also sets the id field
+        mountpoints.register (e)
 
-    # now move all mountpoints into own directories
-    # begin from deepest mountpoints
+        fslabel[fs.text("label")] = e
 
+    # Get the sorted list of mountpoints
+    fslist = mountpoints.depthlist ()
+
+    # create directories, where we want our
+    # filesystems later
     fspath = os.path.join(target, "filesystems")
     outf.do( 'mkdir -p %s' % fspath )
 
     imagemnt = os.path.join(target, "imagemnt")
     outf.do( 'mkdir -p %s' % imagemnt )
 
+    # now move all mountpoints into own directories
+    # begin from deepest mountpoints
     for l in reversed(fslist):
-        outf.do( 'mkdir -p "%s"' % os.path.join( fspath, l.label ) )
+        outf.do( 'mkdir -p "%s"' % os.path.join( fspath, l.id ) )
         outf.do( 'mkdir -p "%s"' % rfs.fname('') + l.mountpoint )
         if len(rfs.listdir( l.mountpoint )) > 0:
             outf.do( 'mv "%s"/* "%s"' % ( rfs.fname(l.mountpoint), os.path.join(
-                fspath, l.label ) ), allow_fail=True )
+                fspath, l.id ) ), allow_fail=True )
 
     try:
         # Now iterate over all images and create filesystems and partitions
@@ -496,8 +505,8 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         # Put back the filesystems into /target
         # most shallow fs first...
         for i in fslist:
-            if len(os.listdir(os.path.join( fspath, i.label ))) > 0:
-                outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.label ),
+            if len(os.listdir(os.path.join( fspath, i.id ))) > 0:
+                outf.do( 'mv "%s"/* "%s"' % ( os.path.join( fspath, i.id ),
                     rfs.fname(i.mountpoint) ), allow_fail=True )
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
