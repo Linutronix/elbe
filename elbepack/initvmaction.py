@@ -519,6 +519,8 @@ class SubmitAction(InitVMAction):
                 build_opts += '--build-bin '
             if opt.build_sources:
                 build_opts += '--build-sources '
+            if cdrom:
+                build_opts += '--skip-pbuilder '
 
             try:
                 system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
