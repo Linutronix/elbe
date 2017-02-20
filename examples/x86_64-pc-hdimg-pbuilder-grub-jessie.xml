@@ -16,6 +16,12 @@
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
+		<package>
+			<!-- build a tarball of the target image -->
+			<tar>
+				<name>jessie-rfs.tgz</name>
+			</tar>
+		</package>
 		<images>
 			<msdoshd>
 				<name>sda.img</name>
