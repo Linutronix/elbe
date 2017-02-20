@@ -1,3 +1,10 @@
+elbe (1.9.18) unstable; urgency=medium
+
+  * bugfix: make elbe pbuilder create --xmlfile working again
+  * add an 'elbe initvm stop' command
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 20 Feb 2017 11:00:49 +0100
+
 elbe (1.9.17) unstable; urgency=medium
 
   * add [install] section to systemd service files
