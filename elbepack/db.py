@@ -480,7 +480,7 @@ class ElbeDB(object):
 
             if not p.status in allowed_status:
                 raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
+                        " set_busy: invalid status: " + p.status )
 
             old_status = p.status
             p.status = "busy"
@@ -517,7 +517,7 @@ class ElbeDB(object):
                         builddir )
 
             if p.status != "busy":
-                raise ElbeDBError( "project: " + builddir + " invalid status: " +
+                raise ElbeDBError( "project: " + builddir + " reset_busy: invalid status: " +
                         p.status )
 
             p.status = new_status
@@ -571,7 +571,7 @@ class ElbeDB(object):
 
             if p.status == "empty_project" or p.status == "busy":
                 raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
+                        " set_project_version: invalid status: " + p.status )
 
             xmlpath = os.path.join( builddir, "source.xml" )
             xml = ElbeXML( xmlpath, skip_urlcheck=True )
@@ -723,7 +723,7 @@ class ElbeDB(object):
 
             if p.status == "busy":
                 raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
+                        " get_project_files: invalid status: " + p.status )
 
             return [ ProjectFileData(f) for f in p.files ]
 
@@ -738,7 +738,7 @@ class ElbeDB(object):
 
             if p.status == "busy":
                 raise ElbeDBError( "project: " + builddir +
-                        " invalid status: " + p.status )
+                        " get_project_file: invalid status: " + p.status )
 
             try:
                 f = s.query( ProjectFile ).\
