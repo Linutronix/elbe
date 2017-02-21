@@ -98,6 +98,8 @@ class ESoap (ServiceBase):
                 fp.flush ()
             self.app.pm.db.reset_busy (builddir, "has_changes")
             if (fname == "source.xml"):
+                # ensure that the project cache is reloaded
+                self.app.pm.close_current_project (uid)
                 self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
                 self.app.pm.set_current_project_xml (uid, fn)
             return -2
