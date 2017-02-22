@@ -288,8 +288,9 @@ class TargetFs(ChRootFilesystem):
         f = self.open("etc/fstab", "w")
         if xml.tgt.has("fstab"):
             for fs in xml.tgt.node("fstab"):
-                fstab = fstabentry(xml, fs)
-                f.write (fstab.get_str ())
+                if not fs.has("nofstab"):
+                    fstab = fstabentry(xml, fs)
+                    f.write (fstab.get_str ())
             f.close()
 
     def part_target(self, targetdir, grub_version):
