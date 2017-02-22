@@ -1896,4 +1896,12 @@
       </element>
     </sequence>
   </complexType>
+
+  <complexType name="empty">
+    <annotation>
+      <documentation>
+        This element just acts like a flag. It might be there, or not.
+      </documentation>
+    </annotation>
+  </complexType>
 </schema>
