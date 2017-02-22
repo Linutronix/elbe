@@ -727,7 +727,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="tighten" type="string" minOccurs="0">
+      <element name="tighten" type="rfs:empty" minOccurs="0">
         <annotation>
           <documentation>
             don't install any dependencies; just the content of the given debian
@@ -735,7 +735,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="diet" type="string" minOccurs="0">
+      <element name="diet" type="rfs:empty" minOccurs="0">
         <annotation>
           <documentation>
             use reverse dependencies of the given debian packages to determine
@@ -743,7 +743,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="setsel" type="string" minOccurs="0">
+      <element name="setsel" type="rfs:empty" minOccurs="0">
         <annotation>
           <documentation>
             Elbe uses +dpkg --set-selections+ to install packages in the target.
@@ -753,7 +753,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="norecommend" type="string" minOccurs="0">
+      <element name="norecommend" type="rfs:empty" minOccurs="0">
         <annotation>
           <documentation>
             Turn off the installation of recommended Packages.
