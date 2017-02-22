@@ -1207,6 +1207,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="nofstab" type="rfs:empty" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+		  This mountpoint shall not be inserted into fstab.
+		  Useful for redundant filesystems, where two entries
+		  with identical mountpoint would end up in the fstab.
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
   </complexType>
 
