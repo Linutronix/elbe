@@ -1526,7 +1526,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="rm" type="string" minOccurs="0">
+      <element name="rm" type="rfs:rm" minOccurs="0">
         <annotation>
           <documentation>
             remove a file or directory (recursive)
@@ -1677,6 +1677,20 @@
     <simpleContent>
       <extension base="string">
         <attribute name="path" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="rm">
+    <annotation>
+      <documentation>
+	      describes a removal of a pattern from the rootfilesystem.
+	      Including an exclude pattern
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="exclude" type="string" use="optional" />
       </extension>
     </simpleContent>
   </complexType>

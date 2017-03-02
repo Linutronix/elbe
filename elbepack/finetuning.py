@@ -53,7 +53,18 @@ class RmAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        log.do( "rm -rvf " + target.fname( self.node.et.text ) )
+        files = target.glob( self.node.et.text )
+
+        if self.node.et.attrib.has_key ('exclude'):
+            exclude = self.node.et.attrib['exclude'].split (' ')
+        else:
+            exclude = []
+
+        for f in files:
+            if os.path.basename (f) in exclude:
+                continue
+
+            log.do( "rm -rvf '%s'" % f )
 
 FinetuningAction.register( RmAction )
 
