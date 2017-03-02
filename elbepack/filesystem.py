@@ -104,7 +104,12 @@ class Filesystem(object):
         return retval
 
     def glob( self, path ):
-        return glob( self.fname( path ) )
+        flist = glob( self.fname( path ) )
+        for i in flist:
+            if not i.startswith (self.path):
+                raise IOError("Broken glob '%s'" % path)
+
+        return flist
 
     def write_file( self, path, mode, cont ):
         f = self.open( path, "w" )
