@@ -71,6 +71,8 @@ def mirror_script_add_key(mirror, key_url):
     mirror += key_text + "\n"
     mirror += "EOF\n"
 
+    return mirror
+
 def pbuilder_write_repo_hook (builddir, xml):
 
     pbuilder_hook_dir = os.path.join (builddir, "pbuilder", "hooks.d")
@@ -87,7 +89,7 @@ def pbuilder_write_repo_hook (builddir, xml):
 
     mirror += 'echo "deb http://127.0.0.1:8080' + builddir + '/repo ' + xml.prj.text("suite") + ' main" > /etc/apt/sources.list\n'
 
-    mirror_script_add_key (mirror, 'http://127.0.0.1:8080' + builddir + '/repo/repo.pub')
+    mirror = mirror_script_add_key (mirror, 'http://127.0.0.1:8080' + builddir + '/repo/repo.pub')
 
     if xml.prj.has("mirror/primary_host"):
         mirror += 'echo "deb ' + xml.get_primary_mirror (None) + ' ' + xml.prj.text("suite") + ' main" >> /etc/apt/sources.list\n'
@@ -98,7 +100,7 @@ def pbuilder_write_repo_hook (builddir, xml):
                     mirror += 'echo "deb ' + url.text("binary").strip() + '" >> /etc/apt/sources.list\n'
                 if url.has("key"):
                     key_url = url.text("key").strip()
-                    mirror_script_add_key (mirror, key_url)
+                    mirror = mirror_script_add_key (mirror, key_url)
 
 
     if xml.prj.has("mirror/cdrom"):
