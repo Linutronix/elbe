@@ -75,7 +75,7 @@ class Kernel (DebianizeBase):
         for tmpl in ['control', 'rules', 'preinst', 'postinst', 'prerm', 'postrm']:
             with open (os.path.join('debian/', tmpl), 'w') as f:
                 mako = os.path.join(self.tmpl_dir, tmpl+'.mako')
-                f.write (template(self.deb, mako))
+                f.write (template(mako, self.deb))
 
         cmd = 'dch --package linux-' + pkg_name + \
                    ' -v ' + self.deb['p_version'] + \

@@ -28,10 +28,7 @@ from npyscreen import TitleText, TitleSelectOne, ButtonPress, notify
 
 from shutil import copyfile
 
-from mako.template import Template
-
-def template (deb, fname):
-    return Template(filename=fname).render(**deb)
+from elbepack.templates import template
 
 class DebianizeBase (FormMultiPage):
     def __init__ (self):
@@ -100,7 +97,7 @@ class DebianizeBase (FormMultiPage):
 
         with open ('debian/source/format', 'w') as f:
             mako = os.path.join(self.tmpl_dir, 'format.mako')
-            f.write (template(self.deb, mako))
+            f.write (template(mako, self.deb))
 
         copyfile (os.path.join(self.tmpl_dir, 'copyright'), 'debian/copyright')
         with open ('debian/compat', 'w') as f:
