@@ -28,6 +28,7 @@ from shutil import copyfile
 
 from elbepack.debianize.kernel import Kernel
 from elbepack.debianize.uboot  import UBoot
+from elbepack.debianize.barebox import BareBox
 
 from elbepack.debianize.base import DebianizeBase
 
