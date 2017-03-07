@@ -31,6 +31,25 @@ from shutil import copyfile
 from elbepack.templates import template
 
 class DebianizeBase (FormMultiPage):
+
+    srctypes = {}
+
+    @classmethod
+    def register (cls, srctype):
+        cls.srctypes[srctype.name] = srctype
+
+    @classmethod
+    def get_debianizer (cls):
+        for t in cls.srctypes.values ():
+           match = True
+           for f in t.files:
+               if not os.path.exists (f):
+                   match = False
+           if match:
+               return t
+
+        raise KeyError
+
     def __init__ (self):
         self.deb = { }
         self.tmpl_dir = None

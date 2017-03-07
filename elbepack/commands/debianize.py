@@ -21,22 +21,19 @@
 import os
 import sys
 
-from elbepack.debianize.debianize import files, debianizer, Debianize
+from elbepack.debianize.debianize import Debianize, DebianizeBase
 
 def run_command ( args ):
     if os.path.exists ('debian'):
         print 'debian folder already exists, nothing to do'
-        sys.exit (-1)
+        sys.exit (10)
 
-    for key in files.keys ():
-       match = True
-       for f in files[key]:
-           if not os.path.exists (f):
-               match = False
-       if match:
-           Debianize (debianizer[key]).run ()
-           sys.exit(-1)
-
-    print ("this creates a debinization of a kernel source")
-    print ("please run the command from kernel source dir")
-    sys.exit (-2)
+    try:
+        debianizer = DebianizeBase.get_debianizer ()
+        Debianize (debianizer).run ()
+        sys.exit(10)
+    except KeyError:
+        print ("This creates a debinization of a source directory.")
+        print ("The software was not able to identify the current directory.")
+        print ("Please run the command from source directory")
+        sys.exit (20)

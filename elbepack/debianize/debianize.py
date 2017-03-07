@@ -26,18 +26,11 @@ from npyscreen import TitleText, TitleSelectOne, ButtonPress
 
 from shutil import copyfile
 
-##############################################################################
-#TODO before adding another helper, refactor the code to be 'plugin-like',
-# see finetuning for example.
-
 from elbepack.debianize.kernel import Kernel
 from elbepack.debianize.uboot  import UBoot
-debianizer = {'kernel': Kernel,
-              'uboot':  UBoot}
 
-files = {'kernel': ['Kbuild', 'Kconfig', 'MAINTAINERS', 'REPORTING-BUGS'],
-         'uboot':  ['Kbuild', 'Kconfig', 'MAINTAINERS', 'config.mk'],}
-##############################################################################
+from elbepack.debianize.base import DebianizeBase
+
 
 class Debianize (NPSAppManaged):
     def __init__ (self, debianizer):

@@ -31,6 +31,10 @@ from elbepack.debianize.base import DebianizeBase, template
 # this is just a template to show how debianizing another component should work
 
 class UBoot (DebianizeBase):
+
+    name  = "uboot"
+    files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'config.mk']
+
     def __init__ (self):
         print ("debianization of uboot is not supported at the moment")
         sys.exit (-2)
@@ -41,3 +45,5 @@ class UBoot (DebianizeBase):
 
     def debianize (self):
         pass
+
+DebianizeBase.register (UBoot)

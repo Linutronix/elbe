@@ -29,6 +29,10 @@ from elbepack.directories import mako_template_dir
 from elbepack.debianize.base import DebianizeBase, template
 
 class Kernel (DebianizeBase):
+
+    name  = "kernel"
+    files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'REPORTING-BUGS']
+
     def __init__ (self):
         self.imgtypes = ["bzImage", "zImage", "uImage", "Image"]
         self.imgtypes_install = ["install", "zinstall", "uinstall", "install"]
@@ -89,3 +93,5 @@ class Kernel (DebianizeBase):
                   'debian/linux-headers-'+pkg_name+'.install')
 
         self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % self.deb['p_arch']
+
+DebianizeBase.register (Kernel)
