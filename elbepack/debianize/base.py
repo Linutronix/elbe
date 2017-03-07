@@ -85,11 +85,13 @@ class DebianizeBase (FormMultiPage):
                 value = [0],
                 scroll_exit = True)
 
+        fullname = os.environ.get ('DEBFULLNAME', failobj="Max Mustermann")
         self.m_name = self.add_widget_intelligent (TitleText,
-                name = "Maintainer:", value = "Max Mustermann")
+                name = "Maintainer:", value = fullname)
 
+        email = os.environ.get ('DEBEMAIL', failobj="max@mustermann.org")
         self.m_mail = self.add_widget_intelligent (TitleText,
-                name = "Mail:", value = "max@mustermann.org")
+                name = "Mail:", value = email)
 
         self.add_page ()
         self.gui ()
