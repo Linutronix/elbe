@@ -99,7 +99,7 @@ class DebianizeBase (FormMultiPage):
             mako = os.path.join(self.tmpl_dir, 'format.mako')
             f.write (template(mako, self.deb))
 
-        copyfile (os.path.join(self.tmpl_dir, 'copyright'), 'debian/copyright')
+        copyfile ('COPYING', 'debian/copyright')
         with open ('debian/compat', 'w') as f:
             f.write ('9')
 
