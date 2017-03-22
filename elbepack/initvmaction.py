@@ -298,15 +298,18 @@ class CreateAction(InitVMAction):
             exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
 
         try:
+            init_opts = '';
             if opt.devel:
-                devel = ' --devel'
-            else:
-                devel = ''
+                init_opts += ' --devel'
+
+            if opt.nesting:
+                init_opts += ' --nesting'
+
 
             if cdrom:
-                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, devel, initvmdir, cdrom, exampl))
+                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, init_opts, initvmdir, cdrom, exampl))
             else:
-                system ('%s init %s --directory "%s" "%s"' % (elbe_exe, devel, initvmdir, exampl))
+                system ('%s init %s --directory "%s" "%s"' % (elbe_exe, init_opts, initvmdir, exampl))
 
         except CommandError:
             print ("'elbe init' Failed", file=sys.stderr)

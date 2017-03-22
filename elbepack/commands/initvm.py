@@ -59,6 +59,10 @@ def run_command (argv):
     oparser.add_option ("--writeproject", dest="writeproject", default=None,
                         help="write project name to file")
 
+    oparser.add_option( "--nesting", dest="nesting",
+                        action="store_true", default=False,
+           help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host." )
+
     (opt,args) = oparser.parse_args (sys.argv)
     args = args[2:]
 
