@@ -125,6 +125,9 @@ run:
 % else:
 		-netdev user,id=user.0${fwd} \
 % endif
+% if opt.nesting:
+		-cpu host \
+% endif
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
@@ -139,6 +142,9 @@ run-con:
 		-netdev user,ipv4,id=user.0${fwd} \
 % else:
 		-netdev user,id=user.0${fwd} \
+% endif
+% if opt.nesting:
+		-cpu host \
 % endif
 		-m $(MEMSIZE) \
 		-usb \

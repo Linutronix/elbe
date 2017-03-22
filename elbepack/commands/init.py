@@ -63,6 +63,10 @@ def run_command( argv ):
                         action="store_true", default=False,
            help="use devel mode, and install current builddir inside initvm" )
 
+    oparser.add_option( "--nesting", dest="nesting",
+                        action="store_true", default=False,
+           help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host." )
+
     (opt,args) = oparser.parse_args(argv)
 
     print opt.directory
