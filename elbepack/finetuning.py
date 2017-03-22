@@ -368,6 +368,8 @@ class UpdatedAction(FinetuningAction):
 
         rmtree (buildenv.rfs.path + '/tmp/pkgs')
 
+        # allow downgrades by default
+        target.touch_file ('/var/cache/elbe/.downgrade_allowed')
 
 FinetuningAction.register( UpdatedAction )
 
