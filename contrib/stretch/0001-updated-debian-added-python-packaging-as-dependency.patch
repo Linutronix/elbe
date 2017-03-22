@@ -1,0 +1,25 @@
+From b7b647a1151429894c2d6a4ae289e25df345d68e Mon Sep 17 00:00:00 2001
+From: Kurt Kanzenbach <kurt@linutronix.de>
+Date: Wed, 22 Mar 2017 12:36:39 +0100
+Subject: [PATCH] updated: debian: added python-packaging as dependency
+
+Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+---
+ debian/control | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/debian/control b/debian/control
+index 1148287..477ec2b 100644
+--- a/debian/control
++++ b/debian/control
+@@ -155,6 +155,7 @@ Depends: ${misc:Depends},
+   python-apt,
+   python-suds,
+   python-phyne,
++  python-packaging,
+   lsb-base (>= 3.0-6)
+ Suggests: python-pyudev,
+   usbmount
+-- 
+2.1.4
+
