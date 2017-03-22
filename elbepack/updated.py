@@ -35,6 +35,7 @@ from soaplib.serializers.primitive import String
 from suds.client import Client
 from syslog import syslog
 from zipfile import (ZipFile, BadZipfile)
+from packaging import version
 
 from elbepack.aptprogress import (ElbeInstallProgress,
  ElbeAcquireProgress, ElbeOpProgress)
@@ -343,6 +344,35 @@ def get_current_version ():
     with open ("/etc/updated_version", "r") as version_file:
         return version_file.read ()
 
+def get_base_version ():
+    xml = etree ("/etc/elbe_base.xml")
+    return xml.text ("/project/version")
+
+def is_downgrade (target_version, current_version, base_version):
+    current = current_version
+    if current == "":
+        current = base_version
+    return version.parse (target_version) < version.parse (current)
+
+def is_downgrade_allowed ():
+    return os.path.isfile ("/var/cache/elbe/.downgrade_allowed")
+
+def reject_downgrade (status, new_xml_file):
+    t_ver = get_target_version(new_xml_file)
+    b_ver = get_base_version()
+
+    try:
+        c_ver = get_current_version()
+    except IOError as e:
+        status.log ('get current version failed: ' + str (e))
+        c_ver = ""
+
+    if is_downgrade (t_ver, c_ver, b_ver) and not is_downgrade_allowed ():
+        status.log ('Update is a downgrade and downgrades are not allowed')
+        return True
+
+    return False
+
 def apply_update (fname, status):
     # As soon as python-apt closes its opened files on object deletion
     # we can drop this fork workaround. As long as they keep their files
@@ -388,6 +418,14 @@ def action_select (upd_file, status):
 
     with rw_access ("/tmp", status):
         upd_file_z.extract ("new.xml", "/tmp/")
+
+    # prevent downgrades
+    try:
+        if reject_downgrade (status, "/tmp/new.xml"):
+            return
+    except Exception as e:
+        status.log ('Error while reading XML files occurred: ' + str(e))
+        return
 
     xml = etree ("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
