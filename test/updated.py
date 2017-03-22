@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-# there are warnings raised by python-soaplib
-import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
+#!/usr/bin/env python2
 
 import soaplib
 import sys
@@ -10,14 +6,15 @@ import threading
 import time
 
 from optparse import OptionParser
-from soaplib.service import soapmethod
-from soaplib.wsgi_soap import SimpleWSGISoapApp
-from soaplib.serializers.primitive import String, Array
+from spyne.model.primitive import String
+from spyne import Application, rpc, ServiceBase
+from spyne.protocol.soap import Soap11
+from spyne.server.wsgi import WsgiApplication
 from suds.client import Client
 from wsgiref.simple_server import make_server
 
-class MonitorService (SimpleWSGISoapApp):
-    @soapmethod (String)
+class MonitorService (ServiceBase):
+    @rpc (String)
     def msg (self, m):
         print m
 
@@ -29,7 +26,11 @@ class MonitorThread (threading.Thread):
 
     def run (self):
         print "monitor ready :%s" % (self.port)
-        self.server = make_server ("", int(self.port), MonitorService())
+        application = Application([MonitorService], 'monitor',
+                                  in_protocol=Soap11(validator='lxml'),
+                                  out_protocol=Soap11())
+        wsgi_application = WsgiApplication(application)
+        self.server = make_server ("", int(self.port), wsgi_application)
         self.server.serve_forever ()
 
 def shutdown (monitor):

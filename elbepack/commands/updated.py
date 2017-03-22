@@ -26,7 +26,10 @@ import sys
 from optparse import OptionParser
 from wsgiref.simple_server import make_server
 
-from elbepack.updated import UpdateStatus, UpdateService
+from spyne.protocol.soap import Soap11
+from spyne.server.wsgi import WsgiApplication
+
+from elbepack.updated import UpdateStatus, UpdateService, UpdateApplication
 from elbepack.updated_monitors import FileMonitor
 try:
     from elbepack.updated_monitors import USBMonitor
@@ -109,8 +112,16 @@ def run_command (argv):
     for mon in status.monitors:
         mon.start()
 
+    application = UpdateApplication([UpdateService], 'update',
+                                    in_protocol=Soap11(validator='lxml'),
+                                    out_protocol=Soap11())
+    application.status = status
+
+    wsgi_application = WsgiApplication(application)
+
     status.soapserver = make_server (opt.host, int (opt.port),
-                                     UpdateService (status))
+                                     wsgi_application)
+
     try:
         status.soapserver.serve_forever ()
     except:

@@ -154,7 +154,7 @@ Depends: ${misc:Depends},
   python-pyinotify,
   python-apt,
   python-suds,
-  python-soaplib,
+  python-spyne,
   lsb-base (>= 3.0-6)
 Suggests: python-pyudev,
   usbmount

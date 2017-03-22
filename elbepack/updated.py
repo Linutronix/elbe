@@ -29,9 +29,10 @@ import threading
 
 from multiprocessing import Process
 from shutil import copyfile, rmtree, copy
-from soaplib.service import soapmethod
-from soaplib.wsgi_soap import SimpleWSGISoapApp
-from soaplib.serializers.primitive import String
+from spyne import Application
+from spyne.service import ServiceBase
+from spyne.decorator import rpc
+from spyne.model.primitive import String
 from suds.client import Client
 from syslog import syslog
 from zipfile import (ZipFile, BadZipfile)
@@ -101,14 +102,13 @@ class UpdateStatus:
         if self.verbose:
             print msg
 
+class UpdateApplication (Application):
+    def __init__(self, *args, **kargs):
+        Application.__init__(self, *args, **kargs)
+        self.status = UpdateStatus ()
 
-class UpdateService (SimpleWSGISoapApp):
-
-    def __init__ (self, status):
-        SimpleWSGISoapApp.__init__ (self)
-        self.status = status
-
-    @soapmethod (_returns=String)
+class UpdateService (ServiceBase):
+    @rpc (_returns=String)
     def list_snapshots (self):
         # use comma seperated string because array of string triggers a bug in
         # python suds :(
@@ -124,27 +124,27 @@ class UpdateService (SimpleWSGISoapApp):
 
         return snapshots
 
-    @soapmethod (String, _returns=String)
+    @rpc (String, _returns=String)
     def apply_snapshot (self, version):
         if version == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
-            fname = self.status.repo_dir + "/" + version + "/new.xml"
+            fname = self.app.status.repo_dir + "/" + version + "/new.xml"
 
         try:
-            apply_update (fname, self.status)
+            apply_update (fname, self.app.status)
         except Exception, err:
             print Exception, err
-            self.status.set_finished ('error')
+            self.app.status.set_finished ('error')
             return "apply snapshot %s failed" % version
 
-        self.status.set_finished ('OK')
+        self.app.status.set_finished ('OK')
         return "snapshot %s applied" % version
 
-    @soapmethod (String)
+    @rpc (String)
     def register_monitor (self, wsdl_url):
-        self.status.monitor = Client (wsdl_url)
-        self.status.log ("connection established")
+        self.app.status.monitor = Client (wsdl_url)
+        self.app.status.log ("connection established")
 
 class rw_access_file:
     def __init__ (self, filename, status):
