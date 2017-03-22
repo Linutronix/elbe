@@ -1,0 +1,10 @@
+[Unit]
+Description=ELBE Update Daemon
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/elbe-updated
+ExecStart=/usr/bin/elbe $DAEMON_ARGS
+
+[Install]
+WantedBy=multi-user.target
