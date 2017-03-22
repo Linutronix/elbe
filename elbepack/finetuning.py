@@ -225,12 +225,12 @@ class AddUserAction(FinetuningAction):
     def execute(self, log, buildenv, target):
       with target:
         if 'groups' in self.node.et.attrib:
-          log.chroot (target.path, "/usr/sbin/useradd -U -m -G %s -s %s %s" % (
+          log.chroot (target.path, '/usr/sbin/useradd -U -m -G "%s" -s "%s" "%s"' % (
                 self.node.et.attrib['groups'],
                 self.node.et.attrib['shell'],
                 self.node.et.text))
         else:
-          log.chroot (target.path, "/usr/sbin/useradd -U -m -s %s %s" % (
+          log.chroot (target.path, '/usr/sbin/useradd -U -m -s "%s" "%s"' % (
                 self.node.et.attrib['shell'], self.node.et.text))
 
         log.chroot( target.path,
