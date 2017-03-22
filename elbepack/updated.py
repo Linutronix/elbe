@@ -35,13 +35,17 @@ from soaplib.serializers.primitive import String
 from suds.client import Client
 from syslog import syslog
 from zipfile import (ZipFile, BadZipfile)
-from packaging import version
 
 from elbepack.aptprogress import (ElbeInstallProgress,
  ElbeAcquireProgress, ElbeOpProgress)
 from elbepack.gpg import unsign_file
 from elbepack.treeutils import etree
 
+downgrade_prevention_feature_available = True
+try:
+    from packaging import version
+except ImportError:
+    downgrade_prevention_feature_available = False
 
 class UpdateStatus:
     def __init__ (self):
@@ -419,13 +423,14 @@ def action_select (upd_file, status):
     with rw_access ("/tmp", status):
         upd_file_z.extract ("new.xml", "/tmp/")
 
-    # prevent downgrades
-    try:
-        if reject_downgrade (status, "/tmp/new.xml"):
+    # prevent downgrades (if available)
+    if downgrade_prevention_feature_available:
+        try:
+            if reject_downgrade (status, "/tmp/new.xml"):
+                return
+        except Exception as e:
+            status.log ('Error while reading XML files occurred: ' + str(e))
             return
-    except Exception as e:
-        status.log ('Error while reading XML files occurred: ' + str(e))
-        return
 
     xml = etree ("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace (xml.text ("/project/name"))
