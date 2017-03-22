@@ -19,14 +19,11 @@
 import os
 import subprocess
 
-class NoExecutableFound (Exception):
-    def __init__ (self, exe_fname):
-        Exception.__init__ (self, 'No Executable for "%s" found')
-
 kvm_exe_list = [
     '/usr/bin/kvm',
     '/usr/bin/qemu-kvm',
-    '/usr/libexec/qemu-kvm'
+    '/usr/libexec/qemu-kvm',
+    '/usr/bin/qemu-system-x86_64'
     ]
 
 def find_kvm_exe ():
@@ -37,6 +34,9 @@ def find_kvm_exe ():
             for line in cmd.stdout:
                 if "version" in line:
                     version = line.split()[3].split('(')[0].strip()
+
+            if fname == "/usr/bin/qemu-system-x86_64":
+                fname += " -enable-kvm"
 
             return fname, version
 
