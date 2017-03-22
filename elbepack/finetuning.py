@@ -114,9 +114,7 @@ class CpAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        dest = target.glob( self.node.et.text )
-        src = target.glob ( self.node.et.attrib['path'] )
-        log.do( "cp -av " + src + " " + dest)
+        log.do( "cp -av " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
 
 FinetuningAction.register( CpAction )
 
@@ -181,9 +179,7 @@ class MvAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, buildenv, target):
-        dest = target.glob( self.node.et.text )
-        src = target.glob ( self.node.et.attrib['path'] )
-        log.do( "mv -v " + src + " " + dest )
+        log.do( "mv -v " + target.fname( self.node.et.attrib['path'] ) + " " + target.fname( self.node.et.text ) )
 
 FinetuningAction.register( MvAction )
 
