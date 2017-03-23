@@ -1,5 +1,6 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/debianize.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/uboot.py
+./usr/lib/python2.*/*-packages/elbepack/debianize/barebox.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/base.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/kernel.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/__init__.py

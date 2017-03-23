@@ -1,3 +1,16 @@
+elbe (1.9.19) unstable; urgency=medium
+
+  * bugfix: set_xml needs restart of elbe-daemon
+  * hdimg: allow mapping a single mountpoint to N fstab entries
+  * efilesystem: dont insert entries marked <nofstab/> into /etc/fstab
+  * debianize: add barebox debianizer implementation
+  * bugfix: add the project repo keys to the pbuilder
+  * updated: added possibility to prevent downgrades
+  * updated: convert soaplib to spyne
+  * new elbe preprocessor command enables using xincludes
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 23 Mar 2017 15:49:45 +0100
+
 elbe (1.9.18) unstable; urgency=medium
 
   * bugfix: make elbe pbuilder create --xmlfile working again
