@@ -7,7 +7,6 @@
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/rules.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/linux-image.install
-./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/copyright
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/control.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/format.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/linux-headers.install
@@ -15,3 +14,8 @@
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/postinst.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/prerm.mako
 ./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/kernel/postrm.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/barebox/barebox-image.install
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/barebox/barebox-tools.install
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/barebox/control.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/barebox/format.mako
+./usr/lib/python2.*/*-packages/elbepack/makofiles/debianize/barebox/rules.mako
