@@ -5,6 +5,9 @@
         elementFormDefault="unqualified"
         attributeFormDefault="unqualified">
 
+  <import namespace="http://www.w3.org/XML/1998/namespace"
+	  schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+
   <element name="RootFileSystem" type="rfs:RootFileSystemType">
     <annotation>
       <documentation>
@@ -68,14 +71,14 @@
           </documentation>
         </annotation>
       </element>
-      <element name="initvm_sources_list" type="string" minOccurs="0" maxOccurs="1">
+      <element name="initvm_sources_list" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             apt sources list.
           </documentation>
         </annotation>
       </element>
-      <element name="initvm_apt_prefs" type="string" minOccurs="0" maxOccurs="1">
+      <element name="initvm_apt_prefs" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             apt preferences list
@@ -89,21 +92,21 @@
           </documentation>
         </annotation>
       </element>
-      <element name="sources_list" type="string" minOccurs="0" maxOccurs="1">
+      <element name="sources_list" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             apt sources list.
           </documentation>
         </annotation>
       </element>
-      <element name="apt_prefs" type="string" minOccurs="0" maxOccurs="1">
+      <element name="apt_prefs" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             apt preferences list
           </documentation>
         </annotation>
       </element>
-      <element name="elbe_version" type="string" minOccurs="0" maxOccurs="1">
+      <element name="elbe_version" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Elbe Version that was used in the last build of this file.
@@ -125,6 +128,7 @@
         </documentation>
       </annotation>
     </attribute>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <simpleType name="revisionNr">
@@ -147,7 +151,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="pin" type="string" use="optional">
           <annotation>
             <documentation>
@@ -187,7 +191,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="key" type="string" minOccurs="0">
+      <element name="key" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
 	    URL of the Public Key used to sign this Repository e.g "http://myhost/key.pub" or "http://debian.linutronix.de/elbe/elbe-repo.pub"
@@ -195,6 +199,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="url-list">
@@ -212,6 +217,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="mirror">
@@ -221,7 +227,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="primary_host" type="string" minOccurs="0" maxOccurs="1">
+      <element name="primary_host" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             IP address or hostname of the primary debian mirror
@@ -229,7 +235,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="primary_path" type="string" minOccurs="0" maxOccurs="1">
+      <element name="primary_path" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             base path to the debian mirror on the given host
@@ -237,7 +243,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="primary_proto" type="string" minOccurs="0" maxOccurs="1">
+      <element name="primary_proto" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             protocol to access the primary debian mirror
@@ -245,7 +251,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="primary_proxy" type="string" minOccurs="0" maxOccurs="1">
+      <element name="primary_proxy" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             proxy to access the debian mirror
@@ -253,7 +259,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="cdrom" type="string" minOccurs="0" maxOccurs="1">
+      <element name="cdrom" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             iso image of a cdrom/dvd with debian packages.
@@ -268,6 +274,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="initvm">
@@ -277,7 +284,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
+      <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Default buildtype like armel, ppc, and in the future armel-virtio
@@ -291,7 +298,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="noauth" type="string" minOccurs="0">
+      <element name="noauth" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             allow installation of unsigned debian packages
@@ -306,7 +313,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="suite" type="string">
+      <element name="suite" type="rfs:string">
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the initvm.
@@ -328,14 +335,14 @@
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="string" minOccurs="0" maxOccurs="1">
+      <element name="size" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             size of the virtual harddisk used to run the build environment
           </documentation>
         </annotation>
       </element>
-      <element name="img" type="string" minOccurs="0" maxOccurs="1">
+      <element name="img" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             hd image backend format: raw, qcow, vmdk, ...
@@ -351,6 +358,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="project">
@@ -361,28 +369,28 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="0">
+      <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             name of the project this rootfilesystem is associated with
           </documentation>
         </annotation>
       </element>
-      <element name="version" type="string" minOccurs="0">
+      <element name="version" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             version of the rootfilesystem definition
           </documentation>
         </annotation>
       </element>
-      <element name="description" type="string" minOccurs="0">
+      <element name="description" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             human readable description of the project
           </documentation>
         </annotation>
       </element>
-      <element name="buildtype" type="string" minOccurs="0" maxOccurs="1">
+      <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Default buildtype like armel, ppc, and in the future armel-virtio
@@ -396,7 +404,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="noauth" type="string" minOccurs="0">
+      <element name="noauth" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             allow installation of unsigned debian packages
@@ -419,7 +427,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="suite" type="string">
+      <element name="suite" type="rfs:string">
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the
@@ -444,6 +452,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="preference">
@@ -453,7 +462,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="pin" type="string" use="required">
           <annotation>
             <documentation>
@@ -472,8 +481,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
-      </extension>
+      <extension base="rfs:string" />
     </simpleContent>
   </complexType>
 
@@ -484,14 +492,14 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="arch" type="string" minOccurs="0" maxOccurs="1">
+      <element name="arch" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             architecture of the target system. e.g. "amd64", "armel", "ppc", ..
           </documentation>
         </annotation>
       </element>
-      <element name="size" type="string" minOccurs="0" maxOccurs="1">
+      <element name="size" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             size of the virtual harddisk used to run the build environment
@@ -505,35 +513,35 @@
           </documentation>
         </annotation>
       </element>
-      <element name="interpreter" type="string" minOccurs="0" maxOccurs="1">
+      <element name="interpreter" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             virtual machine interpreter, e.g. "kvm", "qemu-system-arm", ...
           </documentation>
         </annotation>
       </element>
-      <element name="interpreterversion" type="string" minOccurs="0" maxOccurs="1">
+      <element name="interpreterversion" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             virtual machine interpreter version, e.g. "2.8.0", "1.4.7", ...
           </documentation>
         </annotation>
       </element>
-      <element name="kinitrd" type="string" minOccurs="0" maxOccurs="1">
+      <element name="kinitrd" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             pkg name of the initrd/kernel package.
           </documentation>
         </annotation>
       </element>
-      <element name="console" type="string" minOccurs="0" maxOccurs="1">
+      <element name="console" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             serial console of the virtual machine, e.g. "ttyAMA0,115200n1"
           </documentation>
         </annotation>
       </element>
-      <element name="machine" type="string" minOccurs="0" maxOccurs="1">
+      <element name="machine" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             virtual platform to host the build environment,
@@ -556,7 +564,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="pkgversionlist" type="string" minOccurs="0" maxOccurs="1">
+      <element name="pkgversionlist" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             create /etc/elbe_pkglist on the target RFS. It includes all packages
@@ -574,19 +582,33 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
-  <simpleType name="memory">
-     <annotation>
-       <documentation>
-         at least 128 MB of memory are needed to run the debian-installer
-       </documentation>
-     </annotation>
+  <complexType name="memory">
+    <annotation>
+      <documentation>
+        Helper around memory_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:memory_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="memory_restriction">
+    <annotation>
+      <documentation>
+        at least 128 MB of memory are needed to run the debian-installer
+      </documentation>
+    </annotation>
     <restriction base="integer">
       <minInclusive value="128" />
     </restriction>
   </simpleType>
-
+  
   <complexType name="NIC">
      <annotation>
        <documentation>
@@ -594,14 +616,14 @@
        </documentation>
      </annotation>
     <sequence>
-      <element name="model" type="string" minOccurs="0" maxOccurs="1">
+      <element name="model" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             hardware emulation of the network interface; e.g. "e1000"
           </documentation>
         </annotation>
       </element>
-      <element name="MAC" type="string" minOccurs="0" maxOccurs="1">
+      <element name="MAC" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
              mac address of the virtual network interface
@@ -609,9 +631,23 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
-  <simpleType name="fw_proto">
+  <complexType name="fw_proto">
+    <annotation>
+      <documentation>
+        Helper around fw_proto_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:fw_proto_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="fw_proto_restriction">
     <annotation>
       <documentation>
          only tcp and udp are allowed protocols for forwarding
@@ -652,6 +688,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="portforwarding" >
@@ -669,6 +706,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="target">
@@ -678,28 +716,28 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="hostname" type="string" minOccurs="1" maxOccurs="1">
+      <element name="hostname" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             hostname of the system
           </documentation>
         </annotation>
       </element>
-      <element name="domain" type="string" minOccurs="1" maxOccurs="1">
+      <element name="domain" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             domainname of the network the target system is part of
           </documentation>
         </annotation>
       </element>
-      <element name="passwd" type="string" minOccurs="1" maxOccurs="1">
+      <element name="passwd" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             root password
           </documentation>
         </annotation>
       </element>
-      <element name="console" type="string" minOccurs="1" maxOccurs="1">
+      <element name="console" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             serial console for getty
@@ -727,7 +765,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="tighten" type="string" minOccurs="0">
+      <element name="tighten" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             don't install any dependencies; just the content of the given debian
@@ -735,7 +773,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="diet" type="string" minOccurs="0">
+      <element name="diet" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             use reverse dependencies of the given debian packages to determine
@@ -743,7 +781,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="setsel" type="string" minOccurs="0">
+      <element name="setsel" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             Elbe uses +dpkg --set-selections+ to install packages in the target.
@@ -753,7 +791,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="norecommend" type="string" minOccurs="0">
+      <element name="norecommend" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             Turn off the installation of recommended Packages.
@@ -789,9 +827,23 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
-  <simpleType name="ubi_type">
+  <complexType name="ubi_type">
+    <annotation>
+      <documentation>
+        Helper around ubi_type_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:ubi_type_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="ubi_type_restriction">
     <annotation>
       <documentation>
         a ubi volume can be either static or dynamic
@@ -817,7 +869,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+      <element name="label" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             human readable name of the ubi volume (also used for mount by label)
@@ -838,7 +890,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="binary" type="string" minOccurs="0" maxOccurs="1">
+      <element name="binary" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             path and filename of a binary image which will be used as a source
@@ -847,7 +899,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="empty" type="string" minOccurs="0" maxOccurs="1">
+      <element name="empty" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
            if binary is used or a label was given that is also available in
@@ -857,6 +909,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="ubivg">
@@ -866,7 +919,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+      <element name="label" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              human readable name; used to generate filename for the flashable
@@ -874,35 +927,35 @@
           </documentation>
         </annotation>
       </element>
-      <element name="miniosize" type="string" minOccurs="1" maxOccurs="1">
+      <element name="miniosize" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              flash parameter minimal i/o size
           </documentation>
         </annotation>
       </element>
-      <element name="maxlogicaleraseblockcount" type="string" minOccurs="1" maxOccurs="1">
+      <element name="maxlogicaleraseblockcount" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              flash parameter maximum logical erase block count
           </documentation>
         </annotation>
       </element>
-      <element name="logicaleraseblocksize" type="string" minOccurs="1" maxOccurs="1">
+      <element name="logicaleraseblocksize" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              flash parameter logical erase block size
           </documentation>
         </annotation>
       </element>
-      <element name="physicaleraseblocksize" type="string" minOccurs="1" maxOccurs="1">
+      <element name="physicaleraseblocksize" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              flash parameter physical erase block size
           </documentation>
         </annotation>
       </element>
-      <element name="subpagesize" type="string" minOccurs="0" maxOccurs="1">
+      <element name="subpagesize" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
              flash parameter subpagesize
@@ -919,6 +972,7 @@
         </element>
       </sequence>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="mtd">
@@ -928,7 +982,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+      <element name="name" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
              human readable name of the mtd device
@@ -949,7 +1003,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="binary" type="string" minOccurs="0" maxOccurs="1">
+      <element name="binary" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             path and filename of a binary image which will be used as a source
@@ -967,6 +1021,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="gpthd">
@@ -976,7 +1031,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+      <element name="name" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             human readable name of the harddisk, this will be used as name for
@@ -991,7 +1046,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="grub-install" type="string" minOccurs="0" maxOccurs="1">
+      <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             human readable name of the harddisk, this will be used as name for
@@ -1007,6 +1062,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="binaryblob">
@@ -1016,7 +1072,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="offset" type="int" use="optional">
           <annotation>
             <documentation>
@@ -1042,7 +1098,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="1" maxOccurs="1">
+      <element name="name" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             human readable name of the harddisk, this will be used as name for
@@ -1057,7 +1113,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="grub-install" type="string" minOccurs="0" maxOccurs="1">
+      <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             human readable name of the harddisk, this will be used as name for
@@ -1094,6 +1150,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="images">
@@ -1124,7 +1181,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="passno" type="string" minOccurs="0" maxOccurs="1">
+      <element name="passno" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             passno order for fsck
@@ -1132,6 +1189,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="fs">
@@ -1148,21 +1206,21 @@
           </documentation>
         </annotation>
       </element>
-      <element name="mkfs" type="string" minOccurs="0" maxOccurs="1">
+      <element name="mkfs" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             options passed to the mkfs command
           </documentation>
         </annotation>
       </element>
-      <element name="tune2fs" type="string" minOccurs="0" maxOccurs="1">
+      <element name="tune2fs" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             options passed to the tune2fs command
           </documentation>
         </annotation>
       </element>
-      <element name="passno" type="string" minOccurs="0" maxOccurs="1">
+      <element name="passno" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             passno order for fsck
@@ -1170,6 +1228,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="bylabel">
@@ -1179,14 +1238,14 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="label" type="string" minOccurs="1" maxOccurs="1">
+      <element name="label" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             label of the partition/volume to mount
           </documentation>
         </annotation>
       </element>
-      <element name="mountpoint" type="string" minOccurs="1" maxOccurs="1">
+      <element name="mountpoint" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             path in the rootfilesystem where the partition/volume is mounted
@@ -1200,7 +1259,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="options" type="string" minOccurs="0" maxOccurs="1">
+      <element name="options" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             options passed to the mount command
@@ -1208,6 +1267,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="bydev">
@@ -1217,14 +1277,14 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="source" type="string" minOccurs="1" maxOccurs="1">
+      <element name="source" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             either a device-node or "none" for virtual filesystems
           </documentation>
         </annotation>
       </element>
-      <element name="mountpoint" type="string" minOccurs="1" maxOccurs="1">
+      <element name="mountpoint" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
             path in the rootfilesystem where the device or virtual filesystem
@@ -1239,7 +1299,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="options" type="string" minOccurs="0" maxOccurs="1">
+      <element name="options" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             options passed to the mount command
@@ -1247,6 +1307,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="fstab">
@@ -1272,6 +1333,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="package">
@@ -1303,6 +1365,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="tar">
@@ -1312,14 +1375,14 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="0">
+      <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              filename of the tar package
           </documentation>
         </annotation>
       </element>
-      <element name="options" type="string" minOccurs="0">
+      <element name="options" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              options passed to the tar command
@@ -1327,6 +1390,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="cpio">
@@ -1336,7 +1400,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="0">
+      <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              filename of the cpio package 
@@ -1344,6 +1408,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="squashfs">
@@ -1353,7 +1418,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="name" type="string" minOccurs="0">
+      <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              filename of the squashfs image
@@ -1361,6 +1426,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="partition">
@@ -1377,7 +1443,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="label" type="string" minOccurs="1">
+      <element name="label" type="rfs:string" minOccurs="1">
         <annotation>
           <documentation>
              human readable label of the partition used for mount by label and
@@ -1385,14 +1451,14 @@
           </documentation>
         </annotation>
       </element>
-      <element name="bootable" type="string" minOccurs="0">
+      <element name="bootable" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              Whether this partition is marked bootable.
           </documentation>
         </annotation>
       </element>
-      <element name="biosgrub" type="string" minOccurs="0">
+      <element name="biosgrub" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
              Whether this partition is marked as biosgrub partition.
@@ -1400,6 +1466,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="extended">
@@ -1424,9 +1491,23 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
-  <simpleType name="part_size">
+  <complexType name="part_size">
+    <annotation>
+      <documentation>
+        Helper around part_size_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:part_size_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="part_size_restriction">
     <annotation>
       <documentation>
          format of the partition size
@@ -1437,7 +1518,20 @@
     </restriction>
   </simpleType>
 
-  <simpleType name="part_nr">
+  <complexType name="part_nr">
+    <annotation>
+      <documentation>
+        Helper around part_nr_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:part_nr_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="part_nr_restriction">
     <annotation>
       <documentation>
          allow maximum 4 primary partitions
@@ -1449,7 +1543,20 @@
     </restriction>
   </simpleType>
 
-  <simpleType name="part_type">
+  <complexType name="part_type">
+    <annotation>
+      <documentation>
+        Helper around part_type_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:part_type_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="part_type_restriction">
     <annotation>
       <documentation>
          list of supported partition types
@@ -1461,7 +1568,20 @@
     </restriction>
   </simpleType>
 
-  <simpleType name="fs_type">
+  <complexType name="fs_type">
+    <annotation>
+      <documentation>
+        Helper around fs_type_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:fs_type_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <simpleType name="fs_type_restriction">
     <annotation>
       <documentation>
          list of supported filesystems
@@ -1494,6 +1614,7 @@
     <sequence>
       <group ref="rfs:action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <group name="action">
@@ -1503,7 +1624,7 @@
       </documentation>
     </annotation>
     <choice>
-      <element name="addgroup" type="string" minOccurs="0">
+      <element name="addgroup" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             add a group by name
@@ -1517,7 +1638,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="rm" type="string" minOccurs="0">
+      <element name="rm" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             remove a file or directory (recursive)
@@ -1580,14 +1701,14 @@
           </documentation>
         </annotation>
       </element>
-      <element name="mkdir" type="string" minOccurs="0">
+      <element name="mkdir" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             create a directory
           </documentation>
         </annotation>
       </element>
-      <element name="buildenv_mkdir" type="string" minOccurs="0">
+      <element name="buildenv_mkdir" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             create a directory
@@ -1601,35 +1722,35 @@
           </documentation>
         </annotation>
       </element>
-      <element name="purge" type="string" minOccurs="0">
+      <element name="purge" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             purge a debian package out of the rootfilesystem
           </documentation>
         </annotation>
       </element>
-      <element name="raw_cmd" type="string" minOccurs="0">
+      <element name="raw_cmd" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command
           </documentation>
         </annotation>
       </element>
-      <element name="command" type="string" minOccurs="0">
+      <element name="command" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command in /bin/sh
           </documentation>
         </annotation>
       </element>
-      <element name="buildenv_command" type="string" minOccurs="0">
+      <element name="buildenv_command" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             execute the defined command
           </documentation>
         </annotation>
       </element>
-      <element name="updated" type="string" minOccurs="0">
+      <element name="updated" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             include the base debian repository in the target rfs to enable
@@ -1651,7 +1772,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="shell" type="string" use="required" />
         <attribute name="passwd" type="string" use="required" />
         <attribute name="groups" type="string" use="optional" />
@@ -1666,7 +1787,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="path" type="string" use="required" />
       </extension>
     </simpleContent>
@@ -1679,7 +1800,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="opts" type="string" use="required" />
       </extension>
     </simpleContent>
@@ -1692,7 +1813,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="revision" type="string" use="optional" />
       </extension>
     </simpleContent>
@@ -1705,7 +1826,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="revision" type="string" use="optional" />
       </extension>
     </simpleContent>
@@ -1718,7 +1839,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="pin" type="string" use="optional">
           <annotation>
             <documentation>
@@ -1779,6 +1900,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="pkg-list">
@@ -1797,6 +1919,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="blacklist">
@@ -1821,6 +1944,7 @@
           </annotation>
         </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="fullpkg-list">
@@ -1838,6 +1962,7 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="conf">
@@ -1847,7 +1972,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="owner" type="string" use="required">
           <annotation>
             <documentation>
@@ -1895,5 +2020,20 @@
         </annotation>
       </element>
     </sequence>
+    <attribute ref="xml:base"/>
   </complexType>
+
+  <complexType name="string">
+    <annotation>
+      <documentation>
+        E.L.B.E. standard string. Allow XML base attribute.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+
 </schema>
