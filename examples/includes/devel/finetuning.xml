@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<finetuning>
+  <adduser shell="/bin/bash" passwd="notsosecure">user</adduser>
+  <rm>var/cache/apt/archives/*.deb</rm>
+</finetuning>

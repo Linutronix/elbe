@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<finetuning>
+  <adduser shell="/bin/bash" passwd="supersecure">user</adduser>
+  <raw_cmd>passwd -d -l root</raw_cmd>
+  <rm>var/cache/apt/archives/*.deb</rm>
+</finetuning>
