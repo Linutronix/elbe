@@ -27,6 +27,8 @@ from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
 from elbepack.elbexml     import ElbeXML, ValidationError
 
+from tempfile import NamedTemporaryFile
+
 import sys
 import time
 import os
@@ -508,6 +510,16 @@ class SubmitAction(InitVMAction):
             else:
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
                 sys.exit (20)
+
+            outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
+            cmd = '%s preprocess -o %s %s' % (elbe_exe, outxml.name, xmlfile)
+            ret, msg, err = command_out_stderr (cmd)
+            if ret != 0:
+                print ("elbe preprocess failed.", file=sys.stderr)
+                print (err, file=sys.stderr)
+                print ("Giving up", file=sys.stderr)
+                sys.exit(20)
+            xmlfile = outxml.name
 
             ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
             if ret != 0:

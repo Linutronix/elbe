@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<pkg-list>
+  <pkg>linux-image-686-pae</pkg>
+  <pkg>grub-pc</pkg>
+  <pkg>xserver-xorg-video-radeon</pkg>
+  <pkg>xserver-xorg-core</pkg>
+  <pkg>mono-runtime</pkg>
+  <pkg>slim</pkg>
+  <pkg>awesome</pkg>
+</pkg-list>

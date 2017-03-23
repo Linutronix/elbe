@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<msdoshd>
+  <name>sda.img</name>
+  <size>1900MiB</size>
+  <grub-install/>
+  <partition>
+    <size>remain</size>
+    <label>rfs</label>
+  </partition>
+</msdoshd>
