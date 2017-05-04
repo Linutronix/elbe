@@ -22,7 +22,7 @@ import sys
 import os
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import ValidationError
+from elbepack.elbexml import ValidationError, ValidationMode
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog chroot [options] <builddir> [cmd]")
@@ -44,7 +44,7 @@ def run_command( argv ):
 
     try:
         project = ElbeProject(args[0], override_buildtype=opt.buildtype,
-                skip_validate=opt.skip_validation, skip_urlcheck=True)
+                skip_validate=opt.skip_validation, url_validation=ValidationMode.NO_CHECK)
     except ValidationError as e:
         print str(e)
         print "xml validation failed. Bailing out"

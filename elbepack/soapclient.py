@@ -30,7 +30,7 @@ import sys
 import os
 
 from elbepack.filesystem import Filesystem
-from elbepack.elbexml import ElbeXML
+from elbepack.elbexml import ElbeXML, ValidationMode
 
 def set_suds_debug(debug):
     import logging
@@ -239,7 +239,7 @@ class SetXmlAction(ClientAction):
         filename = args[1]
 
         try:
-            x = ElbeXML (filename, skip_validate=True, skip_urlcheck=True)
+            x = ElbeXML (filename, skip_validate=True, url_validation=ValidationMode.NO_CHECK)
         except IOError as e:
             print ("%s is not a valid elbe xml file" % filename)
             sys.exit (20)

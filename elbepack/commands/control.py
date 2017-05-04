@@ -32,6 +32,8 @@ from elbepack.soapclient import ClientAction, ElbeSoapClient
 from elbepack.version import elbe_version
 from elbepack.config import cfg
 
+from elbepack.elbexml import ValidationMode
+
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
 
@@ -73,7 +75,7 @@ def run_command (argv):
     devel = OptionGroup(oparser, "options for elbe developers",
             "Caution: Don't use these options in a productive environment")
     devel.add_option( "--skip-urlcheck", action="store_true",
-                 dest="skip_urlcheck", default=False,
+                 dest="url_validation", default=ValidationMode.CHECK_ALL,
                  help="Skip URL Check inside initvm" )
 
     devel.add_option ("--debug", action="store_true",

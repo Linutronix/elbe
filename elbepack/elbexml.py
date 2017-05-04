@@ -49,8 +49,13 @@ class ValidationError(Exception):
 class NoInitvmNode(Exception):
     pass
 
+class ValidationMode():
+    NO_CHECK = True
+    CHECK_BINARIES = 2
+    CHECK_ALL = False
+
 class ElbeXML(object):
-    def __init__(self, fname, buildtype=None, skip_validate=False, skip_urlcheck=False):
+    def __init__(self, fname, buildtype=None, skip_validate=False, url_validation=ValidationMode.NO_CHECK):
         if not skip_validate:
             validation = validate_xml (fname)
             if len (validation) != 0:
@@ -68,8 +73,8 @@ class ElbeXML(object):
             buildtype = "nodefaults"
         self.defs = ElbeDefaults(buildtype)
 
-        if not skip_validate and not skip_urlcheck:
-                self.validate_apt_sources ()
+        if not skip_validate:
+            self.validate_apt_sources (url_validation, buildtype)
 
 
     def text(self, txt, key=None):
@@ -142,7 +147,7 @@ class ElbeXML(object):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
-    def validate_apt_sources (self):
+    def validate_apt_sources (self, url_validation, buildtype):
         slist = self.create_apt_sources_list ()
         sources_lines = slist.split ('\n')
 
@@ -158,9 +163,16 @@ class ElbeXML(object):
             elif l.startswith ("deb ") or l.startswith ("deb-src "):
                 lsplit = l.split (" ")
                 if lsplit[2].endswith('/'):
-                    urls.append ("%s/%sRelease" % (lsplit[1], lsplit[2]))
+                    s = "%s/%s" % (lsplit[1], lsplit[2])
                 else:
-                    urls.append ("%s/dists/%s/Release" % (lsplit[1], lsplit[2]))
+                    s = "%s/dists/%s/"  % (lsplit[1], lsplit[2])
+
+                urls.append(s + "Release")
+                if url_validation == ValidationMode.CHECK_ALL:
+                    urls.append(s + lsplit[3] + "/source/Release")
+                    urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
+                elif url_validation == ValidationMode.CHECK_BINARIES:
+                    urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
 
         if not self.prj:
             return

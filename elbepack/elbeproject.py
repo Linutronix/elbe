@@ -24,7 +24,7 @@ import io
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.shellhelper import CommandError
-from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
+from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError, ValidationMode
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.efilesystem import TargetFs
@@ -57,7 +57,7 @@ class AptCacheCommitError(Exception):
 class ElbeProject (object):
     def __init__ (self, builddir, xmlpath = None, logpath = None, name = None,
             override_buildtype = None, skip_validate = False,
-            skip_urlcheck = False, rpcaptcache_notifier = None,
+            url_validation = ValidationMode.CHECK_ALL, rpcaptcache_notifier = None,
             private_data = None, postbuild_file = None, presh_file = None,
             postsh_file = None, savesh_file = None):
         self.builddir = os.path.abspath(str(builddir))
@@ -67,7 +67,7 @@ class ElbeProject (object):
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
-        self.skip_urlcheck = skip_urlcheck
+        self.url_validation = url_validation
         self.postbuild_file = postbuild_file
         self.presh_file = presh_file
         self.postsh_file = postsh_file
@@ -90,11 +90,11 @@ class ElbeProject (object):
         # file of the project
         if xmlpath:
             self.xml = ElbeXML( xmlpath, buildtype=override_buildtype,
-                    skip_validate=skip_validate, skip_urlcheck=skip_urlcheck )
+                    skip_validate=skip_validate, url_validation=url_validation )
         else:
             sourcexmlpath = os.path.join( self.builddir, "source.xml" )
             self.xml = ElbeXML( sourcexmlpath, buildtype=override_buildtype,
-                    skip_validate=skip_validate, skip_urlcheck=skip_urlcheck )
+                    skip_validate=skip_validate, url_validation=url_validation )
 
         self.arch = self.xml.text( "project/arch", key="arch" )
         self.codename = self.xml.text( "project/suite" )
@@ -205,6 +205,15 @@ class ElbeProject (object):
 
         # Write the log header
         self.write_log_header()
+
+        # Validate Apt Sources
+        m = ValidationMode.NO_CHECK
+        if build_bin:
+            m = ValidationMode.CHECK_BINARIES
+            if build_sources:
+                m = ValidationMode.CHECK_ALL
+        self.xml.validate_apt_sources ( m , self.arch )
+
 
         if (self.xml.has('target/pbuilder') and not skip_pbuild):
             if not os.path.exists ( os.path.join (self.builddir, "pbuilder") ):
@@ -458,7 +467,7 @@ class ElbeProject (object):
 
         newxml = ElbeXML( xmlpath, buildtype=self.override_buildtype,
                 skip_validate=self.skip_validate,
-                skip_urlcheck=self.skip_urlcheck )
+                url_validation=self.url_validation )
 
         # New XML file has to have the same architecture
         oldarch = self.xml.text( "project/arch", key="arch" )
@@ -511,7 +520,7 @@ class ElbeProject (object):
                 source = self.xml
                 try:
                     initxml = ElbeXML( "/var/cache/elbe/source.xml",
-                            skip_validate=self.skip_validate, skip_urlcheck=True )
+                            skip_validate=self.skip_validate, url_validation=ValidationMode.NO_CHECK )
                     self.xml.get_initvmnode_from( initxml )
                 except ValidationError as e:
                     self.log.printo( "/var/cache/elbe/source.xml validation failed" )
@@ -528,7 +537,7 @@ class ElbeProject (object):
                 source = ElbeXML( sourcepath,
                         buildtype=self.override_buildtype,
                         skip_validate=self.skip_validate,
-                        skip_urlcheck=self.skip_urlcheck )
+                        url_validation=self.url_validation )
 
                 self.xml.get_debootstrappkgs_from( source )
                 try:

@@ -41,7 +41,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import (ElbeXML, ValidationError)
+from elbepack.elbexml import (ElbeXML, ValidationError, ValidationMode)
 from elbepack.dosunix import dos2unix
 
 Base = declarative_base ()
@@ -278,7 +278,7 @@ class ElbeDB(object):
                         "cannot set XML file while project %s is busy" %
                         builddir )
 
-            xml = ElbeXML (xml_file, skip_urlcheck=True)    #ValidationError
+            xml = ElbeXML (xml_file, url_validation=ValidationMode.NO_CHECK)    #ValidationError
 
             p.name = xml.text ("project/name")
             p.version = xml.text ("project/version")
@@ -419,7 +419,7 @@ class ElbeDB(object):
                     project.xml = xml_str
 
 
-    def load_project (self, builddir, logpath = None, skip_urlcheck=False):
+    def load_project (self, builddir, logpath = None, url_validation=ValidationMode.CHECK_ALL):
 
         # pass exceptions if hook-scripts can't be loaded (they're optional)
         postbuild_file = None
@@ -460,7 +460,7 @@ class ElbeDB(object):
                         presh_file=presh_file,
                         postsh_file=postsh_file,
                         savesh_file=savesh_file,
-                        skip_urlcheck=skip_urlcheck)
+                        url_validation=url_validation)
             except NoResultFound:
                 raise ElbeDBError(
                         "project %s is not registered in the database" %
@@ -574,7 +574,7 @@ class ElbeDB(object):
                         " set_project_version: invalid status: " + p.status )
 
             xmlpath = os.path.join( builddir, "source.xml" )
-            xml = ElbeXML( xmlpath, skip_urlcheck=True )
+            xml = ElbeXML( xmlpath, url_validation=ValidationMode.NO_CHECK )
 
             if not new_version is None:
                 xml.node( "/project/version" ).set_text( new_version )
@@ -608,7 +608,7 @@ class ElbeDB(object):
             assert p.status == "busy"
 
             sourcexmlpath = os.path.join( builddir, "source.xml" )
-            sourcexml = ElbeXML( sourcexmlpath, skip_urlcheck=True )
+            sourcexml = ElbeXML( sourcexmlpath, url_validation=ValidationMode.NO_CHECK )
 
             version = sourcexml.text( "project/version" )
             if s.query( ProjectVersion ).\

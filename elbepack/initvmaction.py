@@ -25,7 +25,7 @@ from elbepack.treeutils   import etree
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
-from elbepack.elbexml     import ElbeXML, ValidationError
+from elbepack.elbexml     import ElbeXML, ValidationError, ValidationMode
 
 from tempfile import NamedTemporaryFile
 
@@ -273,7 +273,7 @@ class CreateAction(InitVMAction):
                     sys.exit (20)
 
                 try:
-                    exml = ElbeXML (tmp.fname ('source.xml'), skip_urlcheck=True)
+                    exml = ElbeXML (tmp.fname ('source.xml'), url_validation=ValidationMode.NO_CHECK)
                 except ValidationError as e:
                     print ('Iso image does contain a source.xml file.', file=sys.stderr)
                     print ('But that xml does not validate correctly', file=sys.stderr)
@@ -477,7 +477,7 @@ class SubmitAction(InitVMAction):
             if args[0].endswith ('.xml'):
                 # We have an xml file, use that for elbe init
                 xmlfile = args[0]
-                skip_urlcheck = ''
+                url_validation = ''
             elif args[0].endswith ('.iso'):
                 # We have an iso image, extract xml from there.
                 tmp = TmpdirFilesystem ()
@@ -493,7 +493,7 @@ class SubmitAction(InitVMAction):
                     sys.exit (20)
 
                 try:
-                    exml = ElbeXML (tmp.fname ('source.xml'), skip_urlcheck=True)
+                    exml = ElbeXML (tmp.fname ('source.xml'), url_validation=ValidationMode.NO_CHECK)
                 except ValidationError as e:
                     print ('Iso image does contain a source.xml file.', file=sys.stderr)
                     print ('But that xml does not validate correctly', file=sys.stderr)
@@ -505,7 +505,7 @@ class SubmitAction(InitVMAction):
                 print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
 
                 xmlfile = tmp.fname ('source.xml')
-                skip_urlcheck = '--skip-urlcheck'
+                url_validation = '--skip-urlcheck'
                 cdrom = args[0]
             else:
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)

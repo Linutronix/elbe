@@ -29,6 +29,7 @@ from elbepack.version import elbe_version
 from faults import soap_faults
 
 from elbepack.db import Project, User
+from elbepack.elbexml import ValidationMode
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
@@ -100,7 +101,7 @@ class ESoap (ServiceBase):
             if (fname == "source.xml"):
                 # ensure that the project cache is reloaded
                 self.app.pm.close_current_project (uid)
-                self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+                self.app.pm.open_project (uid, builddir, url_validation=ValidationMode.NO_CHECK)
                 self.app.pm.set_current_project_xml (uid, fn)
             return -2
 
@@ -164,7 +165,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def start_cdrom (self, uid, builddir):
-        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.open_project (uid, builddir, url_validation=ValidationMode.NO_CHECK)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -176,7 +177,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def append_cdrom (self, uid, builddir, data):
-        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.open_project (uid, builddir, url_validation=ValidationMode.NO_CHECK)
 
         cdrom_fname = os.path.join (builddir, "uploaded_cdrom.iso")
 
@@ -189,7 +190,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def finish_cdrom (self, uid, builddir):
-        self.app.pm.open_project (uid, builddir, skip_urlcheck=True)
+        self.app.pm.open_project (uid, builddir, url_validation=ValidationMode.NO_CHECK)
         self.app.pm.set_current_project_upload_cdrom (uid)
 
     @rpc (String)
@@ -276,18 +277,18 @@ class ESoap (ServiceBase):
     @rpc(String, String, _returns=String)
     @authenticated_uid
     @soap_faults
-    def create_project (self, uid, xml, skip_urlcheck):
+    def create_project (self, uid, xml, url_validation):
         with NamedTemporaryFile() as fp:
             fp.write (binascii.a2b_base64 (xml))
             fp.flush ()
-            prjid = self.app.pm.create_project (uid, fp.name, skip_urlcheck=skip_urlcheck)
+            prjid = self.app.pm.create_project (uid, fp.name, url_validation=url_validation)
 
         return prjid
 
     @rpc(String, _returns=String)
     @authenticated_uid
     @soap_faults
-    def new_project (self, uid, skip_urlcheck):
+    def new_project (self, uid, url_validation):
         return self.app.pm.new_project (uid)
 
     @rpc (String, Integer, _returns=String)

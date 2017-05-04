@@ -24,7 +24,7 @@ import apt_pkg
 
 from optparse import OptionParser
 
-from elbepack.elbexml import ElbeXML
+from elbepack.elbexml import ElbeXML, ValidationMode
 
 def run_command( argv ):
 
@@ -42,7 +42,7 @@ def run_command( argv ):
     fix_rfs = args[1]
 
     x = os.path.join(gen_rfs, 'etc/elbe_base.xml')
-    xml = ElbeXML (x, skip_validate=True, skip_urlcheck=True)
+    xml = ElbeXML (x, skip_validate=True, url_validation=ValidationMode.NO_CHECK)
     arch = xml.text ('project/arch', key='arch')
 
     apt_pkg.init_config()
