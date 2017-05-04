@@ -22,6 +22,7 @@ SYNOPSIS
 'elbe control' [options] 'del_project' <build-dir>
 'elbe control' [options] 'build_pbuilder' <build-dir>
 'elbe control' [options] 'build' <build-dir>
+'elbe control' [options] 'rm_log' <build-dir>
 'elbe control' [options] 'get_file' <build-dir> <filename>
 'elbe control' [options] 'dump_file' <build-dir> <filename>
 'elbe control' [options] 'shutdown_initvm'
@@ -65,7 +66,7 @@ OPTIONS
 
 --build-sources::
 	Build source CDROM.
-	
+
 --output <directory>::
 	Output downloaded files to <directory>.
 
@@ -161,6 +162,11 @@ Trigger building the project.
 Status will change to busy.
 
 
+'rm_log' <build-dir>::
+
+Deletes log file for the given project <build-dir>
+
+
 'get_file' <build-dir> <filename>::
 
 Download a single file from the project.
@@ -195,7 +201,7 @@ $ elbe control list_projects
 $ elbe control create_project examples/rescue.xml
 /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f
 $ elbe control build /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f
-$ elbe control wait_busy /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f 
+$ elbe control wait_busy /var/cache/elbe/f310dcbc-f5fc-423e-99e4-fb72d7b9dd5f
 project still busy, waiting
 project still busy, waiting
 ...
