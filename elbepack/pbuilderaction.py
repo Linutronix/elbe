@@ -162,6 +162,7 @@ class BuildAction(PBuilderAction):
             print ("")
         elif opt.project:
             prjdir = opt.project
+            system ('%s control rm_log %s' % (elbe_exe, prjdir))
         else:
             print ('you need to specify --project or --xmlfile option', file=sys.stderr)
             sys.exit(20)

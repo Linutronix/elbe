@@ -309,3 +309,9 @@ class ESoap (ServiceBase):
     def shutdown_initvm (self, uid):
         system ("systemctl --no-block poweroff")
 
+    @rpc (String)
+    @authenticated_uid
+    @soap_faults
+    def rm_log (self, uid, builddir):
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.rm_log (uid, builddir)

@@ -123,6 +123,24 @@ class ClientAction(object):
     def __init__(self, node):
         self.node = node
 
+class RemoveLogAction(ClientAction):
+
+    tag = 'rm_log'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control rm_log <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.rm_log (builddir)
+
+
+ClientAction.register(RemoveLogAction)
+
 class ListProjectsAction(ClientAction):
 
     tag = 'list_projects'
