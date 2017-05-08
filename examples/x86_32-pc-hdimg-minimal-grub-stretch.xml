@@ -45,6 +45,11 @@
 			<pkg>grub-pc</pkg>
 			<pkg>xserver-xorg-video-radeon</pkg>
 			<pkg>xserver-xorg-core</pkg>
+			<pkg>xserver-xorg-input-all</pkg>
+			<pkg>xterm</pkg>
+			<pkg>isc-dhcp-client</pkg>
+			<pkg>net-tools</pkg>
+			<pkg>network-manager</pkg>
 			<pkg>mono-runtime</pkg>
 			<pkg>slim</pkg>
 			<pkg>awesome</pkg>
