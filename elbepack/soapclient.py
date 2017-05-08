@@ -29,6 +29,8 @@ import time
 import sys
 import os
 
+from datetime import datetime
+
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
 
@@ -624,3 +626,31 @@ class ListPackagesAction(RepoAction):
         print(client.service.list_packages (builddir))
 
 RepoAction.register(ListPackagesAction)
+
+
+class DownloadAction(RepoAction):
+
+    tag = 'download'
+
+    def __init__(self, node):
+        RepoAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe prjrepo download <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = "repo.tar.gz"
+        client.service.tar_prjrepo (builddir, filename)
+
+        dst_fname = os.path.join(".", "elbe-projectrepo-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".tar.gz")
+
+        client.download_file (builddir, filename, dst_fname)
+        print (dst_fname + " saved", file=sys.stderr)
+
+        client.service.rm (builddir, filename)
+        print (filename + " deleted on initvm.")
+
+
+RepoAction.register(DownloadAction)

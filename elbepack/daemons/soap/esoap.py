@@ -20,6 +20,8 @@
 
 import binascii
 import os
+import tarfile
+import fnmatch
 
 from tempfile import NamedTemporaryFile
 
@@ -326,3 +328,11 @@ class ESoap (ServiceBase):
             for filename in fnmatch.filter(filenames, '*.deb'):
                 s += filename +'\n'
         return s
+
+    @rpc (String, String)
+    @authenticated_uid
+    @soap_faults
+    def tar_prjrepo (self, uid, builddir, filename):
+        self.app.pm.open_project (uid, builddir)
+        with tarfile.open(os.path.join(builddir, filename), "w:gz") as tar:
+            tar.add(os.path.join(builddir, "repo"), arcname=os.path.basename(os.path.join(builddir, "repo")))
