@@ -65,7 +65,7 @@ ${docindent(n.text(DOC))}
 </%def>
 
 <%def name="elementseq(n)">
-  ${n.et.attrib["name"]} ('${genlink(n.et.attrib["type"])}') ${cardinality(n)}::
+  ${n.et.attrib["name"]} ${genlink(n.et.attrib["type"])} ${cardinality(n)}::
 ${docindent(n.text(DOC), 2)}
 </%def>
 
