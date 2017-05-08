@@ -592,3 +592,35 @@ class BuildPbuilderAction(ClientAction):
 
 ClientAction.register(BuildPbuilderAction)
 
+
+class RepoAction(ClientAction):
+    repoactiondict = {}
+    @classmethod
+    def register(cls, action):
+        cls.repoactiondict[action.tag] = action
+    @classmethod
+    def print_actions(cls):
+        print ('available subcommands are:', file=sys.stderr)
+        for a in cls.repoactiondict:
+            print ('   ' + a, file=sys.stderr)
+    def __new__(cls, node):
+        action = cls.repoactiondict[node]
+        return object.__new__(action)
+
+
+class ListPackagesAction(RepoAction):
+
+    tag = 'list_packages'
+
+    def __init__(self, node):
+        RepoAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe prjrepo list_packages <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        print(client.service.list_packages (builddir))
+
+RepoAction.register(ListPackagesAction)
