@@ -5,6 +5,7 @@ debian/elbe-buildenv/
 debian/elbe-common/
 debian/elbe-control/
 debian/elbe-daemon/
+debian/elbe-debianize/
 debian/elbe-doc/
 debian/elbe-soap/
 debian/elbe-updated/
@@ -14,11 +15,16 @@ debian/elbe-bootup-check/
 debian/elbe-daemon/
 debian/elbe-buildchroot/
 debian/elbe-adjustpkg/
+debian/debhelper-build-stamp
 *.pyc
 build
+docs/_build
 docs/*.1
 docs/*.html
 docs/*.png
+docs/*.xml
+docs/elbe*.rst
+docs/article-*.rst
 docs/manpage-base-url.xsl
 docs/elbe-examples.txt
 docs/elbe-schema-reference.txt
