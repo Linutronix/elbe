@@ -141,6 +141,7 @@ Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
   python-suds,
+  python-debian,
   elbe-common (= ${binary:Version}),
   tmux (>= 1.9)
 Description: Commandline Tool to control an elbe buildenv
