@@ -15,10 +15,9 @@ MAN_HTML=$(patsubst %.txt,%.html,$(MAN_TXT))
 
 DOC_HTML=$(MAN_HTML)
 
-ARTICLES = elbe-schema-reference elbe-examples
-SP_ARTICLES= elbeoverview-en
+SP_ARTICLES= elbeoverview-en elbe-schema-reference
 
-DOC_HTML+=$(patsubst %,%.html,$(ARTICLES) $(SP_ARTICLES))
+DOC_HTML+=$(patsubst %,%.html,$(SP_ARTICLES))
 
 DOC_MAN1=$(patsubst %.txt,%.1,$(MAN1_TXT))
 DOC_MAN5=$(patsubst %.txt,%.5,$(MAN5_TXT))
@@ -57,6 +56,9 @@ ASCIIDOC_DATA_URI = -a data-uri -a iconsdir=/usr/share/asciidoc/images/icons
 all: html man
 html: $(DOC_HTML)
 
+sphinx:
+	sphinx-build . _build
+
 install: install-man install-html
 
 install-man: man
@@ -76,7 +78,8 @@ man7: $(DOC_MAN7)
 
 
 clean:
-	$(RM) *.xml *.xml+ *.html *.html+ *.1 *.5 *.7
+	$(RM) -r _build
+	$(RM) article*.rst elbe*.rst *.xml *.xml+ *.html *.html+ *.1 *.5 *.7
 	$(RM) *.texi *.texi+ *.texi++ git.info gitman.info
 	$(RM) *.pdf
 	$(RM) howto-index.txt howto/*.html doc.dep
@@ -100,12 +103,14 @@ manpage-base-url.xsl: manpage-base-url.xsl.in
 
 %.xml : %.txt
 	$(RM) $@+ $@ && \
+	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o $@ $< && \
+	pandoc -r docbook -w rst -o $*.rst $@
+	sed -i "1s/^/************************\n\n/" $*.rst
+	sed -i "1s/^/$*\n/" $*.rst
+	sed -i "1s/^/************************\n/" $*.rst
 	$(ASCIIDOC) -b docbook -d manpage -f asciidoc.conf \
 		$(ASCIIDOC_EXTRA) -agit_version=$(ELBE_VERSION) -o $@+ $< && \
 	mv $@+ $@
-
-$(patsubst %,%.html,$(ARTICLES)) : %.html : %.txt
-	$(ASCIIDOC) -a toc $(ASCIIDOC_EXTRA) -b xhtml11 $*.txt
 
 %.svg : %.dia
 	$(RM) $@ && \
@@ -116,21 +121,33 @@ $(patsubst %,%.html,$(ARTICLES)) : %.html : %.txt
 	$(DIA) --export=$@ $<
 
 elbeoverview-en.html : elbeoverview-en.txt elbe-process.png emu-process.png
+	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o elbeoverview-en.xml $< && \
+	pandoc -r docbook -w rst -o article-elbeoverview-en.rst elbeoverview-en.xml
+	sed -i "1s/^/************************\n\n/" article-elbeoverview-en.rst
+	sed -i "1s/^/ELBE Overview\n/" article-elbeoverview-en.rst
+	sed -i "1s/^/************************\n/" article-elbeoverview-en.rst
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbeoverview-en.txt
 
 elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
-	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) -a iconsdir=icons -o elbeoverview-en-ie.html -b xhtml11 elbeoverview-en.txt
+	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o $*.xml $< && \
+	pandoc -r docbook -w rst -o article-$*.rst $*.xml
+	sed -i "1s/^/************************\n\n/" $*.rst
+	sed -i "1s/^/$*\n/" $*.rst
+	sed -i "1s/^/************************\n/" $*.rst
+	$(ASCIIDOC) -b html5 -a icons -a toc2 -a theme=flask -o elbeoverview-en.html elbeoverview-en.txt
 
 elbe-schema-reference.txt: ../elbepack/dbsfed.xsd ../elbepack/xsdtoasciidoc.mako
 	../elbe xsdtoasciidoc --output elbe-schema-reference.txt ../elbepack/dbsfed.xsd
 
+elbe-schema-reference.html: %.html : %.txt
+	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o $*.xml $< && \
+	pandoc -r docbook -w rst -o article-$*.rst $*.xml
+	sed -i "1s/^/*************************\n\n/" article-$*.rst
+	sed -i "1s/^/ELBE XML Reference\n/" article-$*.rst
+	sed -i "1s/^/*************************\n/" article-$*.rst
+	sed -i "s/<#/<#type-/g" article-$*.rst
+	$(ASCIIDOC) -a toc $(ASCIIDOC_EXTRA) -b xhtml11 $*.txt
+
 elbe-examples.txt:
 	./build-example-doc.sh
 	$(ASCIIDOC) $(ASIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbe-examples.txt
-<<<<<<< HEAD
-
-repobuilder-en.html : repobuilder-en.txt buildrepo.png repobuild-cycle.png
-	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 repobuilder-en.txt
-
-=======
->>>>>>> 59ddd827... Revert "Add repobuilder preliminary description"
