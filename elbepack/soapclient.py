@@ -30,6 +30,7 @@ import sys
 import os
 
 from datetime import datetime
+import deb822                     # package for dealing with Debian related data
 
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
@@ -654,3 +655,87 @@ class DownloadAction(RepoAction):
 
 
 RepoAction.register(DownloadAction)
+
+
+class UploadPackageAction(RepoAction):
+
+    tag = 'upload_pkg'
+
+    def __init__(self, node):
+        RepoAction.__init__(self, node)
+
+    def upload_file(self, client, f, builddir):
+        # Uploads file f into builddir in intivm
+        size = 1024 * 1024
+        part = 0
+        with file (f, "r") as fp:
+            while (True):
+                xml_base64 = binascii.b2a_base64(fp.read (size))
+                # finish upload
+                if len (xml_base64) == 1:
+                    part = client.service.upload_file (builddir,
+                                                       f,
+                                                       xml_base64,
+                                                       -1)
+                else:
+                    part = client.service.upload_file (builddir,
+                                                       f,
+                                                       xml_base64,
+                                                       part)
+                if part == -1:
+                    print ("project busy, upload not allowed")
+                    return -1
+                if part == -2:
+                    print ("Upload of package finished.")
+                    break
+
+    def execute(self, client, opt, args):
+        if len (args) != 2:
+            print ("usage: elbe prjrepo upload_pkg <project_dir> <deb/dsc file>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        filename = args[1]
+
+        print("\n--------------------------")
+        print("Upload and Include Package")
+        print("--------------------------")
+        print("Check files...")
+
+        # Check filetype
+        if filename[-3:] not in ['dsc','deb']:
+            print ("Error: Only .dsc and .deb files allowed to upload.")
+        else:
+            filetype = filename[-4:]
+
+        files = [filename] # list of all files which will be uploaded
+
+        # Parse .dsc-File and append neccessary source files to files
+        if filetype == '.dsc':
+            for f in deb822.Dsc(file(filename))['Files']:
+                files.append(f['name'])
+
+        # Check whether all files are available
+        abort = False
+        for f in files:
+            if not os.path.isfile(f):
+                print("File %s not found." % f)
+                abort = True
+        # Abort if one or more source files are missing
+        if abort: sys.exit(20)
+
+        print ("Start uploading file(s)...")
+        for f in files:
+            print("Upload %s..." % f)
+            self.upload_file(client, f, builddir)
+
+        print ("Including Package in initvm...")
+        client.service.include_package(builddir, filename)
+
+
+        print("Cleaning initvm builddir...")
+        for f in files:
+            client.service.rm (builddir, f)
+
+
+RepoAction.register(UploadPackageAction)

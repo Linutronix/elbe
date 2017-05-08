@@ -482,6 +482,19 @@ class ProjectManager(object):
         with open (os.path.join (ep.builddir, 'log.txt'), 'w', 0):
             pass
 
+    def add_deb_package(self, userid, filename):
+        ep = self._get_current_project( userid )
+
+        t = filename[-3:] # filetype of uploaded file
+
+        if t == 'dsc':
+            ep.repo.includedsc(os.path.join( ep.builddir, filename))
+        elif t == 'deb':
+            ep.repo.includedeb(os.path.join( ep.builddir, filename))
+
+        ep.repo.finalize()
+
+
     def current_project_has_changes (self, userid):
         with self.lock:
             builddir = self._get_current_project( userid ).builddir

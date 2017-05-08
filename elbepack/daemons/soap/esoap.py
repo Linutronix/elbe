@@ -336,3 +336,10 @@ class ESoap (ServiceBase):
         self.app.pm.open_project (uid, builddir)
         with tarfile.open(os.path.join(builddir, filename), "w:gz") as tar:
             tar.add(os.path.join(builddir, "repo"), arcname=os.path.basename(os.path.join(builddir, "repo")))
+
+    @rpc (String, String)
+    @authenticated_uid
+    @soap_faults
+    def include_package (self, uid, builddir, filename):
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.add_deb_package(uid, filename)
