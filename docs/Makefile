@@ -14,7 +14,7 @@ MAN_HTML=$(patsubst %.txt,%.html,$(MAN_TXT))
 DOC_HTML=$(MAN_HTML)
 
 ARTICLES = elbe-schema-reference elbe-examples
-SP_ARTICLES= elbeoverview-en repobuilder-en quickstart
+SP_ARTICLES= elbeoverview-en quickstart
 
 DOC_HTML+=$(patsubst %,%.html,$(ARTICLES) $(SP_ARTICLES))
 
@@ -129,6 +129,3 @@ elbe-schema-reference.txt: ../elbepack/dbsfed.xsd ../elbepack/xsdtoasciidoc.mako
 elbe-examples.txt:
 	./build-example-doc.sh
 	$(ASCIIDOC) $(ASIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbe-examples.txt
-
-repobuilder-en.html : repobuilder-en.txt buildrepo.png repobuild-cycle.png
-	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 repobuilder-en.txt
