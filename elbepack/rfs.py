@@ -188,6 +188,18 @@ class BuildEnv ():
         self.rfs.mkdir_p ("/state/lists/partial")
         self.rfs.touch_file ("/state/status")
 
+    def import_keys(self):
+        if self.xml.has('project/mirror/url-list'):
+            for url in self.xml.node('project/mirror/url-list'):
+                if url.has('key'):
+                    l = url.text('key').strip()    # URL to key
+                    name = l.split('/')[-1]        # Filename of key
+
+                    # Download key and add it to Debian keyring
+                    self.log.chroot(self.rfs.path, 'wget %s' % l )
+                    self.log.chroot(self.rfs.path, 'apt-key add %s' % name )
+                    self.log.chroot(self.rfs.path, 'rm %s' % name)
+
     def initialize_dirs (self, build_sources=False):
         mirror = self.xml.create_apt_sources_list (build_sources=build_sources)
 

@@ -240,6 +240,10 @@ class ElbeProject (object):
                                       build_sources = build_sources, clean = True )
             skip_pkglist = False
 
+        # Import keyring
+        self.buildenv.import_keys()
+        self.log.printo ("Keys imported")
+
         # Install packages
         if not skip_pkglist:
             self.install_packages()
