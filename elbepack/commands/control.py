@@ -117,6 +117,20 @@ def run_command (argv):
         print ("try 'elbe initvm --directory /path/to/initvm start'", file=sys.stderr)
         sys.exit(10)
 
+    try:
+        v_server = control.service.get_version ()
+        if v_server != elbe_version:
+            print ("elbe v%s is used in initvm, this is not compatible with \
+elbe v%s that is used on this machine. Please install same \
+versions of elbe in initvm and on your machine." % (v_server, elbe_version), file=sys.stderr)
+            if not (opt.ignore_version):
+                sys.exit (20)
+    except AttributeError:
+        print ("the elbe installation inside the initvm doesn't provide a \
+get_version interface. Please create a new initvm or upgrade \
+elbe inside the existing initvm.", file=sys.stderr)
+        if not (opt.ignore_version):
+            sys.exit (20)
 
     try:
         action = ClientAction (args[0])
@@ -125,20 +139,6 @@ def run_command (argv):
         ClientAction.print_actions ()
         sys.exit(20)
 
-    try:
-        v_server = control.service.get_version ()
-        if v_server != elbe_version:
-            print ("elbe v%s is used in initvm, this is not compatible with \
-elbe v%s that is used on this machine. Please install same \
-versions of elbe in initvm and on your machine." % (v_server, elbe_version))
-            if not (opt.ignore_version):
-                sys.exit (20)
-    except AttributeError:
-        print ("the elbe installation inside the initvm doesn't provide a \
-get_version interface. Please create a new initvm or upgrade \
-elbe inside the existing initvm.")
-        if not (opt.ignore_version):
-            sys.exit (20)
 
 
     try:
