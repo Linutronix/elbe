@@ -34,6 +34,8 @@ import time
 import os
 import datetime
 
+import libvirt
+
 cmd_exists = lambda x: any(os.access(os.path.join(path, x), os.X_OK) for path in os.environ["PATH"].split(os.pathsep))
 
 # Create download directory with timestamp,
@@ -43,6 +45,10 @@ def ensure_outdir (wdfs, opt):
         opt.outdir = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     print ("Saving generated Files to %s" % opt.outdir)
+
+def ensure_initvm_defined():
+    if self.initvm == None:
+        sys.exit(20)
 
 class InitVMError(Exception):
     def __init__(self, str):
@@ -61,10 +67,15 @@ class InitVMAction(object):
     def __new__(cls, node):
         action = cls.actiondict[node]
         return object.__new__(action)
-    def __init__(self, node):
-        if not cmd_exists('tmux'):
-            print ("We need tmux installed, please install it via \"sudo apt-get install -y tmux\"");
-            sys.exit(20)
+    def __init__(self, node, initvmNeeded = True):
+        # The tag initvmNeeded is required in order to be able to run `elbe initvm create`
+        conn = libvirt.open("qemu:///session")
+        try:
+            self.initvm = conn.lookupByName('initvm')
+        except libvirt.libvirtError:
+            self.initvm = None
+            if initvmNeeded == True:
+                sys.exit(20)
         self.node = node
 
 class StartAction(InitVMAction):
@@ -75,20 +86,20 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        if os.system('virsh start initmv') == 256:
-            print('Starting initvm failed.')
-            print('The reason is most likely that')
-            print('  1) The initvm is already running.')
-            print('  2) The initvm is not registered in libvirt.')
-            print('For more information run `virsh list --all`.')
+        virDomainState = self.initvm.info()[0]
+        if virDomainState == 1:
+            print('Initvm already running.')
             sys.exit(20)
-
-        # Wait five seconds for the initvm to boot
-        for i in range (1, 5):
-            sys.stdout.write ("*")
-            sys.stdout.flush ()
-            time.sleep (1)
-        print ("*")
+        elif virDomainState == 5:
+            # Domain is shut off. Let's start it!
+            self.initvm.create()
+            # TODO: Instead of waiting for five seconds check whether SOAP server is reachable
+            # Wait five seconds for the initvm to boot
+            for i in range (1, 5):
+                sys.stdout.write ("*")
+                sys.stdout.flush ()
+                time.sleep (1)
+            print ("*")
 
 InitVMAction.register(StartAction)
 
@@ -190,7 +201,7 @@ class CreateAction(InitVMAction):
     tag = 'create'
 
     def __init__(self, node):
-        InitVMAction.__init__(self, node)
+        InitVMAction.__init__(self, node, initvmNeeded = False)
 
     def execute(self, initvmdir, opt, args):
         try:
