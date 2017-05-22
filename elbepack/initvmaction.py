@@ -313,14 +313,26 @@ class CreateAction(InitVMAction):
             else:
                 system ('%s init %s --directory "%s" "%s"' % (elbe_exe, init_opts, initvmdir, exampl))
 
-            print('init done')
-            sys.exit(20)
-
         except CommandError:
             print ("'elbe init' Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)
             sys.exit(20)
 
+        # Register initvm in libvirt
+        # TODO: Extended vm name support? Currently, only one initvm with the
+        # name `initvm` is allowed. But perhaps it is a good idea to leave it
+        # that way because otherwise the user may be tempted to start more than
+        # one elbe-initvm which is not possible in the current network
+        # configuration (user networking with portforwarding).
+        try:
+            system('virsh define %s/libvirt.xml' % initvmdir)
+        except CommandError:
+            print('Registering initvm in libvirt failed', file=sys.stderr)
+            print('Try `virsh undefine initvm` to delete existing initvm',
+                    file=sys.stderr)
+            sys.exit(20)
+
+        # Build initvm
         try:
             system ('cd "%s"; make' % (initvmdir))
         except CommandError:
