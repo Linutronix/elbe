@@ -313,6 +313,9 @@ class CreateAction(InitVMAction):
             else:
                 system ('%s init %s --directory "%s" "%s"' % (elbe_exe, init_opts, initvmdir, exampl))
 
+            print('init done')
+            sys.exit(20)
+
         except CommandError:
             print ("'elbe init' Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)

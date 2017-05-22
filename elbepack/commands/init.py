@@ -67,8 +67,6 @@ def run_command( argv ):
 
     (opt,args) = oparser.parse_args(argv)
 
-    print opt.directory
-
     if len(args) == 0:
         print "no filename specified"
         oparser.print_help()
@@ -170,7 +168,7 @@ def run_command( argv ):
     for t in templates:
         o = t.replace( ".mako", "" )
 
-        if t == "Makefile.mako":
+        if t == "Makefile.mako" or t == "libvirt.xml.mako":
             write_template(os.path.join(path,o), os.path.join(init_template_dir, t), d, linebreak=True )
         else:
             write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d, linebreak=False )
