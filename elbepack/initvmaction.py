@@ -86,42 +86,23 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        try:
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
+        if os.system('virsh start initmv') == 256:
+            print('Starting initvm failed.')
+            print('The reason is most likely that')
+            print('  1) The initvm is already running.')
+            print('  2) The initvm is not registered in libvirt.')
+            print('For more information run `virsh list --all`.')
             sys.exit(20)
-        if have_session != 256:
-            print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
-            print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr)
-            sys.exit(20)
+
+        # Wait five seconds for the initvm to boot
+        for i in range (1, 5):
+            sys.stdout.write ("*")
+            sys.stdout.flush ()
+            time.sleep (1)
+        print ("*")
 
         # No other session exists, sanity check initvmdir
         sanity_check_dir (initvmdir)
-
-        # Sanity check passed. start initvm session
-        try:
-            try:
-                os.remove (os.path.join (initvmdir, "run.log"))
-            except OSError:
-                pass
-            system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make run-con 2> %s"' % (
-                        initvmdir, str(os.path.join (initvmdir, "run.log")).replace (' ', '\ ')))
-            for i in range (1, 5):
-                sys.stdout.write ("*")
-                sys.stdout.flush ()
-                time.sleep (1)
-            print ("*")
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-            if have_session:
-                print ("Maybe starting elbe initvm failed:", file=sys.stderr)
-                with open (os.path.join (initvmdir, "run.log"), 'r') as f:
-                    for l in f:
-                        print (l, file=sys.stderr)
-                os.remove (os.path.join (initvmdir, "run.log"))
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
-            sys.exit(20)
 
 InitVMAction.register(StartAction)
 
