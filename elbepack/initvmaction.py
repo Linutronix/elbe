@@ -67,17 +67,6 @@ class InitVMAction(object):
             sys.exit(20)
         self.node = node
 
-def sanity_check_dir (initvmdir):
-    if not os.path.isfile (os.path.join (initvmdir, "Makefile")):
-        print ("No Makefile exists in '%s'." % initvmdir, file=sys.stderr)
-        print ("This is not an initvmdir. Starting Initvm failed", file=sys.stderr)
-        sys.exit(20)
-
-    if not os.path.isdir (os.path.join (initvmdir, ".elbe-in")):
-        print ("No '.elbe-in' directory exists in '%s'." % initvmdir, file=sys.stderr)
-        print ("This is not an initvmdir. Starting Initvm failed", file=sys.stderr)
-        sys.exit(20)
-
 class StartAction(InitVMAction):
 
     tag = 'start'
@@ -101,9 +90,6 @@ class StartAction(InitVMAction):
             time.sleep (1)
         print ("*")
 
-        # No other session exists, sanity check initvmdir
-        sanity_check_dir (initvmdir)
-
 InitVMAction.register(StartAction)
 
 class EnsureAction(InitVMAction):
@@ -122,9 +108,6 @@ class EnsureAction(InitVMAction):
         if have_session != 256:
             # other session exists... Good. exit
             sys.exit(0)
-
-        # No other session exists, sanity check initvmdir
-        sanity_check_dir (initvmdir)
 
         # Sanity check passed. start initvm session
         system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make run-con"' % initvmdir )
@@ -197,9 +180,6 @@ class StartBuildAction(InitVMAction):
             print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
             print ("Try 'elbe initvm attach' to attach to the session.", file=sys.stderr)
             sys.exit(20)
-
-        # No other session exists, sanity check initvmdir
-        sanity_check_dir (initvmdir)
 
         system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make"' % initvmdir )
 
