@@ -113,17 +113,13 @@ class EnsureAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        try:
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
+        if self.initvm_state() == 5:
+            system ('%s initvm start' % elbe_exe)
+        elif self.initvm_state() == 1:
+            pass
+        else:
+            print("Elbe initvm in bad state.")
             sys.exit(20)
-        if have_session != 256:
-            # other session exists... Good. exit
-            sys.exit(0)
-
-        # Sanity check passed. start initvm session
-        system( 'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make run-con"' % initvmdir )
 
 InitVMAction.register(EnsureAction)
 
