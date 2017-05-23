@@ -161,20 +161,12 @@ class AttachAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        try:
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
+        if self.initvm_state() != 1:
+            print('Error: Initvm not running properly.')
             sys.exit(20)
-        if have_session == 0:
-                if os.environ.has_key('TMUX'):
-                    system( 'tmux link-window -s ElbeInitVMSession:initvm' )
-                else:
-                    system( 'tmux attach -t ElbeInitVMSession' )
-        else:
-            print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
-            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
-            sys.exit(20)
+
+        print('Attaching to initvm console.')
+        system('virsh console initvm')
 
 InitVMAction.register(AttachAction)
 
