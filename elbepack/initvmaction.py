@@ -200,17 +200,14 @@ class CreateAction(InitVMAction):
         InitVMAction.__init__(self, node, initvmNeeded = False)
 
     def execute(self, initvmdir, opt, args):
-        try:
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
-            sys.exit(20)
-        if have_session == 0:
-            print ("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
-            print ("", file=sys.stderr)
-            print ("There can only exist a single ElbeInitVMSession, and this session", file=sys.stderr)
-            print ("can also be used to make your build.", file=sys.stderr)
-            print ("See 'elbe initvm submit', 'elbe initvm attach' and 'elbe control'", file=sys.stderr)
+        if self.initvm != None:
+            print("Initvm already defined.\n")
+            print("If you want to build in your old initvm, use `elbe initvm submit <xml>`.")
+            print("If you want to remove your old initvm from libvirt run `virsh undefine initvm`.\n")
+            print("Note:")
+            print("\t1) You can reimport your old initvm via `virsh define <file>`")
+            print("\t   where <file> is the corresponding libvirt.xml")
+            print("\t2) virsh undefine does not delete the image of your old initvm.")
             sys.exit(20)
 
         # Init cdrom to None, if we detect it, we set it
