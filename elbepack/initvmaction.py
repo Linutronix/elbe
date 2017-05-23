@@ -69,9 +69,9 @@ class InitVMAction(object):
         return object.__new__(action)
     def __init__(self, node, initvmNeeded = True):
         # The tag initvmNeeded is required in order to be able to run `elbe initvm create`
-        conn = libvirt.open("qemu:///session")
+        self.conn = libvirt.open("qemu:///session")
         try:
-            self.initvm = conn.lookupByName('initvm')
+            self.initvm = self.conn.lookupByName('initvm')
         except libvirt.libvirtError:
             self.initvm = None
             if initvmNeeded == True:
@@ -285,8 +285,13 @@ class CreateAction(InitVMAction):
         # that way because otherwise the user may be tempted to start more than
         # one elbe-initvm which is not possible in the current network
         # configuration (user networking with portforwarding).
+
+        # Read xml file
+        with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
+            xml = f.read()
+
         try:
-            system('virsh define %s/libvirt.xml' % initvmdir)
+            self.conn.defineXML(xml)
         except CommandError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
             print('Try `virsh undefine initvm` to delete existing initvm',
@@ -302,7 +307,7 @@ class CreateAction(InitVMAction):
             sys.exit(20)
 
         try:
-            system ('%s initvm start --directory "%s"' % (elbe_exe, initvmdir))
+            system('%s initvm start' % elbe_exe)
         except CommandError:
             print ("Starting the initvm Failed", file=sys.stderr)
             print ("Giving up", file=sys.stderr)
