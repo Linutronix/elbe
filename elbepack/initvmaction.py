@@ -78,6 +78,9 @@ class InitVMAction(object):
                 sys.exit(20)
         self.node = node
 
+    def initvm_state(self):
+        return self.initvm.info()[0]
+
 class StartAction(InitVMAction):
 
     tag = 'start'
@@ -86,11 +89,10 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        virDomainState = self.initvm.info()[0]
-        if virDomainState == 1:
+        if self.initvm_state() == 1:
             print('Initvm already running.')
             sys.exit(20)
-        elif virDomainState == 5:
+        elif self.initvm_state() == 5:
             # Domain is shut off. Let's start it!
             self.initvm.create()
             # TODO: Instead of waiting for five seconds check whether SOAP server is reachable
@@ -134,17 +136,19 @@ class StopAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, initvmdir, opt, args):
-        try:
-            have_session = os.system( "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1" )
-        except CommandError as e:
-            print ("tmux execution failed, tmux version 1.9 or higher is required")
+        if self.initvm_state() != 1:
+            print('Initvm is not running.')
             sys.exit(20)
-        if have_session == 0:
-            os.system( '%s control shutdown_initvm' % elbe_exe )
         else:
-            print ("ElbeInitVMSession does not exist in tmux.", file=sys.stderr)
-            print ("Try 'elbe initvm start' to start the session.", file=sys.stderr)
-            sys.exit(20)
+            # Shutdown initvm
+            self.initvm.shutdown()
+            while(True):
+                sys.stdout.write ("*")
+                sys.stdout.flush ()
+                if self.initvm_state() == 5:
+                    print("\nInitvm shut down.")
+                    break
+                time.sleep (1)
 
 InitVMAction.register(StopAction)
 
