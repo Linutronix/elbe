@@ -108,13 +108,13 @@ def run_command (argv):
         print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
         print ("", file=sys.stderr)
         print ("Check, wether the initvm is actually running.", file=sys.stderr)
-        print ("try 'elbe initvm --directory /path/to/initvm start'", file=sys.stderr)
+        print ("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(10)
     except BadStatusLine as e:
         print ("Failed to connect to Soap server %s:%s\n" % (opt.host, opt.port), file=sys.stderr)
         print ("", file=sys.stderr)
         print ("Check, wether the initvm is actually running.", file=sys.stderr)
-        print ("try 'elbe initvm --directory /path/to/initvm start'", file=sys.stderr)
+        print ("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(10)
 
     try:
