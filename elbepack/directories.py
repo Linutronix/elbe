@@ -37,6 +37,13 @@ def init_directories(elbe_relpath):
     else:
         examples_dir = os.path.join (elbe_dir, "examples")
 
+        # Set XML catalog if elbe is run from source
+        xmlcat = os.path.join(elbe_dir, "schema/catalog.xml")
+        if os.environ.get('XML_CATALOG_FILES') is None:
+            os.environ['XML_CATALOG_FILES'] = xmlcat
+        else:
+            os.environ['XML_CATALOG_FILES'] += " "
+            os.environ['XML_CATALOG_FILES'] += xmlcat
 
 def get_cmdlist():
     return [ x for _, x, _ in iter_modules(elbepack.commands.__path__) ]
