@@ -55,9 +55,9 @@ setup(name='elbe',
                                    "init/*.mako", \
                                    "init/*.xml", \
                                    "*.pub", \
-                                   "dbsfed.xsd", \
                                    "default-preseed.xml", \
-                                   "xsdtoasciidoc.mako"] },
+                                   "xsdtoasciidoc.mako"],
+                          'schema': ["dbsfed.xsd", "xml.xsd"]},
       scripts=['elbe'],
       cmdclass={"install": my_install},
       data_files= [

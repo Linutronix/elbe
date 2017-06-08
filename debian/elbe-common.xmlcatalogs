@@ -1,0 +1,4 @@
+local;debian/catalog.xml;/usr/share/xml/elbe-common/catalog.xml
+root-and-package;public;https://www.linutronix.de/projects/Elbe;/usr/share/xml/elbe-common/catalog.xml
+root-and-package;system;https://www.linutronix.de/projects/Elbe/dbsfed.xsd;/usr/share/xml/elbe-common/catalog.xml
+root-and-package;public;http://www.w3.org/XML/1998/namespace;/usr/share/xml/elbe-common/catalog.xml

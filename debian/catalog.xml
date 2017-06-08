@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS//DTD XML Catalogs V1.0//EN"
+  "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="public">
+  <system systemId="http://www.w3.org/2001/03/xml.xsd"
+	  uri="xml.xsd"/>
+
+  <rewriteSystem systemIdStartString="http://www.w3.org/2001/03/"
+		 rewritePrefix="./"/>
+
+  <system systemId="https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
+	  uri="dbsfed.xsd"/>
+
+  <rewriteSystem systemIdStartString="https://www.linutronix.de/projects/Elbe"
+		 rewritePrefix="./"/>
+
+</catalog>

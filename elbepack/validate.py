@@ -23,7 +23,7 @@ from lxml import etree
 from lxml.etree import XMLParser,parse
 
 def validate_xml(fname):
-    schema_file = os.path.join( elbepack.__path__[0], "dbsfed.xsd" )
+    schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
     parser = XMLParser(huge_tree=True)
     schema_tree = etree.parse(schema_file)
     schema = etree.XMLSchema(schema_tree)

@@ -13,7 +13,8 @@ Build-Depends: dh-python,
   xmlto,
   lintian,
   source-highlight,
-  git
+  git,
+  xml-core
 Standards-Version: 3.9.6
 Homepage: http://elbe-rfs.org
 
