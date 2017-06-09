@@ -1,0 +1,275 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<!-- human readable description of the project -->
+		<name>qemu vexpress</name>
+		<version>1.0</version>
+		<description>
+			Debian jessie rootfs for qemu without apt
+
+            This xml generates an root file system for the ARM architecture.
+            To boot the rfs with qemu first unzip the sdcard image and extract
+            the kernel, the device tree and the initrd from qemu.tgz:
+
+            `tar -xvf qemu.tgz ./boot/initrd.img-3.16.0-4-armmp ./boot/vexpress.dtb ./boot/vmlinuz-3.16.0-4-armmp`
+
+            Then run:
+            
+            `qemu-system-arm -machine vexpress-a15 -append "console=ttyAMA0 root=/dev/mmcblk0p2" -nographic -dtb boot/vexpress.dtb -initrd boot/initrd.img-3.16.0-4-armmp -sd sdcard.img -kernel boot/vmlinuz-3.16.0-4-armmp`
+
+            And log in with user root and password foo.
+		</description>
+		<!-- buildtype is used to configure qemu-user and debian arch -->
+		<buildtype>armhf</buildtype>
+		<mirror>
+			<!-- primary mirror is used by debootstrap -->
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<!-- debian testing? stable? unstable?? -->
+		<suite>jessie</suite>
+	</project>
+	<target>
+		<!-- content for /etc/hostname -->
+		<hostname>elbe</hostname>
+		<!-- content for /etc/domainname -->
+		<domain>linutronix.de</domain>
+		<!-- root password -->
+		<passwd>foo</passwd>
+		<!-- run a getty here: -->
+		<console>ttyAMA0,115200</console>
+		<package>
+			<!-- build a tarball of the target image -->
+			<tar>
+				<name>qemu.tgz</name>
+			</tar>
+		</package>
+		<!-- define an sdcard image -->
+		<images>
+			<msdoshd>
+				<!-- name of the image file -->
+				<name>sdcard.img</name>
+				<size>1500MiB</size>
+					<!-- partition layout -->
+					<partition>
+						<size>50MiB</size>
+						<!-- label needs to match with the fstab entry below -->
+						<label>boot</label>
+						<bootable/>
+					</partition>
+					<partition>
+						<size>remain</size>
+						<label>rfs</label>
+					</partition>
+			</msdoshd>
+		</images>
+		<fstab>
+			<bylabel>
+				<!-- label needs to match with an image entry aboth -->
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs>
+					<!-- fs type and options -->
+					<type>ext2</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<bylabel>
+				<label>boot</label>
+				<mountpoint>/boot</mountpoint>
+				<fs>
+					<type>vfat</type>
+				</fs>
+			</bylabel>
+		</fstab>
+        <setsel/>	<!-- don't auto install recommended packages -->
+		<norecommend/>
+		<finetuning>
+			<!-- move the devicetree to the path where the bootloader excpets it -->
+			<cp path="/usr/lib/linux-image-3.16.0-4-armmp/vexpress-v2p-ca15-tc1.dtb">/boot/vexpress.dtb</cp>
+			<!-- shrink target image -->
+			<rm>/var/cache/apt/archives/*.deb</rm>
+			<rm>/var/cache/apt/*.bin</rm>
+			<rm>/var/lib/apt/lists/ftp*</rm>
+		</finetuning>
+		<pkg-list><pkg>acl</pkg>
+<pkg>adduser</pkg>
+<pkg>base-files</pkg>
+<pkg>base-passwd</pkg>
+<pkg>bash</pkg>
+<pkg>bsdmainutils</pkg>
+<pkg>bsdutils</pkg>
+<pkg>busybox</pkg>
+<pkg>coreutils</pkg>
+<pkg>cpio</pkg>
+<pkg>cron</pkg>
+<pkg>dash</pkg>
+<pkg>debconf</pkg>
+<pkg>debconf-i18n</pkg>
+<pkg>debian-archive-keyring</pkg>
+<pkg>debianutils</pkg>
+<pkg>diffutils</pkg>
+<pkg>dmidecode</pkg>
+<pkg>dmsetup</pkg>
+<pkg>dpkg</pkg>
+<pkg>e2fslibs:armhf</pkg>
+<pkg>e2fsprogs</pkg>
+<pkg>findutils</pkg>
+<pkg>gcc-4.8-base:armhf</pkg>
+<pkg>gcc-4.9-base:armhf</pkg>
+<pkg>gnupg</pkg>
+<pkg>gpgv</pkg>
+<pkg>grep</pkg>
+<pkg>groff-base</pkg>
+<pkg>gzip</pkg>
+<pkg>hostname</pkg>
+<pkg>ifupdown</pkg>
+<pkg>init</pkg>
+<pkg>init-system-helpers</pkg>
+<pkg>initramfs-tools</pkg>
+<pkg>initscripts</pkg>
+<pkg>insserv</pkg>
+<pkg>iproute2</pkg>
+<pkg>iptables</pkg>
+<pkg>iputils-ping</pkg>
+<pkg>isc-dhcp-client</pkg>
+<pkg>isc-dhcp-common</pkg>
+<pkg>klibc-utils</pkg>
+<pkg>kmod</pkg>
+<pkg>less</pkg>
+<pkg>libacl1:armhf</pkg>
+<pkg>libapt-inst1.5:armhf</pkg>
+<pkg>libapt-pkg4.12:armhf</pkg>
+<pkg>libattr1:armhf</pkg>
+<pkg>libaudit-common</pkg>
+<pkg>libaudit1:armhf</pkg>
+<pkg>libblkid1:armhf</pkg>
+<pkg>libboost-iostreams1.55.0:armhf</pkg>
+<pkg>libbsd0:armhf</pkg>
+<pkg>libbz2-1.0:armhf</pkg>
+<pkg>libc-bin</pkg>
+<pkg>libc6:armhf</pkg>
+<pkg>libcap2:armhf</pkg>
+<pkg>libcap2-bin</pkg>
+<pkg>libcomerr2:armhf</pkg>
+<pkg>libcryptsetup4:armhf</pkg>
+<pkg>libdb5.3:armhf</pkg>
+<pkg>libdebconfclient0:armhf</pkg>
+<pkg>libdevmapper1.02.1:armhf</pkg>
+<pkg>libdns-export100</pkg>
+<pkg>libedit2:armhf</pkg>
+<pkg>libestr0</pkg>
+<pkg>libffi6:armhf</pkg>
+<pkg>libgcc1:armhf</pkg>
+<pkg>libgcrypt20:armhf</pkg>
+<pkg>libgdbm3:armhf</pkg>
+<pkg>libgmp10:armhf</pkg>
+<pkg>libgnutls-deb0-28:armhf</pkg>
+<pkg>libgnutls-openssl27:armhf</pkg>
+<pkg>libgpg-error0:armhf</pkg>
+<pkg>libgssapi-krb5-2:armhf</pkg>
+<pkg>libhogweed2:armhf</pkg>
+<pkg>libicu52:armhf</pkg>
+<pkg>libidn11:armhf</pkg>
+<pkg>libirs-export91</pkg>
+<pkg>libisc-export95</pkg>
+<pkg>libisccfg-export90</pkg>
+<pkg>libjson-c2:armhf</pkg>
+<pkg>libk5crypto3:armhf</pkg>
+<pkg>libkeyutils1:armhf</pkg>
+<pkg>libklibc</pkg>
+<pkg>libkmod2:armhf</pkg>
+<pkg>libkrb5-3:armhf</pkg>
+<pkg>libkrb5support0:armhf</pkg>
+<pkg>liblocale-gettext-perl</pkg>
+<pkg>liblogging-stdlog0:armhf</pkg>
+<pkg>liblognorm1:armhf</pkg>
+<pkg>liblzma5:armhf</pkg>
+<pkg>libmnl0:armhf</pkg>
+<pkg>libmount1:armhf</pkg>
+<pkg>libncurses5:armhf</pkg>
+<pkg>libncursesw5:armhf</pkg>
+<pkg>libnetfilter-acct1:armhf</pkg>
+<pkg>libnettle4:armhf</pkg>
+<pkg>libnewt0.52:armhf</pkg>
+<pkg>libnfnetlink0:armhf</pkg>
+<pkg>libp11-kit0:armhf</pkg>
+<pkg>libpam-modules:armhf</pkg>
+<pkg>libpam-modules-bin</pkg>
+<pkg>libpam-runtime</pkg>
+<pkg>libpam0g:armhf</pkg>
+<pkg>libpcre3:armhf</pkg>
+<pkg>libpipeline1:armhf</pkg>
+<pkg>libpopt0:armhf</pkg>
+<pkg>libprocps3:armhf</pkg>
+<pkg>libpsl0:armhf</pkg>
+<pkg>libreadline6:armhf</pkg>
+<pkg>libselinux1:armhf</pkg>
+<pkg>libsemanage-common</pkg>
+<pkg>libsemanage1:armhf</pkg>
+<pkg>libsepol1:armhf</pkg>
+<pkg>libsigc++-2.0-0c2a:armhf</pkg>
+<pkg>libslang2:armhf</pkg>
+<pkg>libsmartcols1:armhf</pkg>
+<pkg>libss2:armhf</pkg>
+<pkg>libssl1.0.0:armhf</pkg>
+<pkg>libstdc++6:armhf</pkg>
+<pkg>libsystemd0:armhf</pkg>
+<pkg>libtasn1-6:armhf</pkg>
+<pkg>libtext-charwidth-perl</pkg>
+<pkg>libtext-iconv-perl</pkg>
+<pkg>libtext-wrapi18n-perl</pkg>
+<pkg>libtinfo5:armhf</pkg>
+<pkg>libudev1:armhf</pkg>
+<pkg>libusb-0.1-4:armhf</pkg>
+<pkg>libustr-1.0-1:armhf</pkg>
+<pkg>libuuid-perl</pkg>
+<pkg>libuuid1:armhf</pkg>
+<pkg>libwrap0:armhf</pkg>
+<pkg>libxtables10</pkg>
+<pkg>linux-base</pkg>
+<pkg>linux-image-3.16.0-4-armmp</pkg>
+<pkg>login</pkg>
+<pkg>logrotate</pkg>
+<pkg>lsb-base</pkg>
+<pkg>man-db</pkg>
+<pkg>manpages</pkg>
+<pkg>mawk</pkg>
+<pkg>mount</pkg>
+<pkg>multiarch-support</pkg>
+<pkg>nano</pkg>
+<pkg>ncurses-base</pkg>
+<pkg>ncurses-bin</pkg>
+<pkg>net-tools</pkg>
+<pkg>netbase</pkg>
+<pkg>netcat-traditional</pkg>
+<pkg>nfacct</pkg>
+<pkg>ntpdate</pkg>
+<pkg>openssh-client</pkg>
+<pkg>openssh-server</pkg>
+<pkg>openssh-sftp-server</pkg>
+<pkg>passwd</pkg>
+<pkg>perl-base</pkg>
+<pkg>procps</pkg>
+<pkg>readline-common</pkg>
+<pkg>rsyslog</pkg>
+<pkg>sed</pkg>
+<pkg>sensible-utils</pkg>
+<pkg>startpar</pkg>
+<pkg>systemd</pkg>
+<pkg>systemd-sysv</pkg>
+<pkg>sysv-rc</pkg>
+<pkg>sysvinit-utils</pkg>
+<pkg>tar</pkg>
+<pkg>traceroute</pkg>
+<pkg>tzdata</pkg>
+<pkg>udev</pkg>
+<pkg>util-linux</pkg>
+<pkg>vim-common</pkg>
+<pkg>vim-tiny</pkg>
+<pkg>wget</pkg>
+<pkg>whiptail</pkg>
+<pkg>zlib1g:armhf</pkg>
+</pkg-list>
+</target>
+</ns0:RootFileSystem>
