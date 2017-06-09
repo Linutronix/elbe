@@ -103,9 +103,16 @@ def extract_target( src, xml, dst, log, cache ):
             for item in pkglist:
                 f.write("%s  install\n" % item)
 
-        log.chroot (dst.path, "dpkg --clear-selections")
-        log.chroot (dst.path, "dpkg --set-selections < %s " % dst.fname (psel))
-        log.chroot (dst.path, "dpkg --purge -a")
+        host_arch = log.get_command_out("dpkg --print-architecture").strip()
+        if xml.is_cross (host_arch):
+            ui = "/usr/share/elbe/qemu-elbe/" + str(xml.defs["userinterpr"])
+            if not os.path.exists (ui):
+                ui = "/usr/bin/" + str(xml.defs["userinterpr"])
+            log.do ('cp %s %s' % (ui, dst.fname( "usr/bin" )))
+
+        log.chroot (dst.path, "/usr/bin/dpkg --clear-selections")
+        log.chroot (dst.path, "/usr/bin/dpkg --set-selections < %s " % dst.fname (psel))
+        log.chroot (dst.path, "/usr/bin/dpkg --purge -a")
 
 
 class ElbeFilesystem(Filesystem):
