@@ -14,7 +14,8 @@ Build-Depends: dh-python,
   lintian,
   source-highlight,
   git,
-  xml-core
+  xml-core,
+  pandoc
 Standards-Version: 3.9.6
 Homepage: http://elbe-rfs.org
 
