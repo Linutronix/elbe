@@ -31,7 +31,7 @@ from apt import Cache
 
 CDROM_SIZE = 640*1000*1000
 
-def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=CDROM_SIZE):
+def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=CDROM_SIZE, xml=None):
 
     hostfs.mkdir_p( '/var/cache/elbe/sources' )
     rfs.mkdir_p( '/var/cache/elbe/sources' )
@@ -45,7 +45,21 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
 
     pkglist = cache.get_installed_pkgs()
 
+    forbiddenPackages = []
+    if xml != None and xml.has('target/pkg-list'):
+        for i in xml.node('target/pkg-list'):
+            try:
+                if i.tag == 'pkg' and i.et.attrib['on_src_cd'] == 'False':
+                   forbiddenPackages.append(i.text('.').strip())
+
+            except KeyError:
+                pass
+
+
     for pkg in pkglist:
+        # Do not include forbidden packages in src cdrom
+        if pkg.name in forbiddenPackages:
+            continue
         try:
             dsc = cache.download_source( pkg.name, '/var/cache/elbe/sources' )
             repo.includedsc( dsc, force=True )
@@ -61,6 +75,9 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
     cache.open ()
 
     for pkg in pkglist:
+        # Do not include forbidden packages in src cdrom
+        if pkg.name in forbiddenPackages:
+            continue
         try:
             p = cache[pkg.name]
             if pkg.name == 'elbe-bootstrap':

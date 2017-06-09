@@ -1891,6 +1891,13 @@
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="on_src_cd" type="string" use="optional">
+          <annotation>
+            <documentation>
+                If set to "False" the source will not be included on the source cdrom.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>

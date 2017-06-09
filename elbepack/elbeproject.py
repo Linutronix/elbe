@@ -343,7 +343,8 @@ class ElbeProject (object):
                                                         init_codename,
                                                         self.builddir,
                                                         self.log,
-                                                        cdrom_size=cdrom_size )
+                                                        cdrom_size=cdrom_size,
+                                                        xml=self.xml)
                 except SystemError as e:
                     # e.g. no deb-src urls specified
                     self.log.printo( str (e) )
