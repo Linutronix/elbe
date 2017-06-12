@@ -20,6 +20,7 @@ import apt_pkg
 import os
 import sys
 import urlparse
+import urllib2
 
 import elbepack
 
@@ -195,10 +196,11 @@ class BuildEnv ():
                     l = url.text('key').strip()    # URL to key
                     name = l.split('/')[-1]        # Filename of key
 
-                    # Download key and add it to Debian keyring
-                    self.log.chroot(self.rfs.path, 'wget %s' % l )
-                    self.log.chroot(self.rfs.path, 'apt-key add %s' % name )
-                    self.log.chroot(self.rfs.path, 'rm %s' % name)
+                    myKey = urllib2.urlopen(l).read()
+                    self.log.do('echo "%s" > %s' % (myKey, self.rfs.fname("tmp/key.pub")))
+                    with self.rfs:
+                        self.log.chroot(self.rfs.path, 'apt-key add /tmp/key.pub' )
+                    self.log.do('rm -f %s' % self.rfs.fname("tmp/key.pub"))
 
     def initialize_dirs (self, build_sources=False):
         mirror = self.xml.create_apt_sources_list (build_sources=build_sources)
