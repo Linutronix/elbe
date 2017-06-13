@@ -38,9 +38,6 @@ from elbepack.elbexml import ValidationMode
 def run_command(argv):
     oparser = OptionParser(usage="usage: elbe prjrepo [options] <command>")
 
-    oparser.add_option("--project", dest="project", default=None,
-                       help="project directory on the initvm")
-
     oparser.add_option("--host", dest="host", default="localhost",
                        help="Ip or hostname of elbe-daemon.")
 
@@ -60,18 +57,10 @@ def run_command(argv):
         help="How many times to retry the connection to the server before\
                 giving up (default is 10 times, yielding 10 seconds).")
 
-    oparser.add_option("--output",
-                       dest="output", default=None,
-                       help="Output files to <directory>")
-
     devel = OptionGroup(
         oparser,
         "options for elbe developers",
         "Caution: Don't use these options in a productive environment")
-    devel.add_option("--skip-urlcheck", action="store_true",
-                     dest="url_validation", default=ValidationMode.CHECK_ALL,
-                     help="Skip URL Check inside initvm")
-
     devel.add_option("--debug", action="store_true",
                      dest="debug", default=False,
                      help="Enable debug mode.")
