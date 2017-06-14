@@ -2,3 +2,7 @@
 
 %:
 	dh $@ --with=config-package
+
+override_dh_clean:
+	dh_clean dh_configpackage.1
+
