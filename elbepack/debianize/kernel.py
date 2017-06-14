@@ -31,7 +31,7 @@ from elbepack.debianize.base import DebianizeBase, template
 class Kernel (DebianizeBase):
 
     name  = "kernel"
-    files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'REPORTING-BUGS']
+    files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'kernel/futex.c']
 
     def __init__ (self):
         self.imgtypes = ["bzImage", "zImage", "uImage", "Image"]
