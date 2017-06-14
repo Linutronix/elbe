@@ -1,3 +1,18 @@
+elbe (1.9.20) unstable; urgency=medium
+
+  * avoid that schema verification needs internet (introduced by xinclude feature)
+  * add elbe control command to remove log file
+  * log is reseted before every pbuilder command
+  * Debian mirror without source packages does not end in cryptic error
+  * added elbe prjrepo subcommand to modify project apt repo
+  * generate docs in sphinx format
+  * import repository keys from url-list to chroot directory and the target RFS
+  * fix problem when building in setsel mode
+  * add vexpress example file without apt
+  * add package tag "on_src_cd" in xml scheme
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 14 Jun 2017 11:45:53 +0200
+
 elbe (1.9.19) unstable; urgency=medium
 
   * bugfix: set_xml needs restart of elbe-daemon
