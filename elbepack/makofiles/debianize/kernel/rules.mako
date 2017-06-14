@@ -18,6 +18,11 @@ INSTALL_PATH=$(KERNEL_PATH) \
 INSTALL_DTBS_PATH=$(DTBS_PATH) \
 O=debian/build
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+    NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+    MAKE_OPTS += -j$(NUMJOBS)
+endif
+
 #export DH_VERBOSE=1
 
 override_dh_auto_clean:
@@ -32,7 +37,7 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -rf include/config
-	$(MAKE) -j`nproc` $(MAKE_OPTS) ${imgtype} modules
+	$(MAKE) $(MAKE_OPTS) ${imgtype} modules
 	test ${k_arch} = arm && make -j`nproc` $(MAKE_OPTS) dtbs || true
 
 override_dh_auto_install:
