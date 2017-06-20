@@ -159,7 +159,7 @@ def sign (infile, outfile, fingerprint):
     try:
         key = ctx.get_key(fingerprint)
     except gpgme.GpgmeError as ex:
-        print 'no key with fingerprint %s: %s' % (fingerprint % ex.message)
+        print 'no key with fingerprint %s: %s' % (fingerprint, ex.message)
         pass
 
     ctx.signers = [key]
