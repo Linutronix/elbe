@@ -18,8 +18,9 @@
 
 suite2codename = { 'oldstable': 'squeeze',
                    'oldstable': 'wheezy',
-                   'stable': 'jessie',
-                   'testing': 'stretch',
+                   'oldstable': 'jessie',
+                   'stable': 'stretch',
+                   'testing': 'buster',
                    'unstable': 'sid',
 
                    'lucid': 'lucid',
