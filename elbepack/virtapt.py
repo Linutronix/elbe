@@ -118,27 +118,37 @@ class VirtApt:
         self.touch   (self.projectpath + "/state/status")
 
     def setup_gpg (self):
-        ring_path = self.projectpath + "/etc/apt/trusted.gpg.d"
+        ring_path = self.projectpath + "/etc/apt/trusted.gpg"
         if not os.path.isdir ("/etc/apt/trusted.gpg.d"):
             print ("/etc/apt/trusted.gpg.d doesn't exist")
             print ("apt-get install debian-archive-keyring may fix this problem")
             sys.exit (20)
 
-        system ('cp /etc/apt/trusted.gpg.d/* "%s"' % ring_path)
+        system ('cp /etc/apt/trusted.gpg "%s"' % ring_path )
 
         gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
-                os.path.join (ring_path, "linutronix-elbe.gpg"),
+                ring_path,
                 self.projectpath)
 
         system ('gpg %s --import "%s"' % (
                 gpg_options,
                 elbe_pubkey_fname))
 
+        trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
+        for key in trustkeys:
+            print "Import %s: " % key
+            try:
+                system ('gpg %s --import "%s"' % (
+                    gpg_options,
+                    os.path.join ("/etc/apt/trusted.gpg.d", key)))
+            except CommandError as e:
+                print "adding elbe-pubkey to keyring failed"
+
     def add_pubkey_url (self, url):
-        ring_path = self.projectpath + "/etc/apt/trusted.gpg.d"
+        ring_path = self.projectpath + "/etc/apt/trusted.gpg"
         tmpkey_path = self.projectpath + "/tmpkey.gpg"
         gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
-                os.path.join (ring_path, "linutronix-elbe.gpg"),
+                ring_path,
                 self.projectpath)
 
         try:
