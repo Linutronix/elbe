@@ -851,7 +851,7 @@ class ElbeDB(object):
     def add_user (self, name, fullname, password, email, admin):
         u = User( name = name,
                   fullname = fullname,
-                  pwhash = pbkdf2_sha512.encrypt( password ),
+                  pwhash = pbkdf2_sha512.hash( password ),
                   email = email,
                   admin = admin )
         with session_scope(self.session) as s:
@@ -881,7 +881,7 @@ class ElbeDB(object):
 
             # Update password only if given
             if not password is None:
-                u.pwhash = pbkdf2_sha512.encrypt( password )
+                u.pwhash = pbkdf2_sha512.hash( password )
 
     def del_user (self, userid):
         with session_scope(self.session) as s:
