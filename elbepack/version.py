@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (C) 2013  Linutronix GmbH
+# Copyright (C) 2017  Linutronix GmbH
 #
 # This file is part of ELBE.
 #
@@ -20,7 +20,7 @@
 
 from elbepack.directories import pack_dir
 
-elbe_version = "1.1"
+elbe_version = "1.2"
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
     is_devel = False
