@@ -20,17 +20,12 @@
 
 from __future__ import print_function
 
-import elbepack
-from elbepack.treeutils   import etree
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
-from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
-from elbepack.elbexml     import ElbeXML, ValidationError
+from elbepack.filesystem  import wdfs, TmpdirFilesystem
 
 import sys
-
 import os
-import datetime
 
 cmd_exists = lambda x: any(os.access(os.path.join(path, x), os.X_OK) for path in os.environ["PATH"].split(os.pathsep))
 

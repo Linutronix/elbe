@@ -16,15 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import apt_pkg
 import os
-import sys
 import urlparse
 import urllib2
 
-import elbepack
-
-from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress
 from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import write_pack_template, get_preseed, preseed_to_text
 from elbepack.shellhelper import CommandError

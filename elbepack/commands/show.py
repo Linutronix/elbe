@@ -20,7 +20,6 @@
 
 import sys
 
-import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 

@@ -20,7 +20,7 @@
 
 import errno
 from os import path, remove
-from shutil import rmtree, copyfile, copytree, move
+from shutil import rmtree, copytree, move
 from apt.package import FetchError
 from elbepack.repomanager import RepoBase, RepoAttributes
 

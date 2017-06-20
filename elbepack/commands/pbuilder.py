@@ -19,7 +19,6 @@
 from __future__ import print_function
 
 import sys
-import os
 
 from optparse import OptionParser
 from elbepack.pbuilderaction import PBuilderAction, PBuilderError

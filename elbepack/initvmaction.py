@@ -24,7 +24,7 @@ import elbepack
 from elbepack.treeutils   import etree
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
-from elbepack.filesystem  import wdfs, TmpdirFilesystem, Filesystem
+from elbepack.filesystem  import wdfs, TmpdirFilesystem
 from elbepack.elbexml     import ElbeXML, ValidationError, ValidationMode
 
 from tempfile import NamedTemporaryFile

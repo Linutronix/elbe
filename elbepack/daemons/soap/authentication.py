@@ -18,7 +18,7 @@
 
 
 
-from faults import SoapElbeDBError, SoapElbeAuthenticationFailed, SoapElbeNotLoggedIn, SoapElbeNotAuthorized
+from faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 from functools import wraps
 
 def authenticated_uid(func):

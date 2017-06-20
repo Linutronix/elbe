@@ -19,7 +19,6 @@
 
 from optparse import OptionParser
 import sys
-import os
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError

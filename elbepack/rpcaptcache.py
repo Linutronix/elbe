@@ -21,7 +21,6 @@ from apt_pkg import config, version_compare
 from apt import Cache
 from multiprocessing.managers import BaseManager
 from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress, ElbeOpProgress
-from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
 import os

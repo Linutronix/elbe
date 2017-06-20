@@ -20,7 +20,6 @@
 # with has to have ultimate trust level, otherwise you'll only get
 # VALID (Untrusted)!
 
-import sys
 from elbepack.gpg import unsign_file
 
 def run_command( argv ):

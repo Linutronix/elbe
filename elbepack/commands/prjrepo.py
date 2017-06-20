@@ -32,9 +32,6 @@ from elbepack.soapclient import RepoAction, ElbeSoapClient
 from elbepack.version import elbe_version
 from elbepack.config import cfg
 
-from elbepack.elbexml import ValidationMode
-
-
 def run_command(argv):
     oparser = OptionParser(usage="usage: elbe prjrepo [options] <command>")
 

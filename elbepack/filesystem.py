@@ -19,7 +19,6 @@
 
 import os
 import shutil
-import io
 
 from glob import glob
 from tempfile import mkdtemp

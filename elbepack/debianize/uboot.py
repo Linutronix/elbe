@@ -18,15 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
 
-from npyscreen import TitleText, TitleSelectOne
-
-from shutil import copyfile
-
-from elbepack.directories import mako_template_dir
-from elbepack.debianize.base import DebianizeBase, template
+from elbepack.debianize.base import DebianizeBase
 
 # this is just a template to show how debianizing another component should work
 

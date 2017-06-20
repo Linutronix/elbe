@@ -18,14 +18,11 @@
 
 
 from optparse import OptionParser
-import datetime
 import sys
 import os
 import io
 
 from elbepack.asciidoclog import StdoutLog
-from elbepack.elbexml import ElbeXML, ValidationError
-
 from elbepack.filesystem import Filesystem
 
 def run_command( argv ):

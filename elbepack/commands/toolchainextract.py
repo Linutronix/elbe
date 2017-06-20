@@ -17,18 +17,15 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 from optparse import OptionParser
-import sys
-import os
-import string
-
 from tempfile import mkdtemp
+
+import os
 
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.repomanager import ToolchainRepo
 from elbepack.debpkg import build_binary_deb
 from elbepack.toolchain import get_toolchain
 from elbepack.asciidoclog import StdoutLog
-
 
 def run_command( argv ):
     oparser = OptionParser(usage="usage: %prog toolchainextract [options]")

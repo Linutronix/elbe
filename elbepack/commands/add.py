@@ -19,7 +19,6 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import os
 
 from elbepack.elbexml import ElbeXML
 from optparse import OptionParser

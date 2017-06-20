@@ -19,9 +19,8 @@
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
 
-from npyscreen import TitleText, TitleSelectOne
+from npyscreen import TitleText
 
 from shutil import copyfile
 

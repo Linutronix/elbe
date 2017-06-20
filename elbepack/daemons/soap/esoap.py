@@ -30,19 +30,14 @@ from elbepack.version import elbe_version
 
 from faults import soap_faults
 
-from elbepack.db import Project, User
 from elbepack.elbexml import ValidationMode
 from datatypes import SoapProject, SoapFile
 from authentication import authenticated_admin, authenticated_uid
 
-from subprocess import Popen, PIPE
-
 from spyne.service import ServiceBase
 from spyne.decorator import rpc
 from spyne.model.primitive import String, Boolean, Integer
-from spyne.model.complex import Array, Iterable
-
-from threading import local
+from spyne.model.complex import Array
 
 class ESoap (ServiceBase):
 

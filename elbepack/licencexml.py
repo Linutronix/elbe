@@ -19,10 +19,8 @@
 
 
 from elbepack.treeutils import etree
-from debian.copyright import Copyright, NotMachineReadableError, LicenseParagraph
+from debian.copyright import Copyright, LicenseParagraph
 
-import os
-import sys
 import io
 import re
 

@@ -25,7 +25,7 @@ from contextlib import contextmanager
 from urllib import quote
 import traceback
 
-from elbepack.db import ElbeDBError, get_versioned_filename
+from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
 from elbepack.updatepkg import gen_update_pkg
 from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive

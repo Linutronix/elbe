@@ -35,13 +35,13 @@ from sqlalchemy import (Column, ForeignKey)
 from sqlalchemy import (Integer, String, Boolean, Sequence, DateTime)
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session, object_mapper
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import (ElbeXML, ValidationError, ValidationMode)
+from elbepack.elbexml import (ElbeXML, ValidationMode)
 from elbepack.dosunix import dos2unix
 
 Base = declarative_base ()

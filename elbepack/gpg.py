@@ -20,7 +20,6 @@
 
 import gpgme
 import os
-import sys
 
 from elbepack.filesystem import hostfs
 

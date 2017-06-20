@@ -24,9 +24,6 @@ import subprocess
 import io
 import stat
 
-from glob import glob
-from tempfile import mkdtemp
-
 from elbepack.asciidoclog import CommandError
 from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_version

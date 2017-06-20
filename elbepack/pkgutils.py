@@ -35,7 +35,6 @@ except ImportError:
     print " elbe-bootstrap packages on the mirror(s) elbe selects the first package it"
     print " has found. There is no guarantee that the latest package is used."
     print " To ensure this, the python-apt package needs to be installed."
-    import urllib2
     virtapt_imported = False
 
 

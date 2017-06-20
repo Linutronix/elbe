@@ -18,14 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
 
 from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
-from elbepack.asciidoclog import ASCIIDocLog
 
 def run_command( argv ):
 

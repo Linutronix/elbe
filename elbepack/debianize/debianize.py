@@ -18,20 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-
-from npyscreen import NPSAppManaged, FormMultiPage
-from npyscreen import TitleText, TitleSelectOne, ButtonPress
-
-from shutil import copyfile
-
-from elbepack.debianize.kernel import Kernel
-from elbepack.debianize.uboot  import UBoot
-from elbepack.debianize.barebox import BareBox
-
-from elbepack.debianize.base import DebianizeBase
-
+from npyscreen import NPSAppManaged
 
 class Debianize (NPSAppManaged):
     def __init__ (self, debianizer):

@@ -21,9 +21,6 @@
 
 from elbepack.dbaction import DbAction
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
 def run_command (argv):
 
     if not len(argv):

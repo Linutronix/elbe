@@ -22,8 +22,6 @@ import os
 import sys
 import shutil
 
-
-import elbepack
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd, NoKinitrdException

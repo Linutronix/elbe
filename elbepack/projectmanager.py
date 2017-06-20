@@ -27,9 +27,9 @@ from threading import Lock
 from uuid import uuid4
 from shutil import rmtree
 
-from elbepack.db import ElbeDB, ElbeDBError, get_versioned_filename
+from elbepack.db import ElbeDB, get_versioned_filename
 from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
-from elbepack.asyncworker import APTCommitJob, GenUpdateJob, GenUpdateJob
+from elbepack.asyncworker import APTCommitJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
 from elbepack.asyncworker import PdebuildJob, CreatePbuilderJob

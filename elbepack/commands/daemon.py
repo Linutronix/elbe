@@ -24,7 +24,6 @@ from pkgutil import iter_modules
 import elbepack.daemons
 
 import sys
-import os
 
 def get_daemonlist():
     return [ x for _, x, _ in iter_modules(elbepack.daemons.__path__) ]

@@ -26,15 +26,9 @@ import string
 
 from tempfile import NamedTemporaryFile
 
-from elbepack.asciidoclog import StdoutLog
-from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
-
-from elbepack.filesystem import Filesystem
 from elbepack.shellhelper import system_out
-
-
 
 class license_dep5_to_spdx (dict):
     def __init__ (self, xml_fname=None):
