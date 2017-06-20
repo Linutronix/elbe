@@ -1,11 +1,16 @@
 #!/usr/bin/make -f
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	MAKE_OPTS += -j$(NUMJOBS)
+endif
+
 override_dh_auto_configure:
-	cd docs && $(MAKE)
+	cd docs && $(MAKE) $(MAKE_OPTS)
 
 override_dh_clean:
 	dh_clean
-	$(MAKE) -C docs clean
+	$(MAKE) $(MAKE_OPTS) -C docs clean
 
 override_dh_compress:
 	dh_compress -X.xml
