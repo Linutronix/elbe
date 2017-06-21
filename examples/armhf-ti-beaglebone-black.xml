@@ -4,7 +4,7 @@
 		<name>beaglebone-black</name>
 		<version>1.0</version>
 		<description>
-			debian jessie rootfs for beaglebone black
+			debian stretch rootfs for beaglebone black
 		</description>
 		<!-- buildtype is used to configure qemu-user and debian arch -->
 		<buildtype>armhf</buildtype>
@@ -15,7 +15,7 @@
 			<primary_proto>http</primary_proto>
 		</mirror>
 		<!-- debian testing? stable? unstable?? -->
-		<suite>jessie</suite>
+		<suite>stretch</suite>
 	</project>
 	<target>
 		<!-- content for /etc/hostname -->
