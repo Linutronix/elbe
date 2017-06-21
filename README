@@ -8,6 +8,12 @@ It can be used to build embedded Linux Rootfilesystems based on Debian packages.
 
 ELBE runs on Debian Linux Host Systems.
 
+Software Dependencies
+---------------------
+If using ELBE from git repository directly, you'll need following packages installed:
+
+    apt install python-mako python-suds qemu-utils qemu-kvm libvirt-bin p7zip-full
+
 Crash Course
 ------------
 1. use a Elbe XML file (e.g. from /usr/share/doc/elbe/examples or
