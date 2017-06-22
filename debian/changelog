@@ -1,3 +1,10 @@
+elbe (1.9.21) unstable; urgency=medium
+
+  * minor improvements here and there
+  * some fixes for stretch
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 22 Jun 2017 17:21:26 +0200
+
 elbe (1.9.20) unstable; urgency=medium
 
   * avoid that schema verification needs internet (introduced by xinclude feature)
