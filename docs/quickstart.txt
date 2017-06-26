@@ -58,6 +58,11 @@ deb http://debian.linutronix.de/elbe-testing jessie main
 deb http://debian.linutronix.de/elbe-common jessie main
 --------------------------------------------------------
 
+Add a repository key to the list of trusted keys (as root):
+--------------------------------------------------------
+$ wget -q -O - http://debian.linutronix.de/elbe-common/elbe-repo.pub | apt-key add -
+--------------------------------------------------------
+
 Then run (as root):
 --------------------------------------------------------
 $ apt-get update
