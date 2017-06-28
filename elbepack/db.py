@@ -849,11 +849,18 @@ class ElbeDB(object):
     ### User management ###
 
     def add_user (self, name, fullname, password, email, admin):
+        # encrypt is deprecated but hash is not available in jessie
+        try:
+            hash = pbkdf2_sha512.hash( password )
+        except AttributeError:
+            hash = pbkdf2_sha512.encrypt( password )
+
         u = User( name = name,
-                  fullname = fullname,
-                  pwhash = pbkdf2_sha512.hash( password ),
-                  email = email,
-                  admin = admin )
+                fullname = fullname,
+                pwhash = hash,
+                email = email,
+                admin = admin )
+
         with session_scope(self.session) as s:
             if s.query(User).filter(User.name == name).count() > 0:
                 raise ElbeDBError( "user %s already exists in the database"  %
@@ -881,7 +888,11 @@ class ElbeDB(object):
 
             # Update password only if given
             if not password is None:
-                u.pwhash = pbkdf2_sha512.hash( password )
+                # encrypt is deprecated but hash is not available in jessie
+                try:
+                    u.pwhash = pbkdf2_sha512.hash( password )
+                except AttributeError:
+                    u.pwhash = pbkdf2_sha512.encrypt( password )
 
     def del_user (self, userid):
         with session_scope(self.session) as s:
