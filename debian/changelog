@@ -1,3 +1,9 @@
+elbe (1.9.22) unstable; urgency=medium
+
+  * fix hash function that avoids installing elbe in initvm
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 28 Jun 2017 06:57:13 +0200
+
 elbe (1.9.21) unstable; urgency=medium
 
   * minor improvements here and there
