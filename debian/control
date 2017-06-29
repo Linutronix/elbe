@@ -33,8 +33,7 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   python-lxml,
   python-apt,
-  python-gpgme,
-  python-pyme,
+  python-pyme|python-gpg,
   wget,
   cpio
 Description: common files
