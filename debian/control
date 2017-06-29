@@ -31,7 +31,7 @@ Depends: ${misc:Depends},
   python-lxml,
   python-apt,
   python-gpgme,
-  python-pyme
+  python-pyme|python-gpg,
 Description: common files
  Common files for ELBE (embedded linux build environment). These
  python-modules are shared by several elbe subcommands.
