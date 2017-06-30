@@ -1,3 +1,13 @@
+elbe (1.9.23) unstable; urgency=medium
+
+  * bugfix: make elbe debianize work again
+  * quickstart: some improvements
+  * elbe can now be installed on stretch
+  * support stretch targets
+  * workaround for pbuilder to be able to build stretch/armhf packages
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 30 Jun 2017 09:09:12 +0200
+
 elbe (1.9.22) unstable; urgency=medium
 
   * fix hash function that avoids installing elbe in initvm
