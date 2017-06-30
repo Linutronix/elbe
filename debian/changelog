@@ -1,3 +1,9 @@
+elbe (1.9.24) unstable; urgency=medium
+
+  * add missing runtime dependency
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 30 Jun 2017 14:29:23 +0200
+
 elbe (1.9.23) unstable; urgency=medium
 
   * bugfix: make elbe debianize work again
