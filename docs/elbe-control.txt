@@ -115,7 +115,9 @@ Use get_files to retrieve them.
 Get list of files in the <build-dir>.
 +
 If the --output option is specified, the files are downloaded to
-the directory specified in the option.
+the directory specified in the option. If the --matches option is
+specified only files matching the wildcard expression are shown/downloaded.
+Note that you have to put the wildcard expression in quotation marks.
 
 
 'build_chroot_tarball' <build-dir>::

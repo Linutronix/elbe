@@ -68,6 +68,9 @@ def run_command (argv):
                         dest="output", default=None,
                         help="Output files to <directory>" )
 
+    oparser.add_option( "--matches", dest="matches", default=False,
+                        help="Select files based on wildcard expression.")
+
     oparser.add_option( "--pbuilder-only", action="store_true",
                         dest="pbuilder_only", default=False,
                         help="Only list/download pbuilder Files" )

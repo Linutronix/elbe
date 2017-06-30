@@ -28,6 +28,7 @@ import socket
 import time
 import sys
 import os
+import fnmatch
 
 from datetime import datetime
 import deb822                     # package for dealing with Debian related data
@@ -409,6 +410,9 @@ class GetFilesAction(ClientAction):
 
         for f in files[0]:
             if opt.pbuilder_only and not f.name.startswith ('pbuilder'):
+                continue
+
+            if opt.matches and not fnmatch.fnmatch(f.name, opt.matches):
                 continue
 
             nfiles += 1
