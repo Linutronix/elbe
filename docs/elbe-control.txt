@@ -14,6 +14,8 @@ SYNOPSIS
 'elbe control' [options] 'build_sysroot' <build-dir>
 'elbe control' [options] 'set_pdebuild' <project-dir> <pdebuild file>
 'elbe control' [options] 'get_files' <build-dir>
+'elbe control' [options] 'build_chroot_tarball' <build-dir>
+'elbe control' [options] 'set_orig' <build-dir>
 'elbe control' [options] 'set_cdrom' <build-dir> <iso-img>
 'elbe control' [options] 'reset_project' <build-dir>
 'elbe control' [options] 'list_users'
@@ -58,8 +60,8 @@ OPTIONS
 --pass <password>::
 	Password for login (defaults to 'foo').
 
---retries <N>::
-	How many times to retry the connection to the server before giving up (default is 10 times, yielding 10 seconds).
+--retries <N>:: How many times to retry the connection to the server before
+	giving up (default is 10 times, yielding 10 seconds).
 
 --build-bin::
 	Build binary repository CDROM, for exact reproduction.
@@ -69,6 +71,9 @@ OPTIONS
 
 --output <directory>::
 	Output downloaded files to <directory>.
+
+--pbuilder-only::
+	Only list/download pbuilder files.
 
 COMMANDS
 --------
@@ -111,6 +116,19 @@ Get list of files in the <build-dir>.
 +
 If the --output option is specified, the files are downloaded to
 the directory specified in the option.
+
+
+'build_chroot_tarball' <build-dir>::
+
+Creates a tarball of the chroot environment in <build_dir>.
+
+
+'set_orig' <build-dir> <orig-file>::
+
+Uploads a quilt orig-file to the initvm.
++
+This command shall be run before building a Debian package with `elbe pbuilder
+build` if the package is given in the quilt source format.
 
 
 'set_cdrom' <build-dir> <iso-img>::

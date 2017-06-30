@@ -75,7 +75,7 @@ class AddUserAction(DbAction):
         DbAction.__init__(self, node)
 
     def execute(self, args):
-        oparser = OptionParser (usage="usage: %prog db add_user [options] username")
+        oparser = OptionParser (usage="usage: %prog db add_user [options] <username>")
         oparser.add_option ("--fullname", dest="fullname")
         oparser.add_option ("--password", dest="password")
         oparser.add_option ("--email", dest="email")
