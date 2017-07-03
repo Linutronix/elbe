@@ -314,3 +314,68 @@ $ cd program
 $ elbe pbuilder build --project `cat ../fun.prj` --output ../out
 ---------------------------------------------------------
 
+Custom Repository
+-----------------
+
+You might have your own packages which should be installed into your image. This
+can be done with a custom repository. You can use
+link:https://mirrorer.alioth.debian.org/[reprepro] to create your own
+repository.
+
+To create your own repository with reprepro you need only the `distributions`
+configuration file. For an amd64 and source repository for Debian jessie it
+might look as follows:
+
+-------------------------------------------------------------------------------
+Origin: mylocal
+Label: mylocal
+Suite: stable
+Codename: jessie
+Architectures: amd64 source
+Components: main
+Description: my local repo
+-------------------------------------------------------------------------------
+
+Now place the `distributions` file in a `conf` named directory.
+
+-------------------------------------------------------------------------------
+repo/
+├── conf
+│   └── distributions
+-------------------------------------------------------------------------------
+
+To include packages in your repository you might use the following comand from
+inside the `repo` directory:
+
+-------------------------------------------------------------------------------
+$ reprepro include jessie ../path/to/your/*.dsc
+-------------------------------------------------------------------------------
+
+To use this repository from ELBE you need a webserver. Simply place the
+repository inside the document root of your webserver.
+
+If the webser is running on the same machine as the initvm you can use the
+following to access the repository:
+
+[source,xml]
+-------------------------------------------------------------------------------
+<url-list>
+	<url>
+		<binary>http://LOCALMACHINE/repo/ jessie main</binary>
+		<source>http://LOCALMACHINE/repo/ jessie main</source>
+		<key>http://LOCALMACHINE/repo/key.pub</key>
+	</url>
+</url-list>
+-------------------------------------------------------------------------------
+
+ELBE replaces the string `LOCALMACHINE` with the ip address of your machine. If
+you use an external machine as webserver you need to replace `LOCALMACHINE` with
+the name or the ip of it.
+
+You need to sign your repository (see `SignWith` in the
+link:https://mirrorer.alioth.debian.org/reprepro.1.html[reprepro manpage]), or
+you may set <noauth/> in your xml file. If you don't sign your repository you
+don't need the `<key>` tag.
+
+Now you can install packages from your custom repository the same way you can
+install from any other repository.
