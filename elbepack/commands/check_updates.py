@@ -109,6 +109,8 @@ def run_command( argv ):
                 print pname, "%s != %s" % (pver, cver)
                 required_updates += 1
 
+    sys.stdout.flush()
+    sys.stderr.flush()
     if errors > 0:
         print errors, "Errors occured, xml files needs fixing"
         if opt.script:
