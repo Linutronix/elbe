@@ -143,8 +143,13 @@ class BuildEnv ():
             cmd = 'debootstrap --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
                 arch, suite, self.rfs.path, primary_mirror)
         else:
-            cmd = 'debootstrap --foreign --arch=%s "%s" "%s" "%s"' % (
-                arch, suite, self.rfs.path, primary_mirror)
+            if self.xml.has("project/mirror/cdrom"):
+                keyring = ' --keyring="%s/targetrepo/elbe-keyring.gpg"' % (
+                    self.rfs.fname("cdrom"))
+            else:
+                keyring = ''
+            cmd = 'debootstrap --foreign --arch=%s %s "%s" "%s" "%s"' % (
+                arch, keyring, suite, self.rfs.path, primary_mirror)
 
         try:
             self.cdrom_mount()
