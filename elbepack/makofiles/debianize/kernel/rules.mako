@@ -1,22 +1,40 @@
 #!/usr/bin/make -f
 
-MOD_PATH=`pwd`/debian/tmp
-FW_PATH=`pwd`/debian/tmp/lib/firmware
-HDR_PATH=`pwd`/debian/tmp/usr
-KERNEL_PATH=`pwd`/debian/tmp/boot
-DTBS_PATH=`pwd`/debian/tmp/usr/lib/linux-image-${k_version}-${p_name}
+PWD:=$(shell pwd)
+REL:=${k_version}-${p_name}
+
+DEB_DIR:=$(PWD)/debian
+TMP_DIR:=$(DEB_DIR)/tmp
+BUILD_DIR:=$(DEB_DIR)/build
+
+MOD_PATH:=$(TMP_DIR)
+FW_PATH:=$(TMP_DIR)/lib/firmware
+KERNEL_PATH:=$(TMP_DIR)/boot
+HDR_PATH:=$(TMP_DIR)/usr
+KERNEL_HDR_PATH:=$(TMP_DIR)/usr/src/linux-headers-$(REL)
+DTBS_PATH:=$(TMP_DIR)/usr/lib/linux-image-$(REL)
+
+ARCH:=${k_arch}
+SRCARCH:=$(ARCH)
+# Additional ARCH settings for x86
+ifeq ($(ARCH),i386)
+        SRCARCH := x86
+endif
+ifeq ($(ARCH),x86_64)
+        SRCARCH := x86
+endif
 
 MAKE_OPTS= \
-ARCH=${k_arch} \
-CROSS_COMPILE=${cross_compile} \
-KERNELRELEASE=${k_version}-${p_name} \
+ARCH=$(ARCH) \
+CROSS_COMPILE=$(CROSS_COMPILE) \
+KERNELRELEASE=$(REL) \
 LOADADDR=${loadaddr} \
 INSTALL_MOD_PATH=$(MOD_PATH) \
 INSTALL_FW_PATH=$(FW_PATH) \
 INSTALL_HDR_PATH=$(HDR_PATH) \
 INSTALL_PATH=$(KERNEL_PATH) \
 INSTALL_DTBS_PATH=$(DTBS_PATH) \
-O=debian/build
+O=$(BUILD_DIR)
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
     NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -47,6 +65,25 @@ override_dh_auto_install:
 	$(MAKE) $(MAKE_OPTS) firmware_install
 	$(MAKE) $(MAKE_OPTS) headers_install
 	test ${k_arch} = arm && make $(MAKE_OPTS) dtbs_install || true
+	# Build kernel header package
+	rm -f "$(TMP_DIR)/lib/modules/$(REL)/build" "$(TMP_DIR)/lib/modules/$(REL)/source"
+	find . -name Makefile\* -o -name Kconfig\* -o -name \*.pl > $(DEB_DIR)/hdrsrcfiles
+	find arch/*/include include scripts -type f >> $(DEB_DIR)/hdrsrcfiles
+	find arch/$(SRCARCH) -name module.lds -o -name Kbuild.platforms -o -name Platform >> $(DEB_DIR)/hdrsrcfiles
+	find `find arch/$(SRCARCH) -name include -o -name scripts -type d` -type f >> $(DEB_DIR)/hdrsrcfiles
+	if grep -q '^CONFIG_STACK_VALIDATION=y' $(BUILD_DIR)/.config ; then \
+		(cd $(BUILD_DIR); find tools/objtool -type f -executable) >> $(DEB_DIR)/hdrobjfiles ; \
+	fi
+	(cd $(BUILD_DIR); find arch/$(SRCARCH)/include Module.symvers include scripts -type f) >> $(DEB_DIR)/hdrobjfiles
+	if grep -q '^CONFIG_GCC_PLUGINS=y' $(BUILD_DIR)/.config ; then \
+			(cd $(BUILD_DIR); find scripts/gcc-plugins -name \*.so -o -name gcc-common.h) >> $(DEB_DIR)/hdrobjfiles ; \
+	fi
+	mkdir -p "$(KERNEL_HDR_PATH)"
+	tar -c -f - -T - < "$(DEB_DIR)/hdrsrcfiles" | (cd $(KERNEL_HDR_PATH); tar -xf -)
+	(cd $(BUILD_DIR); tar -c -f - -T -) < "$(DEB_DIR)/hdrobjfiles" | (cd $(KERNEL_HDR_PATH); tar -xf -)
+	(cd $(BUILD_DIR); cp $(BUILD_DIR)/.config $(KERNEL_HDR_PATH)/.config) # copy .config manually to be where it's expected to be
+	ln -sf "/usr/src/linux-headers-$(REL)" "$(TMP_DIR)/lib/modules/$(REL)/build"
+	rm -f "$(DEB_DIR)/hdrsrcfiles" "$(DEB_DIR)/hdrobjfiles"
 
 %%:
 	dh $@

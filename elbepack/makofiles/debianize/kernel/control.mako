@@ -17,9 +17,16 @@ Description: Linux kernel, version ${p_name} ${k_version}
 
 Package: linux-headers-${p_name}-${k_version}
 Provides: linux-headers, linux-headers-2.6
-Replaces: linux-libc-dev
 Architecture: ${p_arch}
 Description: Linux kernel headers
  This package provides kernel header files
  .
  This is useful for people who need to build external modules
+
+Package: linux-libc-dev-${p_name}-${k_version}
+Provides: linux-libc-dev, linux-kernel-headers, linux-headers-2.6
+Replaces: linux-libc-dev
+Architecture: ${p_arch}
+Description: Linux support headers for userspace development
+ This package provides userspaces headers from the Linux kernel. These headers
+ are used by the installed headers for GNU glibc and other system libraries.
