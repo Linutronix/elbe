@@ -344,7 +344,7 @@ repo/
 │   └── distributions
 -------------------------------------------------------------------------------
 
-To include packages in your repository you might use the following comand from
+To include packages in your repository you might use the following command from
 inside the `repo` directory:
 
 -------------------------------------------------------------------------------
@@ -354,7 +354,7 @@ $ reprepro include jessie ../path/to/your/*.changes
 To use this repository from ELBE you need a webserver. Simply place the
 repository inside the document root of your webserver.
 
-If the webser is running on the same machine as the initvm you can use the
+If the webserver is running on the same machine as the initvm you can use the
 following to access the repository:
 
 [source,xml]
