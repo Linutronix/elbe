@@ -573,7 +573,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <3> The 'noauth' tag can be used to disable authentication if custom
     unsigned packages are supposed to be installed.
 
-<4> The suite selects the distribution codename used from the primary mirror.
+<4> The 'suite' selects the distribution codename used from the primary mirror.
 
 
 .Note
@@ -582,7 +582,7 @@ the 'project' tag isn't closed yet.
 ************************************************
 
 The following section describes the virtual machine in which the
-debian-installer is exectued and custom packages can be build.
+debian-installer is executed and custom packages can be build.
 
 [xml]
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -649,7 +649,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .Note
 **********************************************************
-The optional parameters are normaly set to defaults by the buildtype tag.
+The optional parameters are normally set to defaults by the buildtype tag.
 The tags can be used for advanced use of elbe; to override the defaults.
 
 If the optional parameters are not set, the buildtype can even be overridden
