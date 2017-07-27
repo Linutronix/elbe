@@ -35,6 +35,7 @@ Depends: ${misc:Depends},
   python-apt,
   python-gpgme,
   python-pyme|python-gpg,
+  python-libvirt,
   wget,
   cpio
 Description: common files
@@ -145,7 +146,7 @@ Depends: ${misc:Depends},
   python-suds,
   python-debian,
   elbe-common (= ${binary:Version}),
-  tmux (>= 1.9)
+  libvirt-clients
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
