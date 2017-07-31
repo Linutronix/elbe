@@ -523,7 +523,7 @@ def action_select (upd_file, status):
 
 def is_update_file(upd_file):
     root, extension = os.path.splitext(upd_file)
-    if extension == "gpg":
+    if extension == ".gpg":
         return True
 
     try:
@@ -544,7 +544,7 @@ def handle_update_file(upd_file, status, remove=False):
         status.log ("checking file: " + str(upd_file))
         root, extension = os.path.splitext(upd_file)
 
-        if extension == "gpg":
+        if extension == ".gpg":
             fname = unsign_file (upd_file)
             if remove:
                 os.remove (upd_file)
