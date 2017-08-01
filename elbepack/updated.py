@@ -248,7 +248,7 @@ def _apply_update (fname, status):
     try:
         xml = etree (fname)
     except:
-        return "read %s failed" % fname
+        raise Exception ( "reading %s failed " % fname )
 
     fpl = xml.node ("fullpkgs")
 
@@ -404,6 +404,8 @@ def apply_update (fname, status):
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
         os.system ("apt-get clean")
+        if p.exitcode != 0:
+            raise Exception ( "Applying update failed. See logfile for more information" )
         post_sh (c_ver, t_ver, status)
 
 def action_select (upd_file, status):
