@@ -224,7 +224,7 @@ def update_sourceslist (xml, update_dir, status):
         status.log ('invalid repository, not added to sources.list')
         return
 
-    deb =  "deb file://" + update_dir + " " + xml.text ("/project/suite")
+    deb =  "deb [trusted=yes] file://" + update_dir + " " + xml.text ("/project/suite")
     deb += " main\n"
     fname = "/etc/apt/sources.list.d/"
     fname += fname_replace (xml.text ("/project/name")) + "_"
