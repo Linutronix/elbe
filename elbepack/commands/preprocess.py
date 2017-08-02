@@ -19,6 +19,7 @@
 from __future__ import print_function
 
 import sys
+import os
 from optparse import OptionParser
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
@@ -32,6 +33,10 @@ def run_command( argv ):
     if len(args) != 1:
         print("Wrong number of arguments", file=sys.stderr)
         oparser.print_help()
+        sys.exit(20)
+
+    if not os.path.isfile(args[0]):
+        print("%s doesn't exist" % args[0], file=sys.stderr)
         sys.exit(20)
 
     try:
