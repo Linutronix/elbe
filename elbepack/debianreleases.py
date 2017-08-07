@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-suite2codename = { 'oldstable': 'squeeze',
-                   'oldstable': 'wheezy',
+suite2codename = { 'oldoldoldstable': 'squeeze',
+                   'oldoldstable': 'wheezy',
                    'oldstable': 'jessie',
                    'stable': 'stretch',
                    'testing': 'buster',
