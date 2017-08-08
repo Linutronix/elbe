@@ -240,6 +240,7 @@ class CreateAction(InitVMAction):
                     print ('But that xml does not validate correctly', file=sys.stderr)
                     print ('', file=sys.stderr)
                     print ('Exiting !!!', file=sys.stderr)
+                    print (e)
                     sys.exit (20)
 
 
@@ -470,6 +471,7 @@ class SubmitAction(InitVMAction):
                     print ('But that xml does not validate correctly', file=sys.stderr)
                     print ('', file=sys.stderr)
                     print ('Exiting !!!', file=sys.stderr)
+                    print (e)
                     sys.exit (20)
 
                 print ('Iso Image with valid source.xml detected !')
