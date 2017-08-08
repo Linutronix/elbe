@@ -119,10 +119,10 @@ class BuildEnv ():
             # seems to ignore /etc/apt/trusted.gpg.d/elbe-keyring.gpg
             # 01/2017 manut
             if self.xml.has("project/noauth") or self.xml.has("project/mirror/cdrom"):
-                cmd = 'debootstrap --include=apt-listchanges --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --include=apt-listchanges --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
                             arch, suite, self.rfs.path, primary_mirror)
 
             try:
