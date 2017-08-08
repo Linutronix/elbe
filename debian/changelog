@@ -1,3 +1,14 @@
+elbe (1.9.25) unstable; urgency=medium
+
+  * update and improve man pages and documentation
+  * rebuild from cdrom: fixed by using gpg key stored on cdrom
+  * debianize kernel: create linux-libc-dev and linux-headers packages
+  * initvm: use deboostrap from backports to enable creating stretch targets
+  * updated: several bugfixes
+  * reenable building wheezy images
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 07 Aug 2017 18:32:05 +0200
+
 elbe (1.9.24) unstable; urgency=medium
 
   * add missing runtime dependency
