@@ -95,10 +95,9 @@ class BuildEnv ():
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
-            os.environ["http_proxy"] = self.xml.prj.text(
-                    "mirror/primary_proxy")
-            os.environ["https_proxy"] = self.xml.prj.text(
-                    "mirror/primary_proxy")
+            proxy = self.xml.prj.text("mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
+            os.environ["http_proxy"] = proxy
+            os.environ["https_proxy"] = proxy
 
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"
