@@ -2,6 +2,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/elbe-repo.pub
 ./usr/lib/python2.*/*-packages/elbepack/init/default-init.xml
 ./usr/lib/python2.*/*-packages/elbepack/init/Makefile.mako
+./usr/lib/python2.*/*-packages/elbepack/init/libvirt.xml.mako
 ./usr/lib/python2.*/*-packages/elbepack/init/apt.conf.mako
 ./usr/lib/python2.*/*-packages/elbepack/init/preseed.cfg.mako
 ./usr/lib/python2.*/*-packages/elbepack/init/init-elbe.sh.mako
