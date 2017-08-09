@@ -1,3 +1,9 @@
+elbe (2.9.1) unstable; urgency=medium
+
+  * replace running initvm in tmux by hosting initvm in libvirt
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 09 Aug 2017 17:04:28 +0200
+
 elbe (2.0) unstable; urgency=medium
 
   * bugfix: lockup during initvm attach inside vmware
