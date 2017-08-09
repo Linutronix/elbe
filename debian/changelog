@@ -1,3 +1,10 @@
+elbe (2.0) unstable; urgency=medium
+
+  * bugfix: lockup during initvm attach inside vmware
+  * dont (online) validate sources.list on rebuild from cdrom
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 09 Aug 2017 16:20:33 +0200
+
 elbe (1.9.25) unstable; urgency=medium
 
   * update and improve man pages and documentation

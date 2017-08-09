@@ -19,7 +19,16 @@
 MEMSIZE?=1024
 SMP?=`nproc`
 INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
+
+# this is a workaround for
+# http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
+VIRT=$(shell test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt)
+ifeq ($(VIRT), vmware)
+MACHINE?=pc-i440fx-2.6
+else
 MACHINE?=pc
+endif
+
 NICMODEL?=virtio
 CONSOLE?=ttyS0,115200n1
 LOOP_OFFSET?=1048576
