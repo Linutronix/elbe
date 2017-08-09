@@ -73,7 +73,7 @@ class ElbeXML(object):
             buildtype = "nodefaults"
         self.defs = ElbeDefaults(buildtype)
 
-        if not skip_validate and not (url_validation == ValidationMode.NO_CHECK):
+        if not skip_validate and url_validation != ValidationMode.NO_CHECK:
             self.validate_apt_sources (url_validation, buildtype)
 
 
