@@ -112,7 +112,7 @@ def run_command( argv ):
     elif opt.proxy:
         http_proxy = opt.proxy
     elif xml.has("initvm/mirror/primary_proxy"):
-        http_proxy = xml.text("initvm/mirror/primary_proxy")
+        http_proxy = xml.text("initvm/mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
 
     if opt.cdrom:
         mirror = xml.node ("initvm/mirror")
