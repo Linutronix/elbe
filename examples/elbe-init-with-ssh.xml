@@ -7,8 +7,8 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://debian.linutronix.de/elbe-testing jessie main</binary>
-					<source>http://debian.linutronix.de/elbe-testing jessie main</source>
+					<binary>http://debian.linutronix.de/elbe jessie main</binary>
+					<source>http://debian.linutronix.de/elbe jessie main</source>
 					<key>http://debian.linutronix.de/elbe/elbe-repo.pub</key>
 				</url>
 				<url>
