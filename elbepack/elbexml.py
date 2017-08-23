@@ -162,10 +162,13 @@ class ElbeXML(object):
                 pass
             elif l.startswith ("deb ") or l.startswith ("deb-src "):
                 lsplit = l.split (" ")
+                url = lsplit[1]
+                suite = lsplit[2]
+
                 if lsplit[2].endswith('/'):
-                    s = "%s/%s" % (lsplit[1], lsplit[2])
+                    s = "%s/%s" % (url, suite)
                 else:
-                    s = "%s/dists/%s/"  % (lsplit[1], lsplit[2])
+                    s = "%s/dists/%s/"  % (url, suite)
 
                 urls.append(s + "Release")
                 if url_validation == ValidationMode.CHECK_ALL:
