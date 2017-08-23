@@ -146,7 +146,8 @@ Depends: ${misc:Depends},
   python-suds,
   python-debian,
   elbe-common (= ${binary:Version}),
-  libvirt-clients
+  libvirt-clients,
+  libvirt-daemon-system
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
