@@ -164,6 +164,7 @@ class ElbeXML(object):
                 lsplit = l.split (" ")
                 url = lsplit[1]
                 suite = lsplit[2]
+                section = lsplit[3]
 
                 if lsplit[2].endswith('/'):
                     s = "%s/%s" % (url, suite)
@@ -173,11 +174,17 @@ class ElbeXML(object):
                 urls.append(s + "Release")
                 if url_validation == ValidationMode.CHECK_ALL:
                     if l.startswith ("deb-src "):
-                        urls.append(s + lsplit[3] + "/source/Release")
+                        urls.append(s + section + "/source/Release")
                     else:
-                        urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
+                        if "updates" in suite:
+                            urls.append(s + "/Release")
+                        else:
+                            urls.append(s + section + "/binary-%s/Release" % buildtype)
                 elif url_validation == ValidationMode.CHECK_BINARIES:
-                    urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
+                    if "updates" in suite:
+                        urls.append(s + section + "/Release")
+                    else:
+                        urls.append(s + section + "/binary-%s/Release" % buildtype)
 
         if not self.prj:
             return
