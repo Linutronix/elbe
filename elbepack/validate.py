@@ -38,8 +38,15 @@ def validate_xml(fname):
 
     # We have errors, return them in string form...
     errors = []
+    uses_xinclude = False
+
     for err in schema.error_log:
         errors.append ("%s:%d error %s" % (err.filename, err.line, err.message))
+        if "http://www.w3.org/2003/XInclude" in err.message:
+            uses_xinclude = True
+
+    if uses_xinclude:
+        errors.append ("\nThere are XIncludes in the XML file. Run 'elbe preprocess' first!\n")
 
     return errors
 
