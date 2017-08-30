@@ -1610,6 +1610,7 @@
       <enumeration value="sysfs" />
       <enumeration value="vfat" />
       <enumeration value="btrfs" />
+      <enumeration value="devtmpfs" />
     </restriction>
   </simpleType>
 
