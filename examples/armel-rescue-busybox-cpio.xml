@@ -1,7 +1,7 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
 		<name>ARM-rescue-image</name>
-		<version>1.0</version>
+		<version>2.0</version>
 		<description>
 			busybox based rescue rfs for armel
 		</description>
@@ -11,7 +11,7 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>wheezy</suite>
+		<suite>stretch</suite>
 	</project>
 	<target>
 		<hostname>rescue</hostname>
@@ -24,6 +24,27 @@
 		<fstab>
 			<bydev>
 				<source>none</source>
+				<mountpoint>/proc</mountpoint>
+				<fs>
+					<type>proc</type>
+				</fs>
+			</bydev>
+			<bydev>
+				<source>none</source>
+				<mountpoint>/sys</mountpoint>
+				<fs>
+					<type>sysfs</type>
+				</fs>
+			</bydev>
+			<bydev>
+				<source>none</source>
+				<mountpoint>/dev</mountpoint>
+				<fs>
+					<type>devtmpfs</type>
+				</fs>
+			</bydev>
+			<bydev>
+				<source>none</source>
 				<mountpoint>/sys/kernel/debug</mountpoint>
 				<fs>
 					<type>debugfs</type>
@@ -33,27 +54,29 @@
 		<diet />
 		<norecommend />
 		<finetuning>
-			<mkdir>/lib/arm-linux-gnueabi</mkdir>
-			<b2t_cp path="/lib/arm-linux-gnueabi/libgcc_s.so.1">/lib/arm-linux-gnueabi/libgcc_s.so.1</b2t_cp>
-			<b2t_cp path="/lib/arm-linux-gnueabi/libc-2.13.so">/lib/arm-linux-gnueabi/libc.so.6</b2t_cp>
-			<b2t_cp path="/lib/arm-linux-gnueabi/ld-2.13.so">/lib/ld-linux.so.3</b2t_cp>
-			<b2t_cp path="/bin/dash">/bin/dash</b2t_cp>
-			<b2t_cp path="/bin/ln">/bin/ln2</b2t_cp>
-			<command>/install_bb.sh</command>
-			<rm>/bin/ln2</rm>
-			<rm>/bin/dash</rm>
+			<!-- Create missing directories -->
+			<mkdir>/dev</mkdir>
+			<mkdir>/bin</mkdir>
+			<mkdir>/sbin</mkdir>
+			<mkdir>/usr/bin</mkdir>
+			<mkdir>/usr/sbin</mkdir>
+			<mkdir>/etc/init.d</mkdir>
+			<!-- Complete Busybox installation -->
+			<raw_cmd>/bin/busybox --install -s</raw_cmd>
+			<ln path="/sbin/init">/init</ln>
+			<!-- minimum dvice nodes (fallback) -->
+			<mknod opts="c 5 0">/dev/tty</mknod>
+			<mknod opts="c 5 1">/dev/console</mknod>
+			<mknod opts="c 1 3">/dev/null</mknod>
+			<!-- Add start script (may be moved to archive) -->
+			<command>echo "#!/bin/sh" | tee    /etc/init.d/rcS</command>
+			<command>echo "mount -a"  | tee -a /etc/init.d/rcS</command>
+			<command>chmod +x /etc/init.d/rcS</command>
+			<!-- Delete documentation and unused files -->
 			<rm>/usr/share</rm>
-			<rm>/lib/ld-linux.so.3</rm>
-			<rm>/lib/arm-linux-gnueabi/libc.so.6</rm>
-			<rm>/lib/arm-linux-gnueabi/libgcc_s.so.1</rm>
 		</finetuning>
 		<pkg-list>
 			<pkg>busybox-static</pkg>
 		</pkg-list>
 	</target>
-<archive>QlpoOTFBWSZTWVg9NvMAAI17hswQAEBsY/+ACAD3ZZ5gAACEAAAIIACUhKp6
-aSYQ0xGRp5EPUepo9QMqn6TU2jRGAjARjUybR2cyPIIEKyCCPfpgrRixJ2JI
-CHPanTx3hdKjuJVbF1oqxlQ/LFXJGxysEwCaFoOVl/aFL1aiHhj0bBs9FJ8S
-41ujdgSIquhemZlOVTfrDr9r0Bvllp3JNKxiVcN/rjoeWCgvaFBQaSQOhdyR
-ThQkFg9NvMA=
-</archive></ns0:RootFileSystem>
+</ns0:RootFileSystem>
