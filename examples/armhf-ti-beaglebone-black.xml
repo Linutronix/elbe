@@ -73,11 +73,11 @@
 		<!-- don't auto install recommended packages -->
 		<norecommend />
 		<finetuning>
-			<!-- move the 1st stage bootloader to the path where the bootrom excpets it -->
+			<!-- move the 1st stage bootloader to the path where the bootrom expects it -->
 			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
-			<!-- move the 2nd stage bootloader to the path where the 1 stage excpets it -->
+			<!-- move the 2nd stage bootloader to the path where the 1 stage expects it -->
 			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
-			<!-- move the devicetree to the path where the bootloader excpets it -->
+			<!-- move the devicetree to the path where the bootloader expects it -->
 			<cp path="/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb">/boot/dtb-4.9.0-3-armmp</cp>
 			<!-- set a proper u-boot environment -->
 			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-4.9.0-3-armmp;load mmc 0:1 0x82000000 dtb-4.9.0-3-armmp;load mmc 0:1 0x88000000 initrd.img-4.9.0-3-armmp;bootz 0x84000000 0x88000000:${filesize} 0x82000000" > /boot/uEnv.txt</command>
