@@ -80,7 +80,7 @@
 			<!-- move the devicetree to the path where the bootloader expects it -->
 			<cp path="/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb">/boot/dtb-4.9.0-3-armmp</cp>
 			<!-- set a proper u-boot environment -->
-			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-4.9.0-3-armmp;load mmc 0:1 0x82000000 dtb-4.9.0-3-armmp;load mmc 0:1 0x88000000 initrd.img-4.9.0-3-armmp;bootz 0x84000000 0x88000000:${filesize} 0x82000000" > /boot/uEnv.txt</command>
+			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-4.9.0-3-armmp;load mmc 0:1 0x82000000 dtb-4.9.0-3-armmp;load mmc 0:1 0x88000000 initrd.img-4.9.0-3-armmp;bootz 0x84000000 0x88000000:\${filesize} 0x82000000" > /boot/uEnv.txt</command>
 			<!-- shrink target image -->
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
