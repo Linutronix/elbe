@@ -1,6 +1,6 @@
 #
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (C) 2014  Linutronix GmbH
+# Copyright (C) 2014,2017 Linutronix GmbH
 #
 # This file is part of ELBE.
 #
@@ -21,11 +21,15 @@ import os
 
 class Config(dict):
     def __init__(self):
+        self['soaphost'] = "localhost"
         self['soapport'] = "7587"
         self['pbuilder_jobs'] = "auto"
 
         if os.environ.has_key('ELBE_SOAPPORT'):
             self['soapport'] = os.environ['ELBE_SOAPPORT']
+
+        if os.environ.has_key('ELBE_SOAPHOST'):
+            self['soaphost'] = os.environ['ELBE_SOAPHOST']
 
         if os.environ.has_key('ELBE_PBUILDER_JOBS'):
             self['pbuilder_jobs'] = os.environ['ELBE_PBUILDER_JOBS']
