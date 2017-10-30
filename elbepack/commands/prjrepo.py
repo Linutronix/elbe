@@ -35,7 +35,7 @@ from elbepack.config import cfg
 def run_command(argv):
     oparser = OptionParser(usage="usage: elbe prjrepo [options] <command>")
 
-    oparser.add_option("--host", dest="host", default="localhost",
+    oparser.add_option("--host", dest="host", default=cfg['soaphost'],
                        help="Ip or hostname of elbe-daemon.")
 
     oparser.add_option("--port", dest="port", default=cfg['soapport'],
