@@ -23,6 +23,8 @@ class Config(dict):
     def __init__(self):
         self['soaphost'] = "localhost"
         self['soapport'] = "7587"
+        self['elbeuser'] = "root"
+        self['elbepass'] = "foo"
         self['pbuilder_jobs'] = "auto"
 
         if os.environ.has_key('ELBE_SOAPPORT'):
@@ -30,6 +32,12 @@ class Config(dict):
 
         if os.environ.has_key('ELBE_SOAPHOST'):
             self['soaphost'] = os.environ['ELBE_SOAPHOST']
+
+        if os.environ.has_key('ELBE_USER'):
+            self['elbeuser'] = os.environ['ELBE_USER']
+
+        if os.environ.has_key('ELBE_PASS'):
+            self['elbepass'] = os.environ['ELBE_PASS']
 
         if os.environ.has_key('ELBE_PBUILDER_JOBS'):
             self['pbuilder_jobs'] = os.environ['ELBE_PBUILDER_JOBS']
