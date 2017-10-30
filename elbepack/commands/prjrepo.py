@@ -41,10 +41,10 @@ def run_command(argv):
     oparser.add_option("--port", dest="port", default=cfg['soapport'],
                        help="Port of soap itf on elbe-daemon.")
 
-    oparser.add_option("--pass", dest="passwd", default="foo",
+    oparser.add_option("--pass", dest="passwd", default=cfg['elbepass'],
                        help="Password (default is foo).")
 
-    oparser.add_option("--user", dest="user", default="root",
+    oparser.add_option("--user", dest="user", default=cfg['elbeuser'],
                        help="Username (default is root).")
 
     oparser.add_option(
