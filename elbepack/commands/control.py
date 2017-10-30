@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (C) 2014  Linutronix GmbH
+# Copyright (C) 2014,2017 Linutronix GmbH
 #
 # This file is part of ELBE.
 #
@@ -37,7 +37,7 @@ from elbepack.elbexml import ValidationMode
 def run_command (argv):
     oparser = OptionParser (usage="usage: elbe control [options] <command>")
 
-    oparser.add_option ("--host", dest="host", default="localhost",
+    oparser.add_option ("--host", dest="host", default=cfg['soaphost'],
                         help="Ip or hostname of elbe-daemon.")
 
     oparser.add_option ("--port", dest="port", default=cfg['soapport'],
