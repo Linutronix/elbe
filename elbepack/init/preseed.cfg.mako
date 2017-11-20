@@ -108,7 +108,11 @@ debathena-transform-lighttpd \
 elbe-soap elbe-buildenv qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":
-  ${n.et.text} \
+%   if prj.has("mirror/primary_host") or not prj.node("mirror/cdrom") or n.et.text.find('/') == -1:
+${n.et.text} \
+%   else:
+${n.et.text[:n.et.text.find('/')]} \
+%   endif
 % endif
 % endfor
 
