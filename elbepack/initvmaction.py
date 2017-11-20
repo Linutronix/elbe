@@ -351,7 +351,7 @@ class CreateAction(InitVMAction):
                 exampl = args[0]
             elif cdrom is not None:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
-                exampl = 'source.xml'
+                exampl = tmp.fname ('source.xml')
             else:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
 
@@ -363,7 +363,7 @@ class CreateAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            ret, msg, err = command_out_stderr ('%s control set_xml "%s %s"' % (elbe_exe, prjdir, exampl))
+            ret, msg, err = command_out_stderr ('%s control set_xml %s %s' % (elbe_exe, prjdir, exampl))
             if ret != 0:
                 print ("elbe control set_xml failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
