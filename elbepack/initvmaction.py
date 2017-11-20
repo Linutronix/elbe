@@ -212,19 +212,21 @@ class CreateAction(InitVMAction):
         if len(args) == 1:
             if args[0].endswith ('.xml'):
                 # We have an xml file, use that for elbe init
-                exampl = args[0]
+                xmlfile = args[0]
                 try:
-                    xml = etree( exampl )
+                    xml = etree( xmlfile )
                 except ValidationError as e:
                     print ('XML file is inavlid: ' + str(e))
                 # Use default XML if no initvm was specified
                 if not xml.has( "initvm" ):
-                    exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
+                    xmlfile = os.path.join (elbepack.__path__[0], "init/default-init.xml")
 
             elif args[0].endswith ('.iso'):
                 # We have an iso image, extract xml from there.
                 tmp = TmpdirFilesystem ()
                 os.system ('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
+
+                print ('', file=sys.stderr)
 
                 if not tmp.isfile ('source.xml'):
                     print ('Iso image does not contain a source.xml file', file=sys.stderr)
@@ -243,7 +245,6 @@ class CreateAction(InitVMAction):
                     print (e)
                     sys.exit (20)
 
-
                 print ('Iso Image with valid source.xml detected !')
                 print ('Image was generated using Elbe Version %s' % exml.get_elbe_version ())
 
@@ -252,14 +253,14 @@ class CreateAction(InitVMAction):
                 if tmp.isfile ('elbe-keyring.gpg'):
                     print ('Iso image contains a elbe-kerying')
 
-                exampl = tmp.fname ('source.xml')
+                xmlfile = tmp.fname ('source.xml')
                 cdrom = args[0]
             else:
                 print ('Unknown file ending (use either xml or iso)', file=sys.stderr)
                 sys.exit (20)
         else:
             # No xml File was specified, build the default elbe-init-with-ssh
-            exampl = os.path.join (elbepack.__path__[0], "init/default-init.xml")
+            xmlfile = os.path.join (elbepack.__path__[0], "init/default-init.xml")
 
         try:
             init_opts = '';
@@ -269,11 +270,10 @@ class CreateAction(InitVMAction):
             if opt.nesting:
                 init_opts += ' --nesting'
 
-
             if cdrom:
-                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, init_opts, initvmdir, cdrom, exampl))
+                system ('%s init %s --directory "%s" --cdrom "%s" "%s"' % (elbe_exe, init_opts, initvmdir, cdrom, xmlfile))
             else:
-                system ('%s init %s --directory "%s" "%s"' % (elbe_exe, init_opts, initvmdir, exampl))
+                system ('%s init %s --directory "%s" "%s"' % (elbe_exe, init_opts, initvmdir, xmlfile))
 
         except CommandError:
             print ("'elbe init' Failed", file=sys.stderr)
@@ -315,7 +315,7 @@ class CreateAction(InitVMAction):
             sys.exit(20)
 
         if len(args) == 1:
-            # if provided xml file has no initvm section exampl is set to a
+            # if provided xml file has no initvm section xmlfile is set to a
             # default initvm XML file. But we need the original file here
             if args[0].endswith ('.xml'):
                 # stop here if no project node was specified
@@ -329,10 +329,10 @@ class CreateAction(InitVMAction):
                     sys.exit(0)
 
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
-                exampl = args[0]
+                xmlfile = args[0]
             elif cdrom is not None:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
-                exampl = tmp.fname ('source.xml')
+                xmlfile = tmp.fname ('source.xml')
             else:
                 ret, prjdir, err = command_out_stderr ('%s control create_project' % (elbe_exe))
 
@@ -344,7 +344,8 @@ class CreateAction(InitVMAction):
 
             prjdir = prjdir.strip()
 
-            ret, msg, err = command_out_stderr ('%s control set_xml %s %s' % (elbe_exe, prjdir, exampl))
+            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+            ret, msg, err = command_out_stderr (cmd)
             if ret != 0:
                 print ("elbe control set_xml failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
@@ -371,6 +372,8 @@ class CreateAction(InitVMAction):
                 build_opts += '--build-bin '
             if opt.build_sources:
                 build_opts += '--build-sources '
+            if cdrom:
+                build_opts += '--skip-pbuilder '
 
             try:
                 system ('%s control build "%s" %s' % (elbe_exe, prjdir, build_opts) )
@@ -378,6 +381,8 @@ class CreateAction(InitVMAction):
                 print ("elbe control build Failed", file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
+
+            print ("Build started, waiting till it finishes")
 
             try:
                 system ('%s control wait_busy "%s"' % (elbe_exe, prjdir) )
@@ -409,21 +414,35 @@ class CreateAction(InitVMAction):
                 try:
                     system ('%s control get_files "%s"' % (elbe_exe, prjdir) )
                 except CommandError:
-                    print ("elbe control Failed", file=sys.stderr)
+                    print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
 
                 print ("")
                 print ('Get Files with: elbe control get_file "%s" <filename>' % prjdir)
             else:
+                print ("")
+                print ("Getting generated Files")
+                print ("")
+
                 ensure_outdir (wdfs, opt)
 
                 try:
-                    system ('%s control get_files --output "%s" "%s"' % (elbe_exe, opt.outdir, prjdir) )
+                    system ('%s control get_files --output "%s" "%s"' % (
+                            elbe_exe, opt.outdir, prjdir ))
                 except CommandError:
                     print ("elbe control get_files Failed", file=sys.stderr)
                     print ("Giving up", file=sys.stderr)
                     sys.exit(20)
+
+                if not opt.keep_files:
+                    try:
+                        system ('%s control del_project "%s"' % (
+                            elbe_exe, prjdir))
+                    except CommandError:
+                        print ("remove project from initvm failed",
+                                file=sys.stderr)
+                        sys.exit(20)
 
 InitVMAction.register(CreateAction)
 
@@ -506,7 +525,7 @@ class SubmitAction(InitVMAction):
             cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
             ret, msg, err = command_out_stderr (cmd)
             if ret != 0:
-                print ("elbe control set_xml failed2", file=sys.stderr)
+                print ("elbe control set_xml failed.", file=sys.stderr)
                 print (err, file=sys.stderr)
                 print ("Giving up", file=sys.stderr)
                 sys.exit(20)
