@@ -169,10 +169,10 @@ class ElbeXML(object):
 
                 urls.append(s + "Release")
                 if url_validation == ValidationMode.CHECK_ALL:
-                    urls.append(s + lsplit[3] + "/source/Release")
-                    urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
+                    urls.append(s + lsplit[3] + "/source/")
+                    urls.append(s + lsplit[3] + "/binary-%s/" % buildtype)
                 elif url_validation == ValidationMode.CHECK_BINARIES:
-                    urls.append(s + lsplit[3] + "/binary-%s/Release" % buildtype)
+                    urls.append(s + lsplit[3] + "/binary-%s/" % buildtype)
 
         if not self.prj:
             return
