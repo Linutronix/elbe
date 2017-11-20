@@ -166,7 +166,13 @@ class ElbeXML(object):
                 suite = lsplit[2]
                 section = lsplit[3]
 
-                if lsplit[2].endswith('/'):
+                #
+                # NOTE: special interpretation if suite followed by slash
+                #
+                # deb http://mirror foo  --> URI-Prefix: http://mirror/dist/foo
+                # deb http://mirror foo/ --> URI-Prefix: http://mirror/foo
+                #
+                if suite.endswith('/'):
                     s = "%s/%s" % (url, suite)
                 else:
                     s = "%s/dists/%s/"  % (url, suite)
