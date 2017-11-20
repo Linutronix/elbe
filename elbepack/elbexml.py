@@ -179,18 +179,10 @@ class ElbeXML(object):
 
                 urls.append(s + "Release")
                 if url_validation == ValidationMode.CHECK_ALL:
-                    if l.startswith ("deb-src "):
-                        urls.append(s + section + "/source/Release")
-                    else:
-                        if "updates" in suite:
-                            urls.append(s + "/Release")
-                        else:
-                            urls.append(s + section + "/binary-%s/Release" % buildtype)
+                    urls.append(s + section + "/source/")
+                    urls.append(s + section + "/binary-%s/" % buildtype)
                 elif url_validation == ValidationMode.CHECK_BINARIES:
-                    if "updates" in suite:
-                        urls.append(s + section + "/Release")
-                    else:
-                        urls.append(s + section + "/binary-%s/Release" % buildtype)
+                    urls.append(s + section + "/binary-%s/" % buildtype)
 
         if not self.prj:
             return
