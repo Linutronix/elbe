@@ -147,11 +147,43 @@ class ElbeXML(object):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
+    def validate_repo (self, r, url_validation):
+        try:
+            fp = urllib2.urlopen(r["url"] + "InRelease", None, 10)
+        except urllib2.URLError:
+            try:
+                fp = urllib2.urlopen(r["url"] + "Release", None, 10)
+            except urllib2.URLError:
+                return False
+
+        ret = False
+        if url_validation == ValidationMode.CHECK_ALL:
+            found_bin = False
+            found_src = False
+            for line in fp:
+                if not found_bin and line.find(r["binstr"]) != -1:
+                    found_bin = True
+                elif not found_src and line.find(r["srcstr"]) != -1:
+                    found_src = True
+                if found_bin and found_src:
+                    ret = True
+                    break
+        elif url_validation == ValidationMode.CHECK_BINARIES:
+            for line in fp:
+                if line.find(r["binstr"]) != -1:
+                    ret = True
+                    break
+        else:
+            ret = True
+
+        fp.close()
+        return ret
+
     def validate_apt_sources (self, url_validation, buildtype):
         slist = self.create_apt_sources_list ()
         sources_lines = slist.split ('\n')
 
-        urls = []
+        repos = []
         for l in sources_lines:
             l = re.sub(r'\[.*\] ','',l)
             if l.startswith ("deb copy:"):
@@ -165,6 +197,7 @@ class ElbeXML(object):
                 url = lsplit[1]
                 suite = lsplit[2]
                 section = lsplit[3]
+                r = {}
 
                 #
                 # NOTE: special interpretation if suite followed by slash
@@ -173,16 +206,12 @@ class ElbeXML(object):
                 # deb http://mirror foo/ --> URI-Prefix: http://mirror/foo
                 #
                 if suite.endswith('/'):
-                    s = "%s/%s" % (url, suite)
+                    r["url"] = "%s/%s" % (url, suite)
                 else:
-                    s = "%s/dists/%s/"  % (url, suite)
-
-                urls.append(s + "Release")
-                if url_validation == ValidationMode.CHECK_ALL:
-                    urls.append(s + section + "/source/")
-                    urls.append(s + section + "/binary-%s/" % buildtype)
-                elif url_validation == ValidationMode.CHECK_BINARIES:
-                    urls.append(s + section + "/binary-%s/" % buildtype)
+                    r["url"] = "%s/dists/%s/"  % (url, suite)
+                r["binstr"] = (section + "/binary-%s/Packages" % buildtype)
+                r["srcstr"] = (section + "/source/Sources")
+                repos.append(r)
 
         if not self.prj:
             return
@@ -198,24 +227,20 @@ class ElbeXML(object):
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
 
-        for u in urls:
-            if '@' in u:
-                t = u.split('@')
+        for r in repos:
+            if '@' in r["url"]:
+                t = r["url"].split('@')
                 if '://' in t[0]:
                     scheme, auth = t[0].split('://')
                     scheme = scheme + '://'
                 else:
                     scheme = ''
                     auth = t[0]
-                u = scheme + t[1]
+                r["url"] = scheme + t[1]
                 usr, passwd = auth.split(':')
-                passman.add_password(None, u, usr, passwd)
-            try:
-                fp = urllib2.urlopen(u, None, 10)
-                fp.close()
-            except urllib2.URLError:
-                raise ValidationError (["Repository %s can not be validated" % u])
-
+                passman.add_password(None, r["url"], usr, passwd)
+            if not self.validate_repo(r, url_validation):
+                raise ValidationError (["Repository %s can not be validated" % r["url"]])
 
     def get_target_packages(self):
         return [p.et.text for p in self.xml.node("/target/pkg-list")]
