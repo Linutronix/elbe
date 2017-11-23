@@ -1,3 +1,12 @@
+elbe (2.2) unstable; urgency=medium
+
+  * specify connection to elbe-daemon via env vars (port & host)
+  * specify credentials for elbe-daemon via env vars (user & pass)
+  * improve repo url validation
+  * fix rebuilding from cdrom if e.g. backports was used to create the image
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 23 Nov 2017 14:28:08 +0100
+
 elbe (2.1) unstable; urgency=medium
 
   * use 'elbe' repos for generating initvm instead of elbe-testing
