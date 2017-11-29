@@ -20,6 +20,7 @@
 
 from optparse import OptionParser
 import sys
+import os.path
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
@@ -80,18 +81,16 @@ def run_command( argv ):
         sys.exit(20)
 
     if opt.presh_file:
-        try:
-            project.presh_file = open (opt.presh_file)
-        except IOError as e:
-            print 'pre.sh file invalid: %s' % str (e)
+        if not os.path.isfile(opt.presh_file):
+            print 'pre.sh file does not exist'
             sys.exit(20)
+        project.presh_file = opt.presh_file
 
     if opt.postsh_file:
-        try:
-            project.postsh_file = open (opt.postsh_file)
-        except IOError as e:
-            print 'post.sh file invalid: %s' % str (e)
+        if not os.path.isfile(opt.postsh_file):
+            print 'post.sh file does not exist'
             sys.exit(20)
+        project.postsh_file = opt.postsh_file
 
     update_xml = None
     if len(args) >= 1:
@@ -109,9 +108,3 @@ def run_command( argv ):
     except MissingData as e:
         print str(e)
         sys.exit(20)
-
-    if project.postsh_file:
-        project.postsh_file.close ()
-
-    if project.presh_file:
-        project.presh_file.close ()
