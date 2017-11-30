@@ -28,7 +28,7 @@ class LogBase(object):
         self.fp = fp
 
     def printo(self, text=""):
-        self.fp.write(text+"\n")
+        self.fp.write("%s\n" % str(text))
 
     def print_raw(self, text):
         self.fp.write(text)
@@ -36,13 +36,13 @@ class LogBase(object):
     def h1(self, text):
         self.printo()
         self.printo(text)
-        self.printo("="*len(text))
+        self.printo("="*len(str(text)))
         self.printo()
 
     def h2(self, text):
         self.printo()
         self.printo(text)
-        self.printo("-"*len(text))
+        self.printo("-"*len(str(text)))
         self.printo()
 
     def table(self):
