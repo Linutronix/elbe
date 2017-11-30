@@ -221,6 +221,10 @@ class ElbeXML(object):
             proxy = self.prj.text ("mirror/primary_proxy").strip().replace("LOCALMACHINE", "10.0.2.2")
             os.environ ["http_proxy"] = proxy
             os.environ ["https_proxy"] = proxy
+        else:
+            os.environ ["http_proxy"] = ""
+            os.environ ["https_proxy"] = ""
+            os.environ["no_proxy"] = ""
 
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
