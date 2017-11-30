@@ -670,9 +670,6 @@ class DownloadAction(RepoAction):
         client.download_file (builddir, filename, dst_fname)
         print (dst_fname + " saved", file=sys.stderr)
 
-        client.service.rm (builddir, filename)
-        print (filename + " deleted on initvm.")
-
 
 RepoAction.register(DownloadAction)
 
@@ -751,11 +748,6 @@ class UploadPackageAction(RepoAction):
 
         print ("Including Package in initvm...")
         client.service.include_package(builddir, filename)
-
-
-        print("Cleaning initvm builddir...")
-        for f in files:
-            client.service.rm (builddir, f)
 
 
 RepoAction.register(UploadPackageAction)
