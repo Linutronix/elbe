@@ -158,6 +158,14 @@ class ESoap (ServiceBase):
         self.app.pm.open_project (uid, builddir)
         self.app.pm.build_pbuilder (uid)
 
+
+    @rpc (String)
+    @authenticated_uid
+    @soap_faults
+    def update_pbuilder (self, uid, builddir):
+        self.app.pm.open_project (uid, builddir)
+        self.app.pm.update_pbuilder (uid)
+
     @rpc (String)
     @authenticated_uid
     @soap_faults

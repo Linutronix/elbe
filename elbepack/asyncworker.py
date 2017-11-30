@@ -216,6 +216,29 @@ class CreatePbuilderJob(AsyncWorkerJob):
             self.project.log.printo( traceback.format_exc() )
             db.reset_busy( self.project.builddir, "build_failed" )
 
+class UpdatePbuilderJob(AsyncWorkerJob):
+    def __init__ (self, project):
+        AsyncWorkerJob.__init__( self, project )
+
+    def enqueue (self, queue, db):
+        db.set_busy( self.project.builddir,
+                [ "empty_project", "needs_build", "has_changes",
+                  "build_done", "build_failed" ] )
+        self.project.log.printo( "Enqueueing project to update the pbuilder" )
+        AsyncWorkerJob.enqueue( self, queue, db )
+
+    def execute (self, db):
+        try:
+            self.project.log.printo( "Updating pbuilder started" )
+            self.project.update_pbuilder()
+            self.project.log.printo( "Updating Pbuilder finished successfully" )
+            db.reset_busy( self.project.builddir, "build_done" )
+        except Exception as e:
+            db.update_project_files( self.project )
+            self.project.log.printo( "update Pbuilder failed" )
+            self.project.log.printo( traceback.format_exc() )
+            db.reset_busy( self.project.builddir, "build_failed" )
+
 class APTUpdateJob(AsyncWorkerJob):
     def __init__ (self, project):
         AsyncWorkerJob.__init__( self, project )

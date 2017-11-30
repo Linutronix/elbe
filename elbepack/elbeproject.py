@@ -412,6 +412,9 @@ class ElbeProject (object):
             self.log.printo ('Package fails to build.')
             self.log.printo ('Please make sure, that the submitted package builds in pbuilder')
 
+    def update_pbuilder (self):
+        self.log.do ('pbuilder --update --configfile "%s" --aptconfdir "%s"' % (
+                     os.path.join (self.builddir, "pbuilderrc"), os.path.join (self.builddir, "aptconfdir")))
 
     def create_pbuilder (self):
         # Remove old pbuilder directory, if it exists

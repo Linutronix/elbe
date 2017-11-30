@@ -599,6 +599,22 @@ class BuildPbuilderAction(ClientAction):
 
 ClientAction.register(BuildPbuilderAction)
 
+class UpdatePbuilderAction(ClientAction):
+
+    tag = 'update_pbuilder'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len (args) != 1:
+            print ("usage: elbe control update_pbuilder <project_dir>", file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.update_pbuilder (builddir)
+
+ClientAction.register(UpdatePbuilderAction)
 
 class RepoAction(ClientAction):
     repoactiondict = {}

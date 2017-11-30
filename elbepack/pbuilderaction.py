@@ -118,6 +118,37 @@ class CreateAction(PBuilderAction):
 
 PBuilderAction.register(CreateAction)
 
+class UpdateAction(PBuilderAction):
+
+    tag = 'update'
+
+    def __init__(self, node):
+        PBuilderAction.__init__(self, node)
+
+    def execute(self, opt, args):
+
+        if not opt.project:
+            print ('you need to specify --project option', file=sys.stderr)
+            sys.exit(20)
+
+        prjdir = opt.project
+
+        print ("Updating pbuilder")
+
+        try:
+            system ('%s control update_pbuilder "%s"' % (elbe_exe, prjdir))
+        except CommandError:
+            print ("elbe control update_pbuilder Failed", file=sys.stderr)
+            print ("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        print ("")
+        print ("Updating Pbuilder finished !")
+        print ("")
+
+PBuilderAction.register(CreateAction)
+
+
 class BuildAction(PBuilderAction):
 
     tag = 'build'
