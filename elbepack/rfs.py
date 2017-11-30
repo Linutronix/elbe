@@ -55,6 +55,7 @@ class BuildEnv ():
             self.need_dumpdebootstrap = False
 
         self.initialize_dirs (build_sources=build_sources)
+        self.create_apt_prefs ()
 
     def cdrom_umount(self):
         if self.xml.prj.has ("mirror/cdrom"):
@@ -106,8 +107,6 @@ class BuildEnv ():
         os.environ["DEBONF_NONINTERACTIVE_SEEN"]="true"
 
         self.log.h2( "debootstrap log" )
-
-        self.create_apt_prefs ()
 
         arch = self.xml.text ("project/buildimage/arch", key="arch")
 
