@@ -24,7 +24,6 @@
 ./usr/lib/python2.*/*-packages/elbepack/debpkg.py
 ./usr/lib/python2.*/*-packages/elbepack/efilesystem.py
 ./usr/lib/python2.*/*-packages/elbepack/fstab.py
-./usr/lib/python2.*/*-packages/elbepack/persistency.py
 ./usr/lib/python2.*/*-packages/elbepack/rpcaptcache.py
 ./usr/lib/python2.*/*-packages/elbepack/updatepkg.py
 ./usr/lib/python2.*/*-packages/elbepack/pbuilder.py
