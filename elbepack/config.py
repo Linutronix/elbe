@@ -27,19 +27,19 @@ class Config(dict):
         self['elbepass'] = "foo"
         self['pbuilder_jobs'] = "auto"
 
-        if os.environ.has_key('ELBE_SOAPPORT'):
+        if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
 
-        if os.environ.has_key('ELBE_SOAPHOST'):
+        if 'ELBE_SOAPHOST' in os.environ:
             self['soaphost'] = os.environ['ELBE_SOAPHOST']
 
-        if os.environ.has_key('ELBE_USER'):
+        if 'ELBE_USER' in os.environ:
             self['elbeuser'] = os.environ['ELBE_USER']
 
-        if os.environ.has_key('ELBE_PASS'):
+        if 'ELBE_PASS' in os.environ:
             self['elbepass'] = os.environ['ELBE_PASS']
 
-        if os.environ.has_key('ELBE_PBUILDER_JOBS'):
+        if 'ELBE_PBUILDER_JOBS' in os.environ:
             self['pbuilder_jobs'] = os.environ['ELBE_PBUILDER_JOBS']
 
 

@@ -45,9 +45,9 @@ class ebase(object):
 
     def text( self, path, **args ):
         el = self.et.find("./"+path)
-        if (el is None) and not args.has_key("default"):
+        if (el is None) and "default" not in args:
             raise Exception( "Cant find path %s" % path )
-        elif (el is None) and args.has_key("default"):
+        elif (el is None) and "default" in args:
             default = args["default"]
             if type(default) == str:
                 return default

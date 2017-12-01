@@ -45,7 +45,7 @@ def mkfs_mtd( outf, mtd, fslabel, rfs, target ):
             continue
 
         label = v.text("label")
-        if not fslabel.has_key(label):
+        if label not in fslabel:
             continue
 
         try:
@@ -301,7 +301,7 @@ def create_partition(disk, part, ptype, fslabel, size_in_sectors, current_sector
         sz = size_to_int(part.text("size"))/sector_size
 
     g = parted.Geometry(device=disk.device, start=current_sector, length=sz)
-    if ptype != parted.PARTITION_EXTENDED and fslabel.has_key(part.text("label")) and fslabel[part.text("label")].fstype == "vfat":
+    if ptype != parted.PARTITION_EXTENDED and part.text("label") in fslabel and fslabel[part.text("label")].fstype == "vfat":
         fs = simple_fstype("fat32")
         ppart = parted.Partition(disk, ptype, fs, geometry=g)
         ppart.setFlag(_ped.PARTITION_LBA)
@@ -357,7 +357,7 @@ def create_logical_partitions(outf, disk, extended, epart, fslabel, target, grub
 
         current_sector += 2048
         lpart = create_partition(disk, logical, parted.PARTITION_LOGICAL, fslabel, size_in_sectors, current_sector)
-        if logical.has("label") and fslabel.has_key(logical.text("label")):
+        if logical.has("label") and logical.text("label") in fslabel:
             create_label(outf, disk, logical, lpart, fslabel, target, grub)
 
         current_sector += lpart.getLength();
@@ -392,7 +392,7 @@ def do_image_hd( outf, hd, fslabel, target, grub_version ):
 
         if part.tag == "partition":
             ppart = create_partition(disk, part, parted.PARTITION_NORMAL, fslabel, size_in_sectors, current_sector)
-            if fslabel.has_key(part.text("label")):
+            if part.text("label") in fslabel:
                 create_label(outf, disk, part, ppart, fslabel, target, grub)
         elif part.tag == "extended":
             ppart = create_partition(disk, part, parted.PARTITION_EXTENDED, fslabel, size_in_sectors, current_sector)

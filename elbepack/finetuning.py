@@ -53,7 +53,7 @@ class RmAction(FinetuningAction):
     def execute(self, log, buildenv, target):
         files = target.glob( self.node.et.text )
 
-        if self.node.et.attrib.has_key ('exclude'):
+        if 'exclude' in self.node.et.attrib:
             exclude = self.node.et.attrib['exclude'].split (' ')
         else:
             exclude = []

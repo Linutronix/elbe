@@ -53,7 +53,7 @@ class mountpoint_dict (dict):
     def register (self, fstabentry):
         mp = fstabentry.mountpoint
 
-        if self.has_key (mp):
+        if mp in self:
             fstabentry.id = self[mp].id
         else:
             fstabentry.id = str(self.id_count)

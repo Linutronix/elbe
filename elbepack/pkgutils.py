@@ -165,7 +165,7 @@ def get_dsc_size( fname ):
 
     sz = os.path.getsize(fname)
     for sect in tf:
-        if sect.has_key('Files'):
+        if 'Files' in sect:
             files = sect['Files'].split('\n')
             files = [ f.strip().split(' ') for f in files ]
             for f in files:

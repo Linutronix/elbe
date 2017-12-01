@@ -146,7 +146,7 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
             errors += 1
 
     for cp in cache.get_installed_pkgs():
-        if not pindex.has_key(cp.name):
+        if cp.name not in pindex:
             elog.printo( "additional package %s installed, that was not requested" % cp.name )
             errors += 1
 
@@ -227,19 +227,19 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
     tgt_pkg_list = set()
 
     for fpath, realpath in targetfs.walk_files():
-        if index.has_key(fpath):
+        if fpath in index:
             pkg = index[fpath]
             tgt_pkg_list.add(pkg)
         else:
             pkg = "postinst generated"
 
-        if mt_index_post_fine.has_key(fpath) and mt_index.has_key(fpath):
+        if fpath in mt_index_post_fine and fpath in mt_index:
             if mt_index_post_fine[fpath] > mt_index[fpath]:
                 pkg = "modified finetuning"
-        if mt_index_post_fine.has_key(fpath):
+        if fpath in mt_index_post_fine:
             if mt_index_post_arch[fpath] > mt_index_post_fine[fpath]:
                 pkg = "from archive"
-            elif not mt_index.has_key(fpath):
+            elif fpath not in mt_index:
                 pkg = "added in finetuning"
         else:
             pkg = "added in archive"
@@ -250,9 +250,9 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
 
     outf.h2( "Deleted Files" )
     outf.table()
-    for fpath in mt_index.keys():
-        if not mt_index_post_arch.has_key(fpath):
-            if index.has_key(fpath):
+    for fpath in list(mt_index.keys()):
+        if fpath not in mt_index_post_arch:
+            if fpath in index:
                 pkg = index[fpath]
             else:
                 pkg = "postinst generated"

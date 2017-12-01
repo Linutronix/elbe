@@ -56,16 +56,16 @@ class license_dep5_to_spdx (dict):
 
 
     def have_override (self, pkgname):
-        return self.perpackage_override.has_key (pkgname)
+        return pkgname in self.perpackage_override
 
     def get_override (self, pkgname):
         return self.perpackage_override[pkgname]
 
     def map_one_license (self, pkgname, l, errors):
-        if self.perpackage_mapping.has_key(pkgname):
-            if self.perpackage_mapping[pkgname].has_key(l):
+        if pkgname in self.perpackage_mapping:
+            if l in self.perpackage_mapping[pkgname]:
                 return self.perpackage_mapping[pkgname][l]
-        if self.has_key(l):
+        if l in self:
             return self[l]
         errors.append ('no mapping for "%s" for pkg "%s"' % (l, pkgname))
         return None
@@ -92,7 +92,7 @@ class license_dep5_to_spdx (dict):
 
 
     def map_lic (self, pkgname, licenses, errors):
-        if self.perpackage_override.has_key (pkgname):
+        if pkgname in self.perpackage_override:
             if len(self.perpackage_override[pkgname]) > 0:
                 return self.perpackage_override[pkgname]
 

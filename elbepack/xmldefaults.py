@@ -185,7 +185,7 @@ class ElbeDefaults(object):
 
     def __init__(self, build_type):
 
-        if not defaults.has_key(build_type):
+        if build_type not in defaults:
             print "Please specify a valid buildtype."
             print "Valid buildtypes:"
             print defaults.keys()
@@ -197,9 +197,9 @@ class ElbeDefaults(object):
         self.generic_defaults = archindep_defaults
 
     def __getitem__( self, key ):
-        if self.defaults.has_key( key ):
+        if key in self.defaults:
             return self.defaults[key]
-        if self.generic_defaults.has_key( key ):
+        if key in self.generic_defaults:
             return self.generic_defaults[key]
 
         return None
