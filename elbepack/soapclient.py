@@ -255,7 +255,7 @@ class SetXmlAction(ClientAction):
 
         size = 1024 * 1024
         part = 0
-        with file (filename, "r") as fp:
+        with file (filename, "rb") as fp:
             while (True):
                 xml_base64 = binascii.b2a_base64(fp.read (size))
                 # finish upload
@@ -670,7 +670,6 @@ class DownloadAction(RepoAction):
         client.download_file (builddir, filename, dst_fname)
         print (dst_fname + " saved", file=sys.stderr)
 
-
 RepoAction.register(DownloadAction)
 
 
@@ -685,7 +684,7 @@ class UploadPackageAction(RepoAction):
         # Uploads file f into builddir in intivm
         size = 1024 * 1024
         part = 0
-        with file (f, "r") as fp:
+        with file (f, "rb") as fp:
             while (True):
                 xml_base64 = binascii.b2a_base64(fp.read (size))
                 # finish upload
