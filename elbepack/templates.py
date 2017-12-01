@@ -38,7 +38,7 @@ def template(fname, d, linebreak=False):
         raise
 
 def write_template( outname, fname, d, linebreak=False ):
-    outfile = file(outname, "w")
+    outfile = open(outname, "w")
     outfile.write( template( fname, d, linebreak ) )
     outfile.close()
 

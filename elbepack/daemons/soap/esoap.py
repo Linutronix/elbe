@@ -119,7 +119,7 @@ class ESoap (ServiceBase):
         if (pos >= file_stat.st_size):
             return "EndOfFile"
 
-        with file (file_name) as fp:
+        with open (file_name) as fp:
             if not fp:
                 return "FileNotFound"
             try:
