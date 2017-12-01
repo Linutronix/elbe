@@ -21,17 +21,17 @@
 from __future__ import print_function
 
 import binascii
-from suds.client import Client
-from urllib2 import URLError
-from httplib import BadStatusLine
 import socket
 import time
 import sys
 import os
 import fnmatch
-
-from datetime import datetime
 import deb822                     # package for dealing with Debian related data
+
+from suds.client import Client
+from datetime import datetime
+from urllib2 import URLError
+from httplib import BadStatusLine
 
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
