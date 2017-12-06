@@ -41,6 +41,7 @@ class VirtApt:
             self.add_pubkey_url (k)
 
         apt_pkg.config.set ("APT::Architecture", arch)
+        apt_pkg.config.set ("APT::Architectures", arch)
         apt_pkg.config.set ("Acquire::http::Proxy::127.0.0.1", "DIRECT")
         apt_pkg.config.set ("APT::Install-Recommends", "0")
         apt_pkg.config.set ("Dir", self.projectpath)
