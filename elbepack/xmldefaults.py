@@ -178,7 +178,7 @@ def get_random_mac():
     binaddr[0] |= 0x02
     s = map( lambda x: "%02x" % x, binaddr )
 
-    return string.join( s, ":" )
+    return ':'.join (s)
 
 
 class ElbeDefaults(object):

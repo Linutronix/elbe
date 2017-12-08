@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-from string import split, join
 
 def dos2unix_str (d):
-    return join (split (d, '\r\n'), '\n')
+    return d.replace('\r\n', '\n')
 
 def unix2dos_str (d):
-    return join (split (dos2unix_str (d), '\n'), '\r\n')
+    d = d.replace('\n', '\r\n')
+    d = d.replace('\r\r\n', '\r\n')
+    return d
 
 def __rewrite (fn, rw_func):
     with open (fn, 'r+') as f:

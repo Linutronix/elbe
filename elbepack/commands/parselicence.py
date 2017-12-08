@@ -83,9 +83,9 @@ class license_dep5_to_spdx (dict):
                     ands.append (mapped_lic + u" WITH " + with_split[1])
                 else:
                     ands.append (mapped_lic)
-            ors.append (string.join (ands, u' AND '))
+            ors.append (' AND '.join (ands))
 
-        retval = string.join (ors, u' OR ')
+        retval = ' OR '.join (ors)
         return retval
 
 
@@ -136,7 +136,7 @@ def license_string (pkg):
         else:
             l_list.append (ll.et.text)
 
-    return string.join (l_list, ' AND ')
+    return ' AND '.join (l_list)
 
 
 

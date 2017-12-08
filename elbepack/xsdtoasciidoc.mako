@@ -12,9 +12,9 @@ MINI = "{http://www.w3.org/2001/XMLSchema}minInclusive"
 
 def docindent( s, indent=0 ):
   lines = s.splitlines()
-  lines = map(string.strip, lines)
+  lines = [l.strip() for l in lines]
   lines = map(lambda x: indent*" "+x, lines)
-  return string.join(lines).strip()
+  return str('').join(lines).strip()
 
 def genlink(typ):
   if typ.startswith("rfs:"):
