@@ -41,6 +41,9 @@ class eiter(object):
 
         return elem(n)
 
+    def next(self):
+        return self.__next__()
+
 class ebase(object):
     def __init__(self, et):
         self.et = et
