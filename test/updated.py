@@ -123,7 +123,7 @@ while 1:
     sys.stdout.flush ()
 
     try:
-        n = int (raw_input ())
+        n = int (input ())
         print control.service.apply_snapshot (snapshots [n])
     except:
         shutdown (monitor)
