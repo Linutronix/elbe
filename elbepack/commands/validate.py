@@ -28,14 +28,18 @@ def run_command( argv ):
                         help="try to access specified repositories",
                         default=False, action="store_true")
 
-    (opt,args) = oparser.parse_args(sys.argv)
+    (opt,args) = oparser.parse_args(argv)
 
-    if not os.path.exists(args[2]):
-        print ("%s - file not found" % args[2])
+    if len(args) < 1:
         oparser.print_help()
         sys.exit(20)
 
-    validation = validate_xml (args[2])
+    if not os.path.exists(args[0]):
+        print ("%s - file not found" % args[0])
+        oparser.print_help()
+        sys.exit(20)
+
+    validation = validate_xml (args[0])
     if len (validation):
         print "validation failed"
         for i in validation:
@@ -44,7 +48,7 @@ def run_command( argv ):
 
     if opt.validate_urls:
         try:
-            xml = ElbeXML(args[2], url_validation=ValidationMode.CHECK_ALL)
+            xml = ElbeXML(args[0], url_validation=ValidationMode.CHECK_ALL)
         except ValidationError as e:
             print e
             sys.exit(20)

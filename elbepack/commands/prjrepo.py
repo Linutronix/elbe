@@ -67,8 +67,7 @@ def run_command(argv):
                      help="allow different elbe version on host and initvm")
     oparser.add_option_group(devel)
 
-    (opt, args) = oparser.parse_args(sys.argv)
-    args = args[2:]
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) < 1:
         print ('elbe prjrepo - no subcommand given', file=sys.stderr)

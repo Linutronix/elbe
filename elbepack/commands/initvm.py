@@ -63,8 +63,7 @@ def run_command (argv):
                         action="store_true", default=False,
            help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host." )
 
-    (opt,args) = oparser.parse_args (sys.argv)
-    args = args[2:]
+    (opt,args) = oparser.parse_args (argv)
 
     if len(args) < 1:
         print ('elbe initvm - no subcommand given', file=sys.stderr)

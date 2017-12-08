@@ -91,8 +91,7 @@ def run_command (argv):
     oparser.add_option_group (devel)
 
 
-    (opt,args) = oparser.parse_args (sys.argv)
-    args = args[2:]
+    (opt,args) = oparser.parse_args (argv)
 
     if len(args) < 1:
         print ('elbe control - no subcommand given', file=sys.stderr)
