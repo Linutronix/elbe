@@ -35,7 +35,7 @@ def create_zip_archive( zipfilename, path, inarchpath ):
                     archname = archname[2:]
                 zi = ZipInfo( archname)
                 stat = os.stat( path + '/' + archname )
-                zi.external_attr = stat.st_mode << 16L
+                zi.external_attr = stat.st_mode << 16
                 # this hack is needed to use the external attributes
                 # there is no way to set a zipinfo object directly to an archive
                 with open (filename, 'rb') as f:

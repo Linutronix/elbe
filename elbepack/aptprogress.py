@@ -70,7 +70,7 @@ class ElbeAcquireProgress (AcquireProgress):
 
     def __init__ (self, cb=None):
         AcquireProgress.__init__ (self)
-        self._id = long(1)
+        self._id = 1
         self.cb = cb
 
     def write (self, line):
@@ -108,7 +108,7 @@ class ElbeOpProgress (OpProgress):
 
     def __init__ (self, cb=None):
         OpProgress.__init__ (self)
-        self._id = long(1)
+        self._id = 1
         self.cb = cb
 
     def write (self, line):
