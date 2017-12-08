@@ -13,7 +13,18 @@
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>http://ftp.debian.org/debian stretch-backports main non-free contrib</binary>
+					<source>http://ftp.debian.org/debian stretch-backports main non-free contrib</source>
+				</url>
+				<url>
+					<binary>http://security.debian.org/ stretch/updates main contrib non-free</binary>
+					<source>http://security.debian.org/ stretch/updates main contrib non-free</source>
+				</url>
+			</url-list>
 		</mirror>
+
 		<!-- debian testing? stable? unstable?? -->
 		<suite>stretch</suite>
 	</project>
@@ -103,6 +114,8 @@
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
+			<!-- install a package from backports -->
+			<pkg pin="stretch-backports">btrfs-progs</pkg>
 			<!-- install the libgpio built by pbuilder  -->
 			<pkg>libgpio1</pkg>
 		</pkg-list>
