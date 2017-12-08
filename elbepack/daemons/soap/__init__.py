@@ -16,15 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
+import sys
+
 from esoap import ESoap
 
 from beaker.middleware import SessionMiddleware
-
-from spyne import Application
-from spyne.protocol.soap import Soap11
-from spyne.server.wsgi import WsgiApplication
-
 from cherrypy.process.plugins import SimplePlugin
+
+try:
+    from spyne import Application
+    from spyne.protocol.soap import Soap11
+    from spyne.server.wsgi import WsgiApplication
+except ImportError as e:
+    print("failed to import spyne", file=sys.stderr)
+    print("please install python(3)-spyne", file=sys.stderr)
+    sys.exit(20)
 
 from elbepack.projectmanager import ProjectManager
 

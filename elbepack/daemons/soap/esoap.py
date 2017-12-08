@@ -18,26 +18,33 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import binascii
 import os
 import tarfile
 import fnmatch
+import sys
 
 from tempfile import NamedTemporaryFile
 
 from elbepack.shellhelper import system
 from elbepack.version import elbe_version
-
-from faults import soap_faults
-
 from elbepack.elbexml import ValidationMode
-from datatypes import SoapProject, SoapFile
-from authentication import authenticated_admin, authenticated_uid
 
-from spyne.service import ServiceBase
-from spyne.decorator import rpc
-from spyne.model.primitive import String, Boolean, Integer
-from spyne.model.complex import Array
+from .faults import soap_faults
+from .datatypes import SoapProject, SoapFile
+from .authentication import authenticated_admin, authenticated_uid
+
+try:
+    from spyne.service import ServiceBase
+    from spyne.decorator import rpc
+    from spyne.model.primitive import String, Boolean, Integer
+    from spyne.model.complex import Array
+except ImportError as e:
+    print("failed to import spyne", file=sys.stderr)
+    print("please install python(3)-spyne", file=sys.stderr)
+    sys.exit(20)
 
 class ESoap (ServiceBase):
 
