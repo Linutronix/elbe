@@ -340,7 +340,7 @@ class GetFileAction(ClientAction):
             dst_fname = str (os.path.join (dst, filename))
 
         client.download_file (builddir, filename, dst_fname)
-        print (dst_fname + " saved", file=sys.stderr)
+        print("%s saved" % dst_fname)
 
 ClientAction.register(GetFileAction)
 
@@ -668,7 +668,7 @@ class DownloadAction(RepoAction):
         dst_fname = os.path.join(".", "elbe-projectrepo-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".tar.gz")
 
         client.download_file (builddir, filename, dst_fname)
-        print (dst_fname + " saved", file=sys.stderr)
+        print("%s saved" % dst_fname)
 
 RepoAction.register(DownloadAction)
 
