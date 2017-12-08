@@ -207,11 +207,9 @@ class ElbeProject (object):
         self.write_log_header()
 
         # Validate Apt Sources
-        m = ValidationMode.NO_CHECK
-        if build_bin:
-            m = ValidationMode.CHECK_BINARIES
-            if build_sources:
-                m = ValidationMode.CHECK_ALL
+        m = ValidationMode.CHECK_BINARIES
+        if build_sources:
+            m = ValidationMode.CHECK_ALL
         self.xml.validate_apt_sources ( m , self.arch )
 
 
