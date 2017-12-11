@@ -49,20 +49,20 @@ def run_command (argv):
     (opt,args) = oparser.parse_args (argv)
 
     if len(args) < 1:
-        print ('elbe pbuilder - no subcommand given', file=sys.stderr)
+        print("elbe pbuilder - no subcommand given", file=sys.stderr)
         PBuilderAction.print_actions ()
         return
 
     try:
         action = PBuilderAction (args[0])
     except KeyError:
-        print ('elbe pbuilder - unknown subcommand', file=sys.stderr)
+        print("elbe pbuilder - unknown subcommand", file=sys.stderr)
         PBuilderAction.print_actions ()
         sys.exit(20)
 
     try:
         action.execute (opt, args[1:])
     except PBuilderError as e:
-        print ('PBuilder Exception', file=sys.stderr)
-        print (e, file=sys.stderr)
+        print("PBuilder Exception", file=sys.stderr)
+        print(e, file=sys.stderr)
         sys.exit(5)

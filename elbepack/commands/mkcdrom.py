@@ -61,7 +61,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print ("wrong number of arguments", file=sys.stderr)
+        print("wrong number of arguments", file=sys.stderr)
         oparser.print_help()
         sys.exit(20)
 
@@ -71,8 +71,8 @@ def run_command( argv ):
                     override_buildtype=opt.buildtype,
                     skip_validate=opt.skip_validation )
         except ValidationError as e:
-            print (str (e), file=sys.stderr)
-            print ("xml validation failed. Bailing out", file=sys.stderr)
+            print(str (e), file=sys.stderr)
+            print("xml validation failed. Bailing out", file=sys.stderr)
             sys.exit(20)
 
         builddir = project.builddir
@@ -107,10 +107,10 @@ def run_command( argv ):
                                                 init_codename, xml, builddir, log,
                     opt.cdrom_size )
 
-    print ("")
-    print ("Image Build finished !")
-    print ("")
-    print ("Files generated:")
+    print("")
+    print("Image Build finished !")
+    print("")
+    print("Files generated:")
     for f in generated_files:
-        print (" %s"%f)
+        print(" %s"%f)
 

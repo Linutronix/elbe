@@ -30,7 +30,7 @@ class UBoot (DebianizeBase):
     files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'config.mk']
 
     def __init__ (self):
-        print ("debianization of uboot is not supported at the moment")
+        print("debianization of uboot is not supported at the moment")
         sys.exit (-2)
         DebianizeBase.__init__ (self)
 

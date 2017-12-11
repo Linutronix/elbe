@@ -66,7 +66,7 @@ def run_command (argv):
     (opt,args) = oparser.parse_args (argv)
 
     if len(args) < 1:
-        print ('elbe initvm - no subcommand given', file=sys.stderr)
+        print("elbe initvm - no subcommand given", file=sys.stderr)
         InitVMAction.print_actions ()
         sys.exit(20)
 
@@ -78,13 +78,13 @@ def run_command (argv):
     try:
         action = InitVMAction (args[0])
     except KeyError:
-        print ('elbe initvm - unknown subcommand', file=sys.stderr)
+        print("elbe initvm - unknown subcommand", file=sys.stderr)
         InitVMAction.print_actions ()
         sys.exit(20)
 
     try:
         action.execute (directory, opt, args[1:])
     except InitVMError as e:
-        print ('InitVM Exception', file=sys.stderr)
-        print (e, file=sys.stderr)
+        print("InitVM Exception", file=sys.stderr)
+        print(e, file=sys.stderr)
         sys.exit(5)
