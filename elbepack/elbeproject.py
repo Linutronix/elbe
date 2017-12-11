@@ -297,10 +297,22 @@ class ElbeProject (object):
         elbe_report( self.xml, self.buildenv, self.get_rpcaptcache(),
                 reportpath, self.targetfs )
 
-        # Licenses
-        f = io.open( os.path.join( self.builddir, "licence.txt" ), "w+", encoding='utf-8' )
-        self.buildenv.rfs.write_licenses(f, self.log, os.path.join( self.builddir, "licence.xml"))
-        f.close()
+        # the current license code raises an exception that interrupts the hole
+        # build if a licence can't be converted to utf-8. Exception handling can
+        # be removed as soon as the licence code is more stable
+        lic_err = False
+        try:
+            f = io.open( os.path.join( self.builddir, "licence.txt" ), "w+", encoding='utf-8' )
+            self.buildenv.rfs.write_licenses(f, self.log, os.path.join( self.builddir, "licence.xml"))
+        except Exception as e:
+            self.log.printo( "error during generating licence.txt/xml" )
+            self.log.printo( sys.exc_info()[0] )
+            lic_err = True
+        finally:
+            f.close()
+        if lic_err:
+            os.remove (os.path.join( self.builddir, "licence.txt" ))
+            os.remove (os.path.join( self.builddir, "licence.xml" ))
 
         # Use some handwaving to determine grub version
         # jessie and wheezy grubs are 2.0 but differ in behaviour
