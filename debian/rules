@@ -5,6 +5,9 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKE_OPTS += -j$(NUMJOBS)
 endif
 
+override_dh_auto_test:
+	echo 'skip tests'
+
 override_dh_auto_configure:
 	cd docs && $(MAKE) $(MAKE_OPTS)
 
