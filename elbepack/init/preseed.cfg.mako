@@ -105,7 +105,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools btrfs-tools openssh-client \
 debathena-transform-lighttpd \
-elbe-soap elbe-buildenv qemu-elbe-user-static \
+elbe-soap python-elbe-buildenv qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":
 %   if prj.has("mirror/primary_host") or not prj.node("mirror/cdrom") or n.et.text.find('/') == -1:

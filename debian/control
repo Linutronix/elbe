@@ -2,12 +2,16 @@ Source: elbe
 Section: misc
 Priority: optional
 Maintainer: Manuel Traut <manut@linutronix.de>
-Build-Depends: dh-python,
-  debhelper (>= 7),
-  dh-systemd (>= 1.5),
+Build-Depends: debhelper (>= 9),
+  dh-python,
+  dh-systemd,
+  python-setuptools,
   python (>= 2.7~),
-  python-mako,
   python-lxml,
+  python-mako,
+  python3,
+  python3-lxml,
+  python3-mako,
   dia,
   asciidoc,
   xmlto,
@@ -27,15 +31,50 @@ Description: man-pages, examples and documentation
  man-pages for elbe and all elbe subcommands. Some documentation and howtos.
  And examples for several targets.
 
-Package: elbe-common
+Package: elbe-schema
 Architecture: all
+Conflicts: elbe-common
+Depends: ${misc:Depends}
+Description: xml schema files
+ Common files for ELBE (embedded linux build environment). These
+ schemas are used by ELBE.
+
+Package: python-elbe-bin
+Conflicts: elbe-common
+Architecture: all
+Depends: python-elbe-common (= ${binary:Version})
+Description: elbe executable
+ Common files for ELBE (embedded linux build environment). These
+ python-modules are shared by several elbe subcommands.
+
+Package: python-elbe-common
+Architecture: all
+Conflicts: elbe-common
 Depends: ${misc:Depends},
+  elbe-schema (= ${binary:Version}),
+  python-elbe-bin (= ${binary:Version}),
   python (>= 2.7~),
   python-lxml,
   python-apt,
   python-gpgme,
   python-pyme|python-gpg,
   python-libvirt,
+  wget,
+  cpio
+Description: common files
+ Common files for ELBE (embedded linux build environment). These
+ python-modules are shared by several elbe subcommands.
+
+Package: python3-elbe-common
+Architecture: all
+Depends: ${misc:Depends},
+  elbe-schema (= ${binary:Version}),
+  python3,
+  python3-lxml,
+  python3-apt,
+  python3-gpgme,
+  python3-gpg,
+  python3-libvirt,
   wget,
   cpio
 Description: common files
@@ -49,7 +88,7 @@ Depends: ${misc:Depends},
   devscripts,
   libdistro-info-perl,
   libparse-debcontrol-perl,
-  elbe-common (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
   python-mako,
   python-npyscreen
 Description: Wizard for debian foler generation
@@ -59,8 +98,8 @@ Package: elbe
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  elbe-common (= ${binary:Version}),
-  elbe-control (= ${binary:Version}),
+  python-elbe-bin (= ${binary:Version}),
+  python-elbe-control (= ${binary:Version}),
   qemu-utils,
   qemu-kvm (>= 1:2.1),
   python-mako,
@@ -76,14 +115,51 @@ Package: elbe-daemon
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  elbe-common (= ${binary:Version}),
-  elbe-buildenv (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
+  python-elbe-buildenv (= ${binary:Version}),
   python-cherrypy3, python-beaker, openssh-server, lsb-base (>= 3.0-6)
 Description: wsgi daemon interface
  subcommand to start wsgi services.
 
-Package: elbe-buildenv
+Package: python3-elbe-buildenv
 Architecture: all
+Depends: ${misc:Depends},
+  python3,
+  apt-rdepends,
+  binfmt-support,
+  debootstrap,
+  dosfstools,
+  dpkg-dev,
+  python3-elbe-common (= ${binary:Version}),
+  genisoimage,
+  mtd-utils,
+  python3-apt,
+  python3-mako,
+  python3-parted,
+  python3-passlib,
+  python3-sqlalchemy,
+  python3-debian,
+  qemu-user-static,
+  reprepro,
+  rsync,
+  kpartx,
+  squashfs-tools,
+  sudo,
+  pbuilder,
+  git,
+  ca-certificates,
+  subversion,
+  haveged
+Description: Embedded Linux Build Environment Server Component
+ This package is typically installed in a virtual machine (that can be created
+ with the 'elbe initvm create' command from the 'elbe' package). Several
+ subcommands need to be executed with root privileges. It is not recommended to
+ install this package on a native system.
+
+
+Package: python-elbe-buildenv
+Architecture: all
+Conflicts: elbe-buildenv
 Depends: ${misc:Depends},
   python (>= 2.7~),
   apt-rdepends,
@@ -91,7 +167,7 @@ Depends: ${misc:Depends},
   debootstrap,
   dosfstools,
   dpkg-dev,
-  elbe-common (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
   genisoimage,
   mtd-utils,
   python-apt,
@@ -123,7 +199,7 @@ Package: elbe-bootup-check
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  elbe-common (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
   python-apt, lsb-base (>= 3.0-6)
 Description: bootup checker
  This package is typically installed on a embedded system. The bootup checker
@@ -134,28 +210,42 @@ Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
   python-spyne,
-  elbe-buildenv (= ${binary:Version}),
+  python-elbe-buildenv (= ${binary:Version}),
   elbe-daemon (= ${binary:Version})
 Description: SOAP Interface for elbe buildenv
  Enables remote control of the elbe buildenv via SOAP.
 
-Package: elbe-control
+Package: python-elbe-control
 Architecture: all
+Conflicts: elbe-control
 Depends: ${misc:Depends},
   python (>= 2.7~),
   python-suds,
   python-debian,
-  elbe-common (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
   libvirt-clients,
   libvirt-daemon-system
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
+Package: python3-elbe-control
+Architecture: all
+Depends: ${misc:Depends},
+  python3,
+  python3-suds,
+  python3-debian,
+  python3-elbe-common (= ${binary:Version}),
+  libvirt-clients,
+  libvirt-daemon-system
+Description: Commandline Tool to control an elbe buildenv
+ The SOAP Interface is used to control an elbe buildenv.
+
+
 Package: elbe-updated
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
-  elbe-common (= ${binary:Version}),
+  python-elbe-common (= ${binary:Version}),
   python-lxml (>= 2.3.2-1),
   python-tz (>= 2012c-1),
   python-pyinotify,
@@ -168,6 +258,6 @@ Suggests: python-pyudev,
 Description: update daemon for embedded systems
  This package is typically installed on a embedded system. The update daemon
  monitors a directory or USB mounts. If an ELBE update file (generated by
- 'elbe gen_update' command from the 'elbe-buildenv' package) is placed in this
+ 'elbe gen_update' command from the 'python-elbe-buildenv' package) is placed in this
  directory the update will be applied.
  Downgrades are possible by the integrated SOAP interface.

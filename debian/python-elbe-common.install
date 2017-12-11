@@ -1,4 +1,3 @@
-./usr/bin/*
 ./usr/lib/python2.*/*-packages/elbepack/elbe-repo.pub
 ./usr/lib/python2.*/*-packages/elbepack/init/default-init.xml
 ./usr/lib/python2.*/*-packages/elbepack/init/Makefile.mako
@@ -31,5 +30,3 @@
 ./usr/lib/python2.*/*-packages/elbepack/version.py
 ./usr/lib/python2.*/*-packages/elbepack/virtapt.py
 ./usr/lib/python2.*/*-packages/elbepack/xmldefaults.py
-./usr/share/man/man1/elbe.1
-schema/*xsd	usr/share/xml/elbe-common/
