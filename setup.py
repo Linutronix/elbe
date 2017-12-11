@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import subprocess
 import os
@@ -35,7 +35,7 @@ class my_install(install):
                                   stdout=subprocess.PIPE,
                                   cwd=docs_dir,
                                   env=envvars).communicate()[0]
-        print output
+        print(output)
 
 setup(name='elbe',
       version=elbe_version,
