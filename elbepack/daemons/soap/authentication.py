@@ -32,7 +32,7 @@ def authenticated_uid(func):
             @authenticated_uid
             def get_files (self, uid, builddir): 
     """
-    if func.func_code.co_argcount == 2:
+    if func.__code__.co_argcount == 2:
         @wraps(func)
         def wrapped(self):
             s = self.transport.req_env['beaker.session']
@@ -43,7 +43,7 @@ def authenticated_uid(func):
 
             return func(self,uid)
         return wrapped
-    elif func.func_code.co_argcount == 3:
+    elif func.__code__.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1):
             s = self.transport.req_env['beaker.session']
@@ -54,7 +54,7 @@ def authenticated_uid(func):
 
             return func(self,uid,arg1)
         return wrapped
-    elif func.func_code.co_argcount == 4:
+    elif func.__code__.co_argcount == 4:
         @wraps(func)
         def wrapped(self, arg1, arg2):
             s = self.transport.req_env['beaker.session']
@@ -65,7 +65,7 @@ def authenticated_uid(func):
 
             return func(self,uid,arg1,arg2)
         return wrapped
-    elif func.func_code.co_argcount == 5:
+    elif func.__code__.co_argcount == 5:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3):
             s = self.transport.req_env['beaker.session']
@@ -76,7 +76,7 @@ def authenticated_uid(func):
 
             return func(self,uid,arg1,arg2,arg3)
         return wrapped
-    elif func.func_code.co_argcount == 6:
+    elif func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4):
             s = self.transport.req_env['beaker.session']
@@ -87,7 +87,7 @@ def authenticated_uid(func):
 
             return func(self,uid,arg1,arg2,arg3,arg4)
         return wrapped
-    elif func.func_code.co_argcount == 7:
+    elif func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
             s = self.transport.req_env['beaker.session']
@@ -99,7 +99,7 @@ def authenticated_uid(func):
             return func(self,uid,arg1,arg2,arg3,arg4,arg5)
         return wrapped
     else:
-        raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )
+        raise Exception( "arg count %d not implemented" % func.__code__.co_argcount )
 
 
 
@@ -114,7 +114,7 @@ def authenticated_admin(func):
             @authenticated_uid
             def get_files (self, uid, builddir): 
     """
-    if func.func_code.co_argcount == 1:
+    if func.__code__.co_argcount == 1:
         @wraps(func)
         def wrapped(self):
             s = self.transport.req_env['beaker.session']
@@ -127,7 +127,7 @@ def authenticated_admin(func):
                 raise SoapElbeNotAuthorized()
             return func(self)
         return wrapped
-    elif func.func_code.co_argcount == 2:
+    elif func.__code__.co_argcount == 2:
         @wraps(func)
         def wrapped(self, arg1):
             s = self.transport.req_env['beaker.session']
@@ -141,7 +141,7 @@ def authenticated_admin(func):
 
             return func(self,arg1)
         return wrapped
-    elif func.func_code.co_argcount == 3:
+    elif func.__code__.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1, arg2):
             s = self.transport.req_env['beaker.session']
@@ -155,4 +155,4 @@ def authenticated_admin(func):
             return func(self,arg1,arg2)
         return wrapped
     else:
-        raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )
+        raise Exception( "arg count %d not implemented" % func.__code__.co_argcount )

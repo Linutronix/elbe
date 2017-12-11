@@ -61,7 +61,7 @@ def soap_faults(func):
     """ decorator, which wraps Exceptions to the proper
         Soap Faults, and raises these.
     """
-    if func.func_code.co_argcount == 1:
+    if func.__code__.co_argcount == 1:
         @wraps(func)
         def wrapped(self):
             try:
@@ -81,7 +81,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 2:
+    if func.__code__.co_argcount == 2:
         @wraps (func)
         def wrapped (self, arg1):
             try:
@@ -101,7 +101,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 3:
+    if func.__code__.co_argcount == 3:
         @wraps (func)
         def wrapped (self, arg1, arg2):
             try:
@@ -121,7 +121,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 4:
+    if func.__code__.co_argcount == 4:
         @wraps (func)
         def wrapped (self, arg1, arg2, arg3):
             try:
@@ -141,7 +141,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 5:
+    if func.__code__.co_argcount == 5:
         @wraps (func)
         def wrapped (self, arg1, arg2, arg3, arg4):
             try:
@@ -161,7 +161,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 6:
+    if func.__code__.co_argcount == 6:
         @wraps (func)
         def wrapped (self, arg1, arg2, arg3, arg4, arg5):
             try:
@@ -181,7 +181,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
-    if func.func_code.co_argcount == 7:
+    if func.__code__.co_argcount == 7:
         @wraps (func)
         def wrapped (self, arg1, arg2, arg3, arg4, arg5, arg6):
             try:
@@ -202,5 +202,5 @@ def soap_faults(func):
                 raise SoapElbeProjectError (format_exc ())
         return wrapped
     else:
-        raise Exception( "arg count %d not implemented" % func.func_code.co_argcount )
+        raise Exception( "arg count %d not implemented" % func.__code__.co_argcount )
 
