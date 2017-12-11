@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 from lxml.etree import ElementTree, SubElement, Element
 from lxml.etree import XMLParser,parse
 import copy
@@ -29,9 +31,9 @@ class eiter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         while True:
-            n = self.it.next()
+            n = next(self.it)
             # A Comment has a callable tag
             # A better way for this predicate would be nice
             if not callable(n.tag):
