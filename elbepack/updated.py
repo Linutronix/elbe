@@ -133,8 +133,8 @@ class UpdateService (ServiceBase):
 
         try:
             apply_update (fname, self.app.status)
-        except Exception, err:
             print Exception, err
+        except Exception as err:
             self.app.status.set_finished ('error')
             return "apply snapshot %s failed" % version
 
@@ -505,7 +505,7 @@ def action_select (upd_file, status):
     if os.path.isdir (prefix + "repo"):
         try:
             update_sourceslist (xml, prefix + "repo", status)
-        except Exception, err:
+        except Exception as err:
             status.log (str (err))
             status.set_finished ('error')
             status.log ("update apt sources list failed: " + prefix)
@@ -513,7 +513,7 @@ def action_select (upd_file, status):
 
         try:
             apply_update ("/tmp/new.xml", status)
-        except Exception, err:
+        except Exception as err:
             status.log (str (err))
             status.set_finished ('error')
             status.log ("apply update failed: " + prefix)

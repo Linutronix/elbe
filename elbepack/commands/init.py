@@ -125,14 +125,14 @@ def run_command( argv ):
 
     try:
         os.makedirs(path)
-    except OSError, e:
+    except OSError as e:
         print 'unable to create project directory: %s (%s)' % (path, e.strerror)
         sys.exit(30)
 
     out_path = os.path.join(path,".elbe-in")
     try:
         os.makedirs(out_path)
-    except OSError, e:
+    except OSError as e:
         print 'unable to create subdirectory: %s (%s)' % (out_path, e.strerror)
         sys.exit(30)
 
