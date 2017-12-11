@@ -93,8 +93,8 @@ def get_url ( arch, suite, target_pkg, mirror, comp='main' ):
         packages = urllib2.urlopen(pack_url, None, 10)
 
         packages = packages.readlines()
-        packages = filter( lambda x: x.startswith( "Filename" ), packages )
-        packages = filter( lambda x: x.find( target_pkg ) != -1, packages )
+        packages = [x for x in packages if x.startswith( "Filename" )]
+        packages = [x for x in packages if x.find( target_pkg ) != -1]
 
         tmp = packages.pop()
         urla = tmp.split()

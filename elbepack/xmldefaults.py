@@ -176,7 +176,7 @@ def get_random_mac():
     binaddr = [random.randint(0,255) for i in range(6) ]
     binaddr[0] &= 0xfe
     binaddr[0] |= 0x02
-    s = map( lambda x: "%02x" % x, binaddr )
+    s = ["%02x" % x for x in binaddr]
 
     return ':'.join (s)
 

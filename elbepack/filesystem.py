@@ -98,7 +98,7 @@ class Filesystem(object):
     def listdir(self, path='', ignore=[], skiplinks=False):
         retval = [os.path.join(self.path, path, x) for x in os.listdir( self.fname(path) ) if not x in ignore]
         if skiplinks:
-            retval = filter(lambda x: (not os.path.islink(x)) and os.path.isdir(x), retval)
+            retval = [x for x in retval if (not os.path.islink(x)) and os.path.isdir(x)]
 
         return retval
 
