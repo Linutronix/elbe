@@ -71,8 +71,7 @@ class mountpoint_dict (dict):
             depth += 1
 
     def depthlist (self):
-        mplist = self.keys()
-        mplist.sort (key=mountpoint_dict.mountdepth)
+        mplist = sorted (self.keys(), key=mountpoint_dict.mountdepth)
 
         return [self[x] for x in mplist]
 

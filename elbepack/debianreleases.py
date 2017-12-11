@@ -32,4 +32,4 @@ suite2codename = { 'oldoldoldstable': 'squeeze',
 
 
 # generate reverse mapping
-codename2suite = dict( [(v,k) for k,v in suite2codename.items()] )
+codename2suite = { v:k for k,v in suite2codename.items() }

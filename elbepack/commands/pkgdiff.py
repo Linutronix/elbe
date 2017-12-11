@@ -79,8 +79,8 @@ def run_command( argv ):
             if p.current_ver and not p.essential:
                 fix_pkgs[p.name] = p.current_ver
 
-    for p in fix_pkgs.keys():
-        if not p in gen_pkgs.keys():
+    for p in fix_pkgs:
+        if not p in gen_pkgs:
             print("+<pkg>%s</pkg>" % p)
 
     for p in gen_pkgs.keys():
