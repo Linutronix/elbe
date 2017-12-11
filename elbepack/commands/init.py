@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 import shutil
@@ -68,31 +70,31 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) == 0:
-        print "no filename specified"
+        print("no filename specified")
         oparser.print_help()
         sys.exit(20)
     elif len(args) > 1:
-        print "too many filenames specified"
+        print("too many filenames specified")
         oparser.print_help()
         sys.exit(20)
 
     if opt.devel:
         if not os.path.isdir( os.path.join (elbe_dir, "elbepack")):
-            print "Devel Mode only valid, when running from elbe checkout"
+            print("Devel Mode only valid, when running from elbe checkout")
             sys.exit(20)
 
     if not opt.skip_validation:
         validation = validate_xml (args[0])
         if len (validation) != 0:
-            print "xml validation failed. Bailing out"
+            print("xml validation failed. Bailing out")
             for i in validation:
-                print i
+                print(i)
             sys.exit(20)
 
     xml = etree( args[0] )
 
     if not xml.has( "initvm" ):
-        print "fatal error: xml missing mandatory section 'initvm'"
+        print("fatal error: xml missing mandatory section 'initvm'")
         sys.exit(20)
 
     if opt.buildtype:
@@ -126,14 +128,14 @@ def run_command( argv ):
     try:
         os.makedirs(path)
     except OSError as e:
-        print 'unable to create project directory: %s (%s)' % (path, e.strerror)
+        print("unable to create project directory: %s (%s)" % (path, e.strerror))
         sys.exit(30)
 
     out_path = os.path.join(path,".elbe-in")
     try:
         os.makedirs(out_path)
     except OSError as e:
-        print 'unable to create subdirectory: %s (%s)' % (out_path, e.strerror)
+        print("unable to create subdirectory: %s (%s)" % (out_path, e.strerror))
         sys.exit(30)
 
     d = {"elbe_version": elbe_version,
@@ -153,11 +155,11 @@ def run_command( argv ):
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
     except NoKinitrdException as e:
-        print "Failure to download kernel/initrd debian Package:"
-        print
-        print e.message
-        print
-        print "Check Mirror configuration"
+        print("Failure to download kernel/initrd debian Package:")
+        print("")
+        print(e.message)
+        print("")
+        print("Check Mirror configuration")
         sys.exit(20)
 
     templates = os.listdir( init_template_dir )

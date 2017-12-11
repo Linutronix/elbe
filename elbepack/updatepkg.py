@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 
 from shutil import rmtree, copyfile, copytree
@@ -78,7 +80,7 @@ def gen_update_pkg (project, xml_filename, upd_filename,
             xmlindex[name] = p
 
             if not name in instindex:
-                print "package removed: " + name
+                print("package removed: %s" % name)
                 continue
 
             ipkg = instindex[name]
@@ -87,22 +89,22 @@ def gen_update_pkg (project, xml_filename, upd_filename,
             pfname = ipkg.installed_deb
 
             if comp == 0:
-                print "package ok: " + name + "-" + ipkg.installed_version
+                print("package ok: %s-%s" % (name, ipkg.installed_version))
                 if debug:
                     fnamelist.append( pfname )
                 continue
 
             if comp > 0:
-                print "package upgrade: " + pfname
+                print("package upgrade: %s" % pfname)
                 fnamelist.append( pfname )
             else:
-                print "package downgrade: " + name + "-" + ipkg.installed_version
+                print("package downgrade: %s-%s" % (name, ipkg.installed_version))
 
         for p in instpkgs:
             if p.name in xmlindex:
                 continue
 
-            print "package new installed " + p.name
+            print("package %s newly installed" % p.name)
             pfname = p.installed_deb
             fnamelist.append( pfname )
 

@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 
@@ -37,19 +39,19 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     if not opt.skip_validation:
         validation = validate_xml (args[0])
         if len (validation) != 0:
-            print "xml validation failed. Bailing out"
+            print("xml validation failed. Bailing out")
             for i in validation:
-                print i
+                print(i)
             sys.exit(20)
 
-    print "checking %s" % args[0]
+    print("checking %s" % args[0])
 
     xml = etree( args[0] )
 
@@ -93,10 +95,10 @@ def run_command( argv ):
 
         if not pname in v.cache:
             if pauto == 'false':
-                print pname, "does not exist in cache but is specified in pkg-list"
+                print("%s does not exist in cache but is specified in pkg-list" % pname)
                 errors += 1
             else:
-                print pname, "is no more required"
+                print("%s is no more required" % pname)
                 required_updates += 1
 
             continue
@@ -106,18 +108,18 @@ def run_command( argv ):
         if d.marked_install( centry ):
             cver = d.get_candidate_ver( v.cache[pname] ).ver_str
             if pver != cver:
-                print pname, "%s != %s" % (pver, cver)
+                print("%s: %s != %s" % (pname, pver, cver))
                 required_updates += 1
 
     sys.stdout.flush()
     sys.stderr.flush()
     if errors > 0:
-        print errors, "Errors occured, xml files needs fixing"
+        print("%d Errors occured, xml files needs fixing" % errors)
         if opt.script:
             os.system( "%s ERRORS %s" % (opt.script, args[0]) )
     elif required_updates > 0:
-        print required_updates, "updates required"
+        print("%d updates required" % required_updates)
         if opt.script:
             os.system( "%s UPDATE %s" % (opt.script, args[0]) )
     else:
-        print "No Updates available"
+        print("No Updates available")

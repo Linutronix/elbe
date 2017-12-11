@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import errno
 import re
@@ -973,7 +975,7 @@ class ElbeDB(object):
             try:
                 os.makedirs (cls.db_path)
             except OSError as e:
-                print e
+                print(str(e))
                 return
 
         db = ElbeDB()
@@ -981,7 +983,7 @@ class ElbeDB(object):
         try:
             db.add_user(name, fullname, password, email, admin)
         except ElbeDBError as e:
-            print e
+            print(str(e))
 
 
 class User(Base):

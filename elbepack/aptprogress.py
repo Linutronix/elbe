@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 from apt.progress.base import InstallProgress, AcquireProgress, OpProgress
 from apt_pkg import size_to_str
 import os
@@ -36,7 +38,7 @@ class ElbeInstallProgress (InstallProgress):
         if self.cb:
             self.cb (line)
         else:
-            print line
+            print(line)
 
     def processing (self, pkg, stage):
         self.write ("processing: " + pkg + " - " + stage)
@@ -51,7 +53,7 @@ class ElbeInstallProgress (InstallProgress):
         try:
             obj.do_install (self.fileno)
         except AttributeError:
-            print 'installing .deb files is not supported by elbe progress'
+            print("installing .deb files is not supported by elbe progress")
             raise SystemError
         return 0
 
@@ -76,7 +78,7 @@ class ElbeAcquireProgress (AcquireProgress):
         if self.cb:
             self.cb (line)
         else:
-            print line
+            print(line)
 
     def ims_hit(self, item):
         line = 'Hit ' + item.description
@@ -114,7 +116,7 @@ class ElbeOpProgress (OpProgress):
         if self.cb:
             self.cb (line)
         else:
-            print line
+            print(line)
     def update (self, percent=None):
         pass
     def done (self):

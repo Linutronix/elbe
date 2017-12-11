@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 import os
 
@@ -51,14 +53,14 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     try:
         xml = etree( args[0] )
     except:
-        print "Error reading xml file!"
+        print("Error reading xml file!")
         sys.exit(20)
 
     if os.path.isdir (args[1]):
@@ -76,13 +78,13 @@ def run_command( argv ):
         arch = xml.ensure_child( "archive" )
         arch.set_text( enbase( archive ) )
     except:
-        print "Error reading archive"
+        print("Error reading archive")
         sys.exit(20)
 
     try:
         xml.write( args[0] )
     except:
-        print "Unable to write new xml file"
+        print("Unable to write new xml file")
         sys.exit(20)
 
     if os.path.isdir (args[1]):

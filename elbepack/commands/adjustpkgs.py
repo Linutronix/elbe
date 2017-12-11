@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 from optparse import OptionParser
 
 from elbepack.asciidoclog import ASCIIDocLog
@@ -53,7 +55,7 @@ class adjpkg(object):
                     continue
                 if p.essential or p.is_auto_installed or (p.name in pkglist) or p.installed.priority == "important" or p.installed.priority == "required":
                     continue
-                print "MARK REMOVE %s" % p.name
+                print("MARK REMOVE %s" % p.name)
                 p.mark_delete( auto_fix=False, purge=True )
 
             for name in pkglist:
@@ -66,7 +68,7 @@ class adjpkg(object):
                 cp = cache[name]
 
                 cp.mark_install()
-                print "MARK INSTALL %s" % cp.name
+                print("MARK INSTALL %s" % cp.name)
 
             cache.commit(apt.progress.base.AcquireProgress(),
                          apt.progress.base.InstallProgress())
@@ -80,7 +82,7 @@ class adjpkg(object):
                     continue
                 if p.is_auto_removable:
                     p.mark_delete( purge=True )
-                    print "MARKED AS AUTOREMOVE %s" % p.name
+                    print("MARKED AS AUTOREMOVE %s" % p.name)
 
         cache.commit(apt.progress.base.AcquireProgress(),
                      apt.progress.base.InstallProgress())
@@ -97,7 +99,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 

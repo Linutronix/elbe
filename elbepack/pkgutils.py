@@ -16,13 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
+# different module names in python 2 and 3
+try:
+    import urllib.request
+    urlopen = urllib.request.urlopen
+except ImportError:
+    import urllib2
+    urlopen = urllib2.urlopen
 
 import os
+import hashlib
 
 from tempfile import mkdtemp
-import urllib2
-import hashlib
 
 from elbepack.shellhelper import CommandError, system
 
@@ -31,10 +38,10 @@ try:
     from apt_pkg import TagFile
     virtapt_imported = True
 except ImportError:
-    print "WARNING - python-apt not available: if there are multiple versions of"
-    print " elbe-bootstrap packages on the mirror(s) elbe selects the first package it"
-    print " has found. There is no guarantee that the latest package is used."
-    print " To ensure this, the python-apt package needs to be installed."
+    print("WARNING - python-apt not available: if there are multiple versions of")
+    print(" elbe-bootstrap packages on the mirror(s) elbe selects the first package it")
+    print(" has found. There is no guarantee that the latest package is used.")
+    print(" To ensure this, the python-apt package needs to be installed.")
     virtapt_imported = False
 
 
@@ -213,10 +220,10 @@ def copy_kinitrd( prj, target_dir, defs, arch="default" ):
             if m.hexdigest() != sha1:
                 raise NoKinitrdException ('elbe-bootstrap failed to verify !!!')
         else:
-            print "-----------------------------------------------------"
-            print "WARNING:"
-            print "Using untrusted elbe-bootstrap"
-            print "-----------------------------------------------------"
+            print("-----------------------------------------------------")
+            print("WARNING:")
+            print("Using untrusted elbe-bootstrap")
+            print("-----------------------------------------------------")
 
 
         try:

@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import cherrypy
 
 from optparse import OptionParser
@@ -32,7 +34,7 @@ def run_command( argv ):
     daemons = get_daemonlist()
 
     if not daemons:
-        print 'no elbe daemons installed'
+        print("no elbe daemons installed")
 
     oparser = OptionParser(usage="usage: %prog")
     oparser.add_option( "--host", dest="host", default='0.0.0.0',
@@ -53,16 +55,16 @@ def run_command( argv ):
             if str(o) == str(d):
                 if getattr(opt,o) == True:
                     active = True
-                    print "enable", str(d)
+                    print(("enable %s" % str(d)))
                     module = "elbepack.daemons." + str(d)
                     mod = __import__(module)
                     cmdmod = sys.modules[module]
                     cherrypy.tree.graft(cmdmod.get_app(cherrypy.engine), "/"+str(d))
     if not active:
-        print 'no daemon activated, use'
+        print("no daemon activated, use")
         for d in daemons:
-            print '   --'+d
-        print 'to activate at least one daemon'
+            print(("   --%s" % d))
+        print("to activate at least one daemon")
         return
 
     cherrypy.server.unsubscribe()

@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 from optparse import OptionParser
 from datetime import datetime
@@ -160,7 +161,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "wrong number of arguments"
+        print("wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
@@ -172,7 +173,7 @@ def run_command( argv ):
     err_pkg = 0
 
     if not opt.mapping:
-        print "A mapping file is required"
+        print("A mapping file is required")
         oparser.print_help()
         sys.exit(20)
 
@@ -283,8 +284,8 @@ def run_command( argv ):
         tree.write (opt.output)
 
 
-    print "statistics:"
-    print 'num:%d mr:%d hr:%d err_pkg:%d' % (num_pkg, mr, hr, err_pkg)
+    print("statistics:")
+    print(("num:%d mr:%d hr:%d err_pkg:%d" % (num_pkg, mr, hr, err_pkg)))
 
 
 

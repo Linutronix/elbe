@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 
 from optparse import OptionParser
@@ -48,17 +50,17 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     if not opt.target:
-        print "No directory specified!"
+        print("No directory specified!")
         oparser.print_help()
         sys.exit(20)
 
     if not opt.output:
-        print "No Log output"
+        print("No Log output")
         oparser.print_help()
         sys.exit(20)
 
@@ -66,7 +68,7 @@ def run_command( argv ):
         opt.grub_version = 0
 
     if opt.grub_version not in [0,199,202]:
-        print "invalid grub version"
+        print("invalid grub version")
         oparser.print_help()
         sys.exit(20)
 
@@ -75,8 +77,8 @@ def run_command( argv ):
                 xmlpath=args[0], logpath=opt.output,
                 skip_validate=opt.skip_validation )
     except ValidationError as e:
-        print str(e)
-        print "xml validation failed. Bailing out"
+        print(str(e))
+        print("xml validation failed. Bailing out")
         sys.exit(20)
 
     project.targetfs.part_target(opt.target, opt.grub_version)

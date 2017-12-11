@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 from string import digits
 
@@ -177,7 +179,7 @@ class grubinstaller_base( object ):
         self.boot = None
 
     def set_boot_entry( self, entry ):
-        print "setting boot entry"
+        print("setting boot entry")
         self.boot = entry
 
     def set_root_entry( self, entry ):
@@ -431,7 +433,7 @@ def add_binary_blob( outf, hd, target ):
         # use file from target/ dir if binary path starts with /
         if (binary.et.text[0] == '/'):
             bf = os.path.join(target, 'target', binary.et.text[1:])
-            print bf
+            print(bf)
         # else use file from /var/cache/elbe/<uuid> project dir
         else:
             bf = os.path.join(target, binary.et.text)

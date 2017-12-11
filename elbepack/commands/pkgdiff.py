@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 
@@ -34,7 +36,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
@@ -79,14 +81,14 @@ def run_command( argv ):
 
     for p in fix_pkgs.keys():
         if not p in gen_pkgs.keys():
-            print "+<pkg>%s</pkg>" % p
+            print("+<pkg>%s</pkg>" % p)
 
     for p in gen_pkgs.keys():
         if not p in fix_pkgs.keys():
-            print "-<pkg>%s</pkg>" % p
+            print("-<pkg>%s</pkg>" % p)
 
     for p in fix_pkgs.keys():
         if p in gen_pkgs.keys() and fix_pkgs[p] != gen_pkgs[p]:
-            print "%s: Version mismatch %s != %s" % (p, fix_pkgs[p], gen_pkgs[p])
+            print("%s: Version mismatch %s != %s" % (p, fix_pkgs[p], gen_pkgs[p]))
 
 

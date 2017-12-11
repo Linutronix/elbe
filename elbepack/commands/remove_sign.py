@@ -20,16 +20,18 @@
 # with has to have ultimate trust level, otherwise you'll only get
 # VALID (Untrusted)!
 
+from __future__ import print_function
+
 from elbepack.gpg import unsign_file
 
 def run_command( argv ):
     if(len(argv) != 1):
-        print 'Wrong number of arguments.'
-        print 'Please pass the name of the file to unsign.'
+        print("Wrong number of arguments.")
+        print("Please pass the name of the file to unsign.")
         return
 
     fname = unsign_file( argv[0] )
     if fname:
-        print "unsigned file:", fname
+        print("unsigned file: %s" % fname)
     else:
-        print "removing signature failed"
+        print("removing signature failed")

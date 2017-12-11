@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 import os
 from optparse import OptionParser
@@ -41,16 +43,16 @@ def run_command( argv ):
 
     validation = validate_xml (args[0])
     if len (validation):
-        print "validation failed"
+        print("validation failed")
         for i in validation:
-            print i
+            print(i)
         sys.exit(20)
 
     if opt.validate_urls:
         try:
             xml = ElbeXML(args[0], url_validation=ValidationMode.CHECK_ALL)
         except ValidationError as e:
-            print e
+            print(e)
             sys.exit(20)
 
     sys.exit (0)

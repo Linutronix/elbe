@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 
 from optparse import OptionParser
@@ -35,9 +37,9 @@ class DbAction(object):
 
     @classmethod
     def print_actions(cls):
-        print 'available actions are:'
+        print("available actions are:")
         for a in cls.actiondict:
-            print '   ' + a
+            print("   %s" % a)
 
     def __new__(cls, node):
         action = cls.actiondict[node]
@@ -85,7 +87,7 @@ class AddUserAction(DbAction):
         (opt, arg) = oparser.parse_args (args)
 
         if len(arg) != 1:
-            print "wrong number of arguments"
+            print("wrong number of arguments")
             oparser.print_help()
             return
 
@@ -115,13 +117,13 @@ class DelUserAction(DbAction):
         (opt, arg) = oparser.parse_args (args)
 
         if len(arg) != 1:
-            print "usage: elbe db del_user <userid>"
+            print("usage: elbe db del_user <userid>")
             return
 
         try:
             userid = int(arg[0])
         except:
-            print "userid must be an integer"
+            print("userid must be an integer")
             return
 
         db = ElbeDB()
@@ -131,18 +133,18 @@ class DelUserAction(DbAction):
         if projects:
             if not opt.quiet:
                 if opt.delete_projects:
-                    print "removing projects owned by the deleted user:"
+                    print("removing projects owned by the deleted user:")
                 else:
-                    print "keeping projects owned by the deleted user:"
+                    print("keeping projects owned by the deleted user:")
 
         for p in projects:
             if not opt.quiet:
-                print p.builddir + ":", p.name, "[", p.version, "]", p.edit
+                print("%s: %s [%s] %s" % (p.builddir, p.name, p.version, p.edit))
             if opt.delete_projects:
                 try:
                     db.del_project( p.builddir )
                 except ElbeDBError as e:
-                    print "  ==> ", e
+                    print("  ==> %s " % str(e))
 
 DbAction.register(DelUserAction)
 
@@ -158,7 +160,7 @@ class ListProjectsAction(DbAction):
         projects = db.list_projects ()
 
         for p in projects:
-            print p.builddir+":", p.name, "[", p.version, "]", p.edit
+            print("%s: %s [%s] %s" % (p.builddir, p.name, p.version, p.edit))
 
 DbAction.register(ListProjectsAction)
 
@@ -174,7 +176,7 @@ class ListUsersAction(DbAction):
         users = db.list_users ()
 
         for u in users:
-            print u.name+":", u.fullname, "<"+u.email+">"
+            print("%s: %s <%s>" % (u.name, u.fullname, u.email))
 
 DbAction.register(ListUsersAction)
 
@@ -211,7 +213,7 @@ class DeleteProjectAction(DbAction):
 
     def execute(self, args):
         if len (args) != 1:
-            print "usage: elbe db del_project <project_dir>"
+            print("usage: elbe db del_project <project_dir>")
             return
 
         db = ElbeDB()
@@ -228,7 +230,7 @@ class SetXmlAction(DbAction):
 
     def execute(self, args):
         if len (args) != 2:
-            print "usage: elbe db set_xml <project_dir> <xml>"
+            print("usage: elbe db set_xml <project_dir> <xml>")
             return
 
         db = ElbeDB()
@@ -246,7 +248,7 @@ class BuildAction(DbAction):
 
     def execute(self, args):
         if len (args) != 1:
-            print "usage: elbe db build <project_dir>"
+            print("usage: elbe db build <project_dir>")
             return
 
         db = ElbeDB()
@@ -259,7 +261,7 @@ class BuildAction(DbAction):
         except Exception as e:
             db.update_project_files( ep )
             db.reset_busy( args[0], "build_failed" )
-            print e
+            print(str(e))
             return
         db.reset_busy( args[0], "build_done" )
 
@@ -275,16 +277,16 @@ class GetFilesAction(DbAction):
 
     def execute(self, args):
         if len (args) != 1:
-            print "usage: elbe db get_files <project_dir>"
+            print("usage: elbe db get_files <project_dir>")
             return
 
         db = ElbeDB()
         files = db.get_project_files (args[0])
         for f in files:
             if f.description:
-                print "%-40s  %s" % (f.name, f.description)
+                print("%-40s  %s" % (f.name, f.description))
             else:
-                print f.name
+                print(f.name)
 
 DbAction.register(GetFilesAction)
 
@@ -305,7 +307,7 @@ class ResetProjectAction(DbAction):
         (opt, arg) = oparser.parse_args (args)
 
         if len(arg) != 1:
-            print "wrong number of arguments"
+            print("wrong number of arguments")
             oparser.print_help()
             return
 
@@ -324,7 +326,7 @@ class SetProjectVersionAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print "usage: elbe db set_project_version <project_dir> <version>"
+            print("usage: elbe db set_project_version <project_dir> <version>")
             return
 
         db = ElbeDB()
@@ -342,7 +344,7 @@ class ListVersionsAction(DbAction):
 
     def execute(self, args):
         if len(args) != 1:
-            print "usage: elbe db list_versions <project_dir>"
+            print("usage: elbe db list_versions <project_dir>")
             return
 
         db = ElbeDB()
@@ -350,9 +352,9 @@ class ListVersionsAction(DbAction):
 
         for v in versions:
             if v.description:
-                print v.version + ": " + v.description
+                print("%s: %s" % (v.version, v.description))
             else:
-                print v.version
+                print(v.version)
 
 DbAction.register(ListVersionsAction)
 
@@ -371,7 +373,7 @@ class SaveVersionAction(DbAction):
         (opt, arg) = oparser.parse_args (args)
 
         if len(arg) != 1:
-            print "wrong number of arguments"
+            print("wrong number of arguments")
             oparser.print_help()
             return
 
@@ -390,7 +392,7 @@ class DelVersionAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print "usage: elbe db del_version <project_dir> <version>"
+            print("usage: elbe db del_version <project_dir> <version>")
             return
 
         db = ElbeDB()
@@ -408,7 +410,7 @@ class PrintVersionXMLAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print "usage: elbe db print_version_xml <project_dir> <version>"
+            print("usage: elbe db print_version_xml <project_dir> <version>")
             return
 
         db = ElbeDB()

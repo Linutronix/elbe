@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import apt
 import apt_pkg
 import errno
@@ -92,15 +94,15 @@ class UpdateStatus:
             try:
                 self.monitor.service.msg (msg)
             except:
-                print "logging to monitor failed, removing monitor connection"
+                print("logging to monitor failed, removing monitor connection")
                 self.monitor = None
-                print msg
+                print(msg)
         try:
             syslog (msg)
         except:
-            print msg
+            print(msg)
         if self.verbose:
-            print msg
+            print(msg)
 
 class UpdateApplication (Application):
     def __init__(self, *args, **kargs):
@@ -133,8 +135,8 @@ class UpdateService (ServiceBase):
 
         try:
             apply_update (fname, self.app.status)
-            print Exception, err
         except Exception as err:
+            print("%s" % str(err))
             self.app.status.set_finished ('error')
             return "apply snapshot %s failed" % version
 

@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 from optparse import OptionParser
 import sys
 import os.path
@@ -59,11 +61,11 @@ def run_command( argv ):
             sys.exit(20)
 
     if len(args) == 1 and not opt.target:
-        print "No target specified"
+        print("No target specified")
         sys.exit(20)
 
     if not opt.output:
-        print "No output file specified"
+        print("No output file specified")
         sys.exit(20)
 
     if opt.buildtype:
@@ -76,19 +78,19 @@ def run_command( argv ):
                 override_buildtype=buildtype,
                 skip_validate=opt.skip_validation)
     except ValidationError as e:
-        print str(e)
-        print "xml validation failed. Bailing out"
+        print(str(e))
+        print("xml validation failed. Bailing out")
         sys.exit(20)
 
     if opt.presh_file:
         if not os.path.isfile(opt.presh_file):
-            print 'pre.sh file does not exist'
+            print('pre.sh file does not exist')
             sys.exit(20)
         project.presh_file = opt.presh_file
 
     if opt.postsh_file:
         if not os.path.isfile(opt.postsh_file):
-            print 'post.sh file does not exist'
+            print('post.sh file does not exist')
             sys.exit(20)
         project.postsh_file = opt.postsh_file
 
@@ -102,9 +104,9 @@ def run_command( argv ):
                 cfg_dir = opt.cfg_dir, cmd_dir = opt.cmd_dir )
 
     except ValidationError as e:
-        print str(e)
-        print "xml validation failed. Bailing out"
+        print(str(e))
+        print("xml validation failed. Bailing out")
         sys.exit(20)
     except MissingData as e:
-        print str(e)
+        print(str(e))
         sys.exit(20)

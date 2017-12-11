@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 import filecmp
@@ -40,7 +42,7 @@ def walk_generated( gen_path, fix_path, exclude ):
 
         if len(files)==0:
             if not os.path.exists(fix_path+infs_root):
-                print "empty directory %s only exists in gen image" % (infs_root)
+                print("empty directory %s only exists in gen image" % (infs_root))
                 file_to_rm.append( infs_root )
         else:
             for f in files:
@@ -51,17 +53,17 @@ def walk_generated( gen_path, fix_path, exclude ):
                     if os.path.isfile(gen_fname) and os.path.isfile(fix_fname):
                         if not os.path.islink(gen_fname) and not os.path.islink(fix_fname):
                             if not filecmp.cmp(gen_fname,fix_fname,shallow=False):
-                                print "files %s and %s differ" %(gen_fname, fix_fname)
+                                print("files %s and %s differ" %(gen_fname, fix_fname))
                                 file_differ.append(os.path.join( infs_root, f ) )
                         else:
                             if not (os.readlink(gen_fname) == os.readlink(fix_fname)):
-                                print "symlinks %s and %s differ" %(gen_fname, fix_fname)
+                                print("symlinks %s and %s differ" %(gen_fname, fix_fname))
                                 file_differ.append(os.path.join( infs_root, f ) )
 
                 elif not os.path.exists(gen_fname) and os.path.exists(fix_fname):
-                    print "file %s only exists in fixed image" % (fix_fname)
+                    print("file %s only exists in fixed image" % (fix_fname))
                 elif os.path.exists(gen_fname) and not os.path.exists(fix_fname):
-                    print "file %s only exists in gen image" % (gen_fname)
+                    print("file %s only exists in gen image" % (gen_fname))
                     file_to_rm.append( os.path.join( infs_root, f ) )
 
     return file_differ, file_to_rm
@@ -85,7 +87,7 @@ def walk_fixed( gen_path, fix_path, exclude ):
 
         if len(files)==0:
             if not os.path.exists(gen_path+infs_root):
-                print "empty directory %s only exists in fix image" % (infs_root)
+                print("empty directory %s only exists in fix image" % (infs_root))
                 dir_to_create.append( infs_root.lstrip("/") )
         else:
             for f in files:
@@ -93,7 +95,7 @@ def walk_fixed( gen_path, fix_path, exclude ):
                 fix_fname = os.path.join(fix_path+infs_root, f)
 
                 if not os.path.exists(gen_fname) and os.path.exists(fix_fname):
-                    print "file %s only exists in fixed image" % (fix_fname)
+                    print("file %s only exists in fixed image" % (fix_fname))
                     file_only.append( os.path.join( infs_root, f ) )
 
     return file_only, dir_to_create
@@ -106,7 +108,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
@@ -120,19 +122,19 @@ def run_command( argv ):
     only, mkdir = walk_fixed( gen_rfs, fix_rfs, opt.exclude )
 
 
-    print "suggesting:"
-    print
+    print("suggesting:")
+    print()
 
     for f in rm:
-        print "<rm>%s</rm>"%f
+        print("<rm>%s</rm>"%f)
 
     for d in mkdir:
-        print "<mkdir>%s</mkdir>"%d
+        print("<mkdir>%s</mkdir>"%d)
 
-    print
+    print("")
 
     fileline=""
     for f in differ+only:
-        print "tar rf archive.tar -C %s %s"%(fix_rfs, f)
+        print("tar rf archive.tar -C %s %s"%(fix_rfs, f))
 
 

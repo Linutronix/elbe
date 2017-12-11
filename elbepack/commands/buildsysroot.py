@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 from optparse import OptionParser
 import sys
@@ -34,7 +35,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "wrong number of arguments"
+        print("wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
@@ -42,8 +43,8 @@ def run_command( argv ):
         project = ElbeProject( args[0], override_buildtype=opt.buildtype,
                 skip_validate=opt.skip_validation )
     except ValidationError as e:
-        print str(e)
-        print "xml validation failed. Bailing out"
+        print(str(e))
+        print("xml validation failed. Bailing out")
         sys.exit(20)
 
     project.build_sysroot ()

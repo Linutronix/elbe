@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 
 from elbepack.treeutils import etree
@@ -34,7 +36,7 @@ def template(fname, d, linebreak=False):
         else:
             return Template(filename=fname).render(**d)
     except:
-        print exceptions.text_error_template().render()
+        print(exceptions.text_error_template().render())
         raise
 
 def write_template( outname, fname, d, linebreak=False ):

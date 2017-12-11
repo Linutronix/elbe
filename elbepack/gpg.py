@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import gpgme
 import os
 
@@ -67,46 +69,46 @@ def check_signature(ctx, sig):
     status = OverallStatus()
 
     if sig.summary & gpgme.SIGSUM_KEY_MISSING:
-        print 'Signature with unknown key: %s' % sig.fpr
+        print("Signature with unknown key: %s" % sig.fpr)
         status.key_missing = True
         return status
 
     # there should be a key
     key = ctx.get_key(sig.fpr)
-    print '%s <%s> (%s):' % (key.uids[0].name, key.uids[0].email, sig.fpr),
+    print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, sig.fpr))
     if sig.summary & gpgme.SIGSUM_VALID == gpgme.SIGSUM_VALID:
         # signature fully valid and trusted
-        print 'VALID (Trusted)'
+        print("VALID (Trusted)")
         return status
 
     # print detailed status in case it's not fully valid and trusted
     if sig.summary == 0:
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
-        print 'VALID (Untrusted).',
+        print("VALID (Untrusted).")
     if sig.summary & gpgme.SIGSUM_SIG_EXPIRED == gpgme.SIGSUM_SIG_EXPIRED:
-        print 'SIGNATURE EXPIRED!',
+        print("SIGNATURE EXPIRED!")
         status.sig_expired = True
     if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIRED:
-        print 'KEY EXPIRED!',
+        print("KEY EXPIRED!")
         status.key_expired = True
     if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKED:
-        print 'KEY REVOKED!',
+        print("KEY REVOKED!")
         status.key_revoked = True
     if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
-        print 'INVALID SIGNATURE!',
+        print("INVALID SIGNATURE!")
         status.invalid = True
     if sig.summary & gpgme.SIGSUM_CRL_MISSING == gpgme.SIGSUM_CRL_MISSING:
-        print 'CRL MISSING!',
+        print("CRL MISSING!")
         status.gpgme_error = True
     if sig.summary & gpgme.SIGSUM_CRL_TOO_OLD == gpgme.SIGSUM_CRL_TOO_OLD:
-        print 'CRL TOO OLD!',
+        print("CRL TOO OLD!")
         status.gpgme_error = True
     if sig.summary & gpgme.SIGSUM_BAD_POLICY == gpgme.SIGSUM_BAD_POLICY:
-        print 'UNMET POLICY REQUIREMENT!',
+        print("UNMET POLICY REQUIREMENT!")
         status.gpgme_error = True
     if sig.summary & gpgme.SIGSUM_SYS_ERROR == gpgme.SIGSUM_SYS_ERROR:
-        print 'SYSTEM ERROR!',
+        print("SYSTEM ERROR!'")
         status.gpgme_error = True
 
     return status
@@ -115,7 +117,7 @@ def check_signature(ctx, sig):
 def unsign_file(fname):
     # check for .gpg extension and create an output filename without it
     if len(fname) <= 4 or fname[len(fname)-4:] != '.gpg':
-        print 'The input file needs a .gpg extension'
+        print("The input file needs a .gpg extension")
         return None
 
     outfilename = fname[:len(fname)-4]
@@ -143,9 +145,9 @@ def unsign_file(fname):
         return outfilename
 
     except IOError as ex:
-        print ex.message
+        print(ex.message)
     except Exception as ex:
-        print 'Error checking the file %s: %s' % (fname, ex.message)
+        print("Error checking the file %s: %s" % (fname, ex.message))
 
     return None
 
@@ -158,7 +160,7 @@ def sign (infile, outfile, fingerprint):
     try:
         key = ctx.get_key(fingerprint)
     except gpgme.GpgmeError as ex:
-        print 'no key with fingerprint %s: %s' % (fingerprint, ex.message)
+        print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
         pass
 
     ctx.signers = [key]
@@ -167,7 +169,7 @@ def sign (infile, outfile, fingerprint):
     try:
         ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
     except Exception as ex:
-        print 'Error signing file %s' % ex.message
+        print("Error signing file %s" % ex.message)
         pass
 
 
@@ -179,7 +181,7 @@ def sign_file(fname, fingerprint):
             with open(outfilename, 'w') as outfile:
                 sign (infile, outfile, fingerprint)
     except Exception as ex:
-        print 'Error signing file %s' % ex.message
+        print("Error signing file %s" % ex.message)
         pass
 
 
@@ -208,6 +210,6 @@ def export_key (fingerprint, outfile):
     try:
         ctx.export(fingerprint, outfile)
     except Exception as ex:
-        print 'Error exporting key %s' % (fingerprint)
+        print("Error exporting key %s" % (fingerprint))
 
     return '/var/cache/elbe/gnupg/pubring.gpg'

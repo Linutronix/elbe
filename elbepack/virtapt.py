@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import apt_pkg
 import os
 import sys
@@ -83,7 +85,6 @@ class VirtApt:
         pass
 
     def pulse (self, obj):
-        #print "updating in progress", obj
         return True
 
     def mkdir_p (self, newdir, mode=0o755):
@@ -121,8 +122,8 @@ class VirtApt:
     def setup_gpg (self):
         ring_path = self.projectpath + "/etc/apt/trusted.gpg"
         if not os.path.isdir ("/etc/apt/trusted.gpg.d"):
-            print ("/etc/apt/trusted.gpg.d doesn't exist")
-            print ("apt-get install debian-archive-keyring may fix this problem")
+            print("/etc/apt/trusted.gpg.d doesn't exist")
+            print("apt-get install debian-archive-keyring may fix this problem")
             sys.exit (20)
 
         system ('cp /etc/apt/trusted.gpg "%s"' % ring_path )
@@ -137,13 +138,13 @@ class VirtApt:
 
         trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
         for key in trustkeys:
-            print "Import %s: " % key
+            print("Import %s: " % key)
             try:
                 system ('gpg %s --import "%s"' % (
                     gpg_options,
                     os.path.join ("/etc/apt/trusted.gpg.d", key)))
             except CommandError as e:
-                print "adding elbe-pubkey to keyring failed"
+                print("adding elbe-pubkey to keyring failed")
 
     def add_pubkey_url (self, url):
         ring_path = self.projectpath + "/etc/apt/trusted.gpg"

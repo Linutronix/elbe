@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 
 from elbepack.treeutils import etree
@@ -35,26 +37,26 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     if not opt.skip_validation:
         validation = validate_xml (args[0])
         if len (validation) != 0:
-            print "xml validation failed. Bailing out"
+            print("xml validation failed. Bailing out")
             for i in validation:
-                print i
+                print(i)
             sys.exit(20)
 
     try:
         xml = etree( args[0] )
     except:
-        print "Error reading xml file!"
+        print("Error reading xml file!")
         sys.exit(20)
 
     if not xml.has ("fullpkgs"):
-        print "xml file does not have fullpkgs node"
+        print("xml file does not have fullpkgs node")
         sys.exit(20)
 
     plist = xml.ensure_child("/target/pkg-list")
@@ -74,6 +76,6 @@ def run_command( argv ):
     try:
         xml.write( args[0] )
     except:
-        print "Unable to write new xml file"
+        print("Unable to write new xml file")
         sys.exit(20)
 

@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 
 from elbepack.treeutils import etree
@@ -36,14 +38,14 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     xml = etree( args[0] )
 
     if not opt.out:
-        print 'output is mandatory'
+        print("--output is mandatory")
         sys.exit(20)
 
     d = {"opt": opt,

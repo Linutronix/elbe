@@ -1,4 +1,6 @@
 
+from __future__ import print_function
+
 import random
 import string
 import sys
@@ -186,9 +188,12 @@ class ElbeDefaults(object):
     def __init__(self, build_type):
 
         if build_type not in defaults:
-            print "Please specify a valid buildtype."
-            print "Valid buildtypes:"
-            print defaults.keys()
+            print("Please specify a valid buildtype.")
+            print("Valid buildtypes:")
+            print(defaults.keys())
+            print("Please specify a valid buildtype.")
+            print("Valid buildtypes:")
+            print(list(defaults.keys()))
             sys.exit(20)
 
         self.defaults = defaults[build_type]

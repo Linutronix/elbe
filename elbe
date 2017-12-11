@@ -18,6 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
+import os
 import sys
 
 import elbepack.commands
@@ -26,11 +29,11 @@ from elbepack.directories import init_directories, get_cmdlist
 
 
 def usage():
-    print 'elbe v' + elbe_version
-    print 'need a subcommand: e.g. \'elbe initvm\'. \n\
-    Available subcommands are: \n'
+    print("elbe v%s" % elbe_version)
+    print("need a subcommand: e.g. \'elbe initvm\'. \n\
+    Available subcommands are: \n")
     for i in get_cmdlist():
-        print '        * '+i
+        print("        * %s" % i)
 
 # First initialise the directories module
 # so that it knows, where the current elbe
@@ -43,13 +46,13 @@ if (len(sys.argv) < 2):
     sys.exit(20)
 
 if sys.argv[1] == "--version":
-    print 'elbe v' + elbe_version + ' ' + running_os[0] + ' ' + running_os[1]
+    print("elbe v %s %s %s" % (elbe_version, running_os[0], running_os[1]))
     sys.exit(0)
 
 cmd_list = get_cmdlist()
 
 if not sys.argv[1] in cmd_list:
-    print "Unknown subcommand !\n"
+    print("Unknown subcommand !\n")
     usage()
     sys.exit(20)
 

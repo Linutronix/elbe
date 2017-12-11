@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import sys
 
 from elbepack.elbexml import ElbeXML
@@ -29,25 +31,25 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) < 2:
-        print "Wrong number of arguments"
+        print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     try:
         xml = ElbeXML ( args[0] )
     except Exception as e:
-        print "Error reading xml file: %s" % str(e)
+        print(("Error reading xml file: %s" % str(e)))
         sys.exit(20)
 
     for a in args[1:]:
         try:
             xml.add_target_package( a )
         except Exception as e:
-            print "Error adding package %s: %s" % (a, str(e))
+            print(("Error adding package %s: %s" % (a, str(e))))
             sys.exit(20)
 
     try:
         xml.xml.write( args[0] )
     except:
-        print "Unable to write new xml file"
+        print("Unable to write new xml file")
         sys.exit(20)

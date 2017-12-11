@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 
+from __future__ import print_function
+
 import soaplib
 import sys
 import threading
@@ -16,7 +18,7 @@ from wsgiref.simple_server import make_server
 class MonitorService (ServiceBase):
     @rpc (String)
     def msg (self, m):
-        print m
+        print(m)
 
 class MonitorThread (threading.Thread):
     def __init__ (self, port):
@@ -25,7 +27,7 @@ class MonitorThread (threading.Thread):
         self.server = None
 
     def run (self):
-        print "monitor ready :%s" % (self.port)
+        print("monitor ready :%s" % (self.port))
         application = Application([MonitorService], 'monitor',
                                   in_protocol=Soap11(validator='lxml'),
                                   out_protocol=Soap11())
@@ -89,7 +91,7 @@ wsdl = "http://" + target + ":" + port + "/?wsdl"
 try:
     control = Client (wsdl)
 except:
-    print wsdl, "not reachable"
+    print(wsdl, "not reachable")
     sys.exit (1)
 
 monitor = MonitorThread (monitorport)
@@ -101,7 +103,7 @@ try:
     monitor_wsdl = "http://" + host + ":" + monitorport + "/?wsdl"
     control.service.register_monitor (monitor_wsdl)
 except:
-    print "monitor couldn't be registered (port already in use?)"
+    print("monitor couldn't be registered (port already in use?)")
     shutdown (monitor)
 
 while 1:
@@ -110,20 +112,20 @@ while 1:
     try:
         snapshots = s.split (',')
 
-        print "select snapshot:"
+        print("select snapshot:")
         i = 0
         for s in snapshots:
             if s:
-                print "  [%d] %s" % (i, s)
+                print("  [%d] %s" % (i, s))
             i = i + 1
     except:
-        print "no snapshots available"
+        print("no snapshots available")
 
     sys.stdout.write ("% ")
     sys.stdout.flush ()
 
     try:
         n = int (input ())
-        print control.service.apply_snapshot (snapshots [n])
+        print(control.service.apply_snapshot (snapshots [n]))
     except:
         shutdown (monitor)

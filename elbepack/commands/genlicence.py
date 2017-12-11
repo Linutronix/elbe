@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 from optparse import OptionParser
 import sys
@@ -35,7 +36,7 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "wrong number of arguments"
+        print("wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 

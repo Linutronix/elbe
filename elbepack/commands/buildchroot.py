@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 from optparse import OptionParser
 import sys
 
@@ -85,23 +87,23 @@ def run_command( argv ):
     (opt,args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print "wrong number of arguments"
+        print("wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
     if not opt.target:
-        print "No target specified"
+        print("No target specified")
         sys.exit(20)
 
     if opt.skip_cdrom:
-        print "WARNING: Skip CDROMS is now the default, use --build-bin to build binary CDROM"
+        print("WARNING: Skip CDROMS is now the default, use --build-bin to build binary CDROM")
 
     try:
         project = ElbeProject( opt.target, args[0], opt.output, opt.name,
                 opt.buildtype, opt.skip_validation )
     except ValidationError as e:
-        print str(e)
-        print "xml validation failed. Bailing out"
+        print((str(e)))
+        print("xml validation failed. Bailing out")
         sys.exit(20)
 
     try:
@@ -109,12 +111,12 @@ def run_command( argv ):
                 opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist,
                 opt.skip_pbuild )
     except CommandError as ce:
-        print "command in project build failed:", ce.cmd
+        print(("command in project build failed: %s" % ce.cmd))
         sys.exit(20)
 
     try:
         db = ElbeDB()
         db.save_project (project)
     except OperationalError:
-        print "failed to save project in database"
+        print("failed to save project in database")
         sys.exit(20)
