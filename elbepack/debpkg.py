@@ -51,7 +51,7 @@ def build_binary_deb( name, arch, version, description, files, deps, target_dir 
     pkgdir = os.path.join( tmpdir, pkgfname )
 
     os.system( 'mkdir -p "%s"' % os.path.join( pkgdir, "DEBIAN" ) )
-    write_file( os.path.join( pkgdir, "DEBIAN" , "control" ), 0644, gen_controlfile(name, version, arch, description, deps) )
+    write_file( os.path.join( pkgdir, "DEBIAN" , "control" ), 0o644, gen_controlfile(name, version, arch, description, deps) )
 
     for (fname, instpath) in files:
         full_instpath = os.path.join( pkgdir, instpath )

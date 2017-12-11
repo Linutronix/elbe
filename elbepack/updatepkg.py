@@ -134,14 +134,14 @@ def gen_update_pkg (project, xml_filename, upd_filename,
 
     if project.presh_file:
         copyfile (project.presh_file, update + '/pre.sh')
-        os.chmod (update + '/pre.sh', 0755)
+        os.chmod (update + '/pre.sh', 0o755)
 
     if project.postsh_file:
         copyfile (project.postsh_file, update + '/post.sh')
-        os.chmod (update + '/post.sh', 0755)
+        os.chmod (update + '/post.sh', 0o755)
 
     if cmd_dir:
-        inlucdedir (update, 'cmd', cmd_dir, mode=0755)
+        inlucdedir (update, 'cmd', cmd_dir, mode=0o755)
 
     if cfg_dir:
         inlucdedir (update, 'conf', cfg_dir)

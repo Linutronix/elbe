@@ -145,7 +145,7 @@ class ElbeDB(object):
             with open (builddir+"/postbuild.sh", 'w') as dst:
                 copyfileobj (postbuild_file, dst)
 
-            os.chmod (builddir+"/postbuild.sh", 0755)
+            os.chmod (builddir+"/postbuild.sh", 0o755)
             dos2unix (builddir+"/postbuild.sh")
 
             return self._update_project_file( s, builddir, "postbuild.sh",
@@ -179,7 +179,7 @@ class ElbeDB(object):
             with open (builddir+"/save.sh", 'w') as dst:
                 copyfileobj (savesh_file, dst)
 
-            os.chmod (builddir+"/save.sh", 0755)
+            os.chmod (builddir+"/save.sh", 0o755)
             dos2unix (builddir+"/save.sh")
 
             return self._update_project_file( s, builddir, "save.sh",

@@ -174,7 +174,7 @@ def run_command( argv ):
             write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d, linebreak=False )
 
         if t in make_executable:
-            os.chmod( os.path.join(out_path,o), 0755 )
+            os.chmod( os.path.join(out_path,o), 0o755 )
 
     shutil.copyfile( args[0],
        os.path.join(out_path, "source.xml" ) )

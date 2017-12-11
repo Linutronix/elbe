@@ -197,7 +197,7 @@ class ChRootFilesystem(ElbeFilesystem):
 
         self.mkdir_p ("usr/sbin")
         self.write_file ("usr/sbin/policy-rc.d",
-            0755, "#!/bin/sh\nexit 101\n")
+            0o755, "#!/bin/sh\nexit 101\n")
 
         self.mount()
         return self

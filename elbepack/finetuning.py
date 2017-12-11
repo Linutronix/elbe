@@ -340,7 +340,7 @@ class UpdatedAction(FinetuningAction):
             with open ((target.path + '/pub.key'), 'wb') as tkey:
                 tkey.write (key.getvalue ())
 
-            target.mkdir_p ("/var/cache/elbe/gnupg", mode=0700)
+            target.mkdir_p ("/var/cache/elbe/gnupg", mode=0o700)
             with target:
                 os.environ ['GNUPGHOME'] = target.path + "/var/cache/elbe/gnupg"
                 log.do ("gpg --import " + target.path + "/pub.key")

@@ -122,7 +122,7 @@ class Filesystem(object):
         fp.close()
         return retval
 
-    def mkdir_p (self, newdir, mode=0755):
+    def mkdir_p (self, newdir, mode=0o755):
         """works the way a good mkdir -p would...
                 - already exists, silently complete
                 - regular file in the way, raise an exception

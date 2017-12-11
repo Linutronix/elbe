@@ -44,8 +44,7 @@ class BuildEnv ():
         if not self.rfs.isfile( "etc/elbe_version" ):
             # avoid starting daemons inside the buildenv
             self.rfs.mkdir_p ("usr/sbin")
-            self.rfs.write_file ("usr/sbin/policy-rc.d",
-                0755, "#!/bin/sh\nexit 101\n")
+            self.rfs.write_file ("usr/sbin/policy-rc.d", 0o755, "#!/bin/sh\nexit 101\n")
             self.debootstrap ()
             self.fresh_debootstrap = True
             self.need_dumpdebootstrap = True
@@ -210,13 +209,13 @@ class BuildEnv ():
         if self.rfs.exists("etc/apt/sources.list"):
             self.rfs.remove("etc/apt/sources.list")
 
-        self.rfs.write_file ("etc/apt/sources.list", 0644, mirror)
+        self.rfs.write_file ("etc/apt/sources.list", 0o644, mirror)
 
         self.rfs.mkdir_p( "var/cache/elbe" )
 
         preseed = get_preseed( self.xml )
         preseed_txt = preseed_to_text( preseed )
-        self.rfs.write_file( "var/cache/elbe/preseed.txt", 0644, preseed_txt )
+        self.rfs.write_file( "var/cache/elbe/preseed.txt", 0o644, preseed_txt )
         with self.rfs:
             self.log.chroot( self.rfs.path, 'debconf-set-selections < %s' % self.rfs.fname("var/cache/elbe/preseed.txt") )
 

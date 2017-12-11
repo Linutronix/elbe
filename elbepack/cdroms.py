@@ -178,17 +178,17 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, log, cdrom_
     # to make the installer accept this as a CDRom
     repo_fs = Filesystem( repo_path )
     repo_fs.mkdir_p (".disk")
-    repo_fs.write_file (".disk/base_installable", 0644, "main\n")
-    repo_fs.write_file (".disk/base_components", 0644, "main\n")
-    repo_fs.write_file (".disk/cd_type", 0644, "not_complete\n")
-    repo_fs.write_file (".disk/info", 0644, "elbe inst cdrom - full cd\n")
+    repo_fs.write_file (".disk/base_installable", 0o644, "main\n")
+    repo_fs.write_file (".disk/base_components", 0o644, "main\n")
+    repo_fs.write_file (".disk/cd_type", 0o644, "not_complete\n")
+    repo_fs.write_file (".disk/info", 0o644, "elbe inst cdrom - full cd\n")
     repo_fs.symlink (".", "debian", allow_exists=True)
-    repo_fs.write_file ("md5sum.txt", 0644, "")
+    repo_fs.write_file ("md5sum.txt", 0o644, "")
 
     # write source xml onto cdrom
     xml.xml.write (repo_fs.fname ('source.xml'))
 
     target_repo_fs = Filesystem( target_repo_path )
-    target_repo_fs.write_file (".aptignr", 0644, "")
+    target_repo_fs.write_file (".aptignr", 0o644, "")
 
     return repo.buildiso( os.path.join( target, "bin-cdrom.iso" ) )
