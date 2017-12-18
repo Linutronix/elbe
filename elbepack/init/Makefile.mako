@@ -23,7 +23,8 @@ INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
 # this is a workaround for
 # http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
 VIRT=$(shell test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt)
-ifeq ($(VIRT), vmware)
+DIST=$(shell lsb_release -cs)
+ifeq ($(filter-out vmware stretch, $(VIRT) $(DIST)),)
 MACHINE?=pc-i440fx-2.6
 else
 MACHINE?=pc
