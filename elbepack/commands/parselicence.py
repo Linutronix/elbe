@@ -285,7 +285,7 @@ def run_command( argv ):
 
 
     print("statistics:")
-    print(("num:%d mr:%d hr:%d err_pkg:%d" % (num_pkg, mr, hr, err_pkg)))
+    print("num:%d mr:%d hr:%d err_pkg:%d" % (num_pkg, mr, hr, err_pkg))
 
 
 

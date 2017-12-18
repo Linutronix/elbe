@@ -102,7 +102,7 @@ def run_command( argv ):
         project = ElbeProject( opt.target, args[0], opt.output, opt.name,
                 opt.buildtype, opt.skip_validation )
     except ValidationError as e:
-        print((str(e)))
+        print(str(e))
         print("xml validation failed. Bailing out")
         sys.exit(20)
 
@@ -111,7 +111,7 @@ def run_command( argv ):
                 opt.build_sources, opt.cdrom_size, opt.debug, opt.skip_pkglist,
                 opt.skip_pbuild )
     except CommandError as ce:
-        print(("command in project build failed: %s" % ce.cmd))
+        print("command in project build failed: %s" % ce.cmd)
         sys.exit(20)
 
     try:

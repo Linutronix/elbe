@@ -38,14 +38,14 @@ def run_command( argv ):
     try:
         xml = ElbeXML ( args[0] )
     except Exception as e:
-        print(("Error reading xml file: %s" % str(e)))
+        print("Error reading xml file: %s" % str(e))
         sys.exit(20)
 
     for a in args[1:]:
         try:
             xml.add_target_package( a )
         except Exception as e:
-            print(("Error adding package %s: %s" % (a, str(e))))
+            print("Error adding package %s: %s" % (a, str(e)))
             sys.exit(20)
 
     try:
