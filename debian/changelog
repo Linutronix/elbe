@@ -1,3 +1,9 @@
+elbe (2.9.2) unstable; urgency=medium
+
+  * build packages usable with python3
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 19 Dec 2017 16:40:56 +0100
+
 elbe (2.9.1) unstable; urgency=medium
 
   * replace running initvm in tmux by hosting initvm in libvirt
