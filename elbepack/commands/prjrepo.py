@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (C) 2017  Linutronix GmbH
 #

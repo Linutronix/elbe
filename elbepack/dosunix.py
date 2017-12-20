@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-
 def dos2unix_str (d):
     return d.replace('\r\n', '\n')
 
