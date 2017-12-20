@@ -22,36 +22,37 @@ from apt.progress.base import InstallProgress, AcquireProgress, OpProgress
 from apt_pkg import size_to_str
 import os
 
+
 class ElbeInstallProgress (InstallProgress):
 
-    def __init__ (self, cb=None, fileno=2):
-        InstallProgress.__init__ (self)
+    def __init__(self, cb=None, fileno=2):
+        InstallProgress.__init__(self)
         self.cb = cb
         self.fileno = fileno
 
-    def write (self, line):
+    def write(self, line):
         if line == 'update finished':
             self.percent = 100
 
-        line = str (self.percent) + "% " + line
-        line.replace ('\f', '')
+        line = str(self.percent) + "% " + line
+        line.replace('\f', '')
         if self.cb:
-            self.cb (line)
+            self.cb(line)
         else:
             print(line)
 
-    def processing (self, pkg, stage):
-        self.write ("processing: " + pkg + " - " + stage)
+    def processing(self, pkg, stage):
+        self.write("processing: " + pkg + " - " + stage)
 
-    def dpkg_status_change (self, pkg, status):
-        self.write (pkg + " - " + status)
+    def dpkg_status_change(self, pkg, status):
+        self.write(pkg + " - " + status)
 
-    def status_change (self, pkg, percent, status):
-        self.write (pkg + " - " + status + " " + str (percent) + "%")
+    def status_change(self, pkg, percent, status):
+        self.write(pkg + " - " + status + " " + str(percent) + "%")
 
-    def run (self, obj):
+    def run(self, obj):
         try:
-            obj.do_install (self.fileno)
+            obj.do_install(self.fileno)
         except AttributeError:
             print("installing .deb files is not supported by elbe progress")
             raise SystemError
@@ -64,19 +65,20 @@ class ElbeInstallProgress (InstallProgress):
         return retval
 
     def finishUpdate(self):
-        self.write ("update finished")
+        self.write("update finished")
+
 
 class ElbeAcquireProgress (AcquireProgress):
 
-    def __init__ (self, cb=None):
-        AcquireProgress.__init__ (self)
+    def __init__(self, cb=None):
+        AcquireProgress.__init__(self)
         self._id = 1
         self.cb = cb
 
-    def write (self, line):
-        line.replace ('\f', '')
+    def write(self, line):
+        line.replace('\f', '')
         if self.cb:
-            self.cb (line)
+            self.cb(line)
         else:
             print(line)
 
@@ -84,40 +86,43 @@ class ElbeAcquireProgress (AcquireProgress):
         line = 'Hit ' + item.description
         if item.owner.filesize:
             line += ' [%sB]' % size_to_str(item.owner.filesize)
-        self.write (line)
+        self.write(line)
 
     def fail(self, item):
         if item.owner.status == item.owner.STAT_DONE:
-            self.write ("Ign " + item.description)
+            self.write("Ign " + item.description)
 
     def fetch(self, item):
         if item.owner.complete:
             return
         item.owner.id = self._id
         self._id += 1
-        line = "Get:" + str (item.owner.id) + " " + item.description
+        line = "Get:" + str(item.owner.id) + " " + item.description
         if item.owner.filesize:
             line += (" [%sB]" % size_to_str(item.owner.filesize))
 
         self.write(line)
 
-    def pulse (self, owner):
+    def pulse(self, owner):
         return True
+
 
 class ElbeOpProgress (OpProgress):
 
-    def __init__ (self, cb=None):
-        OpProgress.__init__ (self)
+    def __init__(self, cb=None):
+        OpProgress.__init__(self)
         self._id = 1
         self.cb = cb
 
-    def write (self, line):
-        line.replace ('\f', '')
+    def write(self, line):
+        line.replace('\f', '')
         if self.cb:
-            self.cb (line)
+            self.cb(line)
         else:
             print(line)
-    def update (self, percent=None):
+
+    def update(self, percent=None):
         pass
-    def done (self):
+
+    def done(self):
         pass

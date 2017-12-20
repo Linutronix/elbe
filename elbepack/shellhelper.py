@@ -19,6 +19,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 
+
 class CommandError(Exception):
     def __init__(self, cmd, returncode):
         Exception.__init__(self)
@@ -27,7 +28,8 @@ class CommandError(Exception):
 
     def __repr__(self):
         return "Error: %d returned from Command %s" % (
-                                             self.returncode, self.cmd)
+            self.returncode, self.cmd)
+
 
 def system(cmd, allow_fail=False):
     ret = os.system(cmd)
@@ -39,7 +41,7 @@ def system(cmd, allow_fail=False):
 
 def command_out(cmd, input=None, output=PIPE):
     if input is None:
-        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT )
+        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT)
         out, stderr = p.communicate()
     else:
         p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT, stdin=PIPE)
@@ -47,8 +49,9 @@ def command_out(cmd, input=None, output=PIPE):
 
     return p.returncode, out
 
+
 def system_out(cmd, input=None, allow_fail=False):
-    code, out = command_out(cmd,input)
+    code, out = command_out(cmd, input)
 
     if code != 0:
         if not allow_fail:
@@ -56,9 +59,10 @@ def system_out(cmd, input=None, allow_fail=False):
 
     return out
 
+
 def command_out_stderr(cmd, input=None):
     if input is None:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE )
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         output, stderr = p.communicate()
     else:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
@@ -66,8 +70,9 @@ def command_out_stderr(cmd, input=None):
 
     return p.returncode, output, stderr
 
+
 def system_out_stderr(cmd, input=None, allow_fail=False):
-    code, out, err = command_out(cmd,input)
+    code, out, err = command_out(cmd, input)
 
     if code != 0:
         if not allow_fail:

@@ -19,6 +19,7 @@
 
 import os
 
+
 class Config(dict):
     def __init__(self):
         self['soaphost'] = "localhost"
@@ -44,4 +45,3 @@ class Config(dict):
 
 
 cfg = Config()
-

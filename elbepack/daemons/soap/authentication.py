@@ -21,6 +21,7 @@
 from faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 from functools import wraps
 
+
 def authenticated_uid(func):
     """ decorator, which Checks, that the current session is logged in,
         and also passes the current uid to the function
@@ -30,7 +31,7 @@ def authenticated_uid(func):
         Example:
             @soapmethod (String, _returns=Array(SoapFile))
             @authenticated_uid
-            def get_files (self, uid, builddir): 
+            def get_files (self, uid, builddir):
     """
     if func.__code__.co_argcount == 2:
         @wraps(func)
@@ -41,7 +42,7 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid)
+            return func(self, uid)
         return wrapped
     elif func.__code__.co_argcount == 3:
         @wraps(func)
@@ -52,7 +53,7 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid,arg1)
+            return func(self, uid, arg1)
         return wrapped
     elif func.__code__.co_argcount == 4:
         @wraps(func)
@@ -63,7 +64,7 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid,arg1,arg2)
+            return func(self, uid, arg1, arg2)
         return wrapped
     elif func.__code__.co_argcount == 5:
         @wraps(func)
@@ -74,7 +75,7 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid,arg1,arg2,arg3)
+            return func(self, uid, arg1, arg2, arg3)
         return wrapped
     elif func.__code__.co_argcount == 6:
         @wraps(func)
@@ -85,7 +86,7 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid,arg1,arg2,arg3,arg4)
+            return func(self, uid, arg1, arg2, arg3, arg4)
         return wrapped
     elif func.__code__.co_argcount == 7:
         @wraps(func)
@@ -96,12 +97,12 @@ def authenticated_uid(func):
             except KeyError:
                 raise SoapElbeNotLoggedIn()
 
-            return func(self,uid,arg1,arg2,arg3,arg4,arg5)
+            return func(self, uid, arg1, arg2, arg3, arg4, arg5)
         return wrapped
     else:
-        raise Exception( "arg count %d not implemented" % func.__code__.co_argcount )
-
-
+        raise Exception(
+            "arg count %d not implemented" %
+            func.__code__.co_argcount)
 
 
 def authenticated_admin(func):
@@ -112,7 +113,7 @@ def authenticated_admin(func):
         Example:
             @soapmethod (String, _returns=Array(SoapFile))
             @authenticated_uid
-            def get_files (self, uid, builddir): 
+            def get_files (self, uid, builddir):
     """
     if func.__code__.co_argcount == 1:
         @wraps(func)
@@ -139,7 +140,7 @@ def authenticated_admin(func):
             if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
 
-            return func(self,arg1)
+            return func(self, arg1)
         return wrapped
     elif func.__code__.co_argcount == 3:
         @wraps(func)
@@ -152,7 +153,9 @@ def authenticated_admin(func):
 
             if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
-            return func(self,arg1,arg2)
+            return func(self, arg1, arg2)
         return wrapped
     else:
-        raise Exception( "arg count %d not implemented" % func.__code__.co_argcount )
+        raise Exception(
+            "arg count %d not implemented" %
+            func.__code__.co_argcount)

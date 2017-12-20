@@ -23,10 +23,12 @@ import sys
 from elbepack.elbexml import ElbeXML
 from optparse import OptionParser
 
-def run_command( argv ):
 
-    oparser = OptionParser( usage="usage: %prog add [options] <xmlfile> <pkg1> [pkgN]")
-    (opt,args) = oparser.parse_args(argv)
+def run_command(argv):
+
+    oparser = OptionParser(
+        usage="usage: %prog add [options] <xmlfile> <pkg1> [pkgN]")
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) < 2:
         print("Wrong number of arguments")
@@ -34,20 +36,20 @@ def run_command( argv ):
         sys.exit(20)
 
     try:
-        xml = ElbeXML ( args[0] )
+        xml = ElbeXML(args[0])
     except Exception as e:
         print("Error reading xml file: %s" % str(e))
         sys.exit(20)
 
     for a in args[1:]:
         try:
-            xml.add_target_package( a )
+            xml.add_target_package(a)
         except Exception as e:
             print("Error adding package %s: %s" % (a, str(e)))
             sys.exit(20)
 
     try:
-        xml.xml.write( args[0] )
-    except:
+        xml.xml.write(args[0])
+    except BaseException:
         print("Unable to write new xml file")
         sys.exit(20)

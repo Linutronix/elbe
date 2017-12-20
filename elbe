@@ -39,6 +39,7 @@ def usage():
 # so that it knows, where the current elbe
 # executable can be found.
 
+
 init_directories(__file__)
 
 if (len(sys.argv) < 2):
@@ -56,9 +57,9 @@ if not sys.argv[1] in cmd_list:
     usage()
     sys.exit(20)
 
-modname = "elbepack.commands."+sys.argv[1]
+modname = "elbepack.commands." + sys.argv[1]
 
 mod = __import__(modname)
 cmdmod = sys.modules[modname]
 
-cmdmod.run_command( sys.argv[2:] )
+cmdmod.run_command(sys.argv[2:])

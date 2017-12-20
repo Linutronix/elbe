@@ -26,32 +26,39 @@ from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.updatepkg import gen_update_pkg, MissingData
 
-def run_command( argv ):
-    oparser = OptionParser(usage="usage: %prog gen_update [options] [xmlfile]")
-    oparser.add_option( "-t", "--target", dest="target",
-                        help="directoryname of target" )
-    oparser.add_option( "-o", "--output", dest="output",
-                        help="filename of the update package" )
-    oparser.add_option( "-n", "--name", dest="name",
-                        help="name of the project (included in the report)" )
-    oparser.add_option( "-p", "--pre-sh", dest="presh_file",
-                        help="script that is executed before the update will be applied" )
-    oparser.add_option( "-P", "--post-sh", dest="postsh_file",
-                        help="script that is executed after the update was applied" )
-    oparser.add_option( "-c", "--cfg-dir", dest="cfg_dir",
-                        help="files that are copied to target" )
-    oparser.add_option( "-x", "--cmd-dir", dest="cmd_dir",
-                        help="scripts that are executed on the target" )
-    oparser.add_option( "--skip-validation", action="store_true",
-                        dest="skip_validation", default=False,
-                        help="Skip xml schema validation" )
-    oparser.add_option( "--buildtype", dest="buildtype",
-                        help="Override the buildtype" )
-    oparser.add_option( "--debug", action="store_true", dest="debug",
-                        default=False,
-                        help="Enable various features to debug the build" )
 
-    (opt,args) = oparser.parse_args(argv)
+def run_command(argv):
+    oparser = OptionParser(usage="usage: %prog gen_update [options] [xmlfile]")
+    oparser.add_option("-t", "--target", dest="target",
+                       help="directoryname of target")
+    oparser.add_option("-o", "--output", dest="output",
+                       help="filename of the update package")
+    oparser.add_option("-n", "--name", dest="name",
+                       help="name of the project (included in the report)")
+    oparser.add_option(
+        "-p",
+        "--pre-sh",
+        dest="presh_file",
+        help="script that is executed before the update will be applied")
+    oparser.add_option(
+        "-P",
+        "--post-sh",
+        dest="postsh_file",
+        help="script that is executed after the update was applied")
+    oparser.add_option("-c", "--cfg-dir", dest="cfg_dir",
+                       help="files that are copied to target")
+    oparser.add_option("-x", "--cmd-dir", dest="cmd_dir",
+                       help="scripts that are executed on the target")
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
+    oparser.add_option("--buildtype", dest="buildtype",
+                       help="Override the buildtype")
+    oparser.add_option("--debug", action="store_true", dest="debug",
+                       default=False,
+                       help="Enable various features to debug the build")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
         if not opt.cfg_dir and not opt.cmd_dir:
@@ -72,9 +79,9 @@ def run_command( argv ):
         buildtype = None
 
     try:
-        project = ElbeProject (opt.target, name=opt.name,
-                override_buildtype=buildtype,
-                skip_validate=opt.skip_validation)
+        project = ElbeProject(opt.target, name=opt.name,
+                              override_buildtype=buildtype,
+                              skip_validate=opt.skip_validation)
     except ValidationError as e:
         print(str(e))
         print("xml validation failed. Bailing out")
@@ -94,12 +101,12 @@ def run_command( argv ):
 
     update_xml = None
     if len(args) >= 1:
-        update_xml = args[ 0 ]
+        update_xml = args[0]
 
     try:
-        gen_update_pkg( project, update_xml, opt.output, buildtype,
-                opt.skip_validation, opt.debug,
-                cfg_dir = opt.cfg_dir, cmd_dir = opt.cmd_dir )
+        gen_update_pkg(project, update_xml, opt.output, buildtype,
+                       opt.skip_validation, opt.debug,
+                       cfg_dir=opt.cfg_dir, cmd_dir=opt.cmd_dir)
 
     except ValidationError as e:
         print(str(e))

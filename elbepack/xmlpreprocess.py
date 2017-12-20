@@ -18,11 +18,13 @@
 
 import sys
 from lxml import etree
-from lxml.etree import XMLParser,parse
+from lxml.etree import XMLParser, parse
+
 
 class XMLPreprocessError(Exception):
-    def __init__ (self, message):
+    def __init__(self, message):
         Exception.__init__(self, message)
+
 
 def xmlpreprocess(fname, output):
     schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
@@ -31,17 +33,22 @@ def xmlpreprocess(fname, output):
     schema = etree.XMLSchema(schema_tree)
 
     try:
-        xml = parse(fname,parser=parser)
+        xml = parse(fname, parser=parser)
         xml.xinclude()
 
         if schema.validate(xml):
-            xml.write(output, encoding="UTF-8", pretty_print=True, compression=9)
+            xml.write(
+                output,
+                encoding="UTF-8",
+                pretty_print=True,
+                compression=9)
             return
 
     except etree.XMLSyntaxError:
         raise XMLPreprocessError("XML Parse error\n" + str(sys.exc_info()[1]))
-    except:
-        XMLPreprocessError("Unknown Exception during validation\n" + str(sys.exc_info()[1]))
+    except BaseException:
+        XMLPreprocessError(
+            "Unknown Exception during validation\n" + str(sys.exc_info()[1]))
 
     # We have errors, return them in string form...
     errors = []

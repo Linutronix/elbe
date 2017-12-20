@@ -36,45 +36,45 @@ except ImportError:
     usbmonitor_available = False
 
 
-def shutdown (signum, fname, status):
+def shutdown(signum, fname, status):
     status.stop = True
     for mon in status.monitors:
         mon.stop()
 
 
-def run_command (argv):
+def run_command(argv):
 
-    status = UpdateStatus ()
+    status = UpdateStatus()
 
-    oparser = OptionParser (usage="usage: %prog updated [options] <filename>")
+    oparser = OptionParser(usage="usage: %prog updated [options] <filename>")
 
-    oparser.add_option ("--directory", dest="update_dir",
-                        help="monitor dir (default is /var/cache/elbe/updates)",
-                        metavar="FILE" )
+    oparser.add_option("--directory", dest="update_dir",
+                       help="monitor dir (default is /var/cache/elbe/updates)",
+                       metavar="FILE")
 
-    oparser.add_option ("--repocache", dest="repo_dir",
-                        help="monitor dir (default is /var/cache/elbe/repos)",
-                        metavar="FILE" )
+    oparser.add_option("--repocache", dest="repo_dir",
+                       help="monitor dir (default is /var/cache/elbe/repos)",
+                       metavar="FILE")
 
-    oparser.add_option ("--host", dest="host", default="",
-                        help="listen host")
+    oparser.add_option("--host", dest="host", default="",
+                       help="listen host")
 
-    oparser.add_option ("--port", dest="port", default=8088,
-                        help="listen port")
+    oparser.add_option("--port", dest="port", default=8088,
+                       help="listen port")
 
-    oparser.add_option ("--nosign", action="store_true", dest="nosign",
-                        default=False,
-                        help="accept none signed files")
+    oparser.add_option("--nosign", action="store_true", dest="nosign",
+                       default=False,
+                       help="accept none signed files")
 
-    oparser.add_option ("--verbose", action="store_true", dest="verbose",
-                        default=False,
-                        help="force output to stdout instead of syslog")
+    oparser.add_option("--verbose", action="store_true", dest="verbose",
+                       default=False,
+                       help="force output to stdout instead of syslog")
 
-    oparser.add_option ("--usb", action="store_true", dest="use_usb",
-                        default=False,
-                        help="monitor USB devices")
+    oparser.add_option("--usb", action="store_true", dest="use_usb",
+                       default=False,
+                       help="monitor USB devices")
 
-    (opt,args) = oparser.parse_args(argv)
+    (opt, args) = oparser.parse_args(argv)
 
     status.nosign = opt.nosign
     status.verbose = opt.verbose
@@ -89,8 +89,8 @@ def run_command (argv):
     else:
         status.repo_dir = opt.repo_dir
 
-    if not os.path.isdir (update_dir):
-        os.makedirs (update_dir)
+    if not os.path.isdir(update_dir):
+        os.makedirs(update_dir)
 
     status.monitors = []
 
@@ -101,11 +101,12 @@ def run_command (argv):
             um = USBMonitor(status, recursive=False)
             status.monitors.append(um)
         else:
-            status.log("USB Monitor has been requested. "
-                       "This requires pyudev module which could not be imported.")
+            status.log(
+                "USB Monitor has been requested. "
+                "This requires pyudev module which could not be imported.")
             sys.exit(1)
 
-    signal.signal (signal.SIGTERM, shutdown)
+    signal.signal(signal.SIGTERM, shutdown)
 
     for mon in status.monitors:
         mon.start()
@@ -117,13 +118,13 @@ def run_command (argv):
 
     wsgi_application = WsgiApplication(application)
 
-    status.soapserver = make_server (opt.host, int (opt.port),
-                                     wsgi_application)
+    status.soapserver = make_server(opt.host, int(opt.port),
+                                    wsgi_application)
 
     try:
-        status.soapserver.serve_forever ()
-    except:
-        shutdown (1, "now", status)
+        status.soapserver.serve_forever()
+    except BaseException:
+        shutdown(1, "now", status)
 
     for mon in status.monitors:
         mon.join()

@@ -26,28 +26,29 @@ from elbepack.templates import write_template
 
 from optparse import OptionParser
 
-def run_command( argv ):
-    oparser = OptionParser(usage="usage: %prog xsdtoasciidoc [options] <xsdfile>")
 
-    oparser.add_option( "--output", dest="out",
-                        help="specify output filename",
-                        metavar="FILE" )
+def run_command(argv):
+    oparser = OptionParser(
+        usage="usage: %prog xsdtoasciidoc [options] <xsdfile>")
 
-    (opt,args) = oparser.parse_args(argv)
+    oparser.add_option("--output", dest="out",
+                       help="specify output filename",
+                       metavar="FILE")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
         print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
-    xml = etree( args[0] )
+    xml = etree(args[0])
 
     if not opt.out:
         print("--output is mandatory")
         sys.exit(20)
 
     d = {"opt": opt,
-         "xml": xml }
+         "xml": xml}
 
-    write_template(opt.out, xsdtoasciidoc_mako_fname, d )
-
+    write_template(opt.out, xsdtoasciidoc_mako_fname, d)

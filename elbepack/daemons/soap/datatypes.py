@@ -20,6 +20,7 @@
 from spyne.model.complex import ComplexModel
 from spyne.model.primitive import Unicode, DateTime
 
+
 class SoapProject (ComplexModel):
     __namespace__ = 'soap'
 
@@ -36,6 +37,7 @@ class SoapProject (ComplexModel):
         self.status = prj.status
         self.edit = prj.edit
 
+
 class SoapFile (ComplexModel):
     __namespace__ = 'soap'
 
@@ -45,4 +47,3 @@ class SoapFile (ComplexModel):
     def __init__(self, fi):
         self.name = fi.name
         self.description = fi.description
-

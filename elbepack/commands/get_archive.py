@@ -27,41 +27,39 @@ from elbepack.treeutils import etree
 from optparse import OptionParser
 
 
-def unbase( s, fname ):
+def unbase(s, fname):
     outfile = file(fname, "w")
-    outfile.write( standard_b64decode(s) )
+    outfile.write(standard_b64decode(s))
     outfile.close()
 
 
-def run_command( argv ):
+def run_command(argv):
 
-    oparser = OptionParser( usage="usage: %prog get_archive <xmlfile> <archive>")
-    (opt,args) = oparser.parse_args(argv)
+    oparser = OptionParser(
+        usage="usage: %prog get_archive <xmlfile> <archive>")
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
         print("Wrong number of arguments")
         oparser.print_help()
         sys.exit(20)
 
-    if os.path.exists( args[1] ):
+    if os.path.exists(args[1]):
         print("archive already exists, bailing out")
         sys.exit(20)
 
     try:
-        xml = etree( args[0] )
-    except:
+        xml = etree(args[0])
+    except BaseException:
         print("Error reading xml file!")
         sys.exit(20)
 
     if xml.has("archive"):
         try:
-            unbase( xml.text("/archive"), args[1] )
-        except:
+            unbase(xml.text("/archive"), args[1])
+        except BaseException:
             print("Error writing archive")
             sys.exit(20)
     else:
         print("no archive in this xml file.")
         sys.exit(20)
-
-
-

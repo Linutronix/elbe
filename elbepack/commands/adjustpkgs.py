@@ -28,15 +28,16 @@ import apt.progress
 
 import sys
 
+
 class adjpkg(object):
     def __init__(self, logfile, name):
 
-        self.outf = ASCIIDocLog (logfile)
+        self.outf = ASCIIDocLog(logfile)
 
         if name:
-            self.outf.h1( "ELBE Report for Project "+name )
+            self.outf.h1("ELBE Report for Project " + name)
         else:
-            self.outf.h1( "ELBE Report" )
+            self.outf.h1("ELBE Report")
 
     def set_pkgs(self, pkglist):
 
@@ -51,15 +52,16 @@ class adjpkg(object):
             for p in cache:
                 if not p.is_installed:
                     continue
-                if p.essential or p.is_auto_installed or (p.name in pkglist) or p.installed.priority == "important" or p.installed.priority == "required":
+                if p.essential or p.is_auto_installed or (
+                        p.name in pkglist) or p.installed.priority == "important" or p.installed.priority == "required":
                     continue
                 print("MARK REMOVE %s" % p.name)
-                p.mark_delete( auto_fix=False, purge=True )
+                p.mark_delete(auto_fix=False, purge=True)
 
             for name in pkglist:
 
-                if not name in cache:
-                    self.outf.printo( "- package %s does not exist" % name )
+                if name not in cache:
+                    self.outf.printo("- package %s does not exist" % name)
                     errors += 1
                     continue
 
@@ -71,7 +73,6 @@ class adjpkg(object):
             cache.commit(apt.progress.base.AcquireProgress(),
                          apt.progress.base.InstallProgress())
 
-
             cache.update()
             cache.open(None)
 
@@ -79,7 +80,7 @@ class adjpkg(object):
                 if not p.is_installed:
                     continue
                 if p.is_auto_removable:
-                    p.mark_delete( purge=True )
+                    p.mark_delete(purge=True)
                     print("MARKED AS AUTOREMOVE %s" % p.name)
 
         cache.commit(apt.progress.base.AcquireProgress(),
@@ -87,14 +88,15 @@ class adjpkg(object):
 
         return errors
 
-def run_command( argv ):
+
+def run_command(argv):
     oparser = OptionParser(usage="usage: %prog adjustpkgs [options] <xmlfile>")
 
-    oparser.add_option( "-o", "--output", dest="output",
-                        help="name of logfile" )
-    oparser.add_option( "-n", "--name", dest="name",
-                        help="name of the project (included in the report)" )
-    (opt,args) = oparser.parse_args(argv)
+    oparser.add_option("-o", "--output", dest="output",
+                       help="name of logfile")
+    oparser.add_option("-n", "--name", dest="name",
+                       help="name of the project (included in the report)")
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
         print("Wrong number of arguments")
@@ -104,8 +106,7 @@ def run_command( argv ):
     if not opt.output:
         return 0
 
-
-    xml = etree( args[0] )
+    xml = etree(args[0])
     xml_pkglist = xml.node("/target/pkg-list")
     xml_pkgs = [p.et.text for p in xml_pkglist]
 
@@ -120,10 +121,12 @@ def run_command( argv ):
     #         and its dependencies (if it is not in  target/pkg-list.
     buildenv_pkgs = []
     if xml.has("./project/buildimage/pkg-list"):
-        buildenv_pkgs = [p.et.text for p in xml.node("project/buildimage/pkg-list")]
+        buildenv_pkgs = [p.et.text for p in xml.node(
+            "project/buildimage/pkg-list")]
 
     adj = adjpkg(opt.output, opt.name)
     return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
 
+
 if __name__ == "__main__":
-    run_command( sys.argv[1:] )
+    run_command(sys.argv[1:])

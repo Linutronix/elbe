@@ -27,63 +27,68 @@ from apt import Cache
 
 import warnings
 
-def get_initvm_pkglist ():
+
+def get_initvm_pkglist():
     with warnings.catch_warnings():
-        warnings.filterwarnings("ignore",category=DeprecationWarning)
-        cache = Cache ()
-        cache.open ()
-        pkglist = [APTPackage (p) for p in cache if p.is_installed]
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        cache = Cache()
+        cache.open()
+        pkglist = [APTPackage(p) for p in cache if p.is_installed]
         try:
-            eb = APTPackage( cache ['elbe-bootstrap'] )
-            pkglist.append (eb)
+            eb = APTPackage(cache['elbe-bootstrap'])
+            pkglist.append(eb)
         # elbe bootstrap is not installed on pc running elbe
         except KeyError:
             pass
 
     return pkglist
 
-def dump_fullpkgs( xml, rfs, cache ):
+
+def dump_fullpkgs(xml, rfs, cache):
     xml.clear_full_pkglist()
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
-        xml.append_full_pkg( p )
+        xml.append_full_pkg(p)
 
-    sources_list = xml.xml.ensure_child( 'sources_list' )
+    sources_list = xml.xml.ensure_child('sources_list')
     slist = rfs.read_file("etc/apt/sources.list")
-    sources_list.set_text( slist )
+    sources_list.set_text(slist)
 
     try:
-        preferences = xml.xml.ensure_child( 'apt_prefs' )
+        preferences = xml.xml.ensure_child('apt_prefs')
         prefs = rfs.read_file("etc/apt/preferences")
         preferences.set_text(prefs)
     except IOError:
         pass
 
-def dump_debootstrappkgs( xml, cache ):
+
+def dump_debootstrappkgs(xml, cache):
     xml.clear_debootstrap_pkglist()
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
-        xml.append_debootstrap_pkg( p )
+        xml.append_debootstrap_pkg(p)
 
-def dump_initvmpkgs (xml):
-    xml.clear_initvm_pkglist ()
 
-    instpkgs = get_initvm_pkglist ()
+def dump_initvmpkgs(xml):
+    xml.clear_initvm_pkglist()
+
+    instpkgs = get_initvm_pkglist()
     for p in instpkgs:
-        xml.append_initvm_pkg( p )
+        xml.append_initvm_pkg(p)
 
-    sources_list = xml.xml.ensure_child( 'initvm_sources_list' )
+    sources_list = xml.xml.ensure_child('initvm_sources_list')
     slist = hostfs.read_file("etc/apt/sources.list")
-    sources_list.set_text( slist )
+    sources_list.set_text(slist)
 
     try:
-        preferences = xml.xml.ensure_child( 'initvm_apt_prefs' )
+        preferences = xml.xml.ensure_child('initvm_apt_prefs')
         prefs = hostfs.read_file("etc/apt/preferences")
         preferences.set_text(prefs)
     except IOError:
         pass
+
 
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     elog = ASCIIDocLog(errorname)
@@ -97,24 +102,26 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
         name = p.et.text
         nomulti_name = name.split(":")[0]
         if not cache.has_pkg(nomulti_name):
-            elog.printo( "- package %s does not exist" % nomulti_name )
+            elog.printo("- package %s does not exist" % nomulti_name)
             errors += 1
             continue
 
         if not cache.is_installed(nomulti_name):
-            elog.printo( "- package %s is not installed" % nomulti_name )
+            elog.printo("- package %s is not installed" % nomulti_name)
             errors += 1
             continue
 
-        ver  = p.et.get('version')
+        ver = p.et.get('version')
         pkg = cache.get_pkg(nomulti_name)
         if ver and (pkg.installed_version != ver):
-            elog.printo( "- package %s version %s does not match installed version %s" % (name, ver,  pkg.installed_version) )
+            elog.printo(
+                "- package %s version %s does not match installed version %s" %
+                (name, ver, pkg.installed_version))
             errors += 1
             continue
 
     if errors == 0:
-        elog.printo( "No Errors found" )
+        elog.printo("No Errors found")
 
     if not fullpkgs:
         return
@@ -125,52 +132,59 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
     pindex = {}
     for p in fullpkgs:
         name = p.et.text
-        ver  = p.et.get('version')
-        md5  = p.et.get('md5')
+        ver = p.et.get('version')
+        md5 = p.et.get('md5')
 
         pindex[name] = p
 
         if not cache.has_pkg(name):
-            elog.printo( "- package %s does not exist" % name )
+            elog.printo("- package %s does not exist" % name)
             errors += 1
             continue
 
         if not cache.is_installed(name):
-            elog.printo( "- package %s is not installed" % name )
+            elog.printo("- package %s is not installed" % name)
             errors += 1
             continue
 
         pkg = cache.get_pkg(name)
 
         if pkg.installed_version != ver:
-            elog.printo( "- package %s version %s does not match installed version %s" % (name, ver,  pkg.installed_version) )
+            elog.printo(
+                "- package %s version %s does not match installed version %s" %
+                (name, ver, pkg.installed_version))
             errors += 1
             continue
 
         if pkg.installed_md5 != md5:
-            elog.printo( "- package %s md5 %s does not match installed md5 %s" %
-              (name, md5,  pkg.installed_md5) )
+            elog.printo("- package %s md5 %s does not match installed md5 %s" %
+                        (name, md5, pkg.installed_md5))
             errors += 1
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
-            elog.printo( "additional package %s installed, that was not requested" % cp.name )
+            elog.printo(
+                "additional package %s installed, that was not requested" %
+                cp.name)
             errors += 1
 
     if errors == 0:
-        elog.printo( "No Errors found" )
+        elog.printo("No Errors found")
 
-def elbe_report( xml, buildenv, cache, reportname, targetfs ):
+
+def elbe_report(xml, buildenv, cache, reportname, targetfs):
     outf = ASCIIDocLog(reportname)
     rfs = buildenv.rfs
 
-    outf.h1( "ELBE Report for Project " + xml.text("project/name") )
+    outf.h1("ELBE Report for Project " + xml.text("project/name"))
 
-    outf.printo( "report timestamp: "+datetime.now().strftime("%Y%m%d-%H%M%S") )
-    outf.printo( "elbe: %s" % str(elbe_version) )
+    outf.printo(
+        "report timestamp: " +
+        datetime.now().strftime("%Y%m%d-%H%M%S"))
+    outf.printo("elbe: %s" % str(elbe_version))
 
     slist = rfs.read_file('etc/apt/sources.list')
-    outf.h2( "Apt Sources dump" )
+    outf.h2("Apt Sources dump")
     outf.verbatim_start()
     outf.print_raw(slist)
     outf.verbatim_end()
@@ -180,17 +194,17 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
     except IOError:
         prefs = ""
 
-    outf.h2( "Apt Preferences dump" )
+    outf.h2("Apt Preferences dump")
     outf.verbatim_start()
     outf.print_raw(prefs)
     outf.verbatim_end()
 
-    outf.h2( "Installed Packages List" )
+    outf.h2("Installed Packages List")
     outf.table()
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
-        outf.printo( "|%s|%s|%s" % (p.name, p.installed_version, p.origin) )
+        outf.printo("|%s|%s|%s" % (p.name, p.installed_version, p.origin))
     outf.table()
 
     # archive extraction is done before and after finetuning the first
@@ -199,13 +213,13 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
     # the second extraction is done to ensure that files from the archive
     # can't be modified/removed in finetuning
 
-    outf.h2( "archive extract before finetuning" )
+    outf.h2("archive extract before finetuning")
 
     if xml.has("archive"):
         with xml.archive_tmpfile() as fp:
-            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path) )
+            outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
 
-    outf.h2( "finetuning log" )
+    outf.h2("finetuning log")
     outf.verbatim_start()
 
     index = cache.get_fileindex()
@@ -219,16 +233,16 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
 
     outf.verbatim_end()
 
-    outf.h2( "archive extract after finetuning" )
+    outf.h2("archive extract after finetuning")
 
     if xml.has("archive"):
         with xml.archive_tmpfile() as fp:
-            outf.do( 'tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path) )
+            outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
         mt_index_post_arch = targetfs.mtime_snap()
     else:
         mt_index_post_arch = mt_index_post_fine
 
-    outf.h2( "fileslist" )
+    outf.h2("fileslist")
     outf.table()
 
     tgt_pkg_list = set()
@@ -251,11 +265,11 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
         else:
             pkg = "added in archive"
 
-        outf.printo( "|+%s+|%s" % (fpath,pkg) )
+        outf.printo("|+%s+|%s" % (fpath, pkg))
 
     outf.table()
 
-    outf.h2( "Deleted Files" )
+    outf.h2("Deleted Files")
     outf.table()
     for fpath in list(mt_index.keys()):
         if fpath not in mt_index_post_arch:
@@ -263,10 +277,10 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
                 pkg = index[fpath]
             else:
                 pkg = "postinst generated"
-            outf.printo( "|+%s+|%s" % (fpath,pkg) )
+            outf.printo("|+%s+|%s" % (fpath, pkg))
     outf.table()
 
-    outf.h2( "Target Package List" )
+    outf.h2("Target Package List")
     outf.table()
     instpkgs = cache.get_installed_pkgs()
     pkgindex = {}
@@ -278,11 +292,19 @@ def elbe_report( xml, buildenv, cache, reportname, targetfs ):
         f = targetfs.open('etc/elbe_pkglist', 'w')
     for pkg in tgt_pkg_list:
         p = pkgindex[pkg]
-        outf.printo( "|%s|%s|%s|%s" % (p.name, p.installed_version, p.is_auto_installed, p.installed_md5) )
+        outf.printo(
+            "|%s|%s|%s|%s" %
+            (p.name,
+             p.installed_version,
+             p.is_auto_installed,
+             p.installed_md5))
         if xml.has("target/pkgversionlist"):
-            f.write ("%s %s %s\n" % (p.name, p.installed_version, p.installed_md5))
+            f.write(
+                "%s %s %s\n" %
+                (p.name,
+                 p.installed_version,
+                 p.installed_md5))
     outf.table()
 
     if xml.has("target/pkgversionlist"):
-        f.close ()
-
+        f.close()

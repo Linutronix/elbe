@@ -25,18 +25,20 @@ import os
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
 
-def run_command( argv ):
-    oparser = OptionParser(usage="usage: %prog chroot [options] <builddir> [cmd]")
-    oparser.add_option( "--skip-validation", action="store_true",
-                        dest="skip_validation", default=False,
-                        help="Skip xml schema validation" )
-    oparser.add_option( "--target", action="store_true", dest="target",
-                        help="chroot into target instead of buildenv",
-                        default=False )
-    oparser.add_option( "--buildtype", dest="buildtype",
-                        help="Override the buildtype" )
 
-    (opt,args) = oparser.parse_args(argv)
+def run_command(argv):
+    oparser = OptionParser(
+        usage="usage: %prog chroot [options] <builddir> [cmd]")
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
+    oparser.add_option("--target", action="store_true", dest="target",
+                       help="chroot into target instead of buildenv",
+                       default=False)
+    oparser.add_option("--buildtype", dest="buildtype",
+                       help="Override the buildtype")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) < 1:
         print("wrong number of arguments")
@@ -44,8 +46,11 @@ def run_command( argv ):
         sys.exit(20)
 
     try:
-        project = ElbeProject(args[0], override_buildtype=opt.buildtype,
-                skip_validate=opt.skip_validation, url_validation=ValidationMode.NO_CHECK)
+        project = ElbeProject(
+            args[0],
+            override_buildtype=opt.buildtype,
+            skip_validate=opt.skip_validation,
+            url_validation=ValidationMode.NO_CHECK)
     except ValidationError as e:
         print(str(e))
         print("xml validation failed. Bailing out")
@@ -55,7 +60,7 @@ def run_command( argv ):
     os.environ["LANGUAGE"] = "C"
     os.environ["LC_ALL"] = "C"
     # TODO: howto set env in chroot?
-    os.environ["PS1"] = project.xml.text ('project/name') + ': \w\$'
+    os.environ["PS1"] = project.xml.text('project/name') + ': \w\$'
 
     cmd = "/bin/bash"
 
@@ -67,7 +72,7 @@ def run_command( argv ):
 
     if opt.target:
         with project.targetfs:
-            os.system( "/usr/sbin/chroot %s %s" % (project.targetpath, cmd) )
+            os.system("/usr/sbin/chroot %s %s" % (project.targetpath, cmd))
     else:
         with project.buildenv:
-            os.system( "/usr/sbin/chroot %s %s" % (project.chrootpath, cmd) )
+            os.system("/usr/sbin/chroot %s %s" % (project.chrootpath, cmd))

@@ -16,20 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
 
-suite2codename = { 'oldoldoldstable': 'squeeze',
-                   'oldoldstable': 'wheezy',
-                   'oldstable': 'jessie',
-                   'stable': 'stretch',
-                   'testing': 'buster',
-                   'unstable': 'sid',
+suite2codename = {'oldoldoldstable': 'squeeze',
+                  'oldoldstable': 'wheezy',
+                  'oldstable': 'jessie',
+                  'stable': 'stretch',
+                  'testing': 'buster',
+                  'unstable': 'sid',
 
-                   'lucid': 'lucid',
-                   'precise': 'precise',
-                   'quantal': 'quantal',
-                   'raring': 'raring',
-                   'saucy': 'saucy',
-                   }
+                  'lucid': 'lucid',
+                  'precise': 'precise',
+                  'quantal': 'quantal',
+                  'raring': 'raring',
+                  'saucy': 'saucy',
+                  }
 
 
 # generate reverse mapping
-codename2suite = { v:k for k,v in suite2codename.items() }
+codename2suite = {v: k for k, v in suite2codename.items()}

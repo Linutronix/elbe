@@ -25,14 +25,15 @@ from optparse import OptionParser
 from elbepack.validate import validate_xml
 
 
-def run_command( argv ):
+def run_command(argv):
 
-    oparser = OptionParser( usage="usage: %prog pin_versions [options] <xmlfile>")
-    oparser.add_option( "--skip-validation", action="store_true",
-                        dest="skip_validation", default=False,
-                        help="Skip xml schema validation" )
+    oparser = OptionParser(
+        usage="usage: %prog pin_versions [options] <xmlfile>")
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
 
-    (opt,args) = oparser.parse_args(argv)
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
         print("Wrong number of arguments")
@@ -40,20 +41,20 @@ def run_command( argv ):
         sys.exit(20)
 
     if not opt.skip_validation:
-        validation = validate_xml (args[0])
-        if len (validation) != 0:
+        validation = validate_xml(args[0])
+        if len(validation) != 0:
             print("xml validation failed. Bailing out")
             for i in validation:
                 print(i)
             sys.exit(20)
 
     try:
-        xml = etree( args[0] )
-    except:
+        xml = etree(args[0])
+    except BaseException:
         print("Error reading xml file!")
         sys.exit(20)
 
-    if not xml.has ("fullpkgs"):
+    if not xml.has("fullpkgs"):
         print("xml file does not have fullpkgs node")
         sys.exit(20)
 
@@ -64,16 +65,15 @@ def run_command( argv ):
 
     for p in fullp:
         pname = p.et.text
-        pver  = p.et.get('version')
+        pver = p.et.get('version')
 
         pak = plist.append('pkg')
-        pak.set_text( pname )
+        pak.set_text(pname)
         pak.et.tail = '\n'
         pak.et.set('version', pver)
 
     try:
-        xml.write( args[0] )
-    except:
+        xml.write(args[0])
+    except BaseException:
         print("Unable to write new xml file")
         sys.exit(20)
-

@@ -28,12 +28,18 @@ from optparse import OptionParser
 
 from elbepack.elbexml import ElbeXML, ValidationMode
 
-def run_command( argv ):
 
-    oparser = OptionParser(usage="usage: %prog pkgdiff [options] <rfs1> <rfs2>")
-    oparser.add_option( "--noauto", action="store_true", dest="noauto", default=False,
-                        help="Dont compare automatically installed Packages" )
-    (opt,args) = oparser.parse_args(argv)
+def run_command(argv):
+
+    oparser = OptionParser(
+        usage="usage: %prog pkgdiff [options] <rfs1> <rfs2>")
+    oparser.add_option(
+        "--noauto",
+        action="store_true",
+        dest="noauto",
+        default=False,
+        help="Dont compare automatically installed Packages")
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
         print("Wrong number of arguments")
@@ -44,8 +50,11 @@ def run_command( argv ):
     fix_rfs = args[1]
 
     x = os.path.join(gen_rfs, 'etc/elbe_base.xml')
-    xml = ElbeXML (x, skip_validate=True, url_validation=ValidationMode.NO_CHECK)
-    arch = xml.text ('project/arch', key='arch')
+    xml = ElbeXML(
+        x,
+        skip_validate=True,
+        url_validation=ValidationMode.NO_CHECK)
+    arch = xml.text('project/arch', key='arch')
 
     apt_pkg.init_config()
     apt_pkg.config.set('RootDir', gen_rfs)
@@ -80,15 +89,15 @@ def run_command( argv ):
                 fix_pkgs[p.name] = p.current_ver
 
     for p in fix_pkgs:
-        if not p in gen_pkgs:
+        if p not in gen_pkgs:
             print("+<pkg>%s</pkg>" % p)
 
     for p in gen_pkgs.keys():
-        if not p in fix_pkgs.keys():
+        if p not in fix_pkgs.keys():
             print("-<pkg>%s</pkg>" % p)
 
     for p in fix_pkgs.keys():
         if p in gen_pkgs.keys() and fix_pkgs[p] != gen_pkgs[p]:
-            print("%s: Version mismatch %s != %s" % (p, fix_pkgs[p], gen_pkgs[p]))
-
-
+            print(
+                "%s: Version mismatch %s != %s" %
+                (p, fix_pkgs[p], gen_pkgs[p]))

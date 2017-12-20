@@ -15,57 +15,61 @@ from spyne.server.wsgi import WsgiApplication
 from suds.client import Client
 from wsgiref.simple_server import make_server
 
+
 class MonitorService (ServiceBase):
-    @rpc (String)
-    def msg (self, m):
+    @rpc(String)
+    def msg(self, m):
         print(m)
 
+
 class MonitorThread (threading.Thread):
-    def __init__ (self, port):
-        threading.Thread.__init__ (self, name="MonitorThread")
+    def __init__(self, port):
+        threading.Thread.__init__(self, name="MonitorThread")
         self.port = port
         self.server = None
 
-    def run (self):
+    def run(self):
         print("monitor ready :%s" % (self.port))
         application = Application([MonitorService], 'monitor',
                                   in_protocol=Soap11(validator='lxml'),
                                   out_protocol=Soap11())
         wsgi_application = WsgiApplication(application)
-        self.server = make_server ("", int(self.port), wsgi_application)
-        self.server.serve_forever ()
+        self.server = make_server("", int(self.port), wsgi_application)
+        self.server.serve_forever()
 
-def shutdown (monitor):
+
+def shutdown(monitor):
     if monitor.server:
-        monitor.server.shutdown ()
+        monitor.server.shutdown()
 
-    monitor.join ()
-    sys.exit (0)
+    monitor.join()
+    sys.exit(0)
 
-oparser = OptionParser (usage="usage: %prog [options]")
 
-oparser.add_option ("--debug", dest="debug", action="store_true",
-                    default=False,
-                    help="run in debug mode")
+oparser = OptionParser(usage="usage: %prog [options]")
 
-oparser.add_option ("--target", dest="target",
-                    help="ip or hostname of target")
+oparser.add_option("--debug", dest="debug", action="store_true",
+                   default=False,
+                   help="run in debug mode")
 
-oparser.add_option ("--port", dest="port",
-                    help="port of updated on target")
+oparser.add_option("--target", dest="target",
+                   help="ip or hostname of target")
 
-oparser.add_option ("--listen", dest="host",
-                    help="interface ip")
+oparser.add_option("--port", dest="port",
+                   help="port of updated on target")
 
-oparser.add_option ("--monitorport", dest="monitorport",
-                    help="port used for update monitor")
+oparser.add_option("--listen", dest="host",
+                   help="interface ip")
 
-(opt,args) = oparser.parse_args (sys.argv)
+oparser.add_option("--monitorport", dest="monitorport",
+                   help="port used for update monitor")
+
+(opt, args) = oparser.parse_args(sys.argv)
 
 if opt.debug:
     import logging
-    logging.basicConfig (level=logging.INFO)
-    logging.getLogger ('suds.client').setLevel (logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
 if not opt.target:
     target = "localhost"
@@ -75,7 +79,7 @@ else:
 if not opt.port:
     port = "8088"
 else:
-    port = str (opt.port)
+    port = str(opt.port)
 
 if not opt.monitorport:
     monitorport = "8087"
@@ -89,28 +93,28 @@ else:
 
 wsdl = "http://" + target + ":" + port + "/?wsdl"
 try:
-    control = Client (wsdl)
-except:
+    control = Client(wsdl)
+except BaseException:
     print(wsdl, "not reachable")
-    sys.exit (1)
+    sys.exit(1)
 
-monitor = MonitorThread (monitorport)
-monitor.start ()
+monitor = MonitorThread(monitorport)
+monitor.start()
 
-time.sleep (1) # hack to ensure that monitor server was started
+time.sleep(1)  # hack to ensure that monitor server was started
 
 try:
     monitor_wsdl = "http://" + host + ":" + monitorport + "/?wsdl"
-    control.service.register_monitor (monitor_wsdl)
-except:
+    control.service.register_monitor(monitor_wsdl)
+except BaseException:
     print("monitor couldn't be registered (port already in use?)")
-    shutdown (monitor)
+    shutdown(monitor)
 
 while 1:
-    s = control.service.list_snapshots ()
+    s = control.service.list_snapshots()
     snapshots = []
     try:
-        snapshots = s.split (',')
+        snapshots = s.split(',')
 
         print("select snapshot:")
         i = 0
@@ -118,14 +122,14 @@ while 1:
             if s:
                 print("  [%d] %s" % (i, s))
             i = i + 1
-    except:
+    except BaseException:
         print("no snapshots available")
 
-    sys.stdout.write ("% ")
-    sys.stdout.flush ()
+    sys.stdout.write("% ")
+    sys.stdout.flush()
 
     try:
-        n = int (input ())
-        print(control.service.apply_snapshot (snapshots [n]))
-    except:
-        shutdown (monitor)
+        n = int(input())
+        print(control.service.apply_snapshot(snapshots[n]))
+    except BaseException:
+        shutdown(monitor)

@@ -35,6 +35,7 @@ elbe_internal_key_param = """
 </GnupgKeyParms>
 """
 
+
 class OverallStatus:
 
     def __init__(self):
@@ -62,6 +63,7 @@ class OverallStatus:
             return 2
 
         return 0
+
 
 def check_signature(ctx, sig):
     status = OverallStatus()
@@ -114,30 +116,30 @@ def check_signature(ctx, sig):
 
 def unsign_file(fname):
     # check for .gpg extension and create an output filename without it
-    if len(fname) <= 4 or fname[len(fname)-4:] != '.gpg':
+    if len(fname) <= 4 or fname[len(fname) - 4:] != '.gpg':
         print("The input file needs a .gpg extension")
         return None
 
-    outfilename = fname[:len(fname)-4]
+    outfilename = fname[:len(fname) - 4]
 
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context()
     ctx.armor = False
 
     try:
         overall_status = OverallStatus()
 
-        with open (fname, 'r') as infile:
-            with open (outfilename, 'w') as outfile:
+        with open(fname, 'r') as infile:
+            with open(outfilename, 'w') as outfile:
 
                 # obtain signature and write unsigned file
                 sigs = ctx.verify(infile, None, outfile)
 
                 for sig in sigs:
-                    status = check_signature (ctx, sig)
-                    overall_status.add (status)
+                    status = check_signature(ctx, sig)
+                    overall_status.add(status)
 
-        if overall_status.to_exitcode ():
+        if overall_status.to_exitcode():
             return None
 
         return outfilename
@@ -149,9 +151,10 @@ def unsign_file(fname):
 
     return None
 
-def sign (infile, outfile, fingerprint):
 
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+def sign(infile, outfile, fingerprint):
+
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context()
     key = None
 
@@ -177,32 +180,34 @@ def sign_file(fname, fingerprint):
     try:
         with open(fname, 'r') as infile:
             with open(outfilename, 'w') as outfile:
-                sign (infile, outfile, fingerprint)
+                sign(infile, outfile, fingerprint)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
         pass
 
 
-def get_fingerprints ():
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context ()
-    keys = ctx.keylist ()
+def get_fingerprints():
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = gpgme.Context()
+    keys = ctx.keylist()
     fingerprints = []
     for k in keys:
-        fingerprints.append (k.subkeys[0].fpr)
+        fingerprints.append(k.subkeys[0].fpr)
     return fingerprints
 
-def generate_elbe_internal_key ():
+
+def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context ()
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = gpgme.Context()
     key = ctx.genkey(elbe_internal_key_param)
 
     return key.fpr
 
-def export_key (fingerprint, outfile):
-    os.environ ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context ()
+
+def export_key(fingerprint, outfile):
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = gpgme.Context()
     ctx.armor = True
 
     try:

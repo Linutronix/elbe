@@ -24,13 +24,14 @@ from optparse import OptionParser
 from elbepack.validate import validate_xml
 from elbepack.elbexml import ElbeXML, ValidationMode, ValidationError
 
-def run_command( argv ):
-    oparser = OptionParser( usage="usage: %prog validate <xmlfile>")
-    oparser.add_option ("--validate-urls", dest="validate_urls",
-                        help="try to access specified repositories",
-                        default=False, action="store_true")
 
-    (opt,args) = oparser.parse_args(argv)
+def run_command(argv):
+    oparser = OptionParser(usage="usage: %prog validate <xmlfile>")
+    oparser.add_option("--validate-urls", dest="validate_urls",
+                       help="try to access specified repositories",
+                       default=False, action="store_true")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) < 1:
         oparser.print_help()
@@ -41,8 +42,8 @@ def run_command( argv ):
         oparser.print_help()
         sys.exit(20)
 
-    validation = validate_xml (args[0])
-    if len (validation):
+    validation = validate_xml(args[0])
+    if len(validation):
         print("validation failed")
         for i in validation:
             print(i)
@@ -55,4 +56,4 @@ def run_command( argv ):
             print(e)
             sys.exit(20)
 
-    sys.exit (0)
+    sys.exit(0)

@@ -25,18 +25,19 @@ from elbepack.validate import validate_xml
 
 from optparse import OptionParser
 
-def run_command( argv ):
-    oparser = OptionParser( usage="usage: %prog show [options] <filename>" )
 
-    oparser.add_option( "--verbose", action="store_true", dest="verbose",
-                        default=False,
-                        help="show detailed project informations" )
+def run_command(argv):
+    oparser = OptionParser(usage="usage: %prog show [options] <filename>")
 
-    oparser.add_option( "--skip-validation", action="store_true",
-                        dest="skip_validation", default=False,
-                        help="Skip xml schema validation" )
+    oparser.add_option("--verbose", action="store_true", dest="verbose",
+                       default=False,
+                       help="show detailed project informations")
 
-    (opt,args) = oparser.parse_args(argv)
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) == 0:
         print("No Filename specified")
@@ -50,15 +51,15 @@ def run_command( argv ):
 
     try:
         if not opt.skip_validation:
-            validation = validate_xml (args[0])
-            if len (validation) != 0:
+            validation = validate_xml(args[0])
+            if len(validation) != 0:
                 print("xml validation failed. Bailing out")
                 for i in validation:
                     print(i)
                 sys.exit(20)
 
-        xml = etree( args[0] )
-    except:
+        xml = etree(args[0])
+    except BaseException:
         print("Unable to open xml File. Bailing out")
         sys.exit(20)
 
@@ -66,7 +67,7 @@ def run_command( argv ):
         print("no project description available")
         sys.exit(20)
 
-    print("== %s ==" %(args[0]))
+    print("== %s ==" % (args[0]))
     print("Debian suite: %s" % (xml.text("./project/suite")))
     for s in xml.text("./project/description").splitlines():
         print("%s" % s.strip())

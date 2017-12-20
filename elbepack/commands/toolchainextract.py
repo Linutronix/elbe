@@ -27,17 +27,18 @@ from elbepack.debpkg import build_binary_deb
 from elbepack.toolchain import get_toolchain
 from elbepack.asciidoclog import StdoutLog
 
-def run_command( argv ):
+
+def run_command(argv):
     oparser = OptionParser(usage="usage: %prog toolchainextract [options]")
-    oparser.add_option( "-p", "--path", dest="path",
-                        help="path to toolchain" )
-    oparser.add_option( "-o", "--output", dest="output",
-                        help="output repository path" )
-    oparser.add_option( "-c", "--codename", dest="codename",
-                        help="distro codename for repository" )
-    oparser.add_option( "-b", "--buildtype", dest="buildtype",
-                        help="Override the buildtype" )
-    (opt,args) = oparser.parse_args(argv)
+    oparser.add_option("-p", "--path", dest="path",
+                       help="path to toolchain")
+    oparser.add_option("-o", "--output", dest="output",
+                       help="output repository path")
+    oparser.add_option("-c", "--codename", dest="codename",
+                       help="distro codename for repository")
+    oparser.add_option("-b", "--buildtype", dest="buildtype",
+                       help="Override the buildtype")
+    (opt, args) = oparser.parse_args(argv)
 
     if not opt.path:
         oparser.print_help()
@@ -52,26 +53,41 @@ def run_command( argv ):
         oparser.print_help()
         return 0
 
-    defaults = ElbeDefaults( opt.buildtype )
+    defaults = ElbeDefaults(opt.buildtype)
 
-    toolchain = get_toolchain( defaults["toolchaintype"], opt.path, defaults["arch"] )
+    toolchain = get_toolchain(
+        defaults["toolchaintype"],
+        opt.path,
+        defaults["arch"])
 
-    tmpdir   = mkdtemp()
+    tmpdir = mkdtemp()
 
     for lib in toolchain.pkg_libs:
-        files = toolchain.get_files_for_pkg( lib )
+        files = toolchain.get_files_for_pkg(lib)
 
-        pkglibpath = os.path.join( "usr/lib", defaults["triplet"] )
-        fmap = [ (f, pkglibpath) for f in files ]
+        pkglibpath = os.path.join("usr/lib", defaults["triplet"])
+        fmap = [(f, pkglibpath) for f in files]
 
-        build_binary_deb( lib, defaults["arch"], defaults["toolchainver"], lib + " extracted from toolchain", fmap, toolchain.pkg_deps[lib], tmpdir )
+        build_binary_deb(
+            lib,
+            defaults["arch"],
+            defaults["toolchainver"],
+            lib +
+            " extracted from toolchain",
+            fmap,
+            toolchain.pkg_deps[lib],
+            tmpdir)
 
     pkgs = os.listdir(tmpdir)
 
-    repo = ToolchainRepo( defaults["arch"], opt.codename, opt.output, StdoutLog() )
+    repo = ToolchainRepo(
+        defaults["arch"],
+        opt.codename,
+        opt.output,
+        StdoutLog())
 
     for p in pkgs:
-        repo.includedeb( os.path.join(tmpdir, p) )
+        repo.includedeb(os.path.join(tmpdir, p))
 
-    repo.finalize ()
-    os.system( 'rm -r "%s"' % tmpdir )
+    repo.finalize()
+    os.system('rm -r "%s"' % tmpdir)

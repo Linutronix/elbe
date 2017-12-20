@@ -30,6 +30,7 @@ from elbepack.soapclient import RepoAction, ElbeSoapClient
 from elbepack.version import elbe_version
 from elbepack.config import cfg
 
+
 def run_command(argv):
     oparser = OptionParser(usage="usage: elbe prjrepo [options] <command>")
 
@@ -84,7 +85,7 @@ def run_command(argv):
                 opt.retries))
     except socket.error as e:
         print("Failed to connect to Soap server %s:%s\n" %
-               (opt.host, opt.port), file=sys.stderr)
+              (opt.host, opt.port), file=sys.stderr)
         print("", file=sys.stderr)
         print(
             "Check, wether the Soap Server is running inside the initvm",
@@ -93,14 +94,14 @@ def run_command(argv):
         sys.exit(10)
     except URLError as e:
         print("Failed to connect to Soap server %s:%s\n" %
-               (opt.host, opt.port), file=sys.stderr)
+              (opt.host, opt.port), file=sys.stderr)
         print("", file=sys.stderr)
         print("Check, wether the initvm is actually running.", file=sys.stderr)
-        print( "try `elbe initvm start`", file=sys.stderr)
+        print("try `elbe initvm start`", file=sys.stderr)
         sys.exit(10)
     except BadStatusLine as e:
         print("Failed to connect to Soap server %s:%s\n" %
-               (opt.host, opt.port), file=sys.stderr)
+              (opt.host, opt.port), file=sys.stderr)
         print("", file=sys.stderr)
         print("Check, wether the initvm is actually running.", file=sys.stderr)
         print(
@@ -110,19 +111,19 @@ def run_command(argv):
 
     # Check Elbe version
     try:
-        v_server = control.service.get_version ()
+        v_server = control.service.get_version()
         if v_server != elbe_version:
             print("elbe v%s is used in initvm, this is not compatible with \
 elbe v%s that is used on this machine. Please install same \
 versions of elbe in initvm and on your machine." % (v_server, elbe_version), file=sys.stderr)
             if not (opt.ignore_version):
-                sys.exit (20)
+                sys.exit(20)
     except AttributeError:
         print("the elbe installation inside the initvm doesn't provide a \
 get_version interface. Please create a new initvm or upgrade \
 elbe inside the existing initvm.", file=sys.stderr)
         if not (opt.ignore_version):
-            sys.exit (20)
+            sys.exit(20)
 
     # Check whether subcommand exists
     try:

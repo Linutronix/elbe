@@ -18,39 +18,42 @@
 
 import os
 
+
 def get_mtdnum(xml, label):
-  tgt = xml.node ("target")
-  if not tgt.has("images"):
-    raise Exception( "No images tag in target" )
+    tgt = xml.node("target")
+    if not tgt.has("images"):
+        raise Exception("No images tag in target")
 
-  for i in tgt.node("images"):
-    if i.tag != "mtd":
-      continue
+    for i in tgt.node("images"):
+        if i.tag != "mtd":
+            continue
 
-    if not i.has("ubivg"):
-      continue
+        if not i.has("ubivg"):
+            continue
 
-    for v in i.node("ubivg"):
-      if v.tag != "ubi":
-        continue
+        for v in i.node("ubivg"):
+            if v.tag != "ubi":
+                continue
 
-      if v.text("label") == label:
-        return i.text("nr")
+            if v.text("label") == label:
+                return i.text("nr")
 
-  raise Exception( "No ubi volume with label " + label + " found" )
+    raise Exception("No ubi volume with label " + label + " found")
 
 
-def get_devicelabel( xml, node ):
-  if node.text("fs/type") == "ubifs":
-    return "ubi" + get_mtdnum(xml, node.text("label")) + ":" + node.text("label")
-  else:
-    return "LABEL=" + node.text("label")
+def get_devicelabel(xml, node):
+    if node.text("fs/type") == "ubifs":
+        return "ubi" + get_mtdnum(xml,
+                                  node.text("label")) + ":" + node.text("label")
+    else:
+        return "LABEL=" + node.text("label")
+
 
 class mountpoint_dict (dict):
     def __init__(self):
         self.id_count = 0
 
-    def register (self, fstabentry):
+    def register(self, fstabentry):
         mp = fstabentry.mountpoint
 
         if mp in self:
@@ -66,16 +69,14 @@ class mountpoint_dict (dict):
 
         while True:
             mp, t = os.path.split(mp)
-            if t=='':
+            if t == '':
                 return depth
             depth += 1
 
-    def depthlist (self):
-        mplist = sorted (self.keys(), key=mountpoint_dict.mountdepth)
+    def depthlist(self):
+        mplist = sorted(self.keys(), key=mountpoint_dict.mountdepth)
 
         return [self[x] for x in mplist]
-
-
 
 
 class fstabentry(object):
@@ -101,7 +102,8 @@ class fstabentry(object):
         self.id = str(id)
 
     def get_str(self):
-        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint, self.fstype, self.options, self.passno)
+        return "%s %s %s %s 0 %s\n" % (
+            self.source, self.mountpoint, self.fstype, self.options, self.passno)
 
     def mountdepth(self):
         h = self.mountpoint
@@ -109,7 +111,7 @@ class fstabentry(object):
 
         while True:
             h, t = os.path.split(h)
-            if t=='':
+            if t == '':
                 return depth
             depth += 1
 
@@ -129,5 +131,6 @@ class fstabentry(object):
 
         return ""
 
-    def losetup( self, outf, loopdev ):
-        outf.do( 'losetup -o%d --sizelimit %d /dev/%s "%s"' % (self.offset, self.size, loopdev, self.filename) )
+    def losetup(self, outf, loopdev):
+        outf.do('losetup -o%d --sizelimit %d /dev/%s "%s"' %
+                (self.offset, self.size, loopdev, self.filename))

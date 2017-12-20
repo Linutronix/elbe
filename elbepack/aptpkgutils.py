@@ -24,18 +24,20 @@ INSTALLED = 4
 NOTINSTALLED = 5
 
 statestring = {
-    MARKED_INSTALL : "MARKED_INSTALL",
-    MARKED_UPGRADE : "MARKED_UPGRADE",
-    MARKED_DELETE  : "MARKED_DELETE",
-    UPGRADABLE     : "UPGRADABLE",
-    INSTALLED      : "INSTALLED",
-    NOTINSTALLED   : "NOT INSTALLED"
+    MARKED_INSTALL: "MARKED_INSTALL",
+    MARKED_UPGRADE: "MARKED_UPGRADE",
+    MARKED_DELETE: "MARKED_DELETE",
+    UPGRADABLE: "UPGRADABLE",
+    INSTALLED: "INSTALLED",
+    NOTINSTALLED: "NOT INSTALLED"
 }
+
 
 def getdeps(pkg):
     for dd in pkg.dependencies:
         for d in dd:
             yield d.name
+
 
 def getalldeps(c, pkgname):
     retval = []
@@ -43,17 +45,18 @@ def getalldeps(c, pkgname):
 
     while len(togo):
         pp = togo.pop()
-        pkg = c[ pp ]
+        pkg = c[pp]
 
         for p in getdeps(pkg.candidate):
             if p in retval:
                 continue
-            if not p in c:
+            if p not in c:
                 continue
             retval.append(p)
             togo.append(p)
 
     return retval
+
 
 def pkgstate(pkg):
     if pkg.marked_install:
@@ -69,21 +72,21 @@ def pkgstate(pkg):
     else:
         return NOTINSTALLED
 
+
 def pkgorigin(pkg):
-        if pkg.installed:
-            o = pkg.installed.origins[0]
-            origin = "%s %s %s" % (o.site, o.archive, o.component)
-        else:
-            origin = None
+    if pkg.installed:
+        o = pkg.installed.origins[0]
+        origin = "%s %s %s" % (o.site, o.archive, o.component)
+    else:
+        origin = None
 
-        return origin
-
+    return origin
 
 
 class PackageBase(object):
-    def __init__( self, name, installed_version,
-                  candidate_version, installed_md5, candidate_md5,
-                  state, is_auto_installed, origin, architecture ):
+    def __init__(self, name, installed_version,
+                 candidate_version, installed_md5, candidate_md5,
+                 state, is_auto_installed, origin, architecture):
 
         self.name = name
         self.installed_version = installed_version
@@ -96,13 +99,15 @@ class PackageBase(object):
         self.architecture = architecture
 
     def __repr__(self):
-        return "<APTPackage %s-%s state: %s>" % (self.name, self.installed_version, statestring[self.state])
+        return "<APTPackage %s-%s state: %s>" % (
+            self.name, self.installed_version, statestring[self.state])
 
-    def __eq__( self, other ):
+    def __eq__(self, other):
         vereq = (self.installed_version == other.installed_version)
         nameq = (self.name == other.name)
 
         return vereq and nameq
+
 
 class APTPackage(PackageBase):
     def __init__(self, pkg, cache=None):
@@ -119,8 +124,8 @@ class APTPackage(PackageBase):
 
         if pkg.installed:
             arch = pkg.installed.architecture
-            self.installed_deb = pkg.name + '_' + iver.replace( ':', '%3a' ) + \
-                    '_' + arch + '.deb'
+            self.installed_deb = pkg.name + '_' + iver.replace(':', '%3a') + \
+                '_' + arch + '.deb'
         elif pkg.candidate:
             arch = pkg.candidate.architecture
             self.installed_deb = None
@@ -135,9 +140,8 @@ class APTPackage(PackageBase):
 
 
 class XMLPackage(PackageBase):
-    def __init__( self, node, arch ):
-        PackageBase.__init__( self, node.et.text, node.et.get('version'),
-                              None, node.et.get('md5'), None,
-                              INSTALLED, node.et.get('auto') == 'true',
-                              None, arch )
-
+    def __init__(self, node, arch):
+        PackageBase.__init__(self, node.et.text, node.et.get('version'),
+                             None, node.et.get('md5'), None,
+                             INSTALLED, node.et.get('auto') == 'true',
+                             None, arch)

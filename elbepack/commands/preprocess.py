@@ -23,12 +23,13 @@ import os
 from optparse import OptionParser
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
-def run_command( argv ):
-    oparser = OptionParser( usage="usage: %prog preprocess [options] <xmlfile>")
-    oparser.add_option ("-o", "--output", dest="output",
-                        default="preprocess.xml",
-                        help="preprocessed output file", metavar="<xmlfile>")
-    (opt,args) = oparser.parse_args(argv)
+
+def run_command(argv):
+    oparser = OptionParser(usage="usage: %prog preprocess [options] <xmlfile>")
+    oparser.add_option("-o", "--output", dest="output",
+                       default="preprocess.xml",
+                       help="preprocessed output file", metavar="<xmlfile>")
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
         print("Wrong number of arguments", file=sys.stderr)

@@ -24,6 +24,7 @@ elbe_exe = None
 elbe_dir = None
 examples_dir = None
 
+
 def init_directories(elbe_relpath):
     global elbe_exe
     global elbe_dir
@@ -32,10 +33,10 @@ def init_directories(elbe_relpath):
     elbe_exe = os.path.abspath(elbe_relpath)
     elbe_dir = os.path.dirname(elbe_exe)
 
-    if elbe_exe.startswith ("/usr/bin/"):
+    if elbe_exe.startswith("/usr/bin/"):
         examples_dir = "/usr/share/doc/elbe-doc/examples"
     else:
-        examples_dir = os.path.join (elbe_dir, "examples")
+        examples_dir = os.path.join(elbe_dir, "examples")
 
         # Set XML catalog if elbe is run from source
         xmlcat = os.path.join(elbe_dir, "schema/catalog.xml")
@@ -45,15 +46,16 @@ def init_directories(elbe_relpath):
             os.environ['XML_CATALOG_FILES'] += " "
             os.environ['XML_CATALOG_FILES'] += xmlcat
 
+
 def get_cmdlist():
-    return [ x for _, x, _ in iter_modules(elbepack.commands.__path__) ]
+    return [x for _, x, _ in iter_modules(elbepack.commands.__path__)]
+
 
 pack_dir = elbepack.__path__[0]
 
-init_template_dir = os.path.join (pack_dir, "init")
-mako_template_dir = os.path.join (pack_dir, "makofiles")
+init_template_dir = os.path.join(pack_dir, "init")
+mako_template_dir = os.path.join(pack_dir, "makofiles")
 
-default_preseed_fname    = os.path.join (pack_dir, "default-preseed.xml")
-xsdtoasciidoc_mako_fname = os.path.join (pack_dir, "xsdtoasciidoc.mako")
-elbe_pubkey_fname        = os.path.join (pack_dir, "elbe-repo.pub")
-
+default_preseed_fname = os.path.join(pack_dir, "default-preseed.xml")
+xsdtoasciidoc_mako_fname = os.path.join(pack_dir, "xsdtoasciidoc.mako")
+elbe_pubkey_fname = os.path.join(pack_dir, "elbe-repo.pub")

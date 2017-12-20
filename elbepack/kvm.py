@@ -24,13 +24,17 @@ kvm_exe_list = [
     '/usr/bin/qemu-kvm',
     '/usr/libexec/qemu-kvm',
     '/usr/bin/qemu-system-x86_64'
-    ]
+]
 
-def find_kvm_exe ():
+
+def find_kvm_exe():
     for fname in kvm_exe_list:
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
             # determine kvm version
-            cmd = subprocess.Popen (fname + ' --version', shell=True, stdout=subprocess.PIPE)
+            cmd = subprocess.Popen(
+                fname + ' --version',
+                shell=True,
+                stdout=subprocess.PIPE)
             for line in cmd.stdout:
                 if "version" in line:
                     version = line.split()[3].split('(')[0].strip()

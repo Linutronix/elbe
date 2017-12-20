@@ -154,4 +154,4 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-html_sidebars = { '**': ['globaltoc.html'] }
+html_sidebars = {'**': ['globaltoc.html']}

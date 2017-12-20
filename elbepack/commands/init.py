@@ -32,40 +32,52 @@ from elbepack.directories import init_template_dir, elbe_dir
 
 from optparse import OptionParser
 
-def run_command( argv ):
-    oparser = OptionParser( usage="usage: %prog init [options] <filename>" )
 
-    oparser.add_option( "--skip-validation", action="store_true",
-                        dest="skip_validation", default=False,
-                        help="Skip xml schema validation" )
+def run_command(argv):
+    oparser = OptionParser(usage="usage: %prog init [options] <filename>")
 
-    oparser.add_option( "--directory", dest="directory",
-                        help="Working directory (default is build)",
-                        metavar="FILE" )
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
 
-    oparser.add_option( "--cdrom", dest="cdrom",
-                        help="Use FILE as cdrom iso, and use that to build the initvm",
-                        metavar="FILE" )
+    oparser.add_option("--directory", dest="directory",
+                       help="Working directory (default is build)",
+                       metavar="FILE")
 
-    oparser.add_option( "--proxy", dest="proxy",
-                        help="Override the http Proxy" )
+    oparser.add_option(
+        "--cdrom",
+        dest="cdrom",
+        help="Use FILE as cdrom iso, and use that to build the initvm",
+        metavar="FILE")
 
-    oparser.add_option( "--buildtype", dest="buildtype",
-                        help="Override the buildtype" )
+    oparser.add_option("--proxy", dest="proxy",
+                       help="Override the http Proxy")
 
-    oparser.add_option( "--debug", dest="debug",
-                        action="store_true", default=False,
-           help="start qemu in graphical mode to enable console switch" )
+    oparser.add_option("--buildtype", dest="buildtype",
+                       help="Override the buildtype")
 
-    oparser.add_option( "--devel", dest="devel",
-                        action="store_true", default=False,
-           help="use devel mode, and install current builddir inside initvm" )
+    oparser.add_option(
+        "--debug",
+        dest="debug",
+        action="store_true",
+        default=False,
+        help="start qemu in graphical mode to enable console switch")
 
-    oparser.add_option( "--nesting", dest="nesting",
-                        action="store_true", default=False,
-           help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host." )
+    oparser.add_option(
+        "--devel",
+        dest="devel",
+        action="store_true",
+        default=False,
+        help="use devel mode, and install current builddir inside initvm")
 
-    (opt,args) = oparser.parse_args(argv)
+    oparser.add_option(
+        "--nesting",
+        dest="nesting",
+        action="store_true",
+        default=False,
+        help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host.")
+
+    (opt, args) = oparser.parse_args(argv)
 
     if len(args) == 0:
         print("no filename specified")
@@ -77,46 +89,47 @@ def run_command( argv ):
         sys.exit(20)
 
     if opt.devel:
-        if not os.path.isdir( os.path.join (elbe_dir, "elbepack")):
+        if not os.path.isdir(os.path.join(elbe_dir, "elbepack")):
             print("Devel Mode only valid, when running from elbe checkout")
             sys.exit(20)
 
     if not opt.skip_validation:
-        validation = validate_xml (args[0])
-        if len (validation) != 0:
+        validation = validate_xml(args[0])
+        if len(validation) != 0:
             print("xml validation failed. Bailing out")
             for i in validation:
                 print(i)
             sys.exit(20)
 
-    xml = etree( args[0] )
+    xml = etree(args[0])
 
-    if not xml.has( "initvm" ):
+    if not xml.has("initvm"):
         print("fatal error: xml missing mandatory section 'initvm'")
         sys.exit(20)
 
     if opt.buildtype:
         buildtype = opt.buildtype
-    elif xml.has( "initvm/buildtype" ):
-        buildtype = xml.text( "/initvm/buildtype" )
+    elif xml.has("initvm/buildtype"):
+        buildtype = xml.text("/initvm/buildtype")
     else:
         buildtype = "nodefaults"
 
-    defs = ElbeDefaults( buildtype )
+    defs = ElbeDefaults(buildtype)
 
     http_proxy = ""
-    if os.getenv ("http_proxy"):
-        http_proxy = os.getenv ("http_proxy")
+    if os.getenv("http_proxy"):
+        http_proxy = os.getenv("http_proxy")
     elif opt.proxy:
         http_proxy = opt.proxy
     elif xml.has("initvm/mirror/primary_proxy"):
-        http_proxy = xml.text("initvm/mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
+        http_proxy = xml.text(
+            "initvm/mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
 
     if opt.cdrom:
-        mirror = xml.node ("initvm/mirror")
-        mirror.clear ()
-        cdrom = mirror.ensure_child ("cdrom")
-        cdrom.set_text (os.path.abspath (opt.cdrom))
+        mirror = xml.node("initvm/mirror")
+        mirror.clear()
+        cdrom = mirror.ensure_child("cdrom")
+        cdrom.set_text(os.path.abspath(opt.cdrom))
 
     if not opt.directory:
         path = "./build"
@@ -126,14 +139,18 @@ def run_command( argv ):
     try:
         os.makedirs(path)
     except OSError as e:
-        print("unable to create project directory: %s (%s)" % (path, e.strerror))
+        print(
+            "unable to create project directory: %s (%s)" %
+            (path, e.strerror))
         sys.exit(30)
 
-    out_path = os.path.join(path,".elbe-in")
+    out_path = os.path.join(path, ".elbe-in")
     try:
         os.makedirs(out_path)
     except OSError as e:
-        print("unable to create subdirectory: %s (%s)" % (out_path, e.strerror))
+        print(
+            "unable to create subdirectory: %s (%s)" %
+            (out_path, e.strerror))
         sys.exit(30)
 
     d = {"elbe_version": elbe_version,
@@ -143,12 +160,12 @@ def run_command( argv ):
          "prj": xml.node("/initvm"),
          "http_proxy": http_proxy,
          "pkgs": xml.node("/initvm/pkg-list") or [],
-         "preseed": get_initvm_preseed(xml) }
+         "preseed": get_initvm_preseed(xml)}
 
     if http_proxy != "":
-        os.putenv ("http_proxy", http_proxy)
-        os.putenv ("https_proxy", http_proxy)
-        os.putenv ("no_proxy", "localhost,127.0.0.1")
+        os.putenv("http_proxy", http_proxy)
+        os.putenv("https_proxy", http_proxy)
+        os.putenv("no_proxy", "localhost,127.0.0.1")
 
     try:
         copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
@@ -160,27 +177,42 @@ def run_command( argv ):
         print("Check Mirror configuration")
         sys.exit(20)
 
-    templates = os.listdir( init_template_dir )
+    templates = os.listdir(init_template_dir)
 
-    make_executable = [ "init-elbe.sh.mako",
-                        "preseed.cfg.mako" ]
+    make_executable = ["init-elbe.sh.mako",
+                       "preseed.cfg.mako"]
 
     for t in templates:
-        o = t.replace( ".mako", "" )
+        o = t.replace(".mako", "")
 
         if t == "Makefile.mako" or t == "libvirt.xml.mako":
-            write_template(os.path.join(path,o), os.path.join(init_template_dir, t), d, linebreak=True )
+            write_template(
+                os.path.join(
+                    path, o), os.path.join(
+                    init_template_dir, t), d, linebreak=True)
         else:
-            write_template(os.path.join(out_path,o), os.path.join(init_template_dir, t), d, linebreak=False )
+            write_template(
+                os.path.join(
+                    out_path, o), os.path.join(
+                    init_template_dir, t), d, linebreak=False)
 
         if t in make_executable:
-            os.chmod( os.path.join(out_path,o), 0o755 )
+            os.chmod(os.path.join(out_path, o), 0o755)
 
-    shutil.copyfile( args[0],
-       os.path.join(out_path, "source.xml" ) )
+    shutil.copyfile(args[0],
+                    os.path.join(out_path, "source.xml"))
 
     if opt.cdrom:
-        shutil.move( "/tmp/elbe-keyring.gpg", os.path.join(out_path, "elbe-keyring.gpg" ) )
+        shutil.move(
+            "/tmp/elbe-keyring.gpg",
+            os.path.join(
+                out_path,
+                "elbe-keyring.gpg"))
 
     if opt.devel:
-        os.system ('tar cfj "%s" -C "%s" .' % (os.path.join (out_path, "elbe-devel.tar.bz2"), elbe_dir))
+        os.system(
+            'tar cfj "%s" -C "%s" .' %
+            (os.path.join(
+                out_path,
+                "elbe-devel.tar.bz2"),
+                elbe_dir))
