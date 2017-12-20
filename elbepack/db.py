@@ -596,8 +596,6 @@ class ElbeDB(object):
 
             p.version = xml.text("/project/version")
 
-    ### Version management ###
-
     def list_project_versions(self, builddir):
         with session_scope(self.session) as s:
             try:
@@ -723,8 +721,6 @@ class ElbeDB(object):
             xmlname = get_versioned_filename(v.project.name, version,
                                              ".version.xml")
             return os.path.join(builddir, xmlname)
-
-    ### File management ###
 
     def get_project_files(self, builddir):
         # Can throw: ElbeDBError
@@ -896,8 +892,6 @@ class ElbeDB(object):
             None
 
         return filename
-
-    ### User management ###
 
     def add_user(self, name, fullname, password, email, admin):
         # encrypt is deprecated but hash is not available in jessie
