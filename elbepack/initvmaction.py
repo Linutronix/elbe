@@ -253,7 +253,7 @@ class CreateAction(InitVMAction):
                 tmp = TmpdirFilesystem()
                 os.system('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
 
-                print ('', file=sys.stderr)
+                print('', file=sys.stderr)
 
                 if not tmp.isfile('source.xml'):
                     print(
@@ -438,7 +438,7 @@ class CreateAction(InitVMAction):
                 print("Giving up", file=sys.stderr)
                 sys.exit(20)
 
-            print ("Build started, waiting till it finishes")
+            print("Build started, waiting till it finishes")
 
             try:
                 system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
@@ -485,9 +485,9 @@ class CreateAction(InitVMAction):
                     'Get Files with: elbe control get_file "%s" <filename>' %
                     prjdir)
             else:
-                print ("")
-                print ("Getting generated Files")
-                print ("")
+                print("")
+                print("Getting generated Files")
+                print("")
 
                 ensure_outdir(wdfs, opt)
 
@@ -504,8 +504,8 @@ class CreateAction(InitVMAction):
                         system('%s control del_project "%s"' % (
                             elbe_exe, prjdir))
                     except CommandError:
-                        print ("remove project from initvm failed",
-                               file=sys.stderr)
+                        print("remove project from initvm failed",
+                              file=sys.stderr)
                         sys.exit(20)
 
 

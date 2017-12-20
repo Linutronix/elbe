@@ -38,7 +38,7 @@ def run_command(argv):
         sys.exit(20)
 
     if not os.path.exists(args[0]):
-        print ("%s - file not found" % args[0])
+        print("%s - file not found" % args[0])
         oparser.print_help()
         sys.exit(20)
 
