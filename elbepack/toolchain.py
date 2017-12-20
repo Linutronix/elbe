@@ -63,7 +63,9 @@ class LinaroToolchain(Toolchain):
                 "libstdc++6": ["libstdc++.so.*"]}
 
     pkg_deps = {
-        "libasan0": "libc6 (>= 2.13-28), libstdc++ (>= 4.8.3), libgcc1 (>= 4.8.3)",
+        "libasan0": "libc6 (>= 2.13-28), "
+                    "libstdc++ (>= 4.8.3), "
+                    "libgcc1 (>= 4.8.3)",
         "libatomic1": "libc6 (>= 2.13-28)",
         "libgcc1": "libc6 (>= 2.13-28)",
         "libgfortran3": "libgcc1 (>= 4.8.3)",

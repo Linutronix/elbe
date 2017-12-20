@@ -38,10 +38,11 @@ try:
     from apt_pkg import TagFile
     virtapt_imported = True
 except ImportError:
-    print("WARNING - python-apt not available: if there are multiple versions of")
-    print(" elbe-bootstrap packages on the mirror(s) elbe selects the first package it")
-    print(" has found. There is no guarantee that the latest package is used.")
-    print(" To ensure this, the python-apt package needs to be installed.")
+    print("WARNING - python-apt not available:")
+    print("If there are multiple versions of elbe-bootstrap packages on the "
+          "mirror(s) elbe selects the first package it has found.")
+    print("There is no guarantee that the latest package is used.")
+    print("To ensure this, the python-apt package needs to be installed.")
     virtapt_imported = False
 
 

@@ -161,8 +161,8 @@ class ElbeFilesystem(Filesystem):
 
             if f is not None:
                 f.write(unicode(os.path.basename(dir)))
-                f.write(
-                    u":\n================================================================================")
+                f.write(u":\n======================================"
+                        "==========================================")
                 f.write(u"\n")
                 f.write(lic_text)
                 f.write(u"\n\n")
@@ -325,12 +325,12 @@ class TargetFs(ChRootFilesystem):
                 options = ''
                 if self.xml.has("target/package/tar/options"):
                     options = self.xml.text("target/package/tar/options")
-                cmd = "tar cfz %(targetdir)s/%(targz_name)s -C %(sourcedir)s %(options)s ."
+                cmd = "tar cfz %(dest)s/%(fname)s -C %(sdir)s %(options)s ."
                 args = dict(
                     options=options,
-                    targetdir=targetdir,
-                    targz_name=targz_name,
-                    sourcedir=self.fname('')
+                    dest=targetdir,
+                    fname=targz_name,
+                    sdir=self.fname('')
                 )
                 self.log.do(cmd % args)
                 # only append filename if creating tarball was successful

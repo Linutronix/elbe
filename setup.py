@@ -24,8 +24,9 @@ class my_install(install):
     def run(self):
         install.run(self)
         if self.root:
-            envvars = dict(
-                {"prefix": self.prefix, "DESTDIR": self.root}, **dict(os.environ))
+            envvars = dict({"prefix": self.prefix,
+                            "DESTDIR": self.root},
+                           **dict(os.environ))
         else:
             envvars = dict({"prefix": self.prefix}, **dict(os.environ))
 
@@ -63,12 +64,16 @@ setup(name='elbe',
       scripts=['elbe'],
       cmdclass={"install": my_install},
       data_files=[
-          ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbe-schema-reference*")),
-          ('/usr/share/doc/elbe-doc/', glob.glob("docs/elbeoverview-en*")),
-          ('/usr/share/doc/elbe-doc/contrib/linux', glob.glob("contrib/linux/*")),
-          ('/usr/share/doc/elbe-doc/examples', glob.glob("examples/*xml")),
+          ('/usr/share/doc/elbe-doc/',
+           glob.glob("docs/elbe-schema-reference*")),
+          ('/usr/share/doc/elbe-doc/',
+           glob.glob("docs/elbeoverview-en*")),
+          ('/usr/share/doc/elbe-doc/contrib/linux',
+           glob.glob("contrib/linux/*")),
+          ('/usr/share/doc/elbe-doc/examples',
+           glob.glob("examples/*xml")),
           ('/usr/share/doc/elbe-doc/examples/includes/prod',
-              glob.glob("examples/includes/prod/*.xml")),
+           glob.glob("examples/includes/prod/*.xml")),
           ('/usr/share/doc/elbe-doc/examples/includes/devel',
-              glob.glob("examples/includes/devel/*.xml"))],
+           glob.glob("examples/includes/devel/*.xml"))],
       )

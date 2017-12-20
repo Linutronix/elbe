@@ -148,13 +148,15 @@ def run_command(argv):
         action="store_true",
         dest="use_nomos",
         default=False,
-        help="Use the external nomos tool on the copyright text, and record the ouput in out xml")
+        help="Use the external nomos tool on the copyright text, "
+             "and record the ouput in out xml")
     oparser.add_option(
         "--errors-only",
         action="store_true",
         dest="only_errors",
         default=False,
-        help="Only Output Packages with errors, needing a fix in the mapping file")
+        help="Only Output Packages with errors, "
+             "needing a fix in the mapping file")
     oparser.add_option("--tvout", dest="tagvalue",
                        help="tag value output filename")
 

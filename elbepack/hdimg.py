@@ -393,11 +393,12 @@ def create_partition(
         sz = size_to_int(part.text("size")) / sector_size
 
     g = parted.Geometry(device=disk.device, start=current_sector, length=sz)
-    if ptype != parted.PARTITION_EXTENDED and part.text(
-            "label") in fslabel and fslabel[part.text("label")].fstype == "vfat":
-        fs = simple_fstype("fat32")
-        ppart = parted.Partition(disk, ptype, fs, geometry=g)
-        ppart.setFlag(_ped.PARTITION_LBA)
+    if ptype != parted.PARTITION_EXTENDED and \
+            part.text("label") in fslabel and \
+            fslabel[part.text("label")].fstype == "vfat":
+                fs = simple_fstype("fat32")
+                ppart = parted.Partition(disk, ptype, fs, geometry=g)
+                ppart.setFlag(_ped.PARTITION_LBA)
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 

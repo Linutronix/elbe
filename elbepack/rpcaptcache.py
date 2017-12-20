@@ -20,7 +20,8 @@ from multiprocessing.util import Finalize
 from apt_pkg import config, version_compare
 from apt import Cache
 from multiprocessing.managers import BaseManager
-from elbepack.aptprogress import ElbeAcquireProgress, ElbeInstallProgress, ElbeOpProgress
+from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
+                                  ElbeOpProgress)
 from elbepack.aptpkgutils import getalldeps, APTPackage
 
 import os
@@ -124,13 +125,15 @@ class RPCAPTCache(InChRootObject):
         # list all debian src packages of all installed packages that don't
         # come from debootstrap
         src_list = [
-            p.candidate.source_name for p in self.cache if p.is_installed and p.name not in ignore_pkgs]
+            p.candidate.source_name for p in self.cache if (
+                p.is_installed and p.name not in ignore_pkgs)]
         # go through all packages, remember package if its source package
         # matches one of the installed packages and the binary package is a
         # '-dev' package
         dev_list = [
             s for s in self.cache if (
-                s.candidate.source_name in src_list and s.name.endswith('-dev'))]
+                s.candidate.source_name in src_list and (
+                    s.name.endswith('-dev')))]
         for p in dev_list:
             if p.name not in ignore_dev_pkgs:
                 p.mark_install()
@@ -143,13 +146,15 @@ class RPCAPTCache(InChRootObject):
 
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
-            if (p.is_installed and not p.is_auto_installed) or p.is_auto_removable:
-                remove = True
-                for x in exclude_pkgs:
-                    if x == p.name:
-                        remove = False
-                if remove:
-                    p.mark_delete(auto_fix=True, purge=True)
+            if p.is_installed and not \
+               p.is_auto_installed or \
+               p.is_auto_removable:
+                    remove = True
+                    for x in exclude_pkgs:
+                        if x == p.name:
+                            remove = False
+                    if remove:
+                        p.mark_delete(auto_fix=True, purge=True)
 
     def mark_upgrade(self, pkgname, version):
         p = self.cache[pkgname]

@@ -123,12 +123,10 @@ class RepoBase(object):
             fp.write("Suite: " + codename2suite[att.codename] + "\n")
             fp.write("Codename: " + att.codename + "\n")
             fp.write("Architectures: " + " ".join(att.arch) + "\n")
-            fp.write("Components: " +
-                     " ".join(att.components.difference(set(["main/debian-installer"]))) +
-                     "\n")
-            fp.write("UDebComponents: " +
-                     " ".join(att.components.difference(set(["main/debian-installer"]))) +
-                     "\n")
+            fp.write("Components: " + " ".join(att.components.difference(
+                set(["main/debian-installer"]))) + "\n")
+            fp.write("UDebComponents: " + " ".join(att.components.difference(
+                set(["main/debian-installer"]))) + "\n")
             fp.write("Description: " + self.description + "\n")
             fp.write("SignWith: " + self.keyid + "\n")
 
@@ -226,15 +224,11 @@ class RepoBase(object):
         self._includedeb(path, self.init_attr.codename, component)
 
     def _include(self, path, codename, component):
-        self.log.do(
-            'reprepro --ignore=wrongdistribution --ignore=surprisingbinary --keepunreferencedfiles --export=never --basedir "' +
-            self.fs.path +
-            '" -C ' +
-            component +
-            ' -P normal -S misc include ' +
-            codename +
-            ' ' +
-            path)
+        self.log.do('reprepro --ignore=wrongdistribution '
+                    '--ignore=surprisingbinary --keepunreferencedfiles '
+                    '--export=never --basedir "' + self.fs.path + '" -C ' +
+                    component + ' -P normal -S misc include ' + codename +
+                    ' ' + path)
 
     def _removedeb(self, pkgname, codename, component):
         self.log.do(

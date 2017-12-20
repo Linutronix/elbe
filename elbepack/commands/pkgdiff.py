@@ -66,8 +66,10 @@ def run_command(argv):
     gen_pkgs = {}
     for p in gen_cache.packages:
         if opt.noauto:
-            if p.current_ver and not gc[p.name].is_auto_installed and not p.essential:
-                gen_pkgs[p.name] = p.current_ver
+            if p.current_ver and not \
+               gc[p.name].is_auto_installed and not \
+               p.essential:
+                    gen_pkgs[p.name] = p.current_ver
         else:
             if p.current_ver and not p.essential:
                 gen_pkgs[p.name] = p.current_ver
@@ -82,8 +84,10 @@ def run_command(argv):
     fix_pkgs = {}
     for p in fix_cache.packages:
         if opt.noauto:
-            if p.current_ver and not fc[p.name].is_auto_installed and not p.essential:
-                fix_pkgs[p.name] = p.current_ver
+            if p.current_ver and not \
+               fc[p.name].is_auto_installed and not \
+               p.essential:
+                    fix_pkgs[p.name] = p.current_ver
         else:
             if p.current_ver and not p.essential:
                 fix_pkgs[p.name] = p.current_ver

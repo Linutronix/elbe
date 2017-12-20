@@ -43,8 +43,8 @@ def get_mtdnum(xml, label):
 
 def get_devicelabel(xml, node):
     if node.text("fs/type") == "ubifs":
-        return "ubi" + get_mtdnum(xml,
-                                  node.text("label")) + ":" + node.text("label")
+        return "ubi %s:%s" % (get_mtdnum(xml, node.text("label")),
+                              node.text("label"))
     else:
         return "LABEL=" + node.text("label")
 
@@ -102,8 +102,8 @@ class fstabentry(object):
         self.id = str(id)
 
     def get_str(self):
-        return "%s %s %s %s 0 %s\n" % (
-            self.source, self.mountpoint, self.fstype, self.options, self.passno)
+        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint,
+                                       self.fstype, self.options, self.passno)
 
     def mountdepth(self):
         h = self.mountpoint

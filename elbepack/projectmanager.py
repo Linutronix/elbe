@@ -30,7 +30,8 @@ from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
 from elbepack.asyncworker import APTCommitJob, GenUpdateJob
 from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
 from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
-from elbepack.asyncworker import PdebuildJob, CreatePbuilderJob, UpdatePbuilderJob
+from elbepack.asyncworker import (PdebuildJob, CreatePbuilderJob,
+                                  UpdatePbuilderJob)
 from elbepack.asyncworker import BuildChrootTarJob
 from elbepack.elbexml import ValidationMode
 
@@ -323,9 +324,8 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             if not path.isdir(path.join(ep.builddir, "pbuilder")):
-                raise InvalidState(
-                    'No pbuilder exists: run "elbe pbuilder create --project %s" first' %
-                    ep.builddir)
+                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                                   'create --project %s" first' % ep.builddir)
 
             self.worker.enqueue(PdebuildJob(ep))
 
@@ -333,9 +333,8 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             if not path.isdir(path.join(ep.builddir, "pbuilder")):
-                raise InvalidState(
-                    'No pbuilder exists: run "elbe pbuilder create --project %s" first' %
-                    ep.builddir)
+                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                                   'create --project %s" first' % ep.builddir)
 
             ep.orig_fname = fname
             ep.orig_files.append(fname)
@@ -344,9 +343,8 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             if not path.isdir(path.join(ep.builddir, "pbuilder")):
-                raise InvalidState(
-                    'No pbuilder exists: run "elbe pbuilder create --project %s" first' %
-                    ep.builddir)
+                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                                   'create --project %s" first' % ep.builddir)
 
             return ep.orig_fname
 
@@ -573,9 +571,9 @@ class ProjectManager(object):
         if userid in self.userid2project:
             builddir = self.userid2project[userid].builddir
             if self.db.is_busy(builddir):
-                raise InvalidState(
-                    "project in directory %s of user %s is currently busy and cannot be closed" %
-                    (builddir, self.db.get_username(userid)))
+                raise InvalidState("project in directory %s of user %s is "
+                                   "currently busy and cannot be closed" %
+                                   (builddir, self.db.get_username(userid)))
 
             del self.builddir2userid[builddir]
             del self.userid2project[userid]

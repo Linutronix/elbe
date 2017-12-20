@@ -45,11 +45,13 @@ def enbase(fname):
 def run_command(argv):
 
     oparser = OptionParser(
-        usage="usage: %prog chg_archive [options] <xmlfile> [<archive>|<directory>]")
+        usage="usage: %prog chg_archive [options] <xmlfile> "
+              "[<archive>|<directory>]")
     oparser.add_option(
         "--keep-attributes",
         action="store_true",
-        help="keep file owners and groups, if not specified all files will belong to root:root",
+        help="keep file owners and groups, if not specified all files will "
+             "belong to root:root",
         dest="keep_attributes",
         default=False)
 

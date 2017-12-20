@@ -120,8 +120,8 @@ def checkout_binpkg_archive(ep, repodir):
 
     with ep.buildenv:
         try:
-            # Copy the package archive into the buildenv, so the RPCAptCache can
-            # access it
+            # Copy the package archive into the buildenv,
+            # so the RPCAptCache can access it
             ep.log.printo("Copying package archive into build environment")
             copytree(repopath, pkgarchive)
 

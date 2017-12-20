@@ -38,14 +38,11 @@ def pbuilder_write_config(builddir, xml, log):
     fp.write('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
 
     if (xml.text("project/arch", key="arch") != 'amd64'):
-        fp.write(
-            'ARCHITECTURE="%s"\n' %
-            xml.text(
-                "project/buildimage/arch",
-                key="arch"))
+        fp.write('ARCHITECTURE="%s"\n' %
+                 xml.text("project/buildimage/arch", key="arch"))
         fp.write('DEBOOTSTRAP="qemu-debootstrap"\n')
-        fp.write(
-            'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--arch=$ARCHITECTURE")\n')
+        fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" '
+                 '"--arch=$ARCHITECTURE")\n')
 
     if xml.prj.has('noauth'):
         fp.write(
@@ -55,8 +52,8 @@ def pbuilder_write_config(builddir, xml, log):
     # aptitude segfaults with sid armhf changeroots, great! :)
     # link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=834990
     if distname == 'stretch':
-        fp.write(
-            'PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
+        fp.write('PBUILDERSATISFYDEPENDSCMD='
+                 '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
 
     fp.close()
 
@@ -122,21 +119,21 @@ def pbuilder_write_repo_hook(builddir, xml):
         '/repo/repo.pub')
 
     if xml.prj.has("mirror/primary_host"):
-        mirror += 'echo "deb ' + xml.get_primary_mirror(None) + ' ' + xml.prj.text(
-            "suite") + ' main" >> /etc/apt/sources.list\n'
+        mirror += 'echo "deb ' + xml.get_primary_mirror(None) + ' ' + \
+                  xml.prj.text("suite") + ' main" >> /etc/apt/sources.list\n'
 
         if xml.prj.has("mirror/url-list"):
             for url in xml.prj.node("mirror/url-list"):
                 if url.has("binary"):
-                    mirror += 'echo "deb ' + \
-                        url.text("binary").strip() + '" >> /etc/apt/sources.list\n'
+                    mirror += 'echo "deb ' + url.text("binary").strip() + \
+                              '" >> /etc/apt/sources.list\n'
                 if url.has("key"):
                     key_url = url.text("key").strip()
                     mirror = mirror_script_add_key(mirror, key_url)
 
     if xml.prj.has("mirror/cdrom"):
-        mirror += 'echo "deb copy:///cdrom/targetrepo %s main added" >> /etc/apt/sources.list' % (
-            xml.prj.text("suite"))
+        mirror += 'echo "deb copy:///cdrom/targetrepo %s main added" >> ' \
+                  '/etc/apt/sources.list' % (xml.prj.text("suite"))
 
     mirror += 'apt-get update\n'
     mirror = mirror.replace("LOCALMACHINE", "10.0.2.2")

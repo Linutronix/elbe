@@ -48,7 +48,7 @@ def validate_xml(fname):
             uses_xinclude = True
 
     if uses_xinclude:
-        errors.append(
-            "\nThere are XIncludes in the XML file. Run 'elbe preprocess' first!\n")
+        errors.append("\nThere are XIncludes in the XML file. "
+                      "Run 'elbe preprocess' first!\n")
 
     return errors

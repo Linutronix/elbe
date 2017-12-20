@@ -75,7 +75,8 @@ def run_command(argv):
         dest="nesting",
         action="store_true",
         default=False,
-        help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host.")
+        help="allow initvm to support nested kvm. "
+             "This makes /proc/cpuinfo inside initvm differ per host.")
 
     (opt, args) = oparser.parse_args(argv)
 
@@ -122,8 +123,8 @@ def run_command(argv):
     elif opt.proxy:
         http_proxy = opt.proxy
     elif xml.has("initvm/mirror/primary_proxy"):
-        http_proxy = xml.text(
-            "initvm/mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
+        http_proxy = xml.text("initvm/mirror/primary_proxy")
+        http_proxy = http_proxy.strip().replace("LOCALMACHINE", "localhost")
 
     if opt.cdrom:
         mirror = xml.node("initvm/mirror")

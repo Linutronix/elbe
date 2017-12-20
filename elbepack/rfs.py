@@ -21,7 +21,8 @@ import urlparse
 import urllib2
 
 from elbepack.efilesystem import BuildImgFs
-from elbepack.templates import write_pack_template, get_preseed, preseed_to_text
+from elbepack.templates import (write_pack_template, get_preseed,
+                                preseed_to_text)
 from elbepack.shellhelper import CommandError
 
 
@@ -76,12 +77,12 @@ class BuildEnv ():
     def __enter__(self):
         if os.path.exists(self.path + '/../repo/pool'):
             self.log.do("mv %s/../repo %s" % (self.path, self.path))
-            self.log.do(
-                'echo "deb copy:///repo %s main" > %s/etc/apt/sources.list.d/local.list' %
-                (self.xml.text("project/suite"), self.path))
-            self.log.do(
-                'echo "deb-src copy:///repo %s main" >> %s/etc/apt/sources.list.d/local.list' %
-                (self.xml.text("project/suite"), self.path))
+            self.log.do('echo "deb copy:///repo %s main" > '
+                        '%s/etc/apt/sources.list.d/local.list' % (
+                            self.xml.text("project/suite"), self.path))
+            self.log.do('echo "deb-src copy:///repo %s main" >> '
+                        '%s/etc/apt/sources.list.d/local.list' % (
+                            self.xml.text("project/suite"), self.path))
         self.cdrom_mount()
         self.rfs.__enter__()
         return self
@@ -103,8 +104,8 @@ class BuildEnv ():
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
-            proxy = self.xml.prj.text(
-                "mirror/primary_proxy").strip().replace("LOCALMACHINE", "localhost")
+            proxy = self.xml.prj.text("mirror/primary_proxy")
+            proxy = proxy.strip().replace("LOCALMACHINE", "localhost")
             os.environ["http_proxy"] = proxy
             os.environ["https_proxy"] = proxy
         else:
@@ -151,8 +152,9 @@ class BuildEnv ():
             return
 
         if self.xml.has("project/noauth"):
-            cmd = 'debootstrap --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
-                arch, suite, self.rfs.path, primary_mirror)
+            cmd = 'debootstrap --no-check-gpg --foreign ' \
+                  '--arch=%s "%s" "%s" "%s"' % (arch, suite, self.rfs.path,
+                                                primary_mirror)
         else:
             if self.xml.has("project/mirror/cdrom"):
                 keyring = ' --keyring="%s/targetrepo/elbe-keyring.gpg"' % (
@@ -281,17 +283,17 @@ class BuildEnv ():
 
         self.log.chroot(
             self.rfs.path,
-            """/bin/sh -c 'echo "127.0.0.1 %s.%s %s elbe-daemon" >> /etc/hosts'""" %
-            (hostname,
-             domain,
-             hostname))
+            """/bin/sh -c 'echo "127.0.0.1 %s.%s %s elbe-daemon" >> """
+            """/etc/hosts'""" % (hostname, domain, hostname))
+
         self.log.chroot(
             self.rfs.path,
-            """/bin/sh -c 'echo "%s" > /etc/hostname'""" %
-            hostname)
+            """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname)
+
         self.log.chroot(
-            self.rfs.path, """/bin/sh -c 'echo "%s.%s" > /etc/mailname'""" %
-            (hostname, domain))
+            self.rfs.path,
+            """/bin/sh -c 'echo "%s.%s" > """
+            """/etc/mailname'""" % (hostname, domain))
 
         if self.xml.has("target/console"):
             serial_con, serial_baud = self.xml.text(
@@ -299,15 +301,19 @@ class BuildEnv ():
             if serial_baud:
                 self.log.chroot(
                     self.rfs.path,
-                    """/bin/sh -c '[ -f /etc/inittab ] && echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> /etc/inittab'""" %
-                    (serial_con,
-                     serial_baud),
+                    """/bin/sh -c '[ -f /etc/inittab ] && """
+                    """echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> """
+                    """/etc/inittab'""" % (serial_con, serial_baud),
                     allow_fail=True)
+
                 self.log.chroot(
                     self.rfs.path,
-                    """/bin/sh -c '[ -f /lib/systemd/system/serial-getty@.service ] && ln -s /lib/systemd/system/serial-getty@.service /etc/systemd/system/getty.target.wants/serial-getty@%s.service'""" %
-                    serial_con,
+                    """/bin/sh -c """
+                    """'[ -f /lib/systemd/system/serial-getty@.service ] && """
+                    """ln -s /lib/systemd/system/serial-getty@.service """
+                    """/etc/systemd/system/getty.target.wants/"""
+                    """serial-getty@%s.service'""" % serial_con,
                     allow_fail=True)
             else:
-                self.log.printo(
-                    "parsing console tag failed, needs to be of '/dev/ttyS0,115200' format.")
+                self.log.printo("parsing console tag failed, needs to be of "
+                                "'/dev/ttyS0,115200' format.")

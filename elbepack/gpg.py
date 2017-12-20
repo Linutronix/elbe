@@ -59,7 +59,10 @@ class OverallStatus:
             return 20
         if self.invalid:        # invalid signature
             return 1
-        if self.sig_expired or self.key_expired or self.key_revoked or self.key_missing:
+        if self.sig_expired or \
+           self.key_expired or \
+           self.key_revoked or \
+           self.key_missing:
             return 2
 
         return 0

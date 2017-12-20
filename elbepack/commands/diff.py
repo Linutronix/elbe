@@ -63,16 +63,17 @@ def walk_generated(gen_path, fix_path, exclude):
                                     (gen_fname, fix_fname))
                                 file_differ.append(os.path.join(infs_root, f))
                         else:
-                            if not (
-                                    os.readlink(gen_fname) == os.readlink(fix_fname)):
-                                print(
-                                    "symlinks %s and %s differ" %
-                                    (gen_fname, fix_fname))
+                            if not (os.readlink(gen_fname) ==
+                                    os.readlink(fix_fname)):
+                                print("symlinks %s and %s differ" % (
+                                    gen_fname, fix_fname))
                                 file_differ.append(os.path.join(infs_root, f))
 
-                elif not os.path.exists(gen_fname) and os.path.exists(fix_fname):
+                elif not os.path.exists(gen_fname) and \
+                        os.path.exists(fix_fname):
                     print("file %s only exists in fixed image" % (fix_fname))
-                elif os.path.exists(gen_fname) and not os.path.exists(fix_fname):
+                elif os.path.exists(gen_fname) and not \
+                        os.path.exists(fix_fname):
                     print("file %s only exists in gen image" % (gen_fname))
                     file_to_rm.append(os.path.join(infs_root, f))
 

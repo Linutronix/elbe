@@ -54,7 +54,8 @@ class SoapElbeNotLoggedIn(Fault):
         Fault.__init__(
             self,
             faultcode="ElbeNotLoggedIn",
-            faultstring="Not authenticated ! Cant let you perform this command.")
+            faultstring="Not authenticated ! "
+                        "Cant let you perform this command.")
 
 
 class SoapElbeNotAuthorized(Fault):

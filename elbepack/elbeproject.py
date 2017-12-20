@@ -22,7 +22,10 @@ import io
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
 from elbepack.shellhelper import CommandError
-from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError, ValidationMode
+
+from elbepack.elbexml import (ElbeXML, NoInitvmNode,
+                              ValidationError, ValidationMode)
+
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.efilesystem import TargetFs
@@ -34,7 +37,9 @@ from elbepack.dump import check_full_pkgs
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
-from elbepack.pbuilder import pbuilder_write_config, pbuilder_write_repo_hook, pbuilder_write_apt_conf
+from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
+                               pbuilder_write_apt_conf)
+
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
 
@@ -42,7 +47,8 @@ from elbepack.config import cfg
 class IncompatibleArchitectureException(Exception):
     def __init__(self, oldarch, newarch):
         Exception.__init__(
-            self, "Cannot change architecture from %s to %s in existing project" %
+            self,
+            "Cannot change architecture from %s to %s in existing project" %
             (oldarch, newarch))
 
 
@@ -160,7 +166,8 @@ class ElbeProject (object):
 
         with self.buildenv:
             try:
-                self.get_rpcaptcache().mark_install_devpkgs(ignore_pkgs, ignore_dev_pkgs)
+                self.get_rpcaptcache().mark_install_devpkgs(ignore_pkgs,
+                                                            ignore_dev_pkgs)
             except SystemError as e:
                 self.log.printo("mark install devpkgs failed: %s" % str(e))
             try:
@@ -330,8 +337,8 @@ class ElbeProject (object):
                     reportpath, self.targetfs)
 
         # the current license code raises an exception that interrupts the hole
-        # build if a licence can't be converted to utf-8. Exception handling can
-        # be removed as soon as the licence code is more stable
+        # build if a licence can't be converted to utf-8. Exception handling
+        # can be removed as soon as the licence code is more stable
         lic_err = False
         try:
             f = io.open(
@@ -363,8 +370,8 @@ class ElbeProject (object):
             else:
                 grub_version = 202
         elif self.get_rpcaptcache().is_installed('grub-legacy'):
-            self.log.printo(
-                "package grub-legacy is installed, this is obsolete, skipping grub")
+            self.log.printo("package grub-legacy is installed, "
+                            "this is obsolete, skipping grub")
             grub_version = 0
         else:
             self.log.printo("package grub-pc is not installed, skipping grub")
@@ -431,12 +438,9 @@ class ElbeProject (object):
         try:
             for orig_fname in self.orig_files:
                 ofname = os.path.join(self.builddir, orig_fname)
-                self.log.do(
-                    'mv "%s" "%s"' %
-                    (ofname,
-                     os.path.join(
-                         self.builddir,
-                         "pdebuilder")))
+                self.log.do('mv "%s" "%s"' % (ofname,
+                                              os.path.join(self.builddir,
+                                                           "pdebuilder")))
         finally:
             self.orig_fname = None
             self.orig_files = []
@@ -454,27 +458,29 @@ class ElbeProject (object):
 
     def pdebuild_build(self):
         try:
-            self.log.do(
-                'cd "%s"; pdebuild --debbuildopts "-j%s -sa" --configfile "%s" --use-pdebuild-internal --buildresult "%s"' %
-                (os.path.join(
-                    self.builddir, "pdebuilder", "current"), cfg['pbuilder_jobs'], os.path.join(
-                    self.builddir, "pbuilderrc"), os.path.join(
-                    self.builddir, "pbuilder", "result")))
-            self.repo.remove(
-                os.path.join(
-                    self.builddir,
-                    "pdebuilder",
-                    "current",
-                    "debian",
-                    "control"))
+            self.log.do('cd "%s"; pdebuild --debbuildopts "-j%s -sa" '
+                        '--configfile "%s" '
+                        '--use-pdebuild-internal --buildresult "%s"' % (
+                            os.path.join(self.builddir,
+                                         "pdebuilder",
+                                         "current"),
+                            cfg['pbuilder_jobs'],
+                            os.path.join(self.builddir, "pbuilderrc"),
+                            os.path.join(self.builddir, "pbuilder", "result")))
+
+            self.repo.remove(os.path.join(self.builddir,
+                                          "pdebuilder",
+                                          "current",
+                                          "debian",
+                                          "control"))
 
             self.repo.include(os.path.join(self.builddir,
                                            "pbuilder", "result", "*.changes"))
         except CommandError as e:
             self.log.printo('')
             self.log.printo('Package fails to build.')
-            self.log.printo(
-                'Please make sure, that the submitted package builds in pbuilder')
+            self.log.printo('Please make sure, that the submitted package '
+                            'builds in pbuilder')
 
     def update_pbuilder(self):
         self.log.do(
@@ -514,11 +520,10 @@ class ElbeProject (object):
                 "D10elbe_apt_sources"))
 
         # Run pbuilder --create
-        self.log.do(
-            'pbuilder --create --configfile "%s" --aptconfdir "%s" --extrapackages git' %
-            (os.path.join(
-                self.builddir, "pbuilderrc"), os.path.join(
-                self.builddir, "aptconfdir")))
+        self.log.do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
+                    '--extrapackages git' % (
+                        os.path.join(self.builddir, "pbuilderrc"),
+                        os.path.join(self.builddir, "aptconfdir")))
 
     def sync_xml_to_disk(self):
         try:
@@ -548,9 +553,8 @@ class ElbeProject (object):
             if os.path.isfile(elbeversionpath):
                 return True
             else:
-                self.log.printo(
-                    "%s exists, but it does not have an etc/elbe_version file." %
-                    self.chrootpath)
+                self.log.printo("%s exists, but it does not have "
+                                "an etc/elbe_version file." % self.chrootpath)
                 # Apparently we do not have a functional build environment
                 return False
         else:

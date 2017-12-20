@@ -69,8 +69,8 @@ class Kernel (DebianizeBase):
         self.deb['loadaddr'] = self.loadaddr.get_value()
         self.deb['defconfig'] = self.defconfig.get_value()
         self.deb['imgtype'] = self.imgtypes[self.imgtype.get_value()[0]]
-        self.deb['imgtype_install'] = self.imgtypes_install[self.imgtype.get_value()[
-            0]]
+        self.deb['imgtype_install'] = self.imgtypes_install[
+                self.imgtype.get_value()[0]]
         self.deb['cross_compile'] = self.cross.get_value()
         self.deb['k_version'] = self.k_version.get_value()
 
@@ -99,7 +99,8 @@ class Kernel (DebianizeBase):
         copyfile(os.path.join(self.tmpl_dir, 'linux-headers.install'),
                  'debian/linux-headers-' + pkg_name + '.install')
 
-        self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % self.deb['p_arch']
+        self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
+                self.deb['p_arch'])
 
 
 DebianizeBase.register(Kernel)

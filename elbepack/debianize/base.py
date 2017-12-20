@@ -112,8 +112,8 @@ class DebianizeBase (FormMultiPage):
         self.deb['p_arch'] = self.archs[self.p_arch.get_value()[0]]
         self.deb['m_name'] = self.m_name.get_value()
         self.deb['m_mail'] = self.m_mail.get_value()
-        self.deb['source_format'] = self.formats[self.source_format.get_value()[
-            0]]
+        self.deb['source_format'] = self.formats[
+                self.source_format.get_value()[0]]
         self.deb['release'] = self.releases[self.release.get_value()[0]]
 
         os.mkdir('debian')

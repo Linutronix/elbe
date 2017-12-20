@@ -124,13 +124,15 @@ class VirtApt:
         ring_path = self.projectpath + "/etc/apt/trusted.gpg"
         if not os.path.isdir("/etc/apt/trusted.gpg.d"):
             print("/etc/apt/trusted.gpg.d doesn't exist")
-            print("apt-get install debian-archive-keyring may fix this problem")
+            print("apt-get install debian-archive-keyring may "
+                  "fix this problem")
             sys.exit(20)
 
         system('cp /etc/apt/trusted.gpg "%s"' % ring_path)
 
-        gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
-            ring_path, self.projectpath)
+        gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
+                      '--trust-model always --no-default-keyring ' \
+                      '--homedir "%s"' % (ring_path, self.projectpath)
 
         system('gpg %s --import "%s"' % (
             gpg_options,
@@ -149,8 +151,10 @@ class VirtApt:
     def add_pubkey_url(self, url):
         ring_path = self.projectpath + "/etc/apt/trusted.gpg"
         tmpkey_path = self.projectpath + "/tmpkey.gpg"
-        gpg_options = '--keyring "%s" --no-auto-check-trustdb --trust-model always --no-default-keyring --homedir "%s"' % (
-            ring_path, self.projectpath)
+
+        gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
+                      '--trust-model always --no-default-keyring ' \
+                      '--homedir "%s"' % (ring_path, self.projectpath)
 
         try:
             system('wget -O "%s" "%s"' % (tmpkey_path, url))

@@ -24,7 +24,7 @@ import time
 import sys
 import os
 import fnmatch
-import deb822                     # package for dealing with Debian related data
+import deb822   # package for dealing with Debian related data
 
 from suds.client import Client
 from datetime import datetime
@@ -630,9 +630,8 @@ class SetPdebuilderAction(ClientAction):
         size = 1024 * 1024
 
         if len(args) != 2:
-            print(
-                "usage: elbe control set_pdebuild <project_dir> <pdebuild file>",
-                file=sys.stderr)
+            print("usage: elbe control set_pdebuild "
+                  "<project_dir> <pdebuild file>", file=sys.stderr)
             sys.exit(20)
 
         builddir = args[0]
@@ -743,7 +742,8 @@ class DownloadAction(RepoAction):
 
     def execute(self, client, opt, args):
         if len(args) != 1:
-            print("usage: elbe prjrepo download <project_dir>", file=sys.stderr)
+            print("usage: elbe prjrepo download <project_dir>",
+                  file=sys.stderr)
             sys.exit(20)
 
         builddir = args[0]

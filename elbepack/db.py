@@ -154,7 +154,8 @@ class ElbeDB(object):
             dos2unix(builddir + "/postbuild.sh")
 
             return self._update_project_file(
-                s, builddir, "postbuild.sh", "application/sh", "postbuild script")
+                s, builddir,
+                "postbuild.sh", "application/sh", "postbuild script")
 
     def set_savesh(self, builddir, savesh_file):
         if not os.path.exists(builddir):
@@ -188,7 +189,8 @@ class ElbeDB(object):
             dos2unix(builddir + "/save.sh")
 
             return self._update_project_file(
-                s, builddir, "save.sh", "application/sh", "version save script")
+                s, builddir,
+                "save.sh", "application/sh", "version save script")
 
     def set_presh(self, builddir, presh_file):
         if not os.path.exists(builddir):
@@ -254,7 +256,8 @@ class ElbeDB(object):
             dos2unix(builddir + "/post.sh")
 
             return self._update_project_file(
-                s, builddir, "post.sh", "application/sh", "post install script")
+                s, builddir,
+                "post.sh", "application/sh", "post install script")
 
     def set_xml(self, builddir, xml_file):
         # This method can throw: ElbeDBError, ValidationError, OSError
@@ -804,7 +807,8 @@ class ElbeDB(object):
                 images = set(ep.targetfs.images or [])
                 for img in images:
                     self._update_project_file(
-                        s, p.builddir, img, "application/octet-stream", "Image")
+                        s, p.builddir, img,
+                        "application/octet-stream", "Image")
 
             # Add other generated files
             self._update_project_file(

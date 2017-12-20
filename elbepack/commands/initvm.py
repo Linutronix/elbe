@@ -74,7 +74,8 @@ def run_command(argv):
         dest="nesting",
         action="store_true",
         default=False,
-        help="allow initvm to support nested kvm. This makes /proc/cpuinfo inside initvm differ per host.")
+        help="allow initvm to support nested kvm. "
+             "This makes /proc/cpuinfo inside initvm differ per host.")
 
     (opt, args) = oparser.parse_args(argv)
 

@@ -102,8 +102,8 @@ def run_command(argv):
         sys.exit(20)
 
     if opt.skip_cdrom:
-        print(
-            "WARNING: Skip CDROMS is now the default, use --build-bin to build binary CDROM")
+        print("WARNING: Skip CDROMS is now the default, "
+              "use --build-bin to build binary CDROM")
 
     try:
         project = ElbeProject(opt.target, args[0], opt.output, opt.name,

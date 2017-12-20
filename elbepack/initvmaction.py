@@ -44,7 +44,8 @@ def cmd_exists(x): return any(os.access(os.path.join(path, x), os.X_OK)
 
 def ensure_outdir(wdfs, opt):
     if opt.outdir is None:
-        opt.outdir = "elbe-build-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        opt.outdir = "elbe-build-%s" % (
+                datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     print("Saving generated Files to %s" % opt.outdir)
 
@@ -106,8 +107,9 @@ class StartAction(InitVMAction):
         elif self.initvm_state() == 5:
             # Domain is shut off. Let's start it!
             self.initvm.create()
-            # TODO: Instead of waiting for five seconds check whether SOAP server is reachable
             # Wait five seconds for the initvm to boot
+            # TODO: Instead of waiting for five seconds
+            # check whether SOAP server is reachable.
             for i in range(1, 5):
                 sys.stdout.write("*")
                 sys.stdout.flush()
@@ -195,7 +197,7 @@ class StartBuildAction(InitVMAction):
             have_session = os.system(
                 "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1")
         except CommandError as e:
-            print("tmux execution failed, tmux version 1.9 or higher is required")
+            print("tmux exec failed, tmux version 1.9 or higher is required")
             sys.exit(20)
         if have_session != 256:
             print("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
@@ -204,9 +206,8 @@ class StartBuildAction(InitVMAction):
                 file=sys.stderr)
             sys.exit(20)
 
-        system(
-            'TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm "cd \"%s\"; make"' %
-            initvmdir)
+        system('TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm '
+               '"cd \"%s\"; make"' % initvmdir)
 
 
 InitVMAction.register(StartBuildAction)
@@ -222,14 +223,16 @@ class CreateAction(InitVMAction):
     def execute(self, initvmdir, opt, args):
         if self.initvm is not None:
             print("Initvm already defined.\n")
-            print(
-                "If you want to build in your old initvm, use `elbe initvm submit <xml>`.")
-            print(
-                "If you want to remove your old initvm from libvirt run `virsh undefine initvm`.\n")
+            print("If you want to build in your old initvm, "
+                  "use `elbe initvm submit <xml>`.")
+            print("If you want to remove your old initvm from libvirt "
+                  "run `virsh undefine initvm`.\n")
             print("Note:")
-            print("\t1) You can reimport your old initvm via `virsh define <file>`")
+            print("\t1) You can reimport your old initvm via "
+                  "`virsh define <file>`")
             print("\t   where <file> is the corresponding libvirt.xml")
-            print("\t2) virsh undefine does not delete the image of your old initvm.")
+            print("\t2) virsh undefine does not delete the image "
+                  "of your old initvm.")
             sys.exit(20)
 
         # Init cdrom to None, if we detect it, we set it
@@ -373,8 +376,8 @@ class CreateAction(InitVMAction):
                     print("XML file is inavlid: %s" % str(e))
                     sys.exit(20)
                 if not x.has('project'):
-                    print(
-                        "elbe initvm ready: use 'elbe initvm submit myproject.xml' to build a project")
+                    print("elbe initvm ready: use 'elbe initvm submit "
+                          "myproject.xml' to build a project")
                     sys.exit(0)
 
                 ret, prjdir, err = command_out_stderr(

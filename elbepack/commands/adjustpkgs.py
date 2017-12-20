@@ -52,9 +52,12 @@ class adjpkg(object):
             for p in cache:
                 if not p.is_installed:
                     continue
-                if p.essential or p.is_auto_installed or (
-                        p.name in pkglist) or p.installed.priority == "important" or p.installed.priority == "required":
-                    continue
+                if p.essential or \
+                   p.is_auto_installed or \
+                   p.name in pkglist or \
+                   p.installed.priority == "important" or \
+                   p.installed.priority == "required":
+                        continue
                 print("MARK REMOVE %s" % p.name)
                 p.mark_delete(auto_fix=False, purge=True)
 
