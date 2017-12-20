@@ -226,7 +226,6 @@ def elbe_report(xml, buildenv, cache, reportname, targetfs):
     mt_index = targetfs.mtime_snap()
     if xml.has("target/finetuning"):
         do_finetuning(xml, outf, buildenv, targetfs)
-        #outf.print_raw( do_command( opt.finetuning ) )
         mt_index_post_fine = targetfs.mtime_snap()
     else:
         mt_index_post_fine = mt_index

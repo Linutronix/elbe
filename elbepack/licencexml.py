@@ -108,7 +108,6 @@ class copyright_xml (object):
             pass
 
         bytesio.seek(0)
-        #textio = io.TextIOWrapper (bytesio, encoding='iso-8859-1')
 
         c = do_heuristics(bytesio)
 

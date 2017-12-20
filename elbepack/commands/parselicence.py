@@ -256,9 +256,6 @@ def run_command(argv):
         with io.open(opt.tagvalue, "wt", encoding='utf-8') as fp:
             fp.write(u'SPDXVersion: SPDX-1.2\n')
             fp.write(u'DataLicense: CC0-1.0\n')
-            #fp.write (u'SPDXID: SPDXRef-DOCUMENT\n')
-            #fp.write (u'DocumentName: %s\n' % opt.tagvalue)
-            #fp.write (u'DocumentNamespace: %s\n' % some_uri_with_uuid )
             fp.write(u'\n')
             fp.write(u'## Creation Information\n')
             fp.write(u'Creator: Tool: elbe-%s\n' % elbe_version)
@@ -272,7 +269,6 @@ def run_command(argv):
                 fp.write(u'## Package %s\n' % pkg.et.attrib['name'])
                 fp.write(u'PackageName: %s\n' % pkg.et.attrib['name'])
                 fp.write(u'PackageDownloadLocation: NOASSERTION\n')
-                #fp.write (u'PackageVerificationCode: %s\n')
                 if pkg.has('have_override'):
                     fp.write(
                         u'PackageLicenseConcluded: %s\n' %
