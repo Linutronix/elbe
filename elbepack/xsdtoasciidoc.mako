@@ -1,3 +1,8 @@
+## ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2013, 2017 Manuel Traut <manut@linutronix.de>
+##
+## SPDX-License-Identifier: GPL-3.0-or-later
+
 <%
 import string
 ELEM = "{http://www.w3.org/2001/XMLSchema}element"

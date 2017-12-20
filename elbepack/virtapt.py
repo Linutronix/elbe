@@ -1,20 +1,10 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (C) 2013  Linutronix GmbH
+# Copyright (c) 2013-2018 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2014-2015, 2018 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2018 John Ogness <john.ogness@linutronix.de>
+# Copyright (c) 2018 Oliver Brandt <oliver.brandt@lenze.com>
 #
-# This file is part of ELBE.
-#
-# ELBE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# ELBE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with ELBE.  If not, see <http://www.gnu.org/licenses/>.
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import print_function
 

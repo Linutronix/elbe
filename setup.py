@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+#
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2013, 2017-2018 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2014 Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import subprocess
 import os

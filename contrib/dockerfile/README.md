@@ -1,6 +1,3 @@
-
-# Dockerfile for elbe
-
 [elbe][elb] is a debian based system to generate root-filesystems for embedded
 devices.
 

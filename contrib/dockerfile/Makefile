@@ -1,4 +1,3 @@
-
 IMAGENAME ?= elbe-image
 CONTAINERNAME ?= elbe
 

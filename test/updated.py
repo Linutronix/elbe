@@ -1,4 +1,10 @@
 #!/usr/bin/env python2
+#
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2014, 2017 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2017 Kurt Kanzenbach <kurt@linutronix.de>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import print_function
 

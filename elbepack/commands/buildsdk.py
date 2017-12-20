@@ -1,7 +1,7 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (C) 2015  Linutronix GmbH
+# Copyright (c) 2017-2018 Manuel Traut <manut@linutronix.de>
 #
-# SPDX-License-Identifier: GPL-3.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import print_function
 
