@@ -541,18 +541,18 @@ class ProjectManager(object):
             if part is None:
                 return self.db.is_busy(ep.builddir), ""
 
-            l = None
+            logline = None
             with open(os.path.join(ep.builddir, 'log.txt'), 'r', 0) as lf:
-                for l in lf:
+                for logline in lf:
                     if count == part:
-                        l = str(part + 1) + '###' + str(l)
-                        return self.db.is_busy(ep.builddir), str(l)
+                        logline = str(part + 1) + '###' + str(logline)
+                        return self.db.is_busy(ep.builddir), str(logline)
                     count = count + 1
             # don't crash if logfile doesn't exist
-            if not l:
-                l = None
-            l = str(part) + '###' + str(l)
-            return self.db.is_busy(ep.builddir), l
+            if not logline:
+                logline = None
+            logline = str(part) + '###' + str(logline)
+            return self.db.is_busy(ep.builddir), logline
 
     def _get_current_project(self, userid, allow_busy=True):
         # Must be called with self.lock held

@@ -193,16 +193,16 @@ class ElbeXML(object):
         sources_lines = slist.split('\n')
 
         repos = []
-        for l in sources_lines:
-            l = re.sub(r'\[.*\] ', '', l)
-            if l.startswith("deb copy:"):
+        for line in sources_lines:
+            line = re.sub(r'\[.*\] ', '', line)
+            if line.startswith("deb copy:"):
                 # This is a cdrom, we dont verify it
                 pass
-            elif l.startswith("deb-src copy:"):
+            elif line.startswith("deb-src copy:"):
                 # This is a cdrom, we dont verify it
                 pass
-            elif l.startswith("deb ") or l.startswith("deb-src "):
-                lsplit = l.split(" ")
+            elif line.startswith("deb ") or line.startswith("deb-src "):
+                lsplit = line.split(" ")
                 url = lsplit[1]
                 suite = lsplit[2]
                 section = lsplit[3]

@@ -116,8 +116,8 @@ class copyright_xml (object):
             xmlpkg.append('heuristics')
             xmllic = xmlpkg.append('debian_licenses')
             for i in lics:
-                l = xmllic.append('license')
-                l.et.text = i
+                ltag = xmllic.append('license')
+                ltag.et.text = i
 
             return
 

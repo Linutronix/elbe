@@ -203,10 +203,10 @@ class BuildEnv ():
         if self.xml.has('project/mirror/url-list'):
             for url in self.xml.node('project/mirror/url-list'):
                 if url.has('key'):
-                    l = url.text('key').strip()    # URL to key
-                    name = l.split('/')[-1]        # Filename of key
+                    keyurl = url.text('key').strip()    # URL to key
+                    name = keyurl.split('/')[-1]        # Filename of key
 
-                    myKey = urllib2.urlopen(l).read()
+                    myKey = urllib2.urlopen(keyurl).read()
                     self.log.do(
                         'echo "%s" > %s' %
                         (myKey, self.rfs.fname("tmp/key.pub")))
