@@ -136,9 +136,8 @@ apt-mirror-setup apt-setup/use_mirror boolean false
         return pkgname + '/' + pkgrel
 %>
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string rng-tools btrfs-tools openssh-client \
-debathena-transform-lighttpd \
-elbe-soap python-elbe-buildenv qemu-elbe-user-static \
+d-i pkgsel/include string rng-tools btrfs-tools openssh-client\
+ debathena-transform-lighttpd elbe-soap python-elbe-buildenv\
 % for n in pkgs:
 % if n.tag == "pkg":
  ${pkg2preseed (n)}\
