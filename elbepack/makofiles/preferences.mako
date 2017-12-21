@@ -39,7 +39,7 @@ Pin-Priority: ${porg['pin']}
 % for n in pkgs:
 %  if "pin" in n.et.attrib.keys():
 Package: ${n.et.text}
-Pin: release a=${n.et.attrib["pin"]}
+Pin: release n=${n.et.attrib["pin"]}
 Pin-Priority: 991
 
 %  endif
