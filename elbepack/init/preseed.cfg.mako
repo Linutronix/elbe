@@ -102,17 +102,46 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 %  endif
 % endif
 
+<%
+    def pkg2preseed (n):
+        # we have a set of old elbe files, which have pkgnames like:
+        #      pkgname/jessie-backports
+        # be backwards compatible and support them
+        pkgsplit = n.et.text.split ('/')
+
+        pkgname = pkgsplit[0]
+
+        if len (pkgsplit) > 1:
+            pkgrel = pkgsplit[1]
+        else:
+            pkgrel = None
+
+        # pkg pin attrib overrides /
+        if 'pin' in n.et.attrib:
+            pkgrel =  n.et.attrib['pin']
+
+        # pkg attrib version wins over all and it can also be
+        # used with cdrom build
+        if 'version' in n.et.attrib:
+            return pkgname + '=' + n.et.attrib['version']
+
+        # for a cdrom build, the pkgrel is reset to None because the
+        # cdrom does not have the release information anymore
+        if not prj.has("mirror/primary_host") and prj.node("mirror/cdrom"):
+            pkgrel = None
+
+        if pkgrel is None:
+            return pkgname
+
+        return pkgname + '/' + pkgrel
+%>
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools btrfs-tools openssh-client \
 debathena-transform-lighttpd \
 elbe-soap python-elbe-buildenv qemu-elbe-user-static \
 % for n in pkgs:
 % if n.tag == "pkg":
-%   if prj.has("mirror/primary_host") or not prj.node("mirror/cdrom") or n.et.text.find('/') == -1:
-${n.et.text} \
-%   else:
-${n.et.text[:n.et.text.find('/')]} \
-%   endif
+ ${pkg2preseed (n)}\
 % endif
 % endfor
 
