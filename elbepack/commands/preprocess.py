@@ -29,6 +29,9 @@ def run_command(argv):
     oparser.add_option("-o", "--output", dest="output",
                        default="preprocess.xml",
                        help="preprocessed output file", metavar="<xmlfile>")
+    oparser.add_option("-v", "--variants", dest="variant",
+                       default=None,
+                       help="enable only tags with empty or given variant")
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
@@ -40,8 +43,12 @@ def run_command(argv):
         print("%s doesn't exist" % args[0], file=sys.stderr)
         sys.exit(20)
 
+    variants = []
+    if opt.variant:
+        variants = opt.variant.split(',')
+
     try:
-        xmlpreprocess(args[0], opt.output)
+        xmlpreprocess(args[0], opt.output, variants)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(20)
