@@ -1,1 +1,2 @@
-./usr/include/*
+./lib/modules/*/build
+./usr/src/*
