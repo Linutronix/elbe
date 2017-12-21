@@ -54,9 +54,9 @@ def run_command(argv):
         print("Error reading xml file!")
         sys.exit(20)
 
-    if xml.has("archive"):
+    if xml.has("archive") and not xml.text("archive") is None:
         try:
-            unbase(xml.text("/archive"), args[1])
+            unbase(xml.text("archive"), args[1])
         except BaseException:
             print("Error writing archive")
             sys.exit(20)

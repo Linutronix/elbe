@@ -212,7 +212,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
 
     outf.h2("archive extract")
 
-    if xml.has("archive"):
+    if xml.has("archive") and not xml.text("archive") is None:
         with xml.archive_tmpfile() as fp:
             outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
         mt_index_postarch = targetfs.mtime_snap()
@@ -300,7 +300,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
     if xml.has("target/pkgversionlist"):
         f.close()
 
-    if not xml.has("archive"):
+    if not xml.has("archive") or xml.text("archive") is None:
         return
 
     elog = ASCIIDocLog(errorname)
