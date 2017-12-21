@@ -298,9 +298,10 @@ class ElbeProject (object):
         extract_target(self.buildenv.rfs, self.xml, self.targetfs,
                        self.log, self.get_rpcaptcache())
 
+        validationpath = os.path.join(self.builddir, "validation.txt")
+
         # Package validation and package list
         if not skip_pkglist:
-            validationpath = os.path.join(self.builddir, "validation.txt")
             pkgs = self.xml.xml.node("/target/pkg-list")
             if self.xml.has("fullpkgs"):
                 check_full_pkgs(pkgs, self.xml.xml.node("/fullpkgs"),
@@ -334,7 +335,7 @@ class ElbeProject (object):
         # Elbe report
         reportpath = os.path.join(self.builddir, "elbe-report.txt")
         elbe_report(self.xml, self.buildenv, self.get_rpcaptcache(),
-                    reportpath, self.targetfs)
+                    reportpath, validationpath, self.targetfs)
 
         # the current license code raises an exception that interrupts the hole
         # build if a licence can't be converted to utf-8. Exception handling

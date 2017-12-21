@@ -172,7 +172,7 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
         elog.printo("No Errors found")
 
 
-def elbe_report(xml, buildenv, cache, reportname, targetfs):
+def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
     outf = ASCIIDocLog(reportname)
     rfs = buildenv.rfs
 
@@ -207,39 +207,28 @@ def elbe_report(xml, buildenv, cache, reportname, targetfs):
         outf.printo("|%s|%s|%s" % (p.name, p.installed_version, p.origin))
     outf.table()
 
-    # archive extraction is done before and after finetuning the first
-    # extraction is needed that the files can be used (copied/moved to the
-    # buildenv in finetuning
-    # the second extraction is done to ensure that files from the archive
-    # can't be modified/removed in finetuning
+    index = cache.get_fileindex()
+    mt_index = targetfs.mtime_snap()
 
-    outf.h2("archive extract before finetuning")
+    outf.h2("archive extract")
 
     if xml.has("archive"):
         with xml.archive_tmpfile() as fp:
             outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
+        mt_index_postarch = targetfs.mtime_snap()
+    else:
+        mt_index_postarch = mt_index
 
     outf.h2("finetuning log")
     outf.verbatim_start()
 
-    index = cache.get_fileindex()
-    mt_index = targetfs.mtime_snap()
     if xml.has("target/finetuning"):
         do_finetuning(xml, outf, buildenv, targetfs)
         mt_index_post_fine = targetfs.mtime_snap()
     else:
-        mt_index_post_fine = mt_index
+        mt_index_post_fine = mt_index_postarch
 
     outf.verbatim_end()
-
-    outf.h2("archive extract after finetuning")
-
-    if xml.has("archive"):
-        with xml.archive_tmpfile() as fp:
-            outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
-        mt_index_post_arch = targetfs.mtime_snap()
-    else:
-        mt_index_post_arch = mt_index_post_fine
 
     outf.h2("fileslist")
     outf.table()
@@ -253,16 +242,19 @@ def elbe_report(xml, buildenv, cache, reportname, targetfs):
         else:
             pkg = "postinst generated"
 
-        if fpath in mt_index_post_fine and fpath in mt_index:
-            if mt_index_post_fine[fpath] > mt_index[fpath]:
-                pkg = "modified finetuning"
         if fpath in mt_index_post_fine:
-            if mt_index_post_arch[fpath] > mt_index_post_fine[fpath]:
-                pkg = "from archive"
-            elif fpath not in mt_index:
+            if fpath in mt_index_postarch:
+                if mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
+                    pkg = "modified finetuning"
+                elif fpath in mt_index:
+                    if mt_index_postarch[fpath] != mt_index[fpath]:
+                        pkg = "from archive"
+                    # else leave pkg as is
+                else:
+                    pkg = "added in archive"
+            else:
                 pkg = "added in finetuning"
-        else:
-            pkg = "added in archive"
+        # else leave pkg as is
 
         outf.printo("|+%s+|%s" % (fpath, pkg))
 
@@ -271,7 +263,7 @@ def elbe_report(xml, buildenv, cache, reportname, targetfs):
     outf.h2("Deleted Files")
     outf.table()
     for fpath in list(mt_index.keys()):
-        if fpath not in mt_index_post_arch:
+        if fpath not in mt_index_post_fine:
             if fpath in index:
                 pkg = index[fpath]
             else:
@@ -307,3 +299,29 @@ def elbe_report(xml, buildenv, cache, reportname, targetfs):
 
     if xml.has("target/pkgversionlist"):
         f.close()
+
+    if not xml.has("archive"):
+        return
+
+    elog = ASCIIDocLog(errorname)
+
+    elog.h2("Archive validation")
+
+    errors = 0
+
+    for fpath in list(mt_index_postarch.keys()):
+        if fpath not in mt_index or \
+                mt_index_postarch[fpath] != mt_index[fpath]:
+                    if fpath not in mt_index_post_fine:
+                        elog.printo(
+                                "- archive file %s deleted in finetuning" %
+                                fpath)
+                        errors += 1
+                    elif mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
+                        elog.printo(
+                                "- archive file %s modified in finetuning" %
+                                fpath)
+                        errors += 1
+
+    if errors == 0:
+        elog.printo("No Errors found")
