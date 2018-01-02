@@ -134,13 +134,17 @@ def get_uri_nonvirtapt(apt_sources, target_pkg, arch):
 
 
 def get_initrd_uri(prj, defs, arch):
+    target_pkg = get_initrd_pkg(prj, defs)
+    return get_uri(prj, defs, arch, target_pkg)
+
+
+def get_uri(prj, defs, arch, target_pkg):
     if arch == "default":
         arch = prj.text("buildimage/arch", default=defs, key="arch")
     suite = prj.text("suite")
 
     apt_sources = get_sources_list(prj, defs)
     apt_keys = get_key_list(prj)
-    target_pkg = get_initrd_pkg(prj, defs)
 
     if virtapt_imported:
         try:
