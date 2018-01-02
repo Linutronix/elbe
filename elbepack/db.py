@@ -21,6 +21,7 @@ from __future__ import print_function
 import os
 import errno
 import re
+import glob
 
 from datetime import datetime
 from shutil import (rmtree, copyfile, copyfileobj)
@@ -839,6 +840,18 @@ class ElbeDB(object):
                                       "application/x-xz-compressed-tar",
                                       "sysroot for cross-toolchains")
 
+            sdk = glob.glob(os.path.join(p.builddir, "setup-elbe-sdk-*.sh"))
+            try:
+                # throws index error if no  setup-elbe-sdk-* file exists
+                # that's ok because it might not yet been built
+                sdkname = sdk[0].split('/')[-1]
+
+                self._update_project_file(s, p.builddir, sdkname,
+                                        "application/x-shellscript",
+                                        "SDK Installer")
+            except IndexError:
+                pass
+
             self._update_project_file(s, p.builddir, "chroot.tar.xz",
                                       "application/x-xz-compressed-tar",
                                       "chroot for 'native' development")
@@ -855,7 +868,7 @@ class ElbeDB(object):
             if os.path.isdir(pbresult_path):
                 for f in os.listdir(pbresult_path):
                     pfile = os.path.join("pbuilder", "result", f)
-                    self._update_project_file(s, p.builddir, pfile
+                    self._update_project_file(s, p.builddir, pfile,
                                               "application/octet-stream",
                                               "Pbuilder artifact")
 

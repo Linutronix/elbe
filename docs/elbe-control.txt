@@ -15,6 +15,7 @@ SYNOPSIS
 'elbe control' [options] 'set_pdebuild' <project-dir> <pdebuild file>
 'elbe control' [options] 'get_files' <build-dir>
 'elbe control' [options] 'build_chroot_tarball' <build-dir>
+'elbe control' [options] 'build_sdk' <build-dir>
 'elbe control' [options] 'set_orig' <build-dir>
 'elbe control' [options] 'set_cdrom' <build-dir> <iso-img>
 'elbe control' [options] 'reset_project' <build-dir>
@@ -123,6 +124,11 @@ Note that you have to put the wildcard expression in quotation marks.
 'build_chroot_tarball' <build-dir>::
 
 Creates a tarball of the chroot environment in <build_dir>.
+
+
+'build_sdk' <build-dir>::
+
+Creates a yocto-style SDK.
 
 
 'set_orig' <build-dir> <orig-file>::

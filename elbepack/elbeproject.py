@@ -42,6 +42,8 @@ from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
 
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
+from elbepack.pkgutils import extract_pkg
+from elbepack.templates import template, write_pack_template
 
 
 class IncompatibleArchitectureException(Exception):
@@ -60,6 +62,50 @@ class AptCacheUpdateError(Exception):
 class AptCacheCommitError(Exception):
     def __init__(self, msg=''):
         Exception.__init__(self, "Error Committing rpcaptcache %s" % msg)
+
+
+class UnsupportedSDKException(Exception):
+    def __init__(self, triplet):
+        Exception.__init__(self, "SDK for %s currently unsupported" % triplet)
+
+
+def test_gen_sdk_scripts():
+    os.system("mkdir -p /tmp/test/sdk")
+    gen_sdk_scripts('armhf-linux-gnueabihf',
+                    'testproject',
+                    '08.15',
+                    '/tmp/test',
+                    '/tmp/test/sdk')
+
+
+def gen_sdk_scripts(triplet, prj_name, prj_version, builddir, sdkpath):
+
+    prj_name = prj_name.replace(" ", "_")
+    prj_version = prj_version.replace(" ", "_")
+
+    # generate the setup script
+    sdkvalues = { 'sdk_arch': 'x86_64',
+                  'sdk_gcc_ver': '',
+                  'sdk_path': '/opt/elbe-sdk-%s-%s-%s' % (triplet,
+                                                          prj_name,
+                                                          prj_version),
+                  'sdk_ext_path': '~/elbe-sdk',
+                  'real_multimach_target_sys': triplet,
+                  'sdk_title': 'ELBE %s' % prj_name,
+                  'sdk_version': prj_version,
+                }
+    sdkname = 'setup-elbe-sdk-%s-%s-%s.sh' % (triplet, prj_name, prj_version)
+    write_pack_template(os.path.join(builddir, sdkname),
+                        'toolchain-shar-extract.sh.mako',
+                        sdkvalues)
+    envname = 'environment-setup-elbe-%s-%s-%s' % (triplet,
+                                                   prj_name,
+                                                   prj_version)
+    write_pack_template(os.path.join(sdkpath, envname),
+                        'environment-setup-elbe.mako',
+                        sdkvalues)
+
+    return sdkname
 
 
 class ElbeProject (object):
@@ -81,6 +127,7 @@ class ElbeProject (object):
         self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
+        self.sdkpath = os.path.join(self.builddir, "sdk")
 
         self.name = name
         self.override_buildtype = override_buildtype
@@ -123,6 +170,9 @@ class ElbeProject (object):
         self.arch = self.xml.text("project/arch", key="arch")
         self.codename = self.xml.text("project/suite")
 
+        if not self.name:
+            self.name = self.xml.text("project/name")
+
         # If logpath is given, use an AsciiDocLog instance, otherwise log
         # to stdout
         if logpath:
@@ -142,7 +192,7 @@ class ElbeProject (object):
             self.buildenv = None
 
         # Create TargetFs instance, if the target directory exists
-        if os.path.exists(self.targetpath):
+        if os.path.exists(self.targetpath) and self.buildenv:
             self.targetfs = TargetFs(self.targetpath, self.log,
                                      self.buildenv.xml, clean=False)
         else:
@@ -180,6 +230,9 @@ class ElbeProject (object):
 
     def build_sysroot(self):
 
+        if not self.buildenv:
+            self.build()
+
         # ignore packages from debootstrap
         ignore_pkgs = [p.et.text for p in self.xml.node("debootstrappkgs")]
         ignore_dev_pkgs = []
@@ -213,7 +266,6 @@ class ElbeProject (object):
         paths = self.get_sysroot_paths()
 
         self.log.do("rm %s" % sysrootfilelist, allow_fail=True)
-
         os.chdir(self.chrootpath)
         for p in paths:
             self.log.do('find -path "%s" >> %s' % (p, sysrootfilelist))
@@ -227,6 +279,44 @@ class ElbeProject (object):
         # We only remove /etc/elbe_version here.
         # So we can still elbe chroot into the fs
         self.buildenv.rfs.remove("/etc/elbe_version", noerr=True)
+
+    def build_sdk(self):
+        triplet = self.xml.defs["triplet"]
+
+        try:
+            crosstoolchainpkg = "gcc-%s" % self.xml.defs["sdkarch"]
+        except KeyError:
+            raise UnsupportedSDKException(triplet)
+
+        # build target sysroot including libs and headers for the target
+        self.build_sysroot()
+        sdktargetpath = os.path.join(self.sdkpath, "sysroots", "target")
+        self.log.do("mkdir -p %s" % sdktargetpath)
+        self.log.do("tar xJf %s/sysroot.tar.xz -C %s" % (self.builddir,
+                                                          sdktargetpath))
+        # build host sysroot including cross compiler
+        hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
+        self.log.do('mkdir -p "%s"' % hostsysrootpath)
+        extract_pkg(self.xml.prj,
+                    hostsysrootpath,
+                    self.xml.defs,
+                    crosstoolchainpkg,
+                    'amd64',
+                    True)
+
+        n = gen_sdk_scripts(triplet,
+                            self.name,
+                            self.xml.text("project/version"),
+                            self.builddir,
+                            self.sdkpath)
+
+        # create sdk tar and append it to setup script
+        self.log.do("cd %s; tar cJf ../sdk.txz ." % self.sdkpath)
+        self.log.do("cd %s; rm -rf sdk" % self.builddir)
+        self.log.do("cd %s; cat sdk.txz >> %s" % (self.builddir, n))
+        self.log.do("cd %s; chmod +x %s" % (self.builddir, n))
+        self.log.do("cd %s; rm sdk.txz" % self.builddir)
+
 
     def pbuild(self, p):
         self.pdebuild_init()

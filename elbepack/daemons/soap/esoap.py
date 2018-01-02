@@ -149,6 +149,13 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_sysroot(uid)
 
+    @rpc(String)
+    @authenticated_uid
+    @soap_faults
+    def build_sdk(self, uid, builddir):
+        self.app.pm.open_project(uid, builddir)
+        self.app.pm.build_sdk(uid)
+
     @rpc(String, Boolean, Boolean, Boolean)
     @authenticated_uid
     @soap_faults

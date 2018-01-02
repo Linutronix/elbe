@@ -26,13 +26,15 @@ from uuid import uuid4
 from shutil import rmtree
 
 from elbepack.db import ElbeDB, get_versioned_filename
-from elbepack.asyncworker import AsyncWorker, BuildJob, APTUpdateJob
-from elbepack.asyncworker import APTCommitJob, GenUpdateJob
-from elbepack.asyncworker import SaveVersionJob, CheckoutVersionJob
-from elbepack.asyncworker import APTUpdUpgrJob, BuildSysrootJob
-from elbepack.asyncworker import (PdebuildJob, CreatePbuilderJob,
-                                  UpdatePbuilderJob)
-from elbepack.asyncworker import BuildChrootTarJob
+
+from elbepack.asyncworker import (AsyncWorker, BuildJob, APTUpdateJob,
+                                  APTCommitJob, GenUpdateJob,
+                                  SaveVersionJob, CheckoutVersionJob,
+                                  APTUpdUpgrJob, BuildSysrootJob,
+                                  PdebuildJob, CreatePbuilderJob,
+                                  UpdatePbuilderJob, BuildChrootTarJob,
+                                  BuildSDKJob)
+
 from elbepack.elbexml import ValidationMode
 
 
@@ -357,6 +359,11 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildSysrootJob(ep))
+
+    def build_sdk(self, userid):
+        with self.lock:
+            ep = self._get_current_project(userid, allow_busy=False)
+            self.worker.enqueue(BuildSDKJob(ep))
 
     def build_update_package(self, userid, base_version):
         with self.lock:

@@ -347,6 +347,27 @@ class BuildSysrootAction(ClientAction):
 ClientAction.register(BuildSysrootAction)
 
 
+class BuildSDKAction(ClientAction):
+
+    tag = 'build_sdk'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len(args) != 1:
+            print(
+                "usage: elbe control build-sdk <project_dir>",
+                file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.build_sdk(builddir)
+
+
+ClientAction.register(BuildSDKAction)
+
+
 class GetFileAction(ClientAction):
 
     tag = 'get_file'

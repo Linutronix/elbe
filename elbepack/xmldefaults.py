@@ -54,7 +54,8 @@ armhf_defaults = {
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb -cpu cortex-a9",
     "nicmodel": "smc91c111",
-    "triplet": "arm-linux-gnueabihf"
+    "triplet": "arm-linux-gnueabihf",
+    "sdkarch": "arm-linux-gnueabihf"
 }
 
 armhf_linaro48_defaults = {

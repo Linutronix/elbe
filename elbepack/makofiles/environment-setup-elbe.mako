@@ -49,11 +49,11 @@ if [ ! -z "$LD_LIBRARY_PATH" ]; then
     echo "  http://xahlee.info/UnixResource_dir/_/ldpath.html"
     return 1
 fi
-export SDKTARGETSYSROOT=/opt/elbe-sdk/sysroots/target
-export PATH=/opt/elbe-sdk/sysroots/host/usr/bin:/opt/elbe-sdk/sysroots/host/usr/sbin:/opt/elbe-sdk/sysroots/host/bin:/opt/elbe-sdk/sysroots/host/sbin:$PATH
+export SDKTARGETSYSROOT="${sdk_path}/sysroots/target"
+export PATH="${sdk_path}/sysroots/host/usr/bin:${sdk_path}/sysroots/host/usr/sbin:${sdk_path}/sysroots/host/bin:${sdk_path}/sysroots/host/sbin:$PATH"
 export PKG_CONFIG_SYSROOT_DIR=$SDKTARGETSYSROOT
 export PKG_CONFIG_PATH=$SDKTARGETSYSROOT/usr/lib/${real_multimach_target_sys}/pkgconfig
-export OECORE_NATIVE_SYSROOT="/opt/elbe-sdk/sysroots/host"
+export OECORE_NATIVE_SYSROOT="${sdk_path}/sysroots/host"
 export OECORE_TARGET_SYSROOT="$SDKTARGETSYSROOT"
 export CC="${real_multimach_target_sys}-gcc --sysroot=$SDKTARGETSYSROOT"
 export CXX="${real_multimach_target_sys}-g++ --sysroot=$SDKTARGETSYSROOT"
