@@ -120,7 +120,7 @@ def get_url(arch, suite, target_pkg, mirror, comp='main'):
     return url
 
 
-def get_initrd_uri_nonvirtapt(apt_sources, target_pkg, arch):
+def get_uri_nonvirtapt(apt_sources, target_pkg, arch):
     for apts in apt_sources.splitlines():
         apts_split = apts.strip().split(' ')
         if apts_split[0] != 'deb':
@@ -146,7 +146,7 @@ def get_initrd_uri(prj, defs, arch):
         try:
             v = virtapt.VirtApt(arch, suite, apt_sources, "", apt_keys)
         except Exception as e:
-            return get_initrd_uri_nonvirtapt(apt_sources, target_pkg, arch)
+            return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
         d = virtapt.apt_pkg.DepCache(v.cache)
         pkg = v.cache[target_pkg]
@@ -168,7 +168,7 @@ def get_initrd_uri(prj, defs, arch):
             hashval = r.hashes.find('SHA256')
             return hashval, uri
     else:
-        return get_initrd_uri_nonvirtapt(apt_sources, target_pkg, arch)
+        return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
     return "", ""
 
