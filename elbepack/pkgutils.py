@@ -132,13 +132,35 @@ def get_uri_nonvirtapt(apt_sources, target_pkg, arch):
             if pkg:
                 return "", pkg
 
+def getdeps(pkg):
+    for dd in pkg.depends_list.get("Depends", []):
+        for d in dd:
+            yield d.target_pkg.name
 
-def get_initrd_uri(prj, defs, arch):
-    target_pkg = get_initrd_pkg(prj, defs)
-    return get_uri(prj, defs, arch, target_pkg)
+def lookup_uri(v, d, target_pkg):
 
+    pkg = v.cache[target_pkg]
 
-def get_uri(prj, defs, arch, target_pkg):
+    c = d.get_candidate_ver(pkg)
+
+    x = v.source.find_index(c.file_list[0][0])
+
+    r = virtapt.apt_pkg.PackageRecords(v.cache)
+    r.lookup(c.file_list[0])
+    uri = x.archive_uri(r.filename)
+
+    if not x.is_trusted:
+        return target_pkg, uri, ""
+
+    # TODO remove r.sha256_hash path as soon as initvm is stretch or later
+    try:
+        hashval = r.sha256_hash
+    except DeprecationWarning:
+        hashval = str(r.hashes.find('SHA256')).split(':')[1]
+
+    return target_pkg, uri, hashval
+
+def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
     if arch == "default":
         arch = prj.text("buildimage/arch", default=defs, key="arch")
     suite = prj.text("suite")
@@ -153,24 +175,27 @@ def get_uri(prj, defs, arch, target_pkg):
             return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
         d = virtapt.apt_pkg.DepCache(v.cache)
-        pkg = v.cache[target_pkg]
 
-        c = d.get_candidate_ver(pkg)
-        x = v.source.find_index(c.file_list[0][0])
+        if not incl_deps:
+            return [lookup_uri(v, d, target_pkg)]
 
-        r = virtapt.apt_pkg.PackageRecords(v.cache)
-        r.lookup(c.file_list[0])
-        uri = x.archive_uri(r.filename)
+        if incl_deps:
+            deps = [lookup_uri(v, d, target_pkg)]
+            togo = [target_pkg]
+            while len(togo):
+                pp = togo.pop()
+                pkg= v.cache[pp]
+                c = d.get_candidate_ver(pkg)
+                for p in getdeps(c):
+                    if len([y for y in deps if y[0] == p]):
+                        continue
+                    if p != target_pkg and p == pp:
+                        continue
+                    deps.append(lookup_uri(v, d, p))
+                    togo.append(p)
 
-        if not x.is_trusted:
-            return "", uri
+            return deps
 
-        # TODO remove r.sha256_hash path as soon as initvm is stretch or later
-        try:
-            return r.sha256_hash, uri
-        except DeprecationWarning:
-            hashval = r.hashes.find('SHA256')
-            return hashval, uri
     else:
         return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
@@ -194,107 +219,100 @@ def get_dsc_size(fname):
     return sz
 
 
-def copy_kinitrd(prj, target_dir, defs, arch="default"):
+def download_pkg(prj,
+                 target_dir,
+                 defs,
+                 package,
+                 arch="default",
+                 incl_deps=False,
+                 log=None):
+
     try:
-        sha256, uri = get_initrd_uri(prj, defs, arch)
+        urilist = get_uri(prj, defs, arch, package, incl_deps)
     except KeyError:
-        raise NoKinitrdException('no elbe-bootstrap package available')
+        raise NoKinitrdException('no package %s available' % package)
         return
     except SystemError:
         raise NoKinitrdException('a configured mirror is not reachable')
         return
     except CommandError as e:
-        raise NoKinitrdException("couldn't download elbe-bootstrap package")
-        return
+        raise NoKinitrdException("couldn't download package %s" % package)
 
-    try:
-        tmpdir = mkdtemp()
+    for u in urilist:
+        sha256 = u[2]
+        uri = u[1]
+        dest = os.path.join(target_dir, "%s.deb" % u[0])
 
         try:
             if uri.startswith("file://"):
-                system('cp "%s" "%s"' %
-                       (uri[len("file://"):], os.path.join(tmpdir, "pkg.deb")))
-            elif uri.startswith("http://"):
-                system('wget -O "%s" "%s"' %
-                       (os.path.join(tmpdir, "pkg.deb"), uri))
-            elif uri.startswith("ftp://"):
-                system('wget -O "%s" "%s"' %
-                       (os.path.join(tmpdir, "pkg.deb"), uri))
+                system('cp "%s" "%s"' % (uri[len("file://"):], dest))
+            elif uri.startswith("http://") or uri.startswith("ftp://"):
+                system('wget -O "%s" "%s"' % (dest, uri))
             else:
-                raise NoKinitrdException('no elbe-bootstrap package available')
+                raise NoKinitrdException('could not retreive %s' % uri)
         except CommandError as e:
-            raise NoKinitrdException(
-                "couldn't download elbe-bootstrap package")
-            return
+            raise NoKinitrdException("couldn't download package %s" % package)
 
         if len(sha256) > 0:
             m = hashlib.sha256()
-            with open(os.path.join(tmpdir, "pkg.deb"), "rb") as f:
+            with open(dest, "rb") as f:
                 buf = f.read(65536)
                 while len(buf) > 0:
                     m.update(buf)
                     buf = f.read(65536)
-
             if m.hexdigest() != sha256:
-                raise NoKinitrdException('elbe-bootstrap failed to verify !!!')
+                raise NoKinitrdException('%s failed to verify !!!' % package)
         else:
-            print("-----------------------------------------------------")
-            print("WARNING:")
-            print("Using untrusted elbe-bootstrap")
-            print("-----------------------------------------------------")
+            if log:
+                log.printo("WARNING: Using untrusted %s package" % package)
+            else:
+                print("-----------------------------------------------------")
+                print("WARNING:")
+                print("Using untrusted %s package" % package)
+                print("-----------------------------------------------------")
 
+    return [y[0] for y in urilist]
+
+
+def extract_pkg(prj, target_dir, defs, package, arch="default",
+                incl_deps=False, log=None):
+
+    pkgs = download_pkg(prj, target_dir, defs, package, arch, incl_deps, log)
+
+    for package in pkgs:
+        ppath = os.path.join(target_dir, "%s.deb" % package)
         try:
-            system('dpkg -x "%s" "%s"' %
-                   (os.path.join(tmpdir, "pkg.deb"), tmpdir))
+            system('dpkg -x "%s" "%s"' % (ppath, target_dir))
         except CommandError:
             try:
                 # dpkg did not work, try falling back to ar and tar
-                system('ar p "%s" data.tar.gz | tar xz -C "%s"' %
-                       (os.path.join(tmpdir, "pkg.deb"), tmpdir))
+                system('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
+                                                                   target_dir))
             except CommandError:
-                system('ar p "%s" data.tar.xz | tar xJ -C "%s"' %
-                       (os.path.join(tmpdir, "pkg.deb"), tmpdir))
+                system('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (ppath,
+                                                                   target_dir))
+        system('rm -f "%s"' % ppath)
+
+
+def copy_kinitrd(prj, target_dir, defs, arch="default"):
+
+    target_pkg = get_initrd_pkg(prj, defs)
+
+    try:
+        tmpdir = mkdtemp()
+        extract_pkg(prj, tmpdir, defs, target_pkg, arch)
 
         # copy is done twice, because paths in elbe-bootstarp_1.0 and 0.9
         # differ
+        initrd = os.path.join(tmpdir, 'var', 'lib', 'elbe', 'initrd')
         if prj.has("mirror/cdrom"):
-            system(
-                'cp "%s" "%s"' %
-                (os.path.join(
-                    tmpdir,
-                    'var',
-                    'lib',
-                    'elbe',
-                    'initrd',
-                    'initrd-cdrom.gz'),
-                    os.path.join(
-                    target_dir,
-                    "initrd.gz")))
+            system('cp "%s" "%s"' % (os.path.join(initrd, 'initrd-cdrom.gz'),
+                                     os.path.join(target_dir, "initrd.gz")))
         else:
-            system(
-                'cp "%s" "%s"' %
-                (os.path.join(
-                    tmpdir,
-                    'var',
-                    'lib',
-                    'elbe',
-                    'initrd',
-                    'initrd.gz'),
-                    os.path.join(
-                    target_dir,
-                    "initrd.gz")))
+            system('cp "%s" "%s"' % (os.path.join(initrd, 'initrd.gz'),
+                                     os.path.join(target_dir, "initrd.gz")))
 
-        system(
-            'cp "%s" "%s"' %
-            (os.path.join(
-                tmpdir,
-                'var',
-                'lib',
-                'elbe',
-                'initrd',
-                'vmlinuz'),
-                os.path.join(
-                target_dir,
-                "vmlinuz")))
+        system('cp "%s" "%s"' % (os.path.join(initrd, 'vmlinuz'),
+                                 os.path.join(target_dir, "vmlinuz")))
     finally:
         system('rm -rf "%s"' % tmpdir)
