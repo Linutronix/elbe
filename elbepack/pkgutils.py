@@ -161,7 +161,12 @@ def get_initrd_uri(prj, defs, arch):
         if not x.is_trusted:
             return "", uri
 
-        return r.sha1_hash, uri
+        # TODO remove r.sha256_hash path as soon as initvm is stretch or later
+        try:
+            return r.sha256_hash, uri
+        except DeprecationWarning:
+            hashval = r.hashes.find('SHA256')
+            return hashval, uri
     else:
         return get_initrd_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
@@ -187,7 +192,7 @@ def get_dsc_size(fname):
 
 def copy_kinitrd(prj, target_dir, defs, arch="default"):
     try:
-        sha1, uri = get_initrd_uri(prj, defs, arch)
+        sha256, uri = get_initrd_uri(prj, defs, arch)
     except KeyError:
         raise NoKinitrdException('no elbe-bootstrap package available')
         return
@@ -218,15 +223,15 @@ def copy_kinitrd(prj, target_dir, defs, arch="default"):
                 "couldn't download elbe-bootstrap package")
             return
 
-        if len(sha1) > 0:
-            m = hashlib.sha1()
+        if len(sha256) > 0:
+            m = hashlib.sha256()
             with open(os.path.join(tmpdir, "pkg.deb"), "rb") as f:
                 buf = f.read(65536)
                 while len(buf) > 0:
                     m.update(buf)
                     buf = f.read(65536)
 
-            if m.hexdigest() != sha1:
+            if m.hexdigest() != sha256:
                 raise NoKinitrdException('elbe-bootstrap failed to verify !!!')
         else:
             print("-----------------------------------------------------")
