@@ -32,7 +32,7 @@ from elbepack.directories import elbe_pubkey_fname
 
 
 class VirtApt:
-    def __init__(self, name, arch, suite, sources, prefs, keylist=[]):
+    def __init__(self, arch, suite, sources, prefs, keylist=[]):
 
         self.projectpath = mkdtemp()
         self.initialize_dirs()

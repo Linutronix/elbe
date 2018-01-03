@@ -138,14 +138,13 @@ def get_initrd_uri(prj, defs, arch):
         arch = prj.text("buildimage/arch", default=defs, key="arch")
     suite = prj.text("suite")
 
-    name = prj.text("name", default=defs, key="name")
     apt_sources = get_sources_list(prj, defs)
     apt_keys = get_key_list(prj)
     target_pkg = get_initrd_pkg(prj, defs)
 
     if virtapt_imported:
         try:
-            v = virtapt.VirtApt(name, arch, suite, apt_sources, "", apt_keys)
+            v = virtapt.VirtApt(arch, suite, apt_sources, "", apt_keys)
         except Exception as e:
             return get_initrd_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
