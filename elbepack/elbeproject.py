@@ -155,6 +155,29 @@ class ElbeProject (object):
                 --exclude=./proc/* --exclude=./var/cache/* \
                 -C %s ." % (self.builddir, self.chrootpath))
 
+    def get_sysroot_paths(self):
+        triplet = self.xml.defs["triplet"]
+
+        paths = [
+            './usr/include',
+            './usr/include/' + triplet,
+            './etc/ld.so.conf*',
+            './opt/*/lib/*.so',
+            './opt/*lib/*.so.*',
+            './opt/*/include/',
+            './opt/*/lib/' + triplet,
+            './opt/*/include/' + triplet,
+            './lib/*.so',
+            './lib/*.so.*',
+            './lib/' + triplet,
+            './usr/lib/*.so',
+            './usr/lib/*.so',
+            './usr/lib/*.so.*',
+            './usr/lib/' + triplet]
+
+        return paths
+
+
     def build_sysroot(self):
 
         # ignore packages from debootstrap
@@ -187,24 +210,7 @@ class ElbeProject (object):
             self.log.do("chroot %s /usr/bin/symlinks -cr /usr/lib" %
                         self.chrootpath)
 
-        triplet = self.xml.defs["triplet"]
-
-        paths = [
-            './usr/include',
-            './usr/include/' + triplet,
-            './etc/ld.so.conf*',
-            './opt/*/lib/*.so',
-            '/opt/*lib/*.so.*',
-            './opt/*/include/',
-            './opt/*/lib/' + triplet,
-            './opt/*/include/' + triplet,
-            './lib/*.so',
-            './lib/*.so.*',
-            './lib/' + triplet,
-            './usr/lib/*.so',
-            './usr/lib/*.so',
-            './usr/lib/*.so.*',
-            './usr/lib/' + triplet]
+        paths = self.get_sysroot_paths()
 
         self.log.do("rm %s" % sysrootfilelist, allow_fail=True)
 
