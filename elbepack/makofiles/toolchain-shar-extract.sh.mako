@@ -7,7 +7,7 @@
 #
 # known authors of the origin file are:
 #
-# Aníbal Limón <anibal.limon@linux.intel.com>
+# Anibal Limon <anibal.limon@linux.intel.com>
 # Brendan Le Foll <brendan.le.foll@intel.com>
 # Ed Bartosh <ed.bartosh@linux.intel.com>
 # George Nita <george.nita@enea.com>
@@ -32,7 +32,7 @@
 export PATH=`echo "$PATH" | sed -e 's/:\.//' -e 's/::/:/'`
 
 tweakpath () {
-    case ":${PATH}:" in
+    case ":$PATH:" in
         *:"$1":*)
             ;;
         *)
@@ -46,10 +46,10 @@ tweakpath /usr/sbin
 tweakpath /sbin
 
 INST_ARCH=$(uname -m | sed -e "s/i[3-6]86/ix86/" -e "s/x86[-_]64/x86_64/")
-SDK_ARCH=$(echo @SDK_ARCH@ | sed -e "s/i[3-6]86/ix86/" -e "s/x86[-_]64/x86_64/")
+SDK_ARCH=$(echo ${sdk_arch} | sed -e "s/i[3-6]86/ix86/" -e "s/x86[-_]64/x86_64/")
 
 INST_GCC_VER=$(gcc --version | sed -ne 's/.* \([0-9]\+\.[0-9]\+\)\.[0-9]\+.*/\1/p')
-SDK_GCC_VER='@SDK_GCC_VER@'
+SDK_GCC_VER='${sdk_gcc_ver}'
 
 verlte () {
 	[  "$1" = "`printf "$1\n$2" | sort -V | head -n1`" ]
@@ -58,12 +58,6 @@ verlte () {
 verlt() {
 	[ "$1" = "$2" ] && return 1 || verlte $1 $2
 }
-
-verlt `uname -r` @OLDEST_KERNEL@
-if [ $? = 0 ]; then
-	echo "Error: The SDK needs a kernel > @OLDEST_KERNEL@"
-	exit 1
-fi
 
 if [ "$INST_ARCH" != "$SDK_ARCH" ]; then
 	# Allow for installation of ix86 SDK on x86_64 host
@@ -78,7 +72,7 @@ if ! xz -V > /dev/null 2>&1; then
 	exit 1
 fi
 
-DEFAULT_INSTALL_DIR="@SDKPATH@"
+DEFAULT_INSTALL_DIR="${sdk_path}"
 SUDO_EXEC=""
 EXTRA_TAR_OPTIONS=""
 target_sdk_dir=""
@@ -139,19 +133,18 @@ if [ "$listcontents" = "1" ] ; then
     exit
 fi
 
-titlestr="@SDK_TITLE@ installer version @SDK_VERSION@"
+titlestr="${sdk_title} ${sdk_version} SDK installer"
 printf "%s\n" "$titlestr"
-printf "%${#titlestr}s\n" | tr " " "="
+printf "%${"$"}{#titlestr}s\n" | tr " " "="
 
 if [ $verbose = 1 ] ; then
 	set -x
 fi
 
-@SDK_PRE_INSTALL_COMMAND@
 
 # SDK_EXTENSIBLE is exposed from the SDK_PRE_INSTALL_COMMAND above
 if [ "$SDK_EXTENSIBLE" = "1" ]; then
-	DEFAULT_INSTALL_DIR="@SDKEXTPATH@"
+	DEFAULT_INSTALL_DIR="${sdk_ext_path}"
 	if [ "$INST_GCC_VER" = '4.8' -a "$SDK_GCC_VER" = '4.9' ] || [ "$INST_GCC_VER" = '4.8' -a "$SDK_GCC_VER" = '' ] || \
 		[ "$INST_GCC_VER" = '4.9' -a "$SDK_GCC_VER" = '' ]; then
 		echo "Error: Incompatible SDK installer! Your host gcc version is $INST_GCC_VER and this SDK was built by gcc higher version."
@@ -176,7 +169,7 @@ else
 fi
 
 # limit the length for target_sdk_dir, ensure the relocation behaviour in relocate_sdk.py has right result.
-if [ ${#target_sdk_dir} -gt 2048 ]; then
+if [ ${"$"}{#target_sdk_dir} -gt 2048 ]; then
 	echo "Error: The target directory path is too long!!!"
 	exit 1
 fi
@@ -205,7 +198,7 @@ else
 	fi
 fi
 
-if [ -e "$target_sdk_dir/environment-setup-@REAL_MULTIMACH_TARGET_SYS@" ]; then
+if [ -e "$target_sdk_dir/environment-setup-${real_multimach_target_sys}" ]; then
 	echo "The directory \"$target_sdk_dir\" already contains a SDK for this architecture."
 	printf "If you continue, existing files will be overwritten! Proceed[y/N]? "
 
@@ -268,7 +261,7 @@ for env_setup_script in `ls $target_sdk_dir/environment-setup-*`; do
 		# rather than the one that simply sorts last
 		real_env_setup_script="$env_setup_script"
 	fi
-	$SUDO_EXEC sed -e "s:@SDKPATH@:$target_sdk_dir:g" -i $env_setup_script
+	$SUDO_EXEC sed -e "s:${sdk_path}:$target_sdk_dir:g" -i $env_setup_script
 done
 if [ -n "$real_env_setup_script" ] ; then
 	env_setup_script="$real_env_setup_script"
@@ -280,7 +273,7 @@ if ! xargs --version > /dev/null 2>&1; then
 fi
 
 # fix dynamic loader paths in all ELF SDK binaries
-native_sysroot=$($SUDO_EXEC cat $env_setup_script |grep 'OECORE_NATIVE_SYSROOT='|cut -d'=' -f2|tr -d '"')
+native_sysroot=$target_sdk_dir/sysroots/host
 dl_path=$($SUDO_EXEC find $native_sysroot/lib -name "ld-linux*")
 if [ "$dl_path" = "" ] ; then
         echo "SDK could not be set up. Relocate script unable to find ld-linux.so. Abort!"
@@ -299,27 +292,30 @@ if [ x$tdir = x ] ; then
    exit 1
 fi
 cat <<EOF >> $tdir/relocate_sdk.sh
-#!/bin/sh
-for py in python python2 python3
-do
-        PYTHON=\`which \${py} 2>/dev/null\`
-        if [ \$? -eq 0 ]; then
-                break;
-        fi
-done
+#!/bin/bash
+PATCHELF=\`which patchelf 2>/dev/null\`
 
-if [ x\${PYTHON} = "x"  ]; then
-        echo "SDK could not be relocated.  No python found."
+if [ x\$PATCHELF = "x"  ]; then
+        echo "SDK could not be relocated. No patchelf found."
+        echo "use 'sudo apt install patchelf' on Debian"
         exit 1
 fi
-\${PYTHON} ${env_setup_script%/*}/relocate_sdk.py $target_sdk_dir $dl_path $executable_files
+
+for exe in $executable_files; do
+        if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
+            echo SKIP \$exe
+        else
+            \$PATCHELF --set-interpreter $dl_path \$exe
+            \$PATCHELF --set-rpath $native_sysroot/usr/lib/x86_64-linux-gnu:$native_sysroot/lib/x86_64-linux-gnu/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
+        fi
+done
 EOF
 
-$SUDO_EXEC mv $tdir/relocate_sdk.sh ${env_setup_script%/*}/relocate_sdk.sh
-$SUDO_EXEC chmod 755 ${env_setup_script%/*}/relocate_sdk.sh
+$SUDO_EXEC mv $tdir/relocate_sdk.sh ${"$"}{env_setup_script%/*}/relocate_sdk.sh
+$SUDO_EXEC chmod 755 ${"$"}{env_setup_script%/*}/relocate_sdk.sh
 rm -rf $tdir
 if [ $relocate = 1 ] ; then
-        $SUDO_EXEC ${env_setup_script%/*}/relocate_sdk.sh
+        $SUDO_EXEC ${"$"}{env_setup_script%/*}/relocate_sdk.sh
         if [ $? -ne 0 ]; then
                 echo "SDK could not be set up. Relocate script failed. Abort!"
                 exit 1
@@ -329,7 +325,7 @@ fi
 # delete the relocating script, so that user is forced to re-run the installer
 # if he/she wants another location for the sdk
 if [ $savescripts = 0 ] ; then
-	$SUDO_EXEC rm -f ${env_setup_script%/*}/relocate_sdk.py ${env_setup_script%/*}/relocate_sdk.sh
+	$SUDO_EXEC rm -f ${"$"}{env_setup_script%/*}/relocate_sdk.py ${"$"}{env_setup_script%/*}/relocate_sdk.sh
 fi
 
 echo "SDK has been successfully set up and is ready to be used."
