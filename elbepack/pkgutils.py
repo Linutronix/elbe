@@ -238,6 +238,9 @@ def download_pkg(prj,
     except CommandError as e:
         raise NoKinitrdException("couldn't download package %s" % package)
 
+    if not urilist:
+        raise NoKinitrdException("couldn't download package %s" % package)
+
     for u in urilist:
         sha256 = u[2]
         uri = u[1]
