@@ -2,9 +2,29 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: elbe
 Source: https://github.com/Linutronix/elbe/
 
+Files: elbepack/makofiles/toolchain-shar-extract.sh.mako
+Copyright: Aníbal Limón <anibal.limon@linux.intel.com>
+           Brendan Le Foll <brendan.le.foll@intel.com>
+           Ed Bartosh <ed.bartosh@linux.intel.com>
+           George Nita <george.nita@enea.com>
+           Maxin B. John <maxin.john@intel.com>
+           Paul Eggleton <paul.eggleton@linux.intel.com>
+           Qi.Chen@windriver.com <Qi.Chen@windriver.com>
+           Randy Witt <randy.e.witt@linux.intel.com>
+           Richard Purdie <richard.purdie@linuxfoundation.org>
+           Robert Yang <liezhi.yang@windriver.com>
+           Todor Minchev <todor.minchev@linux.intel.com>
+           Wenlin Kang <wenlin.kang@windriver.com>
+License: GPL-2
+
 Files: *
 Copyright: (c) 2013, Torben Hohn, Linutronix GmbH, Manuel Traut, Linutronix GmbH
 License: GPL-3
+
+License: GPL-2
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
 
 License: GPL-3
  This program is free software: you can redistribute it and/or modify
