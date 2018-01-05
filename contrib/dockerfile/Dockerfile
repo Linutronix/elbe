@@ -1,5 +1,11 @@
-# This Dockefile generate a image for the elbe buildsystem
+#
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2014-2015 Silvio Fricke <silvio.fricke@gmail.com>
+# Copyright (c) 2018 Manuel Traut <manut@linutronix.de>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 
+# This Dockefile generate a image for the elbe buildsystem
 FROM debian:stretch
 
 ENV LANG C.UTF-8

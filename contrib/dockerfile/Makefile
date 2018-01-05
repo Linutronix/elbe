@@ -1,3 +1,9 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2015 Silvio Fricke <silvio.fricke@gmail.com>
+# Copyright (c) 2018 Manuel Traut <manut@linutronix.de>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 IMAGENAME ?= elbe-image
 CONTAINERNAME ?= elbe
 
