@@ -19,6 +19,9 @@
 # Robert Yang <liezhi.yang@windriver.com>
 # Todor Minchev <todor.minchev@linux.intel.com>
 # Wenlin Kang <wenlin.kang@windriver.com>
+#
+# The 'meta' folder of the origin repo contains a
+# COPYING.GPLv2 and COPYING.MIT file.
 
 [ -z "$ENVCLEANED" ] && exec /usr/bin/env -i ENVCLEANED=1 HOME="$HOME" \
 	LC_ALL=en_US.UTF-8 \
