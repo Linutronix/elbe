@@ -1,3 +1,13 @@
+elbe (2.9.3) unstable; urgency=medium
+
+  * rework pinning
+  * use qemu from jessie-backports
+  * debianize/kernel support out of tree module build
+  * remove 2nd archive extract
+  * codingstyle: be PEP8 compliant
+
+ -- Manuel Traut <manut@linutronix.de>  Sun, 07 Jan 2018 13:08:21 +0100
+
 elbe (2.9.2) unstable; urgency=medium
 
   * build packages usable with python3
