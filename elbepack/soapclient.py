@@ -512,13 +512,10 @@ class WaitProjectBusyAction(ClientAction):
 
                         localtime = time.asctime(time.localtime(time.time()))
                         try:
-                            print(
-                                localtime +
-                                " -- " +
-                                log[1].replace(
-                                    '\n',
-                                    ''))
+                            print("%s -- %s" % (localtime,
+                                                log[1].replace('\n','')))
                         except IndexError:
+                            print("IndexError - part: %d (skipped)" % part)
                             pass
                     else:
                         time.sleep(1)
