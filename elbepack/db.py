@@ -811,66 +811,53 @@ class ElbeDB(object):
                         "application/octet-stream", "Image")
 
             # Add other generated files
-            self._update_project_file(
-                s,
-                p.builddir,
-                "source.xml",
-                "application/xml",
-                "Current source.xml of the project")
-            self._update_project_file(
-                s,
-                p.builddir,
-                "licence.txt",
-                "text/plain; charset=utf-8",
-                "License file")
+            self._update_project_file(s, p.builddir, "source.xml",
+                                      "application/xml",
+                                      "Current source.xml of the project")
+
+            self._update_project_file(s, p.builddir, "licence.txt",
+                                      "text/plain; charset=utf-8",
+                                      "License file")
+
             self._update_project_file(s, p.builddir, "licence.xml",
-                                      "application/xml", "xml License file")
-            self._update_project_file(
-                s,
-                p.builddir,
-                "validation.txt",
-                "text/plain; charset=utf-8",
-                "Package list validation result")
+                                      "application/xml",
+                                      "xml License file")
+
+            self._update_project_file(s, p.builddir, "validation.txt",
+                                      "text/plain; charset=utf-8",
+                                      "Package list validation result")
+
             self._update_project_file(s, p.builddir, "elbe-report.txt",
-                                      "text/plain; charset=utf-8", "Report")
+                                      "text/plain; charset=utf-8",
+                                      "Report")
+
             self._update_project_file(s, p.builddir, "log.txt",
-                                      "text/plain; charset=utf-8", "Log file")
-            self._update_project_file(
-                s,
-                p.builddir,
-                "sysroot.tar.xz",
-                "application/x-xz-compressed-tar",
-                "sysroot for cross-toolchains")
-            self._update_project_file(
-                s,
-                p.builddir,
-                "chroot.tar.xz",
-                "application/x-xz-compressed-tar",
-                "chroot for 'native' development")
+                                      "text/plain; charset=utf-8",
+                                      "Log file")
+
+            self._update_project_file(s, p.builddir, "sysroot.tar.xz",
+                                      "application/x-xz-compressed-tar",
+                                      "sysroot for cross-toolchains")
+
+            self._update_project_file(s, p.builddir, "chroot.tar.xz",
+                                      "application/x-xz-compressed-tar",
+                                      "chroot for 'native' development")
 
             # Add Repository iso images
             for img in ep.repo_images:
                 name = os.path.basename(img)
-                self._update_project_file(
-                    s,
-                    p.builddir,
-                    name,
-                    "application/octet-stream",
-                    "Repository IsoImage")
+                self._update_project_file(s, p.builddir, name,
+                                          "application/octet-stream",
+                                          "Repository IsoImage")
 
             # Scan pbuilder/build directory if that exists
             pbresult_path = os.path.join(p.builddir, "pbuilder", "result")
             if os.path.isdir(pbresult_path):
                 for f in os.listdir(pbresult_path):
-                    self._update_project_file(
-                        s,
-                        p.builddir,
-                        os.path.join(
-                            "pbuilder",
-                            "result",
-                            f),
-                        "application/octet-stream",
-                        "Pbuilder artifact")
+                    pfile = os.path.join("pbuilder", "result", f)
+                    self._update_project_file(s, p.builddir, pfile
+                                              "application/octet-stream",
+                                              "Pbuilder artifact")
 
     def _update_project_file(self, s, builddir, name, mime_type, description):
         filename = os.path.join(builddir, name)
