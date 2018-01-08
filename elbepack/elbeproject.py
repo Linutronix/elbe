@@ -194,8 +194,8 @@ class ElbeProject (object):
                 raise AptCacheUpdateError(e)
 
             try:
-                self.get_rpcaptcache().mark_install_devpkgs(ignore_pkgs,
-                                                            ignore_dev_pkgs)
+                self.get_rpcaptcache().mark_install_devpkgs(set(ignore_pkgs),
+                    set(ignore_dev_pkgs))
             except SystemError as e:
                 self.log.printo("mark install devpkgs failed: %s" % str(e))
             try:
