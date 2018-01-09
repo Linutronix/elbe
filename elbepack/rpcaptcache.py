@@ -287,3 +287,14 @@ def get_rpcaptcache(
     mm.start()
 
     return mm.RPCAPTCache(rfs, log, arch, notifier, norecommend, noauth)
+
+
+from elbepack.virtapt import VirtApt
+
+MyMan.register("VirtRPCAPTCache", VirtApt)
+
+def get_virtaptcache(arch, suite, sources, prefs, keylist=[]):
+    mm = MyMan()
+    mm.start()
+
+    return mm.VirtRPCAPTCache(arch, suite, sources, prefs)

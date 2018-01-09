@@ -34,10 +34,11 @@ from tempfile import mkdtemp
 from elbepack.shellhelper import CommandError, system
 
 try:
-    from elbepack import virtapt
     from apt_pkg import TagFile
+    from elbepack.rpcaptcache import get_virtaptcache
     virtapt_imported = True
-except ImportError:
+except ImportError as e:
+    print(e)
     print("WARNING - python-apt not available:")
     print("If there are multiple versions of elbe-bootstrap packages on the "
           "mirror(s) elbe selects the first package it has found.")
@@ -132,33 +133,6 @@ def get_uri_nonvirtapt(apt_sources, target_pkg, arch):
             if pkg:
                 return "", pkg
 
-def getdeps(pkg):
-    for dd in pkg.depends_list.get("Depends", []):
-        for d in dd:
-            yield d.target_pkg.name
-
-def lookup_uri(v, d, target_pkg):
-
-    pkg = v.cache[target_pkg]
-
-    c = d.get_candidate_ver(pkg)
-
-    x = v.source.find_index(c.file_list[0][0])
-
-    r = virtapt.apt_pkg.PackageRecords(v.cache)
-    r.lookup(c.file_list[0])
-    uri = x.archive_uri(r.filename)
-
-    if not x.is_trusted:
-        return target_pkg, uri, ""
-
-    # TODO remove r.sha256_hash path as soon as initvm is stretch or later
-    try:
-        hashval = r.sha256_hash
-    except DeprecationWarning:
-        hashval = str(r.hashes.find('SHA256')).split(':')[1]
-
-    return target_pkg, uri, hashval
 
 def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
     if arch == "default":
@@ -170,31 +144,16 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
 
     if virtapt_imported:
         try:
-            v = virtapt.VirtApt(arch, suite, apt_sources, "", apt_keys)
+            if arch == "default":
+                arch = prj.text("buildimage/arch", default=defs, key="arch")
+            suite = prj.text("suite")
+            v = get_virtaptcache(arch, suite, apt_sources, "", apt_keys)
         except Exception as e:
+            print("python-apt failed, using fallback code")
             return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
-        d = virtapt.apt_pkg.DepCache(v.cache)
-
-        if not incl_deps:
-            return [lookup_uri(v, d, target_pkg)]
-
-        if incl_deps:
-            deps = [lookup_uri(v, d, target_pkg)]
-            togo = [target_pkg]
-            while len(togo):
-                pp = togo.pop()
-                pkg= v.cache[pp]
-                c = d.get_candidate_ver(pkg)
-                for p in getdeps(c):
-                    if len([y for y in deps if y[0] == p]):
-                        continue
-                    if p != target_pkg and p == pp:
-                        continue
-                    deps.append(lookup_uri(v, d, p))
-                    togo.append(p)
-
-            return deps
+        ret = v.get_uri(suite, arch, target_pkg, incl_deps)
+        return ret
 
     else:
         return get_uri_nonvirtapt(apt_sources, target_pkg, arch)

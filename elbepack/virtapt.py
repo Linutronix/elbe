@@ -31,6 +31,37 @@ from elbepack.shellhelper import system
 from elbepack.directories import elbe_pubkey_fname
 
 
+def getdeps(pkg):
+    for dd in pkg.depends_list.get("Depends", []):
+        for d in dd:
+            yield d.target_pkg.name
+
+
+def lookup_uri(v, d, target_pkg):
+
+    pkg = v.cache[target_pkg]
+
+    c = d.get_candidate_ver(pkg)
+
+    x = v.source.find_index(c.file_list[0][0])
+
+    r = apt_pkg.PackageRecords(v.cache)
+    r.lookup(c.file_list[0])
+    uri = x.archive_uri(r.filename)
+
+    if not x.is_trusted:
+        return target_pkg, uri, ""
+
+    # TODO remove r.sha256_hash path as soon as initvm is stretch or later
+    try:
+        hashval = r.sha256_hash
+    except DeprecationWarning:
+        hashval = str(r.hashes.find('SHA256')).split(':')[1]
+
+    return target_pkg, uri, hashval
+
+
+
 class VirtApt:
     def __init__(self, arch, suite, sources, prefs, keylist=[]):
 
@@ -183,3 +214,26 @@ class VirtApt:
         file = open(filename, "w")
         file.write(prefs)
         file.close()
+
+    def get_uri(self, suite, arch, target_pkg, incl_deps=False):
+
+        d = apt_pkg.DepCache(self.cache)
+
+        if not incl_deps:
+            return [lookup_uri(self, d, target_pkg)]
+
+        deps = [lookup_uri(self, d, target_pkg)]
+        togo = [target_pkg]
+        while len(togo):
+            pp = togo.pop()
+            pkg= self.cache[pp]
+            c = d.get_candidate_ver(pkg)
+            for p in getdeps(c):
+                if len([y for y in deps if y[0] == p]):
+                    continue
+                if p != target_pkg and p == pp:
+                    continue
+                deps.append(lookup_uri(self, d, p))
+                togo.append(p)
+
+        return deps
