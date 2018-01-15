@@ -1,3 +1,9 @@
+elbe (2.9.7) unstable; urgency=medium
+
+  * add path to elbe
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 15 Jan 2018 15:54:13 +0100
+
 elbe (2.9.6) unstable; urgency=medium
 
   * add path to python interpreter
