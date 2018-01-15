@@ -1,3 +1,9 @@
+elbe (2.9.6) unstable; urgency=medium
+
+  * add path to python interpreter
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 15 Jan 2018 15:37:55 +0100
+
 elbe (2.9.5) unstable; urgency=medium
 
   * fix elbe install problem during d-i
