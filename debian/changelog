@@ -1,3 +1,9 @@
+elbe (2.9.5) unstable; urgency=medium
+
+  * fix elbe install problem during d-i
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 15 Jan 2018 14:49:11 +0100
+
 elbe (2.9.4) unstable; urgency=medium
 
   * variant-management added to elbe-preprocess
