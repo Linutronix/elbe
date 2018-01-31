@@ -172,6 +172,7 @@ class ElbeProject (object):
 
             try:
                 self.get_rpcaptcache().mark_install_devpkgs(ignore_pkgs,
+                                                            ignore_dev_pkgs)
             except SystemError as e:
                 self.log.printo("mark install devpkgs failed: %s" % str(e))
             try:
