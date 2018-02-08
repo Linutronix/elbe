@@ -52,11 +52,12 @@ def lookup_uri(v, d, target_pkg):
     if not x.is_trusted:
         return target_pkg, uri, ""
 
-    # TODO remove r.sha256_hash path as soon as initvm is stretch or later
     try:
-        hashval = r.sha256_hash
-    except DeprecationWarning:
         hashval = str(r.hashes.find('SHA256')).split(':')[1]
+    except AttributeError:
+        # TODO: this fallback Code can be removed on stretch
+        #       but it throws DeprecationWarning already
+        hashval = r.sha256_hash
 
     return target_pkg, uri, hashval
 
