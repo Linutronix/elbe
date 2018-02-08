@@ -231,10 +231,8 @@ def download_pkg(prj,
         urilist = get_uri(prj, defs, arch, package, incl_deps)
     except KeyError:
         raise NoKinitrdException('no package %s available' % package)
-        return
     except SystemError:
         raise NoKinitrdException('a configured mirror is not reachable')
-        return
     except CommandError as e:
         raise NoKinitrdException("couldn't download package %s" % package)
 
