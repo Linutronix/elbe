@@ -55,7 +55,6 @@ class BuildEnv ():
             self.fresh_debootstrap = True
             self.need_dumpdebootstrap = True
         else:
-            print("work on existing rfs")
             self.fresh_debootstrap = False
             self.need_dumpdebootstrap = False
 
