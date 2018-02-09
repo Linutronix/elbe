@@ -131,7 +131,7 @@ def get_uri_nonvirtapt(apt_sources, target_pkg, arch):
             pkg = get_url(arch, apts_split[2], target_pkg, apts_split[1], comp)
 
             if pkg:
-                return "", pkg
+                return [(target_pkg, pkg, "")]
 
 
 def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
