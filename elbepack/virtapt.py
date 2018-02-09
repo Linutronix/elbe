@@ -27,6 +27,8 @@ import sys
 import apt
 
 from tempfile import mkdtemp
+from multiprocessing.managers import BaseManager
+
 from elbepack.shellhelper import system
 from elbepack.directories import elbe_pubkey_fname
 
@@ -238,3 +240,14 @@ class VirtApt:
                 togo.append(p)
 
         return deps
+
+class MyMan(BaseManager):
+    pass
+
+MyMan.register("VirtRPCAPTCache", VirtApt)
+
+def get_virtaptcache(arch, suite, sources, prefs, keylist=[]):
+    mm = MyMan()
+    mm.start()
+
+    return mm.VirtRPCAPTCache(arch, suite, sources, prefs)

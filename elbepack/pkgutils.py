@@ -35,7 +35,7 @@ from elbepack.shellhelper import CommandError, system
 
 try:
     from apt_pkg import TagFile
-    from elbepack.rpcaptcache import get_virtaptcache
+    from elbepack.virtapt import get_virtaptcache
     virtapt_imported = True
 except ImportError as e:
     print(e)
