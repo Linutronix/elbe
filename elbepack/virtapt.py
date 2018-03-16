@@ -250,4 +250,4 @@ def get_virtaptcache(arch, suite, sources, prefs, keylist=[]):
     mm = MyMan()
     mm.start()
 
-    return mm.VirtRPCAPTCache(arch, suite, sources, prefs)
+    return mm.VirtRPCAPTCache(arch, suite, sources, prefs, keylist)
