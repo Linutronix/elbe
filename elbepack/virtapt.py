@@ -162,7 +162,8 @@ class VirtApt:
                   "fix this problem")
             sys.exit(20)
 
-        system('cp /etc/apt/trusted.gpg "%s"' % ring_path)
+        if os.path.exists("/etc/apt/trusted.gpg"):
+            system('cp /etc/apt/trusted.gpg "%s"' % ring_path)
 
         gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
                       '--trust-model always --no-default-keyring ' \
