@@ -1,7 +1,6 @@
 # This Dockefile generate a image for the elbe buildsystem
 
-# baseimage is debian wheezy
-FROM debian:jessie
+FROM debian:stretch
 
 ENV LANG C.UTF-8
 
@@ -15,7 +14,8 @@ RUN export DEBIAN_FRONTEND noninteractive ;\
         e2tools \
         git \
         kvm \
-        libvirt-bin \
+        libvirt-daemon \
+        libvirt-daemon-system \
         make \
         openssh-server \
         p7zip-full \
@@ -27,6 +27,7 @@ RUN export DEBIAN_FRONTEND noninteractive ;\
         python-mako \
         python-parted \
         python-suds \
+        python-libvirt \
         qemu \
         qemu-keymaps \
         qemu-kvm \
@@ -49,7 +50,8 @@ ADD adds/supervisord.conf /etc/supervisord.conf
 
 # create elbe user
 RUN groupadd -g 78 -o -r kvm78          # archlinux
-RUN useradd -d /home/elbe -U -G libvirt,kvm,kvm78,libvirt-qemu -m -s /bin/bash -u 1000 elbe
+RUN groupadd -g 124 -o -r kvm124        # debian-sid
+RUN useradd -d /home/elbe -U -G libvirt,kvm,kvm78,kvm124,libvirt-qemu -m -s /bin/bash -u 1000 elbe
 RUN echo "root:elbe" | chpasswd
 RUN echo "elbe:elbe" | chpasswd
 
