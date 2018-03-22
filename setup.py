@@ -4,8 +4,8 @@ import subprocess
 import os
 import glob
 
-from distutils.core import setup
-from distutils.command.install import install
+from setuptools import setup
+from setuptools.command.install import install
 
 from elbepack.version import elbe_version
 
