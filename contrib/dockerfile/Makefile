@@ -14,13 +14,21 @@ run:
 	docker run \
 		-v $(realpath ../../.):/elbe \
 		--device /dev/kvm:/dev/kvm \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		--cap-add SYS_ADMIN \
+		--security-opt seccomp:unconfined \
+		--tmpfs /tmp \
+		--tmpfs /run \
+		--tmpfs /run/lock \
+		-e container=docker \
 		$(sshauth) \
 		-d \
 		-ti \
 		--group-add kvm \
 		--name \
 		$(CONTAINERNAME) \
-		$(IMAGENAME)
+		$(IMAGENAME) \
+		/lib/systemd/systemd
 
 getip:
 	docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(CONTAINERNAME)

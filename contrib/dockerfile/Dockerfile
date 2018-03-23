@@ -65,5 +65,5 @@ RUN chmod a+rx /usr/bin/sbc
 
 # ssh and startup configuration
 RUN mkdir -v /var/run/sshd
-CMD ["/usr/bin/supervisord", "-n"]
+CMD [ "/lib/systemd/systemd" ]
 EXPOSE 22
