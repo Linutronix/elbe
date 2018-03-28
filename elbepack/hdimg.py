@@ -190,11 +190,15 @@ class grubinstaller_base(object):
         self.outf = outf
         self.root = None
         self.boot = None
+        self.boot_efi = None
         self.fw_type = fw_type
 
     def set_boot_entry(self, entry):
         print("setting boot entry")
         self.boot = entry
+
+    def set_boot_efi_entry(self, entry):
+        self.boot_efi = entry
 
     def set_root_entry(self, entry):
         self.root = entry
@@ -225,6 +229,12 @@ class grubinstaller202(grubinstaller_base):
                     (self.boot.partnum, os.path.join(
                         imagemnt, "boot")))
 
+            if self.boot_efi:
+                self.outf.do(
+                    'mount /dev/mapper/poop0p%d %s' %
+                    (self.boot_efi.partnum, os.path.join(
+                        imagemnt, "boot/efi")))
+
             self.outf.do(
                 "mount --bind /dev %s" %
                 os.path.join(
@@ -253,7 +263,7 @@ class grubinstaller202(grubinstaller_base):
             if self.fw_type == "efi":
                 self.outf.do(
                     "chroot %s grub-install --target=x86_64-efi --removable "
-                    "--efi-directory=/boot --no-floppy /dev/poop0" %
+                    "--no-floppy /dev/poop0" %
                     (imagemnt))
             else:
                 self.outf.do(
@@ -280,6 +290,11 @@ class grubinstaller202(grubinstaller_base):
                     imagemnt,
                     "sys"),
                 allow_fail=True)
+
+            if self.boot_efi:
+                self.outf.do(
+                    'umount /dev/mapper/poop0p%d' %
+                    self.boot_efi.partnum, allow_fail=True)
 
             if self.boot:
                 self.outf.do(
@@ -437,6 +452,8 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
         grub.set_root_entry(entry)
     elif entry.mountpoint == "/boot":
         grub.set_boot_entry(entry)
+    elif entry.mountpoint == "/boot/efi":
+        grub.set_boot_efi_entry(entry)
 
     entry.losetup(outf, "loop0")
     outf.do(
