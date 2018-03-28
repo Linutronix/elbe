@@ -466,7 +466,11 @@ class ElbeProject (object):
         # jessie and wheezy grubs are 2.0 but differ in behaviour
         #
         # We might also want support for legacy grub
-        if self.get_rpcaptcache().is_installed('grub-pc'):
+        if (self.get_rpcaptcache().is_installed('grub-pc') and
+                self.get_rpcaptcache().is_installed('grub-efi-amd64-bin')):
+            grub_version = 202
+            grub_fw_type = "hybrid"
+        elif self.get_rpcaptcache().is_installed('grub-pc'):
             if self.codename == "wheezy":
                 grub_version = 199
             else:

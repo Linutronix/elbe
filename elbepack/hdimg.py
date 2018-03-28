@@ -186,7 +186,7 @@ def size_to_int(size):
 
 
 class grubinstaller_base(object):
-    def __init__(self, outf, fw_type="bios"):
+    def __init__(self, outf, fw_type=None):
         self.outf = outf
         self.root = None
         self.boot = None
@@ -260,12 +260,13 @@ class grubinstaller202(grubinstaller_base):
             self.outf.do("chroot %s  update-initramfs -u -k all" % imagemnt)
             self.outf.do("chroot %s  update-grub2" % imagemnt)
 
-            if self.fw_type == "efi":
+            if self.fw_type == "efi" or self.fw_type == "hybrid":
                 self.outf.do(
                     "chroot %s grub-install --target=x86_64-efi --removable "
                     "--no-floppy /dev/poop0" %
                     (imagemnt))
-            else:
+            if self.fw_type == "hybrid" or self.fw_type is None:
+                # when we are in hybrid mode, install grub also into MBR
                 self.outf.do(
                     "chroot %s grub-install --no-floppy /dev/poop0" %
                     (imagemnt))
@@ -526,6 +527,8 @@ def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type):
         grub = grubinstaller199(outf)
     elif grub_version == 202 and grub_fw_type == "efi":
         grub = grubinstaller202(outf, "efi")
+    elif grub_version == 202 and grub_fw_type == "hybrid":
+        grub = grubinstaller202(outf, "hybrid")
     elif grub_version == 202:
         grub = grubinstaller202(outf)
     else:
