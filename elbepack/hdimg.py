@@ -186,10 +186,11 @@ def size_to_int(size):
 
 
 class grubinstaller_base(object):
-    def __init__(self, outf):
+    def __init__(self, outf, fw_type="bios"):
         self.outf = outf
         self.root = None
         self.boot = None
+        self.fw_type = fw_type
 
     def set_boot_entry(self, entry):
         print("setting boot entry")
@@ -249,9 +250,15 @@ class grubinstaller202(grubinstaller_base):
             self.outf.do("chroot %s  update-initramfs -u -k all" % imagemnt)
             self.outf.do("chroot %s  update-grub2" % imagemnt)
 
-            self.outf.do(
-                "chroot %s grub-install --no-floppy /dev/poop0" %
-                (imagemnt))
+            if self.fw_type == "efi":
+                self.outf.do(
+                    "chroot %s grub-install --target=x86_64-efi --removable "
+                    "--efi-directory=/boot --no-floppy /dev/poop0" %
+                    (imagemnt))
+            else:
+                self.outf.do(
+                    "chroot %s grub-install --no-floppy /dev/poop0" %
+                    (imagemnt))
 
         finally:
             os.unlink(os.path.join(imagemnt, "boot/grub/device.map"))
@@ -480,7 +487,7 @@ def create_logical_partitions(
         current_sector += lpart.getLength()
 
 
-def do_image_hd(outf, hd, fslabel, target, grub_version):
+def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type):
 
     sector_size = 512
     s = size_to_int(hd.text("size"))
@@ -500,6 +507,8 @@ def do_image_hd(outf, hd, fslabel, target, grub_version):
 
     if grub_version == 199:
         grub = grubinstaller199(outf)
+    elif grub_version == 202 and grub_fw_type == "efi":
+        grub = grubinstaller202(outf, "efi")
     elif grub_version == 202:
         grub = grubinstaller202(outf)
     else:
@@ -574,7 +583,7 @@ def add_binary_blob(outf, hd, target):
             bs))
 
 
-def do_hdimg(outf, xml, target, rfs, grub_version):
+def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type):
     # list of created files
     img_files = []
 
@@ -623,11 +632,23 @@ def do_hdimg(outf, xml, target, rfs, grub_version):
         # Now iterate over all images and create filesystems and partitions
         for i in xml.tgt.node("images"):
             if i.tag == "msdoshd":
-                img = do_image_hd(outf, i, fslabel, target, grub_version)
+                img = do_image_hd(
+                    outf,
+                    i,
+                    fslabel,
+                    target,
+                    grub_version,
+                    grub_fw_type)
                 img_files.append(img)
 
             if i.tag == "gpthd":
-                img = do_image_hd(outf, i, fslabel, target, grub_version)
+                img = do_image_hd(
+                    outf,
+                    i,
+                    fslabel,
+                    target,
+                    grub_version,
+                    grub_fw_type)
                 img_files.append(img)
 
             if i.tag == "mtd":

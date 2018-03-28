@@ -471,15 +471,21 @@ class ElbeProject (object):
                 grub_version = 199
             else:
                 grub_version = 202
+                grub_fw_type = "bios"
+        elif self.get_rpcaptcache().is_installed('grub-efi-amd64'):
+            grub_version = 202
+            grub_fw_type = "efi"
         elif self.get_rpcaptcache().is_installed('grub-legacy'):
             self.log.printo("package grub-legacy is installed, "
                             "this is obsolete, skipping grub")
             grub_version = 0
+            grub_fw_type = ""
         else:
             self.log.printo("package grub-pc is not installed, skipping grub")
             # version 0 == skip_grub
             grub_version = 0
-        self.targetfs.part_target(self.builddir, grub_version)
+            grub_fw_type = ""
+        self.targetfs.part_target(self.builddir, grub_version, grub_fw_type)
 
         # Build cdrom images
         self.repo_images = []

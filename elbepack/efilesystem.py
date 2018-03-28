@@ -309,7 +309,7 @@ class TargetFs(ChRootFilesystem):
                     f.write(fstab.get_str())
             f.close()
 
-    def part_target(self, targetdir, grub_version):
+    def part_target(self, targetdir, grub_version, grub_fw_type):
 
         # create target images and copy the rfs into them
         self.images = do_hdimg(
@@ -317,7 +317,8 @@ class TargetFs(ChRootFilesystem):
             self.xml,
             targetdir,
             self,
-            grub_version)
+            grub_version,
+            grub_fw_type)
 
         if self.xml.has("target/package/tar"):
             targz_name = self.xml.text("target/package/tar/name")
