@@ -398,7 +398,8 @@ def create_partition(
             fslabel[part.text("label")].fstype == "vfat":
                 fs = simple_fstype("fat32")
                 ppart = parted.Partition(disk, ptype, fs, geometry=g)
-                ppart.setFlag(_ped.PARTITION_LBA)
+                if disk.type != "gpt":
+                    ppart.setFlag(_ped.PARTITION_LBA)
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 
