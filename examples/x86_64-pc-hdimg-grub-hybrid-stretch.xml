@@ -1,0 +1,89 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>amd64-grub-hybrid-stretch</name>
+		<version>1.0</version>
+		<description>
+			verify successful UEFI boot by checking
+			lsmod | grep efi
+			ls /sys/firmware/efi
+
+			the resulting image can be booted with bios and UEFI
+
+			test UEFI boot in qemu by installing "ovmf" and using the parameter
+			-bios /usr/share/qemu/OVMF.fd
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>http://security.debian.org stretch/updates main</binary>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>stretch</suite>
+	</project>
+	<target>
+		<hostname>lxvm</hostname>
+		<domain>tec.linutronix.de</domain>
+		<passwd>foo</passwd>
+		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>grub-hybrid-rfs.tgz</name>
+			</tar>
+		</package>
+		<images>
+			<!-- use GPT for UEFI -->
+			<gpthd>
+				<name>sda.img</name>
+				<size>2GiB</size>
+				<!-- install grub -->
+				<grub-install/>
+				<!-- small partition for the MBR in case of bios boot -->
+				<partition>
+					<size>1MiB</size>
+					<label>bios</label>
+					<biosgrub>true</biosgrub>
+				</partition>
+				<!-- the EFI system partition -->
+				<partition> 
+					<size>100MiB</size>
+					<label>uefi</label>
+					<bootable>true</bootable>
+				</partition>
+				<partition>
+					<size>remain</size>
+					<label>rfs</label>
+				</partition>
+			</gpthd>
+		</images>
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs>
+					<type>ext4</type>
+					<tune2fs>-i 0</tune2fs>
+				</fs>
+			</bylabel>
+			<!-- the EFI system partition needs to be mounted at /boot/efi -->
+			<bylabel>
+				<label>uefi</label>
+				<mountpoint>/boot/efi</mountpoint>
+				<fs>
+					<type>vfat</type>
+				</fs>
+			</bylabel>
+		</fstab>
+		<norecommend />
+		<pkg-list>
+			<!-- grub-efi-amd64 conflicts with grub-pc, so install grub-efi-amd64-bin and grub-pc -->
+			<pkg>grub-efi-amd64-bin</pkg>
+			<pkg>grub-pc</pkg>
+			<pkg>linux-image-amd64</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
