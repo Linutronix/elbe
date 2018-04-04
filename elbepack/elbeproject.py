@@ -772,7 +772,7 @@ class ElbeProject (object):
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append(p.et.text)
 
-            pkgs = self.buildenv.xml.get_target_packages()
+            pkgs = self.buildenv.xml.get_target_packages() + debootstrap_pkgs
 
             if buildenv:
                 pkgs = pkgs + self.buildenv.xml.get_buildenv_packages()
