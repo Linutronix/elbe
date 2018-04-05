@@ -33,8 +33,11 @@ Crash Course
 
 Report bugs or any other feedback
 ---------------------------------
-Please use the Issue tracker on github, or report bugs or success stories to
-<elbe-devel@linutronix.de>.
+Please use the Issue tracker on github.
+
+Send patches to <elbe-devel@linutronix.de>.
+
+For general discussion use <elbe-users@linutronix.de>.
 
 Development
 -----------
