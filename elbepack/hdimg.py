@@ -693,7 +693,7 @@ def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type):
 
     # dd binary blobs onto images
     for i in xml.tgt.node("images"):
-        if (i.tag == "msdoshd") or (i.tag == "gpt"):
+        if (i.tag == "msdoshd") or (i.tag == "gpthd"):
             add_binary_blob(outf, i, target)
 
     gz_img_files = []
