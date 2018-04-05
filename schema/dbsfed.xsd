@@ -737,7 +737,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="console" type="rfs:string" minOccurs="1" maxOccurs="1">
+      <element name="console" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             serial console for getty
