@@ -465,7 +465,7 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
 
     outf.do('mount /dev/loop0 %s' % os.path.join(target, "imagemnt"))
     outf.do(
-        'cp -a "%s"/* "%s"' %
+        'cp -a "%s/." "%s/"' %
         (os.path.join(
             target, "filesystems", entry.id), os.path.join(
             target, "imagemnt")), allow_fail=True)
