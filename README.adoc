@@ -48,3 +48,31 @@ To get the source use:
 git clone https://github.com/linutronix/elbe
 
 IRC: irc://irc.freenode.net/elbe
+
+License rules
+-------------
+ELBE is provided under the terms of the GPLv3+ license as provided in the
+COPYING file.
+
+Instead of adding GPLv3+ boilerplates to the individual files, elbe uses SPDX
+license identifiers, which are machine parseable and considered legaly
+equivalent.
+
+File headers
+------------
+ELBE files start with a common file header:
+
+----
+# <PATH TO INTERPRETER> (optional)
+# <SOME TEXT>           (optional)
+# <COPYRIGHT>           (optional)
+# <SPDX TAG>
+----
+
+# can be replaced by a comment operator for another programming language, e.g.
+/* <...> */ or // <...> is also allowed.
+
+Empty comment lines are allowed in the header. A single header section like
+<SOME TEXT> can use multiple lines.
+
+The SPDX TAG needs to be the last entry in the header.
