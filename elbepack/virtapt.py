@@ -29,7 +29,7 @@ import apt
 from tempfile import mkdtemp
 from multiprocessing.managers import BaseManager
 
-from elbepack.shellhelper import system
+from elbepack.shellhelper import CommandError, system
 from elbepack.directories import elbe_pubkey_fname
 
 
