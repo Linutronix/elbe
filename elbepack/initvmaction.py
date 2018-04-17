@@ -73,7 +73,7 @@ class InitVMAction(object):
     def __init__(self, node, initvmNeeded=True):
         # The tag initvmNeeded is required in order to be able to run `elbe
         # initvm create`
-        self.conn = libvirt.open("qemu:///session")
+        self.conn = libvirt.open("qemu:///system")
         try:
             self.initvm = self.conn.lookupByName(cfg['initvm_domain'])
         except libvirt.libvirtError:
@@ -172,7 +172,7 @@ class AttachAction(InitVMAction):
             sys.exit(20)
 
         print('Attaching to initvm console.')
-        system('virsh console %s' % cfg['initvm_domain'])
+        system('virsh --connect qemu:///system console %s' % cfg['initvm_domain'])
 
 
 InitVMAction.register(AttachAction)
@@ -219,12 +219,12 @@ class CreateAction(InitVMAction):
             print("If you want to build in your old initvm, "
                   "use `elbe initvm submit <xml>`.")
             print("If you want to remove your old initvm from libvirt "
-                    "run `virsh undefine %s`.\n" % cfg['initvm_domain'])
+                    "run `virsh --connect qemu:///system undefine %s`.\n" % cfg['initvm_domain'])
             print("Note:")
             print("\t1) You can reimport your old initvm via "
-                    "`virsh define <file>`")
+                    "`virsh --connect qemu:///system define <file>`")
             print("\t   where <file> is the corresponding libvirt.xml")
-            print("\t2) virsh undefine does not delete the image "
+            print("\t2) virsh --connect qemu:///system undefine does not delete the image "
                   "of your old initvm.")
             sys.exit(20)
 
@@ -333,7 +333,7 @@ class CreateAction(InitVMAction):
             self.conn.defineXML(xml)
         except CommandError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
-            print('Try `virsh undefine %s` to delete existing initvm' % cfg['initvm_domain'],
+            print('Try `virsh --connect qemu:///system undefine %s` to delete existing initvm' % cfg['initvm_domain'],
                   file=sys.stderr)
             sys.exit(20)
 
