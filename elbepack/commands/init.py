@@ -1,5 +1,5 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2015, 2017 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2014-2015, 2017, 2018 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2014, 2017 Manuel Traut <manut@linutronix.de>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 #
@@ -18,6 +18,7 @@ from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
+from elbepack.config import cfg
 
 from optparse import OptionParser
 
@@ -150,7 +151,8 @@ def run_command(argv):
          "prj": xml.node("/initvm"),
          "http_proxy": http_proxy,
          "pkgs": xml.node("/initvm/pkg-list") or [],
-         "preseed": get_initvm_preseed(xml)}
+         "preseed": get_initvm_preseed(xml),
+         "cfg": cfg}
 
     if http_proxy != "":
         os.putenv("http_proxy", http_proxy)
