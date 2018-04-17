@@ -1651,7 +1651,7 @@
       <element name="rm" type="rfs:rm" minOccurs="0">
         <annotation>
           <documentation>
-            remove a file or directory (recursive)
+            remove a file or directory (recursive). Also allows specifying an exclude pattern.
           </documentation>
         </annotation>
       </element>
