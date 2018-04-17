@@ -22,7 +22,9 @@ DESCRIPTION
 -----------
 
 This command allows to build and manage an initvm.
-It makes use of the tmux Terminal multiplexer.
+
+Initvms are managed via libvirt, and its necessary, that a user is a member of the
+libvirt group.
 
 
 OPTIONS
@@ -69,9 +71,7 @@ COMMANDS
 
 'attach'::
 
-Attach to the initvm running in a Background tmux session.
-When tmux is being used, it links the initvm window into the current tmux session.
-If tmux is not used, tmux is started and the Background session is attached.
+Attach to the initvm console, which is accessed via virsh.
 
 
 'create' [ <xmlfile> | <isoimage> ]::
@@ -139,7 +139,6 @@ $ elbe initvm submit /usr/share/doc/elbe-doc/examples/elbe-desktop.xml
 SEE ALSO
 --------
 linkgit:elbe-control[1]
-linkgit:tmux[1]
 
 ELBE
 ----
