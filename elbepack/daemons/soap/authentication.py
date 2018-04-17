@@ -1,5 +1,5 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2015 Torben Hohn <torbenh@linutronix.de>
+# Copyright (c) 2015, 2018 Torben Hohn <torbenh@linutronix.de>
 # Copyright (c) 2016-2017 Manuel Traut <manut@linutronix.de>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -140,6 +140,19 @@ def authenticated_admin(func):
             if not self.app.pm.db.is_admin(uid):
                 raise SoapElbeNotAuthorized()
             return func(self, arg1, arg2)
+        return wrapped
+    elif func.__code__.co_argcount == 6:
+        @wraps(func)
+        def wrapped(self, arg1, arg2, arg3, arg4, arg5):
+            s = self.transport.req_env['beaker.session']
+            try:
+                uid = s['userid']
+            except KeyError:
+                raise SoapElbeNotLoggedIn()
+
+            if not self.app.pm.db.is_admin(uid):
+                raise SoapElbeNotAuthorized()
+            return func(self, arg1, arg2, arg3, arg4, arg5)
         return wrapped
     else:
         raise Exception(
