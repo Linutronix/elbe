@@ -1,6 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2014-2018 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2015-2016 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2015-2016, 2018 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2016 Claudius Heine <ch@denx.de>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 #
@@ -57,6 +57,12 @@ class ESoap (ServiceBase):
     @authenticated_admin
     def list_users(ctx):
         return [u.name for u in ctx.app.pm.db.list_users()]
+
+    @rpc(String,String,String,String,Boolean)
+    @soap_faults
+    @authenticated_admin
+    def add_user(self, name, fullname, password, email, admin):
+        self.app.pm.db.add_user(name, fullname, password, email, admin)
 
     @rpc(_returns=Array(SoapProject))
     @soap_faults

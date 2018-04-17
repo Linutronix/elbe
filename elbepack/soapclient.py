@@ -1,6 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2014-2018 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2015-2016 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2015-2016, 2018 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2016 Claudius Heine <ch@denx.de>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 #
@@ -17,6 +17,7 @@ import fnmatch
 import deb822   # package for dealing with Debian related data
 
 from suds.client import Client
+from suds import WebFault
 from datetime import datetime
 from urllib2 import URLError
 from httplib import BadStatusLine
@@ -179,6 +180,37 @@ class ListUsersAction(ClientAction):
 
 ClientAction.register(ListUsersAction)
 
+class AddUserAction(ClientAction):
+    tag = 'add_user'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len(args) != 4:
+            print(
+                "usage: elbe control add_user <name> <fullname> <password> <email>",
+                file=sys.stderr)
+            sys.exit(20)
+
+        name     = args[0]
+        fullname = args[1]
+        password = args[2]
+        email    = args[3]
+
+        try:
+            client.service.add_user(name, fullname, password, email, False)
+        except WebFault as e:
+            if not hasattr(e.fault, 'faultstring'):
+                raise
+
+            if not e.fault.faultstring.endswith('already exists in the database'):
+                raise
+
+            # when we get here, the user we wanted to create already exists.
+            # that is fine, and we dont need to do anything now.
+
+ClientAction.register(AddUserAction)
 
 class CreateProjectAction(ClientAction):
 
