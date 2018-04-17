@@ -1,5 +1,5 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2016 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2016, 2018 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2017 Kurt Kanzenbach <kurt@linutronix.de>
 # Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
 #
@@ -15,6 +15,7 @@ class Config(dict):
         self['elbeuser'] = "root"
         self['elbepass'] = "foo"
         self['pbuilder_jobs'] = "auto"
+        self['initvm_domain'] = "initvm"
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
@@ -30,6 +31,9 @@ class Config(dict):
 
         if 'ELBE_PBUILDER_JOBS' in os.environ:
             self['pbuilder_jobs'] = os.environ['ELBE_PBUILDER_JOBS']
+
+        if 'ELBE_INITVM_DOMAIN' in os.environ:
+            self['initvm_domain'] = os.environ['ELBE_INITVM_DOMAIN']
 
 
 cfg = Config()

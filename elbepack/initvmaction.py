@@ -1,6 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2015-2017 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2015-2017 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2015-2018 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2015 Silvio Fricke <silvio.fricke@gmail.com>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 # Copyright (c) 2017 Benedikt Spranger <b.spranger@linutronix.de>
@@ -16,6 +16,7 @@ from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import wdfs, TmpdirFilesystem
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
+from elbepack.config import cfg
 
 from tempfile import NamedTemporaryFile
 
@@ -74,7 +75,7 @@ class InitVMAction(object):
         # initvm create`
         self.conn = libvirt.open("qemu:///session")
         try:
-            self.initvm = self.conn.lookupByName('initvm')
+            self.initvm = self.conn.lookupByName(cfg['initvm_domain'])
         except libvirt.libvirtError:
             self.initvm = None
             if initvmNeeded:
@@ -171,7 +172,7 @@ class AttachAction(InitVMAction):
             sys.exit(20)
 
         print('Attaching to initvm console.')
-        system('virsh console initvm')
+        system('virsh console %s' % cfg['initvm_domain'])
 
 
 InitVMAction.register(AttachAction)
@@ -218,10 +219,10 @@ class CreateAction(InitVMAction):
             print("If you want to build in your old initvm, "
                   "use `elbe initvm submit <xml>`.")
             print("If you want to remove your old initvm from libvirt "
-                  "run `virsh undefine initvm`.\n")
+                    "run `virsh undefine %s`.\n" % cfg['initvm_domain'])
             print("Note:")
             print("\t1) You can reimport your old initvm via "
-                  "`virsh define <file>`")
+                    "`virsh define <file>`")
             print("\t   where <file> is the corresponding libvirt.xml")
             print("\t2) virsh undefine does not delete the image "
                   "of your old initvm.")
@@ -323,22 +324,16 @@ class CreateAction(InitVMAction):
             print("Giving up", file=sys.stderr)
             sys.exit(20)
 
-        # Register initvm in libvirt
-        # TODO: Extended vm name support? Currently, only one initvm with the
-        # name `initvm` is allowed. But perhaps it is a good idea to leave it
-        # that way because otherwise the user may be tempted to start more than
-        # one elbe-initvm which is not possible in the current network
-        # configuration (user networking with portforwarding).
-
-        # Read xml file
+        # Read xml file for libvirt
         with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
             xml = f.read()
 
+        # Register initvm in libvirt
         try:
             self.conn.defineXML(xml)
         except CommandError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
-            print('Try `virsh undefine initvm` to delete existing initvm',
+            print('Try `virsh undefine %s` to delete existing initvm' % cfg['initvm_domain'],
                   file=sys.stderr)
             sys.exit(20)
 

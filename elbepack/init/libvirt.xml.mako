@@ -1,6 +1,7 @@
 ## ELBE - Debian Based Embedded Rootfilesystem Builder
 ## Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 ## Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
+## Copyright (c) 2018 Troben Hohn <torben.hohn@linutronix.de>
 ##
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##
@@ -16,7 +17,7 @@ import os
 # Generate UUID
 uid = uuid.uuid4()
 
-name = 'initvm'
+name = cfg['initvm_domain']
 cpus = multiprocessing.cpu_count()
 memory = 1048576
 
