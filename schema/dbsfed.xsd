@@ -1648,7 +1648,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="rm" type="rfs:string" minOccurs="0">
+      <element name="rm" type="rfs:rm" minOccurs="0">
         <annotation>
           <documentation>
             remove a file or directory (recursive)
@@ -1811,7 +1811,7 @@
       </documentation>
     </annotation>
     <simpleContent>
-      <extension base="string">
+      <extension base="rfs:string">
         <attribute name="exclude" type="string" use="optional" />
       </extension>
     </simpleContent>
