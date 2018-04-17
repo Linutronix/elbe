@@ -131,6 +131,9 @@ rely on the database server to be already running.
 Create initvm and build a first xml file from the examples
 ----------------------------------------------------------
 
+In order to use elbe, a user needs to be member of the `libvirt` system
+group.
+
 To create an initvm and make that initvm build a first Rootfilesystem,
 use the following command:
 
