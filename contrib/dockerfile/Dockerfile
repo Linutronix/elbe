@@ -28,6 +28,7 @@ RUN export DEBIAN_FRONTEND noninteractive ;\
         python python-lxml \
         python-apt \
         python-apt \
+        python-debian \
         python-lxml \
         python-mako \
         python-mako \
