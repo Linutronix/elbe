@@ -25,12 +25,10 @@ RUN export DEBIAN_FRONTEND noninteractive ;\
         make \
         openssh-server \
         p7zip-full \
-        python python-lxml \
-        python-apt \
+        python \
         python-apt \
         python-debian \
         python-lxml \
-        python-mako \
         python-mako \
         python-parted \
         python-suds \
@@ -39,9 +37,7 @@ RUN export DEBIAN_FRONTEND noninteractive ;\
         qemu-keymaps \
         qemu-kvm \
         qemu-system \
-        qemu-system \
         qemu-user-static \
-        qemu-utils \
         qemu-utils \
         sudo \
         supervisor \
