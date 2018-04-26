@@ -294,7 +294,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
 
     elog = ASCIIDocLog(errorname, True)
 
-    elog.h2("Archive validation")
+    elog.h1("Archive validation")
 
     errors = 0
 
