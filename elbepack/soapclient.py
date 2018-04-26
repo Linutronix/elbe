@@ -820,12 +820,12 @@ class UploadPackageAction(RepoAction):
                 # finish upload
                 if len(xml_base64) == 1:
                     part = client.service.upload_file(builddir,
-                                                      f,
+                                                      os.path.basename(f),
                                                       xml_base64,
                                                       -1)
                 else:
                     part = client.service.upload_file(builddir,
-                                                      f,
+                                                      os.path.basename(f),
                                                       xml_base64,
                                                       part)
                 if part == -1:
@@ -879,7 +879,7 @@ class UploadPackageAction(RepoAction):
             self.upload_file(client, f, builddir)
 
         print("Including Package in initvm...")
-        client.service.include_package(builddir, filename)
+        client.service.include_package(builddir, os.path.basename(filename))
 
 
 RepoAction.register(UploadPackageAction)
