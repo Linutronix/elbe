@@ -252,23 +252,41 @@ class AddUserAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            if 'groups' in self.node.et.attrib:
-                log.chroot(
-                    target.path,
-                    '/usr/sbin/useradd -U -m -G "%s" -s "%s" "%s"' %
-                    (self.node.et.attrib['groups'],
-                     self.node.et.attrib['shell'],
-                     self.node.et.text))
+            att = self.node.et.attrib
+            options = ""
+            if 'groups' in att:
+                options += '-G "%s" ' % att['groups']
+            if 'shell' in att:
+                options += '-s "%s" ' % att['shell']
+            if 'uid' in att:
+                options += '-u "%s" ' % att['uid']
+            if 'gid' in att:
+                options += '-g "%s" ' % att['gid']
+            if 'home' in att:
+                options += '-d "%s" ' % att['home']
+            if 'system' in att and att['system'] == 'True':
+                options += '-r'
+            if 'create_home' in att and att['create_home'] == 'False':
+                options += '-M '
             else:
-                log.chroot(
-                    target.path, '/usr/sbin/useradd -U -m -s "%s" "%s"' %
-                    (self.node.et.attrib['shell'], self.node.et.text))
+                options += '-m '
+            if 'create_group' in att and att['create_group'] == 'False':
+                options += '-N '
+            else:
+                options += '-U '
 
-            log.chroot(target.path,
-                       """/bin/sh -c 'echo "%s\\n%s\\n" | passwd %s'""" % (
-                           self.node.et.attrib['passwd'],
-                           self.node.et.attrib['passwd'],
-                           self.node.et.text))
+            log.chroot(
+                target.path,
+                '/usr/sbin/useradd %s "%s"' %
+                (options,
+                 self.node.et.text))
+
+            if 'passwd' in att:
+                log.chroot(target.path,
+                           """/bin/sh -c 'echo "%s\\n%s\\n" | passwd %s'""" % (
+                               att['passwd'],
+                               att['passwd'],
+                               self.node.et.text))
 
 
 FinetuningAction.register(AddUserAction)
@@ -283,7 +301,15 @@ class AddGroupAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
         with target:
-            log.chroot(target.path, "/usr/sbin/groupadd -f %s" % (
+            att = self.node.et.attrib
+            # we use -f always
+            options = "-f "
+            if 'gid' in att:
+                options += '-g "%s" ' % att['gid']
+            if 'system' in att and att['system'] == 'True':
+                options += '-r'
+            log.chroot(target.path, '/usr/sbin/groupadd %s "%s"' % (
+                options,
                 self.node.et.text))
 
 
