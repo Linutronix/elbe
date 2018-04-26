@@ -89,11 +89,14 @@ class LogBase(object):
 
 
 class ASCIIDocLog (LogBase):
-    def __init__(self, fname):
+    def __init__(self, fname, append=False):
         self.fname = fname
-        if os.path.isfile(fname):
-            os.unlink(fname)
-        fp = file(fname, "w", 0)
+        if append:
+            fp = file(fname, "a", 0)
+        else:
+            if os.path.isfile(fname):
+                os.unlink(fname)
+            fp = file(fname, "w", 0)
 
         LogBase.__init__(self, fp)
 
