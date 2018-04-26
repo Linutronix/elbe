@@ -73,7 +73,29 @@ class InitVMAction(object):
     def __init__(self, node, initvmNeeded=True):
         # The tag initvmNeeded is required in order to be able to run `elbe
         # initvm create`
-        self.conn = libvirt.open("qemu:///system")
+        try:
+            self.conn = libvirt.open("qemu:///system")
+        except libvirt.libvirtError as verr:
+            if type(verr.args[0]) is not str:
+                raise
+            if verr.args[0].startswith('Failed to connect socket to'):
+                print("", file=sys.stderr)
+                print("Accessing libvirt provider system not possible.", file=sys.stderr)
+                print("Make sure that package 'libvirt-daemon-system' is", file=sys.stderr)
+                print("installed, and the service is running properly", file=sys.stderr)
+                sys.exit(20)
+
+            if verr.args[0].startswith('authentication unavailable'):
+                print("", file=sys.stderr)
+                print("Accessing libvirt provider system not allowed.", file=sys.stderr)
+                print("Users which want to use elbe need to be members of the 'libvirt' group.", file=sys.stderr)
+                print("'gpasswd -a <user> libvirt' and logging in again,", file=sys.stderr)
+                print("should fix the problem.", file=sys.stderr)
+                sys.exit(20)
+
+            # In case we get here, the exception is unknown, and we want to see it
+            raise
+
         try:
             self.initvm = self.conn.lookupByName(cfg['initvm_domain'])
         except libvirt.libvirtError:
