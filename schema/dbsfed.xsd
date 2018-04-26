@@ -1785,7 +1785,7 @@
     <simpleContent>
       <extension base="rfs:string">
         <attribute name="gid" type="string" use="optional" />
-        <attribute name="system" type="boolean" use="optional">
+        <attribute name="system" type="boolean" use="optional" />
       </extension>
     </simpleContent>
   </complexType>
@@ -1815,9 +1815,9 @@
         <attribute name="uid" type="string" use="optional" />
         <attribute name="gid" type="string" use="optional" />
         <attribute name="home" type="string" use="optional" />
-        <attribute name="system" type="boolean" use="optional">
-        <attribute name="create_home" type="boolean" use="optional">
-        <attribute name="create_group" type="boolean" use="optional">
+        <attribute name="system" type="boolean" use="optional" />
+        <attribute name="create_home" type="boolean" use="optional" />
+        <attribute name="create_group" type="boolean" use="optional" />
       </extension>
     </simpleContent>
   </complexType>
