@@ -513,11 +513,14 @@ class ProjectManager(object):
         ep = self._get_current_project(userid)
 
         t = filename[-3:]  # filetype of uploaded file
+        pkg_name = filename.split('_')[0]
 
         if t == 'dsc':
-            ep.repo.includedsc(os.path.join(ep.builddir, filename))
+            ep.repo.includedsc(os.path.join(ep.builddir, filename),
+                               pkgname=pkg_name, force=True)
         elif t == 'deb':
-            ep.repo.includedeb(os.path.join(ep.builddir, filename))
+            ep.repo.includedeb(os.path.join(ep.builddir, filename),
+                               pkgname=pkg_name, force=True)
 
         ep.repo.finalize()
 
