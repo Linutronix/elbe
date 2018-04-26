@@ -80,7 +80,7 @@ def dump_initvmpkgs(xml):
 
 
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
-    elog = ASCIIDocLog(errorname)
+    elog = ASCIIDocLog(errorname, True)
 
     elog.h1("ELBE Package validation")
     elog.h2("Package List validation")
@@ -292,7 +292,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
     if not xml.has("archive") or xml.text("archive") is None:
         return
 
-    elog = ASCIIDocLog(errorname)
+    elog = ASCIIDocLog(errorname, True)
 
     elog.h2("Archive validation")
 

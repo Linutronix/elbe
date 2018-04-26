@@ -392,6 +392,11 @@ class ElbeProject (object):
                        self.log, self.get_rpcaptcache())
 
         validationpath = os.path.join(self.builddir, "validation.txt")
+        # The validation file is created using check_full_pkgs() and
+        # elbe_report(), both opening the file in append mode. So if an
+        # old validation file already exists, it must be deleted first.
+        if os.path.isfile(validationpath):
+            os.unlink(validationpath)
 
         # Package validation and package list
         if not skip_pkglist:
