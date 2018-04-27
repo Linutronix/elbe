@@ -264,13 +264,13 @@ class AddUserAction(FinetuningAction):
                 options += '-g "%s" ' % att['gid']
             if 'home' in att:
                 options += '-d "%s" ' % att['home']
-            if 'system' in att and att['system'] == 'True':
+            if 'system' in att and att['system'] == 'true':
                 options += '-r'
-            if 'create_home' in att and att['create_home'] == 'False':
+            if 'create_home' in att and att['create_home'] == 'false':
                 options += '-M '
             else:
                 options += '-m '
-            if 'create_group' in att and att['create_group'] == 'False':
+            if 'create_group' in att and att['create_group'] == 'false':
                 options += '-N '
             else:
                 options += '-U '
