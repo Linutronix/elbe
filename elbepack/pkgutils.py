@@ -1,6 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2013-2015, 2017-2018 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2014-2016, 2018 Torben Hohn <torben.hohn@linutronix.de>
+# Copyright (c) 2014-2016 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2016 John Ogness <john.ogness@linutronix.de>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -132,10 +132,14 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
     apt_keys = get_key_list(prj)
 
     if virtapt_imported:
-        if arch == "default":
-            arch = prj.text("buildimage/arch", default=defs, key="arch")
-        suite = prj.text("suite")
-        v = get_virtaptcache(arch, suite, apt_sources, "", apt_keys)
+        try:
+            if arch == "default":
+                arch = prj.text("buildimage/arch", default=defs, key="arch")
+            suite = prj.text("suite")
+            v = get_virtaptcache(arch, suite, apt_sources, "", apt_keys)
+        except Exception as e:
+            print("python-apt failed, using fallback code")
+            return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
         ret = v.get_uri(suite, arch, target_pkg, incl_deps)
         return ret
