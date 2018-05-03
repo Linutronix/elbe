@@ -630,7 +630,7 @@ class ElbeProject (object):
 
         # Run pbuilder --create
         self.log.do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-                    '--extrapackages git' % (
+                    '--extrapackages "git gnupg"' % (
                         os.path.join(self.builddir, "pbuilderrc"),
                         os.path.join(self.builddir, "aptconfdir")))
 
