@@ -428,8 +428,10 @@ class ElbeProject (object):
         self.log.do ('chmod 755 "%s"' % os.path.join (self.builddir, "pbuilder", "hooks.d", "D10elbe_apt_sources"))
 
         # Run pbuilder --create
-        self.log.do ('pbuilder --create --configfile "%s" --aptconfdir "%s" --extrapackages git' % (
-                     os.path.join (self.builddir, "pbuilderrc"), os.path.join (self.builddir, "aptconfdir")))
+        self.log.do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
+                    '--extrapackages "git gnupg"' % (
+                        os.path.join(self.builddir, "pbuilderrc"),
+                        os.path.join(self.builddir, "aptconfdir")))
 
     def sync_xml_to_disk (self):
         try:
