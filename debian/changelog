@@ -1,3 +1,15 @@
+elbe (2.9.10) unstable; urgency=medium
+
+  * use libvirt system instead of user session
+  * use SPDX headers
+  * finetuning, add more options for addgroup and adduser
+  * projrepo add overwrites existing packages now
+  * upgrade packages after debootstrap
+  * support & examples for UEFI+BIOS hybrid boot
+  * bugfix: pbuilder on stretch using projrepo
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 03 May 2018 17:03:21 +0200
+
 elbe (2.9.9) unstable; urgency=medium
 
   * bugfix: elbe-bootstrap package download fails sometimes
