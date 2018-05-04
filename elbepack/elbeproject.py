@@ -472,7 +472,7 @@ class ElbeProject (object):
                 grub_version = 199
             else:
                 grub_version = 202
-                grub_fw_type = "bios"
+            grub_fw_type = "bios"
         elif self.get_rpcaptcache().is_installed('grub-efi-amd64'):
             grub_version = 202
             grub_fw_type = "efi"
