@@ -169,20 +169,6 @@ defaults = {"armel": armel_defaults,
             "i386": i386_defaults,
             "nodefaults": {}}
 
-xml_field_path = {
-    "arch": "project/buildimage/arch",
-    "size": "project/buildimage/size",
-    "img": "project/buildimage/img",
-    "mem": "project/buildimage/mem",
-    "interpreter": "project/buildimage/interpreter",
-    "console": "project/buildimage/console",
-    "machine": "project/buildimage/machine",
-    "nicmodel": "project/buildimage/NIC/model",
-    "kinitrd": "project/buildimage/kinitrd",
-    "name": "project/name"
-}
-
-
 def get_random_mac():
     binaddr = [random.randint(0, 255) for i in range(6)]
     binaddr[0] &= 0xfe
