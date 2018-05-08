@@ -22,7 +22,7 @@ name = cfg['initvm_domain']
 cpus = multiprocessing.cpu_count()
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) / 1024
 
-imagetype = prj.text('img', defaults=defs, key='img')
+imagetype = prj.text('img', default=defs, key='img')
 img = os.path.join(opt.directory, 'buildenv.img')
 
 emulator = prj.text('interpreter', default=defs, key='interpreter')
