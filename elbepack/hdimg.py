@@ -10,13 +10,13 @@
 from __future__ import print_function
 
 import os
-from string import digits
 
 import parted
 import _ped
 
 from elbepack.fstab import fstabentry, mountpoint_dict
 from elbepack.asciidoclog import CommandError
+from elbepack.filesystem import size_to_int
 
 
 def mkfs_mtd(outf, mtd, fslabel, rfs, target):
@@ -139,41 +139,6 @@ def build_image_mtd(outf, mtd, target):
         pass
 
     return img_files
-
-
-def size_to_int(size):
-    if size[-1] in digits:
-        return int(size)
-
-    if size.endswith("M"):
-        unit = 1000 * 1000
-        s = size[:-1]
-    elif size.endswith("MiB"):
-        unit = 1024 * 1024
-        s = size[:-3]
-    elif size.endswith("MB"):
-        unit = 1000 * 1000
-        s = size[:-2]
-    if size.endswith("G"):
-        unit = 1000 * 1000 * 1000
-        s = size[:-1]
-    elif size.endswith("GiB"):
-        unit = 1024 * 1024 * 1024
-        s = size[:-3]
-    elif size.endswith("GB"):
-        unit = 1000 * 1000 * 1000
-        s = size[:-2]
-    if size.endswith("k"):
-        unit = 1000
-        s = size[:-1]
-    elif size.endswith("kiB"):
-        unit = 1024
-        s = size[:-3]
-    elif size.endswith("kB"):
-        unit = 1000
-        s = size[:-2]
-
-    return int(s) * unit
 
 
 class grubinstaller_base(object):

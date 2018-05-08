@@ -9,7 +9,41 @@ import shutil
 
 from glob import glob
 from tempfile import mkdtemp
+from string import digits
 
+def size_to_int(size):
+    if size[-1] in digits:
+        return int(size)
+
+    if size.endswith("M"):
+        unit = 1000 * 1000
+        s = size[:-1]
+    elif size.endswith("MiB"):
+        unit = 1024 * 1024
+        s = size[:-3]
+    elif size.endswith("MB"):
+        unit = 1000 * 1000
+        s = size[:-2]
+    if size.endswith("G"):
+        unit = 1000 * 1000 * 1000
+        s = size[:-1]
+    elif size.endswith("GiB"):
+        unit = 1024 * 1024 * 1024
+        s = size[:-3]
+    elif size.endswith("GB"):
+        unit = 1000 * 1000 * 1000
+        s = size[:-2]
+    if size.endswith("k"):
+        unit = 1000
+        s = size[:-1]
+    elif size.endswith("kiB"):
+        unit = 1024
+        s = size[:-3]
+    elif size.endswith("kB"):
+        unit = 1000
+        s = size[:-2]
+
+    return int(s) * unit
 
 class Filesystem(object):
     def __init__(self, path, clean=False):
