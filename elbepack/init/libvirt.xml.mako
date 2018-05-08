@@ -13,13 +13,14 @@
 import uuid
 import multiprocessing
 import os
+from elbepack.filesystem import size_to_int
 
 # Generate UUID
 uid = uuid.uuid4()
 
 name = cfg['initvm_domain']
 cpus = multiprocessing.cpu_count()
-memory = 1048576
+memory = size_to_int(prj.text('mem', default=defs, key='mem')) / 1024
 
 imagetype = prj.text('img', defaults=defs, key='img')
 img = os.path.join(opt.directory, 'buildenv.img')
