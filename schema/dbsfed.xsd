@@ -349,6 +349,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="swap-size" type="rfs:memory" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            size of the virtual swap partition used in the build environment.
+            this size is subtracted from the size of the virtual harddisk.
+	    Supports unit prefixes like GiB, GB, and G.
+          </documentation>
+        </annotation>
+      </element>
       <element name="img" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
