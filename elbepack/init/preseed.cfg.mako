@@ -5,6 +5,10 @@
 ##
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##
+<%
+  from elbepack.filesystem import size_to_int
+  swap = size_to_int(prj.text('swap-size', default=defs, key='swap-size')) / 1024 / 1024
+%>
 d-i keyboard-configuration/layoutcode string us
 d-i keyboard-configuration/xkb-keymap select us
 
@@ -30,7 +34,11 @@ d-i clock-setup/utc boolean true
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select buildenv
 d-i partman-auto/disk string /dev/vda
-d-i partman-auto/expert_recipe string buildenv :: 256 1000000 -1 ext3 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext3 } mountpoint{ / } .
+d-i partman-auto/expert_recipe string buildenv :: \
+%if swap != 0:
+  ${swap} ${swap} ${swap} linux-swap $primary{ } method{ swap } format{ } . \
+%endif
+256 1000000 -1 ext3 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext3 } mountpoint{ / } .
 d-i partman/partitioning/confirm_write_new_label boolean true
 d-i partman/confirm_write_new_label boolean true
 d-i partman/choose_partition select Finish partitioning and write changes to disk
