@@ -601,11 +601,12 @@
   <simpleType name="memory_restriction">
     <annotation>
       <documentation>
-        at least 128 MB of memory are needed to run the debian-installer
+        Memory can be specified using binary unit prefixes like MiB and GiB,
+        or SI prefixes like GB,MB or simply G or M.
       </documentation>
     </annotation>
-    <restriction base="integer">
-      <minInclusive value="128" />
+    <restriction base="string">
+      <pattern value="(\d+(k|M|G|kB|MB|GB|kiB|MiB|GiB)?)" />
     </restriction>
   </simpleType>
   
