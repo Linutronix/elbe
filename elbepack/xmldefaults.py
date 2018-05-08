@@ -16,7 +16,6 @@ from elbepack.kvm import find_kvm_exe
 
 armel_defaults = {
     "arch": "armel",
-    "mem": "256",
     "interpreter": "qemu-system-arm",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -28,7 +27,6 @@ armel_defaults = {
 
 armel_linaro48_defaults = {
     "arch": "armel",
-    "mem": "256",
     "interpreter": "qemu-system-arm",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -42,7 +40,6 @@ armel_linaro48_defaults = {
 
 armel_virtio_defaults = {
     "arch": "armel",
-    "mem": "256",
     "interpreter": "qemu-system-arm-virtio",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -54,7 +51,6 @@ armel_virtio_defaults = {
 
 armhf_defaults = {
     "arch": "armhf",
-    "mem": "256",
     "interpreter": "qemu-system-arm",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -67,7 +63,6 @@ armhf_defaults = {
 
 armhf_linaro48_defaults = {
     "arch": "armhf",
-    "mem": "256",
     "interpreter": "qemu-system-arm",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -81,7 +76,6 @@ armhf_linaro48_defaults = {
 
 armhf_virtio_defaults = {
     "arch": "armhf",
-    "mem": "256",
     "interpreter": "qemu-system-arm-virtio",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
@@ -93,7 +87,6 @@ armhf_virtio_defaults = {
 
 aarch64_defaults = {
     "arch": "arm64",
-    "mem": "256",
     "interpreter": "qemu-system-aarch64",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-aarch64-static",
@@ -105,7 +98,6 @@ aarch64_defaults = {
 
 ppc_defaults = {
     "arch": "powerpc",
-    "mem": "256",
     "interpreter": "qemu-system-ppc",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-ppc-static",
@@ -117,7 +109,6 @@ ppc_defaults = {
 
 ppcspe_defaults = {
     "arch": "powerpcspe",
-    "mem": "512",
     "interpreter": "qemu-system-ppc",
     "interpreterversion": "0.0.0",
     "userinterpr": "qemu-ppc-static",
@@ -129,7 +120,6 @@ ppcspe_defaults = {
 
 amd64_defaults = {
     "arch": "amd64",
-    "mem": "1024",
     "interpreter": find_kvm_exe()[0],
     "interpreterversion": find_kvm_exe()[1],
     "console": "ttyS0,115200n1",
@@ -140,7 +130,6 @@ amd64_defaults = {
 
 i386_defaults = {
     "arch": "i386",
-    "mem": "1024",
     "interpreter": "kvm",
     "interpreterversion": "0.0.0",
     "console": "ttyS0,115200n1",
@@ -154,6 +143,8 @@ archindep_defaults = {
     "name": "elbe-buildenv",
     "size": "20G",
     "img": "qcow2",
+    "mem": "1GiB",
+    "swap-size": "0"
 }
 
 defaults = {"armel": armel_defaults,
