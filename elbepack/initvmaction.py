@@ -93,6 +93,15 @@ class InitVMAction(object):
                 print("should fix the problem.", file=sys.stderr)
                 sys.exit(20)
 
+            if verr.args[0].startswith('error from service: CheckAuthorization'):
+                print("", file=sys.stderr)
+                print("Accessing libvirt failed.", file=sys.stderr)
+                print("Probably entering the password for accssing libvirt", file=sys.stderr)
+                print("timed out. If this occured after 'elbe initvm create'", file=sys.stderr)
+                print("it should be safe to use 'elbe initvm start' to", file=sys.stderr)
+                print("continue.", file=sys.stderr)
+                sys.exit(20)
+
             # In case we get here, the exception is unknown, and we want to see it
             raise
 
