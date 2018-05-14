@@ -330,7 +330,8 @@ class ElbeProject (object):
         else:
             self.log.printo("unknown pbuild source vcs: %s" % p.tag)
 
-        self.pdebuild_build()
+        # pdebuild_build(-1) means use all cpus
+        self.pdebuild_build(cpuset=-1)
 
     def build(self, skip_debootstrap=False, build_bin=False,
               build_sources=False, cdrom_size=None, debug=False,
@@ -538,7 +539,7 @@ class ElbeProject (object):
         self.log.do('mkdir -p "%s"' % os.path.join(self.builddir,
                                                    "pbuilder", "result"))
 
-    def pdebuild(self):
+    def pdebuild(self, cpuset):
         self.pdebuild_init()
 
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
@@ -562,17 +563,28 @@ class ElbeProject (object):
                 "current_pdebuild.tar.gz"),
                 pbdir))
 
-        self.pdebuild_build()
+        self.pdebuild_build(cpuset)
         self.repo.finalize()
 
-    def pdebuild_build(self):
+    def pdebuild_build(self, cpuset):
+        # check whether we have to use taskset to run pdebuild
+        # this might be useful, when things like java dont
+        # work with multithreading
+        #
+        if cpuset!=-1:
+            cpuset_cmd = 'taskset %d ' % cpuset
+        else:
+            # cpuset == -1 means empty cpuset_cmd
+            cpuset_cmd = ''
+
         try:
-            self.log.do('cd "%s"; pdebuild --debbuildopts "-j%s -sa" '
+            self.log.do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
                         '--configfile "%s" '
                         '--use-pdebuild-internal --buildresult "%s"' % (
                             os.path.join(self.builddir,
                                          "pdebuilder",
                                          "current"),
+                            cpuset_cmd,
                             cfg['pbuilder_jobs'],
                             os.path.join(self.builddir, "pbuilderrc"),
                             os.path.join(self.builddir, "pbuilder", "result")))

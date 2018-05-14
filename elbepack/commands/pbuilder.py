@@ -38,6 +38,9 @@ def run_command(argv):
     oparser.add_option("--output", dest="outdir", default=None,
                        help="directory where to save downloaded Files")
 
+    oparser.add_option("--cpuset", default=-1, type="int",
+                       help="Limit cpuset of pbuilder commands (bitmask) (defaults to -1 for all CPUs)")
+
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) < 1:

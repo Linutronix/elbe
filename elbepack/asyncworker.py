@@ -186,8 +186,9 @@ class BuildJob(AsyncWorkerJob):
 
 
 class PdebuildJob(AsyncWorkerJob):
-    def __init__(self, project):
+    def __init__(self, project, cpuset=-1):
         AsyncWorkerJob.__init__(self, project)
+        self.cpuset=cpuset
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -199,7 +200,7 @@ class PdebuildJob(AsyncWorkerJob):
     def execute(self, db):
         try:
             self.project.log.printo("Pdebuild started")
-            self.project.pdebuild()
+            self.project.pdebuild(self.cpuset)
             db.update_project_files(self.project)
             self.project.log.printo("Pdeb finished successfully")
             db.reset_busy(self.project.builddir, "build_done")

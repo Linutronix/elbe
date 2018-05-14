@@ -311,14 +311,14 @@ class ProjectManager(object):
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(CreatePbuilderJob(ep))
 
-    def build_current_pdebuild(self, userid):
+    def build_current_pdebuild(self, userid, cpuset):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             if not path.isdir(path.join(ep.builddir, "pbuilder")):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    'create --project %s" first' % ep.builddir)
 
-            self.worker.enqueue(PdebuildJob(ep))
+            self.worker.enqueue(PdebuildJob(ep, cpuset))
 
     def set_orig_fname(self, userid, fname):
         with self.lock:

@@ -227,8 +227,8 @@ class BuildAction(PBuilderAction):
         print("")
 
         try:
-            system('%s control set_pdebuild "%s" "%s"' %
-                   (elbe_exe, prjdir, tmp.fname("pdebuild.tar.gz")))
+            system('%s control set_pdebuild --cpuset "%d" "%s" "%s"' %
+                   (elbe_exe, opt.cpuset, prjdir, tmp.fname("pdebuild.tar.gz")))
         except CommandError:
             print("elbe control set_pdebuild Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
