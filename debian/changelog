@@ -1,3 +1,16 @@
+elbe (2.3) unstable; urgency=medium
+
+  * improve kvm machine-emulation heuristic
+  * remove apt-listchanges from extra deboostrap pkgs
+  * Revert "quickstart: describe how to use virtual machines as a regular user"
+  * dbsfed.xsd: reinstate rfs:rm type for <rm> in finetuning
+  * dbsfed.xsd: add text about the exclude feature to finetuning rm node
+  * elbeproject pbuilder: add gnupg to extrapackages installed into pbuilder
+  * validation: parse InRelease or Release
+  * pkgutils: care about version numbers of packages
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 15 May 2018 15:40:57 +0200
+
 elbe (2.2) unstable; urgency=medium
 
   * specify connection to elbe-daemon via env vars (port & host)
