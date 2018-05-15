@@ -20,6 +20,7 @@ import hashlib
 
 from tempfile import mkdtemp
 
+from pkg_resources import parse_version as V
 from elbepack.shellhelper import CommandError, system
 
 try:
@@ -99,8 +100,34 @@ def get_url(arch, suite, target_pkg, mirror, comp='main'):
         packages = [x for x in packages if x.startswith("Filename")]
         packages = [x for x in packages if x.find(target_pkg) != -1]
 
-        tmp = packages.pop()
-        urla = tmp.split()
+        # detect package with latest version number
+        latest_version_str = '0+deb0u0+jessie0'
+        latest_version_pos = 0
+        cnt = 0
+        for x in packages:
+            # extract version from path/name_version_arch
+            version = x.split('_')[1]
+            subcount = 0
+            # iterate over all parts of the version seperated by '+'
+            # this is enough for elbe-bootstrap package, however '~', etc.
+            # should be considered for official debian packages..
+            for subv in version.split('+'):
+                try:
+                    if V(subv) >= V(latest_version_str.split('+')[subcount]):
+                        subcount = subcount + 1
+                    else:
+                        break
+                # current version has more parts then the reference version
+                except IndexError:
+                    subcount = subcount + 1
+            # if iteration over all parts of the version string suceeded,
+            # a new latest_version is detected
+            if subcount == len(version.split('+')):
+                latest_version_pos = cnt
+                latest_version_str = version
+            cnt = cnt + 1
+
+        urla = packages[latest_version_pos].split()
         url = "%s/%s" % (mirror.replace("LOCALMACHINE", "localhost"), urla[1])
     except IOError:
         url = ""
