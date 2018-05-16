@@ -1,3 +1,9 @@
+elbe (2.9.11) unstable; urgency=medium
+
+  * addons needed for nneta-elbe
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 16 May 2018 22:48:02 +0200
+
 elbe (2.9.10) unstable; urgency=medium
 
   * use libvirt system instead of user session
