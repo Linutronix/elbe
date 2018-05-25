@@ -54,7 +54,8 @@ ADD adds/supervisord.conf /etc/supervisord.conf
 # create elbe user
 RUN groupadd -g 78 -o -r kvm78          # archlinux
 RUN groupadd -g 124 -o -r kvm124        # debian-sid
-RUN useradd -d /home/elbe -U -G libvirt,kvm,kvm78,kvm124,libvirt-qemu -m -s /bin/bash -u 1000 elbe
+RUN groupadd -g 232 -o -r kvm232        # ubuntu 14.04
+RUN useradd -d /home/elbe -U -G libvirt,kvm,kvm78,kvm124,kvm232,libvirt-qemu -m -s /bin/bash -u 1000 elbe
 RUN echo "root:elbe" | chpasswd
 RUN echo "elbe:elbe" | chpasswd
 
