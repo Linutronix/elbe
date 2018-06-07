@@ -13,11 +13,13 @@ endif
 
 # docker commands
 build:
-	docker build -t $(IMAGENAME) .
+	docker build --build-arg http_proxy=$(http_proxy) --build-arg https_proxy=$(https_proxy) -t $(IMAGENAME) .
 
 run:
 	docker run \
 		-v $(realpath ../../.):/elbe \
+		--env http_proxy=$(http_proxy) \
+		--env https_proxy=$(https_proxy) \
 		--device /dev/kvm:/dev/kvm \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
 		--cap-add SYS_ADMIN \
