@@ -119,6 +119,7 @@ class ElbeProject (object):
         self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
+        self.sysrootpath = os.path.join(self.builddir, "sysroot")
         self.sdkpath = os.path.join(self.builddir, "sdk")
         self.validationpath = os.path.join(self.builddir, "validation.txt")
 
@@ -191,6 +192,12 @@ class ElbeProject (object):
         else:
             self.targetfs = None
 
+        # dont create sysroot instance, it should be build from scratch
+        # each time, because the pkglist including the -dev packages is
+        # tracked nowhere.
+        self.sysrootenv = None
+        self.log.do('rm -rf %s' % self.sysrootpath)
+
     def build_chroottarball(self):
         self.log.do("tar cJf %s/chroot.tar.xz \
                 --exclude=./tmp/*  --exclude=./dev/* \
@@ -223,8 +230,18 @@ class ElbeProject (object):
 
     def build_sysroot(self):
 
-        if not self.buildenv:
-            self.build()
+        self.log.do('rm -rf %s; mkdir "%s"' % (self.sysrootpath,
+                                               self.sysrootpath))
+
+        self.sysrootenv = BuildEnv(self.xml,
+                                   self.log,
+                                   self.sysrootpath,
+                                   clean=True)
+        # Import keyring
+        self.sysrootenv.import_keys()
+        self.log.printo("Keys imported")
+
+        self.install_packages(self.sysrootenv, buildenv=False)
 
         # ignore packages from debootstrap
         ignore_pkgs = [p.et.text for p in self.xml.node("debootstrappkgs")]
@@ -233,45 +250,44 @@ class ElbeProject (object):
             ignore_dev_pkgs = [p.et.text for p in self.xml.node(
                 "target/pkg-blacklist/sysroot")]
 
-        with self.buildenv:
+        with self.sysrootenv:
             try:
-                self.get_rpcaptcache().update()
+                self.get_rpcaptcache(env=self.sysrootenv).update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
 
             try:
-                self.get_rpcaptcache().mark_install_devpkgs(set(ignore_pkgs),
+                self.get_rpcaptcache(env=self.sysrootenv).mark_install_devpkgs(set(ignore_pkgs),
                     set(ignore_dev_pkgs))
             except SystemError as e:
                 self.log.printo("mark install devpkgs failed: %s" % str(e))
             try:
-                self.get_rpcaptcache().commit()
+                self.get_rpcaptcache(env=self.sysrootenv).commit()
             except SystemError as e:
                 self.log.printo("commiting changes failed: %s" % str(e))
                 raise AptCacheCommitError(str(e))
 
+        try:
+            self.sysrootenv.rfs.dump_elbeversion(self.xml)
+        except IOError:
+            self.log.printo("dump elbeversion into sysroot failed")
+
         sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
 
-        with self.buildenv.rfs:
+        with self.sysrootenv.rfs:
             self.log.do("chroot %s /usr/bin/symlinks -cr /usr/lib" %
-                        self.chrootpath)
+                        self.sysrootpath)
 
         paths = self.get_sysroot_paths()
 
         self.log.do("rm %s" % sysrootfilelist, allow_fail=True)
-        os.chdir(self.chrootpath)
+        os.chdir(self.sysrootpath)
         for p in paths:
             self.log.do('find -path "%s" >> %s' % (p, sysrootfilelist))
 
         self.log.do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
-                    (self.builddir, self.chrootpath, sysrootfilelist))
+                    (self.builddir, self.sysrootpath, sysrootfilelist))
 
-        # chroot is invalid after adding all the -dev packages
-        # it shouldn't be used to create an incremental image
-        #
-        # We only remove /etc/elbe_version here.
-        # So we can still elbe chroot into the fs
-        self.buildenv.rfs.remove("/etc/elbe_version", noerr=True)
 
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
@@ -428,7 +444,7 @@ class ElbeProject (object):
 
         # Install packages
         if not skip_pkglist:
-            self.install_packages()
+            self.install_packages(self.buildenv)
 
         try:
             self.buildenv.rfs.dump_elbeversion(self.xml)
@@ -472,7 +488,7 @@ class ElbeProject (object):
 
         # install packages for buildenv
         if not skip_pkglist:
-            self.install_packages(buildenv=True)
+            self.install_packages(self.buildenv, buildenv=True)
 
         # Write source.xml
         try:
@@ -678,19 +694,23 @@ class ElbeProject (object):
         except MemoryError:
             self.log.printo("write source.xml failed (archive to huge?)")
 
-    def get_rpcaptcache(self):
-        if self._rpcaptcache is None:
-            self._rpcaptcache = get_rpcaptcache(
-                self.buildenv.rfs,
+    def get_rpcaptcache(self, env=None):
+        if not env:
+            env = self.buildenv
+        if env._rpcaptcache is None:
+            env._rpcaptcache = get_rpcaptcache(
+                env.rfs,
                 self.log.fp.name,
                 self.arch,
                 self.rpcaptcache_notifier,
                 self.xml.prj.has('norecommend'),
                 self.xml.prj.has('noauth'))
-        return self._rpcaptcache
+        return env._rpcaptcache
 
-    def drop_rpcaptcache(self):
-        self._rpcaptcache = None
+    def drop_rpcaptcache(self, env=None):
+        if not env:
+            env = self.buildenv
+        env._rpcaptcache = None
 
     def has_full_buildenv(self):
         if os.path.exists(self.chrootpath):
@@ -726,6 +746,12 @@ class ElbeProject (object):
         self.targetfs = None
         self.buildenv = None
 
+        # dont create sysroot instance, it should be build from scratch
+        # each time, because the pkglist including the -dev packages is
+        # tracked nowhere.
+        self.sysrootenv = None
+        self.log.do('rm -rf %s' % self.sysrootpath)
+
         self.xml = newxml
 
         # Create a new BuildEnv instance, if we have a build directory
@@ -750,20 +776,21 @@ class ElbeProject (object):
         self.log.printo("report timestamp: " +
                         datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
-    def install_packages(self, buildenv=False):
-        with self.buildenv:
+    def install_packages(self, target, buildenv=False):
+        with target:
             # First update the apt cache
             try:
-                self.get_rpcaptcache().update()
+                self.get_rpcaptcache(env=target).update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
 
             # Then dump the debootstrap packages
-            if self.buildenv.fresh_debootstrap:
-                if self.buildenv.need_dumpdebootstrap:
-                    dump_debootstrappkgs(self.xml, self.get_rpcaptcache())
+            if target.fresh_debootstrap:
+                if target.need_dumpdebootstrap:
+                    dump_debootstrappkgs(self.xml,
+                                         self.get_rpcaptcache(env=target))
                     dump_initvmpkgs(self.xml)
-                self.buildenv.need_dumpdebootstrap = False
+                target.need_dumpdebootstrap = False
                 source = self.xml
                 try:
                     initxml = ElbeXML(
@@ -798,7 +825,7 @@ class ElbeProject (object):
 
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
             if not buildenv:
-                self.buildenv.seed_etc()
+                target.seed_etc()
 
             # remove all non-essential packages to ensure that on a incremental
             # build packages can be removed
@@ -806,15 +833,15 @@ class ElbeProject (object):
             for p in self.xml.node("debootstrappkgs"):
                 debootstrap_pkgs.append(p.et.text)
 
-            pkgs = self.buildenv.xml.get_target_packages() + debootstrap_pkgs
+            pkgs = target.xml.get_target_packages() + debootstrap_pkgs
 
             if buildenv:
-                pkgs = pkgs + self.buildenv.xml.get_buildenv_packages()
+                pkgs = pkgs + target.xml.get_buildenv_packages()
 
             # Now install requested packages
             for p in pkgs:
                 try:
-                    self.get_rpcaptcache().mark_install(p, None)
+                    self.get_rpcaptcache(env=target).mark_install(p, None)
                 except KeyError:
                     self.log.printo("No Package " + p)
                 except SystemError:
@@ -826,7 +853,7 @@ class ElbeProject (object):
             # self.get_rpcaptcache().cleanup(debootstrap_pkgs + pkgs)
 
             try:
-                self.get_rpcaptcache().commit()
+                self.get_rpcaptcache(env=target).commit()
             except SystemError as e:
                 self.log.printo("commiting changes failed: %s" % str(e))
                 raise AptCacheCommitError(str(e))

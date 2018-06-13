@@ -28,6 +28,7 @@ class BuildEnv ():
         self.xml = xml
         self.log = log
         self.path = path
+        self._rpcaptcache = None
 
         self.rfs = BuildImgFs(path, xml.defs["userinterpr"])
 
