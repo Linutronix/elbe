@@ -333,6 +333,52 @@ class ElbeProject (object):
         # pdebuild_build(-1) means use all cpus
         self.pdebuild_build(cpuset=-1)
 
+
+    def build_cdroms(self, build_bin=True, build_sources=False, cdrom_size=None):
+        self.repo_images = []
+
+        elog = ASCIIDocLog(self.validationpath, True)
+
+        env = None
+        sysrootstr = ""
+        if os.path.exists(self.sysrootpath):
+            sysrootstr = "(including sysroot packages)"
+            env = BuildEnv(self.xml, self.log, self.sysrootpath,
+                    build_sources=build_sources, clean=False)
+        else:
+            env = BuildEnv(self.xml, self.log, self.chrootpath,
+                    build_sources=build_sources, clean=False)
+
+        with env:
+            init_codename = self.xml.get_initvm_codename()
+
+
+            if build_bin:
+                elog.h1("Binary CD %s" % sysrootstr)
+
+                self.repo_images += mk_binary_cdrom(env.rfs,
+                                                    self.arch,
+                                                    self.codename,
+                                                    init_codename,
+                                                    self.xml,
+                                                    self.builddir,
+                                                    self.log,
+                                                    cdrom_size=cdrom_size)
+            if build_sources:
+                elog.h1("Source CD %s" % sysrootstr)
+                try:
+                    self.repo_images += mk_source_cdrom(env.rfs,
+                                                        self.arch,
+                                                        self.codename,
+                                                        init_codename,
+                                                        self.builddir,
+                                                        self.log,
+                                                        cdrom_size=cdrom_size,
+                                                        xml=self.xml)
+                except SystemError as e:
+                    # e.g. no deb-src urls specified
+                    elog.printo(str(e))
+
     def build(self, skip_debootstrap=False, build_bin=False,
               build_sources=False, cdrom_size=None, debug=False,
               skip_pkglist=False, skip_pbuild=False):
@@ -488,32 +534,7 @@ class ElbeProject (object):
             grub_fw_type = ""
         self.targetfs.part_target(self.builddir, grub_version, grub_fw_type)
 
-        # Build cdrom images
-        self.repo_images = []
-        with self.buildenv:
-            init_codename = self.xml.get_initvm_codename()
-            if build_bin:
-                self.repo_images += mk_binary_cdrom(self.buildenv.rfs,
-                                                    self.arch,
-                                                    self.codename,
-                                                    init_codename,
-                                                    self.xml,
-                                                    self.builddir,
-                                                    self.log,
-                                                    cdrom_size=cdrom_size)
-            if build_sources:
-                try:
-                    self.repo_images += mk_source_cdrom(self.buildenv.rfs,
-                                                        self.arch,
-                                                        self.codename,
-                                                        init_codename,
-                                                        self.builddir,
-                                                        self.log,
-                                                        cdrom_size=cdrom_size,
-                                                        xml=self.xml)
-                except SystemError as e:
-                    # e.g. no deb-src urls specified
-                    self.log.printo(str(e))
+        self.build_cdroms(build_bin, build_sources, cdrom_size)
 
         if self.postbuild_file:
             self.log.h2("postbuild script:")
