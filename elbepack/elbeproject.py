@@ -120,6 +120,7 @@ class ElbeProject (object):
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
         self.sdkpath = os.path.join(self.builddir, "sdk")
+        self.validationpath = os.path.join(self.builddir, "validation.txt")
 
         self.name = name
         self.override_buildtype = override_buildtype
@@ -391,21 +392,20 @@ class ElbeProject (object):
         extract_target(self.buildenv.rfs, self.xml, self.targetfs,
                        self.log, self.get_rpcaptcache())
 
-        validationpath = os.path.join(self.builddir, "validation.txt")
         # The validation file is created using check_full_pkgs() and
         # elbe_report(), both opening the file in append mode. So if an
         # old validation file already exists, it must be deleted first.
-        if os.path.isfile(validationpath):
-            os.unlink(validationpath)
+        if os.path.isfile(self.validationpath):
+            os.unlink(self.validationpath)
 
         # Package validation and package list
         if not skip_pkglist:
             pkgs = self.xml.xml.node("/target/pkg-list")
             if self.xml.has("fullpkgs"):
                 check_full_pkgs(pkgs, self.xml.xml.node("/fullpkgs"),
-                                validationpath, self.get_rpcaptcache())
+                                self.validationpath, self.get_rpcaptcache())
             else:
-                check_full_pkgs(pkgs, None, validationpath,
+                check_full_pkgs(pkgs, None, self.validationpath,
                                 self.get_rpcaptcache())
             dump_fullpkgs(self.xml, self.buildenv.rfs, self.get_rpcaptcache())
 
@@ -433,7 +433,7 @@ class ElbeProject (object):
         # Elbe report
         reportpath = os.path.join(self.builddir, "elbe-report.txt")
         elbe_report(self.xml, self.buildenv, self.get_rpcaptcache(),
-                    reportpath, validationpath, self.targetfs)
+                    reportpath, self.validationpath, self.targetfs)
 
         # the current license code raises an exception that interrupts the hole
         # build if a licence can't be converted to utf-8. Exception handling
@@ -523,7 +523,7 @@ class ElbeProject (object):
                 self.xml.text("project/name")),
                 allow_fail=True)
 
-        os.system('cat "%s"' % os.path.join(self.builddir, "validation.txt"))
+        os.system('cat "%s"' % self.validationpath)
 
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
