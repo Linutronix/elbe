@@ -390,6 +390,33 @@ class BuildSDKAction(ClientAction):
 ClientAction.register(BuildSDKAction)
 
 
+class BuildCDROMsAction(ClientAction):
+
+    tag = 'build_cdroms'
+
+    def __init__(self, node):
+        ClientAction.__init__(self, node)
+
+    def execute(self, client, opt, args):
+        if len(args) != 1:
+            print(
+                "usage: elbe control build-cdroms [--build-bin|--build-sources] <project_dir>",
+                file=sys.stderr)
+            sys.exit(20)
+
+        if (not opt.build_bin) and (not opt.build_sources):
+            print(
+                "usage: elbe control build-cdroms [--build-bin|--build-sources] <project_dir>",
+                file=sys.stderr)
+            sys.exit(20)
+
+        builddir = args[0]
+        client.service.build_cdroms(builddir, opt.build_bin, opt.build_sources)
+
+
+ClientAction.register(BuildCDROMsAction)
+
+
 class GetFileAction(ClientAction):
 
     tag = 'get_file'

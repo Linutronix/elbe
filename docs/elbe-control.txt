@@ -12,6 +12,7 @@ SYNOPSIS
 'elbe control' [options] 'list_projects'
 'elbe control' [options] 'create_project'
 'elbe control' [options] 'build_sysroot' <build-dir>
+'elbe control' [options] 'build_cdroms' <build-dir>
 'elbe control' [options] 'set_pdebuild' <project-dir> <pdebuild file>
 'elbe control' [options] 'get_files' <build-dir>
 'elbe control' [options] 'build_chroot_tarball' <build-dir>
@@ -97,6 +98,13 @@ reference in subsequent commands.
 Build a sysroot for the specified project.
 
 The sysroot can be used with a toolchain for cross-compiles.
+
+
+'build_cdroms' <build-dir>::
+
+Build ISO images containing the Debian binary or source packages used by the
+given build-dir. Either --build-bin or --build-sources or both needs to be
+specified.
 
 
 'set_pdebuild' <build-dir> <pdebuild file>

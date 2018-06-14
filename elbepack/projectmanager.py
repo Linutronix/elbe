@@ -22,7 +22,7 @@ from elbepack.asyncworker import (AsyncWorker, BuildJob, APTUpdateJob,
                                   APTUpdUpgrJob, BuildSysrootJob,
                                   PdebuildJob, CreatePbuilderJob,
                                   UpdatePbuilderJob, BuildChrootTarJob,
-                                  BuildSDKJob)
+                                  BuildSDKJob, BuildCDROMsJob)
 
 from elbepack.elbexml import ValidationMode
 
@@ -353,6 +353,11 @@ class ProjectManager(object):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildSDKJob(ep))
+
+    def build_cdroms(self, userid, build_bin, build_src):
+        with self.lock:
+            ep = self._get_current_project(userid, allow_busy=False)
+            self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
     def build_update_package(self, userid, base_version):
         with self.lock:

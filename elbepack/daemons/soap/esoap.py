@@ -152,6 +152,13 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_sdk(uid)
 
+    @rpc(String, Boolean, Boolean)
+    @authenticated_uid
+    @soap_faults
+    def build_cdroms(self, uid, builddir, build_bin, build_src):
+        self.app.pm.open_project(uid, builddir)
+        self.app.pm.build_cdroms(uid, build_bin, build_src)
+
     @rpc(String, Boolean, Boolean, Boolean)
     @authenticated_uid
     @soap_faults
