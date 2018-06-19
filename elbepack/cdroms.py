@@ -47,7 +47,7 @@ def mk_source_cdrom(
                         mirror)
 
     cache = get_rpcaptcache(rfs, "aptcache.log", arch)
-
+    cache.update()
     pkglist = cache.get_installed_pkgs()
 
     forbiddenPackages = []

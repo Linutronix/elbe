@@ -349,6 +349,11 @@ class ElbeProject (object):
             env = BuildEnv(self.xml, self.log, self.chrootpath,
                     build_sources=build_sources, clean=False)
 
+        # ensure the /etc/apt/sources.list is created according to buil_sources,
+        # build_bin flag, ensure to reopen it with the new 'sources.list'
+        env.seed_etc()
+        self.drop_rpcaptcache(env=env)
+
         with env:
             init_codename = self.xml.get_initvm_codename()
 
