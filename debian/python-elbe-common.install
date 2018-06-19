@@ -8,6 +8,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/aptprogress.py
+./usr/lib/python2.*/*-packages/elbepack/archivedir.py
 ./usr/lib/python2.*/*-packages/elbepack/config.py
 ./usr/lib/python2.*/*-packages/elbepack/default-preseed.xml
 ./usr/lib/python2.*/*-packages/elbepack/directories.py
