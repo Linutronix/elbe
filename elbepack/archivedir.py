@@ -33,8 +33,9 @@ def chg_archive(xml, path, keep):
         os.system(cmd)
     else:
         archive = path
-        arch = xml.ensure_child("archive")
-        arch.set_text(enbase(archive))
+
+    arch = xml.ensure_child("archive")
+    arch.set_text(enbase(archive))
 
     if os.path.isdir(path):
         os.remove(archive)
