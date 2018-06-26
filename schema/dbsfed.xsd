@@ -23,7 +23,7 @@
       includes all subelements to define the elbe project
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="initvm" type="rfs:initvm" minOccurs="0">
         <annotation>
           <documentation>
@@ -113,7 +113,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute name="created" type="dateTime">
       <annotation>
         <documentation>
@@ -176,7 +176,7 @@
       links to one additional debian mirror
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="binary" type="rfs:binary-url" minOccurs="0">
         <annotation>
           <documentation>
@@ -198,7 +198,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -226,7 +226,7 @@
       specify main and additional debian mirrors
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="primary_host" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -273,7 +273,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -283,7 +283,7 @@
         describes settings that apply to the creation of the initvm
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -373,7 +373,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -507,7 +507,7 @@
         definition of the build environment
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="arch" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -590,7 +590,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -625,7 +625,7 @@
          describes a virtual network interface
        </documentation>
      </annotation>
-    <sequence>
+    <all>
       <element name="model" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -640,7 +640,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -675,7 +675,7 @@
          forward a network port from the build environment to the host machine
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="proto" type="rfs:fw_proto" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -697,7 +697,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -725,7 +725,7 @@
          configuration of the target rootfilesystem
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="hostname" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -836,7 +836,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -871,7 +871,7 @@
         describes a ubi volume
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="type" type="rfs:ubi_type" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -918,7 +918,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -991,7 +991,7 @@
          describes a mtd device
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="name" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1030,7 +1030,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1208,7 +1208,7 @@
          description of a linux filesystem
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="type" type="rfs:fs_type" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1237,7 +1237,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1247,7 +1247,7 @@
          mount storage by the label of the partition or volume
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="label" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1285,7 +1285,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1295,7 +1295,7 @@
          mount virtual filesystems or other storage devices device-node
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="source" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1325,7 +1325,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1361,7 +1361,7 @@
          list of packages, each contains the hole rootfilesystem
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="tar" type="rfs:tar" minOccurs="0">
         <annotation>
           <documentation>
@@ -1383,7 +1383,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1393,7 +1393,7 @@
          describes a tar package
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1408,7 +1408,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1418,7 +1418,7 @@
          describes a cpio package
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1426,7 +1426,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1436,7 +1436,7 @@
          describes a squashfs image
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
@@ -1444,7 +1444,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
@@ -1454,7 +1454,7 @@
          describes a partition of a harddisk
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="size" type="rfs:part_size">
         <annotation>
           <documentation>
@@ -1484,7 +1484,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
