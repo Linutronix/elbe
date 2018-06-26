@@ -384,7 +384,7 @@
         rootfilesystem and include the definition of the build environment
       </documentation>
     </annotation>
-    <sequence>
+    <all>
       <element name="name" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
@@ -435,7 +435,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="raw-preference" type="rfs:raw-preference" minOccurs="0" maxOccurs="unbounded">
+      <element name="raw-preference" type="rfs:raw-preference" minOccurs="0">
         <annotation>
           <documentation>
             gets dedented and striped and is then written to /etc/apt/preferences
@@ -467,7 +467,7 @@
           </documentation>
         </annotation>
       </element>
-    </sequence>
+    </all>
     <attribute ref="xml:base"/>
   </complexType>
 
