@@ -1,6 +1,6 @@
 ## ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2016 John Ogness <john.ogness@linutronix.de>
-# Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
+## Copyright (c) 2016 John Ogness <john.ogness@linutronix.de>
+## Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
 ##
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##

@@ -1,27 +1,27 @@
 #!/bin/sh
-#
-# This file was copied from http://git.yoctoproject.org/git/poky
-#                           16e22f3e37788afb83044f5089d24187d70094bd
-#
-# origin location of the file is: 'meta/files/toolchain-shar-extract.sh'
-#
-# known authors of the origin file are:
-#
-# Anibal Limon <anibal.limon@linux.intel.com>
-# Brendan Le Foll <brendan.le.foll@intel.com>
-# Ed Bartosh <ed.bartosh@linux.intel.com>
-# George Nita <george.nita@enea.com>
-# Maxin B. John <maxin.john@intel.com>
-# Paul Eggleton <paul.eggleton@linux.intel.com>
-# Qi.Chen@windriver.com <Qi.Chen@windriver.com>
-# Randy Witt <randy.e.witt@linux.intel.com>
-# Richard Purdie <richard.purdie@linuxfoundation.org>
-# Robert Yang <liezhi.yang@windriver.com>
-# Todor Minchev <todor.minchev@linux.intel.com>
-# Wenlin Kang <wenlin.kang@windriver.com>
-#
-# The 'meta' folder of the origin repo contains a
-# COPYING.GPLv2 and COPYING.MIT file.
+##
+## This file was copied from http://git.yoctoproject.org/git/poky
+##                           16e22f3e37788afb83044f5089d24187d70094bd
+##
+## origin location of the file is: 'meta/files/toolchain-shar-extract.sh'
+##
+## known authors of the origin file are:
+##
+## Anibal Limon <anibal.limon@linux.intel.com>
+## Brendan Le Foll <brendan.le.foll@intel.com>
+## Ed Bartosh <ed.bartosh@linux.intel.com>
+## George Nita <george.nita@enea.com>
+## Maxin B. John <maxin.john@intel.com>
+## Paul Eggleton <paul.eggleton@linux.intel.com>
+## Qi.Chen@windriver.com <Qi.Chen@windriver.com>
+## Randy Witt <randy.e.witt@linux.intel.com>
+## Richard Purdie <richard.purdie@linuxfoundation.org>
+## Robert Yang <liezhi.yang@windriver.com>
+## Todor Minchev <todor.minchev@linux.intel.com>
+## Wenlin Kang <wenlin.kang@windriver.com>
+##
+## The 'meta' folder of the origin repo contains a
+## COPYING.GPLv2 and COPYING.MIT file.
 
 [ -z "$ENVCLEANED" ] && exec /usr/bin/env -i ENVCLEANED=1 HOME="$HOME" \
 	LC_ALL=en_US.UTF-8 \

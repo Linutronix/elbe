@@ -1,40 +1,40 @@
-# This file was copied from http://git.yoctoproject.org/git/poky
-#                           16e22f3e37788afb83044f5089d24187d70094bd
-#
-# origin location of the file is: 'meta/classes/toolchain-scripts.bbclass'
-#
-# known authors of the origin file are:
-#
-# Richard Purdie <richard.purdie@linuxfoundation.org>
-# Lianhao Lu <lianhao.lu@intel.com>
-# Jessica Zhang <jessica.zhang@intel.com>
-# Richard Purdie <rpurdie@linux.intel.com>
-# Joshua Lock <joshua.g.lock@intel.com>
-# Mark Hatle <mark.hatle@windriver.com>
-# Otavio Salvador <otavio@ossystems.com.br>
-# Randy Witt <randy.e.witt@linux.intel.com>
-# Dongxiao Xu <dongxiao.xu@intel.com>
-# Joshua Lock <josh@linux.intel.com>
-# Khem Raj <raj.khem@gmail.com>
-# Robert Yang <liezhi.yang@windriver.com>
-# Ross Burton <ross.burton@intel.com>
-# Stephano Cetola <stephano.cetola@linux.intel.com>
-# Zongchun Yu <b40527@freescale.com>
-# Andre McCurdy <armccurdy@gmail.com>
-# Christopher Larson <chris_larson@mentor.com>
-# Denys Dmytriyenko <denys@ti.com>
-# Fang Jia <fang.jia@windriver.com>
-# Jacob Kroon <jacob.kroon@gmail.com>
-# Jun Zhang <jun.zhang@windriver.com>
-# Kevin Tian <kevin.tian@intel.com>
-# Koen Kooi <koen@dominion.thruhere.net>
-# Laszlo Papp <lpapp@kde.org>
-# Laurentiu Palcu <laurentiu.palcu@intel.com>
-# Martin Ertsaas <mertsas@cisco.com>
-# Nitin A Kamble <nitin.a.kamble@intel.com>
-#
-# The 'meta' folder of the origin repo contains a
-# COPYING.GPLv2 and COPYING.MIT file.
+## This file was copied from http://git.yoctoproject.org/git/poky
+##                           16e22f3e37788afb83044f5089d24187d70094bd
+##
+## origin location of the file is: 'meta/classes/toolchain-scripts.bbclass'
+##
+## known authors of the origin file are:
+##
+## Richard Purdie <richard.purdie@linuxfoundation.org>
+## Lianhao Lu <lianhao.lu@intel.com>
+## Jessica Zhang <jessica.zhang@intel.com>
+## Richard Purdie <rpurdie@linux.intel.com>
+## Joshua Lock <joshua.g.lock@intel.com>
+## Mark Hatle <mark.hatle@windriver.com>
+## Otavio Salvador <otavio@ossystems.com.br>
+## Randy Witt <randy.e.witt@linux.intel.com>
+## Dongxiao Xu <dongxiao.xu@intel.com>
+## Joshua Lock <josh@linux.intel.com>
+## Khem Raj <raj.khem@gmail.com>
+## Robert Yang <liezhi.yang@windriver.com>
+## Ross Burton <ross.burton@intel.com>
+## Stephano Cetola <stephano.cetola@linux.intel.com>
+## Zongchun Yu <b40527@freescale.com>
+## Andre McCurdy <armccurdy@gmail.com>
+## Christopher Larson <chris_larson@mentor.com>
+## Denys Dmytriyenko <denys@ti.com>
+## Fang Jia <fang.jia@windriver.com>
+## Jacob Kroon <jacob.kroon@gmail.com>
+## Jun Zhang <jun.zhang@windriver.com>
+## Kevin Tian <kevin.tian@intel.com>
+## Koen Kooi <koen@dominion.thruhere.net>
+## Laszlo Papp <lpapp@kde.org>
+## Laurentiu Palcu <laurentiu.palcu@intel.com>
+## Martin Ertsaas <mertsas@cisco.com>
+## Nitin A Kamble <nitin.a.kamble@intel.com>
+##
+## The 'meta' folder of the origin repo contains a
+## COPYING.GPLv2 and COPYING.MIT file.
 
 # Check for LD_LIBRARY_PATH being set, which can break SDK and generally is a bad practice
 # http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html#AEN80
