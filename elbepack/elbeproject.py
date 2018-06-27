@@ -314,9 +314,10 @@ class ElbeProject (object):
         self.pdebuild_init()
         src_path = os.path.join(self.builddir, "pdebuilder", "current")
 
-        self.log.printo("retrieve pbuild sources: %s" % p.text('.').strip())
+        src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
+        self.log.printo ("retrieve pbuild sources: %s" % src_uri)
         if p.tag == 'git':
-            self.log.do("git clone %s %s" % (p.text('.').strip(), src_path))
+            self.log.do("git clone %s %s" % (src_uri, src_path))
             try:
                 self.log.do(
                     "cd %s; git reset --hard %s" %
@@ -324,9 +325,7 @@ class ElbeProject (object):
             except IndexError:
                 pass
         elif p.tag == 'svn':
-            self.log.do(
-                "svn co --non-interactive %s %s" %
-                (p.text('.').strip(), src_path))
+            self.log.do("svn co --non-interactive %s %s" % (src_uri, src_path))
         else:
             self.log.printo("unknown pbuild source vcs: %s" % p.tag)
 
