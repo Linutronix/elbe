@@ -167,7 +167,7 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
             suite = prj.text("suite")
             v = get_virtaptcache(arch, suite, apt_sources, "", apt_keys)
         except Exception as e:
-            print("python-apt failed, using fallback code")
+            print("python-apt failed, using fallback code: %s" % e)
             return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
         ret = v.get_uri(suite, arch, target_pkg, incl_deps)
