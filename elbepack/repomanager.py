@@ -312,10 +312,18 @@ class CdromBinRepo(RepoBase):
 
 
 class CdromSrcRepo(RepoBase):
-    def __init__( self, codename, init_codename, path, log, maxsize ):
-        repo_attrs = RepoAttributes (codename, "source", ["main", "added"])
+    def __init__(self, codename, init_codename, path, log, maxsize,
+                 mirror='http://ftp.debian.org/debian'):
+
+        repo_attrs = RepoAttributes(codename,
+                                    "source",
+                                    ["main", "added"],
+                                    mirror)
+
         if init_codename is not None:
-            init_attrs = RepoAttributes (init_codename, "source", ["main", "main/debian-installer"])
+            init_attrs = RepoAttributes(
+                init_codename, "source", [
+                    "main", "main/debian-installer"], mirror)
         else:
             init_attrs = None
 

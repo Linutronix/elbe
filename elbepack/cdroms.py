@@ -41,7 +41,18 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target, log, cdrom_size=
                          log,
                          cdrom_size )
 
-    cache = get_rpcaptcache( rfs, "aptcache.log", arch )
+    if not xml is None:
+        mirror = xml.get_primary_mirror (rfs.fname("cdrom"))
+    else:
+        mirror='http://ftp.de.debian.org/debian'
+
+    repo = CdromSrcRepo(codename, init_codename,
+                        os.path.join(target, "srcrepo"),
+                        log,
+                        cdrom_size,
+                        mirror)
+
+    cache = get_rpcaptcache(rfs, "aptcache.log", arch)
 
     pkglist = cache.get_installed_pkgs()
 
