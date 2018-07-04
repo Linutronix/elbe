@@ -6,6 +6,8 @@
 import os
 
 from base64 import standard_b64encode
+from subprocess import check_call
+
 from elbepack.treeutils import etree
 
 def enbase(fname):
@@ -30,7 +32,7 @@ def chg_archive(xml, path, keep):
         else:
             cmd = 'tar cjf .archive.tbz --owner=root --group=root -C '
         cmd += path + ' .'
-        os.system(cmd)
+        check_call(cmd, shell=True)
     else:
         archive = path
 
