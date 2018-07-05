@@ -8,6 +8,7 @@ import sys
 import re
 from lxml import etree
 from lxml.etree import XMLParser, parse
+from elbepack.archivedir import ArchivedirError, combinearchivedir
 
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess
@@ -78,6 +79,9 @@ def xmlpreprocess(fname, output, variants=[]):
                     mergenodes[0].append (c)
                 section.getparent().remove(section)
 
+        # handle archivedir elements
+        xml = combinearchivedir(xml)
+
         if schema.validate(xml):
             # if validation succedes write xml file
             xml.write(
@@ -90,6 +94,9 @@ def xmlpreprocess(fname, output, variants=[]):
 
     except etree.XMLSyntaxError:
         raise XMLPreprocessError("XML Parse error\n" + str(sys.exc_info()[1]))
+    except ArchivedirError:
+        raise XMLPreprocessError("<archivedir> handling failed\n" +
+                                     str(sys.exc_info()[1]))
     except BaseException:
         raise XMLPreprocessError(
             "Unknown Exception during validation\n" + str(sys.exc_info()[1]))
