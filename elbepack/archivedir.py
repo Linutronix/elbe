@@ -4,12 +4,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import re
+import sys
+
+# The urlparse module is renamed to urllib.parse in Python 3.
+try:
+    from urllib.parse import urljoin,urlparse
+except ImportError:
+    from urlparse import urljoin,urlparse
 
 from base64 import standard_b64encode
 from bz2 import compress as bz2compress
-from subprocess import check_call
+from subprocess import CalledProcessError, check_call
 
 from elbepack.treeutils import etree
+
+class ArchivedirError(Exception):
+    pass
 
 def enbase(fname, compress=True):
     infile = file(fname, "r")
@@ -54,3 +65,56 @@ def chg_archive(xml, path, keep):
         os.remove(archive)
 
     return xml
+
+def prepare_path(url):
+    url = urlparse(url)
+    path = url.geturl().replace("%s://"%url.scheme, '', 1)
+    return re.sub(r'/$', "", path)
+
+def get_and_append_local(url, tararchive, keep):
+    if urlparse(url).netloc:
+        msg = "Reject suspicious file:// URI \"{}\". ".format(url)
+        msg += "Please use an absolute URI (file:///a/b/c) or a "
+        msg += "relative URI (a/b/c) instead."
+        raise ArchivedirError(msg)
+    collect(tararchive, prepare_path(url), keep)
+
+def get_and_append_unknown(url, archive):
+    msg = "unhandled scheme \"{}://\"".format(urlparse(url).scheme)
+    raise NotImplementedError(msg)
+
+def get_and_append_method(url):
+    return {
+        '': get_and_append_local,
+        'file': get_and_append_local,
+    }.get(urlparse(url).scheme, get_and_append_unknown)
+
+def _combinearchivedir(xml):
+    elbexml = etree(None)
+    elbexml.et = xml
+
+    archive = '.combinedarchive.tar'
+    for archivedir in xml.iterfind("archivedir"):
+        try:
+            archiveurl = urljoin(archivedir.base, archivedir.text)
+            keep = elbexml.check_boolean(archivedir, "keep-attributes")
+            get_and_append = get_and_append_method(archiveurl)
+            get_and_append(archiveurl, archive, keep)
+            archivedir.getparent().remove(archivedir)
+        except (CalledProcessError, OSError) as ex:
+            msg = "Failure while processing \"" + archivedir.text + "\":\n"
+            msg += str(sys.exc_info()[1])
+            raise ArchivedirError(msg)
+
+    arch = elbexml.ensure_child("archive")
+    arch.set_text(enbase(archive, True))
+
+    os.remove(archive)
+
+    return xml
+
+def combinearchivedir(xml):
+    if xml.find("archivedir") is None:
+        return xml
+
+    return _combinearchivedir(xml)
