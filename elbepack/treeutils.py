@@ -140,6 +140,15 @@ class etree(ebase):
         self.et._setroot(retval.et)
         return retval
 
+    def check_boolean(self, node, attributename):
+        attr = node.get(attributename)
+        if attr is None:
+            return False
+        elif attr in ['true', '1']:
+            return True
+        elif attr in ['false', '0']:
+            return False
+
     @property
     def root(self):
         return elem(self.et.getroot())
