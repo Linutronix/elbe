@@ -17,6 +17,7 @@ kvm_exe_list = [
 
 
 def find_kvm_exe():
+    version = "0.0.0"
     for fname in kvm_exe_list:
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
             # determine kvm version
