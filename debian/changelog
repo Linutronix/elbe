@@ -1,3 +1,16 @@
+elbe (2.9.12) unstable; urgency=medium
+
+  * some minor virtapt improvements
+  * improve docker support
+  * archivedir tag supported in elbe preprocess
+  * fix github #153 network access during src-cdrom build
+  * schema: be more relaxed about ordering of tags
+  * include sysroot packages on cdroms
+  * allow building cdroms via soap interface
+  * build sysroot in seperate chroot
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 30 Jul 2018 14:06:02 +0200
+
 elbe (2.9.11) unstable; urgency=medium
 
   * addons needed for nneta-elbe
