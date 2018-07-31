@@ -367,7 +367,9 @@ class ElbeProject (object):
 
         # ensure the /etc/apt/sources.list is created according to buil_sources,
         # build_bin flag, ensure to reopen it with the new 'sources.list'
-        env.seed_etc()
+        with env:
+            env.seed_etc()
+
         self.drop_rpcaptcache(env=env)
 
         with env:
