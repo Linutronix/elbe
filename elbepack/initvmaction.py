@@ -176,9 +176,14 @@ class StopAction(InitVMAction):
             print('Initvm is not running.')
             sys.exit(20)
         else:
-            # Shutdown initvm
-            self.initvm.shutdown()
             while(True):
+                try:
+                    self.initvm.shutdown()
+                except libvirt.libvirtError as e:
+                    # ignore that initvm is already shutdown but raise all
+                    # other errors
+                    if self.initvm_state() != 5:
+                        raise e
                 sys.stdout.write("*")
                 sys.stdout.flush()
                 if self.initvm_state() == 5:
