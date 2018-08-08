@@ -9,7 +9,7 @@ Source: linux-${p_name}-${k_version}
 Section: kernel
 Priority: optional
 Maintainer: ${m_name} <${m_mail}>
-Build-Depends: debhelper (>= 9), bc
+Build-Depends: debhelper (>= 9), bc, libelf-dev
 Standards-Version: 3.8.4
 Homepage: http://www.kernel.org/
 
