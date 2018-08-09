@@ -101,7 +101,7 @@ def get_url(arch, suite, target_pkg, mirror, comp='main'):
         packages = [x for x in packages if x.find(target_pkg) != -1]
 
         # detect package with latest version number
-        latest_version_str = '0+deb0u0+jessie0'
+        latest_version_str = '0+deb0u0+deb8'
         latest_version_pos = 0
         cnt = 0
         for x in packages:
