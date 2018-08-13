@@ -29,11 +29,27 @@ def getdeps(pkg):
             yield d.target_pkg.name
 
 
+# target_pkg is either a 'package name' or a 'provides'
+#
+# ATTENTION: for provides pinning and priorities for package selection are
+#            ignored. This should be safe for now, because the code is only
+#            used for downloading 'elbe-bootstrap' and generating the SDKs
+#            host-sysroot. For generating host-sysroots there is no posibility
+#            to modify package priorities via elbe-xml.
 def lookup_uri(v, d, target_pkg):
+    try:
+        pkg = v.cache[target_pkg]
+        c = d.get_candidate_ver(pkg)
+    except KeyError:
+        pkg = None
+        c = None
 
-    pkg = v.cache[target_pkg]
-
-    c = d.get_candidate_ver(pkg)
+    if not c:
+        for pkg in v.cache.packages:
+            for x in pkg.provides_list:
+                if target_pkg == x[0]:
+                    return lookup_uri(v, d, x[2].parent_pkg.name)
+        return "", "", ""
 
     x = v.source.find_index(c.file_list[0][0])
 
@@ -226,15 +242,28 @@ class VirtApt:
         togo = [target_pkg]
         while len(togo):
             pp = togo.pop()
-            pkg= self.cache[pp]
-            c = d.get_candidate_ver(pkg)
-            for p in getdeps(c):
-                if len([y for y in deps if y[0] == p]):
-                    continue
-                if p != target_pkg and p == pp:
-                    continue
-                deps.append(lookup_uri(self, d, p))
-                togo.append(p)
+            try:
+                pkg= self.cache[pp]
+                c = d.get_candidate_ver(pkg)
+            except KeyError:
+                pkg = None
+                c = None
+            if not c:
+                for p in self.cache.packages:
+                    for x in p.provides_list:
+                        if pp == x[0]:
+                            pkg = self.cache[x[2].parent_pkg.name]
+                            c = d.get_candidate_ver(pkg)
+            if not c:
+                print("couldnt get candidate: %s" % pkg)
+            else:
+                for p in getdeps(c):
+                    if len([y for y in deps if y[0] == p]):
+                        continue
+                    if p != target_pkg and p == pp:
+                        continue
+                    deps.append(lookup_uri(self, d, p))
+                    togo.append(p)
 
         return deps
 
