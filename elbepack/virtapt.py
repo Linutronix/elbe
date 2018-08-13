@@ -56,7 +56,7 @@ def lookup_uri(v, d, target_pkg):
 
 
 class VirtApt:
-    def __init__(self, arch, suite, sources, prefs, keylist=[]):
+    def __init__(self, arch, suite, sources, prefs, keylist=[], noauth=False):
 
         self.projectpath = mkdtemp()
         self.initialize_dirs()
@@ -80,7 +80,12 @@ class VirtApt:
         apt_pkg.config.set("Dir::Cache", "cache")
         apt_pkg.config.set("Dir::Etc", "etc/apt")
         apt_pkg.config.set("Dir::Log", "log")
-        apt_pkg.config.set("APT::Get::AllowUnauthenticated", "0")
+        if noauth:
+            apt_pkg.config.set("APT::Get::AllowUnauthenticated", "1")
+            apt_pkg.config.set("Acquire::AllowInsecureRepositories", "1")
+        else:
+            apt_pkg.config.set("APT::Get::AllowUnauthenticated", "0")
+            apt_pkg.config.set("Acquire::AllowInsecureRepositories", "0")
 
         apt_pkg.init_system()
 
