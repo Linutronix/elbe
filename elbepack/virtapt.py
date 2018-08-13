@@ -158,16 +158,16 @@ class VirtApt:
             file.close()
 
     def initialize_dirs(self):
-        self.mkdir_p(self.projectpath + "/cache/archives/partial")
-        self.mkdir_p(self.projectpath + "/etc/apt/preferences.d")
-        self.mkdir_p(self.projectpath + "/etc/apt/trusted.gpg.d")
-        self.mkdir_p(self.projectpath + "/db")
-        self.mkdir_p(self.projectpath + "/log")
-        self.mkdir_p(self.projectpath + "/state/lists/partial")
-        self.touch(self.projectpath + "/state/status")
+        self.mkdir_p(os.path.join(self.projectpath, "cache/archives/partial"))
+        self.mkdir_p(os.path.join(self.projectpath, "etc/apt/preferences.d"))
+        self.mkdir_p(os.path.join(self.projectpath, "etc/apt/trusted.gpg.d"))
+        self.mkdir_p(os.path.join(self.projectpath, "db"))
+        self.mkdir_p(os.path.join(self.projectpath, "log"))
+        self.mkdir_p(os.path.join(self.projectpath, "state/lists/partial"))
+        self.touch(os.path.join(self.projectpath, "state/status"))
 
     def setup_gpg(self):
-        ring_path = self.projectpath + "/etc/apt/trusted.gpg"
+        ring_path = os.path.join(self.projectpath, "etc/apt/trusted.gpg")
         if not os.path.isdir("/etc/apt/trusted.gpg.d"):
             print("/etc/apt/trusted.gpg.d doesn't exist")
             print("apt-get install debian-archive-keyring may "
@@ -196,8 +196,8 @@ class VirtApt:
                 print("adding elbe-pubkey to keyring failed")
 
     def add_pubkey_url(self, url):
-        ring_path = self.projectpath + "/etc/apt/trusted.gpg"
-        tmpkey_path = self.projectpath + "/tmpkey.gpg"
+        ring_path = os.path.join(self.projectpath, "etc/apt/trusted.gpg")
+        tmpkey_path = os.path.join(self.projectpath, "tmpkey.gpg")
 
         gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
                       '--trust-model always --no-default-keyring ' \
@@ -212,7 +212,7 @@ class VirtApt:
             system('rm "%s"' % tmpkey_path, allow_fail=True)
 
     def create_apt_sources_list(self, mirror):
-        filename = self.projectpath + "/etc/apt/sources.list"
+        filename = os.path.join(self.projectpath, "etc/apt/sources.list")
 
         if os.path.exists(filename):
             os.remove(filename)
@@ -222,7 +222,7 @@ class VirtApt:
         file.close()
 
     def create_apt_prefs(self, prefs):
-        filename = self.projectpath + "/etc/apt/preferences"
+        filename = os.path.join(self.projectpath, "etc/apt/preferences")
 
         if os.path.exists(filename):
             os.remove(filename)
