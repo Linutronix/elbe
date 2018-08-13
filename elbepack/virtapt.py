@@ -111,7 +111,8 @@ class VirtApt:
         self.cache = apt_pkg.Cache()
         try:
             self.cache.update(self, self.source)
-        except BaseException:
+        except BaseException as e:
+            print(e)
             pass
 
         apt_pkg.config.set("APT::Default-Release", suite)
@@ -119,7 +120,8 @@ class VirtApt:
         self.cache = apt_pkg.Cache()
         try:
             self.cache.update(self, self.source)
-        except BaseException:
+        except BaseException as e:
+            print(e)
             pass
 
     def __del__(self):
