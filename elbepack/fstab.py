@@ -94,10 +94,7 @@ class fstabentry(object):
         if entry.has("fs"):
             self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
-        if entry.has("passno"):
-            self.passno = entry.text("passno")
-        else:
-            self.passno = "0"
+            self.passno = entry.text("fs/passno", default="0")
 
         self.id = str(id)
 
