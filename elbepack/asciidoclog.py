@@ -45,15 +45,15 @@ class LogBase(object):
                     "---------------------------------------")
         self.printo()
 
-    def do(self, cmd, allow_fail=False, input=None):
+    def do(self, cmd, allow_fail=False, stdin=None):
 
-        if input is None:
+        if stdin is None:
             self.printo("running cmd +%s+" % cmd)
         else:
-            self.printo("running cmd +%s with STDIN %s+" % (cmd, input))
+            self.printo("running cmd +%s with STDIN %s+" % (cmd, stdin))
 
         self.verbatim_start()
-        ret, out = command_out(cmd, input=input, output=self.fp)
+        ret, out = command_out(cmd, stdin=stdin, output=self.fp)
         self.verbatim_end()
 
         if ret != 0:

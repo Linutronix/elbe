@@ -28,19 +28,19 @@ def system(cmd, allow_fail=False):
             raise CommandError(cmd, ret)
 
 
-def command_out(cmd, input=None, output=PIPE):
-    if input is None:
+def command_out(cmd, stdin=None, output=PIPE):
+    if stdin is None:
         p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT)
-        out, stderr = p.communicate()
+        out, _ = p.communicate()
     else:
         p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT, stdin=PIPE)
-        out, stderr = p.communicate(input=input)
+        out, _ = p.communicate(input=stdin)
 
     return p.returncode, out
 
 
-def system_out(cmd, input=None, allow_fail=False):
-    code, out = command_out(cmd, input)
+def system_out(cmd, stdin=None, allow_fail=False):
+    code, out = command_out(cmd, stdin)
 
     if code != 0:
         if not allow_fail:
@@ -49,19 +49,19 @@ def system_out(cmd, input=None, allow_fail=False):
     return out
 
 
-def command_out_stderr(cmd, input=None):
-    if input is None:
+def command_out_stderr(cmd, stdin=None):
+    if stdin is None:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         output, stderr = p.communicate()
     else:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
-        output, stderr = p.communicate(input=input)
+        output, stderr = p.communicate(input=stdin)
 
     return p.returncode, output, stderr
 
 
-def system_out_stderr(cmd, input=None, allow_fail=False):
-    code, out, err = command_out(cmd, input)
+def system_out_stderr(cmd, stdin=None, allow_fail=False):
+    code, out, err = command_out(cmd, stdin)
 
     if code != 0:
         if not allow_fail:
