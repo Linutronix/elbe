@@ -14,7 +14,7 @@ import elbepack
 from elbepack.treeutils import etree
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
-from elbepack.filesystem import wdfs, TmpdirFilesystem
+from elbepack.filesystem import TmpdirFilesystem
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
 
@@ -35,7 +35,7 @@ def cmd_exists(x): return any(os.access(os.path.join(path, x), os.X_OK)
 # if necessary
 
 
-def ensure_outdir(wdfs, opt):
+def ensure_outdir(opt):
     if opt.outdir is None:
         opt.outdir = "elbe-build-%s" % (
                 datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
@@ -515,7 +515,7 @@ class CreateAction(InitVMAction):
                 print("Getting generated Files")
                 print("")
 
-                ensure_outdir(wdfs, opt)
+                ensure_outdir(opt)
 
                 try:
                     system('%s control get_files --output "%s" "%s"' % (
@@ -722,7 +722,7 @@ class SubmitAction(InitVMAction):
                 print("Getting generated Files")
                 print("")
 
-                ensure_outdir(wdfs, opt)
+                ensure_outdir(opt)
 
                 try:
                     system('%s control get_files --output "%s" "%s"' % (
