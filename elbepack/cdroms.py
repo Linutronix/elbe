@@ -9,6 +9,7 @@
 import os
 
 from apt.package import FetchError
+from apt import Cache
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
@@ -17,7 +18,6 @@ from elbepack.aptpkgutils import XMLPackage
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem import Filesystem, hostfs
 from elbepack.dump import get_initvm_pkglist
-from apt import Cache
 
 CDROM_SIZE = 640 * 1000 * 1000
 
