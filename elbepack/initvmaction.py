@@ -177,7 +177,7 @@ class StopAction(InitVMAction):
             print('Initvm is not running.')
             sys.exit(20)
         else:
-            while(True):
+            while True:
                 try:
                     self.initvm.shutdown()
                 except libvirt.libvirtError as e:
