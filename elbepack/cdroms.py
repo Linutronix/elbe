@@ -67,13 +67,13 @@ def mk_source_cdrom(
         try:
             dsc = cache.download_source(pkg.name, '/var/cache/elbe/sources')
             repo.includedsc(dsc, force=True)
-        except ValueError as ve:
+        except ValueError:
             log.printo(
                 "No sources for Package " +
                 pkg.name +
                 "-" +
                 pkg.installed_version)
-        except FetchError as fe:
+        except FetchError:
             log.printo(
                 "Source for Package " +
                 pkg.name +
@@ -104,10 +104,10 @@ def mk_source_cdrom(
                     cb=None),
                 unpack=False)
             repo.includedsc(dsc)
-        except ValueError as ve:
+        except ValueError:
             log.printo("No sources for Package " + pkg.name +
                        "-" + str(pkg.installed_version))
-        except FetchError as fe:
+        except FetchError:
             log.printo(
                 "Source for Package " +
                 pkg.name +
@@ -162,17 +162,17 @@ def mk_binary_cdrom(
                 deb = pkgver.fetch_binary('/var/cache/elbe/binaries/main',
                                           ElbeAcquireProgress(cb=None))
                 repo.includedeb(deb, 'main')
-            except ValueError as ve:
+            except ValueError:
                 log.printo("No Package " + pkg.name +
                            "-" + str(pkg.installed_version))
-            except FetchError as fe:
+            except FetchError:
                 log.printo(
                     "Package " +
                     pkg.name +
                     "-" +
                     pkgver.version +
                     " could not be downloaded")
-            except TypeError as te:
+            except TypeError:
                 log.printo("Package " +
                            pkg.name +
                            "-" +
@@ -187,20 +187,20 @@ def mk_binary_cdrom(
                                             '/var/cache/elbe/binaries/main',
                                             pkg.installed_version)
                 target_repo.includedeb(deb, 'main')
-            except ValueError as ve:
+            except ValueError:
                 log.printo(
                     "No Package " +
                     pkg.name +
                     "-" +
                     pkg.installed_version)
-            except FetchError as fe:
+            except FetchError:
                 log.printo(
                     "Package " +
                     pkg.name +
                     "-" +
                     pkg.installed_version +
                     " could not be downloaded")
-            except TypeError as te:
+            except TypeError:
                 log.printo(
                     "Package " +
                     pkg.name +
@@ -218,15 +218,15 @@ def mk_binary_cdrom(
             target_repo.includedeb(deb, 'added', pkg.name, True)
         except KeyError as ke:
             log.printo(str(ke))
-        except ValueError as ve:
+        except ValueError:
             log.printo("No Package " + pkg.name + "-" + pkg.installed_version)
-        except FetchError as fe:
+        except FetchError:
             log.printo("Package " +
                        pkg.name +
                        "-" +
                        str(pkg.installed_version) +
                        " could not be downloaded")
-        except TypeError as te:
+        except TypeError:
             log.printo(
                 "Package " +
                 pkg.name +
