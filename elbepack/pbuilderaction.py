@@ -8,7 +8,7 @@ from __future__ import print_function
 
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
-from elbepack.filesystem import wdfs, TmpdirFilesystem
+from elbepack.filesystem import TmpdirFilesystem
 
 import sys
 import os
@@ -21,7 +21,7 @@ def cmd_exists(x): return any(os.access(os.path.join(path, x), os.X_OK)
 # if necessary
 
 
-def ensure_outdir(wdfs, opt):
+def ensure_outdir(opt):
     if opt.outdir is None:
         opt.outdir = ".."
 
@@ -275,7 +275,7 @@ class BuildAction(PBuilderAction):
             print("Getting generated Files")
             print("")
 
-            ensure_outdir(wdfs, opt)
+            ensure_outdir(opt)
 
             try:
                 system(
