@@ -10,6 +10,7 @@ import os
 
 class Config(dict):
     def __init__(self):
+        dict.__init__(self)
         self['soaphost'] = "localhost"
         self['soapport'] = "7587"
         self['elbeuser'] = "root"
