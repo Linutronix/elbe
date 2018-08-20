@@ -93,13 +93,13 @@ class ElbeXML(object):
 
         target = self.text("project/buildimage/arch", key="arch")
 
-        if (host_arch == target):
+        if host_arch == target:
             return False
 
-        if ((host_arch == "amd64") and (target == "i386")):
+        if (host_arch == "amd64") and (target == "i386"):
             return False
 
-        if ((host_arch == "armhf") and (target == "armel")):
+        if (host_arch == "armhf") and (target == "armel"):
             return False
 
         return True

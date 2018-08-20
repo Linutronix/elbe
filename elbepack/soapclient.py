@@ -322,7 +322,7 @@ class SetXmlAction(ClientAction):
         size = 1024 * 1024
         part = 0
         with open(filename, "rb") as fp:
-            while (True):
+            while True:
                 xml_base64 = binascii.b2a_base64(fp.read(size))
                 # finish upload
                 if len(xml_base64) == 1:
@@ -592,7 +592,7 @@ class WaitProjectBusyAction(ClientAction):
                 # for some reasons lines containing e.g. ^H result in a None
                 # object here. let's just skip those strange lines for the
                 # moment
-                if (busy):
+                if busy:
                     log = busy.split('###')
 
                     if part != int(log[0]):
@@ -862,7 +862,7 @@ class UploadPackageAction(RepoAction):
         size = 1024 * 1024
         part = 0
         with open(f, "rb") as fp:
-            while (True):
+            while True:
                 xml_base64 = binascii.b2a_base64(fp.read(size))
                 # finish upload
                 if len(xml_base64) == 1:

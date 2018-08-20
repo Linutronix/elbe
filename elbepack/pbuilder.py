@@ -44,7 +44,7 @@ def pbuilder_write_config(builddir, xml, _log):
     fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder', 'hooks.d'))
     fp.write('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
 
-    if (xml.text("project/arch", key="arch") != 'amd64'):
+    if xml.text("project/arch", key="arch") != 'amd64':
         fp.write('ARCHITECTURE="%s"\n' %
                  xml.text("project/buildimage/arch", key="arch"))
         fp.write('DEBOOTSTRAP="qemu-debootstrap"\n')

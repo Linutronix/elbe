@@ -49,7 +49,7 @@ class ElbeInstallProgress (InstallProgress):
 
     def fork(self):
         retval = os.fork()
-        if (retval):
+        if retval:
             self.child_pid = retval
         return retval
 

@@ -548,7 +548,7 @@ def add_binary_blob(outf, hd, target):
             bs = 1
 
         # use file from target/ dir if binary path starts with /
-        if (binary.et.text[0] == '/'):
+        if binary.et.text[0] == '/':
             bf = os.path.join(target, 'target', binary.et.text[1:])
             print(bf)
         # else use file from /var/cache/elbe/<uuid> project dir
