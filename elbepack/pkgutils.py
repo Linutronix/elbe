@@ -91,6 +91,9 @@ def get_initrd_pkg(prj, defs):
 
 
 def get_url(arch, suite, target_pkg, mirror, comp='main'):
+
+    # pylint: disable=too-many-locals
+
     try:
         pack_url = "%s/dists/%s/%s/binary-%s/Packages" % (
             mirror.replace("LOCALMACHINE", "localhost"), suite, comp, arch)
@@ -204,6 +207,10 @@ def download_pkg(prj,
                  incl_deps=False,
                  log=None):
 
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+
     try:
         urilist = get_uri(prj, defs, arch, package, incl_deps)
     except KeyError:
@@ -254,6 +261,8 @@ def download_pkg(prj,
 
 def extract_pkg(prj, target_dir, defs, package, arch="default",
                 incl_deps=False, log=None):
+
+    # pylint: disable=too-many-arguments
 
     pkgs = download_pkg(prj, target_dir, defs, package, arch, incl_deps, log)
 

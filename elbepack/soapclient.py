@@ -45,6 +45,8 @@ def set_suds_debug(debug):
 class ElbeSoapClient(object):
     def __init__(self, host, port, user, passwd, retries=10, debug=False):
 
+        # pylint: disable=too-many-arguments
+
         # Mess with suds logging, for debug, or squelch warnings
         set_suds_debug(debug)
 

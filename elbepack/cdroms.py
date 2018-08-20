@@ -32,6 +32,10 @@ def mk_source_cdrom(
         cdrom_size=CDROM_SIZE,
         xml=None):
 
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+
     hostfs.mkdir_p('/var/cache/elbe/sources')
     rfs.mkdir_p('/var/cache/elbe/sources')
 
@@ -129,6 +133,10 @@ def mk_binary_cdrom(
         target,
         log,
         cdrom_size=CDROM_SIZE):
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
 
     rfs.mkdir_p('/var/cache/elbe/binaries/added')
     rfs.mkdir_p('/var/cache/elbe/binaries/main')

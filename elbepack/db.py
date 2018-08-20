@@ -863,6 +863,9 @@ class ElbeDB(object):
                                               "Pbuilder artifact")
 
     def _update_project_file(self, s, builddir, name, mime_type, description):
+
+        # pylint: disable=too-many-arguments
+
         filename = os.path.join(builddir, name)
         try:
             f = s.query(ProjectFile).\
@@ -888,6 +891,9 @@ class ElbeDB(object):
         return filename
 
     def add_user(self, name, fullname, password, email, admin):
+
+        # pylint: disable=too-many-arguments
+
         # encrypt is deprecated but hash is not available in jessie
         try:
             hash = pbkdf2_sha512.hash(password)
@@ -908,6 +914,9 @@ class ElbeDB(object):
 
     def modify_user(self, userid, name, fullname, email, admin,
                     password=None):
+
+        # pylint: disable=too-many-arguments
+
         with session_scope(self.session) as s:
             try:
                 u = s.query(User).filter(User.id == userid).one()
@@ -1007,6 +1016,9 @@ class ElbeDB(object):
 
     @classmethod
     def init_db(cls, name, fullname, password, email, admin):
+
+        # pylint: disable=too-many-arguments
+
         if not os.path.exists(cls.db_path):
             try:
                 os.makedirs(cls.db_path)

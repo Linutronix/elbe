@@ -15,6 +15,8 @@ class ArchiveRepo(RepoBase):
     def __init__(self, xml, path, log, origin, description, components,
                  maxsize=None):
 
+        # pylint: disable=too-many-arguments
+
         arch = xml.text("project/arch", key="arch")
         codename = xml.text("project/suite")
 
@@ -99,6 +101,10 @@ def gen_binpkg_archive(ep, repodir):
 
 
 def checkout_binpkg_archive(ep, repodir):
+
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
+
     repopath = path.join(ep.builddir, repodir)
     sources_list = ep.buildenv.rfs.fname('etc/apt/sources.list')
     sources_list_d = ep.buildenv.rfs.fname('etc/apt/sources.list.d')

@@ -20,6 +20,8 @@ from elbepack.elbexml import ElbeXML, ValidationMode
 
 def run_command(argv):
 
+    # pylint: disable=too-many-locals
+
     oparser = OptionParser(
         usage="usage: %prog pkgdiff [options] <rfs1> <rfs2>")
     oparser.add_option(

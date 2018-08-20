@@ -36,6 +36,9 @@ class RPCAPTCache(InChRootObject):
             notifier=None,
             norecommend=False,
             noauth=True):
+
+        # pylint: disable=too-many-arguments
+
         sys.stdout = open(log, 'a', buffering=0)
         sys.stderr = open(log, 'a', buffering=0)
         self.logfile = open(log, 'a', buffering=0)
@@ -273,6 +276,9 @@ def get_rpcaptcache(
         notifier=None,
         norecommend=False,
         noauth=True):
+
+    # pylint: disable=too-many-arguments
+
     mm = MyMan()
     mm.start()
 

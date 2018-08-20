@@ -147,6 +147,9 @@ class BuildJob(AsyncWorkerJob):
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+
+        # pylint: disable=too-many-statements
+
         try:
             self.project.log.printo("Build started")
             self.project.build(skip_pkglist=False,

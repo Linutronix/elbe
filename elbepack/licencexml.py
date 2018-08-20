@@ -49,6 +49,8 @@ class copyright_xml (object):
 
     def add_copyright_file(self, pkg_name, copyright):
 
+        # pylint: disable=too-many-locals
+
         # remove illegal characters from copyright
         copyright, _ = remove_re.subn('', copyright)
 

@@ -24,6 +24,10 @@ from optparse import OptionParser
 
 
 def run_command(argv):
+
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
+
     oparser = OptionParser(usage="usage: %prog init [options] <filename>")
 
     oparser.add_option("--skip-validation", action="store_true",

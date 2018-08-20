@@ -77,6 +77,8 @@ class PackageBase(object):
                  candidate_version, installed_md5, candidate_md5,
                  state, is_auto_installed, origin, architecture):
 
+        # pylint: disable=too-many-arguments
+
         self.name = name
         self.installed_version = installed_version
         self.candidate_version = candidate_version

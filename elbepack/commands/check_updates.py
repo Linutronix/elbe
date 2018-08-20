@@ -20,6 +20,9 @@ from elbepack.xmldefaults import ElbeDefaults
 
 def run_command(argv):
 
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
+
     oparser = OptionParser(
         usage="usage: %prog check_updates [options] <source-xmlfile>")
     oparser.add_option(

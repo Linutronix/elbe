@@ -251,6 +251,11 @@ class CreateAction(InitVMAction):
         InitVMAction.__init__(self, node, initvmNeeded=False)
 
     def execute(self, initvmdir, opt, args):
+
+        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-statements
+
         if self.initvm is not None:
             print("Initvm already defined.\n")
             print("If you want to build in your old initvm, "
@@ -547,6 +552,11 @@ class SubmitAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, opt, args):
+
+        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-statements
+        # pylint: disable=too-many-branches
+
         try:
             system('%s initvm ensure' % elbe_exe)
         except CommandError:

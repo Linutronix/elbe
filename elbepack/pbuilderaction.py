@@ -158,6 +158,9 @@ class BuildAction(PBuilderAction):
         PBuilderAction.__init__(self, node)
 
     def execute(self, opt, _args):
+
+        # pylint: disable=too-many-statements
+
         tmp = TmpdirFilesystem()
 
         if opt.xmlfile:

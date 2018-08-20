@@ -385,6 +385,8 @@ class UpdatedAction(FinetuningAction):
 
     def execute(self, log, buildenv, target):
 
+        # pylint: disable=too-many-locals
+
         if self.node.et.text:
             fp = self.node.et.text
             log.printo("transfer gpg key to target: " + fp)

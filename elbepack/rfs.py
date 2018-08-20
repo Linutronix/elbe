@@ -25,6 +25,8 @@ class DebootstrapException (Exception):
 class BuildEnv ():
     def __init__(self, xml, log, path, build_sources=False, clean=False):
 
+        # pylint: disable=too-many-arguments
+
         self.xml = xml
         self.log = log
         self.path = path
@@ -86,6 +88,8 @@ class BuildEnv ():
             self.log.do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
 
     def debootstrap(self):
+
+        # pylint: disable=too-many-statements
 
         cleanup = False
         suite = self.xml.prj.text("suite")

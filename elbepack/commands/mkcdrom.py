@@ -21,6 +21,9 @@ from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 
 
 def run_command(argv):
+
+    # pylint disable=too-many-statements
+
     oparser = OptionParser(usage="usage: %prog mkcdrom [options] <builddir>")
     oparser.add_option("--skip-validation", action="store_true",
                        dest="skip_validation", default=False,

@@ -23,6 +23,8 @@ class XMLPreprocessError(Exception):
 
 def xmlpreprocess(fname, output, variants=[]):
 
+    # pylint: disable=too-many-locals
+
     # first convert variants to a set
     variants = set(variants)
 

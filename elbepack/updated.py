@@ -247,6 +247,8 @@ def mark_install(depcache, pkg, version, auto, status):
 
 def _apply_update(fname, status):
 
+    # pylint: disable=too-many-locals
+
     try:
         xml = etree(fname)
     except BaseException:
@@ -424,6 +426,11 @@ def apply_update(fname, status):
 
 
 def action_select(upd_file, status):
+
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
 
     status.log("updating: " + upd_file)
 

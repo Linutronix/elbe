@@ -80,6 +80,9 @@ def dump_initvmpkgs(xml):
 
 
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
+
+    # pylint: disable=too-many-statements
+
     elog = ASCIIDocLog(errorname, True)
 
     elog.h1("ELBE Package validation")
@@ -162,6 +165,11 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
 
 
 def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
+
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-statements
+
     outf = ASCIIDocLog(reportname)
     rfs = buildenv.rfs
 

@@ -74,6 +74,8 @@ def lookup_uri(v, d, target_pkg):
 class VirtApt:
     def __init__(self, arch, suite, sources, prefs, keylist=[], noauth=False):
 
+        # pylint: disable=too-many-arguments
+
         self.projectpath = mkdtemp()
         self.initialize_dirs()
 

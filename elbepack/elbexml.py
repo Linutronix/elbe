@@ -181,8 +181,13 @@ class ElbeXML(object):
         return ret
 
     def validate_apt_sources(self, url_validation, buildtype):
+
+        # pylint disable=too-many-locals
+
         slist = self.create_apt_sources_list()
         sources_lines = slist.split('\n')
+
+        # pylint: disable=too-many-locals
 
         repos = []
         for line in sources_lines:

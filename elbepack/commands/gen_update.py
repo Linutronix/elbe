@@ -18,6 +18,9 @@ from elbepack.updatepkg import gen_update_pkg, MissingData
 
 
 def run_command(argv):
+
+    # pylint: disable=too-many-statements
+
     oparser = OptionParser(usage="usage: %prog gen_update [options] [xmlfile]")
     oparser.add_option("-t", "--target", dest="target",
                        help="directoryname of target")

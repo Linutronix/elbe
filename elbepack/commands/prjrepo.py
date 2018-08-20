@@ -21,6 +21,9 @@ from elbepack.config import cfg
 
 
 def run_command(argv):
+
+    # pylint: disable=too-many-statements
+
     oparser = OptionParser(usage="usage: elbe prjrepo [options] <command>")
 
     oparser.add_option("--host", dest="host", default=cfg['soaphost'],

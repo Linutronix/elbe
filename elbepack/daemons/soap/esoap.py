@@ -62,6 +62,9 @@ class ESoap (ServiceBase):
     @soap_faults
     @authenticated_admin
     def add_user(self, name, fullname, password, email, admin):
+
+        # pylint: disable=too-many-arguments
+
         self.app.pm.db.add_user(name, fullname, password, email, admin)
 
     @rpc(_returns=Array(SoapProject))
@@ -81,6 +84,9 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def upload_file(self, uid, builddir, fname, blob, part):
+
+        # pylint: disable=too-many-arguments
+
         fn = os.path.join(builddir, fname)
         if (part == 0):
             if self.app.pm.db.is_busy(builddir):
@@ -163,6 +169,9 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def build(self, uid, builddir, build_bin, build_src, skip_pbuilder):
+
+        # pylint: disable=too-many-arguments
+
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_current_project(uid, build_bin, build_src,
                                           skip_pbuilder)

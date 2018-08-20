@@ -117,6 +117,9 @@ class ElbeProject (object):
             presh_file=None,
             postsh_file=None,
             savesh_file=None):
+
+        # pylint: disable=too-many-arguments
+
         self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, "chroot")
         self.targetpath = os.path.join(self.builddir, "target")
@@ -406,6 +409,10 @@ class ElbeProject (object):
     def build(self, skip_debootstrap=False, build_bin=False,
               build_sources=False, cdrom_size=None, debug=False,
               skip_pkglist=False, skip_pbuild=False):
+
+        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-statements
 
         # Write the log header
         self.write_log_header()
@@ -780,6 +787,9 @@ class ElbeProject (object):
                         datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     def install_packages(self, target, buildenv=False):
+
+        # pylint: disable=too-many-statements
+
         with target:
             # First update the apt cache
             try:

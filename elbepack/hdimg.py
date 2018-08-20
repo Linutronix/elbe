@@ -363,6 +363,8 @@ def create_partition(
         size_in_sectors,
         current_sector):
 
+    # pylint: disable=too-many-arguments
+
     sector_size = 512
     if part.text("size") == "remain" and disk.type == "gpt":
         sz = size_in_sectors - 35 - current_sector
@@ -395,6 +397,8 @@ def create_partition(
 
 
 def create_label(outf, disk, part, ppart, fslabel, target, grub):
+
+    # pylint: disable=too-many-arguments
 
     sector_size = 512
     partition_number = ppart.number
@@ -440,6 +444,8 @@ def create_logical_partitions(
         target,
         grub):
 
+    # pylint: disable=too-many-arguments
+
     current_sector = epart.geometry.start
     size_in_sectors = current_sector + epart.geometry.length
 
@@ -462,6 +468,9 @@ def create_logical_partitions(
 
 
 def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type):
+
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
 
     sector_size = 512
     s = size_to_int(hd.text("size"))
@@ -560,6 +569,10 @@ def add_binary_blob(outf, hd, target):
 
 
 def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type):
+
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
+
     # list of created files
     img_files = []
 
