@@ -53,7 +53,15 @@ class DebianizeBase (FormMultiPage):
             "unstable",
             "experimental"]
 
+        self.hint = None
+
         FormMultiPage.__init__(self)
+
+    def gui(self):
+        raise NotImplementedError('gui() not implemented')
+
+    def debianize(self):
+        raise NotImplementedError('gui() not implemented')
 
     def create(self):
         self.p_name = self.add_widget_intelligent(TitleText,

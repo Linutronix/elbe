@@ -53,6 +53,9 @@ class PBuilderAction(object):
     def __init__(self, node):
         self.node = node
 
+    def execute(self, _opt, _args):
+        raise NotImplementedError('execute() not implemented')
+
 
 class CreateAction(PBuilderAction):
 

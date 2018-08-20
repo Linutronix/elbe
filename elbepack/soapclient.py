@@ -136,6 +136,9 @@ class ClientAction(object):
     def __init__(self, node):
         self.node = node
 
+    def execute(self, _client, _opt, _args):
+        raise NotImplementedError('execute() not implemented')
+
 
 class RemoveLogAction(ClientAction):
 
@@ -791,6 +794,8 @@ class RepoAction(ClientAction):
         action = cls.repoactiondict[node]
         return object.__new__(action)
 
+    def execute(self, _client, _opt, _args):
+        raise NotImplementedError('execute() not implemented')
 
 class ListPackagesAction(RepoAction):
 

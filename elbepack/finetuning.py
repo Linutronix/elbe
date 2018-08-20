@@ -35,6 +35,8 @@ class FinetuningAction(object):
     def __init__(self, node):
         self.node = node
 
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError('execute() not implemented')
 
 class RmAction(FinetuningAction):
 

@@ -36,6 +36,9 @@ class DbAction(object):
     def __init__(self, node):
         self.node = node
 
+    def execute(self, _args):
+        raise NotImplementedError('execute() not implemented')
+
 
 class InitAction(DbAction):
     tag = 'init'

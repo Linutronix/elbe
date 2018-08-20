@@ -115,6 +115,9 @@ class InitVMAction(object):
                 sys.exit(20)
         self.node = node
 
+    def execute(self, _initvmdir, _opt, _args):
+        raise NotImplementedError('execute() not implemented')
+
     def initvm_state(self):
         return self.initvm.info()[0]
 
