@@ -39,6 +39,10 @@ class ESoap (ServiceBase):
 
     __name__ = 'soap'
 
+    def __init__(self):
+        self.app = None
+        self.transport = None
+
     @rpc(_returns=String)
     @soap_faults
     def get_version(self):
