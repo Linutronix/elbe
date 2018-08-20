@@ -105,6 +105,11 @@ class UpdateApplication (Application):
 
 
 class UpdateService (ServiceBase):
+    def __init__(self):
+        # init self.app, so that pylint knows,
+        # that it exists
+        self.app = None
+
     @rpc(_returns=String)
     def list_snapshots(self):
         # use comma seperated string because array of string triggers a bug in
