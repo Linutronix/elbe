@@ -400,14 +400,8 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
 
     # pylint: disable=too-many-arguments
 
-    sector_size = 512
-    partition_number = ppart.number
     entry = fslabel[part.text("label")]
-    entry.offset = ppart.geometry.start * sector_size
-    entry.size = ppart.getLength() * sector_size
-    entry.filename = disk.device.path
-    entry.partnum = partition_number
-    entry.number = '{}{}'.format(disk.type, partition_number)
+    entry.set_geometry(ppart, disk)
 
     if entry.mountpoint == "/":
         grub.set_root_entry(entry)

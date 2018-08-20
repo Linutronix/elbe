@@ -88,6 +88,14 @@ class fstabentry(object):
             self.mkfsopt = entry.text("fs/mkfs", default="")
             self.passno = entry.text("fs/passno", default="0")
 
+        # These attributes are filled later
+        # using set_geometry()
+        self.size = 0
+        self.offset = 0
+        self.filename = ''
+        self.partnum = 0
+        self.number = ''
+
         self.id = str(id)
 
     def get_str(self):
@@ -119,6 +127,14 @@ class fstabentry(object):
             return "-L " + self.label
 
         return ""
+
+    def set_geometry(self, ppart, disk):
+        sector_size = 512
+        self.offset = ppart.geometry.start * sector_size
+        self.size = ppart.getLength() * sector_size
+        self.filename = disk.device.path
+        self.partnum = ppart.number
+        self.number = '{}{}'.format(disk.type, ppart.number)
 
     def losetup(self, outf, loopdev):
         outf.do('losetup -o%d --sizelimit %d /dev/%s "%s"' %
