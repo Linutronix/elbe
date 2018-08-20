@@ -16,11 +16,12 @@ import os
 import fnmatch
 import deb822   # package for dealing with Debian related data
 
-from suds.client import Client
-from suds import WebFault
 from datetime import datetime
 from urllib2 import URLError
 from httplib import BadStatusLine
+
+from suds.client import Client
+from suds import WebFault
 
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode

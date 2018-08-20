@@ -6,9 +6,9 @@
 
 import os
 
-from npyscreen import TitleText
-
 from shutil import copyfile
+
+from npyscreen import TitleText
 
 from elbepack.directories import mako_template_dir
 from elbepack.debianize.base import DebianizeBase, template

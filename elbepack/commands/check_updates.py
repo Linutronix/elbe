@@ -10,10 +10,10 @@ from __future__ import print_function
 import os
 import sys
 
+from optparse import OptionParser
+
 from elbepack.treeutils import etree
 from elbepack import virtapt
-
-from optparse import OptionParser
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 

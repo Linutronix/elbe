@@ -5,16 +5,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from elbepack.asciidoclog import ASCIIDocLog
+import warnings
 from datetime import datetime
+
+from apt import Cache
+
+from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.finetuning import do_finetuning
 from elbepack.filesystem import hostfs
 from elbepack.version import elbe_version
-
 from elbepack.aptpkgutils import APTPackage
-from apt import Cache
-
-import warnings
 
 
 def get_initvm_pkglist():

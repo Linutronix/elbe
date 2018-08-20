@@ -11,6 +11,8 @@ import os
 import sys
 import shutil
 
+from optparse import OptionParser
+
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
@@ -19,8 +21,6 @@ from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
-
-from optparse import OptionParser
 
 
 def run_command(argv):

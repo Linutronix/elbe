@@ -11,9 +11,10 @@ import socket
 import sys
 
 from optparse import (OptionParser, OptionGroup)
-from suds import WebFault
 from urllib2 import URLError
 from httplib import BadStatusLine
+
+from suds import WebFault
 
 from elbepack.soapclient import RepoAction, ElbeSoapClient
 from elbepack.version import elbe_version

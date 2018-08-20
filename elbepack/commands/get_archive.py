@@ -10,9 +10,9 @@ import os
 import sys
 
 from base64 import standard_b64decode
+from optparse import OptionParser
 
 from elbepack.treeutils import etree
-from optparse import OptionParser
 
 
 def unbase(s, fname):

@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from spyne.model.fault import Fault
 from traceback import format_exc
-
 from functools import wraps
+
+from spyne.model.fault import Fault
 
 # Import the Errors we try to catch wirh the
 # soap_faults decorator

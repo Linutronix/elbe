@@ -8,8 +8,9 @@ from __future__ import print_function
 
 import sys
 
-from elbepack.treeutils import etree
 from optparse import OptionParser
+
+from elbepack.treeutils import etree
 
 
 def parse_selections(fname):

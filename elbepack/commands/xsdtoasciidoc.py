@@ -8,11 +8,12 @@ from __future__ import print_function
 
 import sys
 
+from optparse import OptionParser
+
 from elbepack.treeutils import etree
 from elbepack.directories import xsdtoasciidoc_mako_fname
 from elbepack.templates import write_template
 
-from optparse import OptionParser
 
 
 def run_command(argv):

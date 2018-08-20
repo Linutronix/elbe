@@ -19,14 +19,16 @@ import sys
 import threading
 
 from multiprocessing import Process
+from zipfile import (ZipFile, BadZipfile)
 from shutil import copyfile, rmtree, copy
+
+from syslog import syslog
+
 from spyne import Application
 from spyne.service import ServiceBase
 from spyne.decorator import rpc
 from spyne.model.primitive import String
 from suds.client import Client
-from syslog import syslog
-from zipfile import (ZipFile, BadZipfile)
 
 from elbepack.aptprogress import (ElbeInstallProgress,
                                   ElbeAcquireProgress, ElbeOpProgress)

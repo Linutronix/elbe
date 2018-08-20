@@ -11,14 +11,14 @@ import socket
 import sys
 
 from optparse import (OptionParser, OptionGroup)
-from suds import WebFault
 from urllib2 import URLError
 from httplib import BadStatusLine
+
+from suds import WebFault
 
 from elbepack.soapclient import ClientAction, ElbeSoapClient
 from elbepack.version import elbe_version
 from elbepack.config import cfg
-
 from elbepack.elbexml import ValidationMode
 
 

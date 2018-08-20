@@ -9,11 +9,10 @@ import os
 import sys
 
 from time import sleep
+from shutil import copyfile
 
 from npyscreen import FormMultiPage
 from npyscreen import TitleText, TitleSelectOne, ButtonPress, notify
-
-from shutil import copyfile
 
 from elbepack.templates import template
 

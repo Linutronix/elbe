@@ -6,19 +6,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from multiprocessing.util import Finalize
-from apt_pkg import config, version_compare
-from apt import Cache
-from multiprocessing.managers import BaseManager
-from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
-                                  ElbeOpProgress)
-from elbepack.aptpkgutils import getalldeps, APTPackage
-
 import os
 import sys
 import time
 import warnings
 
+from multiprocessing.util import Finalize
+from multiprocessing.managers import BaseManager
+
+from apt_pkg import config, version_compare
+from apt import Cache
+
+from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
+                                  ElbeOpProgress)
+from elbepack.aptpkgutils import getalldeps, APTPackage
 
 class InChRootObject(object):
     def __init__(self, rfs):

@@ -7,9 +7,9 @@ from __future__ import print_function
 
 import sys
 
-from elbepack.elbexml import ElbeXML
 from optparse import OptionParser
 
+from elbepack.elbexml import ElbeXML
 
 def run_command(argv):
 

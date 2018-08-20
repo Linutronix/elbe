@@ -8,10 +8,11 @@ from __future__ import print_function
 
 import sys
 
+from optparse import OptionParser
+
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 
-from optparse import OptionParser
 
 
 def run_command(argv):

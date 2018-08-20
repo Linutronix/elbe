@@ -8,18 +8,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
+import re
+import urllib2
+
+from base64 import standard_b64decode
+from tempfile import NamedTemporaryFile
+
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 
 from elbepack.version import elbe_version, is_devel
-
-from base64 import standard_b64decode
-from tempfile import NamedTemporaryFile
-
-import urllib2
-import os
-import re
 
 
 class ValidationError(Exception):

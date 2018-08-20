@@ -8,9 +8,10 @@ from __future__ import print_function
 import sys
 import os
 
+from optparse import OptionParser
+
 from elbepack.archivedir import chg_archive
 from elbepack.treeutils import etree
-from optparse import OptionParser
 
 def run_command(argv):
 

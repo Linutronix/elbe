@@ -4,8 +4,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from elbepack.directories import pack_dir
 from platform import linux_distribution
+
+from elbepack.directories import pack_dir
 
 elbe_version = "2.9.12"
 running_os = linux_distribution()

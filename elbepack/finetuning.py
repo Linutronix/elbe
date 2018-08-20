@@ -11,9 +11,10 @@ from __future__ import print_function
 import os
 import gpgme
 
-from apt.package import FetchError
 from shutil import rmtree
 from io import BytesIO
+
+from apt.package import FetchError
 
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache

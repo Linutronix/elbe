@@ -4,8 +4,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 from functools import wraps
+
+from faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 
 
 def authenticated_uid(func):
