@@ -6,15 +6,14 @@
 
 from __future__ import print_function
 
+import sys
 from optparse import OptionParser
-
-from elbepack.asciidoclog import ASCIIDocLog
-from elbepack.treeutils import etree
 
 import apt
 import apt.progress
 
-import sys
+from elbepack.asciidoclog import ASCIIDocLog
+from elbepack.treeutils import etree
 
 
 class adjpkg(object):

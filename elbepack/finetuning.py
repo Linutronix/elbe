@@ -9,10 +9,11 @@
 from __future__ import print_function
 
 import os
-import gpgme
 
 from shutil import rmtree
 from io import BytesIO
+
+import gpgme
 
 from apt.package import FetchError
 

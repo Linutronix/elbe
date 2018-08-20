@@ -15,9 +15,9 @@ import time
 import os
 import datetime
 
-import libvirt
-
 from tempfile import NamedTemporaryFile
+
+import libvirt
 
 import elbepack
 from elbepack.treeutils import etree

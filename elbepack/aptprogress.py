@@ -6,9 +6,10 @@
 
 from __future__ import print_function
 
+import os
+
 from apt.progress.base import InstallProgress, AcquireProgress, OpProgress
 from apt_pkg import size_to_str
-import os
 
 
 class ElbeInstallProgress (InstallProgress):

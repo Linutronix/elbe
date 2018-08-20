@@ -8,16 +8,18 @@
 
 from __future__ import print_function
 
-import apt_pkg
 import os
 import sys
+
+from tempfile import mkdtemp
+
+from multiprocessing.managers import BaseManager
 
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
 import apt
+import apt_pkg
 
-from tempfile import mkdtemp
-from multiprocessing.managers import BaseManager
 
 from elbepack.shellhelper import CommandError, system
 from elbepack.directories import elbe_pubkey_fname

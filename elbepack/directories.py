@@ -5,9 +5,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import elbepack
 import os
+
 from pkgutil import iter_modules
+
+import elbepack
 
 elbe_exe = None
 elbe_dir = None

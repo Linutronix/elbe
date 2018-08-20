@@ -6,12 +6,12 @@
 
 from __future__ import print_function
 
-from lxml.etree import ElementTree, SubElement, Element
-from lxml.etree import XMLParser, parse
 import copy
 
-# ElementTree helpers
+from lxml.etree import ElementTree, SubElement, Element
+from lxml.etree import XMLParser, parse
 
+# ElementTree helpers
 
 class eiter(object):
     def __init__(self, it):

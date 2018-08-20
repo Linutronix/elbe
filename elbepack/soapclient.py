@@ -14,11 +14,12 @@ import time
 import sys
 import os
 import fnmatch
-import deb822   # package for dealing with Debian related data
 
 from datetime import datetime
 from urllib2 import URLError
 from httplib import BadStatusLine
+
+import deb822   # package for dealing with Debian related data
 
 from suds.client import Client
 from suds import WebFault

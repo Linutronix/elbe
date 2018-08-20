@@ -6,12 +6,12 @@
 
 from __future__ import print_function
 
+import sys
+import os
+
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import TmpdirFilesystem
-
-import sys
-import os
 
 
 def cmd_exists(x): return any(os.access(os.path.join(path, x), os.X_OK)

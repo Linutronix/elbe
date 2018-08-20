@@ -10,8 +10,6 @@
 
 from __future__ import print_function
 
-import apt
-import apt_pkg
 import errno
 import os
 import subprocess
@@ -23,6 +21,9 @@ from zipfile import (ZipFile, BadZipfile)
 from shutil import copyfile, rmtree, copy
 
 from syslog import syslog
+
+import apt
+import apt_pkg
 
 from spyne import Application
 from spyne.service import ServiceBase

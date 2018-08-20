@@ -5,14 +5,13 @@
 
 from __future__ import print_function
 
-import cherrypy
-
+import sys
 from optparse import OptionParser
 from pkgutil import iter_modules
 
-import elbepack.daemons
+import cherrypy
 
-import sys
+import elbepack.daemons
 
 
 def get_daemonlist():

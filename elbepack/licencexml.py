@@ -4,13 +4,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from elbepack.treeutils import etree
-from debian.copyright import Copyright, LicenseParagraph
 
 import io
 import re
 
 import warnings
+
+from debian.copyright import Copyright, LicenseParagraph
+from elbepack.treeutils import etree
 
 warnings.simplefilter('error')
 

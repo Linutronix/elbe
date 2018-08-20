@@ -7,8 +7,9 @@
 
 from __future__ import print_function
 
-import gpgme
 import os
+
+import gpgme
 
 from elbepack.filesystem import hostfs
 

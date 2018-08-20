@@ -10,10 +10,10 @@ from __future__ import print_function
 import os
 import sys
 
+from optparse import OptionParser
+
 import apt
 import apt_pkg
-
-from optparse import OptionParser
 
 from elbepack.elbexml import ElbeXML, ValidationMode
 
