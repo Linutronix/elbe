@@ -61,7 +61,7 @@ def command_out_stderr(cmd, stdin=None):
 
 
 def system_out_stderr(cmd, stdin=None, allow_fail=False):
-    code, out, err = command_out(cmd, stdin)
+    code, out, err = command_out_stderr(cmd, stdin)
 
     if code != 0:
         if not allow_fail:
