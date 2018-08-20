@@ -416,7 +416,7 @@ class ElbeProject (object):
             m = ValidationMode.CHECK_ALL
         self.xml.validate_apt_sources(m, self.arch)
 
-        if (self.xml.has('target/pbuilder') and not skip_pbuild):
+        if self.xml.has('target/pbuilder') and not skip_pbuild:
             if not os.path.exists(os.path.join(self.builddir, "pbuilder")):
                 self.create_pbuilder()
             for p in self.xml.node('target/pbuilder'):
