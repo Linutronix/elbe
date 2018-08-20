@@ -43,11 +43,6 @@ class MySession (SessionMiddleware, SimplePlugin):
         self.pm.stop()
 
     def __call__(self, environ, start_response):
-        # example to hook into wsgi environment
-        if environ['PATH_INFO'].startswith('/FILE:'):
-            f = environ['PATH_INFO'][6:]
-            # return f
-
         return SessionMiddleware.__call__(self, environ, start_response)
 
 
