@@ -10,6 +10,15 @@
 
 from __future__ import print_function
 
+import sys
+import time
+import os
+import datetime
+
+import libvirt
+
+from tempfile import NamedTemporaryFile
+
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.directories import elbe_exe
@@ -18,14 +27,6 @@ from elbepack.filesystem import TmpdirFilesystem
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
 
-from tempfile import NamedTemporaryFile
-
-import sys
-import time
-import os
-import datetime
-
-import libvirt
 
 
 def cmd_exists(x):
