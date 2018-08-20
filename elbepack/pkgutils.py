@@ -210,7 +210,7 @@ def download_pkg(prj,
         raise NoKinitrdException('no package %s available' % package)
     except SystemError:
         raise NoKinitrdException('a configured mirror is not reachable')
-    except CommandError as e:
+    except CommandError:
         raise NoKinitrdException("couldn't download package %s" % package)
 
     if not urilist:
@@ -228,7 +228,7 @@ def download_pkg(prj,
                 system('wget -O "%s" "%s"' % (dest, uri))
             else:
                 raise NoKinitrdException('could not retreive %s' % uri)
-        except CommandError as e:
+        except CommandError:
             raise NoKinitrdException("couldn't download package %s" % package)
 
         if len(sha256) > 0:

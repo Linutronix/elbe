@@ -53,7 +53,7 @@ class LogBase(object):
             self.printo("running cmd +%s with STDIN %s+" % (cmd, stdin))
 
         self.verbatim_start()
-        ret, out = command_out(cmd, stdin=stdin, output=self.fp)
+        ret, _ = command_out(cmd, stdin=stdin, output=self.fp)
         self.verbatim_end()
 
         if ret != 0:

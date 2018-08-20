@@ -169,7 +169,6 @@ def run_command(argv):
 
     mapping = license_dep5_to_spdx(opt.mapping)
 
-    unknown_licenses = []
     # Dont use direct iterator, because we might want to delete
     # elements, when --errors-only is active
     for pkg in list(tree.root):

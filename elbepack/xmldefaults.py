@@ -161,7 +161,7 @@ defaults = {"armel": armel_defaults,
             "nodefaults": {}}
 
 def get_random_mac():
-    binaddr = [random.randint(0, 255) for i in range(6)]
+    binaddr = [random.randint(0, 255) for _ in range(6)]
     binaddr[0] &= 0xfe
     binaddr[0] |= 0x02
     s = ["%02x" % x for x in binaddr]

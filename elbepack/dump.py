@@ -224,7 +224,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
 
     tgt_pkg_list = set()
 
-    for fpath, realpath in targetfs.walk_files():
+    for fpath, _ in targetfs.walk_files():
         if fpath in index:
             pkg = index[fpath]
             tgt_pkg_list.add(pkg)

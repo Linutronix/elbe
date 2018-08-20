@@ -62,7 +62,7 @@ def run_command(argv):
                        default=False,
                        help="monitor USB devices")
 
-    (opt, args) = oparser.parse_args(argv)
+    (opt, _) = oparser.parse_args(argv)
 
     status.nosign = opt.nosign
     status.verbose = opt.verbose

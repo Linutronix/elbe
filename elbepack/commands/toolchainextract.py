@@ -26,7 +26,7 @@ def run_command(argv):
                        help="distro codename for repository")
     oparser.add_option("-b", "--buildtype", dest="buildtype",
                        help="Override the buildtype")
-    (opt, args) = oparser.parse_args(argv)
+    (opt, _) = oparser.parse_args(argv)
 
     if not opt.path:
         oparser.print_help()

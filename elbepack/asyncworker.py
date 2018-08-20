@@ -49,7 +49,7 @@ class BuildSysrootJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Build finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Build sysroot failed")
             self.project.log.printo(traceback.format_exc())
@@ -74,7 +74,7 @@ class BuildSDKJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Build finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Build SDK failed")
             self.project.log.printo(traceback.format_exc())
@@ -101,7 +101,7 @@ class BuildCDROMsJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Build finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Build CDROMs failed")
             self.project.log.printo(traceback.format_exc())
@@ -125,7 +125,7 @@ class BuildChrootTarJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Build finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Build chrroot tarball failed")
             self.project.log.printo(traceback.format_exc())
@@ -230,7 +230,7 @@ class PdebuildJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Pdeb finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Pdebuild failed")
             self.project.log.printo(traceback.format_exc())
@@ -256,7 +256,7 @@ class CreatePbuilderJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             self.project.log.printo("Pbuilder finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("Pbuilder failed")
             self.project.log.printo(traceback.format_exc())
@@ -280,7 +280,7 @@ class UpdatePbuilderJob(AsyncWorkerJob):
             self.project.update_pbuilder()
             self.project.log.printo("Updating Pbuilder finished successfully")
             db.reset_busy(self.project.builddir, "build_done")
-        except Exception as e:
+        except Exception:
             db.update_project_files(self.project)
             self.project.log.printo("update Pbuilder failed")
             self.project.log.printo(traceback.format_exc())

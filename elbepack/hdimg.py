@@ -52,7 +52,7 @@ def mkfs_mtd(outf, mtd, fslabel, rfs, target):
                 fslabel[label].mkfsopt))
             # only append the ubifs file if creation didn't fail
             img_files.append("%s.ubifs" % label)
-        except CommandError as e:
+        except CommandError:
             # continue creating further ubifs filesystems
             pass
 
@@ -134,7 +134,7 @@ def build_image_mtd(outf, mtd, target):
         # only add file to list if ubinize command was successful
         img_files.append(mtd.text("name"))
 
-    except CommandError as e:
+    except CommandError:
         # continue with generating further images
         pass
 

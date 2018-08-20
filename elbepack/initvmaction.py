@@ -125,7 +125,7 @@ class StartAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, _initvmdir, _opt, _args):
         if self.initvm_state() == 1:
             print('Initvm already running.')
             sys.exit(20)
@@ -135,7 +135,7 @@ class StartAction(InitVMAction):
             # Wait five seconds for the initvm to boot
             # TODO: Instead of waiting for five seconds
             # check whether SOAP server is reachable.
-            for i in range(1, 5):
+            for _ in range(1, 5):
                 sys.stdout.write("*")
                 sys.stdout.flush()
                 time.sleep(1)
@@ -152,7 +152,7 @@ class EnsureAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, _initvmdir, _opt, _args):
         if self.initvm_state() == 5:
             system('%s initvm start' % elbe_exe)
         elif self.initvm_state() == 1:
@@ -172,7 +172,7 @@ class StopAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, _initvmdir, _opt, _args):
         if self.initvm_state() != 1:
             print('Initvm is not running.')
             sys.exit(20)
@@ -203,7 +203,7 @@ class AttachAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, _initvmdir, _opt, _args):
         if self.initvm_state() != 1:
             print('Error: Initvm not running properly.')
             sys.exit(20)
@@ -222,11 +222,11 @@ class StartBuildAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, initvmdir, _opt, _args):
         try:
             have_session = os.system(
                 "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1")
-        except CommandError as e:
+        except CommandError:
             print("tmux exec failed, tmux version 1.9 or higher is required")
             sys.exit(20)
         if have_session != 256:
@@ -424,7 +424,7 @@ class CreateAction(InitVMAction):
             prjdir = prjdir.strip()
 
             cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-            ret, msg, err = command_out_stderr(cmd)
+            ret, _, err = command_out_stderr(cmd)
             if ret != 0:
                 print("elbe control set_xml failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
@@ -546,7 +546,7 @@ class SubmitAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, _initvmdir, opt, args):
         try:
             system('%s initvm ensure' % elbe_exe)
         except CommandError:
@@ -612,7 +612,7 @@ class SubmitAction(InitVMAction):
 
             outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
             cmd = '%s preprocess -o %s %s' % (elbe_exe, outxml.name, xmlfile)
-            ret, msg, err = command_out_stderr(cmd)
+            ret, _, err = command_out_stderr(cmd)
             if ret != 0:
                 print("elbe preprocess failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
@@ -631,7 +631,7 @@ class SubmitAction(InitVMAction):
             prjdir = prjdir.strip()
 
             cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-            ret, msg, err = command_out_stderr(cmd)
+            ret, _, err = command_out_stderr(cmd)
             if ret != 0:
                 print("elbe control set_xml failed2", file=sys.stderr)
                 print(err, file=sys.stderr)

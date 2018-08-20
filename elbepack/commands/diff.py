@@ -19,7 +19,7 @@ def walk_generated(gen_path, fix_path, exclude):
     gen_path = gen_path.rstrip("/")
     fix_path = fix_path.rstrip("/")
 
-    for root, dirs, files in os.walk(gen_path):
+    for root, _, files in os.walk(gen_path):
         if root == gen_path:
             infs_root = "/"
         else:
@@ -74,7 +74,7 @@ def walk_fixed(gen_path, fix_path, exclude):
     gen_path = gen_path.rstrip("/")
     fix_path = fix_path.rstrip("/")
 
-    for root, dirs, files in os.walk(fix_path):
+    for root, _, files in os.walk(fix_path):
         if root == fix_path:
             infs_root = "/"
         else:
@@ -133,6 +133,5 @@ def run_command(argv):
 
     print("")
 
-    fileline = ""
     for f in differ + only:
         print("tar rf archive.tar -C %s %s" % (fix_rfs, f))

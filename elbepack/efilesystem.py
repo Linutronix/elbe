@@ -325,7 +325,7 @@ class TargetFs(ChRootFilesystem):
                 self.log.do(cmd % args)
                 # only append filename if creating tarball was successful
                 self.images.append(targz_name)
-            except CommandError as e:
+            except CommandError:
                 # error was logged; continue creating cpio image
                 pass
 

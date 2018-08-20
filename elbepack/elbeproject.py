@@ -519,7 +519,7 @@ class ElbeProject (object):
             self.buildenv.rfs.write_licenses(
                 f, self.log, os.path.join(
                     self.builddir, "licence.xml"))
-        except Exception as e:
+        except Exception:
             self.log.printo("error during generating licence.txt/xml")
             self.log.printo(sys.exc_info()[0])
             lic_err = True
@@ -641,7 +641,7 @@ class ElbeProject (object):
 
             self.repo.include(os.path.join(self.builddir,
                                            "pbuilder", "result", "*.changes"))
-        except CommandError as e:
+        except CommandError:
             self.log.printo('')
             self.log.printo('Package fails to build.')
             self.log.printo('Please make sure, that the submitted package '

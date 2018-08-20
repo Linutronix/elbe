@@ -52,7 +52,7 @@ class InitAction(DbAction):
         oparser.add_option("--noadmin", dest="admin", default=True,
                            action="store_false")
 
-        (opt, arg) = oparser.parse_args(args)
+        (opt, _) = oparser.parse_args(args)
 
         ElbeDB.init_db(opt.name, opt.fullname, opt.password,
                        opt.email, opt.admin)
@@ -154,7 +154,7 @@ class ListProjectsAction(DbAction):
     def __init__(self, node):
         DbAction.__init__(self, node)
 
-    def execute(self, args):
+    def execute(self, _args):
         db = ElbeDB()
         projects = db.list_projects()
 
@@ -172,7 +172,7 @@ class ListUsersAction(DbAction):
     def __init__(self, node):
         DbAction.__init__(self, node)
 
-    def execute(self, args):
+    def execute(self, _args):
         db = ElbeDB()
         users = db.list_users()
 

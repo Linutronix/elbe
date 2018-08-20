@@ -35,7 +35,7 @@ def run_command(argv):
         oparser.add_option("--" + str(d), dest=str(d), default=False,
                            action="store_true", help="enable " + str(d))
 
-    (opt, args) = oparser.parse_args(argv)
+    (opt, _) = oparser.parse_args(argv)
 
     active = False
 
@@ -46,7 +46,7 @@ def run_command(argv):
                     active = True
                     print("enable %s" % str(d))
                     module = "elbepack.daemons." + str(d)
-                    mod = __import__(module)
+                    _ = __import__(module)
                     cmdmod = sys.modules[module]
                     cherrypy.tree.graft(
                         cmdmod.get_app(

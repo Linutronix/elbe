@@ -458,8 +458,6 @@ def action_select(upd_file, status):
     with rw_access(prefix, status):
         for i in upd_file_z.namelist():
 
-            (dirname, filename) = os.path.split(i)
-
             try:
                 zi = upd_file_z.getinfo(i)
                 upd_file_z.extract(zi, prefix)
@@ -487,7 +485,7 @@ def action_select(upd_file, status):
 
     if os.path.isdir(prefix + "conf"):
         status.log("copying config files:")
-        for path, pathname, filenames in os.walk(prefix + "conf"):
+        for path, _, filenames in os.walk(prefix + "conf"):
             dst = path[len(prefix + "conf"):]
             with rw_access(dst, status):
                 for f in filenames:
@@ -505,7 +503,7 @@ def action_select(upd_file, status):
 
     if os.path.isdir(prefix + "cmd"):
         status.log("executing scripts:")
-        for path, pathname, filenames in os.walk(prefix + "cmd"):
+        for path, _, filenames in os.walk(prefix + "cmd"):
             for f in filenames:
                 cmd = os.path.join(path, f)
                 if os.path.isfile(cmd):
@@ -539,7 +537,7 @@ def action_select(upd_file, status):
 
 
 def is_update_file(upd_file):
-    root, extension = os.path.splitext(upd_file)
+    _, extension = os.path.splitext(upd_file)
     if extension == ".gpg":
         return True
 
@@ -560,7 +558,7 @@ update_lock = threading.Lock()
 def handle_update_file(upd_file, status, remove=False):
     with update_lock:
         status.log("checking file: " + str(upd_file))
-        root, extension = os.path.splitext(upd_file)
+        _, extension = os.path.splitext(upd_file)
 
         if extension == ".gpg":
             fname = unsign_file(upd_file)

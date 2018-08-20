@@ -25,7 +25,7 @@ def inlucdedir(destination, directory, source, mode=None):
     dst = destination + '/' + directory
     copytree(source, dst)
     if mode:
-        for dp, dn, fn in os.walk(dst):
+        for dp, _, fn in os.walk(dst):
             for f in fn:
                 p = os.path.join(dp, f)
                 os.chmod(p, mode)

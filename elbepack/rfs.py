@@ -198,7 +198,6 @@ class BuildEnv ():
                 if url.has('key'):
                     keyurl = url.text('key').strip()    # URL to key
                     keyurl = keyurl.replace('LOCALMACHINE', '10.0.2.2')
-                    name = keyurl.split('/')[-1]        # Filename of key
 
                     myKey = urllib2.urlopen(keyurl).read()
                     self.log.do(

@@ -25,7 +25,7 @@ def run_command(argv):
 
     oparser = OptionParser(
         usage="usage: %prog get_archive <xmlfile> <archive>")
-    (opt, args) = oparser.parse_args(argv)
+    (_, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
         print("Wrong number of arguments")

@@ -61,8 +61,7 @@ class CreateAction(PBuilderAction):
     def __init__(self, node):
         PBuilderAction.__init__(self, node)
 
-    def execute(self, opt, args):
-        tmp = TmpdirFilesystem()
+    def execute(self, opt, _args):
 
         if opt.xmlfile:
             ret, prjdir, err = command_out_stderr(
@@ -74,7 +73,7 @@ class CreateAction(PBuilderAction):
                 sys.exit(20)
 
             prjdir = prjdir.strip()
-            ret, msg, err = command_out_stderr(
+            ret, _, err = command_out_stderr(
                 '%s control set_xml "%s" "%s"' %
                 (elbe_exe, prjdir, opt.xmlfile))
 
@@ -126,7 +125,7 @@ class UpdateAction(PBuilderAction):
     def __init__(self, node):
         PBuilderAction.__init__(self, node)
 
-    def execute(self, opt, args):
+    def execute(self, opt, _args):
 
         if not opt.project:
             print("you need to specify --project option", file=sys.stderr)
@@ -158,7 +157,7 @@ class BuildAction(PBuilderAction):
     def __init__(self, node):
         PBuilderAction.__init__(self, node)
 
-    def execute(self, opt, args):
+    def execute(self, opt, _args):
         tmp = TmpdirFilesystem()
 
         if opt.xmlfile:

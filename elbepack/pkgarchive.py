@@ -66,11 +66,11 @@ def gen_binpkg_archive(ep, repodir):
                     abs_path = c.download_binary(pkg.name,
                                                  '/var/cache/elbe/pkgarchive',
                                                  pkg.installed_version)
-                except ValueError as ve:
+                except ValueError:
                     ep.log.printo("No Package " + pkg.name + "-" +
                                   pkg.installed_version)
                     raise
-                except FetchError as fe:
+                except FetchError:
                     ep.log.printo(
                         "Package " +
                         pkg.name +
@@ -78,7 +78,7 @@ def gen_binpkg_archive(ep, repodir):
                         pkg.installed_version +
                         " could not be downloaded")
                     raise
-                except TypeError as te:
+                except TypeError:
                     ep.log.printo(
                         "Package " +
                         pkg.name +

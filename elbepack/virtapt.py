@@ -133,7 +133,7 @@ class VirtApt:
     def stop(self):
         pass
 
-    def pulse(self, obj):
+    def pulse(self, _obj):
         return True
 
     def mkdir_p(self, newdir, mode=0o755):
@@ -194,7 +194,7 @@ class VirtApt:
                 system('gpg %s --import "%s"' % (
                     gpg_options,
                     os.path.join("/etc/apt/trusted.gpg.d", key)))
-            except CommandError as e:
+            except CommandError:
                 print("adding elbe-pubkey to keyring failed")
 
     def add_pubkey_url(self, url):

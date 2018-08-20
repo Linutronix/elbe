@@ -79,7 +79,7 @@ def get_and_append_local(url, tararchive, keep):
         raise ArchivedirError(msg)
     collect(tararchive, prepare_path(url), keep)
 
-def get_and_append_unknown(url, archive):
+def get_and_append_unknown(url, _archive):
     msg = "unhandled scheme \"{}://\"".format(urlparse(url).scheme)
     raise NotImplementedError(msg)
 
@@ -101,7 +101,7 @@ def _combinearchivedir(xml):
             get_and_append = get_and_append_method(archiveurl)
             get_and_append(archiveurl, archive, keep)
             archivedir.getparent().remove(archivedir)
-        except (CalledProcessError, OSError) as ex:
+        except (CalledProcessError, OSError):
             msg = "Failure while processing \"" + archivedir.text + "\":\n"
             msg += str(sys.exc_info()[1])
             raise ArchivedirError(msg)

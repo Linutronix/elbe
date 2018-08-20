@@ -43,7 +43,7 @@ class RmAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         files = target.glob(self.node.et.text)
 
         if 'exclude' in self.node.et.attrib:
@@ -68,7 +68,7 @@ class MkdirAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         log.do("mkdir -p " + target.fname(self.node.et.text))
 
 
@@ -82,7 +82,7 @@ class MknodAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         log.do(
             "mknod " +
             target.fname(
@@ -101,7 +101,7 @@ class BuildenvMkdirAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, buildenv, _target):
         log.do("mkdir -p " + buildenv.rfs.fname(self.node.et.text))
 
 
@@ -115,7 +115,7 @@ class CpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
         for f in src:
             log.do("cp -av " + f + " " + target.fname(self.node.et.text))
@@ -131,7 +131,7 @@ class BuildenvCpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
         for f in src:
             log.do("cp -av " + f + " " + buildenv.rfs.fname(self.node.et.text))
@@ -179,7 +179,7 @@ class T2PMvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         if self.node.et.text[0] == '/':
             dest = self.node.et.text[1:]
         else:
@@ -201,7 +201,7 @@ class MvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
         for f in src:
             log.do("mv -v " + f + " " + target.fname(self.node.et.text))
@@ -217,7 +217,7 @@ class LnAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             log.chroot(
                 target.path, """/bin/sh -c 'ln -s %s "%s"' """ %
@@ -234,7 +234,7 @@ class BuildenvMvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
         for f in src:
             log.do("mv -v " + f + " " + buildenv.rfs.fname(self.node.et.text))
@@ -250,7 +250,7 @@ class AddUserAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             att = self.node.et.attrib
             options = ""
@@ -299,7 +299,7 @@ class AddGroupAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             att = self.node.et.attrib
             # we use -f always
@@ -323,7 +323,7 @@ class RawCmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             log.chroot(target.path, self.node.et.text)
 
@@ -338,7 +338,7 @@ class CmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             log.chroot(target.path, "/bin/sh", stdin=self.node.et.text)
 
@@ -353,7 +353,7 @@ class BuildenvCmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, buildenv, _target):
         with buildenv:
             log.chroot(buildenv.path, "/bin/sh", stdin=self.node.et.text)
 
@@ -368,7 +368,7 @@ class PurgeAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, log, _buildenv, target):
         with target:
             log.chroot(target.path, "dpkg --purge " + self.node.et.text)
 
@@ -416,20 +416,20 @@ class UpdatedAction(FinetuningAction):
                 try:
                     cache.download_binary(
                         pkg.name, '/tmp/pkgs', pkg.installed_version)
-                except ValueError as ve:
+                except ValueError:
                     log.printo(
                         "No Package " +
                         pkg.name +
                         "-" +
                         pkg.installed_version)
-                except FetchError as fe:
+                except FetchError:
                     log.printo(
                         "Package " +
                         pkg.name +
                         "-" +
                         pkg.installed_version +
                         " could not be downloaded")
-                except TypeError as te:
+                except TypeError:
                     log.printo(
                         "Package " +
                         pkg.name +

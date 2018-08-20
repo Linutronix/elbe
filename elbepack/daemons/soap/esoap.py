@@ -345,7 +345,7 @@ class ESoap (ServiceBase):
     @soap_faults
     def list_packages(self, uid, builddir):
         s = ''
-        for root, dirnames, filenames in os.walk(
+        for _, _, filenames in os.walk(
                 os.path.join(builddir, "repo/pool/main")):
             for filename in fnmatch.filter(filenames, '*.deb'):
                 s += filename + '\n'

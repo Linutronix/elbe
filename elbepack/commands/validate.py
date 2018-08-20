@@ -39,7 +39,7 @@ def run_command(argv):
 
     if opt.validate_urls:
         try:
-            xml = ElbeXML(args[0], url_validation=ValidationMode.CHECK_ALL)
+            ElbeXML(args[0], url_validation=ValidationMode.CHECK_ALL)
         except ValidationError as e:
             print(e)
             sys.exit(20)

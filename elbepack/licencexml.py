@@ -90,7 +90,7 @@ class copyright_xml (object):
 
             return
 
-        except Exception as e:
+        except Exception:
             pass
 
         bytesio.seek(0)

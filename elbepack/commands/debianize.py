@@ -12,7 +12,7 @@ import sys
 from elbepack.debianize.debianize import Debianize, DebianizeBase
 
 
-def run_command(args):
+def run_command(_args):
     if os.path.exists('debian'):
         print("debian folder already exists, nothing to do")
         sys.exit(10)

@@ -90,7 +90,7 @@ class ElbeSoapClient(object):
         while True:
             try:
                 ret = self.service.get_file(builddir, filename, part)
-            except BadStatusLine as e:
+            except BadStatusLine:
                 retry = retry - 1
 
                 print("get_file part %d failed, retry %d times" % (part, retry),
@@ -142,7 +142,7 @@ class RemoveLogAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print("usage: elbe control rm_log <project_dir>", file=sys.stderr)
             sys.exit(20)
@@ -161,7 +161,7 @@ class ListProjectsAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, _args):
         projects = client.service.list_projects()
 
         try:
@@ -182,7 +182,7 @@ class ListUsersAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, _args):
         users = client.service.list_users()
 
         for u in users.string:
@@ -230,7 +230,7 @@ class CreateProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, _args):
 
         uuid = client.service.new_project()
         print(uuid)
@@ -246,7 +246,7 @@ class ResetProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control reset_project <project_dir>",
@@ -267,7 +267,7 @@ class DeleteProjectAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control del_project <project_dir>",
@@ -288,7 +288,7 @@ class SetXmlAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 2:
             print(
                 "usage: elbe control set_xml <project_dir> <xml>",
@@ -303,7 +303,7 @@ class SetXmlAction(ClientAction):
                 filename,
                 skip_validate=True,
                 url_validation=ValidationMode.NO_CHECK)
-        except IOError as e:
+        except IOError:
             print("%s is not a valid elbe xml file" % filename)
             sys.exit(20)
 
@@ -366,7 +366,7 @@ class BuildSysrootAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control build-sysroot <project_dir>",
@@ -387,7 +387,7 @@ class BuildSDKAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control build-sdk <project_dir>",
@@ -466,7 +466,7 @@ class BuildChrootAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control build_chroot_tarball <project_dir>",
@@ -488,7 +488,7 @@ class DumpFileAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 2:
             print(
                 "usage: elbe control dump_file <project_dir> <file>",
@@ -567,7 +567,7 @@ class WaitProjectBusyAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control wait_busy <project_dir>",
@@ -615,7 +615,7 @@ class SetCdromAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         size = 1024 * 1024
 
         if len(args) != 2:
@@ -648,7 +648,7 @@ class SetOrigAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         size = 1024 * 1024
 
         if len(args) != 2:
@@ -682,7 +682,7 @@ class ShutdownInitvmAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 0:
             print("usage: elbe control shutdown_initvm", file=sys.stderr)
             sys.exit(20)
@@ -737,7 +737,7 @@ class BuildPbuilderAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control build_pbuilder <project_dir>",
@@ -758,7 +758,7 @@ class UpdatePbuilderAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe control update_pbuilder <project_dir>",
@@ -797,7 +797,7 @@ class ListPackagesAction(RepoAction):
     def __init__(self, node):
         RepoAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
                 "usage: elbe prjrepo list_packages <project_dir>",
@@ -818,7 +818,7 @@ class DownloadAction(RepoAction):
     def __init__(self, node):
         RepoAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 1:
             print("usage: elbe prjrepo download <project_dir>",
                   file=sys.stderr)
@@ -873,7 +873,7 @@ class UploadPackageAction(RepoAction):
                     print("Upload of package finished.")
                     break
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 2:
             print(
                 "usage: elbe prjrepo upload_pkg <project_dir> <deb/dsc file>",

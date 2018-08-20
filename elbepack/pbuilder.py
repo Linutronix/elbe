@@ -14,7 +14,7 @@ def pbuilder_ensure_chroot(builddir):
     pass
 
 
-def pbuilder_write_config(builddir, xml, log):
+def pbuilder_write_config(builddir, xml, _log):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
     fp = open(pbuilderrc_fname, "w")
