@@ -12,6 +12,10 @@ arch2triple = {"armhf": "arm-linux-gnueabihf", "armel": "arm-linux-gnueabi"}
 
 
 class Toolchain(object):
+    libc_path = "${triple}/libc"
+    gcc_libpath = "${triple}/lib"
+    pkg_libs = {}
+
     def __init__(self, path, arch, triple=None):
         self.path = path
         self.arch = arch
@@ -39,8 +43,6 @@ class Toolchain(object):
 
 
 class LinaroToolchain(Toolchain):
-    libc_path = "${triple}/libc"
-    gcc_libpath = "${triple}/lib"
     pkg_libs = {"libasan0": ["libasan.so.*"],
                 "libatomic1": ["libatomic.so.*"],
                 "libgcc1": ["libgcc_s.so.*"],
