@@ -36,7 +36,7 @@ from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
 from elbepack.pkgutils import extract_pkg
-from elbepack.templates import template, write_pack_template
+from elbepack.templates import write_pack_template
 
 
 class IncompatibleArchitectureException(Exception):
