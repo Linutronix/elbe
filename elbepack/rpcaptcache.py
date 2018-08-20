@@ -282,4 +282,9 @@ def get_rpcaptcache(
     mm = MyMan()
     mm.start()
 
+    # Disable false positive, because pylint can not
+    # see the creation of MyMan.RPCAPTCache by
+    # MyMan.register()
+    #
+    # pylint: disable=no-member
     return mm.RPCAPTCache(rfs, log, arch, notifier, norecommend, noauth)
