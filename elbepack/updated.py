@@ -41,6 +41,9 @@ except ImportError:
 
 
 class UpdateStatus:
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self):
         self.monitor = None
         self.observer = None

@@ -73,6 +73,9 @@ def pkgorigin(pkg):
 
 
 class PackageBase(object):
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, name, installed_version,
                  candidate_version, installed_md5, candidate_md5,
                  state, is_auto_installed, origin, architecture):

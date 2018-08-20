@@ -69,6 +69,9 @@ class mountpoint_dict (dict):
 
 
 class fstabentry(object):
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, xml, entry, id=0):
         if entry.has("source"):
             self.source = entry.text("source")

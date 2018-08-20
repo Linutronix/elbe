@@ -20,6 +20,8 @@ from elbepack.templates import template
 
 class DebianizeBase (FormMultiPage):
 
+    # pylint: disable=too-many-instance-attributes
+
     srctypes = {}
 
     @classmethod

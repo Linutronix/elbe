@@ -54,6 +54,9 @@ class RepoAttributes(object):
 
 
 class RepoBase(object):
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(
             self,
             path,

@@ -102,6 +102,9 @@ def gen_sdk_scripts(triplet, prj_name, prj_version, builddir, sdkpath):
 
 
 class ElbeProject (object):
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(
             self,
             builddir,
