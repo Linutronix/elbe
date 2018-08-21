@@ -11,7 +11,6 @@ from datetime import datetime
 import sys
 import os
 import io
-import string
 
 from tempfile import NamedTemporaryFile
 
