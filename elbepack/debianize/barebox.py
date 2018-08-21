@@ -24,6 +24,11 @@ class BareBox (DebianizeBase):
     def __init__(self):
         DebianizeBase.__init__(self)
 
+        self.defconfig = None
+        self.imgname = None
+        self.cross = None
+        self.k_version = None
+
     def gui(self):
         self.defconfig = self.add_widget_intelligent(
             TitleText, name="defconfig:", value="imx_v7_defconfig")
