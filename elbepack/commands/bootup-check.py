@@ -52,7 +52,7 @@ def bootup_info():
         print(ev.read())
 
 
-def run_command(argv):
+def run_command(_argv):
     try:
         xml = etree("/etc/elbe_base.xml")
     except IOError:
