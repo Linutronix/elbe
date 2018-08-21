@@ -155,7 +155,6 @@ def sign(infile, outfile, fingerprint):
         key = ctx.get_key(fingerprint)
     except gpgme.GpgmeError as ex:
         print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
-        pass
 
     ctx.signers = [key]
     ctx.armor = False
@@ -164,7 +163,6 @@ def sign(infile, outfile, fingerprint):
         ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
-        pass
 
 
 def sign_file(fname, fingerprint):
@@ -176,7 +174,6 @@ def sign_file(fname, fingerprint):
                 sign(infile, outfile, fingerprint)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
-        pass
 
 
 def get_fingerprints():
