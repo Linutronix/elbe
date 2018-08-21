@@ -9,6 +9,7 @@ from __future__ import print_function
 import sys
 
 from esoap import ESoap
+from elbepack.projectmanager import ProjectManager
 
 from beaker.middleware import SessionMiddleware
 from cherrypy.process.plugins import SimplePlugin
@@ -22,7 +23,6 @@ except ImportError as e:
     print("please install python(3)-spyne", file=sys.stderr)
     sys.exit(20)
 
-from elbepack.projectmanager import ProjectManager
 
 
 class EsoapApp(Application):
