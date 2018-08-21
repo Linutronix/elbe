@@ -61,8 +61,8 @@ class ESoap (ServiceBase):
     @rpc(_returns=Array(String))
     @soap_faults
     @authenticated_admin
-    def list_users(ctx):
-        return [u.name for u in ctx.app.pm.db.list_users()]
+    def list_users(self):
+        return [u.name for u in self.app.pm.db.list_users()]
 
     @rpc(String,String,String,String,Boolean)
     @soap_faults
@@ -76,8 +76,8 @@ class ESoap (ServiceBase):
     @rpc(_returns=Array(SoapProject))
     @soap_faults
     @authenticated_admin
-    def list_projects(ctx):
-        return ctx.app.pm.db.list_projects()
+    def list_projects(self):
+        return self.app.pm.db.list_projects()
 
     @rpc(String, String, _returns=Array(SoapFile))
     @authenticated_uid
