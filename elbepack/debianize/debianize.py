@@ -6,6 +6,9 @@
 from npyscreen import NPSAppManaged
 
 # don't remove these imports; even if pylint, etc believes they are unused
+#
+# pylint: disable=unused-import
+
 from elbepack.debianize.kernel import Kernel
 from elbepack.debianize.uboot import UBoot
 from elbepack.debianize.barebox import BareBox
