@@ -21,6 +21,8 @@ from elbepack.shellhelper import system_out
 
 class license_dep5_to_spdx (dict):
     def __init__(self, xml_fname=None):
+        dict.__init__(self)
+
         self.perpackage_mapping = {}
         self.perpackage_override = {}
         if xml_fname is None:
