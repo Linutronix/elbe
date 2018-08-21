@@ -112,13 +112,13 @@ def run_command(argv):
                       v_server, elbe_version),
                   file=sys.stderr)
 
-            if not (opt.ignore_version):
+            if not opt.ignore_version:
                 sys.exit(20)
     except AttributeError:
         print("the elbe installation inside the initvm doesn't provide a \
 get_version interface. Please create a new initvm or upgrade \
 elbe inside the existing initvm.", file=sys.stderr)
-        if not (opt.ignore_version):
+        if not opt.ignore_version:
             sys.exit(20)
 
     # Check whether subcommand exists

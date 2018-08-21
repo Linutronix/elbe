@@ -78,7 +78,7 @@ class InitVMAction(object):
         try:
             self.conn = libvirt.open("qemu:///system")
         except libvirt.libvirtError as verr:
-            if type(verr.args[0]) is not str:
+            if not isinstance(verr.args[0], str):
                 raise
             if verr.args[0].startswith('Failed to connect socket to'):
                 print("", file=sys.stderr)

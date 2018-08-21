@@ -10,7 +10,7 @@ from elbepack.gpg import unsign_file
 
 
 def run_command(argv):
-    if(len(argv) != 1):
+    if len(argv) != 1:
         print("Wrong number of arguments.")
         print("Please pass the name of the file to unsign.")
         return

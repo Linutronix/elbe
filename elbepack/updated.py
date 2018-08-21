@@ -297,7 +297,7 @@ def _apply_update(fname, status):
     percent = 0
     for p in hl_cache:
         i = i + 1
-        if not (i % step):
+        if not i % step:
             percent = percent + 10
             status.log(str(percent) + "% - " + str(i) + "/" + str(count))
             status.set_progress(2, str(percent) + "%")

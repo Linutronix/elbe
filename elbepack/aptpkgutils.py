@@ -105,7 +105,7 @@ class PackageBase(object):
 
 class APTPackage(PackageBase):
     def __init__(self, pkg, cache=None):
-        if type(pkg) == str:
+        if isinstance(pkg, str):
             pkg = cache[pkg]
 
         iver = pkg.installed and pkg.installed.version

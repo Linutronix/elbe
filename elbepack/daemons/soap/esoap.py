@@ -92,7 +92,7 @@ class ESoap (ServiceBase):
         # pylint: disable=too-many-arguments
 
         fn = os.path.join(builddir, fname)
-        if (part == 0):
+        if part == 0:
             if self.app.pm.db.is_busy(builddir):
                 return -1
             self.app.pm.db.set_busy(builddir, ["empty_project", "needs_build",
@@ -106,7 +106,7 @@ class ESoap (ServiceBase):
             with open(fn, 'a') as fp:
                 fp.flush()
             self.app.pm.db.reset_busy(builddir, "has_changes")
-            if (fname == "source.xml"):
+            if fname == "source.xml":
                 # ensure that the project cache is reloaded
                 self.app.pm.close_current_project(uid)
                 self.app.pm.open_project(
@@ -128,7 +128,7 @@ class ESoap (ServiceBase):
         file_name = builddir + "/" + filename
         file_stat = os.stat(file_name)
 
-        if (pos >= file_stat.st_size):
+        if pos >= file_stat.st_size:
             return "EndOfFile"
 
         with open(file_name) as fp:
