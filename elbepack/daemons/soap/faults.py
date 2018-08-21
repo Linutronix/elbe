@@ -77,10 +77,10 @@ def soap_faults(func):
         def wrapped(self):
             try:
                 return func(self)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -97,10 +97,10 @@ def soap_faults(func):
         def wrapped(self, arg1):
             try:
                 return func(self, arg1)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -117,10 +117,10 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2):
             try:
                 return func(self, arg1, arg2)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -137,10 +137,10 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3):
             try:
                 return func(self, arg1, arg2, arg3)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -157,10 +157,10 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3, arg4):
             try:
                 return func(self, arg1, arg2, arg3, arg4)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -177,10 +177,10 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
@@ -197,10 +197,10 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3, arg4, arg5, arg6):
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5, arg6)
-            except ProjectManagerError as e:
-                raise SoapElbeProjectError(str(e))
             except InvalidState as e:
                 raise SoapElbeInvalidState()
+            except ProjectManagerError as e:
+                raise SoapElbeProjectError(str(e))
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
