@@ -504,10 +504,7 @@ class ElbeDB(object):
                     "project %s is not registered in the database" %
                     builddir)
 
-            if p.status == "busy":
-                return True
-            else:
-                return False
+            return p.status == "busy"
 
     def reset_busy(self, builddir, new_status):
         assert new_status == "has_changes" or \
@@ -542,10 +539,7 @@ class ElbeDB(object):
                     "project %s is not registered in the database" %
                     builddir)
 
-            if p.status == "has_changes":
-                return True
-            else:
-                return False
+            return p.status == "has_changes"
 
     def get_owner_id(self, builddir):
         with session_scope(self.session) as s:
