@@ -901,13 +901,13 @@ class ElbeDB(object):
 
         # encrypt is deprecated but hash is not available in jessie
         try:
-            hash = pbkdf2_sha512.hash(password)
+            pwhash = pbkdf2_sha512.hash(password)
         except AttributeError:
-            hash = pbkdf2_sha512.encrypt(password)
+            pwhash = pbkdf2_sha512.encrypt(password)
 
         u = User(name=name,
                  fullname=fullname,
-                 pwhash=hash,
+                 pwhash=pwhash,
                  email=email,
                  admin=admin)
 

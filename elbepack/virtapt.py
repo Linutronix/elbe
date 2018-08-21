@@ -154,12 +154,12 @@ class VirtApt:
             """ mode is not set correctly """
             os.system("chmod 777 " + newdir)
 
-    def touch(self, file):
-        if os.path.exists(file):
-            os.utime(file, None)
+    def touch(self, fname):
+        if os.path.exists(fname):
+            os.utime(fname, None)
         else:
-            file = open(file, "w")
-            file.close()
+            fp = open(fname, "w")
+            fp.close()
 
     def initialize_dirs(self):
         self.mkdir_p(os.path.join(self.projectpath, "cache/archives/partial"))

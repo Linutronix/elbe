@@ -48,17 +48,17 @@ class copyright_xml (object):
         self.outxml = etree(None)
         self.pkglist = self.outxml.setroot('pkglicenses')
 
-    def add_copyright_file(self, pkg_name, copyright):
+    def add_copyright_file(self, pkg_name, copyright_text):
 
         # pylint: disable=too-many-locals
 
-        # remove illegal characters from copyright
-        copyright, _ = remove_re.subn('', copyright)
+        # remove illegal characters from copyright_text
+        copyright_text, _ = remove_re.subn('', copyright_text)
 
         xmlpkg = self.pkglist.append('pkglicense')
         xmlpkg.et.attrib['name'] = pkg_name
         txtnode = xmlpkg.append('text')
-        txtnode.et.text = copyright
+        txtnode.et.text = copyright_text
 
         bytesio = io.StringIO(unicode(txtnode.et.text))
         try:

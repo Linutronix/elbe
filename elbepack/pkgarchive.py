@@ -12,7 +12,7 @@ from elbepack.repomanager import RepoBase, RepoAttributes
 
 
 class ArchiveRepo(RepoBase):
-    def __init__(self, xml, path, log, origin, description, components,
+    def __init__(self, xml, pathname, log, origin, description, components,
                  maxsize=None):
 
         # pylint: disable=too-many-arguments
@@ -23,7 +23,7 @@ class ArchiveRepo(RepoBase):
         repo_attrs = RepoAttributes(codename, arch, components)
 
         RepoBase.__init__(self,
-                          path,
+                          pathname,
                           log,
                           None,
                           repo_attrs,
