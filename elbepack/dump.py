@@ -82,6 +82,7 @@ def dump_initvmpkgs(xml):
 def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
 
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
 
     elog = ASCIIDocLog(errorname, True)
 
@@ -169,6 +170,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
 
     outf = ASCIIDocLog(reportname)
     rfs = buildenv.rfs

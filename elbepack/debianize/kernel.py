@@ -18,6 +18,7 @@ from elbepack.debianize.base import DebianizeBase, template
 class Kernel (DebianizeBase):
 
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-ancestors
 
     name = "kernel"
     files = ['Kbuild', 'Kconfig', 'MAINTAINERS', 'kernel/futex.c']

@@ -37,6 +37,8 @@ except ImportError as e:
 
 class ESoap (ServiceBase):
 
+    # pylint: disable=too-many-public-methods
+
     __name__ = 'soap'
 
     def __init__(self):

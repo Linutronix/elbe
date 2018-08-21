@@ -22,6 +22,7 @@ def run_command(argv):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
 
     oparser = OptionParser(
         usage="usage: %prog check_updates [options] <source-xmlfile>")

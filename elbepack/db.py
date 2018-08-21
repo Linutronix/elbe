@@ -6,6 +6,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# pylint: disable=too-many-lines
+
 from __future__ import print_function
 
 import os
@@ -68,6 +70,9 @@ def get_versioned_filename(name, version, suffix):
 
 
 class ElbeDB(object):
+
+    # pylint: disable=too-many-public-methods
+
     db_path = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
 

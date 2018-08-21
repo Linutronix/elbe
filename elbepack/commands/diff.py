@@ -14,6 +14,9 @@ from optparse import OptionParser
 
 def walk_generated(gen_path, fix_path, exclude):
 
+    # pylint: disable=too-many-nested-blocks
+    # pylint: disable=too-many-branches
+
     file_to_rm = []
     file_differ = []
     gen_path = gen_path.rstrip("/")

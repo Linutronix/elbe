@@ -16,6 +16,9 @@ from elbepack.validate import validate_xml
 
 
 def run_command(argv):
+
+    # pylint: disable=too-many-branches
+
     oparser = OptionParser(usage="usage: %prog show [options] <filename>")
 
     oparser.add_option("--verbose", action="store_true", dest="verbose",

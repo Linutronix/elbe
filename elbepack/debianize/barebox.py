@@ -16,6 +16,8 @@ from elbepack.debianize.base import DebianizeBase, template
 
 class BareBox (DebianizeBase):
 
+    # pylint: disable=too-many-ancestors
+
     name = "barebox"
     files = ['Kbuild', 'Kconfig', 'README', 'TODO']
 
