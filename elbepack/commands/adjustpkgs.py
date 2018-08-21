@@ -44,7 +44,7 @@ class adjpkg(object):
                    p.name in pkglist or \
                    p.installed.priority == "important" or \
                    p.installed.priority == "required":
-                        continue
+                    continue
                 print("MARK REMOVE %s" % p.name)
                 p.mark_delete(auto_fix=False, purge=True)
 

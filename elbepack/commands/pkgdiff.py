@@ -61,7 +61,7 @@ def run_command(argv):
             if p.current_ver and not \
                gc[p.name].is_auto_installed and not \
                p.essential:
-                    gen_pkgs[p.name] = p.current_ver
+                gen_pkgs[p.name] = p.current_ver
         else:
             if p.current_ver and not p.essential:
                 gen_pkgs[p.name] = p.current_ver
@@ -79,7 +79,7 @@ def run_command(argv):
             if p.current_ver and not \
                fc[p.name].is_auto_installed and not \
                p.essential:
-                    fix_pkgs[p.name] = p.current_ver
+                fix_pkgs[p.name] = p.current_ver
         else:
             if p.current_ver and not p.essential:
                 fix_pkgs[p.name] = p.current_ver
