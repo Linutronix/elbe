@@ -174,7 +174,7 @@ class ChRootFilesystem(ElbeFilesystem):
         self.cwd = os.open("/", os.O_RDONLY)
         self.inchroot = False
 
-    def __delete__(self):
+    def __del__(self):
         os.close(self.cwd)
 
     def __enter__(self):
