@@ -44,7 +44,7 @@ class ebase(object):
             raise Exception("Cant find path %s" % path)
         elif (el is None) and "default" in args:
             default = args["default"]
-            if type(default) == str:
+            if isinstance(default, str):
                 return default
             else:
                 return default[args["key"]]

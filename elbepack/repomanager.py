@@ -22,12 +22,12 @@ class RepoAttributes(object):
     def __init__(self, codename, arch, components,
                  mirror='http://ftp.de.debian.org/debian'):
         self.codename = codename
-        if type(arch) is str:
+        if isinstance(arch, str):
             self.arch = set([arch])
         else:
             self.arch = set(arch)
 
-        if type(components) is str:
+        if isinstance(components, str):
             self.components = set([components])
         else:
             self.components = set(components)
