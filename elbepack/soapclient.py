@@ -604,7 +604,6 @@ class WaitProjectBusyAction(ClientAction):
                                                 log[1].replace('\n','')))
                         except IndexError:
                             print("IndexError - part: %d (skipped)" % part)
-                            pass
                     else:
                         time.sleep(1)
                 else:
