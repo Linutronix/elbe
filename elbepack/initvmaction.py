@@ -246,6 +246,187 @@ class StartBuildAction(InitVMAction):
 
 InitVMAction.register(StartBuildAction)
 
+def submit_and_dl_result(xmlfile, cdrom, opt):
+
+    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
+
+    outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
+    cmd = '%s preprocess -o %s %s' % (elbe_exe, outxml.name, xmlfile)
+    ret, _, err = command_out_stderr(cmd)
+    if ret != 0:
+        print("elbe preprocess failed.", file=sys.stderr)
+        print(err, file=sys.stderr)
+        print("Giving up", file=sys.stderr)
+        sys.exit(20)
+    xmlfile = outxml.name
+
+    ret, prjdir, err = command_out_stderr(
+        '%s control create_project' % (elbe_exe))
+    if ret != 0:
+        print("elbe control create_project failed.", file=sys.stderr)
+        print(err, file=sys.stderr)
+        print("Giving up", file=sys.stderr)
+        sys.exit(20)
+
+    prjdir = prjdir.strip()
+
+    cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+    ret, _, err = command_out_stderr(cmd)
+    if ret != 0:
+        print("elbe control set_xml failed2", file=sys.stderr)
+        print(err, file=sys.stderr)
+        print("Giving up", file=sys.stderr)
+        sys.exit(20)
+
+    if opt.writeproject:
+        with open(opt.writeproject, "w") as wpf:
+            wpf.write(prjdir)
+
+    if cdrom is not None:
+        print("Uploading CDROM. This might take a while")
+        try:
+            system(
+                '%s control set_cdrom "%s" "%s"' %
+                (elbe_exe, prjdir, cdrom))
+        except CommandError:
+            print("elbe control set_cdrom Failed", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        print("Upload finished")
+
+    build_opts = ''
+    if opt.build_bin:
+        build_opts += '--build-bin '
+    if opt.build_sources:
+        build_opts += '--build-sources '
+    if cdrom:
+        build_opts += '--skip-pbuilder '
+
+    try:
+        system(
+            '%s control build "%s" %s' %
+            (elbe_exe, prjdir, build_opts))
+    except CommandError:
+        print("elbe control build Failed", file=sys.stderr)
+        print("Giving up", file=sys.stderr)
+        sys.exit(20)
+
+    print("Build started, waiting till it finishes")
+
+    try:
+        system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
+    except CommandError:
+        print("elbe control wait_busy Failed", file=sys.stderr)
+        print("Giving up", file=sys.stderr)
+        sys.exit(20)
+
+    print("")
+    print("Build finished !")
+    print("")
+    try:
+        system(
+            '%s control dump_file "%s" validation.txt' %
+            (elbe_exe, prjdir))
+    except CommandError:
+        print(
+            "Project failed to generate validation.txt",
+            file=sys.stderr)
+        print("Getting log.txt", file=sys.stderr)
+        try:
+            system(
+                '%s control dump_file "%s" log.txt' %
+                (elbe_exe, prjdir))
+        except CommandError:
+
+            print("Failed to dump log.txt", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+        sys.exit(20)
+
+    if opt.skip_download:
+        print("")
+        print("Listing available files:")
+        print("")
+        try:
+            system('%s control get_files "%s"' % (elbe_exe, prjdir))
+        except CommandError:
+            print("elbe control get_files Failed", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        print("")
+        print(
+            'Get Files with: elbe control get_file "%s" <filename>' %
+            prjdir)
+    else:
+        print("")
+        print("Getting generated Files")
+        print("")
+
+        ensure_outdir(opt)
+
+        try:
+            system('%s control get_files --output "%s" "%s"' % (
+                elbe_exe, opt.outdir, prjdir))
+        except CommandError:
+            print("elbe control get_files Failed", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        if not opt.keep_files:
+            try:
+                system('%s control del_project "%s"' % (
+                    elbe_exe, prjdir))
+            except CommandError:
+                print("remove project from initvm failed",
+                      file=sys.stderr)
+                sys.exit(20)
+
+def extract_cdrom(cdrom):
+    """ Extract cdrom iso image
+        returns a TmpdirFilesystem() object containing
+        the source.xml, which is also validated.
+    """
+
+    tmp = TmpdirFilesystem()
+    os.system('7z x -o%s "%s" source.xml' % (tmp.path, cdrom))
+
+    print("", file=sys.stderr)
+
+    if not tmp.isfile('source.xml'):
+        print(
+            "Iso image does not contain a source.xml file",
+            file=sys.stderr)
+        print(
+            "This is not supported by 'elbe initvm'",
+            file=sys.stderr)
+        print("", file=sys.stderr)
+        print("Exiting !!!", file=sys.stderr)
+        sys.exit(20)
+
+    try:
+        exml = ElbeXML(
+            tmp.fname('source.xml'),
+            url_validation=ValidationMode.NO_CHECK)
+    except ValidationError as e:
+        print(
+            "Iso image does contain a source.xml file.",
+            file=sys.stderr)
+        print(
+            "But that xml does not validate correctly",
+            file=sys.stderr)
+        print("", file=sys.stderr)
+        print("Exiting !!!", file=sys.stderr)
+        print(e)
+        sys.exit(20)
+
+    print("Iso Image with valid source.xml detected !")
+    print(
+        "Image was generated using Elbe Version %s" %
+        exml.get_elbe_version())
+
+    return tmp
 
 class CreateAction(InitVMAction):
 
@@ -256,7 +437,6 @@ class CreateAction(InitVMAction):
 
     def execute(self, initvmdir, opt, args):
 
-        # pylint: disable=too-many-locals
         # pylint: disable=too-many-branches
         # pylint: disable=too-many-statements
 
@@ -292,43 +472,13 @@ class CreateAction(InitVMAction):
 
             elif args[0].endswith('.iso'):
                 # We have an iso image, extract xml from there.
-                tmp = TmpdirFilesystem()
-                os.system('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
+                tmp = extract_cdrom(args[0])
 
-                print('', file=sys.stderr)
-
-                if not tmp.isfile('source.xml'):
-                    print(
-                        "Iso image does not contain a source.xml file",
-                        file=sys.stderr)
-                    print(
-                        "This is not supported by 'elbe initvm'",
-                        file=sys.stderr)
-                    print("", file=sys.stderr)
-                    print("Exiting !!!", file=sys.stderr)
-                    sys.exit(20)
-
-                try:
-                    exml = ElbeXML(
-                        tmp.fname('source.xml'),
-                        url_validation=ValidationMode.NO_CHECK)
-                except ValidationError as e:
-                    print(
-                        "Iso image does contain a source.xml file.",
-                        file=sys.stderr)
-                    print(
-                        "But that xml does not validate correctly",
-                        file=sys.stderr)
-                    print("", file=sys.stderr)
-                    print("Exiting !!!", file=sys.stderr)
-                    print(e)
-                    sys.exit(20)
-
-                print("Iso Image with valid source.xml detected !")
-                print(
-                    "Image was generated using Elbe Version %s" %
-                    exml.get_elbe_version())
-
+                # After extracting the source.xml,
+                # we also extract the elbe-keyring here.
+                #
+                # this only happens for "initvm create"
+                # not for "initvm submit"
                 os.system(
                     '7z x -o%s "%s" elbe-keyring.gpg' %
                     ('/tmp', args[0]))
@@ -413,136 +563,11 @@ class CreateAction(InitVMAction):
                           "myproject.xml' to build a project")
                     sys.exit(0)
 
-                ret, prjdir, err = command_out_stderr(
-                    '%s control create_project' % (elbe_exe))
                 xmlfile = args[0]
             elif cdrom is not None:
-                ret, prjdir, err = command_out_stderr(
-                    '%s control create_project' % (elbe_exe))
                 xmlfile = tmp.fname('source.xml')
-            else:
-                ret, prjdir, err = command_out_stderr(
-                    '%s control create_project' % (elbe_exe))
 
-            if ret != 0:
-                print("elbe control create_project failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            prjdir = prjdir.strip()
-
-            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-            ret, _, err = command_out_stderr(cmd)
-            if ret != 0:
-                print("elbe control set_xml failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            if opt.writeproject:
-                with open(opt.writeproject, "w") as wpf:
-                    wpf.write(prjdir)
-
-            if cdrom is not None:
-                print("Uploading CDROM. This might take a while")
-                try:
-                    system(
-                        '%s control set_cdrom "%s" "%s"' %
-                        (elbe_exe, prjdir, cdrom))
-                except CommandError:
-                    print("elbe control set_cdrom Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                print("Upload finished")
-
-            build_opts = ''
-            if opt.build_bin:
-                build_opts += '--build-bin '
-            if opt.build_sources:
-                build_opts += '--build-sources '
-            if cdrom:
-                build_opts += '--skip-pbuilder '
-
-            try:
-                system(
-                    '%s control build "%s" %s' %
-                    (elbe_exe, prjdir, build_opts))
-            except CommandError:
-                print("elbe control build Failed", file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print("Build started, waiting till it finishes")
-
-            try:
-                system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
-            except CommandError:
-                print("elbe control wait_busy Failed", file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print("")
-            print("Build finished !")
-            print("")
-            try:
-                system(
-                    '%s control dump_file "%s" validation.txt' %
-                    (elbe_exe, prjdir))
-            except CommandError:
-                print(
-                    "Project failed to generate validation.txt",
-                    file=sys.stderr)
-                print("Getting log.txt", file=sys.stderr)
-                try:
-                    system(
-                        '%s control dump_file "%s" log.txt' %
-                        (elbe_exe, prjdir))
-                except CommandError:
-
-                    print("Failed to dump log.txt", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            if opt.skip_download:
-                print("")
-                print("Listing available files:")
-                print("")
-                try:
-                    system('%s control get_files "%s"' % (elbe_exe, prjdir))
-                except CommandError:
-                    print("elbe control Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                print("")
-                print(
-                    'Get Files with: elbe control get_file "%s" <filename>' %
-                    prjdir)
-            else:
-                print("")
-                print("Getting generated Files")
-                print("")
-
-                ensure_outdir(opt)
-
-                try:
-                    system('%s control get_files --output "%s" "%s"' % (
-                        elbe_exe, opt.outdir, prjdir))
-                except CommandError:
-                    print("elbe control get_files Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                if not opt.keep_files:
-                    try:
-                        system('%s control del_project "%s"' % (
-                            elbe_exe, prjdir))
-                    except CommandError:
-                        print("remove project from initvm failed",
-                              file=sys.stderr)
-                        sys.exit(20)
+            submit_and_dl_result(xmlfile, cdrom, opt)
 
 
 InitVMAction.register(CreateAction)
@@ -556,11 +581,6 @@ class SubmitAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, opt, args):
-
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-statements
-        # pylint: disable=too-many-branches
-
         try:
             system('%s initvm ensure' % elbe_exe)
         except CommandError:
@@ -578,42 +598,7 @@ class SubmitAction(InitVMAction):
                 url_validation = ''
             elif args[0].endswith('.iso'):
                 # We have an iso image, extract xml from there.
-                tmp = TmpdirFilesystem()
-                os.system('7z x -o%s "%s" source.xml' % (tmp.path, args[0]))
-
-                print("", file=sys.stderr)
-
-                if not tmp.isfile('source.xml'):
-                    print(
-                        "Iso image does not contain a source.xml file",
-                        file=sys.stderr)
-                    print(
-                        "This is not supported by 'elbe initvm'",
-                        file=sys.stderr)
-                    print("", file=sys.stderr)
-                    print("Exiting !!!", file=sys.stderr)
-                    sys.exit(20)
-
-                try:
-                    exml = ElbeXML(
-                        tmp.fname('source.xml'),
-                        url_validation=ValidationMode.NO_CHECK)
-                except ValidationError as e:
-                    print(
-                        "Iso image does contain a source.xml file.",
-                        file=sys.stderr)
-                    print(
-                        "But that xml does not validate correctly",
-                        file=sys.stderr)
-                    print("", file=sys.stderr)
-                    print("Exiting !!!", file=sys.stderr)
-                    print(e)
-                    sys.exit(20)
-
-                print("Iso Image with valid source.xml detected !")
-                print(
-                    "Image was generated using Elbe Version %s" %
-                    exml.get_elbe_version())
+                tmp = extract_cdrom(args[0])
 
                 xmlfile = tmp.fname('source.xml')
                 url_validation = '--skip-urlcheck'
@@ -624,137 +609,6 @@ class SubmitAction(InitVMAction):
                     file=sys.stderr)
                 sys.exit(20)
 
-            outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
-            cmd = '%s preprocess -o %s %s' % (elbe_exe, outxml.name, xmlfile)
-            ret, _, err = command_out_stderr(cmd)
-            if ret != 0:
-                print("elbe preprocess failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-            xmlfile = outxml.name
-
-            ret, prjdir, err = command_out_stderr(
-                '%s control create_project' % (elbe_exe))
-            if ret != 0:
-                print("elbe control create_project failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            prjdir = prjdir.strip()
-
-            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-            ret, _, err = command_out_stderr(cmd)
-            if ret != 0:
-                print("elbe control set_xml failed2", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            if opt.writeproject:
-                with open(opt.writeproject, "w") as wpf:
-                    wpf.write(prjdir)
-
-            if cdrom is not None:
-                print("Uploading CDROM. This might take a while")
-                try:
-                    system(
-                        '%s control set_cdrom "%s" "%s"' %
-                        (elbe_exe, prjdir, cdrom))
-                except CommandError:
-                    print("elbe control set_cdrom Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                print("Upload finished")
-
-            build_opts = ''
-            if opt.build_bin:
-                build_opts += '--build-bin '
-            if opt.build_sources:
-                build_opts += '--build-sources '
-            if cdrom:
-                build_opts += '--skip-pbuilder '
-
-            try:
-                system(
-                    '%s control build "%s" %s' %
-                    (elbe_exe, prjdir, build_opts))
-            except CommandError:
-                print("elbe control build Failed", file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print("Build started, waiting till it finishes")
-
-            try:
-                system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
-            except CommandError:
-                print("elbe control wait_busy Failed", file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            print("")
-            print("Build finished !")
-            print("")
-            try:
-                system(
-                    '%s control dump_file "%s" validation.txt' %
-                    (elbe_exe, prjdir))
-            except CommandError:
-                print(
-                    "Project failed to generate validation.txt",
-                    file=sys.stderr)
-                print("Getting log.txt", file=sys.stderr)
-                try:
-                    system(
-                        '%s control dump_file "%s" log.txt' %
-                        (elbe_exe, prjdir))
-                except CommandError:
-
-                    print("Failed to dump log.txt", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                sys.exit(20)
-
-            if opt.skip_download:
-                print("")
-                print("Listing available files:")
-                print("")
-                try:
-                    system('%s control get_files "%s"' % (elbe_exe, prjdir))
-                except CommandError:
-                    print("elbe control get_files Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                print("")
-                print(
-                    'Get Files with: elbe control get_file "%s" <filename>' %
-                    prjdir)
-            else:
-                print("")
-                print("Getting generated Files")
-                print("")
-
-                ensure_outdir(opt)
-
-                try:
-                    system('%s control get_files --output "%s" "%s"' % (
-                        elbe_exe, opt.outdir, prjdir))
-                except CommandError:
-                    print("elbe control get_files Failed", file=sys.stderr)
-                    print("Giving up", file=sys.stderr)
-                    sys.exit(20)
-
-                if not opt.keep_files:
-                    try:
-                        system('%s control del_project "%s"' % (
-                            elbe_exe, prjdir))
-                    except CommandError:
-                        print("remove project from initvm failed",
-                              file=sys.stderr)
-                        sys.exit(20)
-
+            submit_and_dl_result(xmlfile, cdrom, opt)
 
 InitVMAction.register(SubmitAction)
