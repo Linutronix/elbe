@@ -128,7 +128,7 @@ class ElbeFilesystem(Filesystem):
 
         version_file = self.open("etc/updated_version", "w")
         version_file.write(xml.text("/project/version"))
-        version_file.close
+        version_file.close()
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
