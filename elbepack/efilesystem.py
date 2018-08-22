@@ -207,7 +207,7 @@ class ChRootFilesystem(ElbeFilesystem):
         self.mount()
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _typ, _value, _traceback):
         if self.inchroot:
             self.leave_chroot()
         self.umount()
@@ -344,7 +344,7 @@ class TargetFs(ChRootFilesystem):
                         targetdir, cpio_name))
                 # only append filename if creating cpio was successful
                 self.images.append(cpio_name)
-            except CommandError as e:
+            except CommandError:
                 # error was logged; continue
                 pass
 

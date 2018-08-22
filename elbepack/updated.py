@@ -181,7 +181,7 @@ class rw_access:
             cmd = "mount -o remount,rw %s" % self.mount
             os.system(cmd)
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _typ, _value, _traceback):
         if self.mount_orig == 'ro':
             self.status.log("remount %s readonly" % self.mount)
             os.system("sync")

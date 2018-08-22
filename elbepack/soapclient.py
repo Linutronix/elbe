@@ -204,7 +204,7 @@ class AddUserAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, opt, args):
+    def execute(self, client, _opt, args):
         if len(args) != 4:
             print(
                 "usage: elbe control add_user <name> <fullname> <password> <email>",
