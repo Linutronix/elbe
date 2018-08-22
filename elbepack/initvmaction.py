@@ -51,8 +51,8 @@ def ensure_initvm_defined():
 
 
 class InitVMError(Exception):
-    def __init__(self, str):
-        Exception.__init__(self, str)
+    def __init__(self, msg):
+        Exception.__init__(self, msg)
 
 
 class InitVMAction(object):
