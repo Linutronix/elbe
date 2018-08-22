@@ -377,12 +377,13 @@ def create_partition(
 
     g = parted.Geometry(device=disk.device, start=current_sector, length=sz)
     if ptype != parted.PARTITION_EXTENDED and \
-            part.text("label") in fslabel and \
-            fslabel[part.text("label")].fstype == "vfat":
-                fs = simple_fstype("fat32")
-                ppart = parted.Partition(disk, ptype, fs, geometry=g)
-                if disk.type != "gpt":
-                    ppart.setFlag(_ped.PARTITION_LBA)
+       part.text("label") in fslabel and \
+       fslabel[part.text("label")].fstype == "vfat":
+
+        fs = simple_fstype("fat32")
+        ppart = parted.Partition(disk, ptype, fs, geometry=g)
+        if disk.type != "gpt":
+            ppart.setFlag(_ped.PARTITION_LBA)
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 
@@ -554,8 +555,8 @@ def add_binary_blob(outf, hd, target):
         if binary.et.text[0] == '/':
             bf = os.path.join(target, 'target', binary.et.text[1:])
             print(bf)
-        # else use file from /var/cache/elbe/<uuid> project dir
         else:
+            # use file from /var/cache/elbe/<uuid> project dir
             bf = os.path.join(target, binary.et.text)
 
         outf.do('dd if="%s" of="%s" seek="%s" bs="%s" conv=notrunc' % (

@@ -137,12 +137,12 @@ class RPCAPTCache(InChRootObject):
             if p.is_installed and not \
                p.is_auto_installed or \
                p.is_auto_removable:
-                    remove = True
-                    for x in exclude_pkgs:
-                        if x == p.name:
-                            remove = False
-                    if remove:
-                        p.mark_delete(auto_fix=True, purge=True)
+                remove = True
+                for x in exclude_pkgs:
+                    if x == p.name:
+                        remove = False
+                if remove:
+                    p.mark_delete(auto_fix=True, purge=True)
 
     def mark_upgrade(self, pkgname, version):
         p = self.cache[pkgname]
