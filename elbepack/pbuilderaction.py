@@ -14,8 +14,9 @@ from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import TmpdirFilesystem
 
 
-def cmd_exists(x): return any(os.access(os.path.join(path, x), os.X_OK)
-                              for path in os.environ["PATH"].split(os.pathsep))
+def cmd_exists(x):
+    return any(os.access(os.path.join(path, x), os.X_OK)
+            for path in os.environ["PATH"].split(os.pathsep))
 
 # Create download directory with timestamp,
 # if necessary
