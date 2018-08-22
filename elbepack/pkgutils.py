@@ -30,6 +30,11 @@ from pkg_resources import parse_version as V
 from elbepack.shellhelper import CommandError, system
 
 try:
+    # this can not be grouped properly
+    # because we can fallback of apt_pkg is not available
+    #
+    # pylint: disable=ungrouped-imports
+
     from apt_pkg import TagFile
     from elbepack.virtapt import get_virtaptcache
     virtapt_imported = True
