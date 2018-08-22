@@ -17,7 +17,8 @@ from multiprocessing.managers import BaseManager
 
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
-import apt
+
+import apt  # pylint: disable=unused-import
 import apt_pkg
 
 
