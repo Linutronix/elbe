@@ -51,6 +51,9 @@ class ValidationMode():
 
 
 class ElbeXML(object):
+
+    # pylint: disable=too-many-public-methods
+
     def __init__(
             self,
             fname,
@@ -182,12 +185,11 @@ class ElbeXML(object):
 
     def validate_apt_sources(self, url_validation, buildtype):
 
-        # pylint disable=too-many-locals
+        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-branches
 
         slist = self.create_apt_sources_list()
         sources_lines = slist.split('\n')
-
-        # pylint: disable=too-many-locals
 
         repos = []
         for line in sources_lines:

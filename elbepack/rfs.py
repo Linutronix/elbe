@@ -90,6 +90,7 @@ class BuildEnv ():
     def debootstrap(self):
 
         # pylint: disable=too-many-statements
+        # pylint: disable=too-many-branches
 
         cleanup = False
         suite = self.xml.prj.text("suite")

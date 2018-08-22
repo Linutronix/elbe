@@ -64,6 +64,9 @@ class OpenProjectFile(object):
 
 
 class ProjectManager(object):
+
+    # pylint: disable=too-many-public-methods
+
     def __init__(self, basepath):
         self.basepath = basepath    # Base path for new projects
         self.db = ElbeDB()          # Database of projects and users

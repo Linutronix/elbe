@@ -43,6 +43,7 @@ def copy_filelist(src, filelist, dst):
 def extract_target(src, xml, dst, log, cache):
 
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
 
     # create filelists describing the content of the target rfs
     if xml.tgt.has("tighten") or xml.tgt.has("diet"):

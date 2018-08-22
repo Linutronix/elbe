@@ -61,6 +61,8 @@ def mkfs_mtd(outf, mtd, fslabel, rfs, target):
 
 def build_image_mtd(outf, mtd, target):
 
+    # pylint: disable=too-many-branches
+
     img_files = []
 
     if not mtd.has("ubivg"):
@@ -465,6 +467,7 @@ def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
 
     sector_size = 512
     s = size_to_int(hd.text("size"))
@@ -566,6 +569,7 @@ def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
 
     # list of created files
     img_files = []

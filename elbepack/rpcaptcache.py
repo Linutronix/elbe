@@ -29,6 +29,7 @@ class InChRootObject(object):
 
 
 class RPCAPTCache(InChRootObject):
+    # pylint: disable=too-many-public-methods
     def __init__(
             self,
             rfs,

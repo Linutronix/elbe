@@ -416,6 +416,7 @@ class ElbeProject (object):
         # pylint: disable=too-many-arguments
         # pylint: disable=too-many-locals
         # pylint: disable=too-many-statements
+        # pylint: disable=too-many-branches
 
         # Write the log header
         self.write_log_header()
@@ -792,6 +793,7 @@ class ElbeProject (object):
     def install_packages(self, target, buildenv=False):
 
         # pylint: disable=too-many-statements
+        # pylint: disable=too-many-branches
 
         with target:
             # First update the apt cache

@@ -46,6 +46,9 @@ def size_to_int(size):
     return int(s) * unit
 
 class Filesystem(object):
+
+    # pylint: disable=too-many-public-methods
+
     def __init__(self, path, clean=False):
         self.path = os.path.abspath(path)
 
