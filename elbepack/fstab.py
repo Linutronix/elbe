@@ -40,6 +40,7 @@ def get_devicelabel(xml, node):
 
 class mountpoint_dict (dict):
     def __init__(self):
+        dict.__init__(self)
         self.id_count = 0
 
     def register(self, fstabentry):
