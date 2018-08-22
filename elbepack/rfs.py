@@ -80,8 +80,8 @@ class BuildEnv ():
         self.rfs.__enter__()
         return self
 
-    def __exit__(self, type, value, traceback):
-        self.rfs.__exit__(type, value, traceback)
+    def __exit__(self, typ, value, traceback):
+        self.rfs.__exit__(typ, value, traceback)
         self.cdrom_umount()
         if os.path.exists(self.path + '/repo'):
             self.log.do("mv %s/repo %s/../" % (self.path, self.path))

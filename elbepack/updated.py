@@ -162,10 +162,10 @@ class rw_access_file:
         self.f = open(self.filename, 'w')
         return self.f
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, typ, value, traceback):
         if os.path.isfile(self.filename):
             self.f.close()
-        self.rw.__exit__(type, value, traceback)
+        self.rw.__exit__(typ, value, traceback)
 
 
 class rw_access:
