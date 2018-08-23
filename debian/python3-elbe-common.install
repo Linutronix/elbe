@@ -1,4 +1,3 @@
-./usr/lib/python3.*/*-packages/elbepack/elbe-repo.pub
 ./usr/lib/python3.*/*-packages/elbepack/init/default-init.xml
 ./usr/lib/python3.*/*-packages/elbepack/init/Makefile.mako
 ./usr/lib/python3.*/*-packages/elbepack/init/libvirt.xml.mako

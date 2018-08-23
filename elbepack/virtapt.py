@@ -23,7 +23,6 @@ import apt_pkg
 
 
 from elbepack.shellhelper import CommandError, system
-from elbepack.directories import elbe_pubkey_fname
 
 
 def getdeps(pkg):
@@ -185,10 +184,6 @@ class VirtApt:
         gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
                       '--trust-model always --no-default-keyring ' \
                       '--homedir "%s"' % (ring_path, self.projectpath)
-
-        system('gpg %s --import "%s"' % (
-            gpg_options,
-            elbe_pubkey_fname))
 
         trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
         for key in trustkeys:
