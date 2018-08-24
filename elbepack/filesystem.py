@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import print_function
+
 import os
 import shutil
 
@@ -239,12 +241,17 @@ class Filesystem(object):
 
 
 class TmpdirFilesystem (Filesystem):
-    def __init__(self):
+    def __init__(self, debug=False):
         tmpdir = mkdtemp()
         Filesystem.__init__(self, tmpdir)
+        self.debug = debug
 
     def __del__(self):
-        shutil.rmtree(self.path, True)
+        # dont delete files in debug mode
+        if self.debug:
+            print('leaving TmpdirFilesystem in "%s"' % self.path)
+        else:
+            shutil.rmtree(self.path, True)
 
 
 hostfs = Filesystem('/')
