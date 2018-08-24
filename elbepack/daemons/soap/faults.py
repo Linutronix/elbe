@@ -175,6 +175,7 @@ def soap_faults(func):
     if func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
+            # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5)
             except InvalidState as e:
@@ -195,6 +196,7 @@ def soap_faults(func):
     if func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5, arg6):
+            # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5, arg6)
             except InvalidState as e:
