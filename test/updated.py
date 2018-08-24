@@ -55,20 +55,19 @@ def shutdown(monitor):
 oparser = OptionParser(usage="usage: %prog [options]")
 
 oparser.add_option("--debug", dest="debug", action="store_true",
-                   default=False,
-                   help="run in debug mode")
+                   default=False, help="run in debug mode")
 
-oparser.add_option("--target", dest="target",
-                   help="ip or hostname of target")
+oparser.add_option("--target", dest="target", default="localhost",
+                   help="ip or hostname of target", type="string")
 
-oparser.add_option("--port", dest="port",
-                   help="port of updated on target")
+oparser.add_option("--port", dest="port", default="8080",
+                   help="port of updated on target", type="string")
 
-oparser.add_option("--listen", dest="host",
-                   help="interface ip")
+oparser.add_option("--listen", dest="host", default="localhost",
+                   help="interface ip", type="string")
 
-oparser.add_option("--monitorport", dest="monitorport",
-                   help="port used for update monitor")
+oparser.add_option("--monitorport", dest="monitorport", default="8087",
+                   help="port used for update monitor", type="string")
 
 (opt, args) = oparser.parse_args(sys.argv)
 
@@ -77,40 +76,20 @@ if opt.debug:
     logging.basicConfig(level=logging.INFO)
     logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
-if not opt.target:
-    target = "localhost"
-else:
-    target = opt.target
-
-if not opt.port:
-    port = "8088"
-else:
-    port = str(opt.port)
-
-if not opt.monitorport:
-    monitorport = "8087"
-else:
-    monitorport = opt.monitorport
-
-if not opt.host:
-    host = "localhost"
-else:
-    host = opt.host
-
-wsdl = "http://" + target + ":" + port + "/?wsdl"
+wsdl = "http://" + opt.target + ":" + opt.port + "/?wsdl"
 try:
     control = Client(wsdl)
 except BaseException:
     print(wsdl, "not reachable")
     sys.exit(1)
 
-monitor = MonitorThread(monitorport)
+monitor = MonitorThread(opt.monitorport)
 monitor.start()
 
 time.sleep(1)  # hack to ensure that monitor server was started
 
 try:
-    monitor_wsdl = "http://" + host + ":" + monitorport + "/?wsdl"
+    monitor_wsdl = "http://" + opt.host + ":" + opt.monitorport + "/?wsdl"
     control.service.register_monitor(monitor_wsdl)
 except BaseException:
     print("monitor couldn't be registered (port already in use?)")
