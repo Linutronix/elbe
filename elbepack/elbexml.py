@@ -44,7 +44,7 @@ class NoInitvmNode(Exception):
     pass
 
 
-class ValidationMode():
+class ValidationMode(object):
     NO_CHECK = True
     CHECK_BINARIES = 2
     CHECK_ALL = False

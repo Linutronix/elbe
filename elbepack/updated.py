@@ -43,7 +43,7 @@ except ImportError:
     downgrade_prevention_feature_available = False
 
 
-class UpdateStatus:
+class UpdateStatus(object):
 
     # pylint: disable=too-many-instance-attributes
 
@@ -152,7 +152,7 @@ class UpdateService (ServiceBase):
         self.app.status.log("connection established")
 
 
-class rw_access_file:
+class rw_access_file(object):
     def __init__(self, filename, status):
         self.filename = filename
         self.rw = rw_access(filename, status)
@@ -168,7 +168,7 @@ class rw_access_file:
         self.rw.__exit__(typ, value, traceback)
 
 
-class rw_access:
+class rw_access(object):
     def __init__(self, directory, status):
         self.status = status
         self.directory = directory

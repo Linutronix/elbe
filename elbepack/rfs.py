@@ -22,7 +22,7 @@ class DebootstrapException (Exception):
         Exception.__init__(self, "Debootstrap Failed")
 
 
-class BuildEnv ():
+class BuildEnv (object):
     def __init__(self, xml, log, path, build_sources=False, clean=False):
 
         # pylint: disable=too-many-arguments

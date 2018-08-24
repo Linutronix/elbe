@@ -26,7 +26,7 @@ elbe_internal_key_param = """
 """
 
 
-class OverallStatus:
+class OverallStatus(object):
 
     def __init__(self):
         self.invalid = False
