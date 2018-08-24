@@ -44,11 +44,11 @@ class MonitorThread (threading.Thread):
         self.server.serve_forever()
 
 
-def shutdown(monitor):
-    if monitor.server:
-        monitor.server.shutdown()
+def shutdown(mon):
+    if mon.server:
+        mon.server.shutdown()
 
-    monitor.join()
+    mon.join()
     sys.exit(0)
 
 

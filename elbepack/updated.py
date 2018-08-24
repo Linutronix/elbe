@@ -130,21 +130,21 @@ class UpdateService (ServiceBase):
         return snapshots
 
     @rpc(String, _returns=String)
-    def apply_snapshot(self, version):
-        if version == "base_version":
+    def apply_snapshot(self, ver):
+        if ver == "base_version":
             fname = "/etc/elbe_base.xml"
         else:
-            fname = self.app.status.repo_dir + "/" + version + "/new.xml"
+            fname = self.app.status.repo_dir + "/" + ver + "/new.xml"
 
         try:
             apply_update(fname, self.app.status)
         except Exception as err:
             print("%s" % str(err))
             self.app.status.set_finished('error')
-            return "apply snapshot %s failed" % version
+            return "apply snapshot %s failed" % ver
 
         self.app.status.set_finished('OK')
-        return "snapshot %s applied" % version
+        return "snapshot %s applied" % ver
 
     @rpc(String)
     def register_monitor(self, wsdl_url):
@@ -245,14 +245,14 @@ def update_sourceslist(xml, update_dir, status):
         f.write(deb)
 
 
-def mark_install(depcache, pkg, version, auto, status):
+def mark_install(depcache, pkg, ver, auto, status):
     for v in pkg.version_list:
-        if v.ver_str == str(version):
+        if v.ver_str == str(ver):
             depcache.set_candidate_ver(pkg, v)
             depcache.mark_install(pkg, False, not auto)
             return
 
-    status.log("ERROR: " + pkg.name + version +
+    status.log("ERROR: " + pkg.name + ver +
                " is not available in the cache")
 
 
