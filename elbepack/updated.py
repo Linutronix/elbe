@@ -22,14 +22,14 @@ from shutil import copyfile, rmtree, copy
 
 from syslog import syslog
 
-import apt
-import apt_pkg
-
 from spyne import Application
 from spyne.service import ServiceBase
 from spyne.decorator import rpc
 from spyne.model.primitive import String
 from suds.client import Client
+
+import apt
+import apt_pkg
 
 from elbepack.aptprogress import (ElbeInstallProgress,
                                   ElbeAcquireProgress, ElbeOpProgress)

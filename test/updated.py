@@ -8,19 +8,19 @@
 
 from __future__ import print_function
 
-import soaplib
 import sys
 import threading
 import time
 
 from optparse import OptionParser
+from wsgiref.simple_server import make_server
+
 from spyne.model.primitive import String
 from spyne import Application, rpc, ServiceBase
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
-from suds.client import Client
-from wsgiref.simple_server import make_server
 
+from suds.client import Client
 
 class MonitorService (ServiceBase):
     @rpc(String)
