@@ -74,7 +74,7 @@ def lookup_uri(v, d, target_pkg):
 
 
 class VirtApt(object):
-    def __init__(self, arch, suite, sources, prefs, keylist=[], noauth=False):
+    def __init__(self, arch, suite, sources, prefs, keylist=None, noauth=False):
 
         # pylint: disable=too-many-arguments
 
@@ -84,8 +84,9 @@ class VirtApt(object):
         self.create_apt_sources_list(sources)
         self.create_apt_prefs(prefs)
         self.setup_gpg()
-        for k in keylist:
-            self.add_pubkey_url(k)
+        if keylist:
+            for k in keylist:
+                self.add_pubkey_url(k)
 
         apt_pkg.config.set("APT::Architecture", arch)
         apt_pkg.config.set("APT::Architectures", arch)
@@ -273,7 +274,7 @@ class MyMan(BaseManager):
 
 MyMan.register("VirtRPCAPTCache", VirtApt)
 
-def get_virtaptcache(arch, suite, sources, prefs, keylist=[]):
+def get_virtaptcache(arch, suite, sources, prefs, keylist=None):
     mm = MyMan()
     mm.start()
 

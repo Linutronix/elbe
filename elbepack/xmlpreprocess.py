@@ -20,12 +20,14 @@ class XMLPreprocessError(Exception):
     pass
 
 
-def xmlpreprocess(fname, output, variants=[]):
+def xmlpreprocess(fname, output, variants=None):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
 
     # first convert variants to a set
+    if not variants:
+        variants = []
     variants = set(variants)
 
     schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"

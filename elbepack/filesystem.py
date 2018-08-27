@@ -120,13 +120,17 @@ class Filesystem(object):
     def rmtree(self, path):
         shutil.rmtree(self.fname(path))
 
-    def listdir(self, path='', ignore=[], skiplinks=False):
+    def listdir(self, path='', ignore=None, skiplinks=False):
+        if not ignore:
+            ignore = []
+
         retval = [
             os.path.join(
                 self.path,
                 path,
                 x) for x in os.listdir(
                 self.fname(path)) if x not in ignore]
+
         if skiplinks:
             retval = [
                 x for x in retval if (
@@ -178,7 +182,10 @@ class Filesystem(object):
             fp = self.open(fname, "w")
             fp.close()
 
-    def walk_files(self, directory='', exclude_dirs=[]):
+    def walk_files(self, directory='', exclude_dirs=None):
+        if not exclude_dirs:
+            exclude_dirs = []
+
         dirname = self.fname(directory)
         if dirname == "/":
             striplen = 0
@@ -203,7 +210,9 @@ class Filesystem(object):
                 realpath = os.path.join(dirpath, f)
                 yield "/" + fpath, realpath
 
-    def mtime_snap(self, dirname='', exclude_dirs=[]):
+    def mtime_snap(self, dirname='', exclude_dirs=None):
+        if not exclude_dirs:
+            exclude_dirs = []
         mtime_index = {}
 
         for fpath, realpath in self.walk_files(dirname, exclude_dirs):
