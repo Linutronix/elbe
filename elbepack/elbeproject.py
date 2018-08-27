@@ -422,9 +422,11 @@ class ElbeProject (object):
         self.write_log_header()
 
         # Validate Apt Sources
-        m = ValidationMode.CHECK_BINARIES
         if build_sources:
             m = ValidationMode.CHECK_ALL
+        else:
+            m = ValidationMode.CHECK_BINARIES
+
         self.xml.validate_apt_sources(m, self.arch)
 
         if self.xml.has('target/pbuilder') and not skip_pbuild:

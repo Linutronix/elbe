@@ -27,8 +27,9 @@ def xmlpreprocess(fname, output, variants=None):
 
     # first convert variants to a set
     if not variants:
-        variants = []
-    variants = set(variants)
+        variants = set([])
+    else:
+        variants = set(variants)
 
     schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
     parser = XMLParser(huge_tree=True)
