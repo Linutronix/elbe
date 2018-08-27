@@ -302,7 +302,7 @@ class TargetFs(ChRootFilesystem):
                     f.write(fstab.get_str())
             f.close()
 
-    def part_target(self, targetdir, grub_version, grub_fw_type):
+    def part_target(self, targetdir, grub_version, grub_fw_type=None):
 
         # create target images and copy the rfs into them
         self.images = do_hdimg(

@@ -464,7 +464,7 @@ def create_logical_partitions(
         current_sector += lpart.getLength()
 
 
-def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type):
+def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type=None):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
@@ -566,7 +566,7 @@ def add_binary_blob(outf, hd, target):
             bs))
 
 
-def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type):
+def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type=None):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
