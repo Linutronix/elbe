@@ -56,6 +56,7 @@ def run_command(argv):
     gc = apt.Cache()
 
     gen_pkgs = {}
+    # pylint: disable=E1133
     for p in gen_cache.packages:
         if opt.noauto:
             if p.current_ver and not \
@@ -74,6 +75,7 @@ def run_command(argv):
     fc = apt.Cache()
 
     fix_pkgs = {}
+    # pylint: disable=E1133
     for p in fix_cache.packages:
         if opt.noauto:
             if p.current_ver and not \
@@ -88,11 +90,11 @@ def run_command(argv):
         if p not in gen_pkgs:
             print("+<pkg>%s</pkg>" % p)
 
-    for p in gen_pkgs.keys():
+    for p in gen_pkgs:
         if p not in fix_pkgs.keys():
             print("-<pkg>%s</pkg>" % p)
 
-    for p in fix_pkgs.keys():
+    for p in fix_pkgs:
         if p in gen_pkgs.keys() and fix_pkgs[p] != gen_pkgs[p]:
             print(
                 "%s: Version mismatch %s != %s" %

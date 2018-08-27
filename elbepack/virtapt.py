@@ -249,6 +249,7 @@ class VirtApt(object):
                 pkg = None
                 c = None
             if not c:
+                # pylint: disable=E1133
                 for p in self.cache.packages:
                     for x in p.provides_list:
                         if pp == x[0]:
