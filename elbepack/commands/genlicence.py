@@ -12,7 +12,7 @@ import os
 import io
 
 from elbepack.asciidoclog import StdoutLog
-from elbepack.filesystem import Filesystem
+from elbepack.efilesystem import ElbeFilesystem
 
 
 def run_command(argv):
@@ -31,7 +31,7 @@ def run_command(argv):
 
     chroot = os.path.abspath(args[0])
 
-    rfs = Filesystem(chroot)
+    rfs = ElbeFilesystem(chroot)
     log = StdoutLog()
 
     if opt.output:
