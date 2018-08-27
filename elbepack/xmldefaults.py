@@ -9,7 +9,6 @@
 from __future__ import print_function
 
 import random
-import string
 import sys
 
 from elbepack.kvm import find_kvm_exe

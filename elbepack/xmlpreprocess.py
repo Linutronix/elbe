@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import sys
-import re
 from lxml import etree
 from lxml.etree import XMLParser, parse
 from elbepack.archivedir import ArchivedirError, combinearchivedir
