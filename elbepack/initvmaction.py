@@ -45,11 +45,6 @@ def ensure_outdir(opt):
     print("Saving generated Files to %s" % opt.outdir)
 
 
-def ensure_initvm_defined():
-    if self.initvm is None:
-        sys.exit(20)
-
-
 class InitVMError(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
