@@ -711,20 +711,20 @@ class ElbeProject (object):
     def get_rpcaptcache(self, env=None):
         if not env:
             env = self.buildenv
-        if env._rpcaptcache is None:
-            env._rpcaptcache = get_rpcaptcache(
+        if env.rpcaptcache is None:
+            env.rpcaptcache = get_rpcaptcache(
                 env.rfs,
                 self.log.fp.name,
                 self.arch,
                 self.rpcaptcache_notifier,
                 self.xml.prj.has('norecommend'),
                 self.xml.prj.has('noauth'))
-        return env._rpcaptcache
+        return env.rpcaptcache
 
     def drop_rpcaptcache(self, env=None):
         if not env:
             env = self.buildenv
-        env._rpcaptcache = None
+        env.rpcaptcache = None
 
     def has_full_buildenv(self):
         if os.path.exists(self.chrootpath):
@@ -756,7 +756,6 @@ class ElbeProject (object):
             raise IncompatibleArchitectureException(oldarch, newarch)
 
         # Throw away old APT cache, targetfs and buildenv
-        self._rpcaptcache = None
         self.targetfs = None
         self.buildenv = None
 
