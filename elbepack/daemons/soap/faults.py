@@ -92,7 +92,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 2:
+    elif func.__code__.co_argcount == 2:
         @wraps(func)
         def wrapped(self, arg1):
             try:
@@ -112,7 +112,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 3:
+    elif func.__code__.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1, arg2):
             try:
@@ -132,7 +132,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 4:
+    elif func.__code__.co_argcount == 4:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3):
             try:
@@ -152,7 +152,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 5:
+    elif func.__code__.co_argcount == 5:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4):
             try:
@@ -172,7 +172,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 6:
+    elif func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
             # pylint: disable=too-many-arguments
@@ -193,7 +193,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    if func.__code__.co_argcount == 7:
+    elif func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5, arg6):
             # pylint: disable=too-many-arguments
