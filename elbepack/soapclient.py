@@ -703,7 +703,7 @@ class ShutdownInitvmAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
-        if len(args) != 0:
+        if args:
             print("usage: elbe control shutdown_initvm", file=sys.stderr)
             sys.exit(20)
 

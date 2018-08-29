@@ -31,7 +31,7 @@ def run_command(argv):
 
     (opt, args) = oparser.parse_args(argv)
 
-    if len(args) == 0:
+    if not args:
         print("No Filename specified")
         oparser.print_help()
         sys.exit(20)
@@ -44,7 +44,7 @@ def run_command(argv):
     try:
         if not opt.skip_validation:
             validation = validate_xml(args[0])
-            if len(validation) != 0:
+            if validation:
                 print("xml validation failed. Bailing out")
                 for i in validation:
                     print(i)

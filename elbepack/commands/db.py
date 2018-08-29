@@ -10,7 +10,7 @@ from elbepack.dbaction import DbAction
 
 def run_command(argv):
 
-    if not len(argv):
+    if not argv:
         print("elbe db - no action given")
         DbAction.print_actions()
         return

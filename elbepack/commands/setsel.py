@@ -19,7 +19,7 @@ def parse_selections(fname):
     sels = []
 
     for l in fp.readlines():
-        if len(l) == 0:
+        if not l:
             continue
         if l[0] == '#':
             continue

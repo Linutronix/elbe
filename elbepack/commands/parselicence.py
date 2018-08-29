@@ -82,7 +82,7 @@ class license_dep5_to_spdx (dict):
 
     def map_lic(self, pkgname, licenses, errors):
         if pkgname in self.perpackage_override:
-            if len(self.perpackage_override[pkgname]) > 0:
+            if self.perpackage_override[pkgname]:
                 return self.perpackage_override[pkgname]
 
         retval = []
@@ -211,7 +211,7 @@ def run_command(argv):
                 ll = sp.append('license')
                 ll.et.text = l
 
-            if len(mapped_lics) == 0:
+            if not mapped_lics:
                 errors.append(
                     'empty mapped licenses in package "%s"' %
                     pkg_name)
@@ -237,7 +237,7 @@ def run_command(argv):
                     ll = nomos_node.append('license')
                     ll.et.text = l
 
-        if len(errors) > 0:
+        if errors:
             for e in errors:
                 ee = pkg.append('error')
                 ee.et.text = e

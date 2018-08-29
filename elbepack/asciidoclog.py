@@ -75,7 +75,7 @@ class LogBase(object):
 
         ret, output, stderr = command_out_stderr(cmd)
 
-        if len(stderr) != 0:
+        if stderr:
             self.verbatim_start()
             self.print_raw(stderr)
             self.verbatim_end()

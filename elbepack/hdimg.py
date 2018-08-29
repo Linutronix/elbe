@@ -612,7 +612,7 @@ def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type=None):
     for l in reversed(fslist):
         outf.do('mkdir -p "%s"' % os.path.join(fspath, l.id))
         outf.do('mkdir -p "%s"' % rfs.fname('') + l.mountpoint)
-        if len(rfs.listdir(l.mountpoint)) > 0:
+        if rfs.listdir(l.mountpoint):
             outf.do('mv "%s"/* "%s"' % (rfs.fname(l.mountpoint), os.path.join(
                 fspath, l.id)), allow_fail=True)
 

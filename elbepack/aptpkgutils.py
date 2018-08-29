@@ -32,7 +32,7 @@ def getalldeps(c, pkgname):
     retval = []
     togo = [pkgname]
 
-    while len(togo):
+    while togo:
         pp = togo.pop()
         pkg = c[pp]
 

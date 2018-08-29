@@ -31,7 +31,7 @@ def run_command(argv):
         sys.exit(20)
 
     validation = validate_xml(args[0])
-    if len(validation):
+    if validation:
         print("validation failed")
         for i in validation:
             print(i)

@@ -241,7 +241,7 @@ class VirtApt(object):
 
         deps = [lookup_uri(self, d, target_pkg)]
         togo = [target_pkg]
-        while len(togo):
+        while togo:
             pp = togo.pop()
             try:
                 pkg= self.cache[pp]
@@ -260,7 +260,7 @@ class VirtApt(object):
                 print("couldnt get candidate: %s" % pkg)
             else:
                 for p in getdeps(c):
-                    if len([y for y in deps if y[0] == p]):
+                    if [y for y in deps if y[0] == p]:
                         continue
                     if p != target_pkg and p == pp:
                         continue

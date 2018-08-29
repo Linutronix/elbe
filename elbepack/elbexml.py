@@ -62,7 +62,7 @@ class ElbeXML(object):
             url_validation=ValidationMode.NO_CHECK):
         if not skip_validate:
             validation = validate_xml(fname)
-            if len(validation) != 0:
+            if validation:
                 raise ValidationError(validation)
 
         self.xml = etree(fname)

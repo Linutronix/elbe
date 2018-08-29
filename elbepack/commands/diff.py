@@ -31,7 +31,7 @@ def walk_generated(gen_path, fix_path, exclude):
         if True in [infs_root.startswith(x) for x in exclude]:
             continue
 
-        if len(files) == 0:
+        if not files:
             if not os.path.exists(fix_path + infs_root):
                 print(
                     "empty directory %s only exists in gen image" %
@@ -86,7 +86,7 @@ def walk_fixed(gen_path, fix_path, exclude):
         if True in [infs_root.startswith(x) for x in exclude]:
             continue
 
-        if len(files) == 0:
+        if not files:
             if not os.path.exists(gen_path + infs_root):
                 print(
                     "empty directory %s only exists in fix image" %

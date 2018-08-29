@@ -246,7 +246,7 @@ def download_pkg(prj,
         except CommandError:
             raise NoKinitrdException("couldn't download package %s" % package)
 
-        if len(sha256) > 0:
+        if sha256:
             m = hashlib.sha256()
             with open(dest, "rb") as f:
                 buf = f.read(65536)

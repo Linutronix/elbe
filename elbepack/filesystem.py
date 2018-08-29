@@ -193,7 +193,7 @@ class Filesystem(object):
             striplen = len(dirname)
         for dirpath, dirnames, filenames in os.walk(dirname):
             subpath = dirpath[striplen:]
-            if len(subpath) == 0:
+            if not subpath:
                 subpath = "/"
 
             deldirs = []

@@ -52,7 +52,7 @@ def xmlpreprocess(fname, output, variants=None):
                 # active variants.
                 intersect = variants.intersection(tag_variants)
 
-                if len(intersect):
+                if intersect:
                     # variant is wanted, keep it and remove the variant
                     # attribute
                     tag.attrib.pop('variant')
