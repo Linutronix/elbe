@@ -336,7 +336,7 @@ class UpdateRepo(RepoBase):
 
 
 class CdromInitRepo(RepoBase):
-    def __init__(self, arch, init_codename, path, log, maxsize,
+    def __init__(self, init_codename, path, log, maxsize,
                  mirror='http://ftp.de.debian.org/debian'):
 
         # pylint: disable=too-many-arguments

@@ -150,8 +150,7 @@ def mk_binary_cdrom(
     repo_path = os.path.join(target, "binrepo")
     target_repo_path = os.path.join(repo_path, 'targetrepo')
 
-    repo = CdromInitRepo(arch, init_codename,
-                         repo_path, log, cdrom_size, mirror)
+    repo = CdromInitRepo(init_codename, repo_path, log, cdrom_size, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
                                target_repo_path, log, cdrom_size, mirror)
