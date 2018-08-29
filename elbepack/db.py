@@ -69,6 +69,35 @@ def get_versioned_filename(name, version, suffix):
     return quote(name, ' ') + '_' + quote(version, ' ') + suffix
 
 
+def _update_project_file(s, builddir, name, mime_type, description):
+
+    # pylint: disable=too-many-arguments
+
+    filename = os.path.join(builddir, name)
+    try:
+        f = s.query(ProjectFile).\
+            filter(ProjectFile.builddir == builddir).\
+            filter(ProjectFile.name == name).one()
+    except NoResultFound:
+        if os.path.isfile(os.path.join(builddir, name)):
+            f = ProjectFile(builddir=builddir,
+                            name=name,
+                            mime_type=mime_type,
+                            description=description)
+            s.add(f)
+            return filename
+        return None
+
+    if os.path.isfile(filename):
+        f.mime_type = mime_type
+        f.description = description
+    else:
+        s.delete(f)
+        return None
+
+    return filename
+
+
 class ElbeDB(object):
 
     # pylint: disable=too-many-public-methods
@@ -149,8 +178,7 @@ class ElbeDB(object):
             os.chmod(builddir + "/postbuild.sh", 0o755)
             dos2unix(builddir + "/postbuild.sh")
 
-            return self._update_project_file(
-                s, builddir,
+            return _update_project_file(s, builddir,
                 "postbuild.sh", "application/sh", "postbuild script")
 
     def set_savesh(self, builddir, savesh_file):
@@ -184,7 +212,7 @@ class ElbeDB(object):
             os.chmod(builddir + "/save.sh", 0o755)
             dos2unix(builddir + "/save.sh")
 
-            return self._update_project_file(
+            return _update_project_file(
                 s, builddir,
                 "save.sh", "application/sh", "version save script")
 
@@ -218,7 +246,7 @@ class ElbeDB(object):
 
             dos2unix(builddir + "/pre.sh")
 
-            return self._update_project_file(
+            return _update_project_file(
                 s, builddir, "pre.sh", "application/sh", "pre install script")
 
     def set_postsh(self, builddir, postsh_file):
@@ -251,7 +279,7 @@ class ElbeDB(object):
 
             dos2unix(builddir + "/post.sh")
 
-            return self._update_project_file(
+            return _update_project_file(
                 s, builddir,
                 "post.sh", "application/sh", "post install script")
 
@@ -296,7 +324,7 @@ class ElbeDB(object):
             if xml_file != srcxml_fname:
                 copyfile(xml_file, srcxml_fname)  # OSError
 
-            self._update_project_file(
+            _update_project_file(
                 s,
                 builddir,
                 "source.xml",
@@ -637,7 +665,7 @@ class ElbeDB(object):
                                description=description)
             s.add(v)
 
-            self._update_project_file(s, builddir, versionxmlname,
+            _update_project_file(s, builddir, versionxmlname,
                                       "application/xml",
                                       "source.xml for version %s" % version)
 
@@ -770,7 +798,7 @@ class ElbeDB(object):
                     "project %s is not registered in the database" %
                     builddir)
 
-            self._update_project_file(s, builddir, name, mime_type,
+            _update_project_file(s, builddir, name, mime_type,
                                       description)
 
     def update_project_files(self, ep):
@@ -795,36 +823,36 @@ class ElbeDB(object):
 
                 images = set(ep.targetfs.images or [])
                 for img in images:
-                    self._update_project_file(
+                    _update_project_file(
                         s, p.builddir, img,
                         "application/octet-stream", "Image")
 
             # Add other generated files
-            self._update_project_file(s, p.builddir, "source.xml",
+            _update_project_file(s, p.builddir, "source.xml",
                                       "application/xml",
                                       "Current source.xml of the project")
 
-            self._update_project_file(s, p.builddir, "licence.txt",
+            _update_project_file(s, p.builddir, "licence.txt",
                                       "text/plain; charset=utf-8",
                                       "License file")
 
-            self._update_project_file(s, p.builddir, "licence.xml",
+            _update_project_file(s, p.builddir, "licence.xml",
                                       "application/xml",
                                       "xml License file")
 
-            self._update_project_file(s, p.builddir, "validation.txt",
+            _update_project_file(s, p.builddir, "validation.txt",
                                       "text/plain; charset=utf-8",
                                       "Package list validation result")
 
-            self._update_project_file(s, p.builddir, "elbe-report.txt",
+            _update_project_file(s, p.builddir, "elbe-report.txt",
                                       "text/plain; charset=utf-8",
                                       "Report")
 
-            self._update_project_file(s, p.builddir, "log.txt",
+            _update_project_file(s, p.builddir, "log.txt",
                                       "text/plain; charset=utf-8",
                                       "Log file")
 
-            self._update_project_file(s, p.builddir, "sysroot.tar.xz",
+            _update_project_file(s, p.builddir, "sysroot.tar.xz",
                                       "application/x-xz-compressed-tar",
                                       "sysroot for cross-toolchains")
 
@@ -834,20 +862,20 @@ class ElbeDB(object):
                 # that's ok because it might not yet been built
                 sdkname = sdk[0].split('/')[-1]
 
-                self._update_project_file(s, p.builddir, sdkname,
+                _update_project_file(s, p.builddir, sdkname,
                                         "application/x-shellscript",
                                         "SDK Installer")
             except IndexError:
                 pass
 
-            self._update_project_file(s, p.builddir, "chroot.tar.xz",
+            _update_project_file(s, p.builddir, "chroot.tar.xz",
                                       "application/x-xz-compressed-tar",
                                       "chroot for 'native' development")
 
             # Add Repository iso images
             for img in ep.repo_images:
                 name = os.path.basename(img)
-                self._update_project_file(s, p.builddir, name,
+                _update_project_file(s, p.builddir, name,
                                           "application/octet-stream",
                                           "Repository IsoImage")
 
@@ -856,37 +884,10 @@ class ElbeDB(object):
             if os.path.isdir(pbresult_path):
                 for f in os.listdir(pbresult_path):
                     pfile = os.path.join("pbuilder", "result", f)
-                    self._update_project_file(s, p.builddir, pfile,
+                    _update_project_file(s, p.builddir, pfile,
                                               "application/octet-stream",
                                               "Pbuilder artifact")
 
-    def _update_project_file(self, s, builddir, name, mime_type, description):
-
-        # pylint: disable=too-many-arguments
-
-        filename = os.path.join(builddir, name)
-        try:
-            f = s.query(ProjectFile).\
-                filter(ProjectFile.builddir == builddir).\
-                filter(ProjectFile.name == name).one()
-        except NoResultFound:
-            if os.path.isfile(os.path.join(builddir, name)):
-                f = ProjectFile(builddir=builddir,
-                                name=name,
-                                mime_type=mime_type,
-                                description=description)
-                s.add(f)
-                return filename
-            return None
-
-        if os.path.isfile(filename):
-            f.mime_type = mime_type
-            f.description = description
-        else:
-            s.delete(f)
-            return None
-
-        return filename
 
     def add_user(self, name, fullname, password, email, admin):
 
