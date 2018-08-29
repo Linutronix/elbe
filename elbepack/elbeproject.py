@@ -410,7 +410,7 @@ class ElbeProject (object):
                     elog.printo(str(e))
 
     def build(self, build_bin=False, build_sources=False, cdrom_size=None,
-              debug=False, skip_pkglist=False, skip_pbuild=False):
+              skip_pkglist=False, skip_pbuild=False):
 
         # pylint: disable=too-many-arguments
         # pylint: disable=too-many-locals

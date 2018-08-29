@@ -50,10 +50,6 @@ def run_command(argv):
     oparser.add_option("--proxy", dest="proxy",
                        help="Override the http proxy")
 
-    oparser.add_option("--debug", action="store_true", dest="debug",
-                       default=False,
-                       help="Enable various features to debug the build")
-
     oparser.add_option("--buildtype", dest="buildtype",
                        help="Override the buildtype")
 
@@ -104,7 +100,6 @@ def run_command(argv):
             opt.build_bin,
             opt.build_sources,
             opt.cdrom_size,
-            opt.debug,
             opt.skip_pkglist,
             opt.skip_pbuild)
     except CommandError as ce:
