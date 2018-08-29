@@ -83,6 +83,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def get_files(self, uid, builddir, _returns=Array(SoapFile)):
+        #pylint: disable=unused-argument
         files = self.app.pm.db.get_project_files(builddir)
         return [SoapFile(f) for f in files]
 
@@ -125,6 +126,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def get_file(self, uid, builddir, filename, part):
+        #pylint: disable=unused-argument
         size = 1024 * 1024 * 5
         pos = size * part
         file_name = builddir + "/" + filename
@@ -303,6 +305,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def reset_project(self, uid, builddir):
+        #pylint: disable=unused-argument
         self.app.pm.db.reset_project(builddir, True)
 
     @rpc(String)
@@ -323,10 +326,10 @@ class ESoap (ServiceBase):
 
         return prjid
 
-    @rpc(String, _returns=String)
+    @rpc(_returns=String)
     @authenticated_uid
     @soap_faults
-    def new_project(self, uid, url_validation):
+    def new_project(self, uid):
         return self.app.pm.new_project(uid)
 
     @rpc(String, Integer, _returns=String)
@@ -346,6 +349,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def shutdown_initvm(self, uid):
+        #pylint: disable=unused-argument
         system("systemctl --no-block poweroff")
 
     @rpc(String)
@@ -359,6 +363,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def list_packages(self, uid, builddir):
+        #pylint: disable=unused-argument
         s = ''
         for _, _, filenames in os.walk(
                 os.path.join(builddir, "repo/pool/main")):
