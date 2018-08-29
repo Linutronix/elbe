@@ -353,7 +353,7 @@ class ESoap (ServiceBase):
     @soap_faults
     def rm_log(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
-        self.app.pm.rm_log(uid, builddir)
+        self.app.pm.rm_log(uid)
 
     @rpc(String, _returns=String)
     @authenticated_uid

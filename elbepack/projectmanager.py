@@ -490,7 +490,7 @@ class ProjectManager(object):
             f.close()
         return data
 
-    def rm_log(self, userid, builddir):
+    def rm_log(self, userid):
         ep = self._get_current_project(userid)
         with open(os.path.join(ep.builddir, 'log.txt'), 'w', 0):
             pass
