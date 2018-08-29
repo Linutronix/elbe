@@ -10,10 +10,6 @@ import os
 import urllib2
 
 
-def pbuilder_ensure_chroot(builddir):
-    pass
-
-
 def pbuilder_write_config(builddir, xml, _log):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
