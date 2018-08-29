@@ -764,8 +764,7 @@ class ElbeDB(object):
     def add_project_file(self, builddir, name, mime_type, description=None):
         with session_scope(self.session) as s:
             try:
-                p = s.query(Project).filter(Project.builddir == builddir).\
-                    one()
+                s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
                     "project %s is not registered in the database" %
