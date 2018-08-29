@@ -162,7 +162,7 @@ def checkout_binpkg_archive(ep, repodir):
 
                 if not marked:
                     ep.log.printo("Delete " + p.name + "-" + version)
-                    c.mark_delete(p.name, None)
+                    c.mark_delete(p.name)
 
             # Now commit the changes
             ep.log.printo("Commiting package changes")
