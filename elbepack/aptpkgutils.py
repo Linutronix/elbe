@@ -58,8 +58,8 @@ def pkgstate(pkg):
         return UPGRADABLE
     elif pkg.is_installed:
         return INSTALLED
-    else:
-        return NOTINSTALLED
+
+    return NOTINSTALLED
 
 
 def pkgorigin(pkg):

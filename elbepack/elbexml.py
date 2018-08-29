@@ -83,8 +83,7 @@ class ElbeXML(object):
     def text(self, txt, key=None):
         if key:
             return self.xml.text(txt, default=self.defs, key=key)
-        else:
-            return self.xml.text(txt)
+        return self.xml.text(txt)
 
     def has(self, path):
         return self.xml.has(path)
@@ -361,8 +360,7 @@ class ElbeXML(object):
     def get_initvm_codename(self):
         if self.has("initvm/suite"):
             return self.text("initvm/suite")
-        else:
-            return None
+        return None
 
     def set_cdrom_mirror(self, abspath):
         mirror = self.node("project/mirror")
@@ -382,5 +380,4 @@ class ElbeXML(object):
     def get_elbe_version(self):
         if self.has('elbe_version'):
             return self.text('elbe_version')
-        else:
-            return "no version"
+        return "no version"

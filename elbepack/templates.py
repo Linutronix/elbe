@@ -26,8 +26,8 @@ def template(fname, d, linebreak=False):
                 filename=fname,
                 preprocessor=fix_linebreak_escapes).render(
                 **d)
-        else:
-            return Template(filename=fname).render(**d)
+
+        return Template(filename=fname).render(**d)
     except BaseException:
         print(exceptions.text_error_template().render())
         raise

@@ -553,8 +553,8 @@ class ElbeDB(object):
 
             if p.owner_id is None:
                 return None
-            else:
-                return int(p.owner_id)
+
+            return int(p.owner_id)
 
     def set_project_version(self, builddir, new_version=None):
         if new_version == "":

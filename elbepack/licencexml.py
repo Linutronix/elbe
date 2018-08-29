@@ -31,8 +31,8 @@ def do_heuristics(fp):
 
     if num_licenses > 0:
         return c
-    else:
-        return None
+
+    return None
 
 
 def get_heuristics_license_list(c):

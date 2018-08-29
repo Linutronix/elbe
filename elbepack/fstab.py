@@ -34,8 +34,8 @@ def get_devicelabel(xml, node):
     if node.text("fs/type") == "ubifs":
         return "ubi %s:%s" % (get_mtdnum(xml, node.text("label")),
                               node.text("label"))
-    else:
-        return "LABEL=" + node.text("label")
+
+    return "LABEL=" + node.text("label")
 
 
 class mountpoint_dict (dict):

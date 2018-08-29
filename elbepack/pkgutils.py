@@ -187,10 +187,7 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
         ret = v.get_uri(target_pkg, incl_deps)
         return ret
 
-    else:
-        return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
-
-    return [(target_pkg, "nonexistent://" + target_pkg, "")]
+    return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
 
 def get_dsc_size(fname):

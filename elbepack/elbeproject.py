@@ -733,13 +733,13 @@ class ElbeProject (object):
                                            "etc", "elbe_version")
             if os.path.isfile(elbeversionpath):
                 return True
-            else:
-                self.log.printo("%s exists, but it does not have "
-                                "an etc/elbe_version file." % self.chrootpath)
-                # Apparently we do not have a functional build environment
-                return False
-        else:
+
+            self.log.printo("%s exists, but it does not have "
+                            "an etc/elbe_version file." % self.chrootpath)
+            # Apparently we do not have a functional build environment
             return False
+
+        return False
 
     def set_xml(self, xmlpath):
         # Use supplied XML file, if given, otherwise change to source.xml

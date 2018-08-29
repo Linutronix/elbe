@@ -41,17 +41,12 @@ class RepoAttributes(object):
 
         if other.codename != self.codename:
             return [self, other]
-        else:
-            assert self.mirror == other.mirror
-            ret_arch = self.arch.union(other.arch)
-            ret_comp = self.components.union(other.components)
 
-            return [
-                RepoAttributes(
-                    self.codename,
-                    ret_arch,
-                    ret_comp,
-                    self.mirror)]
+        assert self.mirror == other.mirror
+        ret_arch = self.arch.union(other.arch)
+        ret_comp = self.components.union(other.components)
+
+        return [RepoAttributes(self.codename, ret_arch, ret_comp, self.mirror)]
 
 
 class RepoBase(object):
@@ -100,8 +95,8 @@ class RepoBase(object):
         if self.maxsize:
             volname = os.path.join(self.vol_path, "vol%02d" % volume)
             return Filesystem(volname)
-        else:
-            return Filesystem(self.vol_path)
+
+        return Filesystem(self.vol_path)
 
     def new_repo_volume(self):
         self.volume_count += 1

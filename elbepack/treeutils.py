@@ -46,10 +46,10 @@ class ebase(object):
             default = args["default"]
             if isinstance(default, str):
                 return default
-            else:
-                return default[args["key"]]
-        else:
-            return el.text
+
+            return default[args["key"]]
+
+        return el.text
 
     @property
     def tag(self):
@@ -89,8 +89,8 @@ class elem(ebase):
         retval = self.et.find("./" + tag)
         if retval is not None:
             return elem(retval)
-        else:
-            return elem(SubElement(self.et, tag))
+
+        return elem(SubElement(self.et, tag))
 
     def append(self, tag):
         retval = elem(SubElement(self.et, tag))
@@ -127,8 +127,8 @@ class etree(ebase):
         retval = self.et.find("./" + tag)
         if retval is not None:
             return elem(retval)
-        else:
-            return elem(SubElement(self.et.getroot(), tag))
+
+        return elem(SubElement(self.et.getroot(), tag))
 
     def set_child_position(self, child, pos):
         root = self.et.getroot()
