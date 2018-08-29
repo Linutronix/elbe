@@ -408,28 +408,6 @@ class ProjectManager(object):
             c = self._get_current_project_apt_cache(userid)
             c.mark_upgrade(pkgname, version)
 
-    def apt_mark_delete(self, userid, pkgname, version):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-
-            ep = self._get_current_project(userid)
-            pkgs = ep.xml.get_target_packages()
-
-            if pkgname in pkgs:
-                pkgs.remove(pkgname)
-                c.mark_delete(pkgname, version)
-
-            ep.xml.set_target_packages(pkgs)
-
-            debootstrap_pkgs = []
-            for p in ep.xml.xml.node("debootstrappkgs"):
-                debootstrap_pkgs.append(p.et.text)
-
-            # temporary disabled because of
-            # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
-            # the functions cleans up to much
-            # c.cleanup(debootstrap_pkgs + pkgs)
-
     def get_debootstrap_pkgs(self, userid):
         with self.lock:
             ep = self._get_current_project(userid)
