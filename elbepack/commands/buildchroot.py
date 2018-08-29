@@ -68,10 +68,6 @@ def run_command(argv):
                        dest="skip_validation", default=False,
                        help="Skip xml schema validation")
 
-    oparser.add_option("--skip-debootstrap", action="store_true",
-                       dest="skip_debootstrap", default=False,
-                       help="Skip debootstrap")
-
     oparser.add_option("--skip-pkglist", action="store_true",
                        dest="skip_pkglist", default=False,
                        help="ignore changes of the package list")
@@ -105,7 +101,6 @@ def run_command(argv):
 
     try:
         project.build(
-            opt.skip_debootstrap,
             opt.build_bin,
             opt.build_sources,
             opt.cdrom_size,

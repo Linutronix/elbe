@@ -267,7 +267,7 @@ class BuildAction(DbAction):
                               "build_done", "build_failed"])
         try:
             ep = db.load_project(args[0])
-            ep.build(skip_debootstrap=True)
+            ep.build()
             db.update_project_files(ep)
         except Exception as e:
             db.update_project_files(ep)

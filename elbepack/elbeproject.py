@@ -409,9 +409,8 @@ class ElbeProject (object):
                     # e.g. no deb-src urls specified
                     elog.printo(str(e))
 
-    def build(self, skip_debootstrap=False, build_bin=False,
-              build_sources=False, cdrom_size=None, debug=False,
-              skip_pkglist=False, skip_pbuild=False):
+    def build(self, build_bin=False, build_sources=False, cdrom_size=None,
+              debug=False, skip_pkglist=False, skip_pbuild=False):
 
         # pylint: disable=too-many-arguments
         # pylint: disable=too-many-locals
