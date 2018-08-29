@@ -885,7 +885,7 @@ class ElbeDB(object):
             f.description = description
         else:
             s.delete(f)
-            None
+            return None
 
         return filename
 
