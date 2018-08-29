@@ -184,7 +184,7 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
             print("python-apt failed, using fallback code: %s" % e)
             return get_uri_nonvirtapt(apt_sources, target_pkg, arch)
 
-        ret = v.get_uri(suite, arch, target_pkg, incl_deps)
+        ret = v.get_uri(target_pkg, incl_deps)
         return ret
 
     else:

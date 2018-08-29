@@ -232,7 +232,7 @@ class VirtApt(object):
         file.write(prefs)
         file.close()
 
-    def get_uri(self, suite, arch, target_pkg, incl_deps=False):
+    def get_uri(self, target_pkg, incl_deps=False):
 
         d = apt_pkg.DepCache(self.cache)
 
