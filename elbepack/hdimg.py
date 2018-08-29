@@ -19,7 +19,7 @@ from elbepack.asciidoclog import CommandError
 from elbepack.filesystem import size_to_int
 
 
-def mkfs_mtd(outf, mtd, fslabel, rfs, target):
+def mkfs_mtd(outf, mtd, fslabel, target):
 
     # generated files
     img_files = []
@@ -640,7 +640,7 @@ def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type=None):
                 img_files.append(img)
 
             if i.tag == "mtd":
-                imgs = mkfs_mtd(outf, i, fslabel, rfs, target)
+                imgs = mkfs_mtd(outf, i, fslabel, target)
                 img_files.extend(imgs)
     finally:
         # Put back the filesystems into /target
