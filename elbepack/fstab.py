@@ -43,14 +43,14 @@ class mountpoint_dict (dict):
         dict.__init__(self)
         self.id_count = 0
 
-    def register(self, fstabentry):
-        mp = fstabentry.mountpoint
+    def register(self, fstab_entry):
+        mp = fstab_entry.mountpoint
 
         if mp in self:
-            fstabentry.id = self[mp].id
+            fstab_entry.id = self[mp].id
         else:
-            fstabentry.id = str(self.id_count)
-            self[mp] = fstabentry
+            fstab_entry.id = str(self.id_count)
+            self[mp] = fstab_entry
             self.id_count += 1
 
     @staticmethod
@@ -73,7 +73,7 @@ class fstabentry(object):
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, xml, entry, id=0):
+    def __init__(self, xml, entry, fsid=0):
         if entry.has("source"):
             self.source = entry.text("source")
         else:
@@ -97,7 +97,7 @@ class fstabentry(object):
         self.partnum = 0
         self.number = ''
 
-        self.id = str(id)
+        self.id = str(fsid)
 
     def get_str(self):
         return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint,
