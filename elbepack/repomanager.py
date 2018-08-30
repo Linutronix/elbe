@@ -170,11 +170,12 @@ class RepoBase(object):
                 self.fs.path +
                 '" update')
         else:
-            self.log.do(
-                'reprepro --basedir "' +
-                self.fs.path +
-                '" export ' +
-                att.codename)
+            for att in self.attrs:
+                self.log.do(
+                    'reprepro --basedir "' +
+                    self.fs.path +
+                    '" export ' +
+                    att.codename)
 
     def finalize(self):
         os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
