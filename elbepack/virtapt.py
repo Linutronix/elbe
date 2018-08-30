@@ -152,7 +152,7 @@ class VirtApt(object):
                           "dir, '%s', already exists." % newdir)
         else:
             os.makedirs(newdir, mode)
-            """ mode is not set correctly """
+            # mode is not set correctly
             os.system("chmod 777 " + newdir)
 
     def touch(self, fname):
