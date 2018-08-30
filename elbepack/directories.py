@@ -17,9 +17,11 @@ examples_dir = None
 
 
 def init_directories(elbe_relpath):
-    global elbe_exe
-    global elbe_dir
-    global examples_dir
+    # set global variables that are used in other modules via imports
+    # this is the very first function that is called by 'elbe'
+    global elbe_exe      #pylint: disable=global-statement
+    global elbe_dir      #pylint: disable=global-statement
+    global examples_dir  #pylint: disable=global-statement
 
     elbe_exe = os.path.abspath(elbe_relpath)
     elbe_dir = os.path.dirname(elbe_exe)
