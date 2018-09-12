@@ -82,11 +82,22 @@ class ElbeSoapClient(object):
         fp = file(dst_fname, "w")
         part = 0
 
+        # XXX the retry logic might get removed in the future, if the error
+        # doesn't occur in real world. If it occurs, we should think about
+        # the root cause instead of stupid retrying.
+        retry = 5
+
         while True:
             try:
                 ret = self.service.get_file(builddir, filename, part)
             except BadStatusLine as e:
                 retry = retry - 1
+
+                print("get_file part %d failed, retry %d times" % (part, retry),
+                      file=sys.stderr)
+                print(e.message, file=sys.stderr)
+                print(repr(e.line), file=sys.stderr)
+
                 if not retry:
                     fp.close()
                     print("file transfer failed", file=sys.stderr)
