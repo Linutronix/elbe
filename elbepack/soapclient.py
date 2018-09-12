@@ -585,7 +585,21 @@ class WaitProjectBusyAction(ClientAction):
         part = 1
 
         while True:
-            busy = client.service.get_project_busy(builddir, part)
+            try:
+                busy = client.service.get_project_busy(builddir, part)
+            # TODO the root cause of this problem is unclear. To enable a
+            # get more information print the exception and retry to see if
+            # the connection problem is just a temporary problem. This
+            # code should be reworked as soon as it's clear what is going on
+            # here
+            except socket.error as e:
+                print(e.message, file=sys.stderr)
+                if e.errno != 104:
+                    raise e
+                print("socket error during wait busy occured, retry..",
+                      file=sys.stderr)
+                continue
+
             if busy == 'FINISH':
                 break
             else:
