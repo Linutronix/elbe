@@ -200,11 +200,9 @@ def run_command(argv):
                     os.path.join(out_path, "source.xml"))
 
     if opt.cdrom:
-        shutil.move(
-            "/tmp/elbe-keyring.gpg",
-            os.path.join(
-                out_path,
-                "elbe-keyring.gpg"))
+        os.system(
+            '7z x -o%s "%s" elbe-keyring.gpg' %
+            (out_path, opt.cdrom))
 
     if opt.devel:
         os.system(

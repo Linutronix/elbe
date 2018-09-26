@@ -469,18 +469,6 @@ class CreateAction(InitVMAction):
                 # We have an iso image, extract xml from there.
                 tmp = extract_cdrom(args[0])
 
-                # After extracting the source.xml,
-                # we also extract the elbe-keyring here.
-                #
-                # this only happens for "initvm create"
-                # not for "initvm submit"
-                os.system(
-                    '7z x -o%s "%s" elbe-keyring.gpg' %
-                    ('/tmp', args[0]))
-
-                if tmp.isfile('elbe-keyring.gpg'):
-                    print("Iso image contains a elbe-kerying")
-
                 xmlfile = tmp.fname('source.xml')
                 cdrom = args[0]
             else:
