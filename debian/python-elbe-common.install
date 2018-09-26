@@ -16,6 +16,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/elbeproject.py
 ./usr/lib/python2.*/*-packages/elbepack/filesystem.py
 ./usr/lib/python2.*/*-packages/elbepack/gpg.py
+./usr/lib/python2.*/*-packages/elbepack/hashes.py
 ./usr/lib/python2.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python2.*/*-packages/elbepack/kvm.py
 ./usr/lib/python2.*/*-packages/elbepack/licencexml.py
