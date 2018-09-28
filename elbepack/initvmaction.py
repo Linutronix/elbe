@@ -212,33 +212,6 @@ class AttachAction(InitVMAction):
 InitVMAction.register(AttachAction)
 
 
-class StartBuildAction(InitVMAction):
-
-    tag = 'start_build'
-
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
-
-    def execute(self, initvmdir, _opt, _args):
-        try:
-            have_session = os.system(
-                "tmux has-session -t ElbeInitVMSession >/dev/null 2>&1")
-        except CommandError:
-            print("tmux exec failed, tmux version 1.9 or higher is required")
-            sys.exit(20)
-        if have_session != 256:
-            print("ElbeInitVMSession already exists in tmux.", file=sys.stderr)
-            print(
-                "Try 'elbe initvm attach' to attach to the session.",
-                file=sys.stderr)
-            sys.exit(20)
-
-        system('TMUX= tmux new-session -d -s ElbeInitVMSession -n initvm '
-               '"cd \"%s\"; make"' % initvmdir)
-
-
-InitVMAction.register(StartBuildAction)
-
 def submit_and_dl_result(xmlfile, cdrom, opt):
 
     # pylint: disable=too-many-statements
