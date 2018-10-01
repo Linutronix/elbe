@@ -100,12 +100,16 @@ class InitVMAction(object):
             # In case we get here, the exception is unknown, and we want to see it
             raise
 
-        try:
-            self.initvm = self.conn.lookupByName(cfg['initvm_domain'])
-        except libvirt.libvirtError:
-            self.initvm = None
-            if initvmNeeded:
-                sys.exit(20)
+        doms = self.conn.listAllDomains()
+
+        self.initvm = None
+        for d in doms:
+            if d.name() == cfg['initvm_domain']:
+                self.initvm = d
+
+        if not self.initvm and initvmNeeded:
+            sys.exit(20)
+
         self.node = node
 
     def execute(self, _initvmdir, _opt, _args):
