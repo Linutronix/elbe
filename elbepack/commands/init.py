@@ -205,9 +205,14 @@ def run_command(argv):
             (out_path, opt.cdrom))
 
     if opt.devel:
+        out_real = os.path.realpath(out_path)
+        ignore = ''
+        if out_real.startswith(elbe_dir + os.sep):
+            ignore = '--exclude "%s"' % os.path.relpath(out_path,
+                                                        start=elbe_dir)
+
         os.system(
-            'tar cfj "%s" -C "%s" .' %
-            (os.path.join(
-                out_path,
-                "elbe-devel.tar.bz2"),
+            'tar cfj "%s" %s -C "%s" .' % (
+                os.path.join(out_path, "elbe-devel.tar.bz2"),
+                ignore,
                 elbe_dir))
