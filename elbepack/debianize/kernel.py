@@ -26,13 +26,13 @@ class Kernel (DebianizeBase):
     def __init__(self):
         self.imgtypes = ["bzImage", "zImage", "uImage", "Image"]
         self.imgtypes_install = ["install", "zinstall", "uinstall", "install"]
-        DebianizeBase.__init__(self)
 
         self.loadaddr = None
         self.defconfig = None
         self.imgtype = None
         self.cross = None
         self.k_version = None
+        DebianizeBase.__init__(self)
 
     def gui(self):
         self.loadaddr = self.add_widget_intelligent(

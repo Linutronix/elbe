@@ -22,12 +22,12 @@ class BareBox (DebianizeBase):
     files = ['Kbuild', 'Kconfig', 'README', 'TODO']
 
     def __init__(self):
-        DebianizeBase.__init__(self)
-
         self.defconfig = None
         self.imgname = None
         self.cross = None
         self.k_version = None
+
+        DebianizeBase.__init__(self)
 
     def gui(self):
         self.defconfig = self.add_widget_intelligent(
