@@ -322,6 +322,55 @@ can be done with a custom repository. You can use
 link:https://mirrorer.alioth.debian.org/[reprepro] to create your own
 repository.
 
+Repository Key
+~~~~~~~~~~~~~~
+
+Because the repository needs to be signed using `gpg`, a key needs to be
+generated.
+
+------------------------------------------------------------------------------
+-> gpg --default-new-key-algo rsa4096 --gen-key
+gpg (GnuPG) 2.1.18; Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Note: Use "gpg --full-generate-key" for a full featured key generation dialog.
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: Torben Hohn
+Email address: torben.hohn@linutronix.de
+You selected this USER-ID:
+    "Torben Hohn <torben.hohn@linutronix.de>"
+
+Change (N)ame, (E)mail, or (O)kay/(Q)uit? O
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: key 68E68615BB6CB47C marked as ultimately trusted
+gpg: directory '/home/torbenh/.gnupg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/home/torbenh/.gnupg/openpgp-revocs.d/CF837F1AAAC35E084062AE4468E68615BB6CB47C.rev'
+public and secret key created and signed.
+
+Note that this key cannot be used for encryption.  You may want to use
+the command "--edit-key" to generate a subkey for this purpose.
+pub   rsa4096 2018-10-08 [SC] [expires: 2020-10-07]
+      CF837F1AAAC35E084062AE4468E68615BB6CB47C
+      CF837F1AAAC35E084062AE4468E68615BB6CB47C
+uid                      Torben Hohn <torben.hohn@linutronix.de>
+-------------------------------------------------------------------------------
+
+Please note the keyname (here `CF837F1AAAC35E084062AE4468E68615BB6CB47C`).
+This keyname can then be used to export the public key into a repo.pub file.
+
+-------------------------------------------------------------------------------
+gpg --export --armor CF837F1AAAC35E084062AE4468E68615BB6CB47C > repo.pub
+-------------------------------------------------------------------------------
+
+reprepro configuration
+~~~~~~~~~~~~~~~~~~~~~~
+
 To create your own repository with reprepro you need only the `distributions`
 configuration file. For an `amd64` and `source` repository for Debian `stretch` it
 might look as follows:
@@ -334,15 +383,24 @@ Codename: stretch
 Architectures: amd64 source
 Components: main
 Description: my local repo
+SignWith: CF837F1AAAC35E084062AE4468E68615BB6CB47C
 -------------------------------------------------------------------------------
 
+NOTE: the `SignWith:` field needs to be the key of the previously generated
+      key.
+
 Now place the `distributions` file in a `conf` named directory.
+also put `repo.pub` into your `repo` directory.
 
 -------------------------------------------------------------------------------
 repo/
 ├── conf
 │   └── distributions
+└── repo.pub
 -------------------------------------------------------------------------------
+
+insert pkgs into repo
+~~~~~~~~~~~~~~~~~~~~~
 
 To include packages in your repository you might use the following command from
 inside the `repo` directory:
@@ -372,10 +430,6 @@ ELBE replaces the string `LOCALMACHINE` with the ip address of your machine. If
 you use an external machine as webserver you need to replace `LOCALMACHINE` with
 the name or the ip of it.
 
-You need to sign your repository (see `SignWith` in the
-link:https://mirrorer.alioth.debian.org/reprepro.1.html[reprepro manpage]), or
-you may set <noauth/> in your xml file. If you don't sign your repository you
-don't need the `<key>` tag.
 
 Now you can install packages from your custom repository the same way you can
 install from any other repository.
