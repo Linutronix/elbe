@@ -323,14 +323,14 @@ link:https://mirrorer.alioth.debian.org/[reprepro] to create your own
 repository.
 
 To create your own repository with reprepro you need only the `distributions`
-configuration file. For an amd64 and source repository for Debian jessie it
+configuration file. For an `amd64` and `source` repository for Debian `stretch` it
 might look as follows:
 
 -------------------------------------------------------------------------------
 Origin: mylocal
 Label: mylocal
 Suite: stable
-Codename: jessie
+Codename: stretch
 Architectures: amd64 source
 Components: main
 Description: my local repo
@@ -348,7 +348,7 @@ To include packages in your repository you might use the following command from
 inside the `repo` directory:
 
 -------------------------------------------------------------------------------
-$ reprepro include jessie ../path/to/your/*.changes
+$ reprepro include stretch ../path/to/your/*.changes
 -------------------------------------------------------------------------------
 
 To use this repository from ELBE you need a webserver. Simply place the
