@@ -28,19 +28,25 @@ def system(cmd, allow_fail=False):
             raise CommandError(cmd, ret)
 
 
-def command_out(cmd, stdin=None, output=PIPE):
+def command_out(cmd, stdin=None, output=PIPE, env_add=None):
+    new_env = os.environ.copy()
+    if env_add:
+        new_env.update(env_add)
+
     if stdin is None:
-        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT)
+        p = Popen(cmd, shell=True,
+                  stdout=output, stderr=STDOUT, env=new_env)
         out, _ = p.communicate()
     else:
-        p = Popen(cmd, shell=True, stdout=output, stderr=STDOUT, stdin=PIPE)
+        p = Popen(cmd, shell=True,
+                  stdout=output, stderr=STDOUT, stdin=PIPE, env=new_env)
         out, _ = p.communicate(input=stdin)
 
     return p.returncode, out
 
 
-def system_out(cmd, stdin=None, allow_fail=False):
-    code, out = command_out(cmd, stdin)
+def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
+    code, out = command_out(cmd, stdin=stdin, env_add=env_add)
 
     if code != 0:
         if not allow_fail:
@@ -49,19 +55,25 @@ def system_out(cmd, stdin=None, allow_fail=False):
     return out
 
 
-def command_out_stderr(cmd, stdin=None):
+def command_out_stderr(cmd, stdin=None, env_add=None):
+    new_env = os.environ.copy()
+    if env_add:
+        new_env.update(env_add)
+
     if stdin is None:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        p = Popen(cmd, shell=True,
+                  stdout=PIPE, stderr=PIPE, env=new_env)
         output, stderr = p.communicate()
     else:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+        p = Popen(cmd, shell=True,
+                  stdout=PIPE, stderr=PIPE, stdin=PIPE, env=new_env)
         output, stderr = p.communicate(input=stdin)
 
     return p.returncode, output, stderr
 
 
-def system_out_stderr(cmd, stdin=None, allow_fail=False):
-    code, out, err = command_out_stderr(cmd, stdin)
+def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
+    code, out, err = command_out_stderr(cmd, stdin, env_add)
 
     if code != 0:
         if not allow_fail:
