@@ -9,17 +9,17 @@ from __future__ import print_function
 
 import os
 
-from tempfile import mkdtemp
-
 from apt_pkg import TagFile
 from elbepack.shellhelper import CommandError, system
 from elbepack.virtapt import get_virtaptcache
 from elbepack.hashes import validate_sha256, HashValidationFailed
 
+
 class NoPackageException(Exception):
     pass
 
-def get_sources_list(prj, defs):
+
+def get_sources_list(prj):
 
     suite = prj.text("suite")
 
@@ -60,7 +60,7 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
         arch = prj.text("buildimage/arch", default=defs, key="arch")
     suite = prj.text("suite")
 
-    apt_sources = get_sources_list(prj, defs)
+    apt_sources = get_sources_list(prj)
     apt_keys = get_key_list(prj)
 
     if arch == "default":
@@ -70,6 +70,7 @@ def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
 
     ret = v.get_uri(target_pkg, incl_deps)
     return ret
+
 
 def get_dsc_size(fname):
     tf = TagFile(fname)
@@ -83,6 +84,7 @@ def get_dsc_size(fname):
                 sz += int(f[1])
 
     return sz
+
 
 def download_pkg(prj,
                  target_dir,
@@ -127,9 +129,8 @@ def download_pkg(prj,
             try:
                 validate_sha256(dest, sha256)
             except HashValidationFailed as e:
-                raise NoPackageException('%s failed to verify: %s' %
-                        package,
-                        e.message)
+                raise NoPackageException('%s failed to verify: %s' % package,
+                                         e.message)
         else:
             if log:
                 log.printo("WARNING: Using untrusted %s package" % package)
