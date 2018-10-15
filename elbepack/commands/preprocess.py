@@ -12,14 +12,18 @@ from optparse import OptionParser
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
 
+def add_pass_through_options(oparser):
+    oparser.add_option("-v", "--variants", dest="variant",
+                       default=None,
+                       help="enable only tags with empty or given variant")
+
+
 def run_command(argv):
     oparser = OptionParser(usage="usage: %prog preprocess [options] <xmlfile>")
     oparser.add_option("-o", "--output", dest="output",
                        default="preprocess.xml",
                        help="preprocessed output file", metavar="<xmlfile>")
-    oparser.add_option("-v", "--variants", dest="variant",
-                       default=None,
-                       help="enable only tags with empty or given variant")
+    add_pass_through_options(oparser)
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
