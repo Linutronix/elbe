@@ -245,7 +245,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     # pylint: disable=too-many-branches
 
     try:
-        with PreprocessWrapper(xmlfile) as ppw:
+        with PreprocessWrapper(xmlfile, opt) as ppw:
             xmlfile = ppw.preproc
 
             ret, prjdir, err = command_out_stderr(

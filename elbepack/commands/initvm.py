@@ -11,6 +11,7 @@ import os
 
 from optparse import OptionParser
 from elbepack.initvmaction import InitVMAction, InitVMError
+from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def run_command(argv):
@@ -64,6 +65,8 @@ def run_command(argv):
         default=False,
         help="allow initvm to support nested kvm. "
              "This makes /proc/cpuinfo inside initvm differ per host.")
+
+    PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
 

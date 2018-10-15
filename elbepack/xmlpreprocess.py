@@ -9,6 +9,7 @@ from __future__ import print_function
 
 import sys
 from tempfile import NamedTemporaryFile
+from optparse import OptionGroup
 
 from lxml import etree
 from lxml.etree import XMLParser, parse
@@ -123,16 +124,21 @@ def xmlpreprocess(fname, output, variants=None):
 
 
 class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
-    def __init__(self, xmlfile):
+    def __init__(self, xmlfile, opt):
         self.xmlfile = xmlfile
         self.outxml = None
+        self.options = ""
+
+        if opt.variant:
+            self.options += ' --variants "%s"' % opt.variant
 
     def __enter__(self):
         self.outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
 
-        cmd = '%s preprocess -o %s %s' % (elbe_exe,
-                                          self.outxml.name,
-                                          self.xmlfile)
+        cmd = '%s preprocess %s -o %s %s' % (elbe_exe,
+                                             self.options,
+                                             self.outxml.name,
+                                             self.xmlfile)
         ret, _, err = command_out_stderr(cmd)
         if ret != 0:
             print("elbe preprocess failed.", file=sys.stderr)
@@ -143,6 +149,18 @@ class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
 
     def __exit__(self, _typ, _value, _traceback):
         self.outxml = None
+
+    @staticmethod
+    def add_options(oparser):
+        # import it here because of cyclic imports
+        from elbepack.commands.preprocess import add_pass_through_options
+
+        group = OptionGroup(oparser,
+                            'Elbe preprocess options',
+                            'Options passed through to invocation of '
+                            '"elbe preprocess"')
+        add_pass_through_options(group)
+        oparser.add_option_group(group)
 
     @property
     def preproc(self):
