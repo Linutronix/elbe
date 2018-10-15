@@ -62,6 +62,8 @@ all: .stamps/stamp-install-initial-image
 	cp .elbe-in/source.xml tmp-tree/
 	mkdir -p tmp-tree/usr/share/keyrings
 	-cp .elbe-in/*.gpg tmp-tree/usr/share/keyrings
+	cp .elbe-in/initrd-cdrom.gz tmp-tree/
+	cp .elbe-in/vmlinuz tmp-tree/
 % if opt.devel:
 	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
 % endif

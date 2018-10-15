@@ -23,12 +23,6 @@ def get_initvm_pkglist():
         cache = Cache()
         cache.open()
         pkglist = [APTPackage(p) for p in cache if p.is_installed]
-        try:
-            eb = APTPackage(cache['elbe-bootstrap'])
-            pkglist.append(eb)
-        # elbe bootstrap is not installed on pc running elbe
-        except KeyError:
-            pass
 
     return pkglist
 

@@ -24,6 +24,10 @@ cp /etc/apt/apt.conf /buildenv/etc/apt/apt.conf.d/50elbe
 ln -s /lib/systemd/system/serial-getty@.service /buildenv/etc/systemd/system/getty.target.wants/serial-getty@ttyS0.service
 % endif
 
+mkdir /buildenv/var/cache/elbe/installer
+cp initrd-cdrom.gz /buildenv/var/cache/elbe/installer
+cp vmlinuz /buildenv/var/cache/elbe/installer
+
 % if opt.devel:
    mkdir /buildenv/var/cache/elbe/devel
    tar xj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel

@@ -7,6 +7,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+from shutil import copyfile
 
 from apt.package import FetchError
 from apt import Cache
@@ -96,11 +97,7 @@ def mk_source_cdrom(
         if pkg.name in forbiddenPackages:
             continue
         try:
-            p = cache[pkg.name]
-            if pkg.name == 'elbe-bootstrap':
-                pkgver = p.versions[0]
-            else:
-                pkgver = p.installed
+            pkgver = cache[pkg.name].installed
 
             dsc = pkgver.fetch_source(
                 '/var/cache/elbe/sources',
@@ -162,10 +159,7 @@ def mk_binary_cdrom(
         for pkg in pkglist:
             try:
                 p = cache[pkg.name]
-                if pkg.name == 'elbe-bootstrap':
-                    pkgver = p.versions[0]
-                else:
-                    pkgver = p.installed
+                pkgver = p.installed
                 deb = pkgver.fetch_binary('/var/cache/elbe/binaries/main',
                                           ElbeAcquireProgress(cb=None))
                 repo.includedeb(deb, 'main')
@@ -257,6 +251,12 @@ def mk_binary_cdrom(
 
     # write source xml onto cdrom
     xml.xml.write(repo_fs.fname('source.xml'))
+
+    # copy initvm-cdrom.gz and vmlinuz
+    copyfile('/var/cache/elbe/installer/initrd-cdrom.gz',
+             repo_fs.fname('initrd-cdrom.gz'))
+    copyfile('/var/cache/elbe/installer/vmlinuz',
+             repo_fs.fname('vmlinuz'))
 
     target_repo_fs = Filesystem(target_repo_path)
     target_repo_fs.write_file(".aptignr", 0o644, "")

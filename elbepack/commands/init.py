@@ -15,7 +15,7 @@ from optparse import OptionParser
 
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.pkgutils import copy_kinitrd, NoKinitrdException
+from elbepack.debinstaller import copy_kinitrd, NoKinitrdException
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
@@ -165,7 +165,7 @@ def run_command(argv):
         os.putenv("no_proxy", "localhost,127.0.0.1")
 
     try:
-        copy_kinitrd(xml.node("/initvm"), out_path, defs, arch="amd64")
+        copy_kinitrd(xml.node("/initvm"), out_path)
     except NoKinitrdException as e:
         print("Failure to download kernel/initrd debian Package:")
         print("")

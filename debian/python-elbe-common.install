@@ -9,6 +9,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/aptprogress.py
 ./usr/lib/python2.*/*-packages/elbepack/archivedir.py
 ./usr/lib/python2.*/*-packages/elbepack/config.py
+./usr/lib/python2.*/*-packages/elbepack/debinstaller.py
 ./usr/lib/python2.*/*-packages/elbepack/default-preseed.xml
 ./usr/lib/python2.*/*-packages/elbepack/directories.py
 ./usr/lib/python2.*/*-packages/elbepack/dosunix.py

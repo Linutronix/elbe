@@ -138,7 +138,6 @@ i386_defaults = {
 }
 
 archindep_defaults = {
-    "kinitrd": "elbe-bootstrap",
     "name": "elbe-buildenv",
     "size": "20G",
     "img": "qcow2",
