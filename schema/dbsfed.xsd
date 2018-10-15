@@ -539,7 +539,7 @@
       <element name="kinitrd" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            pkg name of the initrd/kernel package.
+            pkg name of the initrd/kernel package. (obsolete and ignored)
           </documentation>
         </annotation>
       </element>
