@@ -2,7 +2,7 @@ ELBE TestSpec,,,,
 ,,,,
 #,Component,Functional Requirement,Test,Expectation
 1,debianization,Debian binary and source packages,build packages with pbuilder,"same number of binary packages as in previous test, one source package"
-2,,Debian Repository,build Debian repository with reprepro or aptly,Repo including all necessary packages (don't forget elbe-bootstrap)
+2,,Debian Repository,build Debian repository with reprepro or aptly,Repo including all necessary packages
 3,initvm create,build an initvm image,use absolute path for –directory,Makefile and buildenv.img at specified path
 4,,,use relative path for –directory,Makefile and buildenv.img at specified path
 5,,,use elbe initvm create without any parameter,Makefile and buildenv.img at default locations

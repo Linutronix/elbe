@@ -203,9 +203,6 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		</mirror>
 		<noauth />
 		<suite>wheezy</suite>
-		<buildimage>
-			<kinitrd>elbe-bootstrap</kinitrd>
-		</buildimage>
 	</project>
 	<target>
 		<hostname>myARM</hostname>
@@ -594,21 +591,20 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<size>20G</size>				<2>
 			<mem>256</mem>					<3>
 			<interpreter>qemu-system-arm</interpreter>	<4>
-			<kinitrd>elbe-bootstrap</kinitrd>		<5>
-			<console>ttyAMA0,115200n1</console>		<6>
-			<machine>versatilepb</machine>			<7>
+			<console>ttyAMA0,115200n1</console>		<5>
+			<machine>versatilepb</machine>			<6>
 			<NIC>
 				<model>smc91c111</model>
 				<MAC>de:ad:be:ef:be:05</MAC>
 			</NIC>
-			<portforwarding>				<8>
+			<portforwarding>				<7>
 				<forward>
 					<proto>tcp</proto>
 					<buildenv>22</buildenv>
 					<host>5022</host>
 				</forward>
 			</portforwarding>
-			<pkg-list>					<9>
+			<pkg-list>					<8>
 				<pkg>buildd</pkg>
 			</pkg-list>
 		</buildimage>
@@ -626,25 +622,19 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Usage of kvm is usually only possible, when the target is 'x86'.
 		(optional)
 
-<5> The name of the elbe-bootstrap package.
-    All package sources mentioned in the XML file are scanned for this package.
-    It provides the debian-installer kernel and initrd. This package is not
-    hosted on official Debian mirrors. So it makes sense additional add the
-    <noauth/> tag to the <mirror> section.
-
-<6> The 'console' line needs special attention because it is different on
+<5> The 'console' line needs special attention because it is different on
     different emulation targets.
 		(optional)
 
-<7> The 'machine' tag contains the '-machine' parameter, that is provided to
+<6> The 'machine' tag contains the '-machine' parameter, that is provided to
     qemu.
 		(optional)
 
-<8> 'portforwarding' of network server ports from the virtual machine to the
+<7> 'portforwarding' of network server ports from the virtual machine to the
     host. This example forwards the ssh port to port 5022 on the host.
 		(optional)
 
-<9> This is the list of packages that are only installed to the buildimage.
+<8> This is the list of packages that are only installed to the buildimage.
      (The packages listed in the target sections pkg-list are installed to
      the target image and the buildimage.) It can be used for example to
      install the debian build server into the buildenvironment.
@@ -922,10 +912,9 @@ The 'elbe init' command generates a project directory, which contains a hard
 disk image for a virtual build machine and a 'Makefile' to install the build
 VM and to work with it.
 
-During this process, 'elbe init' will search the package repos mentioned in the
-mirror section of the XML file for the elbe-bootstrap package, which includes
-the debian-installer. You can use the packages provided by Linutronix from
-http://debian.linutronix.de/elbe by adding this url to the mirror section.
+During this process, 'elbe init' will download a linux kernel and initrd.gz
+from the debian mirror. In case of a local mirror, be sure, that
+`dists/jessie/main/installer-amd64/` is also mirrored.
 
 After 'elbe init' has generated the project directory, change to the
 project directory and run 'make'. This will start the installation of the
