@@ -15,8 +15,6 @@ import time
 import os
 import datetime
 
-from tempfile import NamedTemporaryFile
-
 import libvirt
 
 import elbepack
@@ -26,7 +24,7 @@ from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
-
+from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def cmd_exists(x):
@@ -246,31 +244,31 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-branches
 
-    outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
-    cmd = '%s preprocess -o %s %s' % (elbe_exe, outxml.name, xmlfile)
-    ret, _, err = command_out_stderr(cmd)
-    if ret != 0:
-        print("elbe preprocess failed.", file=sys.stderr)
-        print(err, file=sys.stderr)
-        print("Giving up", file=sys.stderr)
-        sys.exit(20)
-    xmlfile = outxml.name
+    try:
+        with PreprocessWrapper(xmlfile) as ppw:
+            xmlfile = ppw.preproc
 
-    ret, prjdir, err = command_out_stderr(
-        '%s control create_project' % (elbe_exe))
-    if ret != 0:
-        print("elbe control create_project failed.", file=sys.stderr)
-        print(err, file=sys.stderr)
-        print("Giving up", file=sys.stderr)
-        sys.exit(20)
+            ret, prjdir, err = command_out_stderr(
+                '%s control create_project' % (elbe_exe))
+            if ret != 0:
+                print("elbe control create_project failed.", file=sys.stderr)
+                print(err, file=sys.stderr)
+                print("Giving up", file=sys.stderr)
+                sys.exit(20)
 
-    prjdir = prjdir.strip()
+            prjdir = prjdir.strip()
 
-    cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-    ret, _, err = command_out_stderr(cmd)
-    if ret != 0:
-        print("elbe control set_xml failed2", file=sys.stderr)
-        print(err, file=sys.stderr)
+            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+            ret, _, err = command_out_stderr(cmd)
+            if ret != 0:
+                print("elbe control set_xml failed2", file=sys.stderr)
+                print(err, file=sys.stderr)
+                print("Giving up", file=sys.stderr)
+                sys.exit(20)
+    except CommandError:
+        # this is the failure from PreprocessWrapper
+        # it already printed the error message from
+        # elbe preprocess
         print("Giving up", file=sys.stderr)
         sys.exit(20)
 
