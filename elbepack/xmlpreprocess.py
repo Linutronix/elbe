@@ -46,7 +46,7 @@ def xmlpreprocess(fname, output, variants=None):
         rmlist = []
         for tag in xml.iter('*'):
             if 'variant' in tag.attrib:
-                tag_variants = set (tag.attrib['variant'].split(','))
+                tag_variants = set(tag.attrib['variant'].split(','))
 
                 # check if tag_variants intersects with
                 # active variants.
@@ -70,7 +70,7 @@ def xmlpreprocess(fname, output, variants=None):
         #
         # Use xpath expressions to identify mergeable sections.
         for mergepath in mergepaths:
-            mergenodes = xml.xpath (mergepath)
+            mergenodes = xml.xpath(mergepath)
 
             # if there is just one section of a type
             # or no section, nothing needs to be done
@@ -81,7 +81,7 @@ def xmlpreprocess(fname, output, variants=None):
             # section[1..n]
             for section in mergenodes[1:]:
                 for c in section.getchildren():
-                    mergenodes[0].append (c)
+                    mergenodes[0].append(c)
                 section.getparent().remove(section)
 
         # handle archivedir elements
@@ -101,7 +101,7 @@ def xmlpreprocess(fname, output, variants=None):
         raise XMLPreprocessError("XML Parse error\n" + str(sys.exc_info()[1]))
     except ArchivedirError:
         raise XMLPreprocessError("<archivedir> handling failed\n" +
-                                     str(sys.exc_info()[1]))
+                                 str(sys.exc_info()[1]))
     except BaseException:
         raise XMLPreprocessError(
             "Unknown Exception during validation\n" + str(sys.exc_info()[1]))
