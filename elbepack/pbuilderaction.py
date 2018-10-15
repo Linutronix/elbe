@@ -12,6 +12,7 @@ import os
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import TmpdirFilesystem
+from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def cmd_exists(x):
@@ -68,22 +69,31 @@ class CreateAction(PBuilderAction):
     def execute(self, opt, _args):
 
         if opt.xmlfile:
-            ret, prjdir, err = command_out_stderr(
-                '%s control create_project' % (elbe_exe))
-            if ret != 0:
-                print("elbe control create_project failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
-                print("Giving up", file=sys.stderr)
-                sys.exit(20)
+            try:
+                with PreprocessWrapper(opt.xmlfile, opt) as ppw:
+                    ret, prjdir, err = command_out_stderr(
+                        '%s control create_project' % (elbe_exe))
+                    if ret != 0:
+                        print("elbe control create_project failed.",
+                              file=sys.stderr)
+                        print(err, file=sys.stderr)
+                        print("Giving up", file=sys.stderr)
+                        sys.exit(20)
 
-            prjdir = prjdir.strip()
-            ret, _, err = command_out_stderr(
-                '%s control set_xml "%s" "%s"' %
-                (elbe_exe, prjdir, opt.xmlfile))
+                    prjdir = prjdir.strip()
+                    ret, _, err = command_out_stderr(
+                        '%s control set_xml "%s" "%s"' %
+                        (elbe_exe, prjdir, ppw.preproc))
 
-            if ret != 0:
-                print("elbe control set_xml failed.", file=sys.stderr)
-                print(err, file=sys.stderr)
+                    if ret != 0:
+                        print("elbe control set_xml failed.", file=sys.stderr)
+                        print(err, file=sys.stderr)
+                        print("Giving up", file=sys.stderr)
+                        sys.exit(20)
+            except CommandError:
+                # this is the failure from PreprocessWrapper
+                # it already printed the error message from
+                # elbe preprocess
                 print("Giving up", file=sys.stderr)
                 sys.exit(20)
 

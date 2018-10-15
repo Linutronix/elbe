@@ -10,6 +10,7 @@ import sys
 
 from optparse import OptionParser
 from elbepack.pbuilderaction import PBuilderAction, PBuilderError
+from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def run_command(argv):
@@ -39,7 +40,10 @@ def run_command(argv):
                        help="directory where to save downloaded Files")
 
     oparser.add_option("--cpuset", default=-1, type="int",
-                       help="Limit cpuset of pbuilder commands (bitmask) (defaults to -1 for all CPUs)")
+                       help="Limit cpuset of pbuilder commands (bitmask) "
+                            "(defaults to -1 for all CPUs)")
+
+    PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
 
