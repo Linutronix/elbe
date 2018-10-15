@@ -35,9 +35,9 @@ def getdeps(pkg):
 #
 # ATTENTION: for provides pinning and priorities for package selection are
 #            ignored. This should be safe for now, because the code is only
-#            used for downloading 'elbe-bootstrap' and generating the SDKs
-#            host-sysroot. For generating host-sysroots there is no posibility
-#            to modify package priorities via elbe-xml.
+#            used for generating the SDKs host-sysroot.
+#            For generating host-sysroots there is no posibility to modify
+#            package priorities via elbe-xml.
 def lookup_uri(v, d, target_pkg):
     try:
         pkg = v.cache[target_pkg]
