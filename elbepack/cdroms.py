@@ -40,10 +40,10 @@ def mk_source_cdrom(
     hostfs.mkdir_p('/var/cache/elbe/sources')
     rfs.mkdir_p('/var/cache/elbe/sources')
 
-    if not xml is None:
-        mirror = xml.get_primary_mirror (rfs.fname("cdrom"))
+    if xml is not None:
+        mirror = xml.get_primary_mirror(rfs.fname("cdrom"))
     else:
-        mirror='http://ftp.de.debian.org/debian'
+        mirror = 'http://ftp.de.debian.org/debian'
 
     repo = CdromSrcRepo(codename, init_codename,
                         os.path.join(target, "srcrepo"),
