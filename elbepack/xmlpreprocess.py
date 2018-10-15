@@ -1,13 +1,21 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2017 Benedikt Spranger <b.spranger@linutronix.de>
 # Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2018 Torben Hohn <torbenh@linutronix.de>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import print_function
+
 import sys
+from tempfile import NamedTemporaryFile
+
 from lxml import etree
 from lxml.etree import XMLParser, parse
+
 from elbepack.archivedir import ArchivedirError, combinearchivedir
+from elbepack.directories import elbe_exe
+from elbepack.shellhelper import command_out_stderr, CommandError
 
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess
@@ -112,3 +120,30 @@ def xmlpreprocess(fname, output, variants=None):
         errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
 
     raise XMLPreprocessError(errors)
+
+
+class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
+    def __init__(self, xmlfile):
+        self.xmlfile = xmlfile
+        self.outxml = None
+
+    def __enter__(self):
+        self.outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
+
+        cmd = '%s preprocess -o %s %s' % (elbe_exe,
+                                          self.outxml.name,
+                                          self.xmlfile)
+        ret, _, err = command_out_stderr(cmd)
+        if ret != 0:
+            print("elbe preprocess failed.", file=sys.stderr)
+            print(err, file=sys.stderr)
+            raise CommandError(cmd, ret)
+
+        return self
+
+    def __exit__(self, _typ, _value, _traceback):
+        self.outxml = None
+
+    @property
+    def preproc(self):
+        return self.outxml.name
