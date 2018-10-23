@@ -5,11 +5,11 @@
 
 from npyscreen import NPSAppManaged
 
-from elbepack.debianize.kernel import Kernel   #pylint: disable=unused-import
-from elbepack.debianize.uboot import UBoot     #pylint: disable=unused-import
-from elbepack.debianize.barebox import BareBox #pylint: disable=unused-import
+from .kernel import Kernel       # pylint: disable=unused-import
+from .uboot import UBoot         # pylint: disable=unused-import
+from .barebox import BareBox     # pylint: disable=unused-import
 
-from elbepack.debianize.base import DebianizeBase #pylint: disable=unused-import
+from .base import DebianizeBase  # pylint: disable=unused-import
 
 
 class Debianize (NPSAppManaged):
