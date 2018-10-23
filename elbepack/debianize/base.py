@@ -146,5 +146,6 @@ class DebianizeBase (FormMultiPage):
 
         sys.exit(0)
 
+    # pylint: disable=no-self-use
     def on_cancel(self):
         sys.exit(-2)
