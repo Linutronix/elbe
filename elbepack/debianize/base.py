@@ -23,6 +23,7 @@ class DebianizeBase (FormMultiPage):
     # pylint: disable=too-many-ancestors
 
     srctypes = {}
+    copyright_fname = 'COPYING'
 
     @classmethod
     def register(cls, srctype):
@@ -135,7 +136,7 @@ class DebianizeBase (FormMultiPage):
             mako = os.path.join(self.tmpl_dir, 'format.mako')
             f.write(template(mako, self.deb))
 
-        copyfile('COPYING', 'debian/copyright')
+        copyfile(self.copyright_fname, 'debian/copyright')
         with open('debian/compat', 'w') as f:
             f.write('9')
 
