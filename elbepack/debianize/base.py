@@ -63,6 +63,17 @@ class DebianizeBase (FormMultiPage):
     def debianize(self):
         raise NotImplementedError('gui() not implemented')
 
+    def get_k_arch(self):
+        """ get_k_arch() may be used in debianize() """
+        if self.deb['p_arch'] == 'armhf':
+            return 'arm'
+        elif self.deb['p_arch'] == 'armel':
+            return 'arm'
+        elif self.deb['p_arch'] == 'amd64':
+            return 'x86_64'
+        else:
+            return self.deb['p_arch']
+
     def create(self):
         self.p_name = self.add_widget_intelligent(TitleText,
                                                   name="Name:", value="elbe")

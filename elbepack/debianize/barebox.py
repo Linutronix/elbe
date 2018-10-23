@@ -45,14 +45,7 @@ class BareBox (DebianizeBase):
             TitleText, name="BareboxVersion:", value="2016.10")
 
     def debianize(self):
-        if self.deb['p_arch'] == 'armhf':
-            self.deb['k_arch'] = 'arm'
-        elif self.deb['p_arch'] == 'armel':
-            self.deb['k_arch'] = 'arm'
-        elif self.deb['p_arch'] == 'amd64':
-            self.deb['k_arch'] = 'x86_64'
-        else:
-            self.deb['k_arch'] = self.deb['p_arch']
+        self.deb['k_arch'] = self.get_k_arch()
 
         self.deb['defconfig'] = self.defconfig.get_value()
         self.deb['cross_compile'] = self.cross.get_value()
