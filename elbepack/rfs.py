@@ -122,17 +122,26 @@ class BuildEnv (object):
         host_arch = self.log.get_command_out(
             "dpkg --print-architecture").strip()
 
+        if self.xml.has("target/debootstrapvariant"):
+            bootstrapvariant = self.xml.text("target/debootstrapvariant")
+            self.log.printo('NOTE: use bootstrap variant "%s".' % (
+                bootstrapvariant))
+            strapcmd = 'debootstrap --variant="%s"' % (bootstrapvariant)
+        else:
+            self.log.printo('use bootstrap no variant.')
+            strapcmd = 'debootstrap'
+
         if not self.xml.is_cross(host_arch):
             # ignore gpg verification if install from cdrom, cause debootstrap
             # seems to ignore /etc/apt/trusted.gpg.d/elbe-keyring.gpg
             # 01/2017 manut
             if self.xml.has(
                     "project/noauth") or self.xml.has("project/mirror/cdrom"):
-                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
-                    arch, suite, self.rfs.path, primary_mirror)
+                cmd = '%s --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                    strapcmd, arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
-                    arch, suite, self.rfs.path, primary_mirror)
+                cmd = '%s --arch=%s "%s" "%s" "%s"' % (
+                    strapcmd, arch, suite, self.rfs.path, primary_mirror)
 
             try:
                 self.cdrom_mount()
@@ -148,17 +157,16 @@ class BuildEnv (object):
             return
 
         if self.xml.has("project/noauth"):
-            cmd = 'debootstrap --no-check-gpg --foreign ' \
-                  '--arch=%s "%s" "%s" "%s"' % (arch, suite, self.rfs.path,
-                                                primary_mirror)
+            cmd = '%s --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
+                strapcmd, arch, suite, self.rfs.path, primary_mirror)
         else:
             if self.xml.has("project/mirror/cdrom"):
                 keyring = ' --keyring="%s/targetrepo/elbe-keyring.gpg"' % (
                     self.rfs.fname("cdrom"))
             else:
                 keyring = ''
-            cmd = 'debootstrap --foreign --arch=%s %s "%s" "%s" "%s"' % (
-                arch, keyring, suite, self.rfs.path, primary_mirror)
+            cmd = '%s --foreign --arch=%s %s "%s" "%s" "%s"' % (
+                strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
 
         try:
             self.cdrom_mount()
