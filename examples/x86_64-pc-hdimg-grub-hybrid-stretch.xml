@@ -30,6 +30,7 @@
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
+		<debootstrapvariant variant="sysv">minbase</debootstrapvariant>
 		<package>
 			<tar>
 				<name>grub-hybrid-rfs.tgz</name>
@@ -84,6 +85,7 @@
 			<pkg>grub-efi-amd64-bin</pkg>
 			<pkg>grub-pc</pkg>
 			<pkg>linux-image-amd64</pkg>
+			<pkg variant="sysv">sysvinit-core</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
