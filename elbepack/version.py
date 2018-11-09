@@ -8,7 +8,7 @@ from platform import linux_distribution
 
 from elbepack.directories import pack_dir
 
-elbe_version = "2.9.12"
+elbe_version = "2.9.13"
 running_os = linux_distribution()
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':

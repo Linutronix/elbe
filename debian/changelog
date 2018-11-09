@@ -1,3 +1,14 @@
+elbe (2.9.13) unstable; urgency=medium
+
+  * fix tons of pylint warnings
+  * introduce debootstarp_variant selection
+  * remove need of 'elbe-bootstrap' package
+  * remove tmux dependency
+  * improve preprocess handling in submit/pbuilder subcommands
+  * update quickstart tutorial
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 09 Nov 2018 13:05:11 +0100
+
 elbe (2.9.12) unstable; urgency=medium
 
   * some minor virtapt improvements
