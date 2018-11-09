@@ -837,7 +837,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="pkg-list" type="rfs:pkg-list">
+      <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             install the given packages into the rootfilesystem

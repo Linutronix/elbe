@@ -257,6 +257,8 @@ class ElbeXML(object):
                     ["Repository %s can not be validated" % r["url"]])
 
     def get_target_packages(self):
+        if not self.xml.has("/target/pkg-list"):
+            return []
         return [p.et.text for p in self.xml.node("/target/pkg-list")]
 
     def add_target_package(self, pkg):

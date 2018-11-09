@@ -25,17 +25,19 @@ Pin: origin ${porg['origin']}
 Pin-Priority: ${porg['pin']}
 
 % endfor
-% for n in pkgs:
-%  if "pin" in n.et.attrib.keys():
+% if pkgs:
+%  for n in pkgs:
+%   if "pin" in n.et.attrib.keys():
 Package: ${n.et.text}
 Pin: release n=${n.et.attrib["pin"]}
 Pin-Priority: 991
 
-%  endif
-%  if "version" in n.et.attrib.keys():
+%   endif
+%   if "version" in n.et.attrib.keys():
 Package: ${n.et.text}
 Pin: version ${n.et.attrib["version"]}
 Pin-Priority: 1001
 
-%  endif
-% endfor
+%   endif
+%  endfor
+% endif

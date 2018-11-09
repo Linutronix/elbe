@@ -85,27 +85,28 @@ def check_full_pkgs(pkgs, fullpkgs, errorname, cache):
 
     errors = 0
 
-    for p in pkgs:
-        name = p.et.text
-        nomulti_name = name.split(":")[0]
-        if not cache.has_pkg(nomulti_name):
-            elog.printo("- package %s does not exist" % nomulti_name)
-            errors += 1
-            continue
+    if pkgs:
+        for p in pkgs:
+            name = p.et.text
+            nomulti_name = name.split(":")[0]
+            if not cache.has_pkg(nomulti_name):
+                elog.printo("- package %s does not exist" % nomulti_name)
+                errors += 1
+                continue
 
-        if not cache.is_installed(nomulti_name):
-            elog.printo("- package %s is not installed" % nomulti_name)
-            errors += 1
-            continue
+            if not cache.is_installed(nomulti_name):
+                elog.printo("- package %s is not installed" % nomulti_name)
+                errors += 1
+                continue
 
-        ver = p.et.get('version')
-        pkg = cache.get_pkg(nomulti_name)
-        if ver and (pkg.installed_version != ver):
-            elog.printo(
-                "- package %s version %s does not match installed version %s" %
-                (name, ver, pkg.installed_version))
-            errors += 1
-            continue
+            ver = p.et.get('version')
+            pkg = cache.get_pkg(nomulti_name)
+            if ver and (pkg.installed_version != ver):
+                elog.printo(
+                    "- package %s version %s does not match installed version %s" %
+                    (name, ver, pkg.installed_version))
+                errors += 1
+                continue
 
     if errors == 0:
         elog.printo("No Errors found")
