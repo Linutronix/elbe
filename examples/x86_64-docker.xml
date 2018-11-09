@@ -1,0 +1,39 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>debian docker base image</name>
+		<version>1.0</version>
+		<description>
+			This can be built as variant 'minimal' which builds an image
+			that just contains a bash and its runtime dependencies, man-pages, etc.
+			If built without variant 'minimal' the resulting image contains
+			all that is needed to run apt, but no init daemon.
+
+			These images are designed for running inside a docker container.
+			Use 'docker import docker-stretch.tgz debian-stretch' to load
+			the image into docker and 'docker run -ti debian-stretch /bin/bash'
+			to run a bash inside the image.
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<suite>stretch</suite>
+	</project>
+	<target>
+		<hostname>stretch</hostname>
+		<domain>docker</domain>
+		<passwd>docker</passwd>
+		<debootstrapvariant>minbase</debootstrapvariant>
+		<package>
+			<tar>
+				<name>docker-stretch.tgz</name>
+			</tar>
+		</package>
+		<diet variant='minimal' />
+		<pkg-list variant='minimal'>
+			<pkg>bash</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
