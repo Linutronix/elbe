@@ -50,6 +50,14 @@ def run_command(argv):
                        default="/var/cache/elbe/sources",
                        help="path where src packages are downloaded to.")
 
+    oparser.add_option("--skip-build-sources", action="store_false",
+                       dest="build_sources", default=True,
+                       help="Skip downloading Source Packages")
+
+    oparser.add_option("--skip-build-bin", action="store_false",
+                       dest="build_bin", default=True,
+                       help="Skip downloading binary packages")
+
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
@@ -85,32 +93,33 @@ def run_command(argv):
 
     hostfs.mkdir_p(opt.archive)
 
-    pkglist = get_initvm_pkglist()
-    cache = Cache()
-    cache.open()
-    for pkg in pkglist:
-        try:
-            p = cache[pkg.name]
-            pkgver = p.installed
-            deb = pkgver.fetch_binary(opt.archive,
-                                      ElbeAcquireProgress(cb=None))
-            repo.includedeb(deb, 'main')
-        except ValueError:
-            log.printo("No Package " + pkg.name +
-                       "-" + str(pkg.installed_version))
-        except FetchError:
-            log.printo(
-                "Package " +
-                pkg.name +
-                "-" +
-                pkgver.version +
-                " could not be downloaded")
-        except TypeError:
-            log.printo("Package " +
-                       pkg.name +
-                       "-" +
-                       str(pkg.installed_version) +
-                       " missing name or version")
+    if opt.build_bin:
+        pkglist = get_initvm_pkglist()
+        cache = Cache()
+        cache.open()
+        for pkg in pkglist:
+            try:
+                p = cache[pkg.name]
+                pkgver = p.installed
+                deb = pkgver.fetch_binary(opt.archive,
+                                          ElbeAcquireProgress(cb=None))
+                repo.includedeb(deb, 'main')
+            except ValueError:
+                log.printo("No Package " + pkg.name +
+                           "-" + str(pkg.installed_version))
+            except FetchError:
+                log.printo(
+                    "Package " +
+                    pkg.name +
+                    "-" +
+                    pkgver.version +
+                    " could not be downloaded")
+            except TypeError:
+                log.printo("Package " +
+                           pkg.name +
+                           "-" +
+                           str(pkg.installed_version) +
+                           " missing name or version")
 
     repo.finalize()
 
@@ -124,33 +133,35 @@ def run_command(argv):
     #
     # FIXME: we need a way to add source cdroms later on
     if opt.cdrom_path:
-        if opt.cdrom_device:
-            log.do('umount "%s"' % opt.cdrom_device)
-        sys.exit(0)
+        opt.build_sources = False
 
-    for pkg in pkglist:
-        try:
-            p = cache[pkg.name]
-            pkgver = p.installed
-            dsc = pkgver.fetch_source(opt.srcarchive,
-                                      ElbeAcquireProgress(cb=None),
-                                      unpack=False)
-            repo.include_init_dsc(dsc, 'initvm')
-        except ValueError:
-            log.printo("No Package " + pkg.name +
-                       "-" + str(pkg.installed_version))
-        except FetchError:
-            log.printo(
-                "Package " +
-                pkg.name +
-                "-" +
-                pkgver.version +
-                " could not be downloaded")
-        except TypeError:
-            log.printo("Package " +
-                       pkg.name +
-                       "-" +
-                       str(pkg.installed_version) +
-                       " missing name or version")
+    if opt.build_sources:
+        for pkg in pkglist:
+            try:
+                p = cache[pkg.name]
+                pkgver = p.installed
+                dsc = pkgver.fetch_source(opt.srcarchive,
+                                          ElbeAcquireProgress(cb=None),
+                                          unpack=False)
+                repo.include_init_dsc(dsc, 'initvm')
+            except ValueError:
+                log.printo("No Package " + pkg.name +
+                           "-" + str(pkg.installed_version))
+            except FetchError:
+                log.printo(
+                    "Package " +
+                    pkg.name +
+                    "-" +
+                    pkgver.version +
+                    " could not be downloaded")
+            except TypeError:
+                log.printo("Package " +
+                           pkg.name +
+                           "-" +
+                           str(pkg.installed_version) +
+                           " missing name or version")
 
     repo.finalize()
+
+    if opt.cdrom_device:
+        log.do('umount "%s"' % opt.cdrom_device)
