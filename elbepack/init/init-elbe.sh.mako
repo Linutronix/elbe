@@ -6,6 +6,12 @@
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##
 #! /bin/sh
+<%
+elbe_exe = 'elbe'
+
+if opt.devel:
+    elbe_exe = '/var/cache/elbe/devel/elbe'
+%>
 
 # First unset the variables which are set by the debian-installer
 unset DEBCONF_REDIR DEBCONF_OLD_FD_BASE MENU
@@ -34,6 +40,17 @@ cp vmlinuz /buildenv/var/cache/elbe/installer
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
    sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/etc/init.d/elbe-daemon
    sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/lib/systemd/system/elbe-daemon.service
+% endif
+
+# since elbe fetch_initvm_pkgs generates repo keys,
+# we need entropy in the target
+
+in-target haveged
+
+% if prj.has("mirror/cdrom"):
+  in-target ${elbe_exe} fetch_initvm_pkgs --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 /var/cache/elbe/source.xml
+% else:
+  in-target ${elbe_exe} fetch_initvm_pkgs /var/cache/elbe/source.xml
 % endif
 
 exit 0
