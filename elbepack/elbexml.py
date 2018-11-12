@@ -106,6 +106,19 @@ class ElbeXML(object):
 
         return True
 
+    def get_initvm_primary_mirror(self, cdrompath):
+        if self.xml.has("initvm/mirror/primary_host"):
+            m = self.node("initvm/mirror")
+
+            mirror = m.text("primary_proto") + "://"
+            mirror += m.text("primary_host") + "/"
+            mirror += m.text("primary_path")
+
+        elif self.xml.has("initvm/mirror/cdrom") and cdrompath:
+            mirror = "file://%s" % cdrompath
+
+        return mirror.replace("LOCALMACHINE", "10.0.2.2")
+
     def get_primary_mirror(self, cdrompath):
         if self.prj.has("mirror/primary_host"):
             m = self.prj.node("mirror")
