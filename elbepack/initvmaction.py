@@ -465,6 +465,12 @@ class CreateAction(InitVMAction):
             if opt.nesting:
                 init_opts += ' --nesting'
 
+            if not opt.build_bin:
+                init_opts += ' --skip-build-bin'
+
+            if not opt.build_sources:
+                init_opts += ' --skip-build-source'
+
             if cdrom:
                 system('%s init %s --directory "%s" --cdrom "%s" "%s"' %
                        (elbe_exe, init_opts, initvmdir, cdrom, xmlfile))
