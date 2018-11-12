@@ -393,9 +393,10 @@ class CdromSrcRepo(RepoBase):
                                     mirror)
 
         if init_codename is not None:
-            init_attrs = RepoAttributes(
-                init_codename, "source", [
-                    "main", "main/debian-installer"], mirror)
+            init_attrs = RepoAttributes(init_codename,
+                                        "source",
+                                        ["initvm"],
+                                        mirror)
         else:
             init_attrs = None
 
