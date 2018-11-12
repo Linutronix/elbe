@@ -73,6 +73,20 @@ def run_command(argv):
         help="allow initvm to support nested kvm. "
              "This makes /proc/cpuinfo inside initvm differ per host.")
 
+    oparser.add_option(
+        "--skip-build-bin",
+        action="store_false",
+        dest="build_bin",
+        default=True,
+        help="Skip building Binary Repository CDROM, for exact Reproduction")
+
+    oparser.add_option(
+        "--skip-build-sources",
+        action="store_false",
+        dest="build_sources",
+        default=True,
+        help="Skip building Source CDROM")
+
     (opt, args) = oparser.parse_args(argv)
 
     if not args:

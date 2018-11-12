@@ -11,6 +11,14 @@ elbe_exe = 'elbe'
 
 if opt.devel:
     elbe_exe = '/var/cache/elbe/devel/elbe'
+
+buildrepo_opts = ''
+
+if not opt.build_bin:
+  buildrepo_opts += '--skip-build-bin'
+
+if not opt.build_sources:
+  buildrepo_opts += '--skip-build-source'
 %>
 
 # First unset the variables which are set by the debian-installer
@@ -48,9 +56,9 @@ cp vmlinuz /buildenv/var/cache/elbe/installer
 in-target haveged
 
 % if prj.has("mirror/cdrom"):
-  in-target ${elbe_exe} fetch_initvm_pkgs --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 /var/cache/elbe/source.xml
+  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 /var/cache/elbe/source.xml
 % else:
-  in-target ${elbe_exe} fetch_initvm_pkgs /var/cache/elbe/source.xml
+  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} /var/cache/elbe/source.xml
 % endif
 
 exit 0
