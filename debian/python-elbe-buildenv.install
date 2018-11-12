@@ -3,6 +3,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/buildsysroot.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/chroot.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/db.py
+./usr/lib/python2.*/*-packages/elbepack/commands/fetch_initvm_pkgs.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/genlicence.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/gen_update.py
 ./usr/lib/python2.*/*-packages/elbepack/commands/hdimg.py
