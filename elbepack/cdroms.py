@@ -10,15 +10,12 @@ import os
 from shutil import copyfile
 
 from apt.package import FetchError
-from apt import Cache
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
 from elbepack.repomanager import CdromInitRepo
 from elbepack.aptpkgutils import XMLPackage
-from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem import Filesystem, hostfs
-from elbepack.dump import get_initvm_pkglist
 
 CDROM_SIZE = 640 * 1000 * 1000
 
@@ -86,40 +83,25 @@ def mk_source_cdrom(
                 pkg.installed_version +
                 " could not be downloaded")
 
-    repo.finalize()
+    # elbe fetch_initvm_pkgs has downloaded all sources to
+    # /var/cache/elbe/sources
+    # use walk_files to scan it, and add all dsc files.
+    #
+    # we can not just copy the source repo, like we do
+    # with the bin repo, because the src cdrom can be split
+    # into multiple cdroms
 
-    pkglist = get_initvm_pkglist()
-    cache = Cache()
-    cache.open()
+    initvm_repo = Filesystem('/var/cache/elbe/sources')
 
-    for pkg in pkglist:
-        # Do not include forbidden packages in src cdrom
-        if pkg.name in forbiddenPackages:
+    for _ , dsc_real in initvm_repo.walk_files():
+        if not dsc_real.endswith('.dsc'):
             continue
-        try:
-            pkgver = cache[pkg.name].installed
 
-            dsc = pkgver.fetch_source(
-                '/var/cache/elbe/sources',
-                ElbeAcquireProgress(
-                    cb=None),
-                unpack=False)
-            repo.includedsc(dsc)
-        except ValueError:
-            log.printo("No sources for Package " + pkg.name +
-                       "-" + str(pkg.installed_version))
-        except FetchError:
-            log.printo(
-                "Source for Package " +
-                pkg.name +
-                "-" +
-                pkgver.version +
-                " could not be downloaded")
+        repo.include_init_dsc(dsc_real, 'initvm')
 
     repo.finalize()
 
     return repo.buildiso(os.path.join(target, "src-cdrom.iso"))
-
 
 def mk_binary_cdrom(
         rfs,
@@ -137,7 +119,6 @@ def mk_binary_cdrom(
 
     rfs.mkdir_p('/var/cache/elbe/binaries/added')
     rfs.mkdir_p('/var/cache/elbe/binaries/main')
-    hostfs.mkdir_p('/var/cache/elbe/binaries/main')
 
     if xml is not None:
         mirror = xml.get_primary_mirror(rfs.fname("cdrom"))
@@ -147,39 +128,16 @@ def mk_binary_cdrom(
     repo_path = os.path.join(target, "binrepo")
     target_repo_path = os.path.join(repo_path, 'targetrepo')
 
+    # initvm repo has been built upon initvm creation
+    # just copy it. the repo __init__() afterwards will
+    # not touch the repo config, nor generate a new key.
+    log.do('cp -av /var/cache/elbe/initvm-bin-repo "%s"' % repo_path)
     repo = CdromInitRepo(init_codename, repo_path, log, cdrom_size, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
                                target_repo_path, log, cdrom_size, mirror)
 
     if xml is not None:
-        pkglist = get_initvm_pkglist()
-        cache = Cache()
-        cache.open()
-        for pkg in pkglist:
-            try:
-                p = cache[pkg.name]
-                pkgver = p.installed
-                deb = pkgver.fetch_binary('/var/cache/elbe/binaries/main',
-                                          ElbeAcquireProgress(cb=None))
-                repo.includedeb(deb, 'main')
-            except ValueError:
-                log.printo("No Package " + pkg.name +
-                           "-" + str(pkg.installed_version))
-            except FetchError:
-                log.printo(
-                    "Package " +
-                    pkg.name +
-                    "-" +
-                    pkgver.version +
-                    " could not be downloaded")
-            except TypeError:
-                log.printo("Package " +
-                           pkg.name +
-                           "-" +
-                           str(pkg.installed_version) +
-                           " missing name or version")
-
         cache = get_rpcaptcache(rfs, "aptcache.log", arch)
         for p in xml.node("debootstrappkgs"):
             pkg = XMLPackage(p, arch)
@@ -235,7 +193,6 @@ def mk_binary_cdrom(
                 pkg.installed_version +
                 " missing name or version")
 
-    repo.finalize()
     target_repo.finalize()
 
     # Mark the binary repo with the necessary Files
