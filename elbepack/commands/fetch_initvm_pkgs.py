@@ -36,8 +36,11 @@ def run_command(argv):
                        dest="skip_validation", default=False,
                        help="Skip xml schema validation")
 
-    oparser.add_option("--cdrom-mount-path", dest="cdrom",
+    oparser.add_option("--cdrom-mount-path", dest="cdrom_path",
                        help="path where cdrom is mounted")
+
+    oparser.add_option("--cdrom-device", dest="cdrom_device",
+                       help="cdrom device, in case it has to be mounted")
 
     oparser.add_option("--apt-archive", dest="archive",
                        default="/var/cache/elbe/binaries/main",
@@ -62,12 +65,24 @@ def run_command(argv):
         sys.exit(20)
 
     log = StdoutLog()
-    mirror = xml.get_initvm_primary_mirror(opt.cdrom)
+
+    if opt.cdrom_path:
+        if opt.cdrom_device:
+            log.do('mount "%s" "%s"' % (opt.cdrom_device, opt.cdrom_path))
+
+        # a cdrom build is identified by the cdrom option
+        # the xml file that is copied into the initvm
+        # by the initrd does not have the cdrom tags setup.
+        mirror = "file://%s" % opt.cdrom_path
+    else:
+        mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
+
     init_codename = xml.get_initvm_codename()
 
     # Binary Repo
     #
     repo = CdromInitRepo(init_codename, opt.binrepo, log, 0, mirror)
+
     hostfs.mkdir_p(opt.archive)
 
     pkglist = get_initvm_pkglist()
@@ -103,6 +118,15 @@ def run_command(argv):
     #
     repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, log, 0, mirror)
     hostfs.mkdir_p(opt.srcarchive)
+
+    # a cdrom build does not have sources
+    # skip adding packages to the source repo
+    #
+    # FIXME: we need a way to add source cdroms later on
+    if opt.cdrom_path:
+        if opt.cdrom_device:
+            log.do('umount "%s"' % opt.cdrom_device)
+        sys.exit(0)
 
     for pkg in pkglist:
         try:
