@@ -111,7 +111,7 @@ def run_command(argv):
             dsc = pkgver.fetch_source(opt.srcarchive,
                                       ElbeAcquireProgress(cb=None),
                                       unpack=False)
-            repo.includedsc(dsc, 'main')
+            repo.include_init_dsc(dsc, 'initvm')
         except ValueError:
             log.printo("No Package " + pkg.name +
                        "-" + str(pkg.installed_version))
