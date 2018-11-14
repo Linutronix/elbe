@@ -57,11 +57,13 @@ class HashValidator(object):
 
     def download_and_validate_file(self, upstream_fname, local_fname):
         url = self.base_url + upstream_fname
+        rf = None
         try:
             rf = urlopen(url, None, 10)
             with open(local_fname, "w") as wf:
                 copyfileobj(rf, wf)
         finally:
-            rf.close()
+            if rf is not None:
+                rf.close()
 
         self.validate_file(upstream_fname, local_fname)
