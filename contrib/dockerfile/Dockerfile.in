@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # This Dockefile generate a image for the elbe buildsystem
-FROM dramaturg/debian-systemd
+FROM elbeproject/debian-stretch:latest
 
 USER root
 
