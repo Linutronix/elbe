@@ -37,6 +37,13 @@
 		<passwd>foo</passwd>
 		<!-- run a getty here: -->
 		<console>ttyO0,115200</console>
+		<!-- speed up build with debootstrap variant minbase.
+		Using minbase here and explicit install of systemd later
+		on speed up the installation process, since it reduces
+		the emulated part (run in QEMU) of the installation
+		significant.
+		-->
+		<debootstrapvariant>minbase</debootstrapvariant>
 		<package>
 			<!-- build a tarball of the target image -->
 			<tar>
@@ -107,6 +114,11 @@
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
 			<pkg>busybox</pkg>
+			<!--
+			    explicit install of systemd, since debootstrap
+			    variant minbase has no default init system.
+			-->
+			<pkg>systemd</pkg>
 			<!-- install a package from backports -->
 			<pkg pin="stretch-backports">btrfs-progs</pkg>
 			<!-- install the libgpio built by pbuilder  -->
