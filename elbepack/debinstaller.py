@@ -100,6 +100,7 @@ def setup_apt_keyring(gpg_home, keyring_fname):
 
     gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
                   '--trust-model always --no-default-keyring ' \
+                  '--batch ' \
                   '--homedir "%s"' % (ring_path, gpg_home)
 
     trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
