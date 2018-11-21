@@ -116,11 +116,9 @@ def setup_apt_keyring(gpg_home, keyring_fname):
 
 def download(url, local_fname):
     try:
-        rf = urlopen(url, None, 10)
-        with open(local_fname, "w") as wf:
-            copyfileobj(rf, wf)
-    finally:
-        rf.close()
+        system('wget -O "%s" "%s"' % (local_fname, url))
+    except CommandError:
+        raise NoKinitrdException('Failed to download %s' % url)
 
 
 def download_release(tmp, base_url):

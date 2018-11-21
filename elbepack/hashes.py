@@ -4,21 +4,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import hashlib
-from shutil import copyfileobj
-
-# different module names in python 2 and 3
-try:
-    import urllib.request
-
-    # when running inside pylint this import fails
-    # disable no-member here
-    #
-    # pylint: disable=no-member
-
-    urlopen = urllib.request.urlopen
-except ImportError:
-    import urllib2
-    urlopen = urllib2.urlopen
+from elbepack.shellhelper import system, CommandError
 
 
 class HashValidationFailed(Exception):
@@ -57,13 +43,9 @@ class HashValidator(object):
 
     def download_and_validate_file(self, upstream_fname, local_fname):
         url = self.base_url + upstream_fname
-        rf = None
         try:
-            rf = urlopen(url, None, 10)
-            with open(local_fname, "w") as wf:
-                copyfileobj(rf, wf)
-        finally:
-            if rf is not None:
-                rf.close()
+            system('wget -O "%s" "%s"' % (local_fname, url))
+        except CommandError:
+            raise HashValidationFailed('Failed to download %s' % url)
 
         self.validate_file(upstream_fname, local_fname)
