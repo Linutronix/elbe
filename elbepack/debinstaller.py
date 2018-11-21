@@ -138,8 +138,8 @@ def download_release(tmp, base_url):
     # open downloaded plaintext file, and
     # use the urlopen object of the Release.gpg
     # directtly.
+    sig = urlopen(base_url + 'Release.gpg', None, 10)
     try:
-        sig = urlopen(base_url + 'Release.gpg', None, 10)
         with tmp.open("Release", "r") as signed:
 
             overall_status = OverallStatus()
