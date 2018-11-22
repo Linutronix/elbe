@@ -5,8 +5,16 @@
 ##
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##
-MEMSIZE?=1024
-SMP?=`nproc`
+<%
+import multiprocessing
+from elbepack.filesystem import size_to_int
+
+max_cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
+memory = size_to_int(prj.text('mem', default=defs, key='mem')) / 1024 / 1024
+%>
+
+MEMSIZE?=${memory}
+SMP?=$$((`nproc` > ${max_cpus} ? ${max_cpus} : `nproc`))
 INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
 
 # this is a workaround for

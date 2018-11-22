@@ -358,6 +358,17 @@
           </documentation>
         </annotation>
       </element>
+      <element name="max-cpus" type="integer" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+	    The number of cpus used by the initvm is clamped to this value.
+	    This shall protect the initvm from running out of memory, when
+	    running on machines with large numbers of cores.
+	    When increasing this value, be sure to also increase mem and
+	    maybe add some swap.
+          </documentation>
+        </annotation>
+      </element>
       <element name="img" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
