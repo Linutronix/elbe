@@ -1,0 +1,68 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-testing jessie main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-testing jessie main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe-testing/elbe-repo.pub
+					</key>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-common jessie main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-common jessie main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe-common/elbe-repo.pub
+					</key>
+				</url>
+				<url>
+					<binary>
+						http://ftp.de.debian.org/debian jessie-backports main
+					</binary>
+					<source>
+						http://ftp.de.debian.org/debian jessie-backports main
+					</source>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>jessie</suite>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+			<pkg pin="jessie-backports">debootstrap</pkg>
+			<pkg pin="jessie-backports">qemu-user-static</pkg>
+		</pkg-list>
+		<preseed>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+		</preseed>
+		<size>80G</size>
+		<mem>2GiB</mem>
+		<swap-size>20GiB</swap-size>
+		<max-cpus>32</max-cpus>
+		<img>qcow2</img>
+		<portforwarding>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>22</buildenv>
+				<host>5022</host>
+			</forward>
+			<forward>
+				<proto>tcp</proto>
+				<buildenv>7588</buildenv>
+				<host>7587</host>
+			</forward>
+		</portforwarding>
+	</initvm>
+</ns0:RootFileSystem>
