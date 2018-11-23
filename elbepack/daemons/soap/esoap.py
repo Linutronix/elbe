@@ -17,7 +17,7 @@ import sys
 from tempfile import NamedTemporaryFile
 
 from elbepack.shellhelper import system, command_out
-from elbepack.version import elbe_version
+from elbepack.version import elbe_version, is_devel
 from elbepack.elbexml import ValidationMode
 from elbepack.filesystem import hostfs
 
@@ -69,6 +69,11 @@ class ESoap (ServiceBase):
     @soap_faults
     @authenticated_admin
     def install_elbe_version(self, version, pkglist):
+        if is_devel:
+            return SoapCmdReply(10,
+                                'Initvm is in devel mode: installing another\n'
+                                'elbe version will not have any effect.\n')
+
         pkgs = ['"%s=%s*"' % (p, version) for p in pkglist]
 
         # Prevent, that elbe daemon is restarted by the
