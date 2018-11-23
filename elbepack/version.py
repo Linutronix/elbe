@@ -11,6 +11,13 @@ from elbepack.directories import pack_dir
 elbe_version = "2.9.13"
 running_os = linux_distribution()
 
+elbe_initvm_packagelist = ['python-elbe-buildenv',
+                           'elbe-soap',
+                           'python-elbe-common',
+                           'elbe-daemon',
+                           'elbe-schema',
+                           'python-elbe-bin']
+
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
     is_devel = False
 else:

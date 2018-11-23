@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from spyne.model.complex import ComplexModel
-from spyne.model.primitive import Unicode, DateTime
+from spyne.model.primitive import Unicode, DateTime, Integer
 
 
 class SoapProject (ComplexModel):
@@ -34,3 +34,15 @@ class SoapFile (ComplexModel):
     def __init__(self, fi):
         self.name = fi.name
         self.description = fi.description
+
+
+class SoapCmdReply (ComplexModel):
+    __namespace__ = 'soap'
+
+    ret = Integer()
+    out = Unicode()
+
+    def __init__(self, ret, out):
+        # pylint: disable=super-init-not-called
+        self.ret = ret
+        self.out = out

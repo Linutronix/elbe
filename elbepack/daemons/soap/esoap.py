@@ -16,12 +16,13 @@ import sys
 
 from tempfile import NamedTemporaryFile
 
-from elbepack.shellhelper import system
+from elbepack.shellhelper import system, command_out
 from elbepack.version import elbe_version
 from elbepack.elbexml import ValidationMode
+from elbepack.filesystem import hostfs
 
 from .faults import soap_faults
-from .datatypes import SoapProject, SoapFile
+from .datatypes import SoapProject, SoapFile, SoapCmdReply
 from .authentication import authenticated_admin, authenticated_uid
 
 try:
@@ -63,6 +64,33 @@ class ESoap (ServiceBase):
     @authenticated_admin
     def list_users(self):
         return [u.name for u in self.app.pm.db.list_users()]
+
+    @rpc(String, String(max_occurs='unbounded'), _returns=SoapCmdReply)
+    @soap_faults
+    @authenticated_admin
+    def install_elbe_version(self, version, pkglist):
+        pkgs = ['"%s=%s*"' % (p, version) for p in pkglist]
+
+        # Prevent, that elbe daemon is restarted by the
+        # prerm/postinst scripts.
+        # elbe daemon does it itself, because cherrypy
+        # notices that.
+        hostfs.write_file("usr/sbin/policy-rc.d",
+                          0o755, "#!/bin/sh\nexit 101\n")
+        try:
+            env = {'LANG': 'C',
+                   'LANGUAGE': 'C',
+                   'LC_ALL': 'C',
+                   'DEBIAN_FRONTEND': 'noninteractive',
+                   'DEBCONF_NONINTERACTIVE_SEEN': 'true'}
+
+            cmd = 'apt-get install -y --force-yes %s' % ' '.join(pkgs)
+
+            ret, out = command_out(cmd, env_add=env)
+        finally:
+            hostfs.remove('usr/sbin/policy-rc.d')
+
+        return SoapCmdReply(ret, out)
 
     @rpc(String,String,String,String,Boolean)
     @soap_faults
