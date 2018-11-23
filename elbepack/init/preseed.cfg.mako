@@ -6,6 +6,7 @@
 ## SPDX-License-Identifier: GPL-3.0-or-later
 ##
 <%
+  from elbepack.version import elbe_version, elbe_initvm_packagelist
   from elbepack.filesystem import size_to_int
   swap = size_to_int(prj.text('swap-size', default=defs, key='swap-size')) / 1024 / 1024
 %>
@@ -135,8 +136,13 @@ apt-mirror-setup apt-setup/use_mirror boolean false
         return pkgname + '/' + pkgrel
 %>
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string rng-tools btrfs-tools openssh-client\
- debathena-transform-lighttpd elbe-soap python-elbe-buildenv\
+d-i pkgsel/include string rng-tools \
+                          btrfs-tools \
+                          openssh-client \
+                          debathena-transform-lighttpd \
+% for p in elbe_initvm_packagelist:
+                          ${p}=${elbe_version}* \
+% endfor
 % for n in pkgs:
 % if n.tag == "pkg":
  ${pkg2preseed (n)}\
