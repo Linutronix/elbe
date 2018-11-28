@@ -16,6 +16,7 @@ from elbepack.repomanager import CdromBinRepo
 from elbepack.repomanager import CdromInitRepo
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.filesystem import Filesystem, hostfs
+from elbepack.shellhelper import CommandError
 
 CDROM_SIZE = 640 * 1000 * 1000
 
@@ -131,7 +132,18 @@ def mk_binary_cdrom(
     # initvm repo has been built upon initvm creation
     # just copy it. the repo __init__() afterwards will
     # not touch the repo config, nor generate a new key.
-    log.do('cp -av /var/cache/elbe/initvm-bin-repo "%s"' % repo_path)
+    try:
+        log.do('cp -av /var/cache/elbe/initvm-bin-repo "%s"' % repo_path)
+    except CommandError:
+        # When /var/cache/elbe/initvm-bin-repo has not been created
+        # (because the initvm install was an old version or somthing,
+        #  log an error, and continue with an empty directory.
+        log.printo('ERROR: /var/cache/elbe/initvm-bin-repo does not exist')
+        log.printo('       The generated CDROM will not contain initvm pkgs')
+        log.printo('       This happened because the initvm was probably')
+        log.printo('       generated with --skip-build-bin')
+        log.do('mkdir -p "%s"' % repo_path)
+
     repo = CdromInitRepo(init_codename, repo_path, log, cdrom_size, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
