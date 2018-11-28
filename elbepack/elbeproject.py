@@ -77,16 +77,16 @@ def gen_sdk_scripts(triplet, prj_name, prj_version, builddir, sdkpath):
     prj_version = prj_version.replace(" ", "_")
 
     # generate the setup script
-    sdkvalues = { 'sdk_arch': 'x86_64',
-                  'sdk_gcc_ver': '',
-                  'sdk_path': '/opt/elbe-sdk-%s-%s-%s' % (triplet,
-                                                          prj_name,
-                                                          prj_version),
-                  'sdk_ext_path': '~/elbe-sdk',
-                  'real_multimach_target_sys': triplet,
-                  'sdk_title': 'ELBE %s' % prj_name,
-                  'sdk_version': prj_version,
-                }
+    sdkvalues = {'sdk_arch': 'x86_64',
+                 'sdk_gcc_ver': '',
+                 'sdk_path': '/opt/elbe-sdk-%s-%s-%s' % (triplet,
+                                                         prj_name,
+                                                         prj_version),
+                 'sdk_ext_path': '~/elbe-sdk',
+                 'real_multimach_target_sys': triplet,
+                 'sdk_title': 'ELBE %s' % prj_name,
+                 'sdk_version': prj_version}
+
     sdkname = 'setup-elbe-sdk-%s-%s-%s.sh' % (triplet, prj_name, prj_version)
     write_pack_template(os.path.join(builddir, sdkname),
                         'toolchain-shar-extract.sh.mako',
@@ -234,7 +234,6 @@ class ElbeProject (object):
 
         return paths
 
-
     def build_sysroot(self):
 
         self.log.do('rm -rf %s; mkdir "%s"' % (self.sysrootpath,
@@ -264,8 +263,9 @@ class ElbeProject (object):
                 raise AptCacheUpdateError(e)
 
             try:
-                self.get_rpcaptcache(env=self.sysrootenv).mark_install_devpkgs(set(ignore_pkgs),
-                    set(ignore_dev_pkgs))
+                self.get_rpcaptcache(
+                        env=self.sysrootenv).mark_install_devpkgs(
+                                set(ignore_pkgs), set(ignore_dev_pkgs))
             except SystemError as e:
                 self.log.printo("mark install devpkgs failed: %s" % str(e))
             try:
@@ -295,7 +295,6 @@ class ElbeProject (object):
         self.log.do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
                     (self.builddir, self.sysrootpath, sysrootfilelist))
 
-
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
 
@@ -309,7 +308,7 @@ class ElbeProject (object):
         sdktargetpath = os.path.join(self.sdkpath, "sysroots", "target")
         self.log.do("mkdir -p %s" % sdktargetpath)
         self.log.do("tar xJf %s/sysroot.tar.xz -C %s" % (self.builddir,
-                                                          sdktargetpath))
+                                                         sdktargetpath))
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
         self.log.do('mkdir -p "%s"' % hostsysrootpath)
@@ -333,13 +332,12 @@ class ElbeProject (object):
         self.log.do("cd %s; chmod +x %s" % (self.builddir, n))
         self.log.do("cd %s; rm sdk.txz" % self.builddir)
 
-
     def pbuild(self, p):
         self.pdebuild_init()
         src_path = os.path.join(self.builddir, "pdebuilder", "current")
 
         src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
-        self.log.printo ("retrieve pbuild sources: %s" % src_uri)
+        self.log.printo("retrieve pbuild sources: %s" % src_uri)
         if p.tag == 'git':
             self.log.do("git clone %s %s" % (src_uri, src_path))
             try:
@@ -356,8 +354,8 @@ class ElbeProject (object):
         # pdebuild_build(-1) means use all cpus
         self.pdebuild_build(cpuset=-1)
 
-
-    def build_cdroms(self, build_bin=True, build_sources=False, cdrom_size=None):
+    def build_cdroms(self, build_bin=True,
+                     build_sources=False, cdrom_size=None):
         self.repo_images = []
 
         elog = ASCIIDocLog(self.validationpath, True)
@@ -367,13 +365,14 @@ class ElbeProject (object):
         if os.path.exists(self.sysrootpath):
             sysrootstr = "(including sysroot packages)"
             env = BuildEnv(self.xml, self.log, self.sysrootpath,
-                    build_sources=build_sources, clean=False)
+                           build_sources=build_sources, clean=False)
         else:
             env = BuildEnv(self.xml, self.log, self.chrootpath,
-                    build_sources=build_sources, clean=False)
+                           build_sources=build_sources, clean=False)
 
-        # ensure the /etc/apt/sources.list is created according to buil_sources,
-        # build_bin flag, ensure to reopen it with the new 'sources.list'
+        # ensure the /etc/apt/sources.list is created according to
+        # buil_sources, # build_bin flag, ensure to reopen it with
+        # the new 'sources.list'
         with env:
             env.seed_etc()
 
@@ -381,7 +380,6 @@ class ElbeProject (object):
 
         with env:
             init_codename = self.xml.get_initvm_codename()
-
 
             if build_bin:
                 elog.h1("Binary CD %s" % sysrootstr)
@@ -627,7 +625,7 @@ class ElbeProject (object):
         # this might be useful, when things like java dont
         # work with multithreading
         #
-        if cpuset!=-1:
+        if cpuset != -1:
             cpuset_cmd = 'taskset %d ' % cpuset
         else:
             # cpuset == -1 means empty cpuset_cmd
