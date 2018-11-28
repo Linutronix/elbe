@@ -272,7 +272,19 @@ class RepoBase(object):
         try:
             self._includedsc(path, self.repo_attr.codename, component)
         except CommandError as ce:
-            if force:
+            if ce.returncode == 251:
+                # 251 is -5 (RET_ERROR_GPGME in reprepro source)
+                #
+                # gnupg2_2.1.18-8~deb9u3.dsc is signed using EdDSA
+                # jessies gpg version does not support this.
+                # expect more packages signed with EdDSA soon.
+                #
+                # copy the dsc into the cdrom root,
+                # when reprepro fails to insert it.
+                self.log.printo('Unable to verify dsc "%s":' % path)
+                self.log.printo('unsupported signature algorithm')
+                self.log.do('cp -av "%s" "%s"' % (path, self.fs.path))
+            elif force:
                 # Including dsc did not work.
                 # Maybe we have the same Version with a
                 # different md5 already.
