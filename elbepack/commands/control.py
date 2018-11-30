@@ -143,6 +143,8 @@ def run_command(argv):
                   "elbe v%s that is used on this machine. Please install same "
                   "versions of elbe in initvm and on your machine." % (
                       v_server, elbe_version), file=sys.stderr)
+            print("To install elbe v%s into the initvm use "
+                  "'elbe control install_elbe_version'" % elbe_version)
 
             if not opt.ignore_version:
                 sys.exit(20)
