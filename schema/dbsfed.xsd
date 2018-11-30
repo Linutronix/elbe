@@ -744,7 +744,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="domain" type="rfs:string" minOccurs="1" maxOccurs="1">
+      <element name="domain" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             domainname of the network the target system is part of

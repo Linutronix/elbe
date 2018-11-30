@@ -283,12 +283,14 @@ class BuildEnv (object):
             (passwd, passwd))
 
         hostname = self.xml.text("target/hostname")
-        domain = self.xml.text("target/domain")
+        fqdn = hostname
+        if self.xml.has("target/domain"):
+            fqdn = ("%s.%s" % (hostname, self.xml.text("target/domain")))
 
         self.log.chroot(
             self.rfs.path,
-            """/bin/sh -c 'echo "127.0.0.1 %s.%s %s elbe-daemon" >> """
-            """/etc/hosts'""" % (hostname, domain, hostname))
+            """/bin/sh -c 'echo "127.0.1.1 %s %s elbe-daemon" >> """
+            """/etc/hosts'""" % (fqdn,hostname))
 
         self.log.chroot(
             self.rfs.path,
@@ -296,8 +298,8 @@ class BuildEnv (object):
 
         self.log.chroot(
             self.rfs.path,
-            """/bin/sh -c 'echo "%s.%s" > """
-            """/etc/mailname'""" % (hostname, domain))
+            """/bin/sh -c 'echo "%s" > """
+            """/etc/mailname'""" % (fqdn))
 
         if self.xml.has("target/console"):
             serial_con, serial_baud = self.xml.text(
