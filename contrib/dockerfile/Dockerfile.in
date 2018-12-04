@@ -9,6 +9,7 @@
 FROM elbeproject/debian-stretch:latest
 
 USER root
+ENV DEBIAN_FRONTEND noninteractive
 
 # use a sources.list including security and backports
 RUN echo "deb http://ftp.de.debian.org/debian stretch main" > /etc/apt/sources.list; \
@@ -16,8 +17,7 @@ RUN echo "deb http://ftp.de.debian.org/debian stretch main" > /etc/apt/sources.l
     echo "deb http://security.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
 
 # update, upgrade and install elbe runtime-dependencies
-RUN export DEBIAN_FRONTEND noninteractive ;\
-    apt-get update -y ;\
+RUN apt-get update -y ;\
     apt-get install -y --no-install-recommends \
                     -o Dpkg::Options::="--force-confnew" \
         systemd \
@@ -52,14 +52,11 @@ ENV LC_ALL en_US.UTF-8
 RUN apt-add-repository 'deb http://debian.linutronix.de/elbe-testing stretch main'
 RUN wget http://debian.linutronix.de/elbe-testing/elbe-repo.pub
 RUN apt-key add elbe-repo.pub
-RUN export DEBIAN_FRONTEND noninteractive ;\
-    apt-get update -y
-RUN export DEBIAN_FRONTEND noninteractive ;\
-    apt-get install -y --no-install-recommends \
+RUN apt-get update -y
+RUN apt-get install -y --no-install-recommends \
         elbe \
         elbe-doc
-RUN export DEBIAN_FRONTEND noninteractive ;\
-    apt-get clean -y
+RUN apt-get clean -y
 RUN rm -rf /var/lib/apt/lists/*
 
 # create elbe user
