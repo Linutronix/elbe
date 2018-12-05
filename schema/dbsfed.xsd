@@ -1929,8 +1929,30 @@
       </documentation>
     </annotation>
     <choice>
+      <element name="extract_partition" type="rfs:extract_partition" minOccurs="0">
+        <annotation>
+          <documentation>
+            Extract a Partition from the currently mounted loop device.
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
+
+  <complexType name="extract_partition">
+    <annotation>
+      <documentation>
+        Describe the partition to be extracted (nr) and the destination filename.
+	The value of the tag describes the filename of the generated Imagefile.
+	The Image is per default compressed with gzip afterwards.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="part" type="integer" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
 
   <complexType name="addgroup">
     <annotation>

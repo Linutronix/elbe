@@ -551,6 +551,32 @@ class LosetupAction(FinetuningAction):
 FinetuningAction.register(LosetupAction)
 
 
+class ExtractPartitionAction(ImageFinetuningAction):
+
+    tag = 'extract_partition'
+
+    def __init__(self, node):
+        ImageFinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<extract_partition> may only be "
+                                  "used in <mount_drive>")
+
+    def execute_img(self, log, _buildenv, target, builddir, loop_dev):
+        part_nr = self.node.et.attrib['part']
+        imgname = os.path.join(builddir, self.node.et.text)
+
+        cmd = 'dd if=%sp%s of="%s"' % (loop_dev, part_nr, imgname)
+
+        log.do(cmd)
+
+        target.images.append(self.node.et.text)
+        target.image_packers[self.node.et.text] = ('gzip -f', '.gz')
+
+
+FinetuningAction.register(ExtractPartitionAction)
+
+
 def do_finetuning(xml, log, buildenv, target):
 
     if not xml.has('target/finetuning'):
