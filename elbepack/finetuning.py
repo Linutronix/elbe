@@ -472,6 +472,41 @@ class UpdatedAction(FinetuningAction):
 FinetuningAction.register(UpdatedAction)
 
 
+class ArtifactAction(FinetuningAction):
+
+    tag = 'artifact'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, target):
+        target.images.append('target' + self.node.et.text)
+
+    def execute_prj(self, _log, _buildenv, target, _builddir):
+        target.images.append(self.node.et.text)
+
+
+FinetuningAction.register(ArtifactAction)
+
+
+class RmArtifactAction(FinetuningAction):
+
+    tag = 'rm_artifact'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<rm_artifact> may only be "
+                                  "used in <project-finetuning>")
+
+    def execute_prj(self, _log, _buildenv, target, _builddir):
+        target.images.remove(self.node.et.text)
+
+
+FinetuningAction.register(ArtifactAction)
+
+
 def do_finetuning(xml, log, buildenv, target):
 
     if not xml.has('target/finetuning'):

@@ -1843,6 +1843,14 @@
           </documentation>
         </annotation>
       </element>
+      <element name="artifact" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            make the named file an artifact. The path is relative to the
+            target root.
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
@@ -1870,6 +1878,21 @@
         <annotation>
           <documentation>
             move a file from the target to the project directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="artifact" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            make the named file an artifact. The path is relative
+            to the project directory.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="rm_artifact" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            remove a project artifact from the list of artifacts.
           </documentation>
         </annotation>
       </element>
