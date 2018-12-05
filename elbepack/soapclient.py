@@ -95,7 +95,7 @@ class ElbeSoapClient(object):
         while True:
             try:
                 ret = self.service.get_file(builddir, filename, part)
-            except BadStatusLine:
+            except BadStatusLine as e:
                 retry = retry - 1
 
                 print("get_file part %d failed, retry %d times" % (part, retry),
