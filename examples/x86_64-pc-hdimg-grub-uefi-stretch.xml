@@ -76,5 +76,11 @@
 			<pkg>grub-efi-amd64</pkg>
 			<pkg>linux-image-amd64</pkg>
 		</pkg-list>
+		<project-finetuning>
+			<losetup img="sda.img">
+				<extract_partition part="1">sda1.img</extract_partition>
+				<extract_partition part="2">sda2.img</extract_partition>
+			</losetup>
+		</project-finetuning>
 	</target>
 </ns0:RootFileSystem>
