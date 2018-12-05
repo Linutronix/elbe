@@ -289,6 +289,7 @@ class TargetFs(ChRootFilesystem):
         self.log = log
         self.xml = xml
         self.images = []
+        self.image_packers = {}
 
     def write_fstab(self, xml):
         if not self.exists("etc"):
@@ -312,6 +313,9 @@ class TargetFs(ChRootFilesystem):
             self,
             grub_version,
             grub_fw_type)
+
+        for i in self.images:
+            self.image_packers[i] = ('gzip -f', '.gz')
 
         if self.xml.has("target/package/tar"):
             targz_name = self.xml.text("target/package/tar/name")
@@ -360,6 +364,16 @@ class TargetFs(ChRootFilesystem):
                 self.images.append(sfs_name)
             except CommandError as e:
                 # error was logged; continue
+                pass
+
+    def pack_images(self, builddir):
+        for img, (packer, ending) in self.image_packers.items():
+            self.images.remove(img)
+            try:
+                self.log.do('%s "%s"' % (packer, os.path.join(builddir, img)))
+                # only add packed image when no exception is thrown
+                self.images.append(img + ending)
+            except CommandError:
                 pass
 
 

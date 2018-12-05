@@ -664,13 +664,6 @@ def do_hdimg(outf, xml, target, rfs, grub_version, grub_fw_type=None):
         if (i.tag == "msdoshd") or (i.tag == "gpthd"):
             add_binary_blob(outf, i, target)
 
-    gz_img_files = []
-    for i in set(img_files):
-        try:
-            outf.do('gzip -f "%s"' % os.path.join(target, i))
-            # only add gz to gz_img_files, if no exception is thrown
-            gz_img_files.append(i + ".gz")
-        except CommandError:
-            pass
-
-    return gz_img_files
+    # use set() to remove duplicates, but
+    # return a list
+    return list(set(img_files))

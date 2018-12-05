@@ -585,6 +585,8 @@ class ElbeProject (object):
                           self.targetfs,
                           self.builddir)
 
+        self.targetfs.pack_images(self.builddir)
+
         os.system('cat "%s"' % self.validationpath)
 
     def pdebuild_init(self):
