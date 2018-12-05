@@ -103,7 +103,18 @@
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
+			<artifact>usr/lib/u-boot/am335x_boneblack/MLO</artifact>
+			<artifact>usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb</artifact>
 		</finetuning>
+		<project-finetuning>
+			<losetup img="sdcard.img">
+				<extract_partition part="1">scard1.img</extract_partition>
+				<extract_partition part="2">scard2.img</extract_partition>
+			</losetup>
+			<rm_artifact>target/usr/lib/u-boot/am335x_boneblack/MLO</rm_artifact>
+			<t2p_mv path="/usr/lib/u-boot/am335x_boneblack/MLO">MLO</t2p_mv>
+			<artifact>MLO</artifact>
+		</project-finetuning>
 		<pkg-list>
 			<pkg>u-boot-omap</pkg>
 			<pkg>linux-image-armmp</pkg>
