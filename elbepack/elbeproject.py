@@ -37,6 +37,7 @@ from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
 from elbepack.pkgutils import extract_pkg
 from elbepack.templates import write_pack_template
+from elbepack.finetuning import do_prj_finetuning
 
 
 class IncompatibleArchitectureException(Exception):
@@ -577,6 +578,12 @@ class ElbeProject (object):
                 self.xml.text("project/version"),
                 self.xml.text("project/name")),
                 allow_fail=True)
+
+        do_prj_finetuning(self.xml,
+                          self.log,
+                          self.buildenv,
+                          self.targetfs,
+                          self.builddir)
 
         os.system('cat "%s"' % self.validationpath)
 

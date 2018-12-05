@@ -40,6 +40,10 @@ class FinetuningAction(object):
     def execute(self, _log, _buildenv, _target):
         raise NotImplementedError('execute() not implemented')
 
+    def execute_prj(self, log, buildenv, target, _builddir):
+        self.execute(log, buildenv, target)
+
+
 class RmAction(FinetuningAction):
 
     tag = 'rm'
@@ -481,3 +485,18 @@ def do_finetuning(xml, log, buildenv, target):
             print("Unimplemented finetuning action '%s'" % (i.et.tag))
         except CommandError:
             log.printo("Finetuning Error, trying to continue anyways")
+
+
+def do_prj_finetuning(xml, log, buildenv, target, builddir):
+
+    if not xml.has('target/project-finetuning'):
+        return
+
+    for i in xml.node('target/project-finetuning'):
+        try:
+            action = FinetuningAction(i)
+            action.execute_prj(log, buildenv, target, builddir)
+        except KeyError:
+            print("Unimplemented project-finetuning action '%s'" % (i.et.tag))
+        except CommandError:
+            log.printo("ProjectFinetuning Error, trying to continue anyways")

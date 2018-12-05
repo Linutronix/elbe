@@ -841,6 +841,17 @@
           </documentation>
         </annotation>
       </element>
+      <element name="project-finetuning" type="rfs:project-finetuning" minOccurs="0">
+        <annotation>
+          <documentation>
+            apply the given commands to the project directory, after images have
+            been generated. Currently supported use-cases are:
+              * extract partition from image and mark as build artifact.
+              * mark files as build artifacts
+              * mv files from target directory to project directory
+          </documentation>
+        </annotation>
+      </element>
       <element name="pbuilder" type="rfs:pbuilder" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1829,6 +1840,36 @@
           <documentation>
             include the base debian repository in the target rfs to enable
             downgrades via elbe-updated
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
+
+  <complexType name="project-finetuning">
+    <annotation>
+      <documentation>
+         container for project-finetuning commands; these commands are executed in the
+         project directory, after the images have been generated.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:project-action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute ref="xml:base"/>
+  </complexType>
+
+  <group name="project-action">
+    <annotation>
+      <documentation>
+        definition of finetuning commands
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="t2p_mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file from the target to the project directory
           </documentation>
         </annotation>
       </element>
