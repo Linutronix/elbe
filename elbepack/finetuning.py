@@ -44,6 +44,21 @@ class FinetuningAction(object):
         self.execute(log, buildenv, target)
 
 
+class ImageFinetuningAction(FinetuningAction):
+
+    tag = 'image_finetuning'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<%s> may only be "
+                                  "used in <image-finetuning>" % self.tag)
+
+    def execute_img(self, _log, _buildenv, _target, _builddir, _loop_dev):
+        raise NotImplementedError('execute_img() not implemented')
+
+
 class RmAction(FinetuningAction):
 
     tag = 'rm'
@@ -505,6 +520,35 @@ class RmArtifactAction(FinetuningAction):
 
 
 FinetuningAction.register(ArtifactAction)
+
+
+class LosetupAction(FinetuningAction):
+
+    tag = 'losetup'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<losetup> may only be "
+                                  "used in <project-finetuning>")
+
+    def execute_prj(self, log, buildenv, target, builddir):
+        imgname = self.node.et.attrib['img']
+        imgpath = os.path.join(builddir, imgname)
+        cmd = 'losetup --find --show --partscan "%s"' % imgpath
+
+        loop_dev = log.get_command_out(cmd).strip()
+        try:
+            for i in self.node:
+                action = ImageFinetuningAction(i)
+                action.execute_img(log, buildenv, target, builddir, loop_dev)
+        finally:
+            cmd = 'losetup --detach "%s"' % loop_dev
+            log.do(cmd)
+
+
+FinetuningAction.register(LosetupAction)
 
 
 def do_finetuning(xml, log, buildenv, target):

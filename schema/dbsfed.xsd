@@ -1896,6 +1896,39 @@
           </documentation>
         </annotation>
       </element>
+      <element name="losetup" type="rfs:losetup" minOccurs="0">
+        <annotation>
+          <documentation>
+            Setup the loop device with an image file. This node wraps image_finetuning
+            Actions, which access the loop device then.
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
+
+  <complexType name="losetup">
+    <annotation>
+      <documentation>
+         Container for image_finetuning commands; these commands are executed in the
+         project directory, while a drive image is setup as a loop device.
+         The loop device id is passed to the individual actions.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:image_action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute ref="xml:base"/>
+    <attribute name="img" type="string" use="required" />
+  </complexType>
+
+  <group name="image_action">
+    <annotation>
+      <documentation>
+        definition of image finetuning commands
+      </documentation>
+    </annotation>
+    <choice>
     </choice>
   </group>
 
