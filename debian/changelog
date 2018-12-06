@@ -1,3 +1,17 @@
+elbe (2.9.14) unstable; urgency=medium
+
+  * implement project-finetuning to allow partition extraction
+  * allow installing a specific elbe version to the initvm via soap
+  * build src-cd: workaround for packages signed with EdDSA
+  * improve elbe to work on machines with many cores
+  * installer download: improve error handling
+  * docker: use own dockerimage as base for dockerfile
+  * enable to specify debootstrap variants
+  * download initvm packages during initvm creation
+  * debianize: support packaging of u-boot bootloader
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 06 Dec 2018 14:21:57 +0100
+
 elbe (2.9.13) unstable; urgency=medium
 
   * fix tons of pylint warnings
