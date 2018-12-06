@@ -19,6 +19,7 @@ RUN echo "deb http://ftp.de.debian.org/debian stretch main" > /etc/apt/sources.l
 RUN export DEBIAN_FRONTEND noninteractive ;\
     apt-get update -y ;\
     apt-get install -y --no-install-recommends \
+                    -o Dpkg::Options::="--force-confnew" \
         systemd \
         ca-certificates \
         sudo \
