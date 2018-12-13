@@ -1,3 +1,13 @@
+elbe (2.4) unstable; urgency=medium
+
+  * repomanager: add fallback, when reprepro fails to add dsc
+  * xml: Add devtmpfs to list of filesystem types
+  * cdroms: fix network access when building src cdrom
+  * Fix passno option handling
+  * pkgutils: update version string for elbe-debootstrap
+
+ -- Manuel Traut <manut@slartibartfast>  Thu, 13 Dec 2018 15:12:58 +0100
+
 elbe (2.3) unstable; urgency=medium
 
   * improve kvm machine-emulation heuristic
