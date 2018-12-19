@@ -1,0 +1,45 @@
+dozer is a memory debugger. see: https://github.com/mgedmin/dozer
+
+Only useful in --devel mode. And its required, that some dependencies
+are installed manually into the initvm
+
+--------------------------------------------------------------------
+apt-get install python-pip
+pip install dozer
+/etc/init.d/elbe-daemon restart
+--------------------------------------------------------------------
+
+then go to: http://localhost:7587/soap/_dozer/index
+
+Signed-off-by: Torben Hohn <torben.hohn@linutronix.de>
+---
+ elbepack/daemons/soap/__init__.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/elbepack/daemons/soap/__init__.py b/elbepack/daemons/soap/__init__.py
+index 7b128c78..4e2c62aa 100644
+--- a/elbepack/daemons/soap/__init__.py
++++ b/elbepack/daemons/soap/__init__.py
+@@ -14,6 +14,7 @@ from elbepack.projectmanager import ProjectManager
+ from beaker.middleware import SessionMiddleware
+ from cherrypy.process.plugins import SimplePlugin
+ 
++from dozer import Dozer
+ try:
+     from spyne import Application
+     from spyne.protocol.soap import Soap11
+@@ -52,5 +53,5 @@ def get_app(engine):
+                    in_protocol=Soap11(validator='lxml'),
+                    out_protocol=Soap11())
+ 
+-    wsgi = WsgiApplication(app)
++    wsgi = Dozer(WsgiApplication(app))
+     return MySession(wsgi, app.pm, engine)
+-- 
+2.11.0
+
+
+_______________________________________________
+elbe-devel mailing list
+elbe-devel@linutronix.de
+https://lists.linutronix.de/mailman/listinfo/elbe-devel
