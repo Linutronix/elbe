@@ -104,6 +104,15 @@ class elem(ebase):
     def remove_child(self, child):
         self.et.remove(child.et)
 
+    def bool_attr(self, attrname):
+        attr = self.et.attrib.get(attrname)
+        if attr is None:
+            return False
+        elif attr in ['true', '1']:
+            return True
+        elif attr in ['false', '0']:
+            return False
+
 
 class etree(ebase):
     def __init__(self, fname):
