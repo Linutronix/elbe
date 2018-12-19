@@ -555,6 +555,48 @@ class LosetupAction(FinetuningAction):
 FinetuningAction.register(LosetupAction)
 
 
+class ImgConvertAction(FinetuningAction):
+
+    tag = 'img_convert'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<img_convert> may only be "
+                                  "used in <project-finetuning>")
+
+    def execute_prj(self, log, _buildenv, target, builddir):
+        src = self.node.et.text
+        dst = self.node.et.attrib['dst']
+        fmt = self.node.et.attrib['fmt']
+
+        if src not in target.images:
+            log.printo("Error: Artifact '%s' does not exist." % src)
+            log.printo("Valid Artifacts are:")
+            for i in target.images:
+                log.printo(i)
+            raise FinetuningException("Artifact '%s' does not exist" % src)
+
+        src_fname = os.path.join(builddir, src)
+        dst_fname = os.path.join(builddir, dst)
+
+        cmd = 'qemu-img convert -O "%s" "%s" "%s"' % (fmt,
+                                                      src_fname,
+                                                      dst_fname)
+        log.do(cmd)
+
+        target.images.append(dst)
+        target.image_packers[dst] = ('gzip -f', '.gz')
+
+        if not self.node.bool_attr('keep_src'):
+            target.images.remove(src)
+            del target.image_packers[src]
+
+
+FinetuningAction.register(ImgConvertAction)
+
+
 class ExtractPartitionAction(ImageFinetuningAction):
 
     tag = 'extract_partition'
