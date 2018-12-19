@@ -22,6 +22,10 @@ from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError
 
 
+class FinetuningException(Exception):
+    pass
+
+
 class FinetuningAction(object):
 
     actiondict = {}
@@ -590,6 +594,9 @@ def do_finetuning(xml, log, buildenv, target):
             print("Unimplemented finetuning action '%s'" % (i.et.tag))
         except CommandError:
             log.printo("Finetuning Error, trying to continue anyways")
+        except FinetuningException as e:
+            log.printo("Finetuning Error: %s" % str(e))
+            log.printo("trying to continue anyways")
 
 
 def do_prj_finetuning(xml, log, buildenv, target, builddir):
@@ -605,3 +612,6 @@ def do_prj_finetuning(xml, log, buildenv, target, builddir):
             print("Unimplemented project-finetuning action '%s'" % (i.et.tag))
         except CommandError:
             log.printo("ProjectFinetuning Error, trying to continue anyways")
+        except FinetuningException as e:
+            log.printo("ProjectFinetuning Error: %s" % e.message)
+            log.printo("trying to continue anyways")
