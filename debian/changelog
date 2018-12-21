@@ -1,3 +1,12 @@
+elbe (2.9.15) unstable; urgency=medium
+
+  * added img_convert finetuning rule
+  * initvm: use swap (10G per default)
+  * initvm: use kernel from jessie-backports
+  * libvirt: allow running nested vm
+
+ -- Manuel Traut <manut@slartibartfast>  Fri, 21 Dec 2018 16:02:07 +0100
+
 elbe (2.9.14) unstable; urgency=medium
 
   * implement project-finetuning to allow partition extraction
