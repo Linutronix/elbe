@@ -16,7 +16,17 @@ suite2codename = {'oldoldoldstable': 'squeeze',
                   'quantal': 'quantal',
                   'raring': 'raring',
                   'saucy': 'saucy',
-                  }
+                  'trusty': 'trusty',
+                  'utopic': 'utopic',
+                  'vivid': 'vivid',
+                  'wily': 'wily',
+                  'xenial': 'xenial',
+                  'yakkety': 'yakkety',
+                  'zesty': 'zesty',
+                  'artful': 'artful',
+                  'bionic': 'bionic',
+                  'cosmic': 'cosmic',
+                 }
 
 
 # generate reverse mapping
