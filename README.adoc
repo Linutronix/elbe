@@ -13,7 +13,7 @@ Software Dependencies
 ---------------------
 If using ELBE from git repository directly, you'll need following packages installed:
 
-    apt install python python-mako python-lxml python-apt python-gpgme python-pyme python-suds tmux qemu-utils qemu-kvm p7zip-full make
+    apt install python python-debian python-mako python-lxml python-apt python-gpgme python-pyme python-suds tmux qemu-utils qemu-kvm p7zip-full make
 
 
 Crash Course
