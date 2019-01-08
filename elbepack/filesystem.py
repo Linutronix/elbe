@@ -254,5 +254,22 @@ class TmpdirFilesystem (Filesystem):
             shutil.rmtree(self.path, True)
 
 
+class ImgMountFilesystem(Filesystem):
+    def __init__(self, mntpoint, dev, log):
+        Filesystem.__init__(self, mntpoint)
+
+        self.dev = dev
+        self.log = log
+
+    def __enter__(self):
+        cmd = 'mount "%s" "%s"' % (self.dev, self.path)
+        self.log.do(cmd)
+
+        return self
+
+    def __exit__(self, typ, value, traceback):
+        self.log.do('umount "%s"' % self.path)
+
+
 hostfs = Filesystem('/')
 wdfs = Filesystem(os.getcwd())
