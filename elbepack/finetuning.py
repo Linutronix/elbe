@@ -20,6 +20,7 @@ from apt.package import FetchError
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError
+from elbepack.filesystem import ImgMountFilesystem
 
 
 class FinetuningException(Exception):
@@ -621,6 +622,74 @@ class ExtractPartitionAction(ImageFinetuningAction):
 
 
 FinetuningAction.register(ExtractPartitionAction)
+
+
+class CopyFromPartition(ImageFinetuningAction):
+
+    tag = 'copy_from_partition'
+
+    def __init__(self, node):
+        ImageFinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<copy_from_partition> may only be "
+                                  "used in <mount_drive>")
+
+    def execute_img(self, log, _buildenv, target, builddir, loop_dev):
+        part_nr = self.node.et.attrib['part']
+        aname = self.node.et.attrib['artifact']
+
+        img_mnt = os.path.join(builddir, 'imagemnt')
+        device = "%sp%s" % (loop_dev, part_nr)
+
+        with ImgMountFilesystem(img_mnt, device, log) as mnt_fs:
+            fname = mnt_fs.glob(self.node.et.text)
+
+            if not fname:
+                log.printo('No file matching "%s" found' % self.node.et.text)
+                raise FinetuningException('No File found')
+
+            if len(fname) > 1:
+                log.printo('Pattern "%s" matches %d files' % (
+                    self.node.et.text,
+                    len(fname)))
+                raise FinetuningException('Patter matches too many files')
+
+            cmd = 'cp "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
+            log.do(cmd)
+
+            target.images.append(aname)
+
+
+FinetuningAction.register(CopyFromPartition)
+
+
+class CopyToPartition(ImageFinetuningAction):
+
+    tag = 'copy_to_partition'
+
+    def __init__(self, node):
+        ImageFinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<copy_to_partition> may only be "
+                                  "used in <mount_drive>")
+
+    def execute_img(self, log, _buildenv, _target, builddir, loop_dev):
+        part_nr = self.node.et.attrib['part']
+        aname = self.node.et.attrib['artifact']
+
+        img_mnt = os.path.join(builddir, 'imagemnt')
+        device = "%sp%s" % (loop_dev, part_nr)
+
+        with ImgMountFilesystem(img_mnt, device, log) as mnt_fs:
+            fname = mnt_fs.fname(self.node.et.text)
+
+            cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
+            log.do(cmd)
+
+
+FinetuningAction.register(CopyToPartition)
 
 
 def do_finetuning(xml, log, buildenv, target):

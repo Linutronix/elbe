@@ -1944,6 +1944,22 @@
           </documentation>
         </annotation>
       </element>
+      <element name="copy_from_partition" type="rfs:copy_from_partition" minOccurs="0">
+        <annotation>
+          <documentation>
+	    Copy a file from a partition. The partition is mounted, and the file is then
+	    copied from the mounted filesystem into the builddir. Its marked as an Artifact.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="copy_to_partition" type="rfs:copy_to_partition" minOccurs="0">
+        <annotation>
+          <documentation>
+	    Copy an artifact onto a partition. The partition is mounted, and the file is then
+	    copied into the mounted filesystem.
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
@@ -1962,6 +1978,38 @@
     </simpleContent>
   </complexType>
 
+  <complexType name="copy_from_partition">
+    <annotation>
+      <documentation>
+        Attribute 'part' describes the partition to be mounted (nr).
+	The value of the tag describes the filename to be copied from the
+	Filesystem, after it has been mounted.
+	Attribute 'artifact' is the artifact name.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="part" type="integer" use="required" />
+        <attribute name="artifact" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="copy_to_partition">
+    <annotation>
+      <documentation>
+        Attribute 'part' describes the partition to be mounted (nr).
+	The value of the tag describes the filename where the artifact shall
+	be copied to, onto the filesystem, after it has been mounted.
+	Attribute 'artifact' is the artifact name.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="part" type="integer" use="required" />
+        <attribute name="artifact" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
   <complexType name="addgroup">
     <annotation>
       <documentation>
