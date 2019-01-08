@@ -67,7 +67,7 @@
 			<rm>/var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
-			<pkg>linux-image-3.16.0-4-arm64</pkg>
+			<pkg>linux-image-arm64</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
 			<pkg>bash</pkg>
