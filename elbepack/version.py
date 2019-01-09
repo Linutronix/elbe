@@ -16,7 +16,6 @@ elbe_initvm_packagelist = ['python-elbe-buildenv',
                            'python-elbe-common',
                            'elbe-daemon',
                            'elbe-schema',
-                           'qemu-utils',
                            'python-elbe-bin']
 
 if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
