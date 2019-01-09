@@ -1,3 +1,9 @@
+elbe (2.9.16) unstable; urgency=medium
+
+  * bugfix release, 2.9.15 was not able to build an initvm
+
+ -- Manuel Traut <manut@slartibartfast>  Wed, 09 Jan 2019 15:55:08 +0100
+
 elbe (2.9.15) unstable; urgency=medium
 
   * added img_convert finetuning rule
