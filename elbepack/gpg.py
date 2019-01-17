@@ -9,22 +9,9 @@ from __future__ import print_function
 
 import os
 
-import gpgme
+import gpg as gpgme
 
 from elbepack.filesystem import hostfs
-
-elbe_internal_key_param = """
-<GnupgKeyParms format="internal">
-  Key-Type: RSA
-  Key-Usage: sign
-  Key-Length: 2048
-  Name-Real: Elbe Internal Repo
-  Name-Comment: Automatically generated
-  Name-Email: root@elbe-daemon.de
-  Expire-Date: 0
-</GnupgKeyParms>
-"""
-
 
 class OverallStatus(object):
 
@@ -61,7 +48,8 @@ class OverallStatus(object):
 def check_signature(ctx, sig):
     status = OverallStatus()
 
-    if sig.summary & gpgme.SIGSUM_KEY_MISSING:
+    sigsum = gpgme.constants.sigsum
+    if sig.summary & sigsum.KEY_MISSING:
         print("Signature with unknown key: %s" % sig.fpr)
         status.key_missing = True
         return status
@@ -69,7 +57,7 @@ def check_signature(ctx, sig):
     # there should be a key
     key = ctx.get_key(sig.fpr)
     print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, sig.fpr))
-    if sig.summary & gpgme.SIGSUM_VALID == gpgme.SIGSUM_VALID:
+    if sig.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
         print("VALID (Trusted)")
         return status
@@ -79,28 +67,28 @@ def check_signature(ctx, sig):
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
         print("VALID (Untrusted).")
-    if sig.summary & gpgme.SIGSUM_SIG_EXPIRED == gpgme.SIGSUM_SIG_EXPIRED:
+    if sig.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
         print("SIGNATURE EXPIRED!")
         status.sig_expired = True
-    if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIRED:
+    if sig.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
         print("KEY EXPIRED!")
         status.key_expired = True
-    if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKED:
+    if sig.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
         print("KEY REVOKED!")
         status.key_revoked = True
-    if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
+    if sig.summary & sigsum.RED == sigsum.RED:
         print("INVALID SIGNATURE!")
         status.invalid = True
-    if sig.summary & gpgme.SIGSUM_CRL_MISSING == gpgme.SIGSUM_CRL_MISSING:
+    if sig.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
         print("CRL MISSING!")
         status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_CRL_TOO_OLD == gpgme.SIGSUM_CRL_TOO_OLD:
+    if sig.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
         print("CRL TOO OLD!")
         status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_BAD_POLICY == gpgme.SIGSUM_BAD_POLICY:
+    if sig.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
         print("UNMET POLICY REQUIREMENT!")
         status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_SYS_ERROR == gpgme.SIGSUM_SYS_ERROR:
+    if sig.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
         print("SYSTEM ERROR!'")
         status.gpgme_error = True
 
@@ -126,9 +114,9 @@ def unsign_file(fname):
             with open(outfilename, 'w') as outfile:
 
                 # obtain signature and write unsigned file
-                sigs = ctx.verify(infile, None, outfile)
+                _, vres = ctx.verify(infile, None, outfile)
 
-                for sig in sigs:
+                for sig in vres.signatures:
                     status = check_signature(ctx, sig)
                     overall_status.add(status)
 
@@ -153,14 +141,14 @@ def sign(infile, outfile, fingerprint):
 
     try:
         key = ctx.get_key(fingerprint)
-    except gpgme.GpgmeError as ex:
+    except Exception as ex:
         print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
 
     ctx.signers = [key]
     ctx.armor = False
 
     try:
-        ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
+        ctx.sign(infile.read(), outfile)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
 
@@ -182,7 +170,7 @@ def get_fingerprints():
     keys = ctx.keylist()
     fingerprints = []
     for k in keys:
-        fingerprints.append(k.subkeys[0].fpr)
+        fingerprints.append(k.fpr)
     return fingerprints
 
 
@@ -190,7 +178,7 @@ def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = gpgme.Context()
-    key = ctx.genkey(elbe_internal_key_param)
+    key = ctx.create_key('Elbe Internal Repo (Automatically generated) <root@elbe-daemon.de>', 'rsa2048', expires=False, sign=True)
 
     return key.fpr
 
@@ -201,7 +189,8 @@ def export_key(fingerprint, outfile):
     ctx.armor = True
 
     try:
-        ctx.export(fingerprint, outfile)
+        key = ctx.key_export(fingerprint)
+        outfile.write(key)
     except Exception:
         print("Error exporting key %s" % (fingerprint))
 

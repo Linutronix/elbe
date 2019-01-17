@@ -23,8 +23,9 @@ except ImportError:
     import urllib2
     urlopen = urllib2.urlopen
 
+import gpg
+
 from shutil import copyfileobj, copyfile
-from gpgme import Context
 
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.gpg import OverallStatus, check_signature
@@ -127,7 +128,7 @@ def download_release(tmp, base_url):
     # setup gpg context, for verifying
     # the Release.gpg signature.
     os.environ['GNUPGHOME'] = tmp.fname('/')
-    ctx = Context()
+    ctx = gpg.Context()
 
     # download the Relase file to a tmp file,
     # because we need it 2 times
@@ -144,14 +145,17 @@ def download_release(tmp, base_url):
             overall_status = OverallStatus()
 
             # verify detached signature
-            sigs = ctx.verify(sig, signed, None)
+            _, vres = ctx.verify(signed, sig)
 
-            for s in sigs:
+            for s in vres.signatures:
                 status = check_signature(ctx, s)
                 overall_status.add(status)
 
             if overall_status.to_exitcode():
                 raise InvalidSignature('Failed to verify Release file')
+
+    except gpg.errors.BadSignatures:
+            raise InvalidSignature('Failed to verify Release file')
     finally:
         sig.close()
 
