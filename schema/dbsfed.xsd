@@ -48,6 +48,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="archivedir" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            A directory path that contains configuration files for the target
+            rootfilesystem. The files are automatically packed as archive
+            element on any command that is effected by archive.
+          </documentation>
+        </annotation>
+      </element>
       <element name="archive" type="base64Binary" minOccurs="0">
         <annotation>
           <documentation>
