@@ -21,7 +21,7 @@ from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError
 from elbepack.filesystem import ImgMountFilesystem
-from elbepack.packers import default_packer
+from elbepack.packers import default_packer, packers
 
 
 class FinetuningException(Exception):
@@ -597,6 +597,27 @@ class ImgConvertAction(FinetuningAction):
 
 
 FinetuningAction.register(ImgConvertAction)
+
+
+class SetPackerAction(FinetuningAction):
+
+    tag = 'set_packer'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute(self, _log, _buildenv, _target):
+        raise NotImplementedError("<set_packer> may only be "
+                                  "used in <project-finetuning>")
+
+    def execute_prj(self, _log, _buildenv, target, _builddir):
+        img = self.node.et.text
+        packer = self.node.et.attrib['packer']
+
+        target.image_packers[img] = packers[packer]
+
+
+FinetuningAction.register(SetPackerAction)
 
 
 class ExtractPartitionAction(ImageFinetuningAction):
