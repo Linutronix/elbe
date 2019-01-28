@@ -82,6 +82,7 @@
 				<copy_from_partition part="1" artifact="vmlinuz">/vmlinuz-3.16.0-*-arm64</copy_from_partition>
 			</losetup>
 			<img_convert fmt="qcow2" dst="sdcard.qcow2">sdcard.img</img_convert>
+			<set_packer packer="tarxz">sdcard.qcow2</set_packer>
 		</project-finetuning>
 	</target>
 </ns0:RootFileSystem>
