@@ -21,6 +21,7 @@ from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError
 from elbepack.filesystem import ImgMountFilesystem
+from elbepack.packers import default_packer
 
 
 class FinetuningException(Exception):
@@ -588,7 +589,7 @@ class ImgConvertAction(FinetuningAction):
         log.do(cmd)
 
         target.images.append(dst)
-        target.image_packers[dst] = ('gzip -f', '.gz')
+        target.image_packers[dst] = default_packer
 
         if not self.node.bool_attr('keep_src'):
             target.images.remove(src)

@@ -19,6 +19,7 @@ from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
 from elbepack.licencexml import copyright_xml
+from elbepack.packers import default_packer
 
 
 def copy_filelist(src, filelist, dst):
@@ -315,7 +316,7 @@ class TargetFs(ChRootFilesystem):
             grub_fw_type)
 
         for i in self.images:
-            self.image_packers[i] = ('gzip -f', '.gz')
+            self.image_packers[i] = default_packer
 
         if self.xml.has("target/package/tar"):
             targz_name = self.xml.text("target/package/tar/name")
@@ -367,14 +368,11 @@ class TargetFs(ChRootFilesystem):
                 pass
 
     def pack_images(self, builddir):
-        for img, (packer, ending) in self.image_packers.items():
+        for img, packer in self.image_packers.items():
             self.images.remove(img)
-            try:
-                self.log.do('%s "%s"' % (packer, os.path.join(builddir, img)))
-                # only add packed image when no exception is thrown
-                self.images.append(img + ending)
-            except CommandError:
-                pass
+            packed = packer.pack_file(self.log, builddir, img)
+            if packed:
+                self.images.append(packed)
 
 
 class BuildImgFs(ChRootFilesystem):
