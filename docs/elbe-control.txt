@@ -78,6 +78,9 @@ OPTIONS
 --pbuilder-only::
 	Only list/download pbuilder files.
 
+--profile::
+	Specify pbuilder profile to build.
+
 COMMANDS
 --------
 

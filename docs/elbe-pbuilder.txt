@@ -43,6 +43,9 @@ OPTIONS
 	for the build. This is usefule when multithreading and qemu-user
 	yield problem with e.g. java.
 
+--profile string::
+	Specify the build profile to build. (dpkg-buildpackage -P<profile>)
+
 COMMANDS
 --------
 
