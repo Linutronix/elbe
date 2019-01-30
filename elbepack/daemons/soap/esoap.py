@@ -291,12 +291,12 @@ class ESoap (ServiceBase):
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
-    @rpc(String, Integer)
+    @rpc(String, Integer, String)
     @authenticated_uid
     @soap_faults
-    def finish_pdebuild(self, uid, builddir, cpuset):
+    def finish_pdebuild(self, uid, builddir, cpuset, profile):
         self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_current_pdebuild(uid, cpuset)
+        self.app.pm.build_current_pdebuild(uid, cpuset, profile)
 
     @rpc(String, String)
     @authenticated_uid

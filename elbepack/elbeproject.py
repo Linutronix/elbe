@@ -353,7 +353,7 @@ class ElbeProject (object):
             self.log.printo("unknown pbuild source vcs: %s" % p.tag)
 
         # pdebuild_build(-1) means use all cpus
-        self.pdebuild_build(cpuset=-1)
+        self.pdebuild_build(cpuset=-1, profile="")
 
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None):
@@ -602,7 +602,7 @@ class ElbeProject (object):
         self.log.do('mkdir -p "%s"' % os.path.join(self.builddir,
                                                    "pbuilder", "result"))
 
-    def pdebuild(self, cpuset):
+    def pdebuild(self, cpuset, profile):
         self.pdebuild_init()
 
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
@@ -626,10 +626,10 @@ class ElbeProject (object):
                 "current_pdebuild.tar.gz"),
                 pbdir))
 
-        self.pdebuild_build(cpuset)
+        self.pdebuild_build(cpuset, profile)
         self.repo.finalize()
 
-    def pdebuild_build(self, cpuset):
+    def pdebuild_build(self, cpuset, profile):
         # check whether we have to use taskset to run pdebuild
         # this might be useful, when things like java dont
         # work with multithreading
@@ -640,8 +640,13 @@ class ElbeProject (object):
             # cpuset == -1 means empty cpuset_cmd
             cpuset_cmd = ''
 
+        if profile:
+            profile_opt = ' -P%s' % profile
+        else:
+            profile_opt = ''
+
         try:
-            self.log.do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
+            self.log.do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa%s" '
                         '--configfile "%s" '
                         '--use-pdebuild-internal --buildresult "%s"' % (
                             os.path.join(self.builddir,
@@ -649,6 +654,7 @@ class ElbeProject (object):
                                          "current"),
                             cpuset_cmd,
                             cfg['pbuilder_jobs'],
+                            profile_opt,
                             os.path.join(self.builddir, "pbuilderrc"),
                             os.path.join(self.builddir, "pbuilder", "result")))
 

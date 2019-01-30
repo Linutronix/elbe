@@ -745,7 +745,7 @@ class SetPdebuilderAction(ClientAction):
             if len(bindata) != size:
                 break
 
-        client.service.finish_pdebuild(builddir, opt.cpuset)
+        client.service.finish_pdebuild(builddir, opt.cpuset, opt.profile)
 
 
 ClientAction.register(SetPdebuilderAction)

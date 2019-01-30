@@ -43,6 +43,9 @@ def run_command(argv):
                        help="Limit cpuset of pbuilder commands (bitmask) "
                             "(defaults to -1 for all CPUs)")
 
+    oparser.add_option("--profile", dest="profile", default="",
+                       help="profile that shall be built")
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
