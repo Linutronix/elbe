@@ -45,6 +45,7 @@
 			<pkg pin="jessie-backports">qemu-user-static</pkg>
 			<pkg pin="jessie-backports">linux-image-amd64</pkg>
 			<pkg pin="jessie-backports">linux-base</pkg>
+			<pkg pin="jessie-backports">pbuilder</pkg>
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
