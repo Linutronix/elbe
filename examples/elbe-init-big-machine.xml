@@ -8,6 +8,14 @@
 			<url-list>
 				<url>
 					<binary>
+						http://security.debian.org/debian-security jessie/updates main
+					</binary>
+					<source>
+						http://security.debian.org/debian-security jessie/updates main
+					</source>
+				</url>
+				<url>
+					<binary>
 						http://debian.linutronix.de/elbe-testing jessie main
 					</binary>
 					<source>
@@ -44,7 +52,6 @@
 			<pkg pin="jessie-backports">debootstrap</pkg>
 			<pkg pin="jessie-backports">qemu-user-static</pkg>
 			<pkg pin="jessie-backports">linux-image-amd64</pkg>
-			<pkg pin="jessie-backports">linux-base</pkg>
 			<pkg pin="jessie-backports">pbuilder</pkg>
 		</pkg-list>
 		<preseed>
