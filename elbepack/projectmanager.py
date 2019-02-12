@@ -527,14 +527,15 @@ class ProjectManager(object):
             logline = None
             with open(os.path.join(ep.builddir, 'log.txt'), 'r', 0) as lf:
                 for logline in lf:
+                    logline = logline.decode('utf-8','replace')
                     if count == part:
-                        logline = str(part + 1) + '###' + str(logline)
-                        return self.db.is_busy(ep.builddir), str(logline)
+                        logline = unicode(part + 1) + u'###' + logline
+                        return self.db.is_busy(ep.builddir), logline
                     count = count + 1
             # don't crash if logfile doesn't exist
             if not logline:
-                logline = None
-            logline = str(part) + '###' + str(logline)
+                logline = u'None'
+            logline = unicode(part) + u'###' + logline
             return self.db.is_busy(ep.builddir), logline
 
     def _get_current_project(self, userid, allow_busy=True):
