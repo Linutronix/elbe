@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, call
 
 
 class CommandError(Exception):
@@ -20,8 +20,12 @@ class CommandError(Exception):
             self.returncode, self.cmd)
 
 
-def system(cmd, allow_fail=False):
-    ret = os.system(cmd)
+def system(cmd, allow_fail=False, env_add=None):
+    new_env = os.environ.copy()
+    if env_add:
+        new_env.update(env_add)
+
+    ret = call(cmd, shell=True, env=new_env)
 
     if ret != 0:
         if not allow_fail:
