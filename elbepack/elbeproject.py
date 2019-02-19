@@ -648,13 +648,8 @@ class ElbeProject (object):
             # cpuset == -1 means empty cpuset_cmd
             cpuset_cmd = ''
 
-        if profile:
-            profile_opt = ' -P%s' % profile
-        else:
-            profile_opt = ''
-
         try:
-            self.log.do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa%s" '
+            self.log.do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
                         '--configfile "%s" '
                         '--use-pdebuild-internal --buildresult "%s"' % (
                             os.path.join(self.builddir,
@@ -662,9 +657,9 @@ class ElbeProject (object):
                                          "current"),
                             cpuset_cmd,
                             cfg['pbuilder_jobs'],
-                            profile_opt,
                             os.path.join(self.builddir, "pbuilderrc"),
-                            os.path.join(self.builddir, "pbuilder", "result")))
+                            os.path.join(self.builddir, "pbuilder", "result")),
+                        env_add={'DEB_BUILD_PROFILES': profile})
 
             self.repo.remove(os.path.join(self.builddir,
                                           "pdebuilder",
