@@ -6,7 +6,7 @@
 
 from __future__ import print_function
 
-from elbepack.gpg import unsign_file
+from elbepack.egpg import unsign_file
 
 
 def run_command(argv):

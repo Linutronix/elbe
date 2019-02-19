@@ -15,7 +15,7 @@ from debian.deb822 import Deb822
 from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
-from elbepack.gpg import generate_elbe_internal_key, export_key
+from elbepack.egpg import generate_elbe_internal_key, export_key
 from elbepack.shellhelper import CommandError
 
 

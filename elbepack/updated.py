@@ -33,7 +33,7 @@ import apt_pkg
 
 from elbepack.aptprogress import (ElbeInstallProgress,
                                   ElbeAcquireProgress, ElbeOpProgress)
-from elbepack.gpg import unsign_file
+from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 
 downgrade_prevention_feature_available = True

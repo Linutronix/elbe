@@ -27,7 +27,7 @@ from shutil import copyfileobj, copyfile
 from gpgme import Context
 
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.gpg import OverallStatus, check_signature
+from elbepack.egpg import OverallStatus, check_signature
 from elbepack.shellhelper import CommandError, system
 from elbepack.hashes import HashValidator, HashValidationFailed
 
