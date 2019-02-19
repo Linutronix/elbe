@@ -9,7 +9,12 @@ from __future__ import print_function
 
 import os
 
-import gpgme
+try:
+    from gpg import core
+    from gpg.constants import sigsum, sig
+except ImportError:
+    from pyme import core
+    from pyme.constants import sigsum, sig
 
 from elbepack.filesystem import hostfs
 
@@ -34,7 +39,7 @@ class OverallStatus(object):
         self.sig_expired = False
         self.key_revoked = False
         self.key_missing = False
-        self.gpgme_error = False
+        self.gpg_error = False
 
     def add(self, to_add):
         self.invalid = self.invalid or to_add.invalid
@@ -42,10 +47,10 @@ class OverallStatus(object):
         self.sig_expired = self.sig_expired or to_add.sig_expired
         self.key_revoked = self.key_revoked or to_add.key_revoked
         self.key_missing = self.key_missing or to_add.key_missing
-        self.gpgme_error = self.gpgme_error or to_add.gpgme_error
+        self.gpg_error = self.gpg_error or to_add.gpg_error
 
     def to_exitcode(self):
-        if self.gpgme_error:    # critical GPG error
+        if self.gpg_error:      # critical GPG error
             return 20
         if self.invalid:        # invalid signature
             return 1
@@ -61,15 +66,15 @@ class OverallStatus(object):
 def check_signature(ctx, sig):
     status = OverallStatus()
 
-    if sig.summary & gpgme.SIGSUM_KEY_MISSING:
+    if sig.summary & sigsum.KEY_MISSING:
         print("Signature with unknown key: %s" % sig.fpr)
         status.key_missing = True
         return status
 
     # there should be a key
-    key = ctx.get_key(sig.fpr)
+    key = ctx.get_key(sig.fpr, 0)
     print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, sig.fpr))
-    if sig.summary & gpgme.SIGSUM_VALID == gpgme.SIGSUM_VALID:
+    if sig.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
         print("VALID (Trusted)")
         return status
@@ -79,30 +84,30 @@ def check_signature(ctx, sig):
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
         print("VALID (Untrusted).")
-    if sig.summary & gpgme.SIGSUM_SIG_EXPIRED == gpgme.SIGSUM_SIG_EXPIRED:
+    if sig.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
         print("SIGNATURE EXPIRED!")
         status.sig_expired = True
-    if sig.summary & gpgme.SIGSUM_KEY_EXPIRED == gpgme.SIGSUM_KEY_EXPIRED:
+    if sig.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
         print("KEY EXPIRED!")
         status.key_expired = True
-    if sig.summary & gpgme.SIGSUM_KEY_REVOKED == gpgme.SIGSUM_KEY_REVOKED:
+    if sig.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
         print("KEY REVOKED!")
         status.key_revoked = True
-    if sig.summary & gpgme.SIGSUM_RED == gpgme.SIGSUM_RED:
+    if sig.summary & sigsum.RED == sigsum.RED:
         print("INVALID SIGNATURE!")
         status.invalid = True
-    if sig.summary & gpgme.SIGSUM_CRL_MISSING == gpgme.SIGSUM_CRL_MISSING:
+    if sig.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
         print("CRL MISSING!")
-        status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_CRL_TOO_OLD == gpgme.SIGSUM_CRL_TOO_OLD:
+        status.gpg_error = True
+    if sig.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
         print("CRL TOO OLD!")
-        status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_BAD_POLICY == gpgme.SIGSUM_BAD_POLICY:
+        status.gpg_error = True
+    if sig.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
         print("UNMET POLICY REQUIREMENT!")
-        status.gpgme_error = True
-    if sig.summary & gpgme.SIGSUM_SYS_ERROR == gpgme.SIGSUM_SYS_ERROR:
+        status.gpg_error = True
+    if sig.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
         print("SYSTEM ERROR!'")
-        status.gpgme_error = True
+        status.gpg_error = True
 
     return status
 
@@ -116,19 +121,20 @@ def unsign_file(fname):
     outfilename = fname[:len(fname) - 4]
 
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context()
-    ctx.armor = False
+    ctx = core.Context()
+    ctx.set_armor(False)
 
     try:
         overall_status = OverallStatus()
 
-        with open(fname, 'r') as infile:
-            with open(outfilename, 'w') as outfile:
+        with core.Data(file=fname) as infile:
+            with core.Data(file=outfilename) as outfile:
 
                 # obtain signature and write unsigned file
-                sigs = ctx.verify(infile, None, outfile)
+                ctx.op_verify(infile, None, outfile)
+                vres = ctx.op_verify_result()
 
-                for sig in sigs:
+                for sig in vres.signatures:
                     status = check_signature(ctx, sig)
                     overall_status.add(status)
 
@@ -148,19 +154,21 @@ def unsign_file(fname):
 def sign(infile, outfile, fingerprint):
 
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context()
+    ctx = core.Context()
     key = None
 
     try:
-        key = ctx.get_key(fingerprint)
-    except gpgme.GpgmeError as ex:
+        key = ctx.get_key(fingerprint, 0)
+    except Exception as ex:
         print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
 
-    ctx.signers = [key]
-    ctx.armor = False
+    ctx.signers_add(key)
+    ctx.set_armor(False)
 
     try:
-        ctx.sign(infile, outfile, gpgme.SIG_MODE_NORMAL)
+        indata = core.Data(file=infile)
+        outdata = core.Data(file=outfile)
+        ctx.op_sign(indata, outdata, sig.mode.NORMAL)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
 
@@ -178,8 +186,8 @@ def sign_file(fname, fingerprint):
 
 def get_fingerprints():
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context()
-    keys = ctx.keylist()
+    ctx = core.Context()
+    keys = ctx.op_keylist_all(None, False)
     fingerprints = []
     for k in keys:
         fingerprints.append(k.subkeys[0].fpr)
@@ -189,19 +197,20 @@ def get_fingerprints():
 def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context()
-    key = ctx.genkey(elbe_internal_key_param)
+    ctx = core.Context()
+    ctx.op_genkey(elbe_internal_key_param, None, None)
+    key = ctx.op_genkey_result()
 
     return key.fpr
 
 
 def export_key(fingerprint, outfile):
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = gpgme.Context()
-    ctx.armor = True
+    ctx = core.Context()
+    ctx.set_armor(True)
 
     try:
-        ctx.export(fingerprint, outfile)
+        ctx.op_export(fingerprint, 0, outfile)
     except Exception:
         print("Error exporting key %s" % (fingerprint))
 

@@ -11,9 +11,11 @@ from __future__ import print_function
 import os
 
 from shutil import rmtree
-from io import BytesIO
 
-import gpgme
+try:
+    from gpg import core
+except ImportError:
+    from pyme import core
 
 from apt.package import FetchError
 
@@ -421,14 +423,16 @@ class UpdatedAction(FinetuningAction):
             log.printo("transfer gpg key to target: " + fp)
 
             os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-            key = BytesIO()
-            ctx = gpgme.Context()
-            ctx.armor = True
-            ctx.export(fp, key)
+            gpgdata = core.Data()
+            ctx = core.Context()
+            ctx.set_armor(True)
+            ctx.op_export(fp, 0, gpgdata)
+            gpgdata.seek(0, os.SEEK_SET)
+            key = gpgdata.read()
 
-            log.printo(str(key.getvalue()))
+            log.printo(str(key))
             with open((target.path + '/pub.key'), 'wb') as tkey:
-                tkey.write(key.getvalue())
+                tkey.write(key)
 
             target.mkdir_p("/var/cache/elbe/gnupg", mode=0o700)
             with target:
