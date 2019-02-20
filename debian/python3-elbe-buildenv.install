@@ -30,3 +30,4 @@
 ./usr/lib/python3.*/*-packages/elbepack/rpcaptcache.py
 ./usr/lib/python3.*/*-packages/elbepack/updatepkg.py
 ./usr/lib/python3.*/*-packages/elbepack/pbuilder.py
+./usr/lib/python3.*/*-packages/elbepack/packers.py
