@@ -426,6 +426,16 @@ class CreateAction(InitVMAction):
                   "of your old initvm.")
             sys.exit(20)
 
+        # Upgrade from older versions which used tmux
+        try:
+            system("tmux has-session -t ElbeInitVMSession 2>/dev/null")
+            print ("ElbeInitVMSession exists in tmux. "
+                   "It may belong to an old elbe version. "
+                   "Please stop it to prevent interfering with this version.", file=sys.stderr)
+            sys.exit(20)
+        except CommandError:
+            pass
+
         # Init cdrom to None, if we detect it, we set it
         cdrom = None
 
