@@ -411,11 +411,13 @@ class CreateAction(InitVMAction):
         # pylint: disable=too-many-statements
 
         if self.initvm is not None:
-            print("Initvm already defined.\n")
+            print("Initvm is already defined for the libvirt domain '%s'.\n" % cfg['initvm_domain'])
             print("If you want to build in your old initvm, "
                   "use `elbe initvm submit <xml>`.")
             print("If you want to remove your old initvm from libvirt "
                     "run `virsh --connect qemu:///system undefine %s`.\n" % cfg['initvm_domain'])
+            print("You can specify another libvirt domain by setting the "
+                  "ELBE_INITVM_DOMAIN environment variable to an unused domain name.\n")
             print("Note:")
             print("\t1) You can reimport your old initvm via "
                     "`virsh --connect qemu:///system define <file>`")
