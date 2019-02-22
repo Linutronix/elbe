@@ -21,6 +21,7 @@ from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
+from elbepack.shellhelper import command_out
 
 
 def run_command(argv):
@@ -146,6 +147,16 @@ def run_command(argv):
     else:
         path = opt.directory
 
+    # this is a workaround for
+    # http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
+    _, virt = command_out('test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt');
+    _, dist = command_out('lsb_release -cs')
+
+    if 'vmware' in virt and 'stretch' in dist:
+        machine_type = 'pc-i440fx-2.6'
+    else:
+        machine_type = 'pc'
+
     try:
         os.makedirs(path)
     except OSError as e:
@@ -171,6 +182,7 @@ def run_command(argv):
          "http_proxy": http_proxy,
          "pkgs": xml.node("/initvm/pkg-list") or [],
          "preseed": get_initvm_preseed(xml),
+         "machine_type": machine_type,
          "cfg": cfg}
 
     if http_proxy != "":
