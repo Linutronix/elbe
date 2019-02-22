@@ -198,6 +198,9 @@ def run_command(argv):
         print(e.message)
         print("")
         print("Check Mirror configuration")
+        if 'SHA256SUMS' in e.message:
+            print("If you use debmirror please read https://github.com/Linutronix/elbe/issues/188 "
+                  "on how to work around the issue")
         sys.exit(20)
 
     templates = os.listdir(init_template_dir)
