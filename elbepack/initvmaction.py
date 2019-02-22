@@ -446,7 +446,7 @@ class CreateAction(InitVMAction):
                 try:
                     xml = etree(xmlfile)
                 except ValidationError as e:
-                    print("XML file is inavlid: %s" % str(e))
+                    print("XML file is invalid: %s" % str(e))
                 # Use default XML if no initvm was specified
                 if not xml.has("initvm"):
                     xmlfile = os.path.join(
@@ -530,9 +530,9 @@ class CreateAction(InitVMAction):
             if args[0].endswith('.xml'):
                 # stop here if no project node was specified
                 try:
-                    x = ElbeXML(args[0])
+                    x = etree(args[0])
                 except ValidationError as e:
-                    print("XML file is inavlid: %s" % str(e))
+                    print("XML file is invalid: %s" % str(e))
                     sys.exit(20)
                 if not x.has('project'):
                     print("elbe initvm ready: use 'elbe initvm submit "
