@@ -68,14 +68,14 @@ all: .stamps/stamp-install-initial-image
 	mkdir -p tmp-tree/usr/lib/post-base-installer.d
 	cp .elbe-in/init-elbe.sh tmp-tree/
 	cp .elbe-in/source.xml tmp-tree/
-	mkdir -p tmp-tree/usr/share/keyrings
-	-cp .elbe-in/*.gpg tmp-tree/usr/share/keyrings
 	cp .elbe-in/initrd-cdrom.gz tmp-tree/
 	cp .elbe-in/vmlinuz tmp-tree/
 % if opt.devel:
 	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
 % endif
 % if opt.cdrom:
+	mkdir -p tmp-tree/usr/share/keyrings
+	-cp .elbe-in/*.gpg tmp-tree/usr/share/keyrings
 	mkdir -p tmp-tree/usr/lib/base-installer.d
 	echo 'mkdir -p /target/etc/apt/trusted.gpg.d/; cp /usr/share/keyrings/elbe-keyring.gpg /target/etc/apt/trusted.gpg.d/' > tmp-tree/usr/lib/base-installer.d/10copyelbekeyring
 	chmod 755 tmp-tree/usr/lib/base-installer.d/*
