@@ -644,7 +644,7 @@ class ExtractPartitionAction(ImageFinetuningAction):
         log.do(cmd)
 
         target.images.append(self.node.et.text)
-        target.image_packers[self.node.et.text] = ('gzip -f', '.gz')
+        target.image_packers[self.node.et.text] = default_packer
 
 
 FinetuningAction.register(ExtractPartitionAction)
