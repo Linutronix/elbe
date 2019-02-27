@@ -883,8 +883,8 @@ class ElbeProject (object):
                     self.get_rpcaptcache(env=target).mark_install(p, None)
                 except KeyError:
                     self.log.printo("No Package " + p)
-                except SystemError:
-                    self.log.printo("Unable to correct problems " + p)
+                except SystemError as e:
+                    self.log.printo("Error: Unable to correct problems in package %s (%s)" % (p, str(e)))
 
             # temporary disabled because of
             # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
