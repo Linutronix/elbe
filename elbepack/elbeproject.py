@@ -318,12 +318,14 @@ class ElbeProject (object):
                     self.xml.defs,
                     crosstoolchainpkg,
                     'amd64',
+                    self.log,
                     True)
         extract_pkg(self.xml.prj,
                     hostsysrootpath,
                     self.xml.defs,
                     'gdb-multiarch',
                     'amd64',
+                    self.log,
                     True)
 
         n = gen_sdk_scripts(triplet,

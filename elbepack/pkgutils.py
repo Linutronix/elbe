@@ -143,8 +143,7 @@ def download_pkg(prj,
     return [y[0] for y in urilist]
 
 
-def extract_pkg(prj, target_dir, defs, package, arch="default",
-                incl_deps=False, log=None):
+def extract_pkg(prj, target_dir, defs, package, arch, log, incl_deps=False):
 
     # pylint: disable=too-many-arguments
 
@@ -153,13 +152,17 @@ def extract_pkg(prj, target_dir, defs, package, arch="default",
     for package in pkgs:
         ppath = os.path.join(target_dir, "%s.deb" % package)
         try:
-            system('dpkg -x "%s" "%s"' % (ppath, target_dir))
+            log.do('dpkg -x "%s" "%s"' % (ppath, target_dir))
         except CommandError:
             try:
                 # dpkg did not work, try falling back to ar and tar
-                system('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
+                log.do('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
                                                                    target_dir))
             except CommandError:
-                system('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (ppath,
-                                                                   target_dir))
-        system('rm -f "%s"' % ppath)
+                try:
+                    log.do('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (
+                           ppath, target_dir))
+                except CommandError as e:
+                    log.printo("extract %s failed: %s\n" % (ppath, e))
+                    raise e
+        log.do('rm -f "%s"' % ppath)
