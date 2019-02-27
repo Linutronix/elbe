@@ -4,15 +4,16 @@
 		<version>1.0</version>
 		<description>
 			use the following call to boot the image in qemu:
-
-			qemu-system-aarch64 \
+			$ tar xf sdcard.qcow2.tar.xz
+			$ rm sdcard.qcow2.tar.xz
+			$ qemu-system-aarch64 \
 					-machine virt -cpu cortex-a57 -machine type=virt -nographic \
 					-smp 1 -m 1024 \
 					-netdev user,id=unet -device virtio-net-device,netdev=unet \
 					-redir tcp:2022::22 -redir tcp:2021::21 -redir tcp:2345::2345 \
-					-kernel linux-arm64/arch/arm64/boot/Image \
+					-kernel vmlinuz \
 					-append "console=ttyAMA0 root=/dev/vda2" \
-					sdcard.img
+					sdcard.qcow2
 
 			currently an own kernel is needed, but this shouldn't be necessary,
 			if we found how to use the one stored in mmcblk0p1
