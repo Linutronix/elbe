@@ -300,7 +300,7 @@ class ElbeProject (object):
         triplet = self.xml.defs["triplet"]
 
         try:
-            crosstoolchainpkg = "gcc-%s" % self.xml.defs["sdkarch"]
+            crosstoolchainpkg = "g++-%s" % self.xml.defs["sdkarch"]
         except KeyError:
             raise UnsupportedSDKException(triplet)
 
