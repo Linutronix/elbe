@@ -267,7 +267,7 @@ class VirtApt(object):
                     deps.append(lookup_uri(self, d, p))
                     togo.append(p)
 
-        return deps
+        return list(set(deps))
 
 class MyMan(BaseManager):
     pass
