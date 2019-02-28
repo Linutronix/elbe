@@ -8,18 +8,18 @@
 			<url-list>
 				<url>
 					<binary>
-						http://security.debian.org/debian-security jessie/updates main
+						http://security.debian.org/debian-security stretch/updates main
 					</binary>
 					<source>
-						http://security.debian.org/debian-security jessie/updates main
+						http://security.debian.org/debian-security stretch/updates main
 					</source>
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe jessie main
+						http://debian.linutronix.de/elbe stretch main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe jessie main
+						http://debian.linutronix.de/elbe stretch main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe/elbe-repo.pub
@@ -27,10 +27,10 @@
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe-common jessie main
+						http://debian.linutronix.de/elbe-common stretch main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe-common jessie main
+						http://debian.linutronix.de/elbe-common stretch main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe-common/elbe-repo.pub
@@ -38,21 +38,20 @@
 				</url>
 				<url>
 					<binary>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://ftp.de.debian.org/debian stretch-backports main
 					</binary>
 					<source>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://ftp.de.debian.org/debian stretch-backports main
 					</source>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>jessie</suite>
+		<suite>stretch</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
-			<pkg pin="jessie-backports">debootstrap</pkg>
-			<pkg pin="jessie-backports">qemu-user-static</pkg>
-			<pkg pin="jessie-backports">linux-image-amd64</pkg>
-			<pkg pin="jessie-backports">pbuilder</pkg>
+			<pkg pin="stretch-backports">debootstrap</pkg>
+			<pkg pin="stretch-backports">linux-image-amd64</pkg>
+			<pkg pin="stretch-backports">pbuilder</pkg>
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
