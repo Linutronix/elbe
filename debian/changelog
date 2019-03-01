@@ -1,8 +1,23 @@
+elbe (2.9.17) unstable; urgency=medium
+
+  * finetuning: implement <copy_to|from_partition />
+  * finetuning: implementation of <set_packer>
+  * pbuilder: allow passing the buildprofile with --profile option
+  * use pbuilder from jessie-backports
+  * fix initvm.xml to support jessie linux-base change
+  * bugfix: handling of utf-8 characters in logfile lines
+  * replace gpgme with maintained gpg module
+  * improve 'initvm create' error message
+  * libvirt.xml: Workaround for buggy qemu machine type in vmware/stretch
+  * sdk: add gdb and g++ to host sysroot
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 01 Mar 2019 12:52:38 +0100
+
 elbe (2.9.16) unstable; urgency=medium
 
   * bugfix release, 2.9.15 was not able to build an initvm
 
- -- Manuel Traut <manut@slartibartfast>  Wed, 09 Jan 2019 15:55:08 +0100
+ -- Manuel Traut <manut@linutronix.de>  Wed, 09 Jan 2019 15:55:08 +0100
 
 elbe (2.9.15) unstable; urgency=medium
 
@@ -11,7 +26,7 @@ elbe (2.9.15) unstable; urgency=medium
   * initvm: use kernel from jessie-backports
   * libvirt: allow running nested vm
 
- -- Manuel Traut <manut@slartibartfast>  Fri, 21 Dec 2018 16:02:07 +0100
+ -- Manuel Traut <manut@linutronix.de>  Fri, 21 Dec 2018 16:02:07 +0100
 
 elbe (2.9.14) unstable; urgency=medium
 
