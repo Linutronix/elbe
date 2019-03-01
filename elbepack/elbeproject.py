@@ -251,7 +251,9 @@ class ElbeProject (object):
         self.install_packages(self.sysrootenv, buildenv=False)
 
         # ignore packages from debootstrap
-        ignore_pkgs = [p.et.text for p in self.xml.node("debootstrappkgs")]
+        tpkgs = self.xml.get_target_packages()
+        bspkgs = self.xml.node("debootstrappkgs")
+        ignore_pkgs = [p.et.text for p in bspkgs if p.et.text not in tpkgs]
         ignore_dev_pkgs = []
         if self.xml.has('target/pkg-blacklist/sysroot'):
             ignore_dev_pkgs = [p.et.text for p in self.xml.node(
