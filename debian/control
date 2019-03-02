@@ -89,7 +89,8 @@ Depends: ${misc:Depends},
   libparse-debcontrol-perl,
   python-elbe-common (= ${binary:Version}),
   python-mako,
-  python-npyscreen
+  python-npyscreen,
+  python-pkg-resources
 Description: Wizard for debian foler generation
  Assists users in generating a debianization for a given source code project.
 
@@ -248,7 +249,6 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   python-elbe-common (= ${binary:Version}),
   python-lxml (>= 2.3.2-1),
-  python-tz (>= 2012c-1),
   python-pyinotify,
   python-apt,
   python-suds,
