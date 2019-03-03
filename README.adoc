@@ -69,7 +69,7 @@ ELBE files start with a common file header:
 # <SPDX TAG>
 ----
 
-# can be replaced by a comment operator for another programming language, e.g.
+`#` can be replaced by a comment operator for another programming language, e.g.
 /* <...> */ or // <...> is also allowed.
 
 Empty comment lines are allowed in the header. A single header section like
