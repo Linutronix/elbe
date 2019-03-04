@@ -124,9 +124,17 @@ class BuildEnv (object):
 
         if self.xml.has("target/debootstrapvariant"):
             bootstrapvariant = self.xml.text("target/debootstrapvariant")
-            self.log.printo('NOTE: use bootstrap variant "%s".' % (
-                bootstrapvariant))
-            strapcmd = 'debootstrap --variant="%s"' % (bootstrapvariant)
+            includepkgs = self.xml.node("target/debootstrapvariant").et.get("includepkgs")
+            if includepkgs:
+                self.log.printo('NOTE: use bootstrap variant '
+                    '"%s" with additional includes: "%s".' % (
+                    bootstrapvariant, includepkgs))
+                strapcmd = 'debootstrap --variant="%s" --include="%s"' % (
+                    bootstrapvariant, includepkgs)
+            else:
+                self.log.printo('NOTE: use bootstrap variant "%s".' % (
+                    bootstrapvariant))
+                strapcmd = 'debootstrap --variant="%s"' % (bootstrapvariant)
         else:
             self.log.printo('use bootstrap no variant.')
             strapcmd = 'debootstrap'

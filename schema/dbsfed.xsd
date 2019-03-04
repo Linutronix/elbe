@@ -885,7 +885,13 @@
     </annotation>
     <simpleContent>
       <extension base="rfs:debootstrapvarianttype_restriction">
-        <attribute ref="xml:base"/>
+        <attribute name="includepkgs" type="string" use="optional">
+          <annotation>
+            <documentation>
+              A comma-separated list of additional packages at debootstrap runtime.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
