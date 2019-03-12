@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import sys
 
 from lxml import etree
@@ -12,6 +13,10 @@ from lxml.etree import XMLParser, parse
 
 
 def validate_xml(fname):
+    if os.path.getsize(fname) > 1<<30:
+        return ["%s is greater than 1 GiB. "
+                "Elbe does not support files of this size." % fname]
+
     schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
     parser = XMLParser(huge_tree=True)
     schema_tree = etree.parse(schema_file)
