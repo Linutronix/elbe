@@ -1,3 +1,9 @@
+elbe (2.9.18) unstable; urgency=medium
+
+  * Add includepkgs as debootstrapvariant attribute
+
+ -- Manuel Traut <manut@linutronix.de>  Tue, 12 Mar 2019 14:52:48 +0100
+
 elbe (2.9.17) unstable; urgency=medium
 
   * finetuning: implement <copy_to|from_partition />
