@@ -182,9 +182,10 @@ class StopAction(InitVMAction):
                 try:
                     self.initvm.shutdown()
                 except libvirt.libvirtError as e:
-                    # ignore that initvm is already shutdown but raise all
-                    # other errors
-                    if self.initvm_state() != libvirt.VIR_DOMAIN_SHUTOFF:
+                    # ignore that initvm is already shutoff or is currently
+                    # shutting down but raise all other errors
+                    if (self.initvm_state() != libvirt.VIR_DOMAIN_SHUTOFF and
+                        self.initvm_state() != libvirt.VIR_DOMAIN_SHUTDOWN):
                         raise e
                 sys.stdout.write("*")
                 sys.stdout.flush()
