@@ -127,10 +127,10 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
-        if self.initvm_state() == 1:
+        if self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             print('Initvm already running.')
             sys.exit(20)
-        elif self.initvm_state() == 5:
+        elif self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             # Domain is shut off. Let's start it!
             self.initvm.create()
             # Wait five seconds for the initvm to boot
@@ -154,9 +154,9 @@ class EnsureAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
-        if self.initvm_state() == 5:
+        if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             system('%s initvm start' % elbe_exe)
-        elif self.initvm_state() == 1:
+        elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             pass
         else:
             print("Elbe initvm in bad state.")
@@ -174,7 +174,7 @@ class StopAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
-        if self.initvm_state() != 1:
+        if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
             print('Initvm is not running.')
             sys.exit(20)
         else:
@@ -184,11 +184,11 @@ class StopAction(InitVMAction):
                 except libvirt.libvirtError as e:
                     # ignore that initvm is already shutdown but raise all
                     # other errors
-                    if self.initvm_state() != 5:
+                    if self.initvm_state() != libvirt.VIR_DOMAIN_SHUTOFF:
                         raise e
                 sys.stdout.write("*")
                 sys.stdout.flush()
-                if self.initvm_state() == 5:
+                if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
                     print("\nInitvm shut off.")
                     break
                 time.sleep(1)
@@ -205,7 +205,7 @@ class AttachAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
-        if self.initvm_state() != 1:
+        if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
             print('Error: Initvm not running properly.')
             sys.exit(20)
 
