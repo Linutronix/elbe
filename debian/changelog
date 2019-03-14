@@ -1,3 +1,11 @@
+elbe (3) unstable; urgency=medium
+
+  * remove outdated examples
+  * add a check that only XMLs < 1GB are allowed
+  * bugfix: race condition in initvm stop
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 14 Mar 2019 14:50:10 +0100
+
 elbe (2.9.18) unstable; urgency=medium
 
   * Add includepkgs as debootstrapvariant attribute

@@ -48,9 +48,9 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# install current elbe-testing
-RUN apt-add-repository 'deb http://debian.linutronix.de/elbe-testing stretch main'
-RUN wget http://debian.linutronix.de/elbe-testing/elbe-repo.pub
+# install current elbe
+RUN apt-add-repository 'deb http://debian.linutronix.de/elbe stretch main'
+RUN wget http://debian.linutronix.de/elbe/elbe-repo.pub
 RUN apt-key add elbe-repo.pub
 RUN apt-get update -y
 RUN apt-get install -y --no-install-recommends \

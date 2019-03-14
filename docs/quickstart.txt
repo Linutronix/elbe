@@ -47,15 +47,15 @@ Binary Debian packages
 
 The latest packages for elbe reside in the following repository
 --------------------------------------------------------
-http://debian.linutronix.de/elbe-testing
+http://debian.linutronix.de/elbe
 http://debian.linutronix.de/elbe-common
 --------------------------------------------------------
 
 Create the file `/etc/apt/sources.list.d/elbe.list`
 with the following contents:
 --------------------------------------------------------
-deb http://debian.linutronix.de/elbe-testing jessie main
-deb http://debian.linutronix.de/elbe-common jessie main
+deb http://debian.linutronix.de/elbe stretch main
+deb http://debian.linutronix.de/elbe-common stretch main
 --------------------------------------------------------
 
 Add a repository key to the list of trusted keys (as root):
