@@ -167,8 +167,12 @@ def sign(infile, outfile, fingerprint):
 
     try:
         indata = core.Data(file=infile)
-        outdata = core.Data(file=outfile)
+        outdata = core.Data()
         ctx.op_sign(indata, outdata, sig.mode.NORMAL)
+        outdata.seek(0, os.SEEK_SET)
+        signature = outdata.read()
+        with open(outfile, 'w') as fd:
+            fd.write(signature)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
 
@@ -177,9 +181,7 @@ def sign_file(fname, fingerprint):
     outfilename = fname + '.gpg'
 
     try:
-        with open(fname, 'r') as infile:
-            with open(outfilename, 'w') as outfile:
-                sign(infile, outfile, fingerprint)
+        sign(fname, outfilename, fingerprint)
     except Exception as ex:
         print("Error signing file %s" % ex.message)
 
@@ -210,7 +212,11 @@ def export_key(fingerprint, outfile):
     ctx.set_armor(True)
 
     try:
-        ctx.op_export(fingerprint, 0, outfile)
+        outdata = core.Data()
+        ctx.op_export(fingerprint, 0, outdata)
+        outdata.seek(0, os.SEEK_SET)
+        key = outdata.read()
+        outfile.write(key)
     except Exception:
         print("Error exporting key %s" % (fingerprint))
 
