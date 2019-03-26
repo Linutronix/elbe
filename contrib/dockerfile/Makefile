@@ -1,45 +1,56 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2015 Silvio Fricke <silvio.fricke@gmail.com>
+# Copyright (c) 2018 Manuel Traut <manut@linutronix.de>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 
-IMAGENAME ?= elbe-image
-CONTAINERNAME ?= elbe
-
-ifdef SSH_AUTH_SOCK
-	sshauth = -e SSH_AUTH_SOCK=/ssh-auth-sock -v $(SSH_AUTH_SOCK):/ssh-auth-sock
-endif
+IMAGENAME ?= elbe-devel-image
+CONTAINERNAME ?= elbe-devel
+KVMGID ?= $(shell ls -n /dev/kvm | awk '{ print $$4 }')
+UID ?= $(shell id -u)
 
 # docker commands
 build:
-	docker build -t $(IMAGENAME) .
+	test -c /dev/kvm  || ( echo "/dev/kvm not found" && false )
+	test -c /dev/fuse || ( echo "/dev/fuse not found" && false )
+	test -n "$(KVMGID)" || ( echo "detecting groupid of /dev/kvm failed" && false )
+	sed -e "s#@KVMGID@#$(KVMGID)#g" \
+	    -e "s#@USERID@#$(UID)#g" \
+	    Dockerfile.in > Dockerfile
+	docker build --build-arg http_proxy=$(http_proxy) \
+	             --build-arg https_proxy=$(https_proxy) \
+	             --build-arg no_proxy=$(no_proxy) \
+	             --no-cache \
+	             -t $(IMAGENAME) .
+	rm Dockerfile
 
-run:
-	docker run \
-		-v $(realpath ../../.):/elbe \
-		--device /dev/kvm:/dev/kvm \
-		$(sshauth) \
-		-d \
-		-ti \
+start:
+	docker ps | grep $(CONTAINERNAME)$$ || \
+	docker run --name $(CONTAINERNAME) -d \
+		-e container=docker \
+		-e http_proxy=$(http_proxy) \
+		-e https_proxy=$(https_proxy) \
+		-e no_proxy=$(no_proxy) \
+		-v $(realpath ../../.):/elbe -w /elbe\
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		--cap-add SYS_ADMIN \
+		--security-opt seccomp:unconfined \
+		--security-opt apparmor:unconfined \
 		--group-add kvm \
-		--name \
-		$(CONTAINERNAME) \
+		--device /dev/kvm \
+		--device /dev/fuse \
 		$(IMAGENAME)
 
-getip:
-	docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(CONTAINERNAME)
-
-start: run getip
-
 stop:
-	docker stop $(CONTAINERNAME)
+	-docker stop $(CONTAINERNAME)
 
 stoprm: stop
-	docker rm $(CONTAINERNAME)
+	-docker rm $(CONTAINERNAME)
 
-# ssh related functions
-cleanssh:
-	IP=$(shell docker inspect -f '{{ .NetworkSettings.IPAddress }}' ${CONTAINERNAME}) ;\
-	[[ -n "$${IP}" ]] && ssh-keygen -R $${IP}
+clean: stoprm
+	-docker rmi $(IMAGENAME)
 
-connect:
-	SBC=$(shell which sbc) ;\
-	IP=$(shell docker inspect -f '{{ .NetworkSettings.IPAddress }}' ${CONTAINERNAME}) ;\
-	ssh-copy-id elbe@$${IP} ;\
-	$$SBC ssh -XA elbe@$${IP}
+connect: start
+	docker exec -tiu $(UID) $(CONTAINERNAME) /bin/bash
+
+.PHONY: build start stop stoprm clean connect
