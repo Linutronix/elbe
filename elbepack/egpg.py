@@ -13,6 +13,7 @@ from gpg import core
 from gpg.constants import sigsum, sig
 
 from elbepack.filesystem import hostfs
+from elbepack.shellhelper import system
 
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">
@@ -23,6 +24,7 @@ elbe_internal_key_param = """
   Name-Comment: Automatically generated
   Name-Email: root@elbe-daemon.de
   Expire-Date: 0
+  Passphrase: requiredToAvoidUserInput
 </GnupgKeyParms>
 """
 
@@ -146,6 +148,14 @@ def unsign_file(fname):
 
     return None
 
+def unlock_key(fingerprint):
+    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
+    ctx = core.Context()
+    key = ctx.get_key(fingerprint, secret=True)
+    keygrip = key.subkeys[0].keygrip
+    system("/usr/lib/gnupg2/gpg-preset-passphrase "
+           "--preset -P requiredToAvoidUserInput %s" % str(keygrip),
+           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
 def sign(infile, outfile, fingerprint):
 
@@ -158,6 +168,7 @@ def sign(infile, outfile, fingerprint):
     except Exception as ex:
         print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
 
+    unlock_key(key.fpr)
     ctx.signers_add(key)
     ctx.set_armor(False)
 
@@ -194,6 +205,8 @@ def get_fingerprints():
 
 def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
+    hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
+                      "allow-preset-passphrase")
     os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
     ctx.op_genkey(elbe_internal_key_param, None, None)
@@ -216,4 +229,4 @@ def export_key(fingerprint, outfile):
     except Exception:
         print("Error exporting key %s" % (fingerprint))
 
-    return '/var/cache/elbe/gnupg/pubring.gpg'
+    return '/var/cache/elbe/gnupg/pubring.kbx'

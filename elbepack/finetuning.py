@@ -19,6 +19,7 @@ from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import CommandError
 from elbepack.filesystem import ImgMountFilesystem
 from elbepack.packers import default_packer, packers
+from elbepack.egpg import unlock_key
 
 
 class FinetuningException(Exception):
@@ -421,6 +422,7 @@ class UpdatedAction(FinetuningAction):
             gpgdata = core.Data()
             ctx = core.Context()
             ctx.set_armor(True)
+            unlock_key(fp)
             ctx.op_export(fp, 0, gpgdata)
             gpgdata.seek(0, os.SEEK_SET)
             key = gpgdata.read()
