@@ -1,3 +1,12 @@
+elbe (2.5) unstable; urgency=medium
+
+  * use debootstrap from linutronix repo instead of no longer available debian
+     jessie-backports repo
+  * use contrib/dockerfile from elbe3
+  * update list of ubuntu releases
+
+ -- Manuel Traut <manut@linutronix.de>  Mon, 01 Apr 2019 09:47:50 +0200
+
 elbe (2.4) unstable; urgency=medium
 
   * repomanager: add fallback, when reprepro fails to add dsc
@@ -6,7 +15,7 @@ elbe (2.4) unstable; urgency=medium
   * Fix passno option handling
   * pkgutils: update version string for elbe-debootstrap
 
- -- Manuel Traut <manut@slartibartfast>  Thu, 13 Dec 2018 15:12:58 +0100
+ -- Manuel Traut <manut@linutronix.de>  Thu, 13 Dec 2018 15:12:58 +0100
 
 elbe (2.3) unstable; urgency=medium
 
