@@ -8,13 +8,13 @@
 			<url-list>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe jessie main
+						http://debian.linutronix.de/elbe2 jessie main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe jessie main
+						http://debian.linutronix.de/elbe2 jessie main
 					</source>
 					<key>
-						http://debian.linutronix.de/elbe/elbe-repo.pub
+						http://debian.linutronix.de/elbe2/elbe-repo.pub
 					</key>
 				</url>
 				<url>
@@ -30,11 +30,14 @@
 				</url>
 				<url>
 					<binary>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://debian.linutronix.de/debian-jessie-backports jessie-backports main
 					</binary>
 					<source>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://debian.linutronix.de/debian-jessie-backports jessie-backports main
 					</source>
+					<key>
+						http://debian.linutronix.de/debian-jessie-backports/repo.pub
+					</key>
 				</url>
 			</url-list>
 		</mirror>

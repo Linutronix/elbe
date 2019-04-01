@@ -18,11 +18,14 @@
 				</url>
 				<url>
 					<binary>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://debian.linutronix.de/debian-jessie-backports jessie-backports main
 					</binary>
 					<source>
-						http://ftp.de.debian.org/debian jessie-backports main
+						http://debian.linutronix.de/debian-jessie-backports jessie-backports main
 					</source>
+					<key>
+						http://debian.linutronix.de/debian-jessie-backports/repo.pub
+					</key>
 				</url>
 			</url-list>
 		</mirror>
