@@ -11,12 +11,7 @@ from __future__ import print_function
 import os
 
 from shutil import rmtree
-
-try:
-    from gpg import core
-except ImportError:
-    from pyme import core
-
+from gpg import core
 from apt.package import FetchError
 
 from elbepack.repomanager import UpdateRepo

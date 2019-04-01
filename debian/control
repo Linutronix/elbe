@@ -57,7 +57,7 @@ Depends: ${misc:Depends},
   python (>= 2.7~),
   python-lxml,
   python-apt,
-  python-pyme|python-gpg,
+  python-gpg,
   python-libvirt,
   wget,
   cpio

@@ -23,11 +23,7 @@ except ImportError:
     import urllib2
     urlopen = urllib2.urlopen
 
-try:
-    from gpg import core
-except ImportError:
-    from pyme import core
-
+from gpg import core
 from shutil import copyfileobj, copyfile
 
 from elbepack.filesystem import TmpdirFilesystem

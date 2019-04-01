@@ -9,12 +9,8 @@ from __future__ import print_function
 
 import os
 
-try:
-    from gpg import core
-    from gpg.constants import sigsum, sig
-except ImportError:
-    from pyme import core
-    from pyme.constants import sigsum, sig
+from gpg import core
+from gpg.constants import sigsum, sig
 
 from elbepack.filesystem import hostfs
 
