@@ -59,6 +59,10 @@ class BuildEnv (object):
         if self.xml.prj.has("mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
             self.log.do('umount "%s"' % cdrompath)
+            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
+                        self.path)
+            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
+                        self.path)
 
     def cdrom_mount(self):
         if self.xml.has("project/mirror/cdrom"):
@@ -76,8 +80,25 @@ class BuildEnv (object):
             self.log.do('echo "deb-src copy:///repo %s main" >> '
                         '%s/etc/apt/sources.list.d/local.list' % (
                             self.xml.text("project/suite"), self.path))
+
         self.cdrom_mount()
         self.rfs.__enter__()
+
+        if self.xml.has("project/mirror/cdrom"):
+            self.log.chroot(self.rfs.path,
+                            'apt-key '
+                            '--keyring /etc/apt/trusted.gpg.d/elbe-cdrepo.gpg '
+                            'add /cdrom/repo.pub')
+            self.log.chroot(self.rfs.path,
+                            'apt-key '
+                            '--keyring /etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg '
+                            'add /cdrom/targetrepo/repo.pub')
+
+        if os.path.exists(os.path.join(self.rfs.path, 'repo/pool')):
+            self.log.chroot(self.rfs.path,
+                            'apt-key '
+                            '--keyring /etc/apt/trusted.gpg.d/elbe-localrepo.gpg '
+                            'add /repo/repo.pub')
         return self
 
     def __exit__(self, typ, value, traceback):
@@ -86,6 +107,8 @@ class BuildEnv (object):
         if os.path.exists(self.path + '/repo'):
             self.log.do("mv %s/repo %s/../" % (self.path, self.path))
             self.log.do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
+            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-localrepo.gpg" %
+                        self.path)
 
     def debootstrap(self):
 
