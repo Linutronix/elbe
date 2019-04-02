@@ -712,13 +712,14 @@ class ElbeProject (object):
                 self.builddir,
                 "pbuilder",
                 "hooks.d",
-                "D10elbe_apt_sources"))
+                "G10elbe_apt_sources"))
 
         # Run pbuilder --create
         self.log.do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-                    '--extrapackages "git gnupg"' % (
+                    '--debootstrapopts --include="git gnupg2" --keyring "%s"' % (
                         os.path.join(self.builddir, "pbuilderrc"),
-                        os.path.join(self.builddir, "aptconfdir")))
+                        os.path.join(self.builddir, "aptconfdir"),
+                        os.path.join(self.builddir, "repo", "elbe-keyring.gpg")))
 
     def sync_xml_to_disk(self):
         try:

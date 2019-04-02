@@ -102,7 +102,7 @@ def pbuilder_write_repo_hook(builddir, xml):
 
     pbuilder_hook_dir = os.path.join(builddir, "pbuilder", "hooks.d")
 
-    fp = open(os.path.join(pbuilder_hook_dir, "D10elbe_apt_sources"), "w")
+    fp = open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w")
 
     if xml.prj is None:
         return "# No Project"
