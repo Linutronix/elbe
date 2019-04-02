@@ -216,17 +216,6 @@ def generate_elbe_internal_key():
 
 
 def export_key(fingerprint, outfile):
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
-    ctx = core.Context()
-    ctx.set_armor(True)
-
-    try:
-        outdata = core.Data()
-        ctx.op_export(fingerprint, 0, outdata)
-        outdata.seek(0, os.SEEK_SET)
-        key = outdata.read()
-        outfile.write(key)
-    except Exception:
-        print("Error exporting key %s" % (fingerprint))
-
+    system("/usr/bin/gpg -a -o %s --export %s" % (outfile, fingerprint),
+           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
     return '/var/cache/elbe/gnupg/pubring.kbx'

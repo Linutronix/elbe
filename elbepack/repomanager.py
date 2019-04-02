@@ -159,11 +159,9 @@ class RepoBase(object):
             fp.write("\n")
         fp.close()
 
-        with self.fs.open("repo.pub", "w") as pubkey_fp:
-            keyring = export_key(self.keyid, pubkey_fp)
-            if keyring:
-                shutil.copyfile(keyring, os.path.join(self.fs.path,
-                                                      "elbe-keyring.gpg"))
+        keyring = export_key(self.keyid, self.fs.fname("/repo.pub"))
+        if keyring:
+            shutil.copyfile(keyring, self.fs.fname("/elbe-keyring.gpg"))
 
         if need_update:
             self.log.do(
