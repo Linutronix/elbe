@@ -145,22 +145,19 @@ class BuildEnv (object):
         host_arch = self.log.get_command_out(
             "dpkg --print-architecture").strip()
 
+        includepkgs = None
+        strapcmd  = 'debootstrap '
         if self.xml.has("target/debootstrapvariant"):
             bootstrapvariant = self.xml.text("target/debootstrapvariant")
             includepkgs = self.xml.node("target/debootstrapvariant").et.get("includepkgs")
-            if includepkgs:
-                self.log.printo('NOTE: use bootstrap variant '
-                    '"%s" with additional includes: "%s".' % (
-                    bootstrapvariant, includepkgs))
-                strapcmd = 'debootstrap --variant="%s" --include="%s"' % (
-                    bootstrapvariant, includepkgs)
-            else:
-                self.log.printo('NOTE: use bootstrap variant "%s".' % (
-                    bootstrapvariant))
-                strapcmd = 'debootstrap --variant="%s"' % (bootstrapvariant)
-        else:
-            self.log.printo('use bootstrap no variant.')
-            strapcmd = 'debootstrap'
+            strapcmd += '--variant="%s" ' % bootstrapvariant
+
+        if includepkgs and not "gnupg2" in includepkgs.split(','):
+            includepkgs += ",gnupg2"
+        if not includepkgs:
+            includepkgs = "gnupg2"
+
+        strapcmd += ' --include="%s"' % includepkgs
 
         if not self.xml.is_cross(host_arch):
             # ignore gpg verification if install from cdrom, cause debootstrap
