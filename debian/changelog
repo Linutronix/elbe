@@ -1,3 +1,13 @@
+elbe (4) unstable; urgency=medium
+
+  * use stretch in initvm
+  * enable buster targets by using debootstrap from stretch-backports
+  * bugfix - pbuilder: fix package build with local dependency
+  * bugfix - prjrepo: fix upload of dsc files
+  * bugfix - fstab: fix ubifs device labels
+
+ -- Manuel Traut <manut@linutronix.de>  Wed, 03 Apr 2019 14:53:14 +0200
+
 elbe (3) unstable; urgency=medium
 
   * remove outdated examples
