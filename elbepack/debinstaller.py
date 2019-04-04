@@ -24,6 +24,7 @@ except ImportError:
     urlopen = urllib2.urlopen
 
 from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP
 from shutil import copyfileobj, copyfile
 
 from elbepack.filesystem import TmpdirFilesystem
@@ -126,8 +127,10 @@ def download_release(tmp, base_url):
 
     # setup gpg context, for verifying
     # the Release.gpg signature.
-    os.environ['GNUPGHOME'] = tmp.fname('/')
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                      None,
+                      tmp.fname('/'))
 
     # download the Relase file to a tmp file,
     # because we need it 2 times

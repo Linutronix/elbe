@@ -12,6 +12,7 @@ import os
 
 from shutil import rmtree
 from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP
 from apt.package import FetchError
 
 from elbepack.repomanager import UpdateRepo
@@ -418,9 +419,11 @@ class UpdatedAction(FinetuningAction):
             fp = self.node.et.text
             log.printo("transfer gpg key to target: " + fp)
 
-            os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
             gpgdata = core.Data()
             ctx = core.Context()
+            ctx.set_engine_info(PROTOCOL_OpenPGP,
+                                None,
+                                '/var/cache/elbe/gnupg')
             ctx.set_armor(True)
             unlock_key(fp)
             ctx.op_export(fp, 0, gpgdata)

@@ -10,7 +10,7 @@ from __future__ import print_function
 import os
 
 from gpg import core
-from gpg.constants import sigsum, sig
+from gpg.constants import sigsum, sig, PROTOCOL_OpenPGP
 
 from elbepack.filesystem import hostfs
 from elbepack.shellhelper import system
@@ -118,8 +118,10 @@ def unsign_file(fname):
 
     outfilename = fname[:len(fname) - 4]
 
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                        None,
+                        '/var/cache/elbe/gnupg')
     ctx.set_armor(False)
 
     try:
@@ -149,8 +151,10 @@ def unsign_file(fname):
     return None
 
 def unlock_key(fingerprint):
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                        None,
+                        '/var/cache/elbe/gnupg')
     key = ctx.get_key(fingerprint, secret=True)
     keygrip = key.subkeys[0].keygrip
     system("/usr/lib/gnupg2/gpg-preset-passphrase "
@@ -159,8 +163,10 @@ def unlock_key(fingerprint):
 
 def sign(infile, outfile, fingerprint):
 
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                        None,
+                        '/var/cache/elbe/gnupg')
     key = None
 
     try:
@@ -194,8 +200,10 @@ def sign_file(fname, fingerprint):
 
 
 def get_fingerprints():
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                        None,
+                        '/var/cache/elbe/gnupg')
     keys = ctx.op_keylist_all(None, False)
     fingerprints = []
     for k in keys:
@@ -207,8 +215,10 @@ def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
                       "allow-preset-passphrase")
-    os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
     ctx = core.Context()
+    ctx.set_engine_info(PROTOCOL_OpenPGP,
+                        None,
+                        '/var/cache/elbe/gnupg')
     ctx.op_genkey(elbe_internal_key_param, None, None)
     key = ctx.op_genkey_result()
 
