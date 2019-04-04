@@ -179,13 +179,13 @@ class RepoBase(object):
                     env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
 
     def finalize(self):
-        os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
         for att in self.attrs:
             self.log.do(
                 'reprepro --basedir "' +
                 self.fs.path +
                 '" export ' +
-                att.codename)
+                att.codename,
+                env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, component):
         if self.maxsize:
@@ -232,7 +232,8 @@ class RepoBase(object):
     def _removedeb(self, pkgname, codename):
         self.log.do(
             "reprepro --basedir %s remove %s %s" %
-            (self.fs.path, codename, pkgname))
+            (self.fs.path, codename, pkgname),
+            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removedeb(self, pkgname, component="main"):
         self._removedeb(pkgname, self.repo_attr.codename)
@@ -240,7 +241,8 @@ class RepoBase(object):
     def _removesrc(self, srcname, codename):
         self.log.do(
             "reprepro --basedir %s removesrc %s %s" %
-            (self.fs.path, codename, srcname))
+            (self.fs.path, codename, srcname),
+            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removesrc(self, path, component="main"):
         for p in Deb822.iter_paragraphs(file(path)):
@@ -248,7 +250,6 @@ class RepoBase(object):
                 self._removesrc(p['Source'], self.repo_attr.codename)
 
     def _remove(self, path, codename, component):
-        os.environ['GNUPGHOME'] = "/var/cache/elbe/gnupg"
         for p in Deb822.iter_paragraphs(file(path)):
             if 'Source' in p:
                 self._removesrc(p['Source'], codename)

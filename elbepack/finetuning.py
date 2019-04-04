@@ -436,8 +436,9 @@ class UpdatedAction(FinetuningAction):
 
             target.mkdir_p("/var/cache/elbe/gnupg", mode=0o700)
             with target:
-                os.environ['GNUPGHOME'] = target.path + "/var/cache/elbe/gnupg"
-                log.do("gpg --import " + target.path + "/pub.key")
+                env_add = {'GNUPGHOME': target.path + "/var/cache/elbe/gnupg"}
+                log.do("gpg --import " + target.path + "/pub.key",
+                       env_add=env_add)
 
         log.printo("generate base repo")
         arch = target.xml.text("project/arch", key="arch")
