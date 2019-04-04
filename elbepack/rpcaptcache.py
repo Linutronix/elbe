@@ -247,10 +247,15 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.installed
         else:
             pkgver = p.versions[version]
-
-        rel_filename = pkgver.fetch_binary(path,
-                                           ElbeAcquireProgress())
-        return self.rfs.fname(rel_filename)
+        # avoid DeprecationWarning:
+        # "MD5Hash is deprecated, use Hashes instead"
+        # triggerd by python-apt
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore",
+                                    category=DeprecationWarning)
+            rel_filename = pkgver.fetch_binary(path,
+                                               ElbeAcquireProgress())
+            return self.rfs.fname(rel_filename)
 
     def download_source(self, pkgname, path, version=None):
         p = self.cache[pkgname]
@@ -259,9 +264,16 @@ class RPCAPTCache(InChRootObject):
         else:
             pkgver = p.versions[version]
 
-        rel_filename = pkgver.fetch_source(path,
-                                           ElbeAcquireProgress(), unpack=False)
-        return self.rfs.fname(rel_filename)
+        # avoid DeprecationWarning:
+        # "MD5Hash is deprecated, use Hashes instead"
+        # triggerd by python-apt
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore",
+                                    category=DeprecationWarning)
+            rel_filename = pkgver.fetch_source(path,
+                                               ElbeAcquireProgress(),
+                                               unpack=False)
+            return self.rfs.fname(rel_filename)
 
 
 class MyMan(BaseManager):
