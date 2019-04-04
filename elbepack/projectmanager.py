@@ -503,7 +503,7 @@ class ProjectManager(object):
 
         if t == 'dsc':
             ep.repo.includedsc(os.path.join(ep.builddir, filename),
-                               pkgname=pkg_name, force=True)
+                               force=True)
         elif t == 'deb':
             ep.repo.includedeb(os.path.join(ep.builddir, filename),
                                pkgname=pkg_name, force=True)
