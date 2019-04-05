@@ -595,8 +595,6 @@ class WaitProjectBusyAction(ClientAction):
             # here
             except socket.error as e:
                 print(e.message, file=sys.stderr)
-                if e.errno != 104:
-                    raise e
                 print("socket error during wait busy occured, retry..",
                       file=sys.stderr)
                 continue
