@@ -59,9 +59,9 @@ class BuildEnv (object):
         if self.xml.prj.has("mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
             self.log.do('umount "%s"' % cdrompath)
-            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
+            self.log.do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
                         self.path)
-            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
+            self.log.do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
                         self.path)
 
     def cdrom_mount(self):
