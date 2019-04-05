@@ -13,13 +13,13 @@
 			<url-list>
 				<!-- for elbe updated -->
 				<url>
-					<binary>http://debian.linutronix.de/elbe jessie main</binary>
-					<source>http://debian.linutronix.de/elbe jessie main</source>
+					<binary>http://debian.linutronix.de/elbe stretch main</binary>
+					<source>http://debian.linutronix.de/elbe stretch main</source>
 					<key>http://debian.linutronix.de/elbe/elbe-repo.pub</key>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>jessie</suite>
+		<suite>stretch</suite>
 	</project>
 	<target>
 		<hostname>elbe-updated</hostname>

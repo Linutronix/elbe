@@ -5,14 +5,13 @@
 		<description>
 			example for testing powerpc
 		</description>
-		<buildtype>ppc</buildtype>
+		<buildtype>ppc64el</buildtype>
 		<mirror>
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<noauth/>
-		<suite>jessie</suite>
+		<suite>sid</suite>
 	</project>
 	<target>
 		<hostname>elbe-ppc</hostname>
@@ -51,7 +50,7 @@
 			<rm>var/cache/apt/archives/*.deb</rm>
 		</finetuning>
 		<pkg-list>
-			<pkg>linux-image-powerpc</pkg>
+			<pkg>linux-image-powerpc64le</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>

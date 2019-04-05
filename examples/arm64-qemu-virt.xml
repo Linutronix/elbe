@@ -24,7 +24,7 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>jessie</suite>
+		<suite>stretch</suite>
 	</project>
 	<target>
 		<hostname>lx64</hostname>
