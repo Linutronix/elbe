@@ -301,10 +301,18 @@ class ElbeProject (object):
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
 
-        try:
-            crosstoolchainpkg = "g++-%s" % self.xml.defs["sdkarch"]
-        except KeyError:
-            raise UnsupportedSDKException(triplet)
+        host_pkglist = []
+        if self.xml.tgt.has('hostsdk-pkg-list'):
+            for p in self.xml.tgt.node('hostsdk-pkg-list'):
+                if p.tag == 'pkg':
+                    host_pkglist.append(p.et.text.strip())
+        else:
+            try:
+                host_pkglist.append("g++-%s" % self.xml.defs["sdkarch"])
+            except KeyError:
+                raise UnsupportedSDKException(triplet)
+
+            host_pkglist.append('gdb-multiarch')
 
         # build target sysroot including libs and headers for the target
         self.build_sysroot()
@@ -315,20 +323,14 @@ class ElbeProject (object):
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
         self.log.do('mkdir -p "%s"' % hostsysrootpath)
-        extract_pkg(self.xml.prj,
-                    hostsysrootpath,
-                    self.xml.defs,
-                    crosstoolchainpkg,
-                    'amd64',
-                    self.log,
-                    True)
-        extract_pkg(self.xml.prj,
-                    hostsysrootpath,
-                    self.xml.defs,
-                    'gdb-multiarch',
-                    'amd64',
-                    self.log,
-                    True)
+        for p in host_pkglist:
+            extract_pkg(self.xml.prj,
+                        hostsysrootpath,
+                        self.xml.defs,
+                        p,
+                        'amd64',
+                        self.log,
+                        True)
 
         n = gen_sdk_scripts(triplet,
                             self.name,
