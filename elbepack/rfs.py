@@ -23,7 +23,7 @@ class DebootstrapException (Exception):
 
 
 class BuildEnv (object):
-    def __init__(self, xml, log, path, build_sources=False, clean=False):
+    def __init__(self, xml, log, path, build_sources=False, clean=False, arch="default"):
 
         # pylint: disable=too-many-arguments
 
@@ -31,6 +31,7 @@ class BuildEnv (object):
         self.log = log
         self.path = path
         self.rpcaptcache = None
+        self.arch = arch
 
         self.rfs = BuildImgFs(path, xml.defs["userinterpr"])
 
@@ -45,7 +46,7 @@ class BuildEnv (object):
                 "usr/sbin/policy-rc.d",
                 0o755,
                 "#!/bin/sh\nexit 101\n")
-            self.debootstrap()
+            self.debootstrap(arch)
             self.fresh_debootstrap = True
             self.need_dumpdebootstrap = True
         else:
