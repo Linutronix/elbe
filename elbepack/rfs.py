@@ -110,7 +110,7 @@ class BuildEnv (object):
             self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-localrepo.gpg" %
                         self.path)
 
-    def debootstrap(self):
+    def debootstrap(self, arch="default"):
 
         # pylint: disable=too-many-statements
         # pylint: disable=too-many-branches
@@ -140,7 +140,8 @@ class BuildEnv (object):
 
         self.log.h2("debootstrap log")
 
-        arch = self.xml.text("project/buildimage/arch", key="arch")
+        if arch == "default":
+            arch = self.xml.text("project/buildimage/arch", key="arch")
 
         host_arch = self.log.get_command_out(
             "dpkg --print-architecture").strip()
