@@ -886,7 +886,8 @@ class ElbeProject (object):
                 except KeyError:
                     self.log.printo("No Package " + p)
                 except SystemError as e:
-                    self.log.printo("Error: Unable to correct problems in package %s (%s)" % (p, str(e)))
+                    self.log.printo("Error: Unable to correct problems in "
+                                    "package %s (%s)" % (p, str(e)))
 
             # temporary disabled because of
             # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
