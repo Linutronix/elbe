@@ -35,7 +35,6 @@ from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
 
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
-from elbepack.pkgutils import extract_pkg
 from elbepack.templates import write_pack_template
 from elbepack.finetuning import do_prj_finetuning
 
@@ -206,6 +205,9 @@ class ElbeProject (object):
         self.sysrootenv = None
         self.log.do('rm -rf %s' % self.sysrootpath)
 
+        # same for host_sysroot instance recreate it in any case
+        self.host_sysrootenv = None
+
     def build_chroottarball(self):
         self.log.do("tar cJf %s/chroot.tar.xz \
                 --exclude=./tmp/*  --exclude=./dev/* \
@@ -298,6 +300,42 @@ class ElbeProject (object):
         self.log.do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
                     (self.builddir, self.sysrootpath, sysrootfilelist))
 
+    def build_host_sysroot(self, pkgs, hostsysrootpath):
+        self.log.do('rm -rf %s; mkdir "%s"' % (hostsysrootpath,
+                                               hostsysrootpath))
+
+        self.host_sysrootenv = BuildEnv(self.xml,
+                                        self.log,
+                                        hostsysrootpath,
+                                        clean=True,
+                                        arch="amd64")
+        # Import keyring
+        self.host_sysrootenv.import_keys()
+        self.log.printo("Keys imported")
+
+        with self.host_sysrootenv:
+
+            try:
+                self.get_rpcaptcache(env=self.host_sysrootenv).update()
+            except Exception as e:
+                raise AptCacheUpdateError(e)
+
+            for p in pkgs:
+                try:
+                    self.get_rpcaptcache(
+                            env=self.host_sysrootenv).mark_install(p, None)
+                except KeyError:
+                    self.log.printo("No Package " + p)
+                except SystemError as e:
+                    self.log.printo("Error: Unable to correct problems "
+                                    "in package %s (%s)" % (p, str(e)))
+
+            try:
+                self.get_rpcaptcache(env=self.host_sysrootenv).commit()
+            except SystemError as e:
+                self.log.printo("commiting changes failed: %s" % str(e))
+                raise AptCacheCommitError(str(e))
+
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
 
@@ -322,15 +360,8 @@ class ElbeProject (object):
                                                          sdktargetpath))
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
-        self.log.do('mkdir -p "%s"' % hostsysrootpath)
-        for p in host_pkglist:
-            extract_pkg(self.xml.prj,
-                        hostsysrootpath,
-                        self.xml.defs,
-                        p,
-                        'amd64',
-                        self.log,
-                        True)
+
+        self.build_host_sysroot(host_pkglist, hostsysrootpath)
 
         n = gen_sdk_scripts(triplet,
                             self.name,
