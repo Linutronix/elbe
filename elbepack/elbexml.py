@@ -45,9 +45,9 @@ class NoInitvmNode(Exception):
 
 
 class ValidationMode(object):
-    NO_CHECK = True
+    NO_CHECK = 1
     CHECK_BINARIES = 2
-    CHECK_ALL = False
+    CHECK_ALL = 0
 
 
 class ElbeXML(object):
