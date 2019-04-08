@@ -336,6 +336,24 @@ class ElbeProject (object):
                 self.log.printo("commiting changes failed: %s" % str(e))
                 raise AptCacheCommitError(str(e))
 
+        # This is just a sysroot, some directories
+        # need to be removed.
+        #
+        # This can move into finetuning in the
+        # second implementation step.
+        self.host_sysrootenv.rfs.rmtree('/boot')
+        self.host_sysrootenv.rfs.rmtree('/dev')
+        self.host_sysrootenv.rfs.rmtree('/etc')
+        self.host_sysrootenv.rfs.rmtree('/home')
+        self.host_sysrootenv.rfs.rmtree('/media')
+        self.host_sysrootenv.rfs.rmtree('/mnt')
+        self.host_sysrootenv.rfs.rmtree('/proc')
+        self.host_sysrootenv.rfs.rmtree('/root')
+        self.host_sysrootenv.rfs.rmtree('/run')
+        self.host_sysrootenv.rfs.rmtree('/sys')
+        self.host_sysrootenv.rfs.rmtree('/tmp')
+        self.host_sysrootenv.rfs.rmtree('/var')
+
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
 
