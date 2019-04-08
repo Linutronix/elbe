@@ -163,7 +163,7 @@ class ElbeXML(object):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
-    def validate_repo(self, r, url_validation):
+    def validate_repo(self, r):
         try:
             fp = urllib2.urlopen(r["url"] + "InRelease", None, 10)
         except urllib2.URLError:
@@ -173,24 +173,19 @@ class ElbeXML(object):
                 return False
 
         ret = False
-        if url_validation == ValidationMode.CHECK_ALL:
-            found_bin = False
-            found_src = False
+        if "srcstr" in r:
             for line in fp:
-                if not found_bin and line.find(r["binstr"]) != -1:
-                    found_bin = True
-                elif not found_src and line.find(r["srcstr"]) != -1:
-                    found_src = True
-                if found_bin and found_src:
+                if line.find(r["srcstr"]) != -1:
                     ret = True
                     break
-        elif url_validation == ValidationMode.CHECK_BINARIES:
+        elif "binstr" in r:
             for line in fp:
                 if line.find(r["binstr"]) != -1:
                     ret = True
                     break
         else:
-            ret = True
+            # This should never happen, either bin or src
+            ret = False
 
         fp.close()
         return ret
@@ -213,6 +208,16 @@ class ElbeXML(object):
                 # This is a cdrom, we dont verify it
                 pass
             elif line.startswith("deb ") or line.startswith("deb-src "):
+                # first check the validation mode, and
+                # only add the repo, when it matches
+                # the valudation mode
+                if url_validation == ValidationMode.NO_CHECK:
+                    continue
+
+                if line.startswith("deb-src ") and \
+                   url_validation != ValidationMode.CHECK_ALL:
+                    continue
+
                 lsplit = line.split(" ")
                 url = lsplit[1]
                 suite = lsplit[2]
@@ -229,8 +234,11 @@ class ElbeXML(object):
                     r["url"] = "%s/%s" % (url, suite)
                 else:
                     r["url"] = "%s/dists/%s/" % (url, suite)
-                r["binstr"] = (section + "/binary-%s/Packages" % buildtype)
-                r["srcstr"] = (section + "/source/Sources")
+
+                if line.startswith("deb "):
+                    r["binstr"] = (section + "/binary-%s/Packages" % buildtype)
+                else:
+                    r["srcstr"] = (section + "/source/Sources")
                 repos.append(r)
 
         if not self.prj:
@@ -265,7 +273,7 @@ class ElbeXML(object):
                 r["url"] = scheme + t[1]
                 usr, passwd = auth.split(':')
                 passman.add_password(None, r["url"], usr, passwd)
-            if not self.validate_repo(r, url_validation):
+            if not self.validate_repo(r):
                 raise ValidationError(
                     ["Repository %s can not be validated" % r["url"]])
 
