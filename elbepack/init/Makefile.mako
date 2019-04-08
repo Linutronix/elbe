@@ -27,7 +27,6 @@ else
 MACHINE?=pc
 endif
 
-NICMODEL?=virtio
 CONSOLE?=ttyS0,115200n1
 LOOP_OFFSET?=1048576
 HD_TYPE?=virtio
@@ -104,8 +103,8 @@ all: .stamps/stamp-install-initial-image
 		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' \
 		-no-reboot \
 		-nographic \
-		-net nic,vlan=1,model=$(NICMODEL),macaddr="${nicmac}" \
-		-net user,vlan=1 \
+		-device virtio-net-pci,netdev=user.0,mac="${nicmac}" \
+		-netdev user,id=user.0 \
 		-m $(MEMSIZE) \
 		-smp $(SMP) \
 		-usb \
