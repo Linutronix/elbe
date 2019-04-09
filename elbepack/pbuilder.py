@@ -52,11 +52,10 @@ def pbuilder_write_config(builddir, xml, _log):
             'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
-    # aptitude segfaults with sid armhf changeroots, great! :)
+    # aptitude segfaults with armhf changeroots, great! :)
     # link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=834990
-    if distname == 'stretch':
-        fp.write('PBUILDERSATISFYDEPENDSCMD='
-                 '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
+    fp.write('PBUILDERSATISFYDEPENDSCMD='
+             '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
 
     fp.close()
 
