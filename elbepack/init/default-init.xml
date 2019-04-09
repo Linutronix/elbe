@@ -50,7 +50,6 @@
 		<pkg-list>
 			<pkg>openssh-server</pkg>
 			<pkg pin="stretch-backports">debootstrap</pkg>
-			<pkg pin="stretch-backports">linux-image-amd64</pkg>
 			<pkg pin="stretch-backports">pbuilder</pkg>
 		</pkg-list>
 		<preseed>
