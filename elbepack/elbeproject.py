@@ -699,6 +699,12 @@ class ElbeProject (object):
             'mkdir -p "%s"' %
             os.path.join(
                 self.builddir,
+                "pbuilder",
+                "aptcache"))
+        self.log.do(
+            'mkdir -p "%s"' %
+            os.path.join(
+                self.builddir,
                 "aptconfdir",
                 "apt.conf.d"))
 
