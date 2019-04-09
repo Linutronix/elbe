@@ -1,3 +1,13 @@
+elbe (5) unstable; urgency=medium
+
+  * bugfix - do not use linux-image from stretch-backports, which is currently broken
+  * bugfix - fix LOCALMACHINE replacement in build_sdk code
+  * bugfix - fix issues with pbuilder for buster
+  * make "initvm create" work on debian buster
+  * bugfix - make initvm network interface name persistent
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Wed, 10 Apr 2019 17:03:21 +0200
+
 elbe (4) unstable; urgency=medium
 
   * use stretch in initvm
