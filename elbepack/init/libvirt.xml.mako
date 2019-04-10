@@ -27,6 +27,7 @@ imagetype = prj.text('img', default=defs, key='img')
 img = os.path.join(opt.directory, 'buildenv.img')
 
 emulator = prj.text('interpreter', default=defs, key='interpreter')
+nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 
 %><domain type='kvm'
 xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
@@ -77,7 +78,10 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
       <address type='virtio-serial' controller='0' bus='0'
       port='1' />
     </channel>
-    <interface type='user' />
+    <interface type='user' >
+      <mac address='${nicmac}'/>
+      <model type='virtio'/>
+    </interface>
   </devices>
 %if prj.has("portforwarding"):
   <qemu:commandline>
