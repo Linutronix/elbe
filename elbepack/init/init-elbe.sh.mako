@@ -19,6 +19,8 @@ if not opt.build_bin:
 
 if not opt.build_sources:
   buildrepo_opts += '--skip-build-source'
+
+nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 %>
 
 # First unset the variables which are set by the debian-installer
@@ -38,6 +40,23 @@ ln -s /lib/systemd/system/serial-getty@.service /buildenv/etc/systemd/system/get
 mkdir /buildenv/var/cache/elbe/installer
 cp initrd-cdrom.gz /buildenv/var/cache/elbe/installer
 cp vmlinuz /buildenv/var/cache/elbe/installer
+
+cat <<EOF > /buildenv/etc/systemd/network/10-host.link
+[Match]
+MACAddress=${nicmac}
+
+[Link]
+NamePolicy=
+Name=host0
+EOF
+
+cat <<EOF > /buildenv/etc/network/interfaces.d/host0
+# The primary network interface
+allow-hotplug host0
+iface host0 inet dhcp
+EOF
+
+in-target update-initramfs -u
 
 % if opt.devel:
    mkdir /buildenv/var/cache/elbe/devel
