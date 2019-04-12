@@ -28,6 +28,10 @@ img = os.path.join(opt.directory, 'buildenv.img')
 
 emulator = prj.text('interpreter', default=defs, key='interpreter')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
+forward = ''
+for f in prj.node("portforwarding"):
+    forward += ',hostfwd=%s::%s-:%s' % (
+        f.text("proto"), f.text("host"), f.text("buildenv"))
 
 %><domain type='kvm'
 xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
@@ -78,17 +82,11 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
       <address type='virtio-serial' controller='0' bus='0'
       port='1' />
     </channel>
-    <interface type='user' >
-      <mac address='${nicmac}'/>
-      <model type='virtio'/>
-    </interface>
   </devices>
-%if prj.has("portforwarding"):
   <qemu:commandline>
-  %for f in prj.node('portforwarding'):
-    <qemu:arg value='-redir' />
-    <qemu:arg value='${f.text("proto")}:${f.text("host")}::${f.text("buildenv")}' />
-  %endfor
+    <qemu:arg value='-netdev' />
+    <qemu:arg value='user,id=user.0${forward}' />
+    <qemu:arg value='-device' />
+    <qemu:arg value='virtio-net-pci,netdev=user.0,mac=${nicmac}' />
   </qemu:commandline>
-% endif
 </domain>
