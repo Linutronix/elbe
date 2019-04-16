@@ -101,6 +101,9 @@ def pbuilder_write_repo_hook(builddir, xml):
 
     pbuilder_hook_dir = os.path.join(builddir, "pbuilder", "hooks.d")
 
+    with open(os.path.join(pbuilder_hook_dir, "H10elbe_apt_update"), "w") as f:
+        f.write("#!/bin/sh\napt update\n")
+
     fp = open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w")
 
     if xml.prj is None:
