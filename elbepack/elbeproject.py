@@ -713,12 +713,11 @@ class ElbeProject (object):
         pbuilder_write_apt_conf(self.builddir, self.xml)
         pbuilder_write_repo_hook(self.builddir, self.xml)
         self.log.do(
-            'chmod 755 "%s"' %
+            'chmod -R 755 "%s"' %
             os.path.join(
                 self.builddir,
                 "pbuilder",
-                "hooks.d",
-                "G10elbe_apt_sources"))
+                "hooks.d"))
 
         # Run pbuilder --create
         self.log.do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
