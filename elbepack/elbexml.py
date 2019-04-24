@@ -140,21 +140,26 @@ class ElbeXML(object):
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
+        noauth = ""
+        if self.prj.has("noauth"):
+            noauth = "[trusted=yes] "
+
         mirror = ""
         if self.prj.has("mirror/primary_host"):
-            mirror += "deb " + self.get_primary_mirror(None)
+            mirror += "deb " + noauth + self.get_primary_mirror(None)
             mirror += " " + self.prj.text("suite") + " main\n"
 
             if build_sources:
-                mirror += "deb-src " + self.get_primary_mirror(None)
+                mirror += "deb-src " + noauth + self.get_primary_mirror(None)
                 mirror += " " + self.prj.text("suite") + " main\n"
 
             if self.prj.has("mirror/url-list"):
                 for url in self.prj.node("mirror/url-list"):
                     if url.has("binary"):
-                        mirror += "deb " + url.text("binary").strip() + "\n"
+                        mirror += "deb " + noauth + \
+                                   url.text("binary").strip() + "\n"
                     if url.has("source"):
-                        mirror += "deb-src " + \
+                        mirror += "deb-src " + noauth + \
                             url.text("source").strip() + "\n"
 
         if self.prj.has("mirror/cdrom"):

@@ -128,11 +128,15 @@ def pbuilder_write_repo_hook(builddir, xml):
                   xml.prj.text("suite") + ' main" >> /etc/apt/sources.list\n'
 
         if xml.prj.has("mirror/url-list"):
+            noauth = ""
+            if xml.prj.has("noauth"):
+                noauth = "[trusted=yes] "
             for url in xml.prj.node("mirror/url-list"):
                 if url.has("binary"):
-                    mirror += 'echo "deb ' + url.text("binary").strip() + \
+                    mirror += 'echo "deb ' + noauth + \
+                              url.text("binary").strip() + \
                               '" >> /etc/apt/sources.list\n'
-                if url.has("key"):
+                if url.has("key") and not xml.prj.has("noauth"):
                     key_url = url.text("key").strip()
                     mirror = mirror_script_add_key(mirror, key_url)
 

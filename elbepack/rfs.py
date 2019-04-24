@@ -238,7 +238,7 @@ class BuildEnv (object):
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
             for url in self.xml.node('project/mirror/url-list'):
-                if url.has('key'):
+                if url.has('key') and not self.xml.prj.has("noauth"):
                     keyurl = url.text('key').strip()    # URL to key
                     keyurl = keyurl.replace('LOCALMACHINE', '10.0.2.2')
 
