@@ -69,7 +69,7 @@ class TarArchiver(Packer):
         return fname + self.suffix
 
 
-packers = {'none': None,
+packers = {'none': NoPacker(),
            'gzip': InPlacePacker('gzip -f', '.gz'),
            'tar':  TarArchiver('', '.tar'),
            'tarxz': TarArchiver('J', '.tar.xz'),
