@@ -246,6 +246,14 @@ if [ ! -x $target_sdk_dir -o ! -w $target_sdk_dir -o ! -r $target_sdk_dir ]; the
 	$SUDO_EXEC mkdir -p $target_sdk_dir >/dev/null 2>&1
 fi
 
+FILECMD=\`which file 2>/dev/null\`
+
+if [ x\$FILECMD = "x"  ]; then
+        echo "file command not found."
+        echo "use 'sudo apt install file' on Debian"
+        exit 1
+fi
+
 printf "Extracting SDK..."
 tail -n +$payload_offset $0| $SUDO_EXEC tar xJ -C $target_sdk_dir --checkpoint=.2500 $EXTRA_TAR_OPTIONS || exit 1
 echo "done"
@@ -280,7 +288,10 @@ if [ "$dl_path" = "" ] ; then
         exit 1
 fi
 executable_files=$($SUDO_EXEC find $native_sysroot -type f \
-        \( -perm -0100 -o -perm -0010 -o -perm -0001 \) -printf "'%h/%f' ")
+        \( -perm -0100 -o -perm -0010 -o -perm -0001 \) \
+        -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; \
+        -printf "'%h/%f' ")
+
 if [ "x$executable_files" = "x" ]; then
    echo "SDK relocate failed, could not get executalbe files"
    exit 1
