@@ -117,6 +117,17 @@ ppcspe_defaults = {
     "triplet": "powerpc-linux-gnuspe"
 }
 
+ppc64el_defaults = {
+    "arch": "ppc64el",
+    "interpreter": "qemu-system-ppc64",
+    "interpreterversion": "0.0.0",
+    "userinterpr": "qemu-ppc64le-static",
+    "console": "ttyS0,115200n1",
+    "machine": "none",
+    "nicmodel": "virtio",
+    "triplet": "ppc64le-linux-gnuspe"
+}
+
 amd64_defaults = {
     "arch": "amd64",
     "interpreter": find_kvm_exe()[0],
@@ -155,6 +166,7 @@ defaults = {"armel": armel_defaults,
             "aarch64": aarch64_defaults,
             "ppc": ppc_defaults,
             "ppcspe": ppcspe_defaults,
+            "ppc64el": ppc64el_defaults,
             "amd64": amd64_defaults,
             "i386": i386_defaults,
             "nodefaults": {}}
