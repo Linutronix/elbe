@@ -1,3 +1,15 @@
+elbe (6) unstable; urgency=medium
+
+  * bugfix: prjrepo public key handling for pbuilder
+  * example/beaglebone: add stacked pbuilder builds to have a test in elbe-ci
+  * bugfix: projectfinetuning/packer handle usage of packer="none" correctly
+  * qemu/portforwarding change to support buster as OS to run the initvm
+  * add a ppc64le buildtype
+  * SDK: only reloc ELF exectubles (e.g. no scripts) during SDK installation
+  * SDK: rework host sysroot generation to (optional) allow specifying packages
+
+ -- Manuel Traut <manut@linutronix.de>  Fri, 26 Apr 2019 07:57:34 +0200
+
 elbe (5) unstable; urgency=medium
 
   * bugfix - do not use linux-image from stretch-backports, which is currently broken
