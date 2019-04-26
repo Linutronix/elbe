@@ -36,7 +36,7 @@ def run_command(argv):
                        dest="skip_validation", default=False,
                        help="Skip xml schema validation")
 
-    oparser.add_option("--directory", dest="directory",
+    oparser.add_option("--directory", dest="directory", default="./build",
                        help="Working directory (default is build)",
                        metavar="FILE")
 
@@ -142,11 +142,6 @@ def run_command(argv):
         cdrom = mirror.ensure_child("cdrom")
         cdrom.set_text(os.path.abspath(opt.cdrom))
 
-    if not opt.directory:
-        path = "./build"
-    else:
-        path = opt.directory
-
     # this is a workaround for
     # http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
     _, virt = command_out('test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt');
@@ -158,14 +153,14 @@ def run_command(argv):
         machine_type = 'pc'
 
     try:
-        os.makedirs(path)
+        os.makedirs(opt.directory)
     except OSError as e:
         print(
             "unable to create project directory: %s (%s)" %
-            (path, e.strerror))
+            (opt.directory, e.strerror))
         sys.exit(30)
 
-    out_path = os.path.join(path, ".elbe-in")
+    out_path = os.path.join(opt.directory, ".elbe-in")
     try:
         os.makedirs(out_path)
     except OSError as e:
@@ -214,7 +209,7 @@ def run_command(argv):
         if t == "Makefile.mako" or t == "libvirt.xml.mako":
             write_template(
                 os.path.join(
-                    path, o), os.path.join(
+                    opt.directory, o), os.path.join(
                     init_template_dir, t), d, linebreak=True)
         else:
             write_template(
