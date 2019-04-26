@@ -208,7 +208,7 @@ def elbe_report(xml, buildenv, cache, reportname, errorname, targetfs):
 
     if xml.has("archive") and not xml.text("archive") is None:
         with xml.archive_tmpfile() as fp:
-            outf.do('tar xvfj "%s" -C "%s"' % (fp.name, targetfs.path))
+            outf.do('tar xvfj "%s" -h -C "%s"' % (fp.name, targetfs.path))
         mt_index_postarch = targetfs.mtime_snap()
     else:
         mt_index_postarch = mt_index
