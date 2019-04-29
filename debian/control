@@ -104,7 +104,8 @@ Depends: ${misc:Depends},
   qemu-kvm (>= 1:2.1),
   python-mako,
   p7zip-full,
-  make
+  make,
+  lsb-release
 Recommends: elbe-doc (= ${binary:Version}), elbe-debianize, haveged
 Description: Embedded Linux Build Environment
  A flexible Root Filesystem builder. ELBE uses Debian packages to build a RFS
