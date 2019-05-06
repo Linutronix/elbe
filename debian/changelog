@@ -1,3 +1,12 @@
+elbe (7) unstable; urgency=medium
+
+  * repomanager: fix key unlock for existing repo
+  * debian: add lsb-release runtime dependency
+  * init: fix crash if --directory was not specified
+  * respect <noauth/> for sources.list generation
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Mon, 06 May 2019 11:25:22 +0200
+
 elbe (6) unstable; urgency=medium
 
   * bugfix: prjrepo public key handling for pbuilder
