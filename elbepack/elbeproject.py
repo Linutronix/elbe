@@ -316,14 +316,16 @@ class ElbeProject (object):
         with self.host_sysrootenv:
 
             try:
-                self.get_rpcaptcache(env=self.host_sysrootenv).update()
+                cache = self.get_rpcaptcache(env=self.host_sysrootenv,
+                                             norecommend=True)
+
+                cache.update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
 
             for p in pkgs:
                 try:
-                    self.get_rpcaptcache(
-                            env=self.host_sysrootenv).mark_install(p, None)
+                    cache.mark_install(p, None)
                 except KeyError:
                     self.log.printo("No Package " + p)
                 except SystemError as e:
@@ -331,7 +333,7 @@ class ElbeProject (object):
                                     "in package %s (%s)" % (p, str(e)))
 
             try:
-                self.get_rpcaptcache(env=self.host_sysrootenv).commit()
+                cache.commit()
             except SystemError as e:
                 self.log.printo("commiting changes failed: %s" % str(e))
                 raise AptCacheCommitError(str(e))
