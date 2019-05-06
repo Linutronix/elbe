@@ -783,9 +783,12 @@ class ElbeProject (object):
         except MemoryError:
             self.log.printo("write source.xml failed (archive to huge?)")
 
-    def get_rpcaptcache(self, env=None):
+    def get_rpcaptcache(self, env=None, norecommend=None):
         if not env:
             env = self.buildenv
+
+        if norecommend is None:
+            norecommend = self.xml.prj.has('norecommend'),
 
         if env.arch == "default":
             arch = self.arch
@@ -798,7 +801,7 @@ class ElbeProject (object):
                 self.log.fp.name,
                 arch,
                 self.rpcaptcache_notifier,
-                self.xml.prj.has('norecommend'),
+                norecommend,
                 self.xml.prj.has('noauth'))
         return env.rpcaptcache
 
