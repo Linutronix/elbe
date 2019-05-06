@@ -142,6 +142,7 @@
 			<pkg>systemd</pkg>
 			<!-- install a package from backports -->
 			<pkg pin="stretch-backports">btrfs-progs</pkg>
+			<pkg pin="stretch-backports">libzstd1</pkg>
 			<!-- install the gpiotest built by pbuilder  -->
 			<pkg>gpiotest</pkg>
 		</pkg-list>
