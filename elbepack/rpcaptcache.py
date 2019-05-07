@@ -50,9 +50,9 @@ class RPCAPTCache(InChRootObject):
         self.notifier = notifier
         config.set("APT::Architecture", arch)
         if norecommend:
-            config.set("APT::Install-Recommends", "1")
-        else:
             config.set("APT::Install-Recommends", "0")
+        else:
+            config.set("APT::Install-Recommends", "1")
 
         if noauth:
             config.set("APT::Get::AllowUnauthenticated", "1")
