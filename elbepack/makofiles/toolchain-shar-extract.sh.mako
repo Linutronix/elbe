@@ -246,7 +246,7 @@ if [ ! -x $target_sdk_dir -o ! -w $target_sdk_dir -o ! -r $target_sdk_dir ]; the
 	$SUDO_EXEC mkdir -p $target_sdk_dir >/dev/null 2>&1
 fi
 
-FILECMD=\`which file 2>/dev/null\`
+FILECMD=$(which "file")
 
 if [ x\$FILECMD = "x"  ]; then
         echo "file command not found."
