@@ -21,7 +21,8 @@ armel_defaults = {
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
-    "triplet": "arm-linux-gnueabi"
+    "triplet": "arm-linux-gnueabi",
+    "sdkarch": "arm-linux-gnueabi",
 }
 
 armel_linaro48_defaults = {
@@ -33,6 +34,7 @@ armel_linaro48_defaults = {
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
+    "sdkarch": "arm-linux-gnueabi",
     "toolchaintype": "linaro_armel",
     "toolchainver": "4.8.3",
 }
@@ -45,7 +47,8 @@ armel_virtio_defaults = {
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
-    "triplet": "arm-linux-gnueabi"
+    "triplet": "arm-linux-gnueabi",
+    "sdkarch": "arm-linux-gnueabi",
 }
 
 armhf_defaults = {
@@ -57,7 +60,7 @@ armhf_defaults = {
     "machine": "versatilepb -cpu cortex-a9",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabihf",
-    "sdkarch": "arm-linux-gnueabihf"
+    "sdkarch": "arm-linux-gnueabihf",
 }
 
 armhf_linaro48_defaults = {
@@ -81,7 +84,8 @@ armhf_virtio_defaults = {
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb -cpu cortex-a9",
     "nicmodel": "virtio",
-    "triplet": "arm-linux-gnueabihf"
+    "triplet": "arm-linux-gnueabihf",
+    "sdkarch": "arm-linux-gnueabihf",
 }
 
 aarch64_defaults = {
@@ -92,7 +96,8 @@ aarch64_defaults = {
     "console": "ttyAMA0,115200n1",
     "machine": "virt -cpu cortex-a57",
     "nicmodel": "virtio",
-    "triplet": "aarch64-linux-gnu"
+    "triplet": "aarch64-linux-gnu",
+    "sdkarch": "aarch64-linux-gnu",
 }
 
 ppc_defaults = {
@@ -103,7 +108,8 @@ ppc_defaults = {
     "console": "ttyPZ0,115200n1",
     "machine": "mac99",
     "nicmodel": "rtl8139",
-    "triplet": "powerpc-linux-gnu"
+    "triplet": "powerpc-linux-gnu",
+    "sdkarch": "powerpc-linux-gnu",
 }
 
 ppcspe_defaults = {
@@ -114,7 +120,7 @@ ppcspe_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "mpc8544ds",
     "nicmodel": "rtl8139",
-    "triplet": "powerpc-linux-gnuspe"
+    "triplet": "powerpc-linux-gnuspe",
 }
 
 ppc64el_defaults = {
@@ -125,7 +131,8 @@ ppc64el_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "none",
     "nicmodel": "virtio",
-    "triplet": "ppc64le-linux-gnuspe"
+    "triplet": "ppc64le-linux-gnu",
+    "sdkarch": "powerpc64le-linux-gnu",
 }
 
 amd64_defaults = {
@@ -135,7 +142,7 @@ amd64_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",
-    "triplet": "x86_64-linux-gnu"
+    "triplet": "x86_64-linux-gnu",
 }
 
 i386_defaults = {
@@ -145,7 +152,7 @@ i386_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",
-    "triplet": "i386-linux-gnu"
+    "triplet": "i386-linux-gnu",
 }
 
 archindep_defaults = {
