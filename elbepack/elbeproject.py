@@ -65,13 +65,19 @@ class UnsupportedSDKException(Exception):
 def test_gen_sdk_scripts():
     os.system("mkdir -p /tmp/test/sdk")
     gen_sdk_scripts('armhf-linux-gnueabihf',
+                    'ARM',
                     'testproject',
                     '08.15',
                     '/tmp/test',
                     '/tmp/test/sdk')
 
 
-def gen_sdk_scripts(triplet, prj_name, prj_version, builddir, sdkpath):
+def gen_sdk_scripts(triplet,
+                    elfcode,
+                    prj_name,
+                    prj_version,
+                    builddir,
+                    sdkpath):
 
     prj_name = prj_name.replace(" ", "_")
     prj_version = prj_version.replace(" ", "_")
@@ -84,6 +90,7 @@ def gen_sdk_scripts(triplet, prj_name, prj_version, builddir, sdkpath):
                                                          prj_version),
                  'sdk_ext_path': '~/elbe-sdk',
                  'real_multimach_target_sys': triplet,
+                 'target_elfcode': elfcode,
                  'sdk_title': 'ELBE %s' % prj_name,
                  'sdk_version': prj_version}
 
@@ -358,6 +365,7 @@ class ElbeProject (object):
 
     def build_sdk(self):
         triplet = self.xml.defs["triplet"]
+        elfcode = self.xml.defs["elfcode"]
 
         host_pkglist = []
         if self.xml.tgt.has('hostsdk-pkg-list'):
@@ -384,6 +392,7 @@ class ElbeProject (object):
         self.build_host_sysroot(host_pkglist, hostsysrootpath)
 
         n = gen_sdk_scripts(triplet,
+                            elfcode,
                             self.name,
                             self.xml.text("project/version"),
                             self.builddir,
