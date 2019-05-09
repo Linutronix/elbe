@@ -23,6 +23,7 @@ armel_defaults = {
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
     "sdkarch": "arm-linux-gnueabi",
+    "elfcode": "ARM",
 }
 
 armel_linaro48_defaults = {
@@ -37,6 +38,7 @@ armel_linaro48_defaults = {
     "sdkarch": "arm-linux-gnueabi",
     "toolchaintype": "linaro_armel",
     "toolchainver": "4.8.3",
+    "elfcode": "ARM",
 }
 
 armel_virtio_defaults = {
@@ -49,6 +51,7 @@ armel_virtio_defaults = {
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
     "sdkarch": "arm-linux-gnueabi",
+    "elfcode": "ARM",
 }
 
 armhf_defaults = {
@@ -61,6 +64,7 @@ armhf_defaults = {
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabihf",
     "sdkarch": "arm-linux-gnueabihf",
+    "elfcode": "ARM",
 }
 
 armhf_linaro48_defaults = {
@@ -74,6 +78,7 @@ armhf_linaro48_defaults = {
     "triplet": "arm-linux-gnueabihf",
     "toolchaintype": "linaro",
     "toolchainver": "4.8.3",
+    "elfcode": "ARM",
 }
 
 armhf_virtio_defaults = {
@@ -86,6 +91,7 @@ armhf_virtio_defaults = {
     "nicmodel": "virtio",
     "triplet": "arm-linux-gnueabihf",
     "sdkarch": "arm-linux-gnueabihf",
+    "elfcode": "ARM"
 }
 
 aarch64_defaults = {
@@ -98,6 +104,7 @@ aarch64_defaults = {
     "nicmodel": "virtio",
     "triplet": "aarch64-linux-gnu",
     "sdkarch": "aarch64-linux-gnu",
+    "elfcode": "ARM aarch64",
 }
 
 ppc_defaults = {
@@ -110,6 +117,7 @@ ppc_defaults = {
     "nicmodel": "rtl8139",
     "triplet": "powerpc-linux-gnu",
     "sdkarch": "powerpc-linux-gnu",
+    "elfcode": "PowerPC or cisco 4500",
 }
 
 ppcspe_defaults = {
@@ -133,6 +141,7 @@ ppc64el_defaults = {
     "nicmodel": "virtio",
     "triplet": "ppc64le-linux-gnu",
     "sdkarch": "powerpc64le-linux-gnu",
+    "elfcode": "64-bit PowerPC or cisco 7500",
 }
 
 amd64_defaults = {
