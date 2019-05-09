@@ -287,12 +287,29 @@ if [ "$dl_path" = "" ] ; then
         echo "SDK could not be set up. Relocate script unable to find ld-linux.so. Abort!"
         exit 1
 fi
-executable_files=$($SUDO_EXEC find $native_sysroot -type f \
+native_executable_files=$($SUDO_EXEC find $native_sysroot -type f \
         \( -perm -0100 -o -perm -0010 -o -perm -0001 \) \
-        -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; \
+	-exec sh -c "file {} | grep -P ': ELF 64-bit LSB (shared object|pie executable|executable), x86-64, .*, interpreter' > /dev/null" \; \
         -printf "'%h/%f' ")
 
-if [ "x$executable_files" = "x" ]; then
+native_elf_files=$($SUDO_EXEC find $native_sysroot -type f \
+	-exec sh -c "file {} | grep -P ': ELF 64-bit LSB (shared object|pie executable|executable), x86-64' > /dev/null" \; \
+        -printf "'%h/%f' ")
+
+target_executable_files=$($SUDO_EXEC find $native_sysroot -type f \
+        \( -perm -0100 -o -perm -0010 -o -perm -0001 \) \
+	-exec sh -c "file {} | grep -P ': ELF (64|32)-bit LSB (shared object|pie executable|executable), ${target_elfcode}, .*, interpreter' > /dev/null" \; \
+        -printf "'%h/%f' ")
+
+target_elf_files=$($SUDO_EXEC find $native_sysroot -type f \
+	-exec sh -c "file {} | grep -P ': ELF (64|32)-bit LSB (shared object|pie executable|executable), ${target_elfcode},' > /dev/null" \; \
+        -printf "'%h/%f' ")
+
+ascii_so_files=$($SUDO_EXEC find $native_sysroot -type f -name "*.so" \
+	-exec sh -c "file {} | grep -P ': ASCII text' > /dev/null" \; \
+        -printf "'%h/%f' ")
+
+if [ "x$native_executable_files" = "x" ]; then
    echo "SDK relocate failed, could not get executalbe files"
    exit 1
 fi
@@ -312,13 +329,37 @@ if [ x\$PATCHELF = "x"  ]; then
         exit 1
 fi
 
-for exe in $executable_files; do
+for exe in $native_executable_files; do
         if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
             echo SKIP \$exe
         else
             \$PATCHELF --set-interpreter $dl_path \$exe
+        fi
+done
+
+for exe in $native_elf_files; do
+        if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
+            echo SKIP \$exe
+        else
             \$PATCHELF --set-rpath $native_sysroot/usr/lib/x86_64-linux-gnu:$native_sysroot/lib/x86_64-linux-gnu/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
         fi
+done
+
+# TODO: target_executable files do not exist yet,
+#       to handle these we would need proper identification
+#       of the target interpreter.
+#
+#       the difference to the native interpreter is, that the
+#       target interpreter does not necessarily exist.
+#
+#       do not skip the interpreter, and do not handle target_executable
+#       files yet.
+for exe in $target_elf_files; do
+	\$PATCHELF --set-rpath $native_sysroot/usr/lib/${real_multimach_target_sys}/:$native_sysroot/lib/${real_multimach_target_sys}/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
+done
+
+for exe in $ascii_so_files; do
+	sed -i "s%/usr/%$native_sysroot/usr/%g" \$exe
 done
 EOF
 
