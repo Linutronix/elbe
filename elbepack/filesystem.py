@@ -78,6 +78,9 @@ class Filesystem(object):
     def exists(self, path):
         return os.path.exists(self.fname(path))
 
+    def lexists(self, path):
+        return os.path.lexists(self.fname(path))
+
     def mkdir(self, path):
         os.makedirs(self.fname(path))
 
