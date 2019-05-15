@@ -66,7 +66,7 @@ class Kernel (DebianizeBase):
         self.deb['k_version'] = self.k_version.get_value()
 
         self.tmpl_dir = os.path.join(mako_template_dir, 'debianize/kernel')
-        pkg_name = self.deb['p_name'] + '-' + self.deb['k_version']
+        pkg_name = self.deb['k_version'] + '-' + self.deb['p_name']
 
         for tmpl in [
             'control',
