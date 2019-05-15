@@ -69,7 +69,7 @@ export AR=${real_multimach_target_sys}-ar
 export NM=${real_multimach_target_sys}-nm
 export M4=m4
 export TARGET_PREFIX=${real_multimach_target_sys}-
-export CONFIGURE_FLAGS="--target=${sdk_arch}-linux --host=${real_multimach_target_sys} --build=${sdk_arch}-linux --with-libtool-sysroot=$SDKTARGETSYSROOT"
+export CONFIGURE_FLAGS="--host=${real_multimach_target_sys} --build=${sdk_arch}-linux --with-libtool-sysroot=$SDKTARGETSYSROOT"
 export CFLAGS=" -O2 -pipe -g -feliminate-unused-debug-types "
 export CXXFLAGS=" -O2 -pipe -g -feliminate-unused-debug-types "
 export LDFLAGS="-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed"
