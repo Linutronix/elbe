@@ -17,6 +17,7 @@ from lxml.etree import XMLParser, parse
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import command_out_stderr, CommandError
+from elbepack.validate import error_log_to_strings
 
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess
@@ -116,11 +117,7 @@ def xmlpreprocess(fname, output, variants=None):
             "Unknown Exception during validation\n" + str(sys.exc_info()[1]))
 
     # We have errors, return them in string form...
-    errors = []
-    for err in schema.error_log:
-        errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
-
-    raise XMLPreprocessError(errors)
+    raise XMLPreprocessError("\n".join(error_log_to_strings(schema.error_log)))
 
 
 class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
