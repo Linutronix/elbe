@@ -2,4 +2,22 @@
 <finetuning>
   <adduser shell="/bin/bash" passwd="notsosecure">user</adduser>
   <rm>var/cache/apt/archives/*.deb</rm>
+  <file dst="/etc/apache2/sites-available/mysite" owner="root"
+	group="www-data" mode="0644"><![CDATA[
+    <VirtualHost *:80>
+      ServerName  MyServer
+      ServerAdmin admin@host.org
+
+      # And so on...
+    </VirtualHost>
+  ]]></file>
+  <file dst="/etc/fstab" append="true"><![CDATA[
+    # <file system> <dir> <type> <options> <dump> <pass>
+    
+  ]]></file>
+  <file dst="/etc/fstab" append="true">
+    # /dev/sda3
+    UUID=9ac83c42-4bc3-dead-beef-5887ced44418	none	swap	default
+    
+  </file>
 </finetuning>
