@@ -79,7 +79,7 @@
 				</fs>
 			</bylabel>
 		</fstab>
-		<norecommend />
+		<install-recommends />
 		<pkg-list>
 			<!-- grub-efi-amd64 conflicts with grub-pc, so install grub-efi-amd64-bin and grub-pc -->
 			<pkg>grub-efi-amd64-bin</pkg>

@@ -52,7 +52,7 @@
 			</bydev>
 		</fstab>
 		<diet />
-		<norecommend />
+		<install-recommends />
 		<finetuning>
 			<!-- Create missing directories -->
 			<mkdir>/dev</mkdir>

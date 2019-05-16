@@ -70,7 +70,7 @@
 				</fs>
 			</bylabel>
 		</fstab>
-		<norecommend />
+		<install-recommends />
 		<pkg-list>
 			<!-- install the EFI version of grub -->
 			<pkg>grub-efi-amd64</pkg>

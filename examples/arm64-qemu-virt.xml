@@ -63,7 +63,7 @@
 				</fs>
 			</bylabel>
 		</fstab>
-		<norecommend />
+		<install-recommends />
 		<finetuning>
 			<rm>/var/cache/apt/archives/*.deb</rm>
 		</finetuning>
