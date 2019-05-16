@@ -13,7 +13,7 @@ from lxml.etree import XMLParser, parse
 
 
 def validate_xml(fname):
-    if os.path.getsize(fname) > 1<<30:
+    if os.path.getsize(fname) > (1 << 30):
         return ["%s is greater than 1 GiB. "
                 "Elbe does not support files of this size." % fname]
 
@@ -56,6 +56,7 @@ def validate_xml(fname):
 
     return errors
 
+
 def validate_xml_content(xml):
     errors = []
 
@@ -69,10 +70,12 @@ def validate_xml_content(xml):
                       "Use debootstrapvariant's attribute includepkgs "
                       "to make gnupg available in debootstrap.\n")
 
-    https = xml.findtext("/project/mirror/primary_proto", "").lower() == "https"
+    primary_proto = xml.findtext("/project/mirror/primary_proto", "")
+    https = (primary_proto.lower() == "https")
 
-    if not https and (dbsv is None
-            or "apt-transport-https" not in dbsv.get("includepkgs", "")):
+    if (not https
+        and (dbsv is None
+             or "apt-transport-https" not in dbsv.get("includepkgs", ""))):
         for url in xml.findall("/project/mirror/url-list/url"):
             b = url.findtext("binary", "")
             s = url.findtext("source", "")
