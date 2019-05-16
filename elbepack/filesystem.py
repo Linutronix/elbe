@@ -152,7 +152,8 @@ class Filesystem(object):
         f = self.open(path, "w")
         f.write(cont)
         f.close()
-        self.chmod(path, mode)
+        if mode is not None:
+            self.chmod(path, mode)
 
     def append_file(self, path, content, mode=None):
         f = self.open(path, "a")
