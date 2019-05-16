@@ -799,7 +799,7 @@ class ElbeProject (object):
             env = self.buildenv
 
         if norecommend is None:
-            norecommend = self.xml.prj.has('norecommend'),
+            norecommend = not self.xml.prj.has('install-recommends'),
 
         if env.arch == "default":
             arch = self.arch

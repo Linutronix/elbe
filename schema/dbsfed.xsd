@@ -827,10 +827,10 @@
           </documentation>
         </annotation>
       </element>
-      <element name="norecommend" type="rfs:string" minOccurs="0">
+      <element name="install-recommend" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
-            Turn off the installation of recommended Packages.
+            Activate the installation of recommended Packages.
           </documentation>
         </annotation>
       </element>
