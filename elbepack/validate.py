@@ -12,6 +12,28 @@ from lxml import etree
 from lxml.etree import XMLParser, parse
 
 
+def error_log_to_strings(error_log):
+    errors = []
+    uses_xinclude = False
+    uses_norecommend = False
+
+    for err in error_log:
+        errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
+        if "http://www.w3.org/2003/XInclude" in err.message:
+            uses_xinclude = True
+        if "norecommend" in err.message:
+            uses_norecommend = True
+
+    if uses_xinclude:
+        errors.append("\nThere are XIncludes in the XML file. "
+                      "Run 'elbe preprocess' first!\n")
+    if uses_norecommend:
+        errors.append("\nThe XML file uses <norecommend />. "
+                      "This function was broken all the time and did the "
+                      "opposite. If you want to retain the original "
+                      "behaviour, please specify <install-recommends /> !\n")
+    return errors
+
 def validate_xml(fname):
     if os.path.getsize(fname) > (1 << 30):
         return ["%s is greater than 1 GiB. "
@@ -34,27 +56,7 @@ def validate_xml(fname):
                 str(sys.exc_info()[1])]
 
     # We have errors, return them in string form...
-    errors = []
-    uses_xinclude = False
-    uses_norecommend = False
-
-    for err in schema.error_log:
-        errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
-        if "http://www.w3.org/2003/XInclude" in err.message:
-            uses_xinclude = True
-        if "norecommend" in err.message:
-            uses_norecommend = True
-
-    if uses_xinclude:
-        errors.append("\nThere are XIncludes in the XML file. "
-                      "Run 'elbe preprocess' first!\n")
-    if uses_norecommend:
-        errors.append("\nThe XML file uses <norecommend />. "
-                      "This function was broken all the time and did the "
-                      "opposite. If you want to retain the original "
-                      "behaviour, please specify <install-recommends /> !\n")
-
-    return errors
+    return error_log_to_strings(schema.error_log)
 
 
 def validate_xml_content(xml):
