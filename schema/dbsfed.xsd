@@ -827,7 +827,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="install-recommend" type="rfs:string" minOccurs="0">
+      <element name="install-recommends" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
             Activate the installation of recommended Packages.
