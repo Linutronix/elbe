@@ -1737,6 +1737,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="file" type="rfs:file" minOccurs="0">
+        <annotation>
+          <documentation>
+	    write or append text to a file
+          </documentation>
+        </annotation>
+      </element>
       <element name="rm" type="rfs:rm" minOccurs="0">
         <annotation>
           <documentation>
@@ -2081,6 +2088,35 @@
     <simpleContent>
       <extension base="rfs:string">
         <attribute name="packer" type="string" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
+
+    <complexType name="file">
+    <annotation>
+      <documentation>
+        write or append text to a file, the following parameters
+        are avaible:
+
+        'dst' - the destination to write to
+        'encoding' - the (optional) encoding of the content
+        'append="True"' - append the content to file instead of writing
+        'owner' - (optional) set file owner
+        'group' - (optional) set group ownership
+        'mode' - (optional) set file mode bits
+
+        The value of the tag is the raw/encoded content to
+        write/append to the destination
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="dst"      type="string"  use="required" />
+        <attribute name="encoding" type="string"  use="optional" />
+        <attribute name="append"   type="boolean" use="optional" />
+        <attribute name="owner"    type="string"  use="optional" />
+        <attribute name="group"    type="string"  use="optional" />
+        <attribute name="mode"     type="string"  use="optional" />
       </extension>
     </simpleContent>
   </complexType>

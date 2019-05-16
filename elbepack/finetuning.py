@@ -9,6 +9,8 @@
 from __future__ import print_function
 
 import os
+import errno
+import base64
 
 from shutil import rmtree
 from gpg import core
@@ -342,6 +344,59 @@ class AddGroupAction(FinetuningAction):
 
 
 FinetuningAction.register(AddGroupAction)
+
+
+class AddFileAction(FinetuningAction):
+
+    tag = 'file'
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    @staticmethod
+    def decode(text, encoding):
+        if encoding == "base64":
+            return base64.standard_b64decode(text)
+        else:
+            raise FinetuningException("Invalid encoding %s" % encoding)
+
+    def execute(self, log, _buildenv, target):
+
+        att = self.node.et.attrib
+        dst = att["dst"]
+        content = self.node.et.text
+        owner = None
+        group = None
+        mode = None
+
+        if "owner" in att: owner = att["owner"]
+        if "group" in att: group = att["group"]
+        if "mode"  in att: mode  = att["mode"]
+
+        try:
+            target.mkdir_p(os.path.dirname(dst))
+        except OSError as E:
+            if E.errno is not errno.EEXIST:
+                raise
+
+        if "encoding" in att:
+            content = AddFileAction.decode(content, att["encoding"])
+
+        if "append" in att and att["append"] == "true":
+            target.append_file(dst, content)
+        else:
+            target.write_file(dst, None, content)
+
+        if owner is not None:
+            log.chroot(target.path, 'chown "%s" "%s"' % (owner, dst))
+
+        if group is not None:
+            log.chroot(target.path, 'chgrp "%s" "%s"' % (group, dst))
+
+        if mode is not None:
+            log.chroot(target.path, 'chmod "%s" "%s"' % (mode, dst))
+
+FinetuningAction.register(AddFileAction)
 
 
 class RawCmdAction(FinetuningAction):
