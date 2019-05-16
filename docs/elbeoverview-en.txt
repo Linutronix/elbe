@@ -247,7 +247,7 @@ root-filesystem.
 
 - The finetuning section allows to remove, copy or move files before the
   archive will be extracted and the target image is generated.
-- The 'norecommend' tag.
+- The 'install-recommends' tag.
 - The initial copy has several modes, which allow to extract very small subsets.
 - The embedded archive.
 
@@ -396,7 +396,7 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     <diet />        <1>
 
-    <norecommend /> <2>
+    <install-recommends /> <2>
 
     <finetuning \>
     <pkg-list>
@@ -409,13 +409,14 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <1> The mode is configured at this place, leaving it out, enables the default
     mode.
 
-<2> 'norecommend' should be placed here.
+<2> 'install-recommends' should be placed here.
 
-norecommend
-~~~~~~~~~~~
+install-recommends
+~~~~~~~~~~~~~~~~~~
 
-'norecommend' disables installation of recommended packages. This is a frequent
-cause for big root-filesystems. Installed programs will still work, but some
+'install-recommends' enables installation of recommended packages.
+This can make the root-filesystem a lot bigger.
+With the default setting, installed programs will still work, but some
 functionality requiring external programs might be disabled.
 
 .Note
