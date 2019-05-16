@@ -8,7 +8,7 @@ from platform import linux_distribution
 
 from elbepack.directories import pack_dir
 
-elbe_version = "7"
+elbe_version = "8"
 running_os = linux_distribution()
 
 elbe_initvm_packagelist = ['python-elbe-buildenv',

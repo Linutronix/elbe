@@ -1,3 +1,13 @@
+elbe (8) unstable; urgency=medium
+
+  * debianize/linux: Add missing build dependencies
+  * debianize/linux: Unify package names
+  * rpcaptcache: fix <norecommend /> being inverted (and exchange it for
+    <install-recommends />
+  * build_sdk: improve toolchain relocation code
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Thu, 16 May 2019 19:27:01 +0200
+
 elbe (7) unstable; urgency=medium
 
   * repomanager: fix key unlock for existing repo
