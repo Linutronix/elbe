@@ -375,10 +375,14 @@ class AddFileAction(FinetuningAction):
         group = None
         mode = None
 
-        if "encoding" in att: encoding = att["encoding"]
-        if "owner" in att: owner = att["owner"]
-        if "group" in att: group = att["group"]
-        if "mode"  in att: mode  = att["mode"]
+        if "encoding" in att:
+            encoding = att["encoding"]
+        if "owner" in att:
+            owner = att["owner"]
+        if "group" in att:
+            group = att["group"]
+        if "mode" in att:
+            mode  = att["mode"]
 
         try:
             target.mkdir_p(os.path.dirname(dst))
