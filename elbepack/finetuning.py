@@ -355,20 +355,27 @@ class AddFileAction(FinetuningAction):
 
     @staticmethod
     def decode(text, encoding):
-        if encoding == "base64":
-            return base64.standard_b64decode(text)
+        if encoding == "plain":
+            msg = "\n".join([line.lstrip(" \t") for line in text.splitlines()[1:-1]])
+        elif encoding == "raw":
+            msg = "\n".join(text.splitlines()[1:-1])
+        elif encoding == "base64":
+            msg = base64.standard_b64decode(text)
         else:
             raise FinetuningException("Invalid encoding %s" % encoding)
+        return msg
 
     def execute(self, log, _buildenv, target):
 
         att = self.node.et.attrib
         dst = att["dst"]
         content = self.node.et.text
+        encoding = "plain"
         owner = None
         group = None
         mode = None
 
+        if "encoding" in att: encoding = att["encoding"]
         if "owner" in att: owner = att["owner"]
         if "group" in att: group = att["group"]
         if "mode"  in att: mode  = att["mode"]
@@ -379,8 +386,7 @@ class AddFileAction(FinetuningAction):
             if E.errno is not errno.EEXIST:
                 raise
 
-        if "encoding" in att:
-            content = AddFileAction.decode(content, att["encoding"])
+        content = AddFileAction.decode(content, encoding)
 
         if "append" in att and att["append"] == "true":
             target.append_file(dst, content)
