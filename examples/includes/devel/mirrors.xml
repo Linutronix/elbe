@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<url-list>
+  <url>
+    <binary>http://debian.linutronix.de/elbe stretch main</binary>
+    <source>http://debian.linutronix.de/elbe stretch main</source>
+    <raw-key>
+      -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+      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
+      a6EqDGtKLEkEM5G1qtDILnp3cIEZm3CFO8ll
+      =02FH
+      -----END PGP PUBLIC KEY BLOCK-----
+
+    </raw-key>
+  </url>
+</url-list>
