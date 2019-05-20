@@ -198,6 +198,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="raw-key" type="rfs:string" minOccurs="0">
+	<annotation>
+          <documentation>
+	    Raw Public Key used to sign this Repository
+          </documentation>
+        </annotation>
+      </element>
     </all>
     <attribute ref="xml:base"/>
   </complexType>
