@@ -29,6 +29,17 @@ mergepaths = ['//target/finetuning',
 class XMLPreprocessError(Exception):
     pass
 
+def preprocess_pgp_key(xml):
+
+    for key in xml.iterfind('project/mirror/url-list/url/key'):
+        print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
+        try:
+            keyurl = key.text.strip().replace('LOCALMACHINE', '10.0.2.2')
+            myKey = urllib2.urlopen(keyurl).read()
+            key.tag = "raw-key"
+            key.text = "\n%s\n" % myKey
+        except urllib2.HTTPError as E:
+            raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" % keyurl)
 
 def xmlpreprocess(fname, output, variants=None):
 
@@ -96,6 +107,9 @@ def xmlpreprocess(fname, output, variants=None):
 
         # handle archivedir elements
         xml = combinearchivedir(xml)
+
+        # Change public PGP url key to raw key
+        preprocess_pgp_key(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
