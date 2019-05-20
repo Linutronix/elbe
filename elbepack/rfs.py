@@ -235,21 +235,26 @@ class BuildEnv (object):
         self.rfs.mkdir_p("/state/lists/partial")
         self.rfs.touch_file("/state/status")
 
+    def add_key(self, key):
+        cmd = 'echo "%s" > %s' % (key, self.rfs.fname("tmp/key.pub"))
+        clean = 'rm -f %s' % self.rfs.fname("tmp/key.pub")
+        self.log.do(cmd)
+        with self.rfs:
+            self.log.chroot(self.rfs.path, 'apt-key add /tmp/key.pub')
+        self.log.do(clean)
+
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
+            # Should we use self.xml.prj.has("noauth")???
+            #
+            # If so, this is related to issue #220 -
+            # https://github.com/Linutronix/elbe/issues/220
+            #
+            # I could make a none global 'noauth' flag for mirrors
             for url in self.xml.node('project/mirror/url-list'):
-                if url.has('key') and not self.xml.prj.has("noauth"):
-                    keyurl = url.text('key').strip()    # URL to key
-                    keyurl = keyurl.replace('LOCALMACHINE', '10.0.2.2')
-
-                    myKey = urllib2.urlopen(keyurl).read()
-                    self.log.do(
-                        'echo "%s" > %s' %
-                        (myKey, self.rfs.fname("tmp/key.pub")))
-                    with self.rfs:
-                        self.log.chroot(
-                            self.rfs.path, 'apt-key add /tmp/key.pub')
-                    self.log.do('rm -f %s' % self.rfs.fname("tmp/key.pub"))
+                if url.has('raw-key'):
+                    key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
+                    self.add_key(key)
 
     def initialize_dirs(self, build_sources=False):
         mirror = self.xml.create_apt_sources_list(build_sources=build_sources)
