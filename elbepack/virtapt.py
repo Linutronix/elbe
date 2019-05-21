@@ -215,22 +215,20 @@ class VirtApt(object):
     def create_apt_sources_list(self, mirror):
         filename = os.path.join(self.projectpath, "etc/apt/sources.list")
 
-        if os.path.exists(filename):
+        if os.path.lexists(filename):
             os.remove(filename)
 
-        file = open(filename, "w")
-        file.write(mirror)
-        file.close()
+        with open(filename, "w") as f:
+            f.write(mirror)
 
     def create_apt_prefs(self, prefs):
         filename = os.path.join(self.projectpath, "etc/apt/preferences")
 
-        if os.path.exists(filename):
+        if os.path.lexists(filename):
             os.remove(filename)
 
-        file = open(filename, "w")
-        file.write(prefs)
-        file.close()
+        with open(filename, "w") as f:
+            f.write(prefs)
 
     def get_uri(self, target_pkg, incl_deps=False):
 
