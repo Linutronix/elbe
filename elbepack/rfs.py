@@ -276,10 +276,10 @@ class BuildEnv (object):
 
     def create_apt_prefs(self):
 
-        filename = self.rfs.path + "/etc/apt/preferences"
+        filename =  "etc/apt/preferences"
 
-        if os.path.exists(filename):
-            os.remove(filename)
+        if self.rfs.lexists(filename):
+            self.rfs.remove(filename)
 
         self.rfs.mkdir_p("/etc/apt")
 
@@ -309,7 +309,7 @@ class BuildEnv (object):
              "pkgs": self.xml.node("/target/pkg-list"),
              "porgs": pinned_origins}
 
-        write_pack_template(filename, "preferences.mako", d)
+        write_pack_template(self.rfs.fname(filename), "preferences.mako", d)
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd")
