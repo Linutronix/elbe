@@ -84,6 +84,53 @@ class Filesystem(object):
     def mkdir(self, path):
         os.makedirs(self.fname(path))
 
+    def realpath(self, path):
+
+        path = path.split(os.sep)
+        path.reverse()
+        following = []
+        real_path = [self.path]
+
+        while path:
+            candidate = path.pop()
+
+            # Don't care
+            if candidate == '' or candidate == os.curdir:
+                continue
+
+            # Can't go out of RFS
+            if candidate == os.pardir:
+                if following:
+                    following.pop()
+                if len(real_path) > 1:
+                    real_path.pop()
+                continue
+
+            parent = os.sep.join(real_path)
+            new_path = os.path.join(parent, candidate)
+            if not os.path.islink(new_path):
+                if following:
+                    following.pop()
+                real_path.append(candidate)
+                continue
+
+            # Circular loop; Don't follow it
+            if new_path in following:
+                real_path.append(candidate)
+                continue
+
+            following.append(new_path)
+            link = os.readlink(new_path)
+
+            # Reset root for absolute link
+            if os.path.isabs(link):
+                real_path = [self.path]
+
+            for element in reversed(link.split(os.sep)):
+                path.append(element)
+
+        return os.sep.join(real_path)
+
     def symlink(self, src, path, allow_exists=False):
         try:
             os.symlink(src, self.fname(path))
