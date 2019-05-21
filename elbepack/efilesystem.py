@@ -167,8 +167,61 @@ class ElbeFilesystem(Filesystem):
         if xml_fname is not None:
             licence_xml.write(xml_fname)
 
+class Excursion(object):
+
+    RFS = {}
+
+    @classmethod
+    def begin(cls, rfs):
+        cls.RFS[rfs.path] = []
+
+    @classmethod
+    def add(cls, rfs, path, restore=True, dst=None):
+        cls.RFS[rfs.path].append(Excursion(path, restore, dst))
+
+    @classmethod
+    def do(cls, rfs):
+        r = cls.RFS[rfs.path]
+        for tmp in r:
+            tmp._do_excursion(rfs)
+
+    @classmethod
+    def end(cls, rfs):
+        r = cls.RFS[rfs.path]
+        for tmp in r:
+            tmp._undo_excursion(rfs)
+        del r
+
+    def __init__(self, path, restore, dst):
+        self.origin = path
+        self.restore = restore
+        self.dst = dst
+
+
+    def _do_excursion(self, rfs):
+        if rfs.lexists(self.origin) and self.restore is True:
+            save_to = "%s.orig" % self.origin
+            os.system('mv %s %s' % (rfs.fname(self.origin), rfs.fname(save_to)))
+        if os.path.exists(self.origin):
+            if self.dst is not None:
+                dst = self.dst
+            else:
+                dst = self.origin
+            os.system('cp %s %s' % (self.origin, rfs.fname(dst)))
+
+    def _undo_excursion(self, rfs):
+        saved_to = "%s.orig" % self.origin
+        if rfs.lexists(self.origin):
+            flags = "-f"
+            if rfs.isdir(self.origin):
+                flags += "r"
+            os.system('rm %s %s' % (flags, rfs.fname(self.origin)))
+        if self.restore is True and rfs.lexists(saved_to):
+            os.system('mv %s %s' % (rfs.fname(saved_to), rfs.fname(self.origin)))
+
 
 class ChRootFilesystem(ElbeFilesystem):
+
     def __init__(self, path, interpreter=None, clean=False):
         ElbeFilesystem.__init__(self, path, clean)
         self.interpreter = interpreter
@@ -179,32 +232,27 @@ class ChRootFilesystem(ElbeFilesystem):
         os.close(self.cwd)
 
     def __enter__(self):
+        Excursion.begin(self)
+        Excursion.add(self, "/etc/resolv.conf")
+        Excursion.add(self, "/etc/apt/apt.conf")
+        Excursion.add(self, "/usr/sbin/policy-rc.d")
+
         if self.interpreter:
             if not self.exists("usr/bin"):
-                self.mkdir("usr/bin")
+                if self.islink("usr/bin"):
+                    Excursion.add(self, "/usr/bin")
 
             ui = "/usr/share/elbe/qemu-elbe/" + self.interpreter
             if not os.path.exists(ui):
                 ui = "/usr/bin/" + self.interpreter
-            os.system('cp %s %s' % (ui, self.fname("usr/bin")))
 
-        if self.exists("/etc/resolv.conf"):
-            os.system('mv %s %s' % (self.fname("etc/resolv.conf"),
-                                    self.fname("etc/resolv.conf.orig")))
-        os.system('cp %s %s' % ("/etc/resolv.conf",
-                                self.fname("etc/resolv.conf")))
+            Excursion.add(self, ui, False, "/usr/bin")
 
-        if self.exists("/etc/apt/apt.conf"):
-            os.system('cp %s %s' % (self.fname("/etc/apt/apt.conf"),
-                                    self.fname("/etc/apt/apt.conf.orig")))
-        if os.path.exists("/etc/apt/apt.conf"):
-            os.system('cp %s %s' % ("/etc/apt/apt.conf",
-                                    self.fname("/etc/apt/")))
+        Excursion.do(self)
 
+        self.mkdir_p("usr/bin")
         self.mkdir_p("usr/sbin")
-        self.write_file("usr/sbin/policy-rc.d",
-                        0o755, "#!/bin/sh\nexit 101\n")
-
+        self.write_file("usr/sbin/policy-rc.d", 0o755, "#!/bin/sh\nexit 101\n")
         self.mount()
         return self
 
@@ -212,25 +260,8 @@ class ChRootFilesystem(ElbeFilesystem):
         if self.inchroot:
             self.leave_chroot()
         self.umount()
-        if self.interpreter:
-            os.system('rm -f %s' %
-                      os.path.join(self.path, "usr/bin/" + self.interpreter))
 
-        os.system('rm -f %s' % (self.fname("etc/resolv.conf")))
-
-        if self.exists("/etc/resolv.conf.orig"):
-            os.system('mv %s %s' % (self.fname("etc/resolv.conf.orig"),
-                                    self.fname("etc/resolv.conf")))
-
-        if self.exists("/etc/apt/apt.conf"):
-            os.system('rm -f %s' % (self.fname("etc/apt/apt.conf")))
-
-        if self.exists("/etc/apt/apt.conf.orig"):
-            os.system('mv %s %s' % (self.fname("etc/apt/apt.conf.orig"),
-                                    self.fname("etc/apt/apt.conf")))
-
-        if self.exists("/usr/sbin/policy-rc.d"):
-            os.system('rm -f %s' % (self.fname("usr/sbin/policy-rc.d")))
+        Excursion.end(self)
 
     def mount(self):
         if self.path == '/':
