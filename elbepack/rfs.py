@@ -259,7 +259,7 @@ class BuildEnv (object):
     def initialize_dirs(self, build_sources=False):
         mirror = self.xml.create_apt_sources_list(build_sources=build_sources)
 
-        if self.rfs.exists("etc/apt/sources.list"):
+        if self.rfs.lexists("etc/apt/sources.list"):
             self.rfs.remove("etc/apt/sources.list")
 
         self.rfs.write_file("etc/apt/sources.list", 0o644, mirror)
