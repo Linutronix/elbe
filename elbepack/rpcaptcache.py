@@ -6,6 +6,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import print_function
+
+import logging
 import os
 import sys
 import time
@@ -20,6 +23,42 @@ from apt import Cache
 from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
                                   ElbeOpProgress)
 from elbepack.aptpkgutils import getalldeps, APTPackage
+from elbepack.log import async_logging
+
+
+log = logging.getLogger("log")
+soap = logging.getLogger("soap")
+
+
+class MyMan(BaseManager):
+
+    @staticmethod
+    def register(typeid):
+        """Register to BaseManager through decorator"""
+        def _register(cls):
+            BaseManager.register(typeid, cls)
+            return cls
+        return _register
+
+    @staticmethod
+    def redirect_outputs(r, w):
+        """Redirect all outputs to the writing end of a pipe 'w'"""
+        os.close(r)
+        os.dup2(w, os.sys.stdout.fileno())
+        os.dup2(w, os.sys.stderr.fileno())
+        # Buffering of 1 because in Python3 buffering of 0 is illegal
+        # for non binary mode ..
+        os.sys.stdout = os.fdopen(os.sys.stdout.fileno(), "w", 1)
+        os.sys.stderr = os.fdopen(os.sys.stderr.fileno(), "w", 1)
+        os.sys.__stdout__ = os.sys.stdout
+        os.sys.__stderr__ = os.sys.stderr
+
+    def start(self):
+        """Redirect outputs of the process to an async logging thread"""
+        r, w = os.pipe()
+        super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
+        async_logging(r, w, soap, log)
+
 
 class InChRootObject(object):
     def __init__(self, rfs):
@@ -28,23 +67,14 @@ class InChRootObject(object):
         self.finalizer = Finalize(self, self.rfs.leave_chroot, exitpriority=10)
 
 
+@MyMan.register("RPCAPTCache")
 class RPCAPTCache(InChRootObject):
+
     # pylint: disable=too-many-public-methods
-    def __init__(
-            self,
-            rfs,
-            log,
-            arch,
-            notifier=None,
-            norecommend=False,
-            noauth=True):
+    def __init__(self, rfs, arch,
+                 notifier=None, norecommend=False, noauth=True):
 
         # pylint: disable=too-many-arguments
-
-        sys.stdout = open(log, 'a', buffering=0)
-        sys.stderr = open(log, 'a', buffering=0)
-        self.logfile = open(log, 'a', buffering=0)
-
         InChRootObject.__init__(self, rfs)
 
         self.notifier = notifier
@@ -99,6 +129,7 @@ class RPCAPTCache(InChRootObject):
         return ret
 
     def mark_install(self, pkgname, version, from_user=True, nodeps=False):
+        print('Mark for install "%s"' % pkgname)
         p = self.cache[pkgname]
         if version:
             p.candidate = p.versions[version]
@@ -165,8 +196,9 @@ class RPCAPTCache(InChRootObject):
     def commit(self):
         os.environ["DEBIAN_FRONTEND"] = "noninteractive"
         os.environ["DEBONF_NONINTERACTIVE_SEEN"] = "true"
+        print("Commiting changes ...")
         self.cache.commit(ElbeAcquireProgress(),
-                          ElbeInstallProgress(fileno=self.logfile.fileno()))
+                          ElbeInstallProgress(fileno=sys.stdout.fileno()))
         self.cache.open(progress=ElbeOpProgress())
 
     def clear(self):
@@ -275,21 +307,8 @@ class RPCAPTCache(InChRootObject):
                                                unpack=False)
             return self.rfs.fname(rel_filename)
 
-
-class MyMan(BaseManager):
-    pass
-
-
-MyMan.register("RPCAPTCache", RPCAPTCache)
-
-
-def get_rpcaptcache(
-        rfs,
-        log,
-        arch,
-        notifier=None,
-        norecommend=False,
-        noauth=True):
+def get_rpcaptcache(rfs, arch,
+                    notifier=None, norecommend=False, noauth=True):
 
     # pylint: disable=too-many-arguments
 
@@ -301,4 +320,4 @@ def get_rpcaptcache(
     # MyMan.register()
     #
     # pylint: disable=no-member
-    return mm.RPCAPTCache(rfs, log, arch, notifier, norecommend, noauth)
+    return mm.RPCAPTCache(rfs, arch, notifier, norecommend, noauth)

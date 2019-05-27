@@ -49,7 +49,7 @@ def mk_source_cdrom(
                         cdrom_size,
                         mirror)
 
-    cache = get_rpcaptcache(rfs, "aptcache.log", arch)
+    cache = get_rpcaptcache(rfs, arch)
     cache.update()
     pkglist = cache.get_installed_pkgs()
 
@@ -150,7 +150,7 @@ def mk_binary_cdrom(
                                target_repo_path, log, cdrom_size, mirror)
 
     if xml is not None:
-        cache = get_rpcaptcache(rfs, "aptcache.log", arch)
+        cache = get_rpcaptcache(rfs, arch)
         for p in xml.node("debootstrappkgs"):
             pkg = XMLPackage(p, arch)
             try:
@@ -179,7 +179,7 @@ def mk_binary_cdrom(
                     pkg.installed_version +
                     " missing name or version")
 
-    cache = get_rpcaptcache(rfs, "aptcache.log", arch)
+    cache = get_rpcaptcache(rfs, arch)
     pkglist = cache.get_installed_pkgs()
     for pkg in pkglist:
         try:

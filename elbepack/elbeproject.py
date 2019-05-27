@@ -807,13 +807,10 @@ class ElbeProject (object):
             arch = env.arch
 
         if env.rpcaptcache is None:
-            env.rpcaptcache = get_rpcaptcache(
-                env.rfs,
-                self.log.fp.name,
-                arch,
-                self.rpcaptcache_notifier,
-                norecommend,
-                self.xml.prj.has('noauth'))
+            env.rpcaptcache = get_rpcaptcache(env.rfs, arch,
+                                              self.rpcaptcache_notifier,
+                                              norecommend,
+                                              self.xml.prj.has('noauth'))
         return env.rpcaptcache
 
     def drop_rpcaptcache(self, env=None):
