@@ -325,7 +325,10 @@ class TargetFs(ChRootFilesystem):
 
     def write_fstab(self, xml):
         if not self.exists("etc"):
-            self.mkdir("etc")
+            if self.islink("etc"):
+                self.mkdir(self.realpath("etc"))
+            else:
+                self.mkdir("etc")
 
         f = self.open("etc/fstab", "w")
         if xml.tgt.has("fstab"):
