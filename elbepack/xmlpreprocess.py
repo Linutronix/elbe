@@ -8,6 +8,8 @@
 from __future__ import print_function
 
 import sys
+import urllib2
+
 from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
 
