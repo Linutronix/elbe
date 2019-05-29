@@ -10,7 +10,7 @@ SYNOPSIS
 --------
 [verse]
 'elbe prjrepo download' <project_dir>
-'elbe prjrepo upload_pkg' <project_dir> [<debfile> | <dscfile>]
+'elbe prjrepo upload_pkg' <project_dir> [<debfile> | <dscfile> | <changesfile>]
 'elbe prjrepo list_packages' <project_dir>
 
 DESCRIPTION
@@ -44,13 +44,15 @@ Downloads the Debian repository of the project located in <project_dir> to the
 host machine.
 
 
-'upload_pkg' <project_dir> [<debfile> | <dscfile>]::
+'upload_pkg' <project_dir> [<debfile> | <dscfile> | <changesfile>]::
 
 Loads a Debian package into the Debian repository of an existing Elbe project in
 the initvm. Both binary and source packages are supported. In order to upload a
 source package you need to specify the dsc-file in the command as shown above.
 The actual source files which are required for the source package need to be
-located in the same directory as the dsc-file.
+located in the same directory as the dsc-file. The same is true for a changes
+file.  The actual files defined in the changes file need to reside in the same
+directory.
 
 
 'list_packages' <project_dir>::

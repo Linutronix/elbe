@@ -498,15 +498,18 @@ class ProjectManager(object):
     def add_deb_package(self, userid, filename):
         ep = self._get_current_project(userid)
 
-        t = filename[-3:]  # filetype of uploaded file
+        t = os.path.splitext(filename)[1]  # filetype of uploaded file
         pkg_name = filename.split('_')[0]
 
-        if t == 'dsc':
+        if t == '.dsc':
             ep.repo.includedsc(os.path.join(ep.builddir, filename),
                                force=True)
-        elif t == 'deb':
+        elif t == '.deb':
             ep.repo.includedeb(os.path.join(ep.builddir, filename),
                                pkgname=pkg_name, force=True)
+        elif t == '.changes':
+            ep.repo.include(os.path.join(ep.builddir, filename),
+                            force=True)
 
         ep.repo.finalize()
 

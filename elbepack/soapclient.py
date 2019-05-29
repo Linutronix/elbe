@@ -928,7 +928,7 @@ class UploadPackageAction(RepoAction):
     def execute(self, client, _opt, args):
         if len(args) != 2:
             print(
-                "usage: elbe prjrepo upload_pkg <project_dir> <deb/dsc file>",
+                "usage: elbe prjrepo upload_pkg <project_dir> <deb/dsc/changes file>",
                 file=sys.stderr)
             sys.exit(20)
 
@@ -943,8 +943,8 @@ class UploadPackageAction(RepoAction):
         filetype = os.path.splitext(filename)[1]
 
         # Check filetype
-        if filetype not in ['.dsc', '.deb']:
-            print("Error: Only .dsc and .deb files allowed to upload.")
+        if filetype not in ['.dsc', '.deb', '.changes']:
+            print("Error: Only .dsc, .deb or .changes files allowed to upload.")
             sys.exit(20)
 
         files = [filename]  # list of all files which will be uploaded
@@ -952,6 +952,10 @@ class UploadPackageAction(RepoAction):
         # Parse .dsc-File and append neccessary source files to files
         if filetype == '.dsc':
             for f in deb822.Dsc(file(filename))['Files']:
+                files.append(f['name'])
+
+        if filetype == '.changes':
+            for f in deb822.Changes(file(filename))['Files']:
                 files.append(f['name'])
 
         # Check whether all files are available
