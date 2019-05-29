@@ -306,7 +306,9 @@ class RepoBase(object):
             else:
                 raise ce
 
-    def include(self, path, component="main"):
+    def include(self, path, component="main", force=False):
+        if force:
+            self._remove(path, self.repo_attr.codename, component)
         self._include(path, self.repo_attr.codename, component)
 
     def remove(self, path, component="main"):
