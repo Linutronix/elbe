@@ -36,7 +36,7 @@ def preprocess_pgp_key(xml):
     for key in xml.iterfind('project/mirror/url-list/url/key'):
         print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
         try:
-            keyurl = key.text.strip().replace('LOCALMACHINE', '10.0.2.2')
+            keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
             myKey = urllib2.urlopen(keyurl).read()
             key.tag = "raw-key"
             key.text = "\n%s\n" % myKey
