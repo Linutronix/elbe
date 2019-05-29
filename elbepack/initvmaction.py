@@ -296,6 +296,30 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     print("")
     print("Build finished !")
     print("")
+
+    if opt.build_sdk:
+        try:
+            system(
+                '%s control build_sdk "%s" %s' %
+                (elbe_exe, prjdir, build_opts))
+        except CommandError:
+            print("elbe control build_sdk Failed", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        print("SDK Build started, waiting till it finishes")
+
+        try:
+            system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
+        except CommandError:
+            print("elbe control wait_busy Failed", file=sys.stderr)
+            print("Giving up", file=sys.stderr)
+            sys.exit(20)
+
+        print("")
+        print("SDK Build finished !")
+        print("")
+
     try:
         system(
             '%s control dump_file "%s" validation.txt' %

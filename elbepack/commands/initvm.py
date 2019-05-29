@@ -66,6 +66,13 @@ def run_command(argv):
         help="allow initvm to support nested kvm. "
              "This makes /proc/cpuinfo inside initvm differ per host.")
 
+    oparser.add_option(
+        "--build-sdk",
+        dest="build_sdk",
+        action="store_true",
+        default=False,
+        help="Also make 'initvm submit' build an SDK.")
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
