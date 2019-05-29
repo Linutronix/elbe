@@ -940,11 +940,12 @@ class UploadPackageAction(RepoAction):
         print("--------------------------")
         print("Check files...")
 
+        filetype = os.path.splitext(filename)[1]
+
         # Check filetype
-        if filename[-3:] not in ['dsc', 'deb']:
+        if filetype not in ['.dsc', '.deb']:
             print("Error: Only .dsc and .deb files allowed to upload.")
-        else:
-            filetype = filename[-4:]
+            sys.exit(20)
 
         files = [filename]  # list of all files which will be uploaded
 
