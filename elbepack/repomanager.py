@@ -255,6 +255,10 @@ class RepoBase(object):
                 self._removesrc(p['Source'], codename)
             elif 'Package' in p:
                 self._removedeb(p['Package'], codename)
+            elif 'Binary' in p:
+                for pp in p['Binary'].split():
+                    self._removedeb(pp, codename)
+
 
     def _includedsc(self, path, codename, component):
         if self.maxsize:
