@@ -484,13 +484,14 @@ class CreateAction(InitVMAction):
             if not opt.build_sources:
                 init_opts += ' --skip-build-source'
 
-            if cdrom:
-                system('%s init %s --directory "%s" --cdrom "%s" "%s"' %
-                       (elbe_exe, init_opts, initvmdir, cdrom, xmlfile))
-            else:
-                system(
-                    '%s init %s --directory "%s" "%s"' %
-                    (elbe_exe, init_opts, initvmdir, xmlfile))
+            with PreprocessWrapper(xmlfile, opt) as ppw:
+                if cdrom:
+                    system('%s init %s --directory "%s" --cdrom "%s" "%s"' %
+                           (elbe_exe, init_opts, initvmdir, cdrom, ppw.preproc))
+                else:
+                    system(
+                        '%s init %s --directory "%s" "%s"' %
+                        (elbe_exe, init_opts, initvmdir, ppw.preproc))
 
         except CommandError:
             print("'elbe init' Failed", file=sys.stderr)
