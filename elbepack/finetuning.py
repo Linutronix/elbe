@@ -34,8 +34,13 @@ class FinetuningAction(object):
     actiondict = {}
 
     @classmethod
-    def register(cls, action):
-        cls.actiondict[action.tag] = action
+    def register(cls, tag, register=True):
+        def _register(action):
+            action.tag = tag
+            if register is True:
+                cls.actiondict[tag] = action
+            return action
+        return _register
 
     def __new__(cls, node):
         action = cls.actiondict[node.tag]
@@ -51,9 +56,8 @@ class FinetuningAction(object):
         self.execute(log, buildenv, target)
 
 
+@FinetuningAction.register('image_finetuning', False)
 class ImageFinetuningAction(FinetuningAction):
-
-    tag = 'image_finetuning'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -66,9 +70,8 @@ class ImageFinetuningAction(FinetuningAction):
         raise NotImplementedError('execute_img() not implemented')
 
 
+@FinetuningAction.register('rm')
 class RmAction(FinetuningAction):
-
-    tag = 'rm'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -88,12 +91,8 @@ class RmAction(FinetuningAction):
             log.do("rm -rvf '%s'" % f)
 
 
-FinetuningAction.register(RmAction)
-
-
+@FinetuningAction.register('mkdir')
 class MkdirAction(FinetuningAction):
-
-    tag = 'mkdir'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -102,12 +101,8 @@ class MkdirAction(FinetuningAction):
         log.do("mkdir -p " + target.fname(self.node.et.text))
 
 
-FinetuningAction.register(MkdirAction)
-
-
+@FinetuningAction.register('mknod')
 class MknodAction(FinetuningAction):
-
-    tag = 'mknod'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -120,13 +115,8 @@ class MknodAction(FinetuningAction):
             " " +
             self.node.et.attrib['opts'])
 
-
-FinetuningAction.register(MknodAction)
-
-
+@FinetuningAction.register('buildenv_mkdir')
 class BuildenvMkdirAction(FinetuningAction):
-
-    tag = 'buildenv_mkdir'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -135,12 +125,8 @@ class BuildenvMkdirAction(FinetuningAction):
         log.do("mkdir -p " + buildenv.rfs.fname(self.node.et.text))
 
 
-FinetuningAction.register(BuildenvMkdirAction)
-
-
+@FinetuningAction.register('cp')
 class CpAction(FinetuningAction):
-
-    tag = 'cp'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -151,12 +137,8 @@ class CpAction(FinetuningAction):
             log.do("cp -av " + f + " " + target.fname(self.node.et.text))
 
 
-FinetuningAction.register(CpAction)
-
-
+@FinetuningAction.register('buildenv_cp')
 class BuildenvCpAction(FinetuningAction):
-
-    tag = 'buildenv_cp'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -167,12 +149,8 @@ class BuildenvCpAction(FinetuningAction):
             log.do("cp -av " + f + " " + buildenv.rfs.fname(self.node.et.text))
 
 
-FinetuningAction.register(BuildenvCpAction)
-
-
+@FinetuningAction.register('b2t_cp')
 class B2TCpAction(FinetuningAction):
-
-    tag = 'b2t_cp'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -183,12 +161,8 @@ class B2TCpAction(FinetuningAction):
             log.do("cp -av " + f + " " + target.fname(self.node.et.text))
 
 
-FinetuningAction.register(B2TCpAction)
-
-
+@FinetuningAction.register('t2b_cp')
 class T2BCpAction(FinetuningAction):
-
-    tag = 't2b_cp'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -198,13 +172,8 @@ class T2BCpAction(FinetuningAction):
         for f in src:
             log.do("cp -av " + f + " " + buildenv.rfs.fname(self.node.et.text))
 
-
-FinetuningAction.register(T2BCpAction)
-
-
+@FinetuningAction.register('t2p_mv')
 class T2PMvAction(FinetuningAction):
-
-    tag = 't2p_mv'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -221,12 +190,8 @@ class T2PMvAction(FinetuningAction):
             log.do("mv -v " + f + " " + dest)
 
 
-FinetuningAction.register(T2PMvAction)
-
-
+@FinetuningAction.register('mv')
 class MvAction(FinetuningAction):
-
-    tag = 'mv'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -237,12 +202,8 @@ class MvAction(FinetuningAction):
             log.do("mv -v " + f + " " + target.fname(self.node.et.text))
 
 
-FinetuningAction.register(MvAction)
-
-
+@FinetuningAction.register('ln')
 class LnAction(FinetuningAction):
-
-    tag = 'ln'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -254,12 +215,8 @@ class LnAction(FinetuningAction):
                 (self.node.et.attrib['path'], self.node.et.text))
 
 
-FinetuningAction.register(LnAction)
-
-
+@FinetuningAction.register('buildenv_mv')
 class BuildenvMvAction(FinetuningAction):
-
-    tag = 'buildenv_mv'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -269,13 +226,8 @@ class BuildenvMvAction(FinetuningAction):
         for f in src:
             log.do("mv -v " + f + " " + buildenv.rfs.fname(self.node.et.text))
 
-
-FinetuningAction.register(BuildenvMvAction)
-
-
+@FinetuningAction.register('adduser')
 class AddUserAction(FinetuningAction):
-
-    tag = 'adduser'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -319,12 +271,8 @@ class AddUserAction(FinetuningAction):
                                self.node.et.text))
 
 
-FinetuningAction.register(AddUserAction)
-
-
+@FinetuningAction.register('addgroup')
 class AddGroupAction(FinetuningAction):
-
-    tag = 'addgroup'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -343,12 +291,8 @@ class AddGroupAction(FinetuningAction):
                 self.node.et.text))
 
 
-FinetuningAction.register(AddGroupAction)
-
-
+@FinetuningAction.register('file')
 class AddFileAction(FinetuningAction):
-
-    tag = 'file'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -406,12 +350,9 @@ class AddFileAction(FinetuningAction):
         if mode is not None:
             log.chroot(target.path, 'chmod "%s" "%s"' % (mode, dst))
 
-FinetuningAction.register(AddFileAction)
 
-
+@FinetuningAction.register('raw_cmd')
 class RawCmdAction(FinetuningAction):
-
-    tag = 'raw_cmd'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -421,12 +362,8 @@ class RawCmdAction(FinetuningAction):
             log.chroot(target.path, self.node.et.text)
 
 
-FinetuningAction.register(RawCmdAction)
-
-
+@FinetuningAction.register('command')
 class CmdAction(FinetuningAction):
-
-    tag = 'command'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -436,12 +373,8 @@ class CmdAction(FinetuningAction):
             log.chroot(target.path, "/bin/sh", stdin=self.node.et.text)
 
 
-FinetuningAction.register(CmdAction)
-
-
+@FinetuningAction.register('buildenv_command')
 class BuildenvCmdAction(FinetuningAction):
-
-    tag = 'buildenv_command'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -451,12 +384,8 @@ class BuildenvCmdAction(FinetuningAction):
             log.chroot(buildenv.path, "/bin/sh", stdin=self.node.et.text)
 
 
-FinetuningAction.register(BuildenvCmdAction)
-
-
+@FinetuningAction.register('purge')
 class PurgeAction(FinetuningAction):
-
-    tag = 'purge'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -466,12 +395,8 @@ class PurgeAction(FinetuningAction):
             log.chroot(target.path, "dpkg --purge " + self.node.et.text)
 
 
-FinetuningAction.register(PurgeAction)
-
-
+@FinetuningAction.register('updated')
 class UpdatedAction(FinetuningAction):
-
-    tag = 'updated'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -560,12 +485,8 @@ class UpdatedAction(FinetuningAction):
         target.touch_file('/var/cache/elbe/.downgrade_allowed')
 
 
-FinetuningAction.register(UpdatedAction)
-
-
+@FinetuningAction.register('artifact')
 class ArtifactAction(FinetuningAction):
-
-    tag = 'artifact'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -577,12 +498,8 @@ class ArtifactAction(FinetuningAction):
         target.images.append(self.node.et.text)
 
 
-FinetuningAction.register(ArtifactAction)
-
-
+@FinetuningAction.register('rm_artifact')
 class RmArtifactAction(FinetuningAction):
-
-    tag = 'rm_artifact'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -595,12 +512,8 @@ class RmArtifactAction(FinetuningAction):
         target.images.remove(self.node.et.text)
 
 
-FinetuningAction.register(ArtifactAction)
-
-
+@FinetuningAction.register('losetup')
 class LosetupAction(FinetuningAction):
-
-    tag = 'losetup'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -624,12 +537,8 @@ class LosetupAction(FinetuningAction):
             log.do(cmd)
 
 
-FinetuningAction.register(LosetupAction)
-
-
+@FinetuningAction.register('img_convert')
 class ImgConvertAction(FinetuningAction):
-
-    tag = 'img_convert'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -666,12 +575,8 @@ class ImgConvertAction(FinetuningAction):
             del target.image_packers[src]
 
 
-FinetuningAction.register(ImgConvertAction)
-
-
+@FinetuningAction.register('set_packer')
 class SetPackerAction(FinetuningAction):
-
-    tag = 'set_packer'
 
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
@@ -687,12 +592,8 @@ class SetPackerAction(FinetuningAction):
         target.image_packers[img] = packers[packer]
 
 
-FinetuningAction.register(SetPackerAction)
-
-
+@FinetuningAction.register('extract_partition')
 class ExtractPartitionAction(ImageFinetuningAction):
-
-    tag = 'extract_partition'
 
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
@@ -713,12 +614,8 @@ class ExtractPartitionAction(ImageFinetuningAction):
         target.image_packers[self.node.et.text] = default_packer
 
 
-FinetuningAction.register(ExtractPartitionAction)
-
-
+@FinetuningAction.register('copy_from_partition')
 class CopyFromPartition(ImageFinetuningAction):
-
-    tag = 'copy_from_partition'
 
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
@@ -753,12 +650,8 @@ class CopyFromPartition(ImageFinetuningAction):
             target.images.append(aname)
 
 
-FinetuningAction.register(CopyFromPartition)
-
-
+@FinetuningAction.register('copy_to_partition')
 class CopyToPartition(ImageFinetuningAction):
-
-    tag = 'copy_to_partition'
 
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
@@ -779,9 +672,6 @@ class CopyToPartition(ImageFinetuningAction):
 
             cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
             log.do(cmd)
-
-
-FinetuningAction.register(CopyToPartition)
 
 
 def do_finetuning(xml, log, buildenv, target):
