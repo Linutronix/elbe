@@ -6,7 +6,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import logging
+
 from subprocess import Popen, PIPE, STDOUT, call
+
+from elbepack.log import async_logging
+
+
+log = logging.getLogger("log")
+soap = logging.getLogger("soap")
 
 
 class CommandError(Exception):
@@ -84,3 +92,56 @@ def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
             raise CommandError(cmd, code)
 
     return out, err
+
+
+def do(cmd, allow_fail=False, stdin=None, env_add=None):
+    new_env = os.environ.copy()
+    if env_add:
+        new_env.update(env_add)
+
+    logging.info(cmd, extra={"context":"[CMD] "})
+
+    r, w = os.pipe()
+
+    if stdin is None:
+        p = Popen(cmd, shell=True, stdout=w, stderr=STDOUT, env=new_env)
+    else:
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
+
+    async_logging(r, w, soap, log)
+    p.communicate(input=stdin)
+
+    if p.returncode and not allow_fail:
+        raise CommandError(cmd, p.returncode)
+
+
+
+def chroot(directory, cmd, env_add=None, **kwargs):
+    new_env = {"LANG":"C",
+               "LANGUAGE":"C",
+               "LC_ALL":"C"}
+    if env_add:
+        new_env.update(env_add)
+    chcmd = 'chroot %s %s' % (directory, cmd)
+    do(chcmd, env_add=new_env, **kwargs)
+
+def get_command_out(cmd, stdin=None, allow_fail=False, env_add={}):
+    new_env = os.environ.copy()
+    new_env.update(env_add)
+
+    logging.info(cmd, extra={"context":"[CMD] "})
+
+    r, w = os.pipe()
+
+    if stdin is None:
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=w, env=new_env)
+    else:
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
+
+    async_logging(r, w, soap, log)
+    stdout, stderr = p.communicate(input=stdin)
+
+    if p.returncode and not allow_fail:
+        raise CommandError(cmd, p.returncode)
+
+    return stdout
