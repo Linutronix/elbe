@@ -108,9 +108,8 @@ class ProjectManager(object):
                 raise
 
             # Open the new project
-            logpath = path.join(builddir, "log.txt")
-            ep = self.db.load_project(
-                builddir, logpath, url_validation=url_validation)
+            ep = self.db.load_project(builddir,
+                                      url_validation=url_validation)
 
             self.userid2project[userid] = ep
             self.builddir2userid[builddir] = userid
@@ -140,9 +139,8 @@ class ProjectManager(object):
             self._close_current_project(userid)
 
             # Load project from the database
-            logpath = path.join(builddir, "log.txt")
-            ep = self.db.load_project(
-                builddir, logpath, url_validation=url_validation)
+            ep = self.db.load_project(builddir,
+                                      url_validation=url_validation)
 
             # Add project to our dictionaries
             self.userid2project[userid] = ep
