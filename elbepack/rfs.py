@@ -10,11 +10,12 @@
 import os
 import urlparse
 import urllib2
+import logging
 
 from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import (write_pack_template, get_preseed,
                                 preseed_to_text)
-from elbepack.shellhelper import CommandError
+from elbepack.shellhelper import CommandError, do, chroot, get_command_out
 
 
 class DebootstrapException (Exception):
@@ -23,12 +24,11 @@ class DebootstrapException (Exception):
 
 
 class BuildEnv (object):
-    def __init__(self, xml, log, path, build_sources=False, clean=False, arch="default"):
+    def __init__(self, xml, path, build_sources=False, clean=False, arch="default"):
 
         # pylint: disable=too-many-arguments
 
         self.xml = xml
-        self.log = log
         self.path = path
         self.rpcaptcache = None
         self.arch = arch
@@ -59,57 +59,56 @@ class BuildEnv (object):
     def cdrom_umount(self):
         if self.xml.prj.has("mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
-            self.log.do('umount "%s"' % cdrompath)
-            self.log.do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
-                        self.path)
-            self.log.do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
-                        self.path)
+            do('umount "%s"' % cdrompath)
+            do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
+               self.path)
+            do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
+               self.path)
 
     def cdrom_mount(self):
         if self.xml.has("project/mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
-            self.log.do('mkdir -p "%s"' % cdrompath)
-            self.log.do('mount -o loop "%s" "%s"'
-                        % (self.xml.text("project/mirror/cdrom"), cdrompath))
+            do('mkdir -p "%s"' % cdrompath)
+            do('mount -o loop "%s" "%s"' %
+               (self.xml.text("project/mirror/cdrom"), cdrompath))
 
     def __enter__(self):
         if os.path.exists(self.path + '/../repo/pool'):
-            self.log.do("mv %s/../repo %s" % (self.path, self.path))
-            self.log.do('echo "deb copy:///repo %s main" > '
-                        '%s/etc/apt/sources.list.d/local.list' % (
-                            self.xml.text("project/suite"), self.path))
-            self.log.do('echo "deb-src copy:///repo %s main" >> '
-                        '%s/etc/apt/sources.list.d/local.list' % (
-                            self.xml.text("project/suite"), self.path))
+            do("mv %s/../repo %s" % (self.path, self.path))
+            do('echo "deb copy:///repo %s main" > '
+               '%s/etc/apt/sources.list.d/local.list' %
+               (self.xml.text("project/suite"), self.path))
+            do('echo "deb-src copy:///repo %s main" >> '
+               '%s/etc/apt/sources.list.d/local.list' %
+               (self.xml.text("project/suite"), self.path))
 
         self.cdrom_mount()
         self.rfs.__enter__()
 
         if self.xml.has("project/mirror/cdrom"):
-            self.log.chroot(self.rfs.path,
-                            'apt-key '
-                            '--keyring /etc/apt/trusted.gpg.d/elbe-cdrepo.gpg '
-                            'add /cdrom/repo.pub')
-            self.log.chroot(self.rfs.path,
-                            'apt-key '
-                            '--keyring /etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg '
-                            'add /cdrom/targetrepo/repo.pub')
+            chroot(self.rfs.path,
+                   'apt-key '
+                   '--keyring /etc/apt/trusted.gpg.d/elbe-cdrepo.gpg '
+                   'add /cdrom/repo.pub')
+            chroot(self.rfs.path,
+                   'apt-key '
+                   '--keyring /etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg '
+                   'add /cdrom/targetrepo/repo.pub')
 
         if os.path.exists(os.path.join(self.rfs.path, 'repo/pool')):
-            self.log.chroot(self.rfs.path,
-                            'apt-key '
-                            '--keyring /etc/apt/trusted.gpg.d/elbe-localrepo.gpg '
-                            'add /repo/repo.pub')
+            chroot(self.rfs.path,
+                   'apt-key '
+                   '--keyring /etc/apt/trusted.gpg.d/elbe-localrepo.gpg '
+                   'add /repo/repo.pub')
         return self
 
     def __exit__(self, typ, value, traceback):
         self.rfs.__exit__(typ, value, traceback)
         self.cdrom_umount()
         if os.path.exists(self.path + '/repo'):
-            self.log.do("mv %s/repo %s/../" % (self.path, self.path))
-            self.log.do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
-            self.log.do("rm %s/etc/apt/trusted.gpg.d/elbe-localrepo.gpg" %
-                        self.path)
+            do("mv %s/repo %s/../" % (self.path, self.path))
+            do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
+            do("rm %s/etc/apt/trusted.gpg.d/elbe-localrepo.gpg" % self.path)
 
     def debootstrap(self, arch="default"):
 
@@ -139,13 +138,12 @@ class BuildEnv (object):
         os.environ["DEBIAN_FRONTEND"] = "noninteractive"
         os.environ["DEBONF_NONINTERACTIVE_SEEN"] = "true"
 
-        self.log.h2("debootstrap log")
+        logging.info("Debootstrap log")
 
         if arch == "default":
             arch = self.xml.text("project/buildimage/arch", key="arch")
 
-        host_arch = self.log.get_command_out(
-            "dpkg --print-architecture").strip()
+        host_arch = get_command_out("dpkg --print-architecture").strip()
 
         includepkgs = None
         strapcmd  = 'debootstrap '
@@ -175,7 +173,7 @@ class BuildEnv (object):
 
             try:
                 self.cdrom_mount()
-                self.log.do(cmd)
+                do(cmd)
             except CommandError:
                 cleanup = True
                 raise DebootstrapException()
@@ -195,29 +193,29 @@ class BuildEnv (object):
                     self.rfs.fname("cdrom"))
             else:
                 keyring = ''
+
             cmd = '%s --foreign --arch=%s %s "%s" "%s" "%s"' % (
                 strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
 
         try:
             self.cdrom_mount()
-            self.log.do(cmd)
+            do(cmd)
 
             ui = "/usr/share/elbe/qemu-elbe/" + self.xml.defs["userinterpr"]
 
             if not os.path.exists(ui):
                 ui = "/usr/bin/" + self.xml.defs["userinterpr"]
 
-            self.log.do('cp %s %s' % (ui, self.rfs.fname("usr/bin")))
+            do('cp %s %s' % (ui, self.rfs.fname("usr/bin")))
 
             if self.xml.has("project/noauth"):
-                self.log.chroot(
-                    self.rfs.path,
-                    '/debootstrap/debootstrap --no-check-gpg --second-stage')
+                chroot(self.rfs.path,
+                       '/debootstrap/debootstrap --no-check-gpg --second-stage')
             else:
-                self.log.chroot(self.rfs.path,
-                                '/debootstrap/debootstrap --second-stage')
+                chroot(self.rfs.path,
+                       '/debootstrap/debootstrap --second-stage')
 
-            self.log.chroot(self.rfs.path, 'dpkg --configure -a')
+            chroot(self.rfs.path, 'dpkg --configure -a')
 
         except CommandError:
             cleanup = True
@@ -265,7 +263,7 @@ class BuildEnv (object):
         preseed_txt = preseed_to_text(preseed)
         self.rfs.write_file("var/cache/elbe/preseed.txt", 0o644, preseed_txt)
         with self.rfs:
-            self.log.chroot(
+            chroot(
                 self.rfs.path, 'debconf-set-selections < %s' %
                 self.rfs.fname("var/cache/elbe/preseed.txt"))
 
@@ -308,7 +306,7 @@ class BuildEnv (object):
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd")
-        self.log.chroot(
+        chroot(
             self.rfs.path, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" %
             (passwd, passwd))
 
@@ -317,39 +315,34 @@ class BuildEnv (object):
         if self.xml.has("target/domain"):
             fqdn = ("%s.%s" % (hostname, self.xml.text("target/domain")))
 
-        self.log.chroot(
-            self.rfs.path,
-            """/bin/sh -c 'echo "127.0.1.1 %s %s elbe-daemon" >> """
-            """/etc/hosts'""" % (fqdn,hostname))
+        chroot(self.rfs.path,
+               """/bin/sh -c 'echo "127.0.1.1 %s %s elbe-daemon" >> """
+               """/etc/hosts'""" % (fqdn,hostname))
 
-        self.log.chroot(
-            self.rfs.path,
-            """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname)
+        chroot(self.rfs.path,
+               """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname)
 
-        self.log.chroot(
-            self.rfs.path,
-            """/bin/sh -c 'echo "%s" > """
-            """/etc/mailname'""" % (fqdn))
+        chroot(self.rfs.path,
+               """/bin/sh -c 'echo "%s" > """
+               """/etc/mailname'""" % (fqdn))
 
         if self.xml.has("target/console"):
             serial_con, serial_baud = self.xml.text(
                 "target/console").split(',')
             if serial_baud:
-                self.log.chroot(
-                    self.rfs.path,
-                    """/bin/sh -c '[ -f /etc/inittab ] && """
-                    """echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> """
-                    """/etc/inittab'""" % (serial_con, serial_baud),
-                    allow_fail=True)
+                chroot(self.rfs.path,
+                       """/bin/sh -c '[ -f /etc/inittab ] && """
+                       """echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> """
+                       """/etc/inittab'""" % (serial_con, serial_baud),
+                       allow_fail=True)
 
-                self.log.chroot(
-                    self.rfs.path,
-                    """/bin/sh -c """
-                    """'[ -f /lib/systemd/system/serial-getty@.service ] && """
-                    """ln -s /lib/systemd/system/serial-getty@.service """
-                    """/etc/systemd/system/getty.target.wants/"""
-                    """serial-getty@%s.service'""" % serial_con,
-                    allow_fail=True)
+                chroot(self.rfs.path,
+                       """/bin/sh -c """
+                       """'[ -f /lib/systemd/system/serial-getty@.service ] && """
+                       """ln -s /lib/systemd/system/serial-getty@.service """
+                       """/etc/systemd/system/getty.target.wants/"""
+                       """serial-getty@%s.service'""" % serial_con,
+                       allow_fail=True)
             else:
-                self.log.printo("parsing console tag failed, needs to be of "
-                                "'/dev/ttyS0,115200' format.")
+                logging.error("parsing console tag failed, needs to be of "
+                              "'/dev/ttyS0,115200' format.")

@@ -91,7 +91,7 @@ def run_command(argv):
 
         # Binary Repo
         #
-        repo = CdromInitRepo(init_codename, opt.binrepo, log, 0, mirror)
+        repo = CdromInitRepo(init_codename, opt.binrepo, 0, mirror)
 
         hostfs.mkdir_p(opt.archive)
 
@@ -119,7 +119,7 @@ def run_command(argv):
 
         # Source Repo
         #
-        repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, log, 0, mirror)
+        repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, 0, mirror)
         hostfs.mkdir_p(opt.srcarchive)
 
         # a cdrom build does not have sources

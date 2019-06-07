@@ -114,7 +114,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if xml_filename:
         repodir = os.path.join(update, "repo")
 
-        repo = UpdateRepo(xml, repodir, project.log)
+        repo = UpdateRepo(xml, repodir)
 
         for fname in fnamelist:
             path = os.path.join(

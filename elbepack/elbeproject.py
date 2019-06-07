@@ -189,13 +189,14 @@ class ElbeProject (object):
             self.log = StdoutLog()
 
         self.repo = ProjectRepo(self.arch, self.codename,
-                                os.path.join(self.builddir, "repo"), self.log)
+                                os.path.join(self.builddir, "repo"))
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
         if os.path.exists(self.chrootpath):
-            self.buildenv = BuildEnv(
-                self.xml, self.log, self.chrootpath, clean=False)
+            self.buildenv = BuildEnv(self.xml,
+                                     self.chrootpath,
+                                     clean=False)
         else:
             self.buildenv = None
 
@@ -250,7 +251,6 @@ class ElbeProject (object):
                                                self.sysrootpath))
 
         self.sysrootenv = BuildEnv(self.xml,
-                                   self.log,
                                    self.sysrootpath,
                                    clean=True)
         # Import keyring
@@ -312,7 +312,6 @@ class ElbeProject (object):
                                                hostsysrootpath))
 
         self.host_sysrootenv = BuildEnv(self.xml,
-                                        self.log,
                                         hostsysrootpath,
                                         clean=True,
                                         arch="amd64")
@@ -437,10 +436,10 @@ class ElbeProject (object):
         sysrootstr = ""
         if os.path.exists(self.sysrootpath):
             sysrootstr = "(including sysroot packages)"
-            env = BuildEnv(self.xml, self.log, self.sysrootpath,
+            env = BuildEnv(self.xml, self.sysrootpath,
                            build_sources=build_sources, clean=False)
         else:
-            env = BuildEnv(self.xml, self.log, self.chrootpath,
+            env = BuildEnv(self.xml, self.chrootpath,
                            build_sources=build_sources, clean=False)
 
         # ensure the /etc/apt/sources.list is created according to
@@ -520,7 +519,7 @@ class ElbeProject (object):
         # so it gets rebuilt properly.
         if not self.has_full_buildenv():
             self.log.do('mkdir -p "%s"' % self.chrootpath)
-            self.buildenv = BuildEnv(self.xml, self.log, self.chrootpath,
+            self.buildenv = BuildEnv(self.xml, self.chrootpath,
                                      build_sources=build_sources, clean=True)
             skip_pkglist = False
 
@@ -861,8 +860,9 @@ class ElbeProject (object):
 
         # Create a new BuildEnv instance, if we have a build directory
         if self.has_full_buildenv():
-            self.buildenv = BuildEnv(
-                self.xml, self.log, self.chrootpath, clean=False)
+            self.buildenv = BuildEnv(self.xml,
+                                     self.chrootpath,
+                                     clean=False)
 
         # Create TargetFs instance, if the target directory exists.
         # We use the old content of the directory if no rebuild is done, so

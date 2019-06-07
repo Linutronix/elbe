@@ -474,8 +474,7 @@ class UpdatedAction(FinetuningAction):
                         " missing name or version")
 
         r = UpdateRepo(target.xml,
-                       target.path + '/var/cache/elbe/repos/base',
-                       log)
+                       target.path + '/var/cache/elbe/repos/base')
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
             r.includedeb(d, 'main')

@@ -71,11 +71,9 @@ def run_command(argv):
 
     with elbe_logging({"streams":sys.stdout}):
 
-        repo = ToolchainRepo(
-            defaults["arch"],
-            opt.codename,
-            opt.output,
-            StdoutLog())
+        repo = ToolchainRepo(defaults["arch"],
+                             opt.codename,
+                             opt.output)
 
         for p in pkgs:
             repo.includedeb(os.path.join(tmpdir, p))

@@ -45,7 +45,6 @@ def mk_source_cdrom(
 
     repo = CdromSrcRepo(codename, init_codename,
                         os.path.join(target, "srcrepo"),
-                        log,
                         cdrom_size,
                         mirror)
 
@@ -144,10 +143,10 @@ def mk_binary_cdrom(
         log.printo('       generated with --skip-build-bin')
         log.do('mkdir -p "%s"' % repo_path)
 
-    repo = CdromInitRepo(init_codename, repo_path, log, cdrom_size, mirror)
+    repo = CdromInitRepo(init_codename, repo_path, cdrom_size, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
-                               target_repo_path, log, cdrom_size, mirror)
+                               target_repo_path, cdrom_size, mirror)
 
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)
