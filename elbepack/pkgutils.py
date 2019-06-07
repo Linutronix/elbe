@@ -8,9 +8,10 @@
 from __future__ import print_function
 
 import os
+import logging
 
 from apt_pkg import TagFile
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import CommandError, system, do
 from elbepack.virtapt import get_virtaptcache
 from elbepack.hashes import validate_sha256, HashValidationFailed
 
@@ -91,8 +92,7 @@ def download_pkg(prj,
                  defs,
                  package,
                  arch="default",
-                 incl_deps=False,
-                 log=None):
+                 incl_deps=False):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
@@ -132,37 +132,31 @@ def download_pkg(prj,
                 raise NoPackageException('%s failed to verify: %s' % package,
                                          e.message)
         else:
-            if log:
-                log.printo("WARNING: Using untrusted %s package" % package)
-            else:
-                print("-----------------------------------------------------")
-                print("WARNING:")
-                print("Using untrusted %s package" % package)
-                print("-----------------------------------------------------")
+            logging.warning("Using unstrusted %s package" % package)
 
     return [y[0] for y in urilist]
 
 
-def extract_pkg(prj, target_dir, defs, package, arch, log, incl_deps=False):
+def extract_pkg(prj, target_dir, defs, package, arch, incl_deps=False):
 
     # pylint: disable=too-many-arguments
 
-    pkgs = download_pkg(prj, target_dir, defs, package, arch, incl_deps, log)
+    pkgs = download_pkg(prj, target_dir, defs, package, arch, incl_deps)
 
     for package in pkgs:
         ppath = os.path.join(target_dir, "%s.deb" % package)
         try:
-            log.do('dpkg -x "%s" "%s"' % (ppath, target_dir))
+            do('dpkg -x "%s" "%s"' % (ppath, target_dir))
         except CommandError:
             try:
                 # dpkg did not work, try falling back to ar and tar
-                log.do('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
+                do('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
                                                                    target_dir))
             except CommandError:
                 try:
-                    log.do('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (
+                    do('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (
                            ppath, target_dir))
                 except CommandError as e:
-                    log.printo("extract %s failed: %s\n" % (ppath, e))
+                    loging.exception("Extract %s failed\n %s" (ppath, e))
                     raise e
-        log.do('rm -f "%s"' % ppath)
+        do('rm -f "%s"' % ppath)
