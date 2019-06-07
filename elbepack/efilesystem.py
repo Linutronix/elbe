@@ -307,13 +307,11 @@ class TargetFs(ChRootFilesystem):
     def part_target(self, targetdir, grub_version, grub_fw_type=None):
 
         # create target images and copy the rfs into them
-        self.images = do_hdimg(
-            self.log,
-            self.xml,
-            targetdir,
-            self,
-            grub_version,
-            grub_fw_type)
+        self.images = do_hdimg(self.xml,
+                               targetdir,
+                               self,
+                               grub_version,
+                               grub_fw_type)
 
         for i in self.images:
             self.image_packers[i] = default_packer
