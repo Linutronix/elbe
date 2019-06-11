@@ -6,25 +6,21 @@
 
 from __future__ import print_function
 
+import logging
+import os
 import sys
 from optparse import OptionParser
 
 import apt
 import apt.progress
 
-from elbepack.asciidoclog import ASCIIDocLog
 from elbepack.treeutils import etree
+from elbepack.log import elbe_logging
 
 
 class adjpkg(object):
-    def __init__(self, logfile, name):
-
-        self.outf = ASCIIDocLog(logfile)
-
-        if name:
-            self.outf.h1("ELBE Report for Project " + name)
-        else:
-            self.outf.h1("ELBE Report")
+    def __init__(self, name):
+        logging.info("ELBE Report for Project %s", name)
 
     def set_pkgs(self, pkglist):
 
@@ -45,20 +41,20 @@ class adjpkg(object):
                    p.installed.priority == "important" or \
                    p.installed.priority == "required":
                     continue
-                print("MARK REMOVE %s" % p.name)
+                logging.info("MARK REMOVE %s", p.name)
                 p.mark_delete(auto_fix=False, purge=True)
 
             for name in pkglist:
 
                 if name not in cache:
-                    self.outf.printo("- package %s does not exist" % name)
+                    logging.warning('Package "%s" does not exist' % name)
                     errors += 1
                     continue
 
                 cp = cache[name]
 
                 cp.mark_install()
-                print("MARK INSTALL %s" % cp.name)
+                logging.info("MARK INSTALL %s", cp.name)
 
             cache.commit(apt.progress.base.AcquireProgress(),
                          apt.progress.base.InstallProgress())
@@ -71,7 +67,7 @@ class adjpkg(object):
                     continue
                 if p.is_auto_removable:
                     p.mark_delete(purge=True)
-                    print("MARKED AS AUTOREMOVE %s" % p.name)
+                    logging.info("MARKED AS AUTOREMOVE %s", p.name)
 
         cache.commit(apt.progress.base.AcquireProgress(),
                      apt.progress.base.InstallProgress())
@@ -114,8 +110,10 @@ def run_command(argv):
         buildenv_pkgs = [p.et.text for p in xml.node(
             "project/buildimage/pkg-list")]
 
-    adj = adjpkg(opt.output, opt.name)
-    return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
+
+    with elbe_logging({"files":opt.output}):
+        adj = adjpkg(opt.name)
+        return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
 
 
 if __name__ == "__main__":
