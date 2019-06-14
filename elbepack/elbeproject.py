@@ -766,7 +766,7 @@ class ElbeProject (object):
                 "apt.conf.d"))
 
         # write config files
-        pbuilder_write_config(self.builddir, self.xml, self.log)
+        pbuilder_write_config(self.builddir, self.xml)
         pbuilder_write_apt_conf(self.builddir, self.xml)
         pbuilder_write_repo_hook(self.builddir, self.xml)
         self.log.do(
