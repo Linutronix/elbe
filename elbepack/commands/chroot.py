@@ -11,9 +11,11 @@ from __future__ import print_function
 from optparse import OptionParser
 import sys
 import os
+import logging
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -35,34 +37,33 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
-    try:
-        project = ElbeProject(
-            args[0],
-            override_buildtype=opt.buildtype,
-            skip_validate=opt.skip_validation,
-            url_validation=ValidationMode.NO_CHECK)
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
+    with elbe_logging({"streams":sys.stdout}):
+        try:
+            project = ElbeProject(args[0],
+                                  override_buildtype=opt.buildtype,
+                                  skip_validate=opt.skip_validation,
+                                  url_validation=ValidationMode.NO_CHECK)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
 
-    os.environ["LANG"] = "C"
-    os.environ["LANGUAGE"] = "C"
-    os.environ["LC_ALL"] = "C"
-    # TODO: howto set env in chroot?
-    os.environ["PS1"] = project.xml.text('project/name') + ': \w\$'
+        os.environ["LANG"] = "C"
+        os.environ["LANGUAGE"] = "C"
+        os.environ["LC_ALL"] = "C"
+        # TODO: howto set env in chroot?
+        os.environ["PS1"] = project.xml.text('project/name') + ': \w\$'
 
-    cmd = "/bin/bash"
+        cmd = "/bin/bash"
 
-    if len(args) > 1:
-        cmd = ""
-        cmd2 = args[1:]
-        for c in cmd2:
-            cmd += (c + " ")
+        if len(args) > 1:
+            cmd = ""
+            cmd2 = args[1:]
+            for c in cmd2:
+                cmd += (c + " ")
 
-    if opt.target:
-        with project.targetfs:
-            os.system("/usr/sbin/chroot %s %s" % (project.targetpath, cmd))
-    else:
-        with project.buildenv:
-            os.system("/usr/sbin/chroot %s %s" % (project.chrootpath, cmd))
+        if opt.target:
+            with project.targetfs:
+                os.system("/usr/sbin/chroot %s %s" % (project.targetpath, cmd))
+        else:
+            with project.buildenv:
+                os.system("/usr/sbin/chroot %s %s" % (project.chrootpath, cmd))
