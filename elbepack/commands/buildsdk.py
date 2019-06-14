@@ -7,9 +7,11 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import sys
+import logging
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -28,12 +30,12 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
-    try:
-        project = ElbeProject(args[0], override_buildtype=opt.buildtype,
-                              skip_validate=opt.skip_validation)
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
+    with elbe_logging({"streams":sys.stdout}):
+        try:
+            project = ElbeProject(args[0], override_buildtype=opt.buildtype,
+                                  skip_validate=opt.skip_validation)
+        except ValidationError:
+            logging.exception("xml validation failed.  Bailing out")
+            sys.exit(20)
 
-    project.build_sdk()
+        project.build_sdk()
