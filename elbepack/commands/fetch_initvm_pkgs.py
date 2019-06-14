@@ -7,6 +7,7 @@
 from __future__ import print_function
 
 import sys
+import logging
 from optparse import OptionParser
 
 from apt.package import FetchError
@@ -14,10 +15,11 @@ from apt import Cache
 
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
-from elbepack.asciidoclog import StdoutLog
 from elbepack.dump import get_initvm_pkglist
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem import hostfs
+from elbepack.log import elbe_logging
+from elbepack.shellhelper import do
 
 
 def run_command(argv):
@@ -72,96 +74,79 @@ def run_command(argv):
         print("xml validation failed. Bailing out")
         sys.exit(20)
 
-    log = StdoutLog()
+    with elbe_logging({"streams":sys.stdout}):
 
-    if opt.cdrom_path:
+        if opt.cdrom_path:
+            if opt.cdrom_device:
+                do('mount "%s" "%s"' % (opt.cdrom_device, opt.cdrom_path))
+
+            # a cdrom build is identified by the cdrom option
+            # the xml file that is copied into the initvm
+            # by the initrd does not have the cdrom tags setup.
+            mirror = "file://%s" % opt.cdrom_path
+        else:
+            mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
+
+        init_codename = xml.get_initvm_codename()
+
+        # Binary Repo
+        #
+        repo = CdromInitRepo(init_codename, opt.binrepo, log, 0, mirror)
+
+        hostfs.mkdir_p(opt.archive)
+
+        if opt.build_bin:
+            pkglist = get_initvm_pkglist()
+            cache = Cache()
+            cache.open()
+            for pkg in pkglist:
+                pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+                try:
+                    p = cache[pkg.name]
+                    pkgver = p.installed
+                    deb = pkgver.fetch_binary(opt.archive,
+                                              ElbeAcquireProgress(cb=None))
+                    repo.includedeb(deb, 'main')
+                except ValueError:
+                    logging.exception('No package "%s"', pkg_id)
+                except FetchError:
+                    logging.exception('Package "%s-%s" could not be downloaded',
+                                      pkg.name, pkgver.version)
+                except TypeError:
+                    logging.exception('Package "%s" missing name or version', pkg_id)
+
+        repo.finalize()
+
+        # Source Repo
+        #
+        repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, log, 0, mirror)
+        hostfs.mkdir_p(opt.srcarchive)
+
+        # a cdrom build does not have sources
+        # skip adding packages to the source repo
+        #
+        # FIXME: we need a way to add source cdroms later on
+        if opt.cdrom_path:
+            opt.build_sources = False
+
+        if opt.build_sources:
+            for pkg in pkglist:
+                pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+                try:
+                    p = cache[pkg.name]
+                    pkgver = p.installed
+                    dsc = pkgver.fetch_source(opt.srcarchive,
+                                              ElbeAcquireProgress(cb=None),
+                                              unpack=False)
+                    repo.include_init_dsc(dsc, 'initvm')
+                except ValueError:
+                    logging.exception('No package "%s"', pkg_id)
+                except FetchError:
+                    logging.exception('Package "%s-%s" could not be downloaded', pkg.name, pkgver.version)
+                except TypeError:
+                    logging.exception('Package "%s" missing name or version', pkg_id)
+
+        repo.finalize()
+
         if opt.cdrom_device:
-            log.do('mount "%s" "%s"' % (opt.cdrom_device, opt.cdrom_path))
-
-        # a cdrom build is identified by the cdrom option
-        # the xml file that is copied into the initvm
-        # by the initrd does not have the cdrom tags setup.
-        mirror = "file://%s" % opt.cdrom_path
-    else:
-        mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
-
-    init_codename = xml.get_initvm_codename()
-
-    # Binary Repo
-    #
-    repo = CdromInitRepo(init_codename, opt.binrepo, log, 0, mirror)
-
-    hostfs.mkdir_p(opt.archive)
-
-    if opt.build_bin:
-        pkglist = get_initvm_pkglist()
-        cache = Cache()
-        cache.open()
-        for pkg in pkglist:
-            try:
-                p = cache[pkg.name]
-                pkgver = p.installed
-                deb = pkgver.fetch_binary(opt.archive,
-                                          ElbeAcquireProgress(cb=None))
-                repo.includedeb(deb, 'main')
-            except ValueError:
-                log.printo("No Package " + pkg.name +
-                           "-" + str(pkg.installed_version))
-            except FetchError:
-                log.printo(
-                    "Package " +
-                    pkg.name +
-                    "-" +
-                    pkgver.version +
-                    " could not be downloaded")
-            except TypeError:
-                log.printo("Package " +
-                           pkg.name +
-                           "-" +
-                           str(pkg.installed_version) +
-                           " missing name or version")
-
-    repo.finalize()
-
-    # Source Repo
-    #
-    repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, log, 0, mirror)
-    hostfs.mkdir_p(opt.srcarchive)
-
-    # a cdrom build does not have sources
-    # skip adding packages to the source repo
-    #
-    # FIXME: we need a way to add source cdroms later on
-    if opt.cdrom_path:
-        opt.build_sources = False
-
-    if opt.build_sources:
-        for pkg in pkglist:
-            try:
-                p = cache[pkg.name]
-                pkgver = p.installed
-                dsc = pkgver.fetch_source(opt.srcarchive,
-                                          ElbeAcquireProgress(cb=None),
-                                          unpack=False)
-                repo.include_init_dsc(dsc, 'initvm')
-            except ValueError:
-                log.printo("No Package " + pkg.name +
-                           "-" + str(pkg.installed_version))
-            except FetchError:
-                log.printo(
-                    "Package " +
-                    pkg.name +
-                    "-" +
-                    pkgver.version +
-                    " could not be downloaded")
-            except TypeError:
-                log.printo("Package " +
-                           pkg.name +
-                           "-" +
-                           str(pkg.installed_version) +
-                           " missing name or version")
-
-    repo.finalize()
-
-    if opt.cdrom_device:
-        log.do('umount "%s"' % opt.cdrom_device)
+            do('umount "%s"' % opt.cdrom_device)
