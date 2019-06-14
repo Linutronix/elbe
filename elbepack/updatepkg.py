@@ -7,6 +7,7 @@
 from __future__ import print_function
 
 import os
+import logging
 
 from shutil import rmtree, copyfile, copytree
 
@@ -154,9 +155,9 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     create_zip_archive(upd_filename, update, ".")
 
     if project.postbuild_file:
-        project.log.h2("postbuild script")
-        project.log.do(project.postbuild_file + ' "%s %s %s"' % (
+        logging.info("Postbuild script")
+        do(project.postbuild_file + ' "%s %s %s"' % (
             upd_filename,
             project.xml.text("project/version"),
             project.xml.text("project/name")),
-            allow_fail=True)
+           allow_fail=True)
