@@ -140,9 +140,9 @@ def pbuilder_write_repo_hook(builddir, xml):
                     mirror += 'echo "deb ' + noauth + \
                               url.text("binary").strip() + \
                               '" >> /etc/apt/sources.list\n'
-                if url.has("key") and not xml.prj.has("noauth"):
-                    key_url = url.text("key").strip()
-                    mirror = mirror_script_add_key(mirror, key_url)
+                if url.has("raw-key") and not xml.prj.has("noauth"):
+                    key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
+                    mirror = mirror_script_add_key_text(mirror, key)
 
     if xml.prj.has("mirror/cdrom"):
         mirror += 'echo "deb copy:///cdrom/targetrepo %s main added" >> ' \
