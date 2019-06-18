@@ -583,11 +583,10 @@ class WaitProjectBusyAction(ClientAction):
             sys.exit(20)
 
         builddir = args[0]
-        part = 1
 
         while True:
             try:
-                busy = client.service.get_project_busy(builddir, part)
+                msg = client.service.get_project_busy(builddir)
             # TODO the root cause of this problem is unclear. To enable a
             # get more information print the exception and retry to see if
             # the connection problem is just a temporary problem. This
@@ -599,30 +598,14 @@ class WaitProjectBusyAction(ClientAction):
                       file=sys.stderr)
                 continue
 
-            if busy == 'FINISH':
+            if not msg:
+                time.sleep(0.1)
+                continue
+
+            if msg == 'ELBE-FINISH':
                 break
-            else:
-                # for some reasons lines containing e.g. ^H result in a None
-                # object here. let's just skip those strange lines for the
-                # moment
-                if busy:
-                    log = busy.split('###')
 
-                    if part != int(log[0]):
-                        part = int(log[0])
-
-                        localtime = time.asctime(time.localtime(time.time()))
-                        try:
-                            print("%s -- %s" % (localtime,
-                                                log[1].replace('\n','')))
-                        except IndexError:
-                            print("IndexError - part: %d (skipped)" % part)
-                    else:
-                        time.sleep(1)
-                else:
-                    print("strange part: %d (skipped)" % part)
-                    part = part + 1
-
+            print(msg)
 
 ClientAction.register(WaitProjectBusyAction)
 
