@@ -84,17 +84,21 @@ def pbuilder_write_apt_conf(builddir, xml):
     fp.close()
 
 
-def mirror_script_add_key(mirror, key_url):
-    key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
-    key_conn = urllib2.urlopen(key_url, None, 10)
-    key_text = key_conn.read()
-    key_conn.close()
-
+def mirror_script_add_key_text(mirror, key_text):
     mirror += "cat << EOF | apt-key add -\n"
     mirror += key_text + "\n"
     mirror += "EOF\n"
 
     return mirror
+
+
+def mirror_script_add_key_url(mirror, key_url):
+    key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
+    key_conn = urllib2.urlopen(key_url, None, 10)
+    key_text = key_conn.read()
+    key_conn.close()
+
+    return mirror_script_add_key_text(mirror, key_text)
 
 
 def pbuilder_write_repo_hook(builddir, xml):
@@ -117,7 +121,7 @@ def pbuilder_write_repo_hook(builddir, xml):
     mirror += 'echo "deb http://127.0.0.1:8080' + builddir + '/repo ' + \
         xml.prj.text("suite") + ' main" > /etc/apt/sources.list\n'
 
-    mirror = mirror_script_add_key(
+    mirror = mirror_script_add_key_url(
         mirror,
         'http://127.0.0.1:8080' +
         builddir +
