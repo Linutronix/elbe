@@ -651,7 +651,6 @@ class ElbeProject (object):
                 allow_fail=True)
 
         do_prj_finetuning(self.xml,
-                          self.log,
                           self.buildenv,
                           self.targetfs,
                           self.builddir)
