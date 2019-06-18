@@ -132,6 +132,14 @@ class RPCAPTCache(InChRootObject):
         for p in ignore_dev_pkgs:
             self.cache[p].mark_delete()
 
+        dbgsym_list = [
+                s.name + '-dbgsym' for s in self.cache if (
+                    s.is_installed or s.marked_install)]
+
+        for p in dbgsym_list:
+            if p in self.cache:
+                self.cache[p].mark_install()
+
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
             if p.is_installed and not \
