@@ -7,7 +7,6 @@
 
 from __future__ import print_function
 
-import os
 import sys
 
 from optparse import OptionParser
@@ -16,6 +15,7 @@ from elbepack.treeutils import etree
 from elbepack import virtapt
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
+from elbepack.shellhelper import system
 
 
 def run_command(argv):
@@ -114,10 +114,10 @@ def run_command(argv):
     if errors > 0:
         print("%d Errors occured, xml files needs fixing" % errors)
         if opt.script:
-            os.system("%s ERRORS %s" % (opt.script, args[0]))
+            system("%s ERRORS %s" % (opt.script, args[0]), allow_fail=True)
     elif required_updates > 0:
         print("%d updates required" % required_updates)
         if opt.script:
-            os.system("%s UPDATE %s" % (opt.script, args[0]))
+            system("%s UPDATE %s" % (opt.script, args[0]), allow_fail=True)
     else:
         print("No Updates available")
