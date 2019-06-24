@@ -35,6 +35,7 @@ from elbepack.aptprogress import (ElbeInstallProgress,
                                   ElbeAcquireProgress, ElbeOpProgress)
 from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
+from elbepack.shellhelper import CommandError, system
 
 downgrade_prevention_feature_available = True
 try:
@@ -180,14 +181,23 @@ class rw_access(object):
         if self.mount_orig == 'ro':
             self.status.log("remount %s read/writeable" % self.mount)
             cmd = "mount -o remount,rw %s" % self.mount
-            os.system(cmd)
+            try:
+                system(cmd)
+            except CommandError as e:
+                self.status.log(repr(e))
 
     def __exit__(self, _typ, _value, _traceback):
         if self.mount_orig == 'ro':
             self.status.log("remount %s readonly" % self.mount)
-            os.system("sync")
+            try:
+                system("sync")
+            except CommandError as e:
+                self.status.log(repr(e))
             cmd = "mount -o remount,ro %s" % self.mount
-            ret = os.system(cmd)
+            try:
+                system(cmd)
+            except CommandError as e:
+                self.status.log(repr(e))
 
     def get_mount_status(self):
         with open('/etc/mtab') as mtab:
@@ -430,7 +440,10 @@ def apply_update(fname, status):
         status.log("cleanup /var/cache/apt/archives")
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
-        os.system("apt-get clean")
+        try:
+            system("apt-get clean")
+        except CommandError as e:
+            status.log(repr(e))
         if p.exitcode != 0:
             raise Exception(
                 "Applying update failed. See logfile for more information")
