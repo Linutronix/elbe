@@ -14,7 +14,7 @@ import datetime
 import io
 
 from elbepack.asciidoclog import ASCIIDocLog, StdoutLog
-from elbepack.shellhelper import CommandError
+from elbepack.shellhelper import CommandError, system
 
 from elbepack.elbexml import (ElbeXML, NoInitvmNode,
                               ValidationError, ValidationMode)
@@ -63,7 +63,7 @@ class UnsupportedSDKException(Exception):
 
 
 def test_gen_sdk_scripts():
-    os.system("mkdir -p /tmp/test/sdk")
+    system("mkdir -p /tmp/test/sdk")
     gen_sdk_scripts('armhf-linux-gnueabihf',
                     'ARM',
                     'testproject',
@@ -659,7 +659,7 @@ class ElbeProject (object):
 
         self.targetfs.pack_images(self.builddir)
 
-        os.system('cat "%s"' % self.validationpath)
+        system('cat "%s"' % self.validationpath)
 
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
