@@ -14,6 +14,7 @@ from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
 from elbepack.ziparchives import create_zip_archive
 from elbepack.repomanager import UpdateRepo
+from elbepack.shellhelper import system
 
 
 class MissingData(Exception):
@@ -109,7 +110,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if os.path.exists(update):
         rmtree(update)
 
-    os.system('mkdir -p %s' % update)
+    system('mkdir -p %s' % update)
 
     if xml_filename:
         repodir = os.path.join(update, "repo")
@@ -128,14 +129,10 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
         project.xml.xml.write(os.path.join(update, "new.xml"))
-        os.system(
-            "cp %s %s" %
-            (xml_filename,
-             os.path.join(
-                 update,
-                 "base.xml")))
+        system("cp %s %s" % (xml_filename,
+                             os.path.join(update, "base.xml")))
     else:
-        os.system("cp source.xml update/new.xml")
+        system("cp source.xml update/new.xml")
 
     if project.presh_file:
         copyfile(project.presh_file, update + '/pre.sh')
