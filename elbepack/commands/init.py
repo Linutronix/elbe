@@ -21,7 +21,7 @@ from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
-from elbepack.shellhelper import command_out
+from elbepack.shellhelper import command_out, system
 
 
 def run_command(argv):
@@ -224,9 +224,7 @@ def run_command(argv):
                     os.path.join(out_path, "source.xml"))
 
     if opt.cdrom:
-        os.system(
-            '7z x -o%s "%s" elbe-keyring.gpg' %
-            (out_path, opt.cdrom))
+        system('7z x -o%s "%s" elbe-keyring.gpg' % (out_path, opt.cdrom))
     else:
         keys = []
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
@@ -245,8 +243,6 @@ def run_command(argv):
             ignore = '--exclude "%s"' % os.path.relpath(out_path,
                                                         start=elbe_dir)
 
-        os.system(
-            'tar cfj "%s" %s -C "%s" .' % (
-                os.path.join(out_path, "elbe-devel.tar.bz2"),
-                ignore,
-                elbe_dir))
+        system('tar cfj "%s" %s -C "%s" .' % (os.path.join(out_path, "elbe-devel.tar.bz2"),
+                                              ignore,
+                                              elbe_dir))
