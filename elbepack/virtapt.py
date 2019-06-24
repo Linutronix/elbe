@@ -12,8 +12,9 @@ import os
 import sys
 
 from tempfile import mkdtemp
-
 from multiprocessing.managers import BaseManager
+
+from elbepack.shellhelper import system
 
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
@@ -128,7 +129,7 @@ class VirtApt(object):
             print(e)
 
     def __del__(self):
-        os.system('rm -rf "%s"' % self.projectpath)
+        system('rm -rf "%s"' % self.projectpath)
 
     def start(self):
         pass
@@ -153,7 +154,7 @@ class VirtApt(object):
         else:
             os.makedirs(newdir, mode)
             # mode is not set correctly
-            os.system("chmod 777 " + newdir)
+            system("chmod 777 " + newdir)
 
     def touch(self, fname):
         if os.path.exists(fname):
