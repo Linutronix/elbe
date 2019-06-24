@@ -15,9 +15,10 @@ except ImportError:
 
 from base64 import standard_b64encode
 from bz2 import compress as bz2compress
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
 
 from elbepack.treeutils import etree
+from elbepack.shellhelper import system
 
 class ArchivedirError(Exception):
     pass
@@ -44,7 +45,7 @@ def collect(tararchive, path, keep):
     else:
         cmd = 'tar rf ' + tararchive + ' --owner=root --group=root -C '
     cmd += path + ' .'
-    check_call(cmd, shell=True)
+    system(cmd)
 
 def chg_archive(xml, path, keep):
     if os.path.isdir(path):
