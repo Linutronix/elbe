@@ -14,6 +14,7 @@ import os
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.shellhelper import system, CommandError
 
 
 def run_command(argv):
@@ -61,8 +62,14 @@ def run_command(argv):
             cmd += (c + " ")
 
     if opt.target:
-        with project.targetfs:
-            os.system("/usr/sbin/chroot %s %s" % (project.targetpath, cmd))
+        try:
+            with project.targetfs:
+                system("/usr/sbin/chroot %s %s" % (project.targetpath, cmd))
+        except CommandError as e:
+            print(repr(e))
     else:
-        with project.buildenv:
-            os.system("/usr/sbin/chroot %s %s" % (project.chrootpath, cmd))
+        try:
+            with project.buildenv:
+                system("/usr/sbin/chroot %s %s" % (project.chrootpath, cmd))
+        except CommandError as e:
+            print(repr(e))
