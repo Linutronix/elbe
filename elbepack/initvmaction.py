@@ -385,7 +385,7 @@ def extract_cdrom(cdrom):
     """
 
     tmp = TmpdirFilesystem()
-    os.system('7z x -o%s "%s" source.xml' % (tmp.path, cdrom))
+    system('7z x -o%s "%s" source.xml' % (tmp.path, cdrom))
 
     print("", file=sys.stderr)
 
