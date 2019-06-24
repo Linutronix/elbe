@@ -13,6 +13,7 @@ import subprocess
 import io
 import stat
 
+
 from elbepack.asciidoclog import CommandError
 from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_version
@@ -20,6 +21,7 @@ from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
+from elbepack.shellhelper import system
 
 
 def copy_filelist(src, filelist, dst):
@@ -201,13 +203,13 @@ class Excursion(object):
     def _do_excursion(self, rfs):
         if rfs.lexists(self.origin) and self.restore is True:
             save_to = "%s.orig" % self.origin
-            os.system('mv %s %s' % (rfs.fname(self.origin), rfs.fname(save_to)))
+            system('mv %s %s' % (rfs.fname(self.origin), rfs.fname(save_to)))
         if os.path.exists(self.origin):
             if self.dst is not None:
                 dst = self.dst
             else:
                 dst = self.origin
-            os.system('cp %s %s' % (self.origin, rfs.fname(dst)))
+            system('cp %s %s' % (self.origin, rfs.fname(dst)))
 
     def _undo_excursion(self, rfs):
         saved_to = "%s.orig" % self.origin
@@ -215,9 +217,9 @@ class Excursion(object):
             flags = "-f"
             if rfs.isdir(self.origin):
                 flags += "r"
-            os.system('rm %s %s' % (flags, rfs.fname(self.origin)))
+            system('rm %s %s' % (flags, rfs.fname(self.origin)))
         if self.restore is True and rfs.lexists(saved_to):
-            os.system('mv %s %s' % (rfs.fname(saved_to), rfs.fname(self.origin)))
+            system('mv %s %s' % (rfs.fname(saved_to), rfs.fname(self.origin)))
 
 
 class ChRootFilesystem(ElbeFilesystem):
@@ -267,10 +269,10 @@ class ChRootFilesystem(ElbeFilesystem):
         if self.path == '/':
             return
         try:
-            os.system("mount -t proc none %s/proc" % self.path)
-            os.system("mount -t sysfs none %s/sys" % self.path)
-            os.system("mount -o bind /dev %s/dev" % self.path)
-            os.system("mount -o bind /dev/pts %s/dev/pts" % self.path)
+            system("mount -t proc none %s/proc" % self.path)
+            system("mount -t sysfs none %s/sys" % self.path)
+            system("mount -o bind /dev %s/dev" % self.path)
+            system("mount -o bind /dev/pts %s/dev/pts" % self.path)
         except BaseException:
             self.umount()
             raise
@@ -292,7 +294,7 @@ class ChRootFilesystem(ElbeFilesystem):
 
     def _umount(self, path):
         if os.path.ismount(path):
-            os.system("umount %s" % path)
+            system("umount %s" % path)
 
     def umount(self):
         if self.path == '/':
