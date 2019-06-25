@@ -7,6 +7,7 @@
 
 import os
 
+from elbepack.shellhelper import system
 
 def get_mtdnum(xml, label):
     tgt = xml.node("target")
@@ -88,6 +89,7 @@ class fstabentry(object):
             self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
             self.passno = entry.text("fs/passno", default="0")
+            self.tune = entry.text("fs/tune2fs", default=None)
 
         # These attributes are filled later
         # using set_geometry()
@@ -140,3 +142,7 @@ class fstabentry(object):
     def losetup(self, outf, loopdev):
         outf.do('losetup -o%d --sizelimit %d /dev/%s "%s"' %
                 (self.offset, self.size, loopdev, self.filename))
+
+    def tuning(self, loopdev):
+        if self.tune:
+            system('tune2fs "%s" %s' % (self.tune, loopdev))
