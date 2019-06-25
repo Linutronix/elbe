@@ -200,14 +200,9 @@ class ElbeDefaults(object):
 
     def __init__(self, build_type):
 
-        if build_type not in defaults:
-            print("Please specify a valid buildtype.")
-            print("Valid buildtypes:")
-            print(defaults.keys())
-            print("Please specify a valid buildtype.")
-            print("Valid buildtypes:")
-            print(list(defaults.keys()))
-            sys.exit(20)
+        assert build_type in defaults, ("Invalid buildtype %s\n"
+                                        "Valid buildtypes are:\n  - %s" %
+                                        (build_type, "\n  - ".join(defaults.keys())))
 
         self.defaults = defaults[build_type]
         self.defaults["nicmac"] = get_random_mac()
