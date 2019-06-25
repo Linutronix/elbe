@@ -17,6 +17,44 @@ from elbepack.templates import (write_pack_template, get_preseed,
 from elbepack.shellhelper import CommandError
 
 
+def create_apt_prefs(xml, rfs):
+
+    filename =  "etc/apt/preferences"
+
+    if rfs.lexists(filename):
+        rfs.remove(filename)
+
+    rfs.mkdir_p("/etc/apt")
+
+    pinned_origins = []
+    if xml.has('project/mirror/url-list'):
+        for url in xml.node('project/mirror/url-list'):
+            if not url.has('binary'):
+                continue
+
+            repo = url.node('binary')
+            if 'pin' not in repo.et.attrib:
+                continue
+
+            origin = urlparse.urlsplit(repo.et.text.strip()).hostname
+            pin = repo.et.attrib['pin']
+            if 'package' in repo.et.attrib:
+                package = repo.et.attrib['package']
+            else:
+                package = '*'
+            pinning = {'pin': pin,
+                       'origin': origin,
+                       'package': package}
+            pinned_origins.append(pinning)
+
+    d = {"xml": xml,
+         "prj": xml.node("/project"),
+         "pkgs": xml.node("/target/pkg-list"),
+         "porgs": pinned_origins}
+
+    write_pack_template(rfs.fname(filename), "preferences.mako", d)
+
+
 class DebootstrapException (Exception):
     def __init__(self):
         Exception.__init__(self, "Debootstrap Failed")
@@ -54,7 +92,7 @@ class BuildEnv (object):
             self.need_dumpdebootstrap = False
 
         self.initialize_dirs(build_sources=build_sources)
-        self.create_apt_prefs()
+        create_apt_prefs(self.xml, self.rfs)
 
     def cdrom_umount(self):
         if self.xml.prj.has("mirror/cdrom"):
@@ -274,42 +312,6 @@ class BuildEnv (object):
                 self.rfs.path, 'debconf-set-selections < %s' %
                 self.rfs.fname("var/cache/elbe/preseed.txt"))
 
-    def create_apt_prefs(self):
-
-        filename =  "etc/apt/preferences"
-
-        if self.rfs.lexists(filename):
-            self.rfs.remove(filename)
-
-        self.rfs.mkdir_p("/etc/apt")
-
-        pinned_origins = []
-        if self.xml.has('project/mirror/url-list'):
-            for url in self.xml.node('project/mirror/url-list'):
-                if not url.has('binary'):
-                    continue
-
-                repo = url.node('binary')
-                if 'pin' not in repo.et.attrib:
-                    continue
-
-                origin = urlparse.urlsplit(repo.et.text.strip()).hostname
-                pin = repo.et.attrib['pin']
-                if 'package' in repo.et.attrib:
-                    package = repo.et.attrib['package']
-                else:
-                    package = '*'
-                pinning = {'pin': pin,
-                           'origin': origin,
-                           'package': package}
-                pinned_origins.append(pinning)
-
-        d = {"xml": self.xml,
-             "prj": self.xml.node("/project"),
-             "pkgs": self.xml.node("/target/pkg-list"),
-             "porgs": pinned_origins}
-
-        write_pack_template(self.rfs.fname(filename), "preferences.mako", d)
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd")
