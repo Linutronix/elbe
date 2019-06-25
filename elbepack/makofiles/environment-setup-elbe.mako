@@ -60,7 +60,7 @@ export CXX="${real_multimach_target_sys}-g++ --sysroot=$SDKTARGETSYSROOT"
 export CPP="${real_multimach_target_sys}-gcc -E --sysroot=$SDKTARGETSYSROOT"
 export AS="${real_multimach_target_sys}-as"
 export LD="${real_multimach_target_sys}-ld --sysroot=$SDKTARGETSYSROOT"
-export GDB=${real_multimach_target_sys}-gdb
+export GDB=gdb-multiarch
 export STRIP=${real_multimach_target_sys}-strip
 export RANLIB=${real_multimach_target_sys}-ranlib
 export OBJCOPY=${real_multimach_target_sys}-objcopy
