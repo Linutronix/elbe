@@ -426,6 +426,7 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
         (os.path.join(
             target, "filesystems", entry.id), os.path.join(
             target, "imagemnt")), allow_fail=True)
+    entry.tuning("/dev/loop0")
     outf.do('umount /dev/loop0')
     outf.do('losetup -d /dev/loop0')
 
