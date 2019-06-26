@@ -243,7 +243,7 @@ class VirtApt(object):
         while togo:
             pp = togo.pop()
             try:
-                pkg= self.cache[pp]
+                pkg = self.cache[pp]
                 c = d.get_candidate_ver(pkg)
             except KeyError:
                 pkg = None
@@ -268,10 +268,13 @@ class VirtApt(object):
 
         return list(set(deps))
 
+
 class MyMan(BaseManager):
     pass
 
+
 MyMan.register("VirtRPCAPTCache", VirtApt)
+
 
 def get_virtaptcache(arch, suite, sources, prefs, keylist=None):
     mm = MyMan()
