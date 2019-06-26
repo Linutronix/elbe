@@ -16,6 +16,7 @@ from elbepack import virtapt
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.shellhelper import system
+from elbepack.elbexml import ElbeXML
 
 
 def run_command(argv):
@@ -51,27 +52,18 @@ def run_command(argv):
 
     print("checking %s" % args[0])
 
-    xml = etree(args[0])
+    xml = ElbeXML(args[0])
 
-    if xml.has("project/buildtype"):
-        buildtype = xml.text("/project/buildtype")
-    else:
-        buildtype = "nodefaults"
-
-    defs = ElbeDefaults(buildtype)
-
-    arch = xml.text("project/buildimage/arch", default=defs, key="arch")
-    suite = xml.text("project/suite")
 
     apt_sources = xml.text("sources_list").replace("10.0.2.2", "localhost")
     apt_prefs = xml.text("apt_prefs")
 
     fullp = xml.node("fullpkgs")
 
-    v = virtapt.VirtApt(arch, suite, apt_sources, apt_prefs)
+    v = virtapt.VirtApt(xml)
 
     d = virtapt.apt_pkg.DepCache(v.cache)
-    d.read_pinfile(v.projectpath + "/etc/apt/preferences")
+    d.read_pinfile(v.basefs.path + "/etc/apt/preferences")
 
     for p in fullp:
         pname = p.et.text
