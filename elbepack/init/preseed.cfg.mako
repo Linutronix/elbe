@@ -86,9 +86,6 @@ d-i mirror/protocol string ${prj.text("mirror/primary_proto")}
 d-i apt-setup/local${i}/repository string ${tmp.strip()}
 d-i apt-setup/local${i}/comment string local server
 d-i apt-setup/local${i}/source boolean true
-% if n.has("key"):
-d-i apt-setup/local${i}/key string ${n.text("key").replace("LOCALMACHINE", "10.0.2.2").strip()}
-% endif
 % endif
 <% i+=1 %>
 % endfor
