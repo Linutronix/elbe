@@ -55,23 +55,6 @@ def get_key_list(prj):
     return retval
 
 
-def get_uri(prj, defs, arch, target_pkg, incl_deps=False):
-    if arch == "default":
-        arch = prj.text("buildimage/arch", default=defs, key="arch")
-    suite = prj.text("suite")
-
-    apt_sources = get_sources_list(prj)
-    apt_keys = get_key_list(prj)
-
-    if arch == "default":
-        arch = prj.text("buildimage/arch", default=defs, key="arch")
-    suite = prj.text("suite")
-    v = get_virtaptcache(arch, suite, apt_sources, "", apt_keys)
-
-    ret = v.get_uri(target_pkg, incl_deps)
-    return ret
-
-
 def get_dsc_size(fname):
     tf = TagFile(fname)
 
