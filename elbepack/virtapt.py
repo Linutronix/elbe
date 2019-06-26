@@ -255,22 +255,3 @@ class VirtApt(object):
                     togo.append(p)
 
         return list(set(deps))
-
-
-class MyMan(BaseManager):
-    pass
-
-
-MyMan.register("VirtRPCAPTCache", VirtApt)
-
-
-def get_virtaptcache(arch, suite, sources, prefs, keylist=None):
-    mm = MyMan()
-    mm.start()
-
-    # Disable false positive, because pylint can not
-    # see the creation of MyMan.VirtRPCAPTCache by
-    # MyMan.register()
-    #
-    # pylint: disable=no-member
-    return mm.VirtRPCAPTCache(arch, suite, sources, prefs, keylist)
