@@ -49,6 +49,14 @@ class ValidationMode(object):
     CHECK_BINARIES = 2
     CHECK_ALL = 0
 
+def replace_localmachine(mirror, initvm=True):
+    if initvm:
+        localmachine = "10.0.0.2"
+    else:
+        localmachine = "localhost"
+
+    return mirror.replace("LOCALMACHINE", localmachine)
+
 
 class ElbeXML(object):
 
@@ -119,7 +127,7 @@ class ElbeXML(object):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
-    def get_primary_mirror(self, cdrompath):
+    def get_primary_mirror(self, cdrompath, initvm=True):
         if self.prj.has("mirror/primary_host"):
             m = self.prj.node("mirror")
 
@@ -130,10 +138,10 @@ class ElbeXML(object):
         elif self.prj.has("mirror/cdrom") and cdrompath:
             mirror = "file://%s" % cdrompath
 
-        return mirror.replace("LOCALMACHINE", "10.0.2.2")
+        return replace_localmachine(mirror, initvm)
 
     # XXX: maybe add cdrom path param ?
-    def create_apt_sources_list(self, build_sources=False):
+    def create_apt_sources_list(self, build_sources=False, initvm=True):
         if self.prj is None:
             return "# No Project"
 
@@ -166,7 +174,7 @@ class ElbeXML(object):
             mirror += "deb copy:///cdrom/targetrepo %s main added\n" % (
                 self.prj.text("suite"))
 
-        return mirror.replace("LOCALMACHINE", "10.0.2.2")
+        return replace_localmachine(mirror, initvm)
 
     def validate_repo(self, r):
         try:
