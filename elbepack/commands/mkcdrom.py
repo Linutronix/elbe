@@ -66,7 +66,7 @@ def run_command(argv):
 
         if not opt.rfs_only:
             try:
-                project = ElbeProject(args[0], logpath=opt.log,
+                project = ElbeProject(args[0],
                                       override_buildtype=opt.buildtype,
                                       skip_validate=opt.skip_validation)
             except ValidationError:

@@ -92,7 +92,7 @@ def run_command(argv):
 
     with elbe_logging({"files": opt.output}):
         try:
-            project = ElbeProject(opt.target, args[0], opt.output, opt.name,
+            project = ElbeProject(opt.target, args[0], opt.name,
                                   opt.buildtype, opt.skip_validation)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
