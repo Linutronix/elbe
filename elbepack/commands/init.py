@@ -227,6 +227,16 @@ def run_command(argv):
         os.system(
             '7z x -o%s "%s" elbe-keyring.gpg' %
             (out_path, opt.cdrom))
+    else:
+        keys = []
+        for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
+            keys.append(key.et.text)
+        import_keyring = os.path.join(out_path, "elbe-keyring")
+        command_out('gpg --no-default-keyring --keyring %s --import' % import_keyring,
+                    stdin="".join(keys))
+        export_keyring = import_keyring + ".gpg"
+        command_out('gpg --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
+                                                                                    export_keyring))
 
     if opt.devel:
         out_real = os.path.realpath(out_path)
