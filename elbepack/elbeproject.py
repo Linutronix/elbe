@@ -202,8 +202,8 @@ class ElbeProject (object):
 
         # Create TargetFs instance, if the target directory exists
         if os.path.exists(self.targetpath) and self.buildenv:
-            self.targetfs = TargetFs(self.targetpath, self.log,
-                                     self.buildenv.xml, clean=False)
+            self.targetfs = TargetFs(self.targetpath, self.buildenv.xml,
+                                     clean=False)
         else:
             self.targetfs = None
 
@@ -462,7 +462,6 @@ class ElbeProject (object):
                                                     init_codename,
                                                     self.xml,
                                                     self.builddir,
-                                                    self.log,
                                                     cdrom_size=cdrom_size)
             if build_sources:
                 elog.h1("Source CD %s" % sysrootstr)
@@ -472,7 +471,6 @@ class ElbeProject (object):
                                                         self.codename,
                                                         init_codename,
                                                         self.builddir,
-                                                        self.log,
                                                         cdrom_size=cdrom_size,
                                                         xml=self.xml)
                 except SystemError as e:
@@ -538,11 +536,11 @@ class ElbeProject (object):
 
         # Extract target FS. We always create a new instance here with
         # clean=true, because we want a pristine directory.
-        self.targetfs = TargetFs(self.targetpath, self.log,
-                                 self.buildenv.xml, clean=True)
+        self.targetfs = TargetFs(self.targetpath, self.buildenv.xml,
+                                 clean=True)
         os.chdir(self.buildenv.rfs.fname(''))
         extract_target(self.buildenv.rfs, self.xml, self.targetfs,
-                       self.log, self.get_rpcaptcache())
+                       self.get_rpcaptcache())
 
         # The validation file is created using check_full_pkgs() and
         # elbe_report(), both opening the file in append mode. So if an
@@ -598,9 +596,8 @@ class ElbeProject (object):
                     "licence.txt"),
                 "w+",
                 encoding='utf-8')
-            self.buildenv.rfs.write_licenses(
-                f, self.log, os.path.join(
-                    self.builddir, "licence.xml"))
+            self.buildenv.rfs.write_licenses(f,
+                                             os.path.join(self.builddir, "licence.xml"))
         except Exception:
             self.log.printo("error during generating licence.txt/xml")
             self.log.printo(sys.exc_info()[0])
@@ -867,8 +864,8 @@ class ElbeProject (object):
         # We use the old content of the directory if no rebuild is done, so
         # don't clean it (yet).
         if os.path.exists(self.targetpath):
-            self.targetfs = TargetFs(self.targetpath, self.log,
-                                     self.xml, clean=False)
+            self.targetfs = TargetFs(self.targetpath, self.xml,
+                                     clean=False)
         else:
             self.targetfs = None
 

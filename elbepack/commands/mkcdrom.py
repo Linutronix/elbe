@@ -91,7 +91,7 @@ def run_command(argv):
         if opt.source:
             with rfs:
                 generated_files += mk_source_cdrom(rfs, arch, codename,
-                                                   init_codename, builddir, log,
+                                                   init_codename, builddir,
                                                    opt.cdrom_size)
 
         if opt.binary:
@@ -102,7 +102,6 @@ def run_command(argv):
                                                    init_codename,
                                                    xml,
                                                    builddir,
-                                                   log,
                                                    opt.cdrom_size)
 
         logging.info("Image Build finished.\n")

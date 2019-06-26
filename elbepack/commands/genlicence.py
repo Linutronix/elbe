@@ -39,5 +39,5 @@ def run_command(argv):
         else:
             f = io.open('licence.txt', "w+", encoding='utf-8')
 
-        rfs.write_licenses(f, log, opt.xml)
+        rfs.write_licenses(f, opt.xml)
         f.close()
