@@ -33,7 +33,7 @@ class XMLPreprocessError(Exception):
 
 def preprocess_pgp_key(xml):
 
-    for key in xml.iterfind('project/mirror/url-list/url/key'):
+    for key in xml.iterfind('.//mirror/url-list/url/key'):
         print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
         try:
             keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
