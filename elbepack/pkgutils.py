@@ -10,9 +10,6 @@ from __future__ import print_function
 import os
 
 from apt_pkg import TagFile
-from elbepack.shellhelper import CommandError, system
-from elbepack.virtapt import get_virtaptcache
-from elbepack.hashes import validate_sha256, HashValidationFailed
 
 
 class NoPackageException(Exception):
