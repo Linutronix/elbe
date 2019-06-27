@@ -132,7 +132,7 @@ def download_pkg(prj,
                 raise NoPackageException('%s failed to verify: %s' % package,
                                          e.message)
         else:
-            logging.warning("Using unstrusted %s package" % package)
+            logging.warning("Using unstrusted '%s' package", package)
 
     return [y[0] for y in urilist]
 
@@ -150,13 +150,13 @@ def extract_pkg(prj, target_dir, defs, package, arch, incl_deps=False):
         except CommandError:
             try:
                 # dpkg did not work, try falling back to ar and tar
-                do('ar p "%s" data.tar.gz | tar xz -C "%s"' % (ppath,
-                                                                   target_dir))
+                do('ar p "%s" data.tar.gz | tar xz -C "%s"' %
+                   (ppath, target_dir))
             except CommandError:
                 try:
-                    do('ar p "%s" data.tar.xz | tar xJ -C "%s"' % (
-                           ppath, target_dir))
-                except CommandError as e:
-                    loging.exception("Extract %s failed\n %s" (ppath, e))
-                    raise e
+                    do('ar p "%s" data.tar.xz | tar xJ -C "%s"' %
+                       (ppath, target_dir))
+                except CommandError:
+                    logging.exception("Extract %s failed", ppath)
+                    raise
         do('rm -f "%s"' % ppath)
