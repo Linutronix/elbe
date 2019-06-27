@@ -110,13 +110,11 @@ def extract_target(src, xml, dst, cache):
                 ui = "/usr/bin/" + str(xml.defs["userinterpr"])
             do('cp %s %s' % (ui, dst.fname("usr/bin")))
 
-        chroot(dst.path, "/usr/bin/dpkg --clear-selections")
-        chroot(
-            dst.path,
-            "/usr/bin/dpkg --set-selections < %s " %
-            dst.fname(psel))
-        chroot(dst.path, "/usr/bin/dpkg --purge -a")
-
+        cmds = ["--clear-selections",
+                "--set-selections < %s" % dst.fname(psel),
+                "--purge -a"]
+        for cmd in cmds:
+            chroot(dst.path, "/usr/bin/dpkg %s" % cmd)
 
 class ElbeFilesystem(Filesystem):
     def __init__(self, path, clean=False):
@@ -144,8 +142,8 @@ class ElbeFilesystem(Filesystem):
                 with io.open(os.path.join(d, "copyright"), "rb") as lic:
                     lic_text = lic.read()
             except IOError as e:
-                logging.error("Error while processing license file %s: '%s'" %
-                              (os.path.join(d, "copyright"), e.strerror))
+                logging.exception("Error while processing license file %s",
+                                  os.path.join(d, "copyright"))
                 lic_text = "Error while processing license file %s: '%s'" % (
                     os.path.join(d, "copyright"), e.strerror)
 
@@ -341,10 +339,8 @@ class TargetFs(ChRootFilesystem):
             cpio_name = self.xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
             try:
-                do(
-                    "find . -print | cpio -ov -H newc >%s" %
-                    os.path.join(
-                        targetdir, cpio_name))
+                do("find . -print | cpio -ov -H newc >%s" %
+                   os.path.join(targetdir, cpio_name))
                 # only append filename if creating cpio was successful
                 self.images.append(cpio_name)
             except CommandError:
@@ -356,9 +352,8 @@ class TargetFs(ChRootFilesystem):
             sfs_name = self.xml.text("target/package/squashfs/name")
             os.chdir(self.fname(''))
             try:
-                do(
-                    "mksquashfs %s %s/%s -noappend -no-progress" %
-                    (self.fname(''), targetdir, sfs_name))
+                do("mksquashfs %s %s/%s -noappend -no-progress" %
+                   (self.fname(''), targetdir, sfs_name))
                 # only append filename if creating mksquashfs was successful
                 self.images.append(sfs_name)
             except CommandError as e:
