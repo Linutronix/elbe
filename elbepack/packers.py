@@ -51,10 +51,8 @@ class TarArchiver(Packer):
             dirname = os.path.dirname(fpath)
             basename = os.path.basename(fpath)
             archname = fpath + self.suffix
-            do('tar cv%sf "%s" --sparse -C "%s" "%s"' % (self.flag,
-                                                         archname,
-                                                         dirname,
-                                                         basename))
+            do('tar cv%sf "%s" --sparse -C "%s" "%s"' %
+               (self.flag, archname, dirname, basename))
             do('rm -f "%s"' % fpath)
         except CommandError:
             # in case of an error, we just return None
