@@ -47,7 +47,7 @@ class adjpkg(object):
             for name in pkglist:
 
                 if name not in cache:
-                    logging.warning('Package "%s" does not exist' % name)
+                    logging.warning('Package "%s" does not exist', name)
                     errors += 1
                     continue
 
