@@ -144,9 +144,9 @@ class CpAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            cmd = "cp -av %s %s" % (f, target.fname(self.node.et.text))
-            do(cmd)
+            do(cmd % f)
 
 
 FinetuningAction.register(CpAction)
@@ -161,12 +161,9 @@ class BuildenvCpAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            # Does buildenv.rfs.fname(self.node.et.text) change in the
-            # loop?  If not we can format the cmd outside of the loop
-            # outside and make a smaller format in the loop.
-            cmd = "cp -av %s %s" % (f, buildenv.rfs.fname(self.node.et.text))
-            do(cmd)
+            do(cmd % f)
 
 
 FinetuningAction.register(BuildenvCpAction)
@@ -181,9 +178,9 @@ class B2TCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            cmd = "cp -av %s %s" % (f, target.fname(self.node.et.text))
-            do(cmd)
+            do(cmd % f)
 
 
 FinetuningAction.register(B2TCpAction)
@@ -198,9 +195,9 @@ class T2BCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            cmd = "cp -av %s %s" % (f, buildenv.rfs.fname(self.node.et.text))
-            do(cmd)
+            do(cmd % f)
 
 
 FinetuningAction.register(T2BCpAction)
@@ -238,9 +235,9 @@ class MvAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "mv -v %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            cmd = "mv -v %s %s" % (f, target.fname(self.node.et.text))
-            do(cmd)
+            do(cmd % f)
 
 
 FinetuningAction.register(MvAction)
@@ -271,9 +268,9 @@ class BuildenvMvAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
-        cmd = "mv -v %s %s"
+        cmd = "mv -v %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            do(cmd % (f, buildenv.rfs.fname(self.node.et.text)))
+            do(cmd % f)
 
 FinetuningAction.register(BuildenvMvAction)
 
@@ -421,7 +418,7 @@ class UpdatedAction(FinetuningAction):
         if self.node.et.text:
             fp = self.node.et.text
 
-            logging.info("transfert gpg key to target: %s" % fp)
+            logging.info("transfert gpg key to target: %s", fp)
 
             gpgdata = core.Data()
             ctx = core.Context()
@@ -458,14 +455,14 @@ class UpdatedAction(FinetuningAction):
                     cache.download_binary(
                         pkg.name, '/tmp/pkgs', pkg.installed_version)
                 except ValueError:
-                    logging.exception("No package %s-%s" % (pkg.name,
-                                                            pkg.installed_version))
+                    logging.exception("No package %s-%s",
+                                      pkg.name, pkg.installed_version)
                 except FetchError:
-                    logging.exception("Package %s-%s could not be downloaded" % (pkg.name,
-                                                                         pkg.installed_version))
+                    logging.exception("Package %s-%s could not be downloaded",
+                                      pkg.name, pkg.installed_version)
                 except TypeError:
-                    logging.exception("Package %s-%s missing name or version" % (pkg.name,
-                                                                                 pkg.installed_version))
+                    logging.exception("Package %s-%s missing name or version",
+                                      pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
                        target.path + '/var/cache/elbe/repos/base')
 
@@ -571,8 +568,8 @@ class ImgConvertAction(FinetuningAction):
         fmt = self.node.et.attrib['fmt']
 
         if src not in target.images:
-            logging.error("Error: Artifact '%s' does not exist.\n Valid Artifcact are: %s" % (
-                      src, ", ".join([str(i) for i in target.images])))
+            logging.error("Artifact '%s' does not exist.\nValid Artifcact are: %s",
+                          src, ", ".join([str(i) for i in target.images]))
             raise FinetuningException("Artifact '%s' does not exist" % src)
 
         src_fname = os.path.join(builddir, src)
@@ -663,11 +660,13 @@ class CopyFromPartition(ImageFinetuningAction):
             fname = mnt_fs.glob(self.node.et.text)
 
             if not fname:
-                logging.error('No file matching "%s" found' % self.node.et.text)
+                logging.error('No file matching "%s" found',
+                              self.node.et.text)
                 raise FinetuningException('No File found')
 
             if len(fname) > 1:
-                logging.info('Pattern "%s" matches %d files' % (self.node.et.text, len(fname)))
+                logging.info('Pattern "%s" matches %d files',
+                             self.node.et.text, len(fname))
                 raise FinetuningException('Patter matches too many files')
 
             cmd = 'cp "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
@@ -716,7 +715,8 @@ def do_finetuning(xml, buildenv, target):
             action = FinetuningAction(i)
             action.execute(buildenv, target)
         except KeyError:
-            logging.exception("Unimplemented finetuning action '%s'" % (i.et.tag))
+            logging.exception("Unimplemented finetuning action '%s'",
+                              i.et.tag)
         except CommandError:
             logging.exception("Finetuning Error, trying to continue anyways")
         except FinetuningException:
@@ -733,7 +733,8 @@ def do_prj_finetuning(xml, buildenv, target, builddir):
             action = FinetuningAction(i)
             action.execute_prj(buildenv, target, builddir)
         except KeyError:
-            logging.exception("Unimplemented project-finetuning action '%s'" % (i.et.tag))
+            logging.exception("Unimplemented project-finetuning action '%s'",
+                              i.et.tag)
         except CommandError:
             logging.exception("ProjectFinetuning Error, trying to continue anyways")
         except FinetuningException:
