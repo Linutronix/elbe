@@ -164,21 +164,18 @@ class RepoBase(object):
 
         if need_update:
             cmd = 'reprepro --export=force --basedir "%s" update' % self.fs.path
-            do(cmd,
-               env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
+            do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
         else:
             for att in self.attrs:
                 cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
-                                                              att.codename)
-                do(cmd,
-                    env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
+                                                             att.codename)
+                do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
 
     def finalize(self):
         for att in self.attrs:
             cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
                                                          att.codename)
-            do(cmd,
-               env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, component):
         if self.maxsize:
@@ -187,11 +184,8 @@ class RepoBase(object):
                 self.new_repo_volume()
 
         cmd = ('reprepro --keepunreferencedfiles --export=never '
-               '--basedir "%s" -C %s includedeb %s %s' % (self.fs.path,
-                                                          component,
-                                                          codename,
-                                                          path))
-        do(cmd)
+               '--basedir "%s" -C %s includedeb %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def includedeb(self, path, component="main", pkgname=None, force=False):
         # pkgname needs only to be specified if force is enabled
@@ -213,26 +207,24 @@ class RepoBase(object):
         self._includedeb(path, self.init_attr.codename, component)
 
     def _include(self, path, codename, component):
-        do('reprepro --ignore=wrongdistribution '
-                    '--ignore=surprisingbinary --keepunreferencedfiles '
-           '--export=never --basedir "' + self.fs.path + '" -C ' +
-           component + ' -P normal -S misc include ' + codename +
-           ' ' + path)
+        cmd = ('reprepro --ignore=wrongdistribution '
+               '--ignore=surprisingbinary --keepunreferencedfiles '
+               '--export=never --basedir "%s" -C %s -P normal '
+               '-S misc include %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def _removedeb(self, pkgname, codename):
-        do(
-            "reprepro --basedir %s remove %s %s" %
-            (self.fs.path, codename, pkgname),
-            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        cmd = 'reprepro --basedir %s remove %s %s'
+        do(cmd % (self.fs.path, codename, pkgname),
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removedeb(self, pkgname, component="main"):
         self._removedeb(pkgname, self.repo_attr.codename)
 
     def _removesrc(self, srcname, codename):
-        do(
-            "reprepro --basedir %s removesrc %s %s" %
-            (self.fs.path, codename, srcname),
-            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        cmd = 'reprepro --basedir %s removesrc %s %s'
+        do(cmd % (self.fs.path, codename, srcname),
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removesrc(self, path, component="main"):
         for p in Deb822.iter_paragraphs(file(path)):
@@ -255,15 +247,9 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        do(
-            'reprepro --keepunreferencedfiles --export=never --basedir "' +
-            self.fs.path +
-            '" -C ' +
-            component +
-            ' -P normal -S misc includedsc ' +
-            codename +
-            ' ' +
-            path)
+        cmd = ('reprepro --keepunreferencedfiles --export=never '
+               '--basedir "%s" -C %s -P normal -S misc includedsc %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def includedsc(self, path, component="main", force=False):
         try:
@@ -278,7 +264,7 @@ class RepoBase(object):
                 #
                 # copy the dsc into the cdrom root,
                 # when reprepro fails to insert it.
-                logging.error('Unable to verify dsc "%s": unsupported signature algorithm' % path)
+                logging.error('Unable to verify dsc "%s": unsupported signature algorithm', path)
                 do('cp -av "%s" "%s"' % (path, self.fs.path))
             elif force:
                 # Including dsc did not work.
@@ -304,17 +290,15 @@ class RepoBase(object):
         files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
-            do(
-                "genisoimage -o %s -J -joliet-long -R %s" %
-                (fname, new_path))
+            do("genisoimage -o %s -J -joliet-long -R %s" %
+               (fname, new_path))
             files.append(fname)
         else:
             for i in range(self.volume_count + 1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
-                do(
-                    "genisoimage -o %s -J -joliet-long -R %s" %
-                    (newname, volfs.path))
+                do("genisoimage -o %s -J -joliet-long -R %s" %
+                   (newname, volfs.path))
                 files.append(newname)
 
         return files
