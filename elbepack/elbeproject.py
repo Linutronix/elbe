@@ -14,7 +14,7 @@ import datetime
 import io
 import logging
 
-from elbepack.shellhelper import CommandError, do
+from elbepack.shellhelper import CommandError, do, chroot
 
 from elbepack.elbexml import (ElbeXML, NoInitvmNode,
                               ValidationError, ValidationMode)
@@ -212,11 +212,11 @@ class ElbeProject (object):
         self.host_sysrootenv = None
 
     def build_chroottarball(self):
-        do("tar cJf %s/chroot.tar.xz \
-                --exclude=./tmp/*  --exclude=./dev/* \
-                --exclude=./run/*  --exclude=./sys/* \
-                --exclude=./proc/* --exclude=./var/cache/* \
-                -C %s ." % (self.builddir, self.chrootpath))
+        do("tar cJf %s/chroot.tar.xz "
+           "--exclude=./tmp/*  --exclude=./dev/* "
+           "--exclude=./run/*  --exclude=./sys/* "
+           "--exclude=./proc/* --exclude=./var/cache/* "
+           "-C %s ." % (self.builddir, self.chrootpath))
 
     def get_sysroot_paths(self):
         triplet = self.xml.defs["triplet"]
@@ -243,7 +243,7 @@ class ElbeProject (object):
     def build_sysroot(self):
 
         do('rm -rf %s; mkdir "%s"' % (self.sysrootpath,
-                                               self.sysrootpath))
+                                      self.sysrootpath))
 
         self.sysrootenv = BuildEnv(self.xml,
                                    self.sysrootpath,
@@ -289,8 +289,7 @@ class ElbeProject (object):
         sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
 
         with self.sysrootenv.rfs:
-            do("chroot %s /usr/bin/symlinks -cr /usr/lib" %
-                        self.sysrootpath)
+            chroot(self.sysrootpath, "/usr/bin/symlinks -cr /usr/lib")
 
         paths = self.get_sysroot_paths()
 
@@ -300,11 +299,10 @@ class ElbeProject (object):
             do('find -path "%s" >> %s' % (p, sysrootfilelist))
 
         do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
-                    (self.builddir, self.sysrootpath, sysrootfilelist))
+           (self.builddir, self.sysrootpath, sysrootfilelist))
 
     def build_host_sysroot(self, pkgs, hostsysrootpath):
-        do('rm -rf %s; mkdir "%s"' % (hostsysrootpath,
-                                               hostsysrootpath))
+        do('rm -rf %s; mkdir "%s"' % (hostsysrootpath, hostsysrootpath))
 
         self.host_sysrootenv = BuildEnv(self.xml,
                                         hostsysrootpath,
@@ -329,8 +327,8 @@ class ElbeProject (object):
                     cache.mark_install(p, None)
                 except KeyError:
                     logging.exception("No Package %s", p)
-                except SystemError as e:
-                    logging.exception("Error: Unable to correct problems in package %s", p)
+                except SystemError:
+                    logging.exception("Unable to correct problems in package %s", p)
 
             try:
                 cache.commit()
@@ -377,8 +375,8 @@ class ElbeProject (object):
         self.build_sysroot()
         sdktargetpath = os.path.join(self.sdkpath, "sysroots", "target")
         do("mkdir -p %s" % sdktargetpath)
-        do("tar xJf %s/sysroot.tar.xz -C %s" % (self.builddir,
-                                                         sdktargetpath))
+        do("tar xJf %s/sysroot.tar.xz -C %s" %
+           (self.builddir, sdktargetpath))
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
 
@@ -403,19 +401,18 @@ class ElbeProject (object):
         src_path = os.path.join(self.builddir, "pdebuilder", "current")
 
         src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
-        logging.info("Retrieve pbuild sources: %s" % src_uri)
+        logging.info("Retrieve pbuild sources: %s",  src_uri)
         if p.tag == 'git':
             do("git clone %s %s" % (src_uri, src_path))
             try:
-                do(
-                    "cd %s; git reset --hard %s" %
-                    (src_path, p.et.attrib['revision']))
+                do("cd %s; git reset --hard %s" %
+                   (src_path, p.et.attrib['revision']))
             except IndexError:
                 pass
         elif p.tag == 'svn':
             do("svn co --non-interactive %s %s" % (src_uri, src_path))
         else:
-            logging.info("Unknown pbuild source vcs: %s" % p.tag)
+            logging.info("Unknown pbuild source vcs: %s", p.tag)
 
         # pdebuild_build(-1) means use all cpus
         self.pdebuild_build(cpuset=-1, profile="")
@@ -446,7 +443,7 @@ class ElbeProject (object):
             init_codename = self.xml.get_initvm_codename()
 
             if build_bin:
-                validation.info("Binary CD %s" % sysrootstr)
+                validation.info("Binary CD %s", sysrootstr)
 
                 self.repo_images += mk_binary_cdrom(env.rfs,
                                                     self.arch,
@@ -456,7 +453,7 @@ class ElbeProject (object):
                                                     self.builddir,
                                                     cdrom_size=cdrom_size)
             if build_sources:
-                validation.info("Source CD %s" % sysrootstr)
+                validation.info("Source CD %s", sysrootstr)
                 try:
                     self.repo_images += mk_source_cdrom(env.rfs,
                                                         self.arch,
@@ -467,7 +464,7 @@ class ElbeProject (object):
                                                         xml=self.xml)
                 except SystemError as e:
                     # e.g. no deb-src urls specified
-                    validation.exception(str(e))
+                    validation.error(str(e))
 
     def build(self, build_bin=False, build_sources=False, cdrom_size=None,
               skip_pkglist=False, skip_pbuild=False):
@@ -624,11 +621,10 @@ class ElbeProject (object):
 
         if self.postbuild_file:
             logging.info("Postbuild script")
-            do(self.postbuild_file + ' "%s %s %s"' % (
-                self.builddir,
-                self.xml.text("project/version"),
-                self.xml.text("project/name")),
-                allow_fail=True)
+            cmd = ' "%s %s %s"' % (self.builddir,
+                                   self.xml.text("project/version"),
+                                   self.xml.text("project/name"))
+            do(self.postbuild_file + cmd, allow_fail=True)
 
         do_prj_finetuning(self.xml,
                           self.buildenv,
@@ -642,15 +638,15 @@ class ElbeProject (object):
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
         do('rm -rf "%s"' % os.path.join(self.builddir,
-                                                 "pdebuilder"))
+                                        "pdebuilder"))
 
         # Remove pbuilder/result directory
         do('rm -rf "%s"' % os.path.join(self.builddir,
-                                                 "pbuilder", "result"))
+                                        "pbuilder", "result"))
 
         # Recreate the directories removed
         do('mkdir -p "%s"' % os.path.join(self.builddir,
-                                                   "pbuilder", "result"))
+                                          "pbuilder", "result"))
 
     def pdebuild(self, cpuset, profile):
         self.pdebuild_init()
@@ -662,19 +658,14 @@ class ElbeProject (object):
             for orig_fname in self.orig_files:
                 ofname = os.path.join(self.builddir, orig_fname)
                 do('mv "%s" "%s"' % (ofname,
-                                              os.path.join(self.builddir,
-                                                           "pdebuilder")))
+                                     os.path.join(self.builddir, "pdebuilder")))
         finally:
             self.orig_fname = None
             self.orig_files = []
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
-        do(
-            'tar xfz "%s" -C "%s"' %
-            (os.path.join(
-                self.builddir,
-                "current_pdebuild.tar.gz"),
-                pbdir))
+        do('tar xfz "%s" -C "%s"' %
+           (os.path.join(self.builddir, "current_pdebuild.tar.gz"), pbdir))
 
         self.pdebuild_build(cpuset, profile)
         self.repo.finalize()
@@ -692,16 +683,14 @@ class ElbeProject (object):
 
         try:
             do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
-                        '--configfile "%s" '
-                        '--use-pdebuild-internal --buildresult "%s"' % (
-                            os.path.join(self.builddir,
-                                         "pdebuilder",
-                                         "current"),
-                            cpuset_cmd,
-                            cfg['pbuilder_jobs'],
-                            os.path.join(self.builddir, "pbuilderrc"),
-                            os.path.join(self.builddir, "pbuilder", "result")),
-                        env_add={'DEB_BUILD_PROFILES': profile})
+               '--configfile "%s" '
+               '--use-pdebuild-internal --buildresult "%s"' % (
+                   os.path.join(self.builddir, "pdebuilder", "current"),
+                   cpuset_cmd,
+                   cfg['pbuilder_jobs'],
+                   os.path.join(self.builddir, "pbuilderrc"),
+                   os.path.join(self.builddir, "pbuilder", "result")),
+               env_add={'DEB_BUILD_PROFILES': profile})
 
             self.repo.remove(os.path.join(self.builddir,
                                           "pdebuilder",
@@ -717,52 +706,34 @@ class ElbeProject (object):
                               "builds in pbuilder")
 
     def update_pbuilder(self):
-        do(
-            'pbuilder --update --configfile "%s" --aptconfdir "%s"' %
-            (os.path.join(
-                self.builddir, "pbuilderrc"), os.path.join(
-                self.builddir, "aptconfdir")))
+        do('pbuilder --update --configfile "%s" --aptconfdir "%s"' %
+           (os.path.join(self.builddir, "pbuilderrc"),
+            os.path.join(self.builddir, "aptconfdir")))
 
     def create_pbuilder(self):
         # Remove old pbuilder directory, if it exists
         do('rm -rf "%s"' % os.path.join(self.builddir, "pbuilder"))
 
         # make hooks.d and pbuilder directory
-        do(
-            'mkdir -p "%s"' %
-            os.path.join(
-                self.builddir,
-                "pbuilder",
-                "hooks.d"))
-        do(
-            'mkdir -p "%s"' %
-            os.path.join(
-                self.builddir,
-                "pbuilder",
-                "aptcache"))
-        do(
-            'mkdir -p "%s"' %
-            os.path.join(
-                self.builddir,
-                "aptconfdir",
-                "apt.conf.d"))
+        do('mkdir -p "%s"' %
+           os.path.join(self.builddir, "pbuilder", "hooks.d"))
+        do('mkdir -p "%s"' %
+           os.path.join(self.builddir, "pbuilder", "aptcache"))
+        do('mkdir -p "%s"' %
+           os.path.join(self.builddir, "aptconfdir", "apt.conf.d"))
 
         # write config files
         pbuilder_write_config(self.builddir, self.xml)
         pbuilder_write_apt_conf(self.builddir, self.xml)
         pbuilder_write_repo_hook(self.builddir, self.xml)
-        do(
-            'chmod -R 755 "%s"' %
-            os.path.join(
-                self.builddir,
-                "pbuilder",
-                "hooks.d"))
+        do('chmod -R 755 "%s"' %
+           os.path.join(self.builddir, "pbuilder", "hooks.d"))
 
         # Run pbuilder --create
         do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-                    '--debootstrapopts --include="git gnupg2"' % (
-                        os.path.join(self.builddir, "pbuilderrc"),
-                        os.path.join(self.builddir, "aptconfdir")))
+           '--debootstrapopts --include="git gnupg2"' %
+           (os.path.join(self.builddir, "pbuilderrc"),
+            os.path.join(self.builddir, "aptconfdir")))
 
     def sync_xml_to_disk(self):
         try:
@@ -803,7 +774,7 @@ class ElbeProject (object):
                 return True
 
             logging.warning("%s exists, but it does not have "
-                            "an etc/elbe_version file." % self.chrootpath)
+                            "an etc/elbe_version file.", self.chrootpath)
             # Apparently we do not have a functional build environment
             return False
 
@@ -852,12 +823,10 @@ class ElbeProject (object):
             self.targetfs = None
 
     def write_log_header(self):
-        if self.name:
-            logging.info("ELBE Report for Project " + self.name)
-        else:
-            logging.info("ELBE Report")
-            logging.info("report timestamp: " +
-                         datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+
+        logging.info("ELBE Report for Project %s\n"
+                     "Report timestamp: %s", self.name,
+                     datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     def install_packages(self, target, buildenv=False):
 
@@ -928,7 +897,7 @@ class ElbeProject (object):
                 try:
                     self.get_rpcaptcache(env=target).mark_install(p, None)
                 except KeyError:
-                    logging.exception("No Package " + p)
+                    logging.exception("No Package %s", p)
                 except SystemError:
                     logging.exception("Unable to correct problems in package %s", p)
 
