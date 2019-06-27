@@ -126,8 +126,8 @@ def build_image_mtd(mtd, target):
         subp = ""
 
     try:
-        do("ubinize %s -o %s -p %s -m %s %s/%s_%s.cfg" % (
-            subp,
+        do("ubinize %s -o %s -p %s -m %s %s/%s_%s.cfg" %
+           (subp,
             os.path.join(target, mtd.text("name")),
             ubivg.text("physicaleraseblocksize"),
             ubivg.text("miniosize"),
@@ -187,17 +187,10 @@ class grubinstaller202(grubinstaller_base):
                 do('mount /dev/mapper/poop0p%d %s' %
                    (self.boot_efi.partnum, os.path.join(imagemnt, "boot/efi")))
 
-            do("mount --bind /dev %s" %
-               os.path.join(imagemnt, "dev"))
-
-            do("mount --bind /proc %s" %
-               os.path.join(imagemnt, "proc"))
-
-            do("mount --bind /sys %s" %
-               os.path.join(imagemnt, "sys"))
-
-            do('mkdir -p "%s"' %
-               os.path.join(imagemnt, "boot/grub"))
+            do("mount --bind /dev %s" % os.path.join(imagemnt, "dev"))
+            do("mount --bind /proc %s" % os.path.join(imagemnt, "proc"))
+            do("mount --bind /sys %s" % os.path.join(imagemnt, "sys"))
+            do('mkdir -p "%s"' % os.path.join(imagemnt, "boot/grub"))
 
             devmap = open(os.path.join(imagemnt, "boot/grub/device.map"), "w")
             devmap.write("(hd0) /dev/poop0\n")
@@ -217,14 +210,9 @@ class grubinstaller202(grubinstaller_base):
         finally:
             os.unlink(os.path.join(imagemnt, "boot/grub/device.map"))
 
-            do("umount %s" % os.path.join(imagemnt, "dev"),
-               allow_fail=True)
-
-            do("umount %s" % os.path.join(imagemnt, "proc"),
-               allow_fail=True)
-
-            do("umount %s" % os.path.join(imagemnt, "sys"),
-               allow_fail=True)
+            do("umount %s" % os.path.join(imagemnt, "dev"), allow_fail=True)
+            do("umount %s" % os.path.join(imagemnt, "proc"), allow_fail=True)
+            do("umount %s" % os.path.join(imagemnt, "sys"), allow_fail=True)
 
             if self.boot_efi:
                 do('umount /dev/mapper/poop0p%d' %
