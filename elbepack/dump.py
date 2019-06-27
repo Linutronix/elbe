@@ -93,21 +93,20 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
             name = p.et.text
             nomulti_name = name.split(":")[0]
             if not cache.has_pkg(nomulti_name):
-                validation.error("- package %s does not exist" % nomulti_name)
+                validation.error("Package '%s' does not exist", nomulti_name)
                 errors += 1
                 continue
 
             if not cache.is_installed(nomulti_name):
-                validation.error("- package %s is not installed" % nomulti_name)
+                validation.error("Package '%s' is not installed", nomulti_name)
                 errors += 1
                 continue
 
             ver = p.et.get('version')
             pkg = cache.get_pkg(nomulti_name)
             if ver and (pkg.installed_version != ver):
-                validation.error(
-                    "- package %s version %s does not match installed version %s" %
-                    (name, ver, pkg.installed_version))
+                validation.error("Package '%s' version '%s' does not match installed version %s",
+                                 name, ver, pkg.installed_version)
                 errors += 1
                 continue
 
@@ -129,34 +128,32 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
         pindex[name] = p
 
         if not cache.has_pkg(name):
-            validation.error("- package %s does not exist" % name)
+            validation.error("Package '%s' does not exist", name)
             errors += 1
             continue
 
         if not cache.is_installed(name):
-            validation.error("- package %s is not installed" % name)
+            validation.error("Package '%s' is not installed", name)
             errors += 1
             continue
 
         pkg = cache.get_pkg(name)
 
         if pkg.installed_version != ver:
-            validation.error(
-                "- package %s version %s does not match installed version %s" %
-                (name, ver, pkg.installed_version))
+            validation.error("Package '%s' version %s does not match installed version %s",
+                             name, ver, pkg.installed_version)
             errors += 1
             continue
 
         if pkg.installed_md5 != md5:
-            validation.error("- package %s md5 %s does not match installed md5 %s" %
-                        (name, md5, pkg.installed_md5))
+            validation.error("Package '%s' md5 %s does not match installed md5 %s",
+                             name, md5, pkg.installed_md5)
             errors += 1
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
-            validation.error(
-                "additional package %s installed, that was not requested" %
-                cp.name)
+            validation.error("Additional package %s installed, that was not requested",
+                             cp.name)
             errors += 1
 
     if errors == 0:
@@ -172,31 +169,28 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     rfs = buildenv.rfs
 
-    report.info("ELBE Report for Project " + xml.text("project/name"))
-
-    report.info(
-        "report timestamp: " +
-        datetime.now().strftime("%Y%m%d-%H%M%S"))
-    report.info("elbe: %s" % str(elbe_version))
+    report.info("ELBE Report for Project %s\n"
+                "Report timestamp: %s\n"
+                "elbe: %s",
+                xml.text("project/name"),
+                datetime.now().strftime("%Y%m%d-%H%M%S"),
+                str(elbe_version))
 
     slist = rfs.read_file('etc/apt/sources.list')
-    report.info("Apt Sources dump")
-    report.info(slist)
+    report.info("Apt Sources dump\n%s", slist)
 
     try:
         prefs = rfs.read_file("etc/apt/preferences")
     except IOError:
         prefs = ""
 
-    report.info("Apt Preferences dump")
-    if prefs:
-        report.info(prefs)
+    report.info("Apt Preferences dump\n%s", prefs)
 
     report.info("Installed Packages List")
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
-        report.info("|%s|%s|%s" % (p.name, p.installed_version, p.origin))
+        report.info("|%s|%s|%s", p.name, p.installed_version, p.origin)
 
     index = cache.get_fileindex()
     mt_index = targetfs.mtime_snap()
@@ -245,7 +239,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
                 pkg = "added in finetuning"
         # else leave pkg as is
 
-        report.info("|+%s+|%s" % (fpath, pkg))
+        report.info("|+%s+|%s", fpath, pkg)
 
 
     report.info("Deleted Files")
@@ -255,7 +249,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
                 pkg = index[fpath]
             else:
                 pkg = "postinst generated"
-            report.info("|+%s+|%s" % (fpath, pkg))
+            report.info("|+%s+|%s", fpath, pkg)
 
     report.info("Target Package List")
 
@@ -269,12 +263,11 @@ def elbe_report(xml, buildenv, cache, targetfs):
         f = targetfs.open('etc/elbe_pkglist', 'w')
     for pkg in tgt_pkg_list:
         p = pkgindex[pkg]
-        report.info(
-            "|%s|%s|%s|%s" %
-            (p.name,
-             p.installed_version,
-             p.is_auto_installed,
-             p.installed_md5))
+        report.info("|%s|%s|%s|%s",
+                    p.name,
+                    p.installed_version,
+                    p.is_auto_installed,
+                    p.installed_md5)
         if xml.has("target/pkgversionlist"):
             f.write(
                 "%s %s %s\n" %
@@ -297,14 +290,12 @@ def elbe_report(xml, buildenv, cache, targetfs):
         if fpath not in mt_index or \
                 mt_index_postarch[fpath] != mt_index[fpath]:
             if fpath not in mt_index_post_fine:
-                validation.error(
-                        "- archive file %s deleted in finetuning" %
-                        fpath)
+                validation.error("Archive file %s deleted in finetuning",
+                                 fpath)
                 errors += 1
             elif mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
-                validation.error(
-                        "- archive file %s modified in finetuning" %
-                        fpath)
+                validation.error("Archive file %s modified in finetuning",
+                                 fpath)
                 errors += 1
 
     if errors == 0:
