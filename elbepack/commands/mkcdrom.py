@@ -104,6 +104,6 @@ def run_command(argv):
                                                    builddir,
                                                    opt.cdrom_size)
 
-        logging.info("Image Build finished.\n")
+        logging.info("Image Build finished.")
         logging.info("Files generated:\n%s",
                      "\n".join([str(f) for f in generated_files]))
