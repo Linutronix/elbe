@@ -59,7 +59,8 @@ def gen_binpkg_archive(ep, repodir):
 
             if not path.isfile(abs_path):
                 # Package file does not exist, download it and adjust path name
-                logging.warning('Package file "%s" not found in var/cache/apt/archives, downloading it' % filename)
+                logging.warning('Package file "%s" not found in var/cache/apt/archives, downloading it',
+                                filename)
                 abs_path = ep.buildenv.rfs.fname(rel_path)
                 pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
                 try:
@@ -67,13 +68,13 @@ def gen_binpkg_archive(ep, repodir):
                                                  '/var/cache/elbe/pkgarchive',
                                                  pkg.installed_version)
                 except ValueError:
-                    logging.error('No package "%s"' % pkg_id)
+                    logging.error('No package "%s"', pkg_id)
                     raise
                 except FetchError:
-                    logging.error('Package "%s" could not be downloaded' % pkd_id)
+                    logging.error('Package "%s" could not be downloaded', pkg_id)
                     raise
                 except TypeError:
-                    logging.error('Package "%s" missing name or version' % pkd_id)
+                    logging.error('Package "%s" missing name or version', pkg_id)
                     raise
 
             # Add package to repository
@@ -141,14 +142,14 @@ def checkout_binpkg_archive(ep, repodir):
                 for fpi in fpl:
                     if p.name == fpi.et.text:
                         version = fpi.et.get('version')
-                        logging.info('Install "%s-%s"' % (p.name, version))
+                        logging.info('Install "%s-%s"', p.name, version)
                         c.mark_install(p.name, version,
                                        from_user=not fpi.et.get('auto'),
                                        nodeps=True)
                         marked = True
 
                 if not marked:
-                    logging.info('Delete "%s-%s"' % (p.name, version))
+                    logging.info('Delete "%s-%s"', p.name, version)
                     c.mark_delete(p.name)
 
             # Now commit the changes
