@@ -263,9 +263,9 @@ class BuildEnv (object):
         preseed_txt = preseed_to_text(preseed)
         self.rfs.write_file("var/cache/elbe/preseed.txt", 0o644, preseed_txt)
         with self.rfs:
-            chroot(
-                self.rfs.path, 'debconf-set-selections < %s' %
-                self.rfs.fname("var/cache/elbe/preseed.txt"))
+            cmd = ('debconf-set-selections < %s' %
+                   self.rfs.fname("var/cache/elbe/preseed.txt"))
+            chroot(self.rfs.path, cmd)
 
     def create_apt_prefs(self):
 
@@ -306,9 +306,8 @@ class BuildEnv (object):
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd")
-        chroot(
-            self.rfs.path, """/bin/sh -c 'echo "%s\\n%s\\n" | passwd'""" %
-            (passwd, passwd))
+        stdin = "%s\n%s\n" % (passwd, passwd)
+        chroot(self.rfs.path, "passwd", stdin=stdin)
 
         hostname = self.xml.text("target/hostname")
         fqdn = hostname
