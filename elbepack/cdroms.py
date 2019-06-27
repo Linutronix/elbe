@@ -66,9 +66,9 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
             dsc = cache.download_source(pkg.name, '/var/cache/elbe/sources')
             repo.includedsc(dsc, force=True)
         except ValueError:
-            logging.error("No sources for package '%s'" % pkg_id)
+            logging.error("No sources for package '%s'", pkg_id)
         except FetchError:
-            logging.error("Source for package '%s' could not be downloaded" % pkg_id)
+            logging.error("Source for package '%s' could not be downloaded", pkg_id)
 
     # elbe fetch_initvm_pkgs has downloaded all sources to
     # /var/cache/elbe/sources
@@ -140,11 +140,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target,
                                             pkg.installed_version)
                 target_repo.includedeb(deb, 'main')
             except ValueError:
-                logging.error("No package '%s'" % pkg_id)
+                logging.error("No package '%s'", pkg_id)
             except FetchError:
-                logging.error("Package '%s' could not be downloaded" % pkg_id)
+                logging.error("Package '%s' could not be downloaded", pkg_id)
             except TypeError:
-                logging.error("Package '%s' missing name or version" % pkg_id)
+                logging.error("Package '%s' missing name or version", pkg_id)
 
     cache = get_rpcaptcache(rfs, arch)
     pkglist = cache.get_installed_pkgs()
@@ -158,11 +158,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target,
         except KeyError as ke:
             logging.error(str(ke))
         except ValueError:
-            logging.error("No package %s" % pkg_id)
+            logging.error("No package '%s'", pkg_id)
         except FetchError:
-            logging.error("Package %s could not be downloaded" % pkg_id)
+            logging.error("Package '%s' could not be downloaded", pkg_id)
         except TypeError:
-            logging.error("Package %s missing name or version")
+            logging.error("Package '%s' missing name or version", pkg_id)
 
     target_repo.finalize()
 
