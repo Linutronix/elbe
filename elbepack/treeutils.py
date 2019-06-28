@@ -38,16 +38,16 @@ class ebase(object):
     def __init__(self, et):
         self.et = et
 
-    def text(self, path, **args):
+    def text(self, path, **kwargs):
         el = self.et.find("./" + path)
-        if (el is None) and "default" not in args:
-            raise Exception("Cant find path %s" % path)
-        elif (el is None) and "default" in args:
-            default = args["default"]
-            if isinstance(default, str):
+        if el is None:
+            if "default" in kwargs:
+                default = kwargs["default"]
+                if hasattr(default, "__getitem__") and "key" in kwargs:
+                    return default[kwargs["key"]]
                 return default
 
-            return default[args["key"]]
+            raise Exception("Cant find path %s" % path)
 
         return el.text
 
