@@ -147,6 +147,9 @@ class VirtApt(object):
         except BaseException as e:
             print(e)
 
+        self.downloads = {}
+        self.acquire = apt_pkg.Acquire(self)
+
     def add_key(self, key):
         cmd = 'echo "%s" > %s' % (key, self.basefs.fname("tmp/key.pub"))
         clean = 'rm -f %s' % self.basefs.fname("tmp/key.pub")
@@ -216,6 +219,49 @@ class VirtApt(object):
 
     def has_pkg(self, pkgname):
         return pkgname in self.cache
+
+    def mark_pkg_download(self, pkgname):
+        pkg = self.cache[pkgname]
+        c = self.depcache.get_candidate_ver(pkg)
+
+        r = apt_pkg.PackageRecords(self.cache)
+        r.lookup(c.file_list[0])
+
+        x = self.source.find_index(c.file_list[0][0])
+        uri = x.archive_uri(r.filename)
+        hashval = str(r.hashes.find('SHA256'))
+
+        acq = apt_pkg.AcquireFile(self.acquire,
+                                  uri,
+                                  hash=hashval,
+                                  size=c.size,
+                                  descr=r.long_desc,
+                                  short_descr=r.short_desc,
+                                  destdir=self.basefs.fname('/cache/archives'))
+        self.downloads[pkgname] = acq
+
+    def do_downloads(self):
+        res = self.acquire.run()
+        print(res)
+
+    def get_downloaded_files(self):
+        ret = []
+        for _, d in self.downloads.iteritems():
+            if d.complete:
+                ret.append(d.destfile)
+            else:
+                print('incomplete download "%s"' % d.desc_uri)
+
+        return ret
+
+    def get_downloaded_pkg(self, pkgname):
+        d = self.downloads[pkgname]
+
+        if not d.complete:
+            print('incomplete download "%s"' % d.desc_uri)
+            raise KeyError
+
+        return d.destfile
 
     def get_uri(self, target_pkg, incl_deps=False):
 
