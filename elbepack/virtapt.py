@@ -175,22 +175,6 @@ class VirtApt(object):
     def pulse(self, _obj):
         return True
 
-    def mkdir_p(self, newdir, mode=0o755):
-        """works the way a good mkdir -p would...
-                - already exists, silently complete
-                - regular file in the way, raise an exception
-                - parent directory(ies) does not exist, make them as well
-        """
-        if os.path.isdir(newdir):
-            pass
-        elif os.path.isfile(newdir):
-            raise OSError("a file with the same name as the desired "
-                          "dir, '%s', already exists." % newdir)
-        else:
-            os.makedirs(newdir, mode)
-            # mode is not set correctly
-            system("chmod 777 " + newdir)
-
     def initialize_dirs(self):
         self.basefs.mkdir_p("cache/archives/partial")
         self.basefs.mkdir_p("etc/apt/preferences.d")
