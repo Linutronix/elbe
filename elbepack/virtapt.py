@@ -80,11 +80,6 @@ class VirtApt(object):
 
         self.xml = xml
 
-        if xml.has("project/buildtype"):
-            buildtype = xml.text("/project/buildtype")
-        else:
-            buildtype = "nodefaults"
-
         arch = xml.text("project/buildimage/arch", key="arch")
         suite = xml.text("project/suite")
 
