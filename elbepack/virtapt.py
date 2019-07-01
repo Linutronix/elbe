@@ -140,6 +140,13 @@ class VirtApt(object):
         except BaseException as e:
             print(e)
 
+        try:
+            self.depcache = apt_pkg.DepCache(self.cache)
+            prefs_name = self.basefs.fname("/etc/apt/preferences")
+            self.depcache.read_pinfile(prefs_name)
+        except BaseException as e:
+            print(e)
+
     def add_key(self, key):
         cmd = 'echo "%s" > %s' % (key, self.basefs.fname("tmp/key.pub"))
         clean = 'rm -f %s' % self.basefs.fname("tmp/key.pub")
@@ -198,6 +205,17 @@ class VirtApt(object):
                    key,
                    ring_path + '.d'))
 
+    def mark_install(self, pkgname):
+        self.depcache.mark_install(self.cache[pkgname])
+
+    def marked_install(self, pkgname):
+        return self.depcache.marked_install(self.cache[pkgname])
+
+    def get_candidate_ver(self, pkgname):
+        return self.depcache.get_candidate_ver(self.cache[pkgname]).ver_str
+
+    def has_pkg(self, pkgname):
+        return pkgname in self.cache
 
     def get_uri(self, target_pkg, incl_deps=False):
 
