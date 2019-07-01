@@ -11,10 +11,8 @@ import sys
 
 from optparse import OptionParser
 
-from elbepack.treeutils import etree
 from elbepack import virtapt
 from elbepack.validate import validate_xml
-from elbepack.xmldefaults import ElbeDefaults
 from elbepack.shellhelper import system
 from elbepack.elbexml import ElbeXML
 
@@ -53,10 +51,6 @@ def run_command(argv):
     print("checking %s" % args[0])
 
     xml = ElbeXML(args[0])
-
-
-    apt_sources = xml.text("sources_list").replace("10.0.2.2", "localhost")
-    apt_prefs = xml.text("apt_prefs")
 
     fullp = xml.node("fullpkgs")
 
