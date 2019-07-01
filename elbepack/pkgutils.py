@@ -8,8 +8,12 @@
 from __future__ import print_function
 
 import os
+import re
 
 from apt_pkg import TagFile
+
+from elbepack.filesystem import TmpdirFilesystem
+from elbepack.shellhelper import system
 
 
 class NoPackageException(Exception):
@@ -64,3 +68,58 @@ def get_dsc_size(fname):
                 sz += int(f[1])
 
     return sz
+
+class ChangelogNeedsDependency(Exception):
+    def __init__(self, pkgname):
+        Exception.__init__(self,
+                           'Changelog extraction depends on "%s"' % (pkgname))
+        self.pkgname = pkgname
+
+
+re_pkgfilename = r'(?P<name>.*)_(?P<ver>.*)_(?P<arch>.*).deb'
+
+
+def extract_pkg_changelog(fname, extra_pkg=None):
+    pkgname = os.path.basename(fname)
+    m = re.match(re_pkgfilename, pkgname)
+
+    pkgname = m.group('name')
+    # pkgver = m.group('ver')
+    pkgarch = m.group('arch')
+
+    print('pkg: %s, arch: %s' % (pkgname, pkgarch))
+
+    fs = TmpdirFilesystem(debug=True)
+
+    if extra_pkg:
+        print('with extra ' + extra_pkg)
+        system('dpkg -x "%s" "%s"' % (extra_pkg, fs.fname('/')))
+
+    system('dpkg -x "%s" "%s"' % (fname, fs.fname('/')))
+
+    dch_dir = '/usr/share/doc/%s' % pkgname
+
+    if fs.islink(dch_dir) and not extra_pkg:
+        l = fs.readlink(dch_dir)
+        print(dch_dir, l)
+        raise ChangelogNeedsDependency(l)
+
+    dch_bin = '/usr/share/doc/%s/changelog.Debian.%s.gz' % (pkgname, pkgarch)
+    dch_src = '/usr/share/doc/%s/changelog.Debian.gz' % pkgname
+
+    print(fs.listdir('/usr/share/doc/'))
+    print(fs.listdir('/usr/share/doc/%s' % pkgname))
+
+    ret = ""
+
+    if fs.exists(dch_bin):
+        ret += fs.read_file(dch_bin, gzip=True)
+    else:
+        print("no bin")
+
+    if fs.exists(dch_src):
+        ret += fs.read_file(dch_src, gzip=True)
+    else:
+        print("no source")
+
+    return ret
