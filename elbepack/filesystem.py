@@ -12,6 +12,7 @@ import shutil
 from glob import glob
 from tempfile import mkdtemp
 from string import digits
+import gzip
 
 def size_to_int(size):
     if size[-1] in digits:
@@ -65,6 +66,9 @@ class Filesystem(object):
 
     def open(self, path, mode="r"):
         return open(self.fname(path), mode)
+
+    def open_gz(self, path, mode="r"):
+        return gzip.open(self.fname(path), mode)
 
     def isdir(self, path):
         return os.path.isdir(self.fname(path))
@@ -212,10 +216,16 @@ class Filesystem(object):
         if mode is not None:
             self.chmod(path, mode)
 
-    def read_file(self, path):
-        fp = self.open(path, "r")
-        retval = fp.read()
-        fp.close()
+    def read_file(self, path, gzip=False):
+        if gzip:
+            print('read gzip '+path)
+            fp = self.open_gz(path, "r")
+        else:
+            fp = self.open(path, "r")
+
+        with fp:
+            retval = fp.read()
+
         return retval
 
     def mkdir_p(self, newdir, mode=0o755):
