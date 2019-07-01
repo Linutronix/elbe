@@ -62,16 +62,13 @@ def run_command(argv):
 
     v = virtapt.VirtApt(xml)
 
-    d = virtapt.apt_pkg.DepCache(v.cache)
-    d.read_pinfile(v.basefs.path + "/etc/apt/preferences")
-
     for p in fullp:
         pname = p.et.text
         pver = p.et.get('version')
         pauto = p.et.get('auto')
 
         if pauto != "true":
-            d.mark_install(v.cache[pname])
+            v.mark_install(pname)
 
     errors = 0
     required_updates = 0
@@ -81,7 +78,7 @@ def run_command(argv):
         pver = p.et.get('version')
         pauto = p.et.get('auto')
 
-        if pname not in v.cache:
+        if not v.has_pkg(pname):
             if pauto == 'false':
                 print(
                     "%s does not exist in cache but is specified in pkg-list" %
@@ -93,10 +90,8 @@ def run_command(argv):
 
             continue
 
-        centry = v.cache[pname]
-
-        if d.marked_install(centry):
-            cver = d.get_candidate_ver(v.cache[pname]).ver_str
+        if v.marked_install(pname):
+            cver = v.get_candidate_ver(pname)
             if pver != cver:
                 print("%s: %s != %s" % (pname, pver, cver))
                 required_updates += 1
