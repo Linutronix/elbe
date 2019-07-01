@@ -15,6 +15,29 @@ from elbepack import virtapt
 from elbepack.validate import validate_xml
 from elbepack.shellhelper import system
 from elbepack.elbexml import ElbeXML
+from elbepack.pkgutils import extract_pkg_changelog, ChangelogNeedsDependency
+from elbepack.aptpkgutils import XMLPackage
+from elbepack.changelogxml import changelogs_xml
+
+
+def build_changelog_xml(v, opt, update_packages):
+    v.do_downloads()
+
+    clx = changelogs_xml()
+
+    for xp in update_packages:
+        try:
+            f = v.get_downloaded_pkg(xp.name)
+            log = extract_pkg_changelog(f)
+        except ChangelogNeedsDependency as e:
+            v.mark_pkg_download(e.pkgname)
+            v.do_downloads()
+            extra = v.get_downloaded_pkg(e.pkgname)
+            log = extract_pkg_changelog(f, extra)
+
+        clx.add_pkg_changelog(xp, log)
+
+    clx.write(opt.changelogs)
 
 
 def run_command(argv):
@@ -33,6 +56,11 @@ def run_command(argv):
     oparser.add_option("--skip-validation", action="store_true",
                        dest="skip_validation", default=False,
                        help="Skip xml schema validation")
+    oparser.add_option(
+        "-c",
+        "--changelogs",
+        dest="changelogs",
+        help="filename of changelog xml file")
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
@@ -54,6 +82,8 @@ def run_command(argv):
 
     fullp = xml.node("fullpkgs")
 
+    arch = xml.text("project/buildimage/arch", key="arch")
+
     v = virtapt.VirtApt(xml)
 
     for p in fullp:
@@ -67,28 +97,36 @@ def run_command(argv):
     errors = 0
     required_updates = 0
 
+    update_packages = []
+
     for p in fullp:
+        xp = XMLPackage(p, arch)
         pname = p.et.text
         pver = p.et.get('version')
         pauto = p.et.get('auto')
 
-        if not v.has_pkg(pname):
-            if pauto == 'false':
+        if not v.has_pkg(xp.name):
+            if not xp.is_auto_installed:
                 print(
                     "%s does not exist in cache but is specified in pkg-list" %
-                    pname)
+                    xp.name)
                 errors += 1
             else:
-                print("%s is no more required" % pname)
+                print("%s is no more required" % xp.name)
                 required_updates += 1
 
             continue
 
-        if v.marked_install(pname):
-            cver = v.get_candidate_ver(pname)
-            if pver != cver:
-                print("%s: %s != %s" % (pname, pver, cver))
+        if v.marked_install(xp.name):
+            cver = v.get_candidate_ver(xp.name)
+            if xp.installed_version != cver:
+                print("%s: %s != %s" % (xp.installed_version, pver, cver))
                 required_updates += 1
+
+                if opt.changelogs:
+                    v.mark_pkg_download(xp.name)
+                    xp.candidate_version = cver
+                    update_packages.append(xp)
 
     sys.stdout.flush()
     sys.stderr.flush()
@@ -98,6 +136,10 @@ def run_command(argv):
             system("%s ERRORS %s" % (opt.script, args[0]), allow_fail=True)
     elif required_updates > 0:
         print("%d updates required" % required_updates)
+
+        if opt.changelogs:
+            build_changelog_xml(v, opt, update_packages)
+
         if opt.script:
             system("%s UPDATE %s" % (opt.script, args[0]), allow_fail=True)
     else:
