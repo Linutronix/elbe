@@ -88,7 +88,8 @@ class VirtApt(object):
 
         create_apt_prefs(self.xml, self.basefs)
 
-        mirror = self.xml.create_apt_sources_list(build_sources=True, initvm=False)
+        mirror = self.xml.create_apt_sources_list(build_sources=True,
+                                                  initvm=False)
         self.basefs.write_file("etc/apt/sources.list", 0o644, mirror)
 
         self.setup_gpg()
