@@ -88,6 +88,9 @@ class Filesystem(object):
     def mkdir(self, path):
         os.makedirs(self.fname(path))
 
+    def readlink(self, path):
+        return os.readlink(self.fname(path))
+
     def realpath(self, path):
 
         path = path.split(os.sep)
