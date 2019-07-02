@@ -8,6 +8,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/commands/__init__.py
 ./usr/lib/python3.*/*-packages/elbepack/aptprogress.py
 ./usr/lib/python3.*/*-packages/elbepack/archivedir.py
+./usr/lib/python3.*/*-packages/elbepack/changelogxml.py
 ./usr/lib/python3.*/*-packages/elbepack/config.py
 ./usr/lib/python3.*/*-packages/elbepack/debinstaller.py
 ./usr/lib/python3.*/*-packages/elbepack/default-preseed.xml
