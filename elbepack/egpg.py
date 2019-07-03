@@ -32,32 +32,50 @@ elbe_internal_key_param = """
 class OverallStatus(object):
 
     def __init__(self):
-        self.invalid = False
-        self.key_expired = False
-        self.sig_expired = False
-        self.key_revoked = False
-        self.key_missing = False
-        self.gpg_error = False
+        self.invalid = 0
+        self.key_expired = 0
+        self.sig_expired = 0
+        self.key_revoked = 0
+        self.key_missing = 0
+        self.gpg_error = 0
+        self.valid = 0
+        self.valid_threshold = 0
 
     def add(self, to_add):
-        self.invalid = self.invalid or to_add.invalid
-        self.key_expired = self.key_expired or to_add.key_expired
-        self.sig_expired = self.sig_expired or to_add.sig_expired
-        self.key_revoked = self.key_revoked or to_add.key_revoked
-        self.key_missing = self.key_missing or to_add.key_missing
-        self.gpg_error = self.gpg_error or to_add.gpg_error
+        self.invalid += to_add.invalid
+        self.key_expired += to_add.key_expired
+        self.sig_expired += to_add.sig_expired
+        self.key_revoked += to_add.key_revoked
+        self.key_missing += to_add.key_missing
+        self.gpg_error += to_add.gpg_error
+        self.valid += to_add.valid
+        self.valid_threshold += to_add.valid_threshold
 
     def to_exitcode(self):
         if self.gpg_error:      # critical GPG error
             return 20
         if self.invalid:        # invalid signature
             return 1
-        if self.sig_expired or \
-           self.key_expired or \
-           self.key_revoked or \
-           self.key_missing:
+        if self.key_missing:
             return 2
-
+        # The number of valid keys must always be greater or equal
+        # than valid_threshold.
+        #
+        # Example for 8 keys:
+        #
+        # Valid    - self.valid = 1
+        # Expired  - self.valid_threshold = 1
+        # Valid    - self.valid = 2
+        # Revoked  - self.valid_threshold = 2
+        # Revoked  - self.valid_threshold = 3
+        # Expired  - self.valid_threshold = 4
+        # Valid    - self.valid = 3
+        # Valid    - self.valid = 4
+        #
+        # This ensure that the number of valid keys is _always_ over
+        # 50%.
+        if self.valid < self.valid_threshold:
+            return 2
         return 0
 
 
@@ -66,7 +84,7 @@ def check_signature(ctx, sig):
 
     if sig.summary & sigsum.KEY_MISSING:
         print("Signature with unknown key: %s" % sig.fpr)
-        status.key_missing = True
+        status.key_missing = 1
         return status
 
     # there should be a key
@@ -75,6 +93,7 @@ def check_signature(ctx, sig):
     if sig.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
         print("VALID (Trusted)")
+        status.valid = 1
         return status
 
     # print detailed status in case it's not fully valid and trusted
@@ -82,30 +101,34 @@ def check_signature(ctx, sig):
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
         print("VALID (Untrusted).")
+        status.valid = 1
     if sig.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
         print("SIGNATURE EXPIRED!")
-        status.sig_expired = True
+        status.sig_expired = 1
+        status.valid_threshold = 1
     if sig.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
         print("KEY EXPIRED!")
-        status.key_expired = True
+        status.key_expired = 1
+        status.valid_threshold = 1
     if sig.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
         print("KEY REVOKED!")
-        status.key_revoked = True
+        status.key_revoked = 1
+        status.valid_threshold = 1
     if sig.summary & sigsum.RED == sigsum.RED:
         print("INVALID SIGNATURE!")
-        status.invalid = True
+        status.invalid = 1
     if sig.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
         print("CRL MISSING!")
-        status.gpg_error = True
+        status.gpg_error = 1
     if sig.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
         print("CRL TOO OLD!")
-        status.gpg_error = True
+        status.gpg_error = 1
     if sig.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
         print("UNMET POLICY REQUIREMENT!")
-        status.gpg_error = True
+        status.gpg_error = 1
     if sig.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
         print("SYSTEM ERROR!'")
-        status.gpg_error = True
+        status.gpg_error = 1
 
     return status
 
