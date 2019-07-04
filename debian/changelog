@@ -1,3 +1,17 @@
+elbe (9) unstable; urgency=medium
+
+  * initvm: add --build-sdk option
+  * add <raw-key> support
+  * finetuning: add <file> tag
+  * dump: follow symlinks when <archive> is unpacked
+  * debianize kernel: fix CROSS_COMPILE var setup
+  * hdimg: implement <tune2fs> (Fixes: #193)
+  * filesystem: handle links correctly (Fixes: #199)
+  * change os.system() to shellhelper.system() (Fixes: #172)
+  * init: relax handling of revoked keys, when downloading debinstaller
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Thu, 04 Jul 2019 10:15:22 +0200
+
 elbe (8) unstable; urgency=medium
 
   * debianize/linux: Add missing build dependencies
