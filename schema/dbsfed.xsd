@@ -881,6 +881,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="src-opts" type="rfs:iso-opts" minOccurs="0" maxOccurs="1">
+	<annotation>
+          <documentation>
+	    Give options for the source cdrom ISO image.
+          </documentation>
+        </annotation>
+      </element>
     </all>
     <attribute ref="xml:base"/>
   </complexType>
@@ -2429,6 +2436,33 @@
          <attribute ref="xml:base"/>
       </extension>
     </simpleContent>
+  </complexType>
+
+  <complexType name="iso-opts">
+    <annotation>
+      <documentation>
+        ISO image options passed to genisoimage(1) or mkisofs(8).
+      </documentation>
+    </annotation>
+    <all>
+      <element name="abstract" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="app" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="biblio" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="copyright" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="publisher" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="preparer" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="sysid" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="volid" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+      <element name="volset" type="rfs:string" minOccurs="0" maxOccurs="1"></element>
+    </all>
+    <attribute name="strict" type="boolean" use="optional">
+      <annotation>
+        <documentation>
+          If set to "true", fails in preprocessing stage if an option
+          doesn't respect ISO-9660.  The default is "false".
+        </documentation>
+      </annotation>
+    </attribute>
   </complexType>
 
 </schema>
