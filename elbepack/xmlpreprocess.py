@@ -19,6 +19,7 @@ from lxml.etree import XMLParser, parse
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import command_out_stderr, CommandError
+from elbepack.cdroms import iso_option_valid
 
 
 # list of sections that are allowed to exists multiple times before
@@ -42,6 +43,28 @@ def preprocess_pgp_key(xml):
             key.text = "\n%s\n" % myKey
         except urllib2.HTTPError as E:
             raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" % keyurl)
+
+def preprocess_iso_option(xml):
+
+    src_opts = xml.find(".//target/src-opts")
+    strict = "strict" in src_opts.attrib and src_opts.attrib["strict"] == "true"
+    for opt in src_opts.iterfind("./*"):
+        valid = iso_option_valid(opt.tag, opt.text)
+        if valid is True:
+            continue
+
+        tag = '<%s>%s</%s>' % (opt.tag, opt.text, opt.tag)
+
+        if valid is False:
+            violation = "Invalid ISO option %s" % tag
+        elif isinstance(valid, int):
+            violation = "Option %s will be truncated by %d characters" % (tag, valid)
+        elif isinstance(valid, str):
+            violation = ("Character '%c' (%d) in ISO option %s violated ISO-9660" %
+                         (valid, ord(valid[0]), tag))
+        if strict:
+            raise XMLPreprocessError(violation)
+        print("[WARN] %s" % violation)
 
 def xmlpreprocess(fname, output, variants=None):
 
@@ -112,6 +135,8 @@ def xmlpreprocess(fname, output, variants=None):
 
         # Change public PGP url key to raw key
         preprocess_pgp_key(xml)
+
+        preprocess_iso_option(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
