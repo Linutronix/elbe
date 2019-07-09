@@ -317,21 +317,20 @@ class RepoBase(object):
     def include_init_dsc(self, path, component="main"):
         self._includedsc(path, self.init_attr.codename, component)
 
-    def buildiso(self, fname):
+    def buildiso(self, fname, options=""):
         files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
-            self.log.do(
-                "genisoimage -o %s -J -joliet-long -R %s" %
-                (fname, new_path))
+            self.log.do("genisoimage %s -o %s -J -joliet-long -R %s" %
+                        (options, fname, new_path))
             files.append(fname)
         else:
             for i in range(self.volume_count + 1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
                 self.log.do(
-                    "genisoimage -o %s -J -joliet-long -R %s" %
-                    (newname, volfs.path))
+                    "genisoimage %s -o %s -J -joliet-long -R %s" %
+                    (options, newname, volfs.path))
                 files.append(newname)
 
         return files
