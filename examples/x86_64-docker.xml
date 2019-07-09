@@ -35,5 +35,8 @@
 		<pkg-list variant='minimal'>
 			<pkg>bash</pkg>
 		</pkg-list>
+		<src-opts>
+		  <publisher>TUX</publisher>
+		</src-opts>
 	</target>
 </ns0:RootFileSystem>
