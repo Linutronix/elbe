@@ -233,11 +233,19 @@ def get_fingerprints():
         fingerprints.append(k.subkeys[0].fpr)
     return fingerprints
 
-
+# End Of Time - Roughtly 136 years
+#
+# The argument parser of GPG use the type unsigned long for
+# default-cache-ttl and max-cache-ttl values.  Thus we're setting the
+# least maximum value of the type unsigned long to ensure that the
+# passphrase is 'never' removed from gpg-agent.
+EOT = 4294967295
 def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
-                      "allow-preset-passphrase")
+                      "allow-preset-passphrase\n"
+                      "default-cache-ttl %d\n"
+                      "max-cache-ttl %d\n" % (EOT, EOT))
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
