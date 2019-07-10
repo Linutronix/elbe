@@ -138,6 +138,7 @@ d-i pkgsel/include string rng-tools \
                           openssh-client \
                           acpi-support \
                           debathena-transform-lighttpd \
+                          gnupg2 \
 % for p in elbe_initvm_packagelist:
                           ${p}=${elbe_version}* \
 % endfor
