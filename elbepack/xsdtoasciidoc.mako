@@ -2,7 +2,6 @@
 ## Copyright (c) 2013, 2017 Manuel Traut <manut@linutronix.de>
 ##
 ## SPDX-License-Identifier: GPL-3.0-or-later
-
 <%
 import string
 ELEM = "{http://www.w3.org/2001/XMLSchema}element"
@@ -11,6 +10,7 @@ DOC  = "{http://www.w3.org/2001/XMLSchema}annotation/{http://www.w3.org/2001/XML
 ATTR = "{http://www.w3.org/2001/XMLSchema}attribute"
 SEQ  = "{http://www.w3.org/2001/XMLSchema}sequence"
 SIMP = "{http://www.w3.org/2001/XMLSchema}simpleType"
+GRP  = "{http://www.w3.org/2001/XMLSchema}group"
 RSTR = "{http://www.w3.org/2001/XMLSchema}restriction"
 MAXI = "{http://www.w3.org/2001/XMLSchema}maxInclusive"
 MINI = "{http://www.w3.org/2001/XMLSchema}minInclusive"
@@ -53,59 +53,37 @@ def cardinality(e):
     retval += "*mandatory"
 
   return retval
-%>
 
-Elbe XML Schema reference
-=========================
+def element_example(n):
+    name = n.et.attrib["name"]
+    _type = n.et.attrib["type"]
+    return "<%s> %s </%s>" % (name, _type, name)
 
-<%def name="element(n)">
+def doc(e):
+    if e.has(".//%s" % DOC):
+        return docindent(e.text(".//%s" % DOC), 2)
+    return ""
+
+def element_doc(e):
+    name = e.et.attrib["name"]
+    _type = e.et.attrib["type"]
+    return "%s %s %s::\n%s" % (name,
+                               genlink(_type),
+                               cardinality(n),
+                               doc(e))
+def attr_doc(a):
+    if "name" in a.et.attrib:
+        return "[attr] %s" % element_doc(a)
+    return ""
+%>\
+##
+<%def name="do_element(n)">
 == ${n.et.attrib["name"]} type: '${n.et.attrib["type"]}' ==
 
 ${docindent(n.text(DOC))}
-</%def>
-
-
-<%def name="elementexample(n)">
-  <${n.et.attrib["name"]}> ${n.et.attrib["type"]} </${n.et.attrib["name"]}> \
-</%def>
-
-<%def name="elementseq(n)">
-  ${n.et.attrib["name"]} ${genlink(n.et.attrib["type"])} ${cardinality(n)}::
-${docindent(n.text(DOC), 2)}
-</%def>
-
-<%def name="complextype(n)">
-[[${n.et.attrib["name"]}]]
-== TYPE: ${n.et.attrib["name"]} ==
-
-${docindent(n.text(DOC))}
-
-=== Example ===
-% if n.has(SEQ):
-[xml]
-source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<${n.et.attrib["name"]}> \
-% for s in n.node(SEQ):
-% if s.tag == ELEM:
-${elementexample(s)} \
-% endif
-% endfor
-
-</${n.et.attrib["name"]}>
-source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-=== Element description ===
-% for s in n.node(SEQ):
-% if s.tag == ELEM:
-${elementseq(s)}
-% endif
-% endfor
-% else:
- no sequence
-% endif
-</%def>
-
-<%def name="simpletype(n)">
+</%def>\
+##
+<%def name="do_simple(n)">
 [[${n.et.attrib["name"]}]]
 ==  SIMPLE TYPE: ${n.et.attrib["name"]} ==
 
@@ -125,28 +103,72 @@ ${docindent(n.text(DOC))}
 %endfor
 |=====================================
 %endif
-</%def>
+</%def>\
+##
+<%def name="do_group(n)">
+[[${n.et.attrib["name"]}]]
+==  GROUP : ${n.et.attrib["name"]} ==
 
+${docindent(n.text(DOC))}
+
+
+% for e in n.all(".//%s" % ELEM):
+${printnode(e)}
+% endfor
+
+</%def>\
+##
 <%def name="printnode(n)">
 %   if n.tag == ELEM:
-${element(n)}
-%   elif n.tag == CPLX:
-${complextype(n)}
+${do_element(n)}
 %   elif n.tag == SIMP:
-${simpletype(n)}
-%   endif
-</%def>
-
-<%def name="printnodeseq(n)">
-%   if n.tag == ELEM:
-${elementseq(n)}
+${do_simple(n)}
 %   elif n.tag == CPLX:
-${complextype(n)}
-%   elif n.tag == SIMP:
-${simpletype(n)}
+${do_complex(n)}
+%   elif n.tag == GRP:
+${do_group(n)}
 %   endif
-</%def>
+</%def>\
+##
+<%def name="do_complex(n)">
+[[${n.et.attrib["name"]}]]
+== TYPE: ${n.et.attrib["name"]} ==
 
+${docindent(n.text(DOC))}
+
+=== Example ===
+[xml]
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<${n.et.attrib["name"]}>\
+% for e in n.all(".//%s" % ELEM):
+
+  ${element_example(e)}
+% endfor
+
+% for ref in n.all(".//%s" % GRP):
+% for g in xml.all('./%s[@name="%s"]' % (GRP, ref.et.attrib["ref"].strip("rfs:"))):
+% for e in g.all(".//%s" % ELEM):
+  ${element_example(e)}
+% endfor
+% endfor
+% endfor
+</${n.et.attrib["name"]}>
+source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=== Elements description ===
+
+% for a in n.all(".//%s" % ATTR):
+${attr_doc(a)}
+
+% endfor
+% for e in n.all(".//%s" % ELEM):
+${element_doc(e)}
+
+% endfor
+</%def>\
+##
+Elbe XML Schema reference
+=========================
 % for n in xml.all('./'):
-${printnode(n)}
+${printnode(n)}\
 % endfor
