@@ -50,6 +50,7 @@ def pbuilder_write_config(builddir, xml, _log):
     if xml.prj.has('noauth'):
         fp.write(
             'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
+        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]} == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
     # aptitude segfaults with armhf changeroots, great! :)
