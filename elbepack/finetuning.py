@@ -209,10 +209,12 @@ class LnAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, log, _buildenv, target):
-        with target:
+        target_name = self.node.et.attrib['path']
+        link_name = self.node.et.text
+        with target.protect({link_name}):
             log.chroot(
-                target.path, """/bin/sh -c 'ln -s %s "%s"' """ %
-                (self.node.et.attrib['path'], self.node.et.text))
+                target.path, """/bin/sh -c 'ln -sf %s "%s"' """ %
+                (target_name, link_name))
 
 
 @FinetuningAction.register('buildenv_mv')
