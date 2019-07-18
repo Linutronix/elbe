@@ -44,6 +44,8 @@ class FinetuningAction(object):
         return _register
 
     def __new__(cls, node):
+        if node.tag not in cls.actiondict:
+            raise FinetuningException("Invalid finetuning action %s" % node.tag)
         action = cls.actiondict[node.tag]
         return object.__new__(action)
 
@@ -728,10 +730,11 @@ def do_prj_finetuning(xml, log, buildenv, target, builddir):
         try:
             action = FinetuningAction(i)
             action.execute_prj(log, buildenv, target, builddir)
-        except KeyError:
-            print("Unimplemented project-finetuning action '%s'" % (i.et.tag))
         except CommandError:
             log.printo("ProjectFinetuning Error, trying to continue anyways")
         except FinetuningException as e:
-            log.printo("ProjectFinetuning Error: %s" % e.message)
+            log.printo("ProjectFinetuning Error: %s" % e)
             log.printo("trying to continue anyways")
+        except Exception as e:
+            log.printo(str(e))
+            raise
