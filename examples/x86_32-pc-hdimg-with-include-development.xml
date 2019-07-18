@@ -36,5 +36,6 @@
 		</fstab>
 		<xi:include href="includes/devel/finetuning.xml"/>
 		<xi:include href="includes/devel/pkglist.xml"/>
+		<xi:include href="includes/devel/project-finetuning.xml"/>
 	</target>
 </ns0:RootFileSystem>

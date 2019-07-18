@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<project-finetuning>
+	<unit-tests>
+		<test-suite name="Suite 1">
+			<file-exists>/etc/fstab</file-exists>
+			<file-exists>/dev/fuse</file-exists>
+		</test-suite>
+		<test-suite name="Suite 2">
+			<file-exists>/bin/bash</file-exists>
+			<file-exists>/bin/clang</file-exists>
+		</test-suite>
+	</unit-tests>
+</project-finetuning>
