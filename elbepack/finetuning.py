@@ -23,6 +23,7 @@ from elbepack.shellhelper import CommandError
 from elbepack.filesystem import ImgMountFilesystem
 from elbepack.packers import default_packer, packers
 from elbepack.egpg import unlock_key
+from elbepack.junit import TestSuite, TestException
 
 
 class FinetuningException(Exception):
@@ -679,6 +680,26 @@ class CopyToPartition(ImageFinetuningAction):
             cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
             log.do(cmd)
 
+
+@FinetuningAction.register("unit-tests")
+class TestSuites(FinetuningAction):
+
+    elbe_junit = "elbe-junit.xml"
+
+    def execute_prj(self, log, buildenv, target, builddir):
+
+        tss = []
+        output = os.path.join(builddir, elbe_junit)
+        target.images.append(elbe_junit)
+
+        for test_suite in self.node:
+            ts = TestSuite(test_suite, target)
+            try:
+                tss.append(ts())
+            except TestException as E:
+                log.printo(str(E))
+
+        TestSuite.to_file(output, tss)
 
 def do_finetuning(xml, log, buildenv, target):
 
