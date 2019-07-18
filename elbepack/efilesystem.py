@@ -188,7 +188,10 @@ class Excursion(object):
     def end(cls, rfs):
         r = cls.RFS[rfs.path]
         for tmp in r:
-            tmp._undo_excursion(rfs)
+            if tmp.origin not in rfs.protect_from_excursion:
+                tmp._undo_excursion(rfs)
+            else:
+                tmp._del_rfs_file(tmp._saved_to(), rfs)
         del r
 
     def __init__(self, path, restore, dst):
@@ -196,10 +199,12 @@ class Excursion(object):
         self.restore = restore
         self.dst = dst
 
+    def _saved_to(self):
+        return "%s.orig" % self.origin
 
     def _do_excursion(self, rfs):
         if rfs.lexists(self.origin) and self.restore is True:
-            save_to = "%s.orig" % self.origin
+            save_to = self._saved_to()
             system('mv %s %s' % (rfs.fname(self.origin), rfs.fname(save_to)))
         if os.path.exists(self.origin):
             if self.dst is not None:
@@ -208,13 +213,17 @@ class Excursion(object):
                 dst = self.origin
             system('cp %s %s' % (self.origin, rfs.fname(dst)))
 
-    def _undo_excursion(self, rfs):
-        saved_to = "%s.orig" % self.origin
-        if rfs.lexists(self.origin):
+    # This should be a method of rfs
+    def _del_rfs_file(self, filename, rfs):
+        if rfs.lexists(filename):
             flags = "-f"
-            if rfs.isdir(self.origin):
+            if rfs.isdir(filename):
                 flags += "r"
-            system('rm %s %s' % (flags, rfs.fname(self.origin)))
+            system("rm %s %s" % (flags, rfs.fname(filename)))
+
+    def _undo_excursion(self, rfs):
+        saved_to = self._saved_to()
+        self._del_rfs_file(self.origin, rfs)
         if self.restore is True and rfs.lexists(saved_to):
             system('mv %s %s' % (rfs.fname(saved_to), rfs.fname(self.origin)))
 
@@ -226,6 +235,7 @@ class ChRootFilesystem(ElbeFilesystem):
         self.interpreter = interpreter
         self.cwd = os.open("/", os.O_RDONLY)
         self.inchroot = False
+        self.protect_from_excursion = set()
 
     def __del__(self):
         os.close(self.cwd)
@@ -261,6 +271,11 @@ class ChRootFilesystem(ElbeFilesystem):
         self.umount()
 
         Excursion.end(self)
+        self.protect_from_excursion = set()
+
+    def protect(self, files):
+        self.protect_from_excursion = files
+        return self
 
     def mount(self):
         if self.path == '/':
