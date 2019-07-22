@@ -313,7 +313,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="suite" type="rfs:string">
+      <element name="suite" type="rfs:suite-initvm">
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the initvm.
@@ -454,7 +454,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="suite" type="rfs:string">
+      <element name="suite" type="rfs:suite-proj">
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the
@@ -481,6 +481,24 @@
     </all>
     <attribute ref="xml:base"/>
   </complexType>
+
+  <simpleType name="suite-initvm">
+    <restriction base="string">
+      <enumeration value="bullseye" />
+      <enumeration value="buster" />
+      <enumeration value="sid" />
+      <enumeration value="stretch" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="suite-proj">
+    <restriction base="string">
+      <enumeration value="bullseye" />
+      <enumeration value="buster" />
+      <enumeration value="sid" />
+      <enumeration value="stretch" />
+    </restriction>
+  </simpleType>
 
   <complexType name="preference">
     <annotation>
