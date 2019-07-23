@@ -64,7 +64,9 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	rm -rf include/config
 	$(MAKE) $(MAKE_OPTS) ${imgtype} modules
-	(test ${k_arch} = arm || test ${k_arch} = arm64) && make -j`nproc` $(MAKE_OPTS) dtbs || true
+	if test${k_arch} = arm -o ${k_arch} = arm64; then \
+		make -j`nproc` $(MAKE_OPTS) dtbs; \
+	fi
 
 override_dh_auto_install:
 	mkdir -p $(MOD_PATH) $(FW_PATH) $(HDR_PATH) $(KERNEL_PATH) $(DTBS_PATH)
@@ -72,7 +74,9 @@ override_dh_auto_install:
 	$(MAKE) $(MAKE_OPTS) INSTALL_MOD_STRIP=1 modules_install
 	$(MAKE) $(MAKE_OPTS) firmware_install
 	$(MAKE) $(MAKE_OPTS) headers_install
-	(test ${k_arch} = arm || test ${k_arch} = arm64) && make $(MAKE_OPTS) dtbs_install || true
+	if test ${k_arch} = arm -o ${k_arch} = arm64; then \
+		make $(MAKE_OPTS) dtbs_install; \
+	fi
 	# Build kernel header package
 	rm -f "$(TMP_DIR)/lib/modules/$(REL)/build" "$(TMP_DIR)/lib/modules/$(REL)/source"
 	find . -name Makefile\* -o -name Kconfig\* -o -name \*.pl > $(DEB_DIR)/hdrsrcfiles
