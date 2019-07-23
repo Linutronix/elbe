@@ -150,10 +150,7 @@ class ElbeFilesystem(Filesystem):
                 lic_text = "Error while processing license file %s: '%s'" % (
                     os.path.join(d, "copyright"), e.strerror)
 
-            try:
-                lic_text = unicode(lic_text, encoding='utf-8')
-            except BaseException:
-                lic_text = unicode(lic_text, encoding='iso-8859-1')
+            lic_text = unicode(lic_text, encoding='utf-8', errors='replace')
 
             if f is not None:
                 f.write(unicode(os.path.basename(d)))
