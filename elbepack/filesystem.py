@@ -86,7 +86,7 @@ class Filesystem(object):
         return os.path.lexists(self.fname(path))
 
     def mkdir(self, path):
-        os.makedirs(self.fname(path))
+        os.makedirs(self.realpath(path))
 
     def readlink(self, path):
         return os.readlink(self.fname(path))
