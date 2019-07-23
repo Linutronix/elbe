@@ -16,7 +16,11 @@ TMP_DIR:=$(DEB_DIR)/tmp
 BUILD_DIR:=$(DEB_DIR)/build
 
 MOD_PATH:=$(TMP_DIR)
+ifeq ($(in_kernel_firmware), 1)
 FW_PATH:=$(TMP_DIR)/lib/firmware
+else
+FW_PATH:=
+endif
 KERNEL_PATH:=$(TMP_DIR)/boot
 HDR_PATH:=$(TMP_DIR)/usr
 KERNEL_HDR_PATH:=$(TMP_DIR)/usr/src/linux-headers-$(REL)
@@ -38,11 +42,14 @@ CROSS_COMPILE=${cross_compile} \
 KERNELRELEASE=$(REL) \
 LOADADDR=${loadaddr} \
 INSTALL_MOD_PATH=$(MOD_PATH) \
-INSTALL_FW_PATH=$(FW_PATH) \
 INSTALL_HDR_PATH=$(HDR_PATH) \
 INSTALL_PATH=$(KERNEL_PATH) \
 INSTALL_DTBS_PATH=$(DTBS_PATH) \
 O=$(BUILD_DIR)
+
+ifeq ($(in_kernel_firmware), 1)
+MAKE_OPTS += INSTALL_FW_PATH=$(FW_PATH)
+endif
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
     NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -72,7 +79,9 @@ override_dh_auto_install:
 	mkdir -p $(MOD_PATH) $(FW_PATH) $(HDR_PATH) $(KERNEL_PATH) $(DTBS_PATH)
 	$(MAKE) $(MAKE_OPTS) ${imgtype_install}
 	$(MAKE) $(MAKE_OPTS) INSTALL_MOD_STRIP=1 modules_install
-	$(MAKE) $(MAKE_OPTS) firmware_install
+	if test $(in_kernel_firmware) -eq 1; then \
+		$(MAKE) $(MAKE_OPTS) firmware_install; \
+	fi
 	$(MAKE) $(MAKE_OPTS) headers_install
 	if test ${k_arch} = arm -o ${k_arch} = arm64; then \
 		make $(MAKE_OPTS) dtbs_install; \
