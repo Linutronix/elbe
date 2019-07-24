@@ -2094,10 +2094,20 @@
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="packer" type="string" use="required" />
+        <attribute name="packer" type="rfs:packer-type" use="required" />
       </extension>
     </simpleContent>
   </complexType>
+
+  <simpleType name="packer-type">
+    <restriction base="string">
+      <enumeration value="none" />
+      <enumeration value="gzip" />
+      <enumeration value="tar" />
+      <enumeration value="tarxz" />
+      <enumeration value="targz" />
+    </restriction>
+  </simpleType>
 
     <complexType name="file">
     <annotation>
