@@ -163,11 +163,14 @@ class ElbeXML(object):
 
             if self.prj.has("mirror/url-list"):
                 for url in self.prj.node("mirror/url-list"):
+                    noauth_url = ""
+                    if url.bool_attr("noauth") and noauth is "":
+                        noauth_url = "[trusted=yes] "
                     if url.has("binary"):
-                        mirror += "deb " + noauth + \
+                        mirror += "deb " + noauth + noauth_url + \
                                    url.text("binary").strip() + "\n"
                     if url.has("source"):
-                        mirror += "deb-src " + noauth + \
+                        mirror += "deb-src " + noauth + noauth_url + \
                             url.text("source").strip() + "\n"
 
         if self.prj.has("mirror/cdrom"):

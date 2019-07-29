@@ -283,14 +283,8 @@ class BuildEnv (object):
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
-            # Should we use self.xml.prj.has("noauth")???
-            #
-            # If so, this is related to issue #220 -
-            # https://github.com/Linutronix/elbe/issues/220
-            #
-            # I could make a none global 'noauth' flag for mirrors
             for url in self.xml.node('project/mirror/url-list'):
-                if url.has('raw-key'):
+                if url.has('raw-key') and not url.bool_attr("noauth"):
                     key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
                     self.add_key(key)
 

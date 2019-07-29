@@ -136,11 +136,14 @@ def pbuilder_write_repo_hook(builddir, xml):
             if xml.prj.has("noauth"):
                 noauth = "[trusted=yes] "
             for url in xml.prj.node("mirror/url-list"):
+                noauth_url = ""
+                if url.bool_attr("noauth") and noauth is "":
+                    noauth_url = "[trusted=yes] "
                 if url.has("binary"):
-                    mirror += 'echo "deb ' + noauth + \
+                    mirror += 'echo "deb ' + noauth + noauth_url + \
                               url.text("binary").strip() + \
                               '" >> /etc/apt/sources.list\n'
-                if url.has("raw-key") and not xml.prj.has("noauth"):
+                if url.has("raw-key") and not xml.prj.has("noauth") and not url.bool_attr("noauth"):
                     key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
                     mirror = mirror_script_add_key_text(mirror, key)
 

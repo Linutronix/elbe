@@ -35,12 +35,15 @@ def get_sources_list(prj):
 
     if prj.node("mirror/url-list"):
         for n in prj.node("mirror/url-list"):
+            noauth_url = ""
+            if n.bool_attr("noauth"):
+                noauth_url = "[trusted=yes] "
             if n.has("binary"):
                 tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2")
-                slist += "deb %s\n" % tmp.strip()
+                slist += "deb %s\n" % noauth_url + tmp.strip()
             if n.has("source"):
                 tmp = n.text("source").replace("LOCALMACHINE", "10.0.2.2")
-                slist += "deb-src %s\n" % tmp.strip()
+                slist += "deb-src %s\n" % noauth_url + tmp.strip()
 
     return slist
 

@@ -200,6 +200,13 @@
       </element>
     </all>
     <attribute ref="xml:base"/>
+    <attribute name="noauth" type="boolean" use="optional">
+      <annotation>
+        <documentation>
+          Allow installation of unsigned debian packages from this repo url(s).
+        </documentation>
+      </annotation>
+    </attribute>
   </complexType>
 
   <complexType name="url-list">
