@@ -19,7 +19,7 @@ from lxml.etree import XMLParser, parse
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import command_out_stderr, CommandError
-from elbepack.validate import error_log_to_strings
+
 
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess
@@ -137,12 +137,12 @@ def xmlpreprocess(fname, output, variants=None):
 
 
 class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
-    def __init__(self, xmlfile, opt):
+    def __init__(self, xmlfile, opt=None):
         self.xmlfile = xmlfile
         self.outxml = None
         self.options = ""
 
-        if opt.variant:
+        if opt and opt.variant:
             self.options += ' --variants "%s"' % opt.variant
 
     def __enter__(self):
@@ -178,3 +178,25 @@ class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
     @property
     def preproc(self):
         return self.outxml.name
+
+def error_log_to_strings(error_log):
+    errors = []
+    uses_xinclude = False
+    uses_norecommend = False
+
+    for err in error_log:
+        errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
+        if "http://www.w3.org/2003/XInclude" in err.message:
+            uses_xinclude = True
+        if "norecommend" in err.message:
+            uses_norecommend = True
+
+    if uses_xinclude:
+        errors.append("\nThere are XIncludes in the XML file. "
+                      "Run 'elbe preprocess' first!\n")
+    if uses_norecommend:
+        errors.append("\nThe XML file uses <norecommend />. "
+                      "This function was broken all the time and did the "
+                      "opposite. If you want to retain the original "
+                      "behaviour, please specify <install-recommends /> !\n")
+    return errors
