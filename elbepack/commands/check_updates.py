@@ -120,7 +120,7 @@ def run_command(argv):
         if v.marked_install(xp.name):
             cver = v.get_candidate_ver(xp.name)
             if xp.installed_version != cver:
-                print("%s: %s != %s" % (xp.installed_version, pver, cver))
+                print("%s: %s != %s" % (xp.name, xp.installed_version, cver))
                 required_updates += 1
 
                 if opt.changelogs:
