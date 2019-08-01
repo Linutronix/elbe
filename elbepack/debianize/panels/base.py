@@ -8,7 +8,6 @@
 
 
 import os
-from enum import Enum
 
 from shutil import copyfile
 
@@ -20,12 +19,7 @@ from elbepack.debianize.widgets.radio import RadioGroup
 from elbepack.templates import template
 
 
-class StrEnum(Enum):
-    def __str__(self):
-        return self.value
-
-
-class Arch(StrEnum):
+class Arch(object):
     ARM64 = "arm64"
     ARMHF = "armhf"
     ARMEL = "armel"
@@ -34,13 +28,13 @@ class Arch(StrEnum):
     POWER = "powerpc"
 
 
-class Format(StrEnum):
+class Format(object):
     NATIVE = "native"
     GIT = "git"
     QUILT = "quilt"
 
 
-class Release(StrEnum):
+class Release(object):
     STABLE = "stable"
     OLDSTABLE = "oldstable"
     TESTING = "testing"
@@ -80,7 +74,7 @@ class Panel(Form):
         for element in grid_elements:
             grid.append(element)
 
-        super().__init__(grid)
+        super(Panel, self).__init__(grid)
 
 
     def get_k_arch(self):
