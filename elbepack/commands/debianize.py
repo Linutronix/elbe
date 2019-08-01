@@ -9,20 +9,19 @@ from __future__ import print_function
 import os
 import sys
 
-from elbepack.debianize.debianize import Debianize, DebianizeBase
+from elbepack.debianize.base.tui import TUI
+from elbepack.debianize.panels.factory import detect_panel
 
 
 def run_command(_args):
+
     if os.path.exists('debian'):
         print("debian folder already exists, nothing to do")
         sys.exit(10)
-
     try:
-        debianizer = DebianizeBase.get_debianizer()
-        Debianize(debianizer).run()
-        sys.exit(10)
+        TUI(detect_panel())()
     except KeyError:
-        print("This creates a debinization of a source directory.")
-        print("The software was not able to identify the current directory.")
-        print("Please run the command from source directory")
+        print("This creates a debianization of a source directory.\n"
+              "The software was not able to identify the current directory.\n"
+              "Please run the command from a valid source directory")
         sys.exit(20)
