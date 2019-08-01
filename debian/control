@@ -80,8 +80,9 @@ Description: common files
  Common files for ELBE (embedded linux build environment). These
  python-modules are shared by several elbe subcommands.
 
-Package: elbe-debianize
+Package: python-elbe-debianize
 Architecture: all
+Conflicts: elbe-debianize
 Depends: ${misc:Depends},
   python (>= 2.7~),
   devscripts,
@@ -89,8 +90,22 @@ Depends: ${misc:Depends},
   libparse-debcontrol-perl,
   python-elbe-common (= ${binary:Version}),
   python-mako,
-  python-npyscreen,
+  python-urwid,
   python-pkg-resources
+Description: Wizard for debian foler generation
+ Assists users in generating a debianization for a given source code project.
+
+Package: python3-elbe-debianize
+Architecture: all
+Depends: ${misc:Depends},
+  python (>= 3.7~),
+  devscripts,
+  libdistro-info-perl,
+  libparse-debcontrol-perl,
+  python3-elbe-common (= ${binary:Version}),
+  python3-mako,
+  python3-urwid,
+  python3-pkg-resources
 Description: Wizard for debian foler generation
  Assists users in generating a debianization for a given source code project.
 
@@ -106,7 +121,7 @@ Depends: ${misc:Depends},
   p7zip-full,
   make,
   lsb-release
-Recommends: elbe-doc (= ${binary:Version}), elbe-debianize, haveged
+Recommends: elbe-doc (= ${binary:Version}), python-elbe-debianize, haveged
 Description: Embedded Linux Build Environment
  A flexible Root Filesystem builder. ELBE uses Debian packages to build a RFS
  for (embedded) targets. A target is described with a single XML file. Besides
