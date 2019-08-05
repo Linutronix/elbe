@@ -51,7 +51,10 @@ def iso_option_valid(opt_name, text):
 
 def get_iso_options(log, xml):
     options = []
-    for node in xml.node("target/src-opts"):
+    src_opts = xml.node("target/src-opts")
+    if src_opts is None:
+        return ""
+    for node in src_opts:
         if node.tag not in iso_options:
             continue
         option = iso_options[node.tag]
