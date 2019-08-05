@@ -47,6 +47,8 @@ def preprocess_pgp_key(xml):
 def preprocess_iso_option(xml):
 
     src_opts = xml.find(".//target/src-opts")
+    if src_opts is None:
+        return
     strict = "strict" in src_opts.attrib and src_opts.attrib["strict"] == "true"
     for opt in src_opts.iterfind("./*"):
         valid = iso_option_valid(opt.tag, opt.text)
@@ -65,6 +67,7 @@ def preprocess_iso_option(xml):
         if strict:
             raise XMLPreprocessError(violation)
         print("[WARN] %s" % violation)
+
 
 def xmlpreprocess(fname, output, variants=None):
 
