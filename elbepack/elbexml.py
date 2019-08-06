@@ -51,7 +51,7 @@ class ValidationMode(object):
 
 def replace_localmachine(mirror, initvm=True):
     if initvm:
-        localmachine = "10.0.0.2"
+        localmachine = "10.0.2.2"
     else:
         localmachine = "localhost"
 
