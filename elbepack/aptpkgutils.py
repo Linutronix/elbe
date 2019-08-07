@@ -21,6 +21,13 @@ statestring = {
     NOTINSTALLED: "NOT INSTALLED"
 }
 
+def apt_pkg_md5(pkg):
+    hashes = pkg.installed._records.hashes
+    for i in xrange(len(hashes)):
+        h = str(hashes[i])
+        if h.startswith("MD5"):
+            return h.split(':')[1]
+    return ""
 
 def getdeps(pkg):
     for dd in pkg.dependencies:
@@ -110,8 +117,9 @@ class APTPackage(PackageBase):
 
         iver = pkg.installed and pkg.installed.version
         cver = pkg.candidate and pkg.candidate.version
-        imd5 = pkg.installed and pkg.installed.md5
-        cmd5 = pkg.candidate and pkg.candidate.md5
+        imd5 = pkg.installed and apt_pkg_md5(pkg.installed)
+        cmd5 = pkg.candidate and apt_pkg_md5(pkg.candidate)
+
         self.state = pkgstate(pkg)
         self.is_auto_installed = pkg.is_auto_installed
         origin = pkgorigin(pkg)
