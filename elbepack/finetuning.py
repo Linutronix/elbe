@@ -511,7 +511,11 @@ class RmArtifactAction(FinetuningAction):
                                   "used in <project-finetuning>")
 
     def execute_prj(self, _log, _buildenv, target, _builddir):
-        target.images.remove(self.node.et.text)
+        try:
+            target.images.remove(self.node.et.text)
+        except ValueError:
+            raise FinetuningException("Artifact %s doesn't exist" %
+                                      self.node.et.text)
 
 
 @FinetuningAction.register('losetup')
