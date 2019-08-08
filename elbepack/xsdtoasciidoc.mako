@@ -15,11 +15,16 @@ RSTR = "{http://www.w3.org/2001/XMLSchema}restriction"
 MAXI = "{http://www.w3.org/2001/XMLSchema}maxInclusive"
 MINI = "{http://www.w3.org/2001/XMLSchema}minInclusive"
 
-def docindent( s, indent=0 ):
-  lines = s.splitlines()
-  lines = [l.strip() for l in lines]
-  lines = map(lambda x: indent*" "+x, lines)
-  return str('').join(lines).strip()
+def docindent(node, indent=0):
+  try:
+    s = node.text(e.text(".//%s" % DOC))
+  except:
+    return "FIXME - I have no documentation"
+  else:
+    lines = s.splitlines()
+    lines = [l.strip() for l in lines]
+    lines = map(lambda x: indent*" "+x, lines)
+    return str('').join(lines).strip()
 
 def genlink(typ):
   if typ.startswith("rfs:"):
@@ -36,7 +41,7 @@ def stripscheme(s):
 
 def cardinality(e):
   min = None
-  max = None 
+  max = None
 
   retval = ""
 
@@ -60,9 +65,7 @@ def element_example(n):
     return "<%s> %s </%s>" % (name, _type, name)
 
 def doc(e):
-    if e.has(".//%s" % DOC):
-        return docindent(e.text(".//%s" % DOC), 2)
-    return ""
+  return docindent(e, 2)
 
 def element_doc(e):
     name = e.et.attrib["name"]
@@ -80,14 +83,14 @@ def attr_doc(a):
 <%def name="do_element(n)">
 == ${n.et.attrib["name"]} type: '${n.et.attrib["type"]}' ==
 
-${docindent(n.text(DOC))}
+${docindent(n)}
 </%def>\
 ##
 <%def name="do_simple(n)">
 [[${n.et.attrib["name"]}]]
 ==  SIMPLE TYPE: ${n.et.attrib["name"]} ==
 
-${docindent(n.text(DOC))}
+${docindent(n)}
 
 %if n.has(RSTR):
 === Base Type === 
@@ -109,7 +112,7 @@ ${docindent(n.text(DOC))}
 [[${n.et.attrib["name"]}]]
 ==  GROUP : ${n.et.attrib["name"]} ==
 
-${docindent(n.text(DOC))}
+${docindent(n)}
 
 
 % for e in n.all(".//%s" % ELEM):
@@ -134,7 +137,7 @@ ${do_group(n)}
 [[${n.et.attrib["name"]}]]
 == TYPE: ${n.et.attrib["name"]} ==
 
-${docindent(n.text(DOC))}
+${docindent(n)}
 
 === Example ===
 [xml]
