@@ -192,10 +192,10 @@ class BuildEnv (object):
             includepkgs = self.xml.node("target/debootstrapvariant").et.get("includepkgs")
             strapcmd += '--variant="%s" ' % bootstrapvariant
 
-        if includepkgs and not "gnupg2" in includepkgs.split(','):
-            includepkgs += ",gnupg2"
+        if includepkgs and not "gnupg" in includepkgs.split(','):
+            includepkgs += ",gnupg"
         if not includepkgs:
-            includepkgs = "gnupg2"
+            includepkgs = "gnupg"
 
         strapcmd += ' --include="%s"' % includepkgs
 

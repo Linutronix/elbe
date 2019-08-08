@@ -180,7 +180,7 @@ def unlock_key(fingerprint):
                         '/var/cache/elbe/gnupg')
     key = ctx.get_key(fingerprint, secret=True)
     keygrip = key.subkeys[0].keygrip
-    system("/usr/lib/gnupg2/gpg-preset-passphrase "
+    system("/usr/lib/gnupg/gpg-preset-passphrase "
            "--preset -P requiredToAvoidUserInput %s" % str(keygrip),
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
