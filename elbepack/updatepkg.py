@@ -74,7 +74,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
             xmlindex[name] = p
 
             if name not in instindex:
-                logging.info("Package removed: %s", )
+                logging.info("Package removed: %s", name)
                 continue
 
             ipkg = instindex[name]
