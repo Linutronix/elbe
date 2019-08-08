@@ -19,7 +19,7 @@ from lxml.etree import XMLParser, parse
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import command_out_stderr, CommandError
-from elbepack.cdroms import iso_option_valid
+from elbepack.isooptions import iso_option_valid
 
 
 # list of sections that are allowed to exists multiple times before
