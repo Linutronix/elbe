@@ -21,6 +21,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python3.*/*-packages/elbepack/kvm.py
 ./usr/lib/python3.*/*-packages/elbepack/licencexml.py
+./usr/lib/python3.*/*-packages/elbepack/log.py
 ./usr/lib/python3.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python3.*/*-packages/elbepack/pkgutils.py
 ./usr/lib/python3.*/*-packages/elbepack/xmlpreprocess.py
