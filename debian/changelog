@@ -1,3 +1,27 @@
+elbe (10) unstable; urgency=medium
+
+  * make "elbe check_updates" work again
+  * check_updates: add option to build changelogxml
+  * fix pbuilder for <noauth> case
+  * debianize kernel: fail on dts failure (Fixes #163)
+  * efilesystem: fix unicode exceptions in den_licence (Fixes: #133)
+  * Protect 'ln' command in finetuning from excursion
+  * debianize kernel: make firmware depending on kernel's version
+    (Fixes: #173)
+  * fix gpg key unlock timeout
+  * filesystem: fix mkdir method for softlinks
+  * Add options for building ISO image
+  * Add gnupg2 to debootstrap in preseed (Fixes: #32)
+  * Revert "repomanager: add fallback, when reprepro fails to add dsc"
+    (Fixes: #196)
+  * Add schema restriction for set_packer XML node (Fixes: #207)
+  * Add schema definition for initvm/project suite restriction (Fixes: #55)
+  * Better mako templates for xsdtoasciidoc (Fixes: #129)
+  * reimplement elbe debianize with urwid
+  * initial support for <unit-tests> in finetuning
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Fri, 09 Aug 2019 12:25:32 +0200
+
 elbe (9) unstable; urgency=medium
 
   * initvm: add --build-sdk option
