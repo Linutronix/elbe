@@ -1,6 +1,5 @@
 ./usr/lib/python2.*/*-packages/elbepack/commands/debianize.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/__init__.py
-./usr/lib/python2.*/*-packages/elbepack/debianize/debianize.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/base/__init__.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/base/tui.py
 ./usr/lib/python2.*/*-packages/elbepack/debianize/panels/barebox.py
