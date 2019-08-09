@@ -19,6 +19,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/ziparchives.py
 ./usr/lib/python3.*/*-packages/elbepack/repomanager.py
 ./usr/lib/python3.*/*-packages/elbepack/finetuning.py
+./usr/lib/python3.*/*-packages/elbepack/junit.py
 ./usr/lib/python3.*/*-packages/elbepack/rfs.py
 ./usr/lib/python3.*/*-packages/elbepack/aptpkgutils.py
 ./usr/lib/python3.*/*-packages/elbepack/asciidoclog.py
