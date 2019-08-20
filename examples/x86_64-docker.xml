@@ -35,8 +35,10 @@
 		<pkg-list variant='minimal'>
 			<pkg>bash</pkg>
 		</pkg-list>
-		<src-opts>
-		  <publisher>TUX</publisher>
-		</src-opts>
 	</target>
+	<src-cdrom>
+		<src-opts>
+			<publisher>TUX</publisher>
+		</src-opts>
+	</src-cdrom>
 </ns0:RootFileSystem>
