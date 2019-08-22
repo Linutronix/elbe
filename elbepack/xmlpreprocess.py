@@ -46,7 +46,7 @@ def preprocess_pgp_key(xml):
 
 def preprocess_iso_option(xml):
 
-    src_opts = xml.find(".//target/src-opts")
+    src_opts = xml.find(".//src-cdrom/src-opts")
     if src_opts is None:
         return
     strict = "strict" in src_opts.attrib and src_opts.attrib["strict"] == "true"

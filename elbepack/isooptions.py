@@ -33,7 +33,7 @@ def iso_option_valid(opt_name, text):
 
 def get_iso_options(log, xml):
     options = []
-    src_opts = xml.node("target/src-opts")
+    src_opts = xml.node("src-cdrom/src-opts")
     if src_opts is None:
         return ""
     for node in src_opts:
