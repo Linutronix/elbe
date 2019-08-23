@@ -147,16 +147,11 @@ class grubinstaller_base(object):
     def __init__(self, outf, fw_type=None):
         self.outf = outf
         self.root = None
-        self.boot = None
-        self.boot_efi = None
+        self.fs = []
         self.fw_type = fw_type if fw_type else []
 
-    def set_boot_entry(self, entry):
-        print("setting boot entry")
-        self.boot = entry
-
-    def set_boot_efi_entry(self, entry):
-        self.boot_efi = entry
+    def add_fs_entry(self, entry):
+        self.fs.append(entry)
 
     def set_root_entry(self, entry):
         self.root = entry
@@ -181,17 +176,11 @@ class grubinstaller202(grubinstaller_base):
                 'mount /dev/mapper/poop0p%d %s' %
                 (self.root.partnum, imagemnt))
 
-            if self.boot:
+            for entry in self.fs:
                 self.outf.do(
                     'mount /dev/mapper/poop0p%d %s' %
-                    (self.boot.partnum, os.path.join(
-                        imagemnt, "boot")))
-
-            if self.boot_efi:
-                self.outf.do(
-                    'mount /dev/mapper/poop0p%d %s' %
-                    (self.boot_efi.partnum, os.path.join(
-                        imagemnt, "boot/efi")))
+                    (entry.partnum, os.path.join(
+                        imagemnt, "." + entry.mountpoint)))
 
             self.outf.do(
                 "mount --bind /dev %s" %
@@ -259,15 +248,10 @@ class grubinstaller202(grubinstaller_base):
                     "sys"),
                 allow_fail=True)
 
-            if self.boot_efi:
+            for entry in self.fs:
                 self.outf.do(
                     'umount /dev/mapper/poop0p%d' %
-                    self.boot_efi.partnum, allow_fail=True)
-
-            if self.boot:
-                self.outf.do(
-                    'umount /dev/mapper/poop0p%d' %
-                    self.boot.partnum, allow_fail=True)
+                    entry.partnum, allow_fail=True)
 
             self.outf.do(
                 'umount /dev/mapper/poop0p%d' %
@@ -333,10 +317,8 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
 
     if entry.mountpoint == "/":
         grub.set_root_entry(entry)
-    elif entry.mountpoint == "/boot":
-        grub.set_boot_entry(entry)
-    elif entry.mountpoint == "/boot/efi":
-        grub.set_boot_efi_entry(entry)
+    else:
+        grub.add_fs_entry(entry)
 
     entry.losetup(outf, "loop0")
     outf.do(
