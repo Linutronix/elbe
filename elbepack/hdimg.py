@@ -16,7 +16,7 @@ import _ped
 
 from elbepack.fstab import fstabentry, mountpoint_dict
 from elbepack.asciidoclog import CommandError
-from elbepack.filesystem import size_to_int
+from elbepack.filesystem import Filesystem, size_to_int
 
 
 def mkfs_mtd(outf, mtd, fslabel, target):
@@ -146,15 +146,11 @@ def build_image_mtd(outf, mtd, target):
 class grubinstaller_base(object):
     def __init__(self, outf, fw_type=None):
         self.outf = outf
-        self.root = None
-        self.fs = []
+        self.fs = mountpoint_dict()
         self.fw_type = fw_type if fw_type else []
 
     def add_fs_entry(self, entry):
-        self.fs.append(entry)
-
-    def set_root_entry(self, entry):
-        self.root = entry
+        self.fs[entry.mountpoint] = entry
 
     def install(self, target):
         pass
@@ -163,44 +159,35 @@ class grubinstaller_base(object):
 class grubinstaller202(grubinstaller_base):
 
     def install(self, target):
-        if not self.root:
+        if '/' not in self.fs:
             return
 
         imagemnt = os.path.join(target, "imagemnt")
+        imagemntfs = Filesystem(imagemnt)
         try:
             self.outf.do('cp -a /dev/loop0 /dev/poop0')
 
-            self.outf.do('losetup /dev/poop0 "%s"' % self.root.filename)
+            self.outf.do('losetup /dev/poop0 "%s"' % self.fs['/'].filename)
             self.outf.do('kpartx -as /dev/poop0')
-            self.outf.do(
-                'mount /dev/mapper/poop0p%d %s' %
-                (self.root.partnum, imagemnt))
 
-            for entry in self.fs:
+            for entry in self.fs.depthlist():
                 self.outf.do(
                     'mount /dev/mapper/poop0p%d %s' %
-                    (entry.partnum, os.path.join(
-                        imagemnt, "." + entry.mountpoint)))
+                    (entry.partnum, imagemntfs.fname(entry.mountpoint)))
 
             self.outf.do(
                 "mount --bind /dev %s" %
-                os.path.join(
-                    imagemnt,
-                    "dev"))
+                imagemntfs.fname("dev"))
             self.outf.do(
                 "mount --bind /proc %s" %
-                os.path.join(
-                    imagemnt,
-                    "proc"))
+                imagemntfs.fname("proc"))
             self.outf.do(
                 "mount --bind /sys %s" %
-                os.path.join(
-                    imagemnt,
-                    "sys"))
+                imagemntfs.fname("sys"))
 
-            self.outf.do('mkdir -p "%s"' % os.path.join(imagemnt, "boot/grub"))
+            self.outf.do('mkdir -p "%s"' % imagemntfs.fname("boot/grub"))
 
-            devmap = open(os.path.join(imagemnt, "boot/grub/device.map"), "w")
+            devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
             devmap.write("(hd0) /dev/poop0\n")
             devmap.close()
 
@@ -228,34 +215,21 @@ class grubinstaller202(grubinstaller_base):
                     (imagemnt))
 
         finally:
-            os.unlink(os.path.join(imagemnt, "boot/grub/device.map"))
+            os.unlink(imagemntfs.fname("boot/grub/device.map"))
             self.outf.do(
-                "umount %s" %
-                os.path.join(
-                    imagemnt,
-                    "dev"),
+                "umount %s" % imagemntfs.fname("dev"),
                 allow_fail=True)
             self.outf.do(
-                "umount %s" %
-                os.path.join(
-                    imagemnt,
-                    "proc"),
+                "umount %s" % imagemntfs.fname("proc"),
                 allow_fail=True)
             self.outf.do(
-                "umount %s" %
-                os.path.join(
-                    imagemnt,
-                    "sys"),
+                "umount %s" % imagemntfs.fname("sys"),
                 allow_fail=True)
 
-            for entry in self.fs:
+            for entry in reversed(self.fs.depthlist()):
                 self.outf.do(
                     'umount /dev/mapper/poop0p%d' %
                     entry.partnum, allow_fail=True)
-
-            self.outf.do(
-                'umount /dev/mapper/poop0p%d' %
-                self.root.partnum, allow_fail=True)
 
             self.outf.do('kpartx -d /dev/poop0', allow_fail=True)
             self.outf.do("losetup -d /dev/poop0", allow_fail=True)
@@ -315,10 +289,7 @@ def create_label(outf, disk, part, ppart, fslabel, target, grub):
     entry = fslabel[part.text("label")]
     entry.set_geometry(ppart, disk)
 
-    if entry.mountpoint == "/":
-        grub.set_root_entry(entry)
-    else:
-        grub.add_fs_entry(entry)
+    grub.add_fs_entry(entry)
 
     entry.losetup(outf, "loop0")
     outf.do(
