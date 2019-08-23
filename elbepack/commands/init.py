@@ -230,10 +230,10 @@ def run_command(argv):
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
             keys.append(key.et.text)
         import_keyring = os.path.join(out_path, "elbe-keyring")
-        command_out('gpg --no-default-keyring --keyring %s --import' % import_keyring,
+        command_out('gpg --no-options --no-default-keyring --keyring %s --import' % import_keyring,
                     stdin="".join(keys))
         export_keyring = import_keyring + ".gpg"
-        command_out('gpg --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
+        command_out('gpg --no-options --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
                                                                                     export_keyring))
 
     if opt.devel:
