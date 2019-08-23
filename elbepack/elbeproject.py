@@ -615,26 +615,29 @@ class ElbeProject (object):
         # Use some handwaving to determine grub version
         #
         # We might also want support for legacy grub
-        if (self.get_rpcaptcache().is_installed('grub-pc') and
-                self.get_rpcaptcache().is_installed('grub-efi-amd64-bin')):
+        grub_arch = "ia32" if self.arch == "i386" else self.arch
+        grub_fw_type = []
+        grub_version = 0
+        if self.get_rpcaptcache().is_installed('grub-pc'):
             grub_version = 202
-            grub_fw_type = "hybrid"
-        elif self.get_rpcaptcache().is_installed('grub-pc'):
+            grub_fw_type.append("bios")
+        if self.get_rpcaptcache().is_installed('grub-efi-%s-bin' % grub_arch):
             grub_version = 202
-            grub_fw_type = "bios"
-        elif self.get_rpcaptcache().is_installed('grub-efi-amd64'):
+            grub_tgt = "x86_64" if self.arch == "amd64" else self.arch
+            grub_fw_type.extend(["efi", grub_tgt + "-efi"])
+        if (self.get_rpcaptcache().is_installed('shim-signed') and
+                self.get_rpcaptcache().is_installed(
+                    'grub-efi-%s-signed' % grub_arch)):
             grub_version = 202
-            grub_fw_type = "efi"
-        elif self.get_rpcaptcache().is_installed('grub-legacy'):
+            grub_fw_type.append("shimfix")
+        if self.get_rpcaptcache().is_installed('grub-legacy'):
             self.log.printo("package grub-legacy is installed, "
                             "this is obsolete, skipping grub")
-            grub_version = 0
-            grub_fw_type = ""
-        else:
-            self.log.printo("package grub-pc is not installed, skipping grub")
-            # version 0 == skip_grub
-            grub_version = 0
-            grub_fw_type = ""
+            grub_fw_type = []
+        elif not grub_fw_type:
+            self.log.printo("neither package grub-pc nor grub-efi-%s-bin "
+                            "are installed, skipping grub" % grub_arch)
+
         self.targetfs.part_target(self.builddir, grub_version, grub_fw_type)
 
         self.build_cdroms(build_bin, build_sources, cdrom_size)

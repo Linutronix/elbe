@@ -149,7 +149,7 @@ class grubinstaller_base(object):
         self.root = None
         self.boot = None
         self.boot_efi = None
-        self.fw_type = fw_type
+        self.fw_type = fw_type if fw_type else []
 
     def set_boot_entry(self, entry):
         print("setting boot entry")
@@ -218,13 +218,22 @@ class grubinstaller202(grubinstaller_base):
             self.outf.do("chroot %s  update-initramfs -u -k all" % imagemnt)
             self.outf.do("chroot %s  update-grub2" % imagemnt)
 
-            if self.fw_type == "efi" or self.fw_type == "hybrid":
+            if "efi" in self.fw_type:
+                grub_tgt = next(t for t in self.fw_type if t.endswith("-efi"))
                 self.outf.do(
-                    "chroot %s grub-install --target=x86_64-efi --removable "
+                    "chroot %s grub-install --target=%s --removable "
                     "--no-floppy /dev/poop0" %
-                    (imagemnt))
-            if self.fw_type == "hybrid" or self.fw_type is None:
-                # when we are in hybrid mode, install grub also into MBR
+                    (imagemnt, grub_tgt))
+            if "shimfix" in self.fw_type:
+                # grub-install is heavily dependent on the running system having
+                # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
+                # shim installation.
+                self.outf.do("chroot %s  /bin/bash -c '"
+                             "cp -r /boot/efi/EFI/BOOT /boot/efi/EFI/debian && "
+                             "cd /usr/lib/shim && f=( shim*.efi.signed ) && cp "
+                             "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'"  %
+                             imagemnt)
+            if not self.fw_type or "bios" in self.fw_type:
                 self.outf.do(
                     "chroot %s grub-install --no-floppy /dev/poop0" %
                     (imagemnt))
@@ -403,12 +412,8 @@ def do_image_hd(outf, hd, fslabel, target, grub_version, grub_fw_type=None):
     else:
         disk = parted.freshDisk(imag, "msdos")
 
-    if grub_version == 202 and grub_fw_type == "efi":
-        grub = grubinstaller202(outf, "efi")
-    elif grub_version == 202 and grub_fw_type == "hybrid":
-        grub = grubinstaller202(outf, "hybrid")
-    elif grub_version == 202:
-        grub = grubinstaller202(outf)
+    if grub_version == 202:
+        grub = grubinstaller202(outf, grub_fw_type)
     else:
         grub = grubinstaller_base(outf)
 
