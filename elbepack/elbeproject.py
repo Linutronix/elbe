@@ -613,7 +613,6 @@ class ElbeProject (object):
             os.remove(os.path.join(self.builddir, "licence.xml"))
 
         # Use some handwaving to determine grub version
-        # jessie and wheezy grubs are 2.0 but differ in behaviour
         #
         # We might also want support for legacy grub
         if (self.get_rpcaptcache().is_installed('grub-pc') and
@@ -621,10 +620,7 @@ class ElbeProject (object):
             grub_version = 202
             grub_fw_type = "hybrid"
         elif self.get_rpcaptcache().is_installed('grub-pc'):
-            if self.codename == "wheezy":
-                grub_version = 199
-            else:
-                grub_version = 202
+            grub_version = 202
             grub_fw_type = "bios"
         elif self.get_rpcaptcache().is_installed('grub-efi-amd64'):
             grub_version = 202
