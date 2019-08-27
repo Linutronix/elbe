@@ -1,3 +1,13 @@
+elbe (11) unstable; urgency=medium
+
+  * move <src-opts> into <src-cdrom> node
+  * Update Debian codenames (buster is stable now)
+  * command init: don't use user's gnupg configuration file (Fixes: #233)
+  * grubinstaller: enable UEFI (secure) boot with shim
+  * fix grubinstall, when /var is separate partition (Fixes: #230)
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Tue, 27 Aug 2019 14:59:16 +0200
+
 elbe (10) unstable; urgency=medium
 
   * make "elbe check_updates" work again
