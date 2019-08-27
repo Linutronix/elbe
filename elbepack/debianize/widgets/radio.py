@@ -50,4 +50,4 @@ class RadioGroup(Grid):
     def get_data(self):
         for radio in self.radio_group:
             if radio.state:
-                return self.enum_type[radio.label.upper()]
+                return self.enum_type.__dict__[radio.label.upper()]
