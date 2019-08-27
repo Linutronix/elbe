@@ -17,6 +17,9 @@ def add_pass_through_options(oparser):
                        default=None,
                        help="add proxy to mirrors")
 
+    oparser.add_option("-z", "--gzip", dest="gzip", type="int",
+                       default=9,
+                       help="gzip compression level 1-9 (0: no compression)")
 
 def run_command(argv):
     oparser = OptionParser(usage="usage: %prog preprocess [options] <xmlfile>")
@@ -40,7 +43,7 @@ def run_command(argv):
         variants = opt.variant.split(',')
 
     try:
-        xmlpreprocess(args[0], opt.output, variants, opt.proxy)
+        xmlpreprocess(args[0], opt.output, variants, opt.proxy, opt.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(20)

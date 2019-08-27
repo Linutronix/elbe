@@ -294,7 +294,7 @@ def preprocess_passwd(xml):
                         "The generated sha512crypt hash only applies 5000 rounds for "
                         "backwards compatibility reasons. This is considered insecure nowadays.")
 
-def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None):
+def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
        `xml_input_file` is either a file-like object or a path (str) to the input file.
@@ -393,7 +393,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None):
                 xml_output_file,
                 encoding="UTF-8",
                 pretty_print=True,
-                compression=9)
+                compression=gzip)
             # the rest of the code is exception and error handling
             return
 
