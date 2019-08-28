@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import print_function
 
 import re
 from elbepack.treeutils import etree
@@ -27,7 +28,7 @@ class changelogs_xml(object):
         try:
             xmlpkg.et.text = changelog_text.decode('utf-8')
         except ValueError:
-            print changelog_text
+            print(changelog_text)
 
     def write(self, fname):
         self.outxml.write(fname, encoding="utf-8")
