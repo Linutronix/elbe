@@ -43,7 +43,8 @@ Description: xml schema files
 Package: python-elbe-bin
 Conflicts: elbe-common
 Architecture: all
-Depends: python-elbe-common (= ${binary:Version})
+Depends: python-elbe-common (= ${binary:Version}),
+  python (>= 2.7~)
 Description: elbe executable
  Common files for ELBE (embedded linux build environment). These
  python-modules are shared by several elbe subcommands.
