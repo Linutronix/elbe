@@ -10,11 +10,13 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import sys
-import os.path
+import os
+import logging
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.updatepkg import gen_update_pkg, MissingData
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -72,24 +74,24 @@ def run_command(argv):
     else:
         buildtype = None
 
-    try:
-        project = ElbeProject(opt.target, name=opt.name,
-                              override_buildtype=buildtype,
-                              skip_validate=opt.skip_validation)
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
+    with elbe_logging({"streams":sys.stdout}):
+        try:
+            project = ElbeProject(opt.target, name=opt.name,
+                                  override_buildtype=buildtype,
+                                  skip_validate=opt.skip_validation)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
 
     if opt.presh_file:
         if not os.path.isfile(opt.presh_file):
-            print('pre.sh file does not exist')
+            logging.error('pre.sh file does not exist')
             sys.exit(20)
         project.presh_file = opt.presh_file
 
     if opt.postsh_file:
         if not os.path.isfile(opt.postsh_file):
-            print('post.sh file does not exist')
+            logging.error('post.sh file does not exist')
             sys.exit(20)
         project.postsh_file = opt.postsh_file
 
@@ -97,15 +99,15 @@ def run_command(argv):
     if len(args) >= 1:
         update_xml = args[0]
 
-    try:
-        gen_update_pkg(project, update_xml, opt.output, buildtype,
-                       opt.skip_validation, opt.debug,
-                       cfg_dir=opt.cfg_dir, cmd_dir=opt.cmd_dir)
+    with elbe_logging({"projects":project.builddir}):
+        try:
+            gen_update_pkg(project, update_xml, opt.output, buildtype,
+                           opt.skip_validation, opt.debug,
+                           cfg_dir=opt.cfg_dir, cmd_dir=opt.cmd_dir)
 
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
-    except MissingData as e:
-        print(str(e))
-        sys.exit(20)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
+        except MissingData:
+            logging.exception("Missing Data")
+            sys.exit(20)

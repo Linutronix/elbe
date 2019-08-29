@@ -10,7 +10,7 @@ from Queue import Queue
 from os import path, getcwd, chdir
 from contextlib import contextmanager
 from urllib import quote
-import traceback
+import logging
 
 from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
@@ -18,9 +18,16 @@ from elbepack.updatepkg import gen_update_pkg
 from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive
 from elbepack.rfs import DebootstrapException
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
+from elbepack.shellhelper import do
+from elbepack.log import elbe_logging
 
 
 class AsyncWorkerJob(object):
+
+    build_done   = "build_done"
+    build_failed = "build_failed"
+    has_changes  = "has_changes"
+
     def __init__(self, project):
         self.project = project
 
@@ -39,21 +46,23 @@ class BuildSysrootJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for building sysroot")
+        logging.info("Enqueueing project for building sysroot")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Build sysroot started")
+            logging.info("Build sysroot started")
             self.project.build_sysroot()
             db.update_project_files(self.project)
-            self.project.log.printo("Build finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Build sysroot failed")
+        else:
+            logging.info("Build finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Build sysroot failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            db.reset_busy(self.project.builddir, success)
 
 
 class BuildSDKJob(AsyncWorkerJob):
@@ -64,21 +73,22 @@ class BuildSDKJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for building SDK")
+        logging.info("Enqueueing project for building SDK")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Build SDK started")
+            logging.info("Build SDK started")
             self.project.build_sdk()
-            db.update_project_files(self.project)
-            self.project.log.printo("Build finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Build SDK Failed")
+        else:
+            logging.info("Build finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Build SDK failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            db.reset_busy(self.project.builddir, success)
 
 
 class BuildCDROMsJob(AsyncWorkerJob):
@@ -91,21 +101,22 @@ class BuildCDROMsJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for building CDROMs")
+        logging.info("Enqueueing project for building CDROMs")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Build CDROMs started")
+            logging.info("Build CDROMs started")
             self.project.build_cdroms(self.build_bin, self.build_src)
-            db.update_project_files(self.project)
-            self.project.log.printo("Build finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Build CDROMs failed")
+        else:
+            logging.info("Build finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Build CDROMs failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            db.reset_busy(self.project.builddir, success)
 
 class BuildChrootTarJob(AsyncWorkerJob):
     def __init__(self, project):
@@ -115,21 +126,22 @@ class BuildChrootTarJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for building croot tar")
+        logging.info("Enqueueing project for building croot tar")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Build chroot tarball started")
+            logging.info("Build chroot tarball started")
             self.project.build_chroottarball()
-            db.update_project_files(self.project)
-            self.project.log.printo("Build finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Build chrroot tarball failed")
+        else:
+            logging.info("Build finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Build chrroot tarball failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            db.reset_busy(self.project.builddir, success)
 
 
 class BuildJob(AsyncWorkerJob):
@@ -143,76 +155,38 @@ class BuildJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for build")
+        logging.info("Enqueueing project for build")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
 
-        # pylint: disable=too-many-statements
-
+        success = self.build_failed
         try:
-            self.project.log.printo("Build started")
+            logging.info("Build started")
             self.project.build(skip_pkglist=False,
                                build_bin=self.build_bin,
                                build_sources=self.build_src,
                                skip_pbuild=self.skip_pbuilder)
-            db.update_project_files(self.project)
-            self.project.log.printo("Build finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
-        except DebootstrapException as e:
-            db.update_project_files(self.project)
-            self.project.log.printo("Build failed !!!")
-            self.project.log.printo("")
-            self.project.log.printo(
-                "Debootstrap failed to install the base rootfilesystem.")
-            self.project.log.printo("Probable cause might be:")
-            self.project.log.printo("- Problems with Internet Connection")
-            self.project.log.printo("- Broken mirrors")
-            self.project.log.printo("")
-            self.project.log.printo("Message from apt:")
-            self.project.log.printo(str(e))
-            self.project.log.printo("")
-            db.reset_busy(self.project.builddir, "build_failed")
-        except AptCacheCommitError as e:
-            db.update_project_files(self.project)
-            self.project.log.printo("Build failed !!!")
-            self.project.log.printo("")
-            self.project.log.printo("Failed to commit the AptCache changes.")
-            self.project.log.printo(
-                "Most likely is, that packages failed to download.")
-            self.project.log.printo("Probable cause might be:")
-            self.project.log.printo("- Problems with Internet Connection")
-            self.project.log.printo("- Broken mirrors")
-            self.project.log.printo("")
-            self.project.log.printo("Message from apt:")
-            self.project.log.printo(str(e))
-            self.project.log.printo("")
-            db.reset_busy(self.project.builddir, "build_failed")
-        except AptCacheUpdateError as e:
-            db.update_project_files(self.project)
-            self.project.log.printo("Build failed !!!")
-            self.project.log.printo("")
-            self.project.log.printo("Failed to build the Apt Cache.")
-            self.project.log.printo(
-                "Not all Mirror Index Files could be downloaded.")
-            self.project.log.printo("Probable cause might be:")
-            self.project.log.printo("- Problems with Internet Connection")
-            self.project.log.printo("- Broken mirrors")
-            self.project.log.printo("")
-            self.project.log.printo("Message from apt:")
-            self.project.log.printo(str(e))
-            self.project.log.printo("")
-            db.reset_busy(self.project.builddir, "build_failed")
-        except Exception as e:
-            db.update_project_files(self.project)
-            self.project.log.printo("Build failed")
-            self.project.log.printo(traceback.format_exc())
-            self.project.log.printo("")
-            self.project.log.printo("Exception:")
-            self.project.log.printo(str(e))
-            self.project.log.printo("")
-            db.reset_busy(self.project.builddir, "build_failed")
+        except (DebootstrapException, AptCacheCommitError, AptCacheUpdateError) as e:
+            if isinstance(e, DebootstrapException):
+                err = "Debootstrap failed to install the base rootfilesystem."
+            elif isinstance(e, AptCacheCommitError):
+                err = "Failed to commit the AptCache changes."
+            elif isinstance(e, AptCacheUpdateError):
+                err ="Failed to build the Apt Cache."
 
+            logging.exception("%s\n"
+                              "Probable cause might be:\n"
+                              "  - Problems with internet connection\n"
+                              "  - Broken mirrors\n", err)
+        except Exception:
+            logging.exception("Build failed")
+        else:
+            logging.info("Build finished successfully")
+            success = self.build_done
+        finally:
+            db.update_project_files(self.project)
+            db.reset_busy(self.project.builddir, success)
 
 class PdebuildJob(AsyncWorkerJob):
     def __init__(self, project, cpuset=-1, profile=""):
@@ -224,22 +198,22 @@ class PdebuildJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project for pdebuild")
+        logging.info("Enqueueing project for pdebuild")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Pdebuild started")
+            logging.info("Pdebuild started")
             self.project.pdebuild(self.cpuset, self.profile)
-            db.update_project_files(self.project)
-            self.project.log.printo("Pdeb finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Pdebuild failed")
+        else:
+            logging.info("Pdeb finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Pdebuild failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
-
+            db.reset_busy(self.project.builddir, success)
 
 class CreatePbuilderJob(AsyncWorkerJob):
     def __init__(self, project):
@@ -249,22 +223,22 @@ class CreatePbuilderJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo(
-            "Enqueueing project to have the pbuilder built")
+        logging.info("Enqueueing project to have the pbuilder built")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Building pbuilder started")
+            logging.info("Building pbuilder started")
             self.project.create_pbuilder()
-            db.update_project_files(self.project)
-            self.project.log.printo("Pbuilder finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
+            logging.exception("Pbuilder failed")
+        else:
+            logging.info("Pbuilder finished successfully")
+            success = self.build_done
+        finally:
             db.update_project_files(self.project)
-            self.project.log.printo("Pbuilder failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            db.reset_busy(self.project.builddir, success)
 
 
 class UpdatePbuilderJob(AsyncWorkerJob):
@@ -275,20 +249,22 @@ class UpdatePbuilderJob(AsyncWorkerJob):
         db.set_busy(self.project.builddir,
                     ["empty_project", "needs_build", "has_changes",
                      "build_done", "build_failed"])
-        self.project.log.printo("Enqueueing project to update the pbuilder")
+        logging.info("Enqueueing project to update the pbuilder")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_done
         try:
-            self.project.log.printo("Updating pbuilder started")
+            logging.info("Updating pbuilder started")
             self.project.update_pbuilder()
-            self.project.log.printo("Updating Pbuilder finished successfully")
-            db.reset_busy(self.project.builddir, "build_done")
         except Exception:
             db.update_project_files(self.project)
-            self.project.log.printo("update Pbuilder failed")
-            self.project.log.printo(traceback.format_exc())
-            db.reset_busy(self.project.builddir, "build_failed")
+            logging.exception("update Pbuilder failed")
+        else:
+            logging.info("Updating Pbuilder finished successfully")
+            success = self.build_done
+        finally:
+            db.reset_busy(self.project.builddir, success)
 
 
 class APTUpdateJob(AsyncWorkerJob):
@@ -298,22 +274,22 @@ class APTUpdateJob(AsyncWorkerJob):
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
                     ["build_done", "has_changes"])
-        self.project.log.printo("Enqueueing project for APT cache update")
+        logging.info("Enqueueing project for APT cache update")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("APT cache update started")
+            logging.info("APT cache update started")
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
-            self.project.log.printo("APT cache update finished successfully")
-            db.reset_busy(self.project.builddir,
-                          "has_changes")
-        except Exception as e:
-            self.project.log.printo("APT cache update failed")
-            self.project.log.printo(str(e))
-            db.reset_busy(self.project.builddir, "build_failed")
-
+        except Exception:
+            logging.exception("APT cache update failed")
+        else:
+            logging.info("APT cache update finished successfully")
+            success = self.has_changes
+        finally:
+            db.reset_busy(self.project.builddir, success)
 
 class APTUpdUpgrJob(AsyncWorkerJob):
     def __init__(self, project):
@@ -321,23 +297,24 @@ class APTUpdUpgrJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir, ["build_done", "has_changes"])
-        self.project.log.printo("Enqueueing project for APT update & upgrade")
+        logging.info("Enqueueing project for APT update & upgrade")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("APT update started")
+            logging.info("APT update started")
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
-            self.project.log.printo("APT update finished, upgrade started")
+            logging.info("APT update finished, upgrade started")
             self.project.get_rpcaptcache().upgrade()
-            self.project.log.printo("APT upgrade finished")
-            db.reset_busy(self.project.builddir, "has_changes")
-        except Exception as e:
-            self.project.log.printo("APT update & upgrade failed")
-            self.project.log.printo(str(e))
-            db.reset_busy(self.project.builddir, "build_failed")
-
+        except Exception:
+            logging.exception("APT update & upgrade failed")
+        else:
+            logging.info("APT upgrade finished")
+            success = self.has_changes
+        finally:
+            db.reset_busy(self.project.builddir, success)
 
 class APTCommitJob(AsyncWorkerJob):
     def __init__(self, project):
@@ -347,14 +324,15 @@ class APTCommitJob(AsyncWorkerJob):
         old_status = db.set_busy(self.project.builddir,
                                  ["build_done", "has_changes"])
         if self.project.get_rpcaptcache().get_changes():
-            self.project.log.printo("Enqueueing project for package changes")
+            logging.info("Enqueueing project for package changes")
             AsyncWorkerJob.enqueue(self, queue, db)
         else:
             db.reset_busy(self.project.builddir, old_status)
 
     def execute(self, db):
+        success = self.build_failed
         try:
-            self.project.log.printo("Applying package changes")
+            logging.info("Applying package changes")
             with self.project.buildenv:
                 # Commit changes, update full package list and write
                 # out new source.xml
@@ -366,15 +344,13 @@ class APTCommitJob(AsyncWorkerJob):
             sourcexmlpath = path.join(self.project.builddir,
                                       "source.xml")
             self.project.xml.xml.write(sourcexmlpath)
-
-            self.project.log.printo("Package changes applied successfully")
-            db.reset_busy(self.project.builddir,
-                          "has_changes")
-        except Exception as e:
-            self.project.log.printo("Applying package changes failed")
-            self.project.log.printo(str(e))
-            db.reset_busy(self.project.builddir,
-                          "build_failed")
+        except Exception:
+            logging.exception("Applying package changes failed")
+        else:
+            logging.info("Package changes applied successfully")
+            succes = self.has_changes
+        finally:
+            db.reset_busy(self.project.builddir, success)
 
 
 class GenUpdateJob(AsyncWorkerJob):
@@ -390,23 +366,20 @@ class GenUpdateJob(AsyncWorkerJob):
         self.base_version_xml = db.get_version_xml(self.project.builddir,
                                                    self.base_version)
 
-        self.project.log.printo(
-            "Enqueueing project for generating update package")
-
+        logging.info("Enqueueing project for generating update package")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         upd_filename = self._gen_upd_filename()
         upd_pathname = path.join(self.project.builddir, upd_filename)
 
-        self.project.log.printo("Generating update package")
+        logging.info("Generating update package")
 
         try:
             gen_update_pkg(self.project, self.base_version_xml, upd_pathname)
-            self.project.log.printo("Update package generated successfully")
-        except Exception as e:
-            self.project.log.printo("Generating update package failed")
-            self.project.log.printo(str(e))
+            logging.info("Update package generated successfully")
+        except Exception:
+            logging.exception("Generating update package failed")
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
@@ -446,27 +419,27 @@ class SaveVersionJob(AsyncWorkerJob):
             raise
 
         if self.project.savesh_file:
-            self.project.log.h2("save version script:")
-            self.project.log.do(self.project.savesh_file + ' "%s %s %s"' % (
+            logging.info("save version script:")
+            do(self.project.savesh_file + ' "%s %s %s"' % (
                 self.project.builddir,
                 self.project.xml.text("project/version"),
                 self.project.xml.text("project/name")),
                 allow_fail=True)
 
-        self.project.log.printo("Enqueueing project to save package archive")
+        logging.info("Enqueueing project to save package archive")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
-        self.project.log.printo("Generating package archive")
+        logging.info("Generating package archive")
         repodir = get_versioned_filename(self.name, self.version,
                                          ".pkgarchive")
         try:
             gen_binpkg_archive(self.project, repodir)
-            self.project.log.printo("Version saved successfully")
-        except Exception as e:
+        except Exception:
+            logging.exception("Saving version failed")
             db.del_version(self.project.builddir, self.version, force=True)
-            self.project.log.printo("Saving version failed")
-            self.project.log.printo(str(e))
+        else:
+            logging.info("Version saved successfully")
         finally:
             db.reset_busy(self.project.builddir, self.old_status)
 
@@ -485,9 +458,8 @@ class CheckoutVersionJob(AsyncWorkerJob):
         # given version and restore the status, indicating that we need a
         # complete rebuild
         if old_status == "build_failed":
-            self.project.log.printo("Previous project status indicated a "
-                                    "failed build.")
-            self.project.log.printo("Just checking out the XML file.")
+            logging.warning("Previous project status indicated a failed build\n"
+                            "Just checking out the XML file.")
 
             try:
                 db.checkout_version_xml(self.project.builddir, self.version)
@@ -506,25 +478,23 @@ class CheckoutVersionJob(AsyncWorkerJob):
             self.project.set_xml(None)
             raise
 
-        self.project.log.printo(
-            "Enqueueing project for package archive checkout")
+        logging.info("Enqueueing project for package archive checkout")
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
-        self.project.log.printo("Checking out package archive")
+        logging.info("Checking out package archive")
         repodir = get_versioned_filename(self.name, self.version,
                                          ".pkgarchive")
-
+        success = self.build_failed
         try:
             checkout_binpkg_archive(self.project, repodir)
-            self.project.log.printo(
-                "Package archive checked out successfully")
-            db.reset_busy(self.project.builddir, "has_changes")
-        except Exception as e:
-            self.project.log.printo(
-                "Checking out package archive failed")
-            self.project.log.printo(str(e))
-            db.reset_busy(self.project.builddir, "build_failed")
+            logging.info("Package archive checked out successfully")
+        except Exception:
+            logging.exception("Checking out package archive failed")
+        else:
+            success = self.has_changes
+        finally:
+            db.reset_busy(self.project.builddir, success)
 
 
 @contextmanager
@@ -557,7 +527,8 @@ class AsyncWorker(Thread):
             job = self.queue.get()
             if job is not None:
                 with savecwd():
-                    job.execute(self.db)
+                    with elbe_logging({"projects":job.project.builddir}):
+                        job.execute(self.db)
             else:
                 loop = False
             self.queue.task_done()

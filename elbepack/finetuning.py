@@ -11,6 +11,7 @@ from __future__ import print_function
 import os
 import errno
 import base64
+import logging
 
 from shutil import rmtree
 from gpg import core
@@ -24,6 +25,7 @@ from elbepack.filesystem import ImgMountFilesystem
 from elbepack.packers import default_packer, packers
 from elbepack.egpg import unlock_key
 from elbepack.junit import TestSuite, TestException
+from elbepack.shellhelper import chroot, do, get_command_out
 
 
 class FinetuningException(Exception):
@@ -52,11 +54,11 @@ class FinetuningAction(object):
     def __init__(self, node):
         self.node = node
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError('execute() not implemented')
 
-    def execute_prj(self, log, buildenv, target, _builddir):
-        self.execute(log, buildenv, target)
+    def execute_prj(self, buildenv, target, _builddir):
+        self.execute(buildenv, target)
 
 
 @FinetuningAction.register('image_finetuning', False)
@@ -65,11 +67,11 @@ class ImageFinetuningAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<%s> may only be "
                                   "used in <image-finetuning>" % self.tag)
 
-    def execute_img(self, _log, _buildenv, _target, _builddir, _loop_dev):
+    def execute_img(self, _buildenv, _target, _builddir, _loop_dev):
         raise NotImplementedError('execute_img() not implemented')
 
 
@@ -79,7 +81,7 @@ class RmAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         files = target.glob(self.node.et.text)
 
         if 'exclude' in self.node.et.attrib:
@@ -91,7 +93,7 @@ class RmAction(FinetuningAction):
             if os.path.basename(f) in exclude:
                 continue
 
-            log.do("rm -rvf '%s'" % f)
+            do("rm -rvf '%s'" % f)
 
 
 @FinetuningAction.register('mkdir')
@@ -100,8 +102,8 @@ class MkdirAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
-        log.do("mkdir -p " + target.fname(self.node.et.text))
+    def execute(self, _buildenv, target):
+        do("mkdir -p %s" % target.fname(self.node.et.text))
 
 
 @FinetuningAction.register('mknod')
@@ -110,13 +112,10 @@ class MknodAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
-        log.do(
-            "mknod " +
-            target.fname(
-                self.node.et.text) +
-            " " +
-            self.node.et.attrib['opts'])
+    def execute(self, _buildenv, target):
+        cmd = "mknod %s %s" % (target.fname(self.node.et.text),
+                               self.node.et.attrib['opts'])
+        do(cmd)
 
 @FinetuningAction.register('buildenv_mkdir')
 class BuildenvMkdirAction(FinetuningAction):
@@ -124,8 +123,8 @@ class BuildenvMkdirAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, _target):
-        log.do("mkdir -p " + buildenv.rfs.fname(self.node.et.text))
+    def execute(self, buildenv, _target):
+        do("mkdir -p %s" % buildenv.rfs.fname(self.node.et.text))
 
 
 @FinetuningAction.register('cp')
@@ -134,10 +133,11 @@ class CpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            log.do("cp -av " + f + " " + target.fname(self.node.et.text))
+            do(cmd % f)
 
 
 @FinetuningAction.register('buildenv_cp')
@@ -146,10 +146,11 @@ class BuildenvCpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, _target):
+    def execute(self, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            log.do("cp -av " + f + " " + buildenv.rfs.fname(self.node.et.text))
+            do(cmd % f)
 
 
 @FinetuningAction.register('b2t_cp')
@@ -158,10 +159,11 @@ class B2TCpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, buildenv, target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            log.do("cp -av " + f + " " + target.fname(self.node.et.text))
+            do(cmd % f)
 
 
 @FinetuningAction.register('t2b_cp')
@@ -170,10 +172,11 @@ class T2BCpAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            log.do("cp -av " + f + " " + buildenv.rfs.fname(self.node.et.text))
+            do(cmd % f)
 
 @FinetuningAction.register('t2p_mv')
 class T2PMvAction(FinetuningAction):
@@ -181,7 +184,7 @@ class T2PMvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         if self.node.et.text[0] == '/':
             dest = self.node.et.text[1:]
         else:
@@ -189,8 +192,9 @@ class T2PMvAction(FinetuningAction):
         dest = os.path.join('..', dest)
 
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "mv -v %s {}".format(dest)
         for f in src:
-            log.do("mv -v " + f + " " + dest)
+            do(cmd % f)
 
 
 @FinetuningAction.register('mv')
@@ -199,10 +203,11 @@ class MvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
+        cmd = "mv -v %s {}".format(target.fname(self.node.et.text))
         for f in src:
-            log.do("mv -v " + f + " " + target.fname(self.node.et.text))
+            do(cmd % f)
 
 
 @FinetuningAction.register('ln')
@@ -211,13 +216,13 @@ class LnAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         target_name = self.node.et.attrib['path']
         link_name = self.node.et.text
         with target.protect({link_name}):
-            log.chroot(
-                target.path, """/bin/sh -c 'ln -sf %s "%s"' """ %
-                (target_name, link_name))
+            chroot(target.path,
+                   """/bin/sh -c 'ln -sf %s "%s"' """ %
+                   (target_name, link_name))
 
 
 @FinetuningAction.register('buildenv_mv')
@@ -226,10 +231,11 @@ class BuildenvMvAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, _target):
+    def execute(self, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
+        cmd = "mv -v %s {}".format(buildenv.rfs.fname(self.node.et.text))
         for f in src:
-            log.do("mv -v " + f + " " + buildenv.rfs.fname(self.node.et.text))
+            do(cmd % f)
 
 @FinetuningAction.register('adduser')
 class AddUserAction(FinetuningAction):
@@ -237,7 +243,7 @@ class AddUserAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         with target:
             att = self.node.et.attrib
             options = ""
@@ -262,18 +268,14 @@ class AddUserAction(FinetuningAction):
             else:
                 options += '-U '
 
-            log.chroot(
-                target.path,
-                '/usr/sbin/useradd %s "%s"' %
-                (options,
-                 self.node.et.text))
+            cmd =  '/usr/sbin/useradd %s "%s"' % (options,
+                                                  self.node.et.text)
+            chroot(target.path, cmd)
 
             if 'passwd' in att:
-                log.chroot(target.path,
-                           """/bin/sh -c 'echo "%s\\n%s\\n" | passwd %s'""" % (
-                               att['passwd'],
-                               att['passwd'],
-                               self.node.et.text))
+                cmd = "passwd %s" % self.node.et.text
+                stdin = "%s\n%s\n" % (att["passwd"], att["passwd"])
+                chroot(target.path, cmd, stdin=stdin)
 
 
 @FinetuningAction.register('addgroup')
@@ -282,7 +284,7 @@ class AddGroupAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         with target:
             att = self.node.et.attrib
             # we use -f always
@@ -291,9 +293,9 @@ class AddGroupAction(FinetuningAction):
                 options += '-g "%s" ' % att['gid']
             if 'system' in att and att['system'] == 'True':
                 options += '-r'
-            log.chroot(target.path, '/usr/sbin/groupadd %s "%s"' % (
-                options,
-                self.node.et.text))
+            cmd = '/usr/sbin/groupadd %s "%s"' % (options,
+                                                  self.node.et.text)
+            chroot(target.path, cmd)
 
 
 @FinetuningAction.register('file')
@@ -362,9 +364,9 @@ class RawCmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         with target:
-            log.chroot(target.path, self.node.et.text)
+            chroot(target.path, self.node.et.text)
 
 
 @FinetuningAction.register('command')
@@ -373,9 +375,9 @@ class CmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         with target:
-            log.chroot(target.path, "/bin/sh", stdin=self.node.et.text)
+            chroot(target.path, "/bin/sh", stdin=self.node.et.text)
 
 
 @FinetuningAction.register('buildenv_command')
@@ -384,9 +386,9 @@ class BuildenvCmdAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, _target):
+    def execute(self, buildenv, _target):
         with buildenv:
-            log.chroot(buildenv.path, "/bin/sh", stdin=self.node.et.text)
+            chroot(buildenv.path, "/bin/sh", stdin=self.node.et.text)
 
 
 @FinetuningAction.register('purge')
@@ -395,9 +397,9 @@ class PurgeAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
         with target:
-            log.chroot(target.path, "dpkg --purge " + self.node.et.text)
+            chroot(target.path, "dpkg --purge %s" % (self.node.et.text))
 
 
 @FinetuningAction.register('updated')
@@ -406,13 +408,14 @@ class UpdatedAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, log, buildenv, target):
+    def execute(self, buildenv, target):
 
         # pylint: disable=too-many-locals
 
         if self.node.et.text:
             fp = self.node.et.text
-            log.printo("transfer gpg key to target: " + fp)
+
+            logging.info("transfert gpg key to target: %s", fp)
 
             gpgdata = core.Data()
             ctx = core.Context()
@@ -425,22 +428,23 @@ class UpdatedAction(FinetuningAction):
             gpgdata.seek(0, os.SEEK_SET)
             key = gpgdata.read()
 
-            log.printo(str(key))
+            logging.info(str(key))
             with open((target.path + '/pub.key'), 'wb') as tkey:
                 tkey.write(key)
 
             target.mkdir_p("/var/cache/elbe/gnupg", mode=0o700)
             with target:
                 env_add = {'GNUPGHOME': target.path + "/var/cache/elbe/gnupg"}
-                log.do("gpg --import " + target.path + "/pub.key",
-                       env_add=env_add)
+                cmd = "gpg --import %s%s" % (target.path, "/pub.key")
+                do(cmd, env_add=env_add)
 
-        log.printo("generate base repo")
+        logging.info("generate base repo")
+
         arch = target.xml.text("project/arch", key="arch")
 
         buildenv.rfs.mkdir_p('/tmp/pkgs')
         with buildenv:
-            cache = get_rpcaptcache(buildenv.rfs, "updated-repo.log", arch)
+            cache = get_rpcaptcache(buildenv.rfs, arch)
 
             pkglist = cache.get_installed_pkgs()
             for pkg in pkglist:
@@ -448,29 +452,16 @@ class UpdatedAction(FinetuningAction):
                     cache.download_binary(
                         pkg.name, '/tmp/pkgs', pkg.installed_version)
                 except ValueError:
-                    log.printo(
-                        "No Package " +
-                        pkg.name +
-                        "-" +
-                        pkg.installed_version)
+                    logging.exception("No package %s-%s",
+                                      pkg.name, pkg.installed_version)
                 except FetchError:
-                    log.printo(
-                        "Package " +
-                        pkg.name +
-                        "-" +
-                        pkg.installed_version +
-                        " could not be downloaded")
+                    logging.exception("Package %s-%s could not be downloaded",
+                                      pkg.name, pkg.installed_version)
                 except TypeError:
-                    log.printo(
-                        "Package " +
-                        pkg.name +
-                        "-" +
-                        pkg.installed_version +
-                        " missing name or version")
-
+                    logging.exception("Package %s-%s missing name or version",
+                                      pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
-                       target.path + '/var/cache/elbe/repos/base',
-                       log)
+                       target.path + '/var/cache/elbe/repos/base')
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
             r.includedeb(d, 'main')
@@ -496,10 +487,10 @@ class ArtifactAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, target):
+    def execute(self, _buildenv, target):
         target.images.append('target' + self.node.et.text)
 
-    def execute_prj(self, _log, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir):
         target.images.append(self.node.et.text)
 
 
@@ -509,11 +500,11 @@ class RmArtifactAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<rm_artifact> may only be "
                                   "used in <project-finetuning>")
 
-    def execute_prj(self, _log, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir):
         try:
             target.images.remove(self.node.et.text)
         except ValueError:
@@ -527,23 +518,23 @@ class LosetupAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<losetup> may only be "
                                   "used in <project-finetuning>")
 
-    def execute_prj(self, log, buildenv, target, builddir):
+    def execute_prj(self, buildenv, target, builddir):
         imgname = self.node.et.attrib['img']
         imgpath = os.path.join(builddir, imgname)
         cmd = 'losetup --find --show --partscan "%s"' % imgpath
 
-        loop_dev = log.get_command_out(cmd).strip()
+        loop_dev = get_command_out(cmd).strip()
         try:
             for i in self.node:
                 action = ImageFinetuningAction(i)
-                action.execute_img(log, buildenv, target, builddir, loop_dev)
+                action.execute_img(buildenv, target, builddir, loop_dev)
         finally:
             cmd = 'losetup --detach "%s"' % loop_dev
-            log.do(cmd)
+            do(cmd)
 
 
 @FinetuningAction.register('img_convert')
@@ -552,20 +543,18 @@ class ImgConvertAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<img_convert> may only be "
                                   "used in <project-finetuning>")
 
-    def execute_prj(self, log, _buildenv, target, builddir):
+    def execute_prj(self, _buildenv, target, builddir):
         src = self.node.et.text
         dst = self.node.et.attrib['dst']
         fmt = self.node.et.attrib['fmt']
 
         if src not in target.images:
-            log.printo("Error: Artifact '%s' does not exist." % src)
-            log.printo("Valid Artifacts are:")
-            for i in target.images:
-                log.printo(i)
+            logging.error("Artifact '%s' does not exist.\nValid Artifcact are: %s",
+                          src, ", ".join([str(i) for i in target.images]))
             raise FinetuningException("Artifact '%s' does not exist" % src)
 
         src_fname = os.path.join(builddir, src)
@@ -574,7 +563,7 @@ class ImgConvertAction(FinetuningAction):
         cmd = 'qemu-img convert -O "%s" "%s" "%s"' % (fmt,
                                                       src_fname,
                                                       dst_fname)
-        log.do(cmd)
+        do(cmd)
 
         target.images.append(dst)
         target.image_packers[dst] = default_packer
@@ -590,11 +579,11 @@ class SetPackerAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<set_packer> may only be "
                                   "used in <project-finetuning>")
 
-    def execute_prj(self, _log, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir):
         img = self.node.et.text
         packer = self.node.et.attrib['packer']
 
@@ -607,17 +596,17 @@ class ExtractPartitionAction(ImageFinetuningAction):
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<extract_partition> may only be "
                                   "used in <mount_drive>")
 
-    def execute_img(self, log, _buildenv, target, builddir, loop_dev):
+    def execute_img(self, _buildenv, target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
         imgname = os.path.join(builddir, self.node.et.text)
 
         cmd = 'dd if=%sp%s of="%s"' % (loop_dev, part_nr, imgname)
 
-        log.do(cmd)
+        do(cmd)
 
         target.images.append(self.node.et.text)
         target.image_packers[self.node.et.text] = default_packer
@@ -629,32 +618,32 @@ class CopyFromPartition(ImageFinetuningAction):
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<copy_from_partition> may only be "
                                   "used in <mount_drive>")
 
-    def execute_img(self, log, _buildenv, target, builddir, loop_dev):
+    def execute_img(self, _buildenv, target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
         device = "%sp%s" % (loop_dev, part_nr)
 
-        with ImgMountFilesystem(img_mnt, device, log) as mnt_fs:
+        with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.glob(self.node.et.text)
 
             if not fname:
-                log.printo('No file matching "%s" found' % self.node.et.text)
+                logging.error('No file matching "%s" found',
+                              self.node.et.text)
                 raise FinetuningException('No File found')
 
             if len(fname) > 1:
-                log.printo('Pattern "%s" matches %d files' % (
-                    self.node.et.text,
-                    len(fname)))
+                logging.info('Pattern "%s" matches %d files',
+                             self.node.et.text, len(fname))
                 raise FinetuningException('Patter matches too many files')
 
             cmd = 'cp "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
-            log.do(cmd)
+            do(cmd)
 
             target.images.append(aname)
 
@@ -665,22 +654,21 @@ class CopyToPartition(ImageFinetuningAction):
     def __init__(self, node):
         ImageFinetuningAction.__init__(self, node)
 
-    def execute(self, _log, _buildenv, _target):
+    def execute(self, _buildenv, _target):
         raise NotImplementedError("<copy_to_partition> may only be "
                                   "used in <mount_drive>")
 
-    def execute_img(self, log, _buildenv, _target, builddir, loop_dev):
+    def execute_img(self, _buildenv, _target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
         device = "%sp%s" % (loop_dev, part_nr)
 
-        with ImgMountFilesystem(img_mnt, device, log) as mnt_fs:
+        with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.fname(self.node.et.text)
-
             cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
-            log.do(cmd)
+            do(cmd)
 
 
 @FinetuningAction.register("unit-tests")
@@ -688,7 +676,7 @@ class TestSuites(FinetuningAction):
 
     elbe_junit = "elbe-junit.xml"
 
-    def execute_prj(self, log, buildenv, target, builddir):
+    def execute_prj(self, buildenv, target, builddir):
 
         tss = []
         output = os.path.join(builddir, elbe_junit)
@@ -699,11 +687,11 @@ class TestSuites(FinetuningAction):
             try:
                 tss.append(ts())
             except TestException as E:
-                log.printo(str(E))
+                logging.exception(str(E))
 
         TestSuite.to_file(output, tss)
 
-def do_finetuning(xml, log, buildenv, target):
+def do_finetuning(xml, buildenv, target):
 
     if not xml.has('target/finetuning'):
         return
@@ -711,17 +699,17 @@ def do_finetuning(xml, log, buildenv, target):
     for i in xml.node('target/finetuning'):
         try:
             action = FinetuningAction(i)
-            action.execute(log, buildenv, target)
+            action.execute(buildenv, target)
         except KeyError:
-            print("Unimplemented finetuning action '%s'" % (i.et.tag))
+            logging.exception("Unimplemented finetuning action '%s'",
+                              i.et.tag)
         except CommandError:
-            log.printo("Finetuning Error, trying to continue anyways")
-        except FinetuningException as e:
-            log.printo("Finetuning Error: %s" % str(e))
-            log.printo("trying to continue anyways")
+            logging.exception("Finetuning Error, trying to continue anyways")
+        except FinetuningException:
+            logging.exception("Finetuning Error\n"
+                              "Trying to continue anyways")
 
-
-def do_prj_finetuning(xml, log, buildenv, target, builddir):
+def do_prj_finetuning(xml, buildenv, target, builddir):
 
     if not xml.has('target/project-finetuning'):
         return
@@ -729,12 +717,15 @@ def do_prj_finetuning(xml, log, buildenv, target, builddir):
     for i in xml.node('target/project-finetuning'):
         try:
             action = FinetuningAction(i)
-            action.execute_prj(log, buildenv, target, builddir)
+            action.execute_prj(buildenv, target, builddir)
+        except KeyError:
+            logging.exception("Unimplemented project-finetuning action '%s'",
+                              i.et.tag)
         except CommandError:
-            log.printo("ProjectFinetuning Error, trying to continue anyways")
-        except FinetuningException as e:
-            log.printo("ProjectFinetuning Error: %s" % e)
-            log.printo("trying to continue anyways")
+            logging.exception("ProjectFinetuning Error, trying to continue anyways")
+        except FinetuningException:
+            logging.exception("Finetuning Error\n"
+                              "Trying to continue anyways")
         except Exception as e:
-            log.printo(str(e))
+            logging.exception(str(e))
             raise

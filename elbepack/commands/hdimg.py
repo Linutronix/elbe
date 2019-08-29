@@ -8,11 +8,14 @@
 from __future__ import print_function
 
 import sys
+import os
+import logging
 
 from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -64,13 +67,14 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
-    try:
-        project = ElbeProject(opt.target, override_buildtype=opt.buildtype,
-                              xmlpath=args[0], logpath=opt.output,
-                              skip_validate=opt.skip_validation)
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
+    with elbe_logging({"files":opt.output}):
+        try:
+            project = ElbeProject(opt.target,
+                                  override_buildtype=opt.buildtype,
+                                  xmlpath=args[0],
+                                  skip_validate=opt.skip_validation)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
 
-    project.targetfs.part_target(opt.target, opt.grub_version)
+        project.targetfs.part_target(opt.target, opt.grub_version)

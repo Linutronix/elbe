@@ -8,12 +8,13 @@ from optparse import OptionParser
 from tempfile import mkdtemp
 
 import os
+import sys
 
 from elbepack.xmldefaults import ElbeDefaults
 from elbepack.repomanager import ToolchainRepo
 from elbepack.debpkg import build_binary_deb
 from elbepack.toolchain import get_toolchain
-from elbepack.asciidoclog import StdoutLog
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -68,14 +69,14 @@ def run_command(argv):
 
     pkgs = os.listdir(tmpdir)
 
-    repo = ToolchainRepo(
-        defaults["arch"],
-        opt.codename,
-        opt.output,
-        StdoutLog())
+    with elbe_logging({"streams":sys.stdout}):
 
-    for p in pkgs:
-        repo.includedeb(os.path.join(tmpdir, p))
+        repo = ToolchainRepo(defaults["arch"],
+                             opt.codename,
+                             opt.output)
 
-    repo.finalize()
-    os.system('rm -r "%s"' % tmpdir)
+        for p in pkgs:
+            repo.includedeb(os.path.join(tmpdir, p))
+
+        repo.finalize()
+        os.system('rm -r "%s"' % tmpdir)

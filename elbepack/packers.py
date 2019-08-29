@@ -4,18 +4,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-from elbepack.shellhelper import CommandError
+from elbepack.shellhelper import CommandError, do
 
 
 class Packer(object):
     # pylint: disable=too-few-public-methods
-    def pack_file(self, _log, _builddir, _fname):
+    def pack_file(self, _builddir, _fname):
         raise NotImplementedError('abstract method called')
 
 
 class NoPacker(Packer):
     # pylint: disable=too-few-public-methods
-    def pack_file(self, _log, _builddir, fname):
+    def pack_file(self, _builddir, fname):
         return fname
 
 
@@ -26,10 +26,10 @@ class InPlacePacker(Packer):
         self.cmd = cmd
         self.suffix = suffix
 
-    def pack_file(self, log, builddir, fname):
+    def pack_file(self, builddir, fname):
         try:
             fpath = os.path.join(builddir, fname)
-            log.do('%s "%s"' % (self.cmd, fpath))
+            do('%s "%s"' % (self.cmd, fpath))
         except CommandError:
             # in case of an error, we just return None
             # which means, that the orig file does not
@@ -45,17 +45,15 @@ class TarArchiver(Packer):
         self.flag = flag
         self.suffix = suffix
 
-    def pack_file(self, log, builddir, fname):
+    def pack_file(self, builddir, fname):
         try:
             fpath = os.path.join(builddir, fname)
             dirname = os.path.dirname(fpath)
             basename = os.path.basename(fpath)
             archname = fpath + self.suffix
-            log.do('tar cv%sf "%s" --sparse -C "%s" "%s"' % (self.flag,
-                                                             archname,
-                                                             dirname,
-                                                             basename))
-            log.do('rm -f "%s"' % fpath)
+            do('tar cv%sf "%s" --sparse -C "%s" "%s"' %
+               (self.flag, archname, dirname, basename))
+            do('rm -f "%s"' % fpath)
         except CommandError:
             # in case of an error, we just return None
             # which means, that the orig file does not

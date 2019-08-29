@@ -10,7 +10,7 @@ import os
 import urllib2
 
 
-def pbuilder_write_config(builddir, xml, _log):
+def pbuilder_write_config(builddir, xml):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
     fp = open(pbuilderrc_fname, "w")

@@ -365,18 +365,15 @@ class ESoap (ServiceBase):
     def new_project(self, uid):
         return self.app.pm.new_project(uid)
 
-    @rpc(String, Integer, _returns=String)
+    @rpc(String, _returns=String)
     @authenticated_uid
     @soap_faults
-    def get_project_busy(self, uid, builddir, part):
+    def get_project_busy(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
-        ret, log = self.app.pm.current_project_is_busy(uid, part)
-        # return bool value to be compatible with elbe v1.0
-        if (part is None) and (log == "") and (not ret):
-            return ret
+        ret, msg = self.app.pm.current_project_is_busy(uid)
         if not ret:
-            return 'FINISH'
-        return log
+            return 'ELBE-FINISH'
+        return msg
 
     @rpc()
     @authenticated_uid

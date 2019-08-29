@@ -455,7 +455,6 @@ class ElbeDB(object):
     def load_project(
             self,
             builddir,
-            logpath=None,
             url_validation=ValidationMode.CHECK_ALL):
 
         # pass exceptions if hook-scripts can't be loaded (they're optional)
@@ -492,7 +491,7 @@ class ElbeDB(object):
                 p = s.query(Project). \
                     filter(Project.builddir == builddir).one()
 
-                return ElbeProject(p.builddir, name=p.name, logpath=logpath,
+                return ElbeProject(p.builddir, name=p.name,
                                    postbuild_file=postbuild_file,
                                    presh_file=presh_file,
                                    postsh_file=postsh_file,

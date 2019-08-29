@@ -11,8 +11,8 @@ import sys
 import os
 import io
 
-from elbepack.asciidoclog import StdoutLog
 from elbepack.efilesystem import ElbeFilesystem
+from elbepack.log import elbe_logging
 
 
 def run_command(argv):
@@ -31,13 +31,13 @@ def run_command(argv):
 
     chroot = os.path.abspath(args[0])
 
-    rfs = ElbeFilesystem(chroot)
-    log = StdoutLog()
+    with elbe_logging({"streams":sys.stdout}):
+        rfs = ElbeFilesystem(chroot)
 
-    if opt.output:
-        f = io.open(opt.output, "w+", encoding='utf-8')
-    else:
-        f = io.open('licence.txt', "w+", encoding='utf-8')
+        if opt.output:
+            f = io.open(opt.output, "w+", encoding='utf-8')
+        else:
+            f = io.open('licence.txt', "w+", encoding='utf-8')
 
-    rfs.write_licenses(f, log, opt.xml)
-    f.close()
+        rfs.write_licenses(f, opt.xml)
+        f.close()

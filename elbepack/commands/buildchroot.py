@@ -10,12 +10,15 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import sys
+import os
+import logging
 
 from elbepack.shellhelper import CommandError
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.db import ElbeDB
 from elbepack.cdroms import CDROM_SIZE
+from elbepack.log import elbe_logging
 from sqlalchemy.exc import OperationalError
 
 
@@ -87,28 +90,28 @@ def run_command(argv):
         print("WARNING: Skip CDROMS is now the default, "
               "use --build-bin to build binary CDROM")
 
-    try:
-        project = ElbeProject(opt.target, args[0], opt.output, opt.name,
-                              opt.buildtype, opt.skip_validation)
-    except ValidationError as e:
-        print(str(e))
-        print("xml validation failed. Bailing out")
-        sys.exit(20)
+    with elbe_logging({"files": opt.output}):
+        try:
+            project = ElbeProject(opt.target, args[0], opt.name,
+                                  opt.buildtype, opt.skip_validation)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
 
-    try:
-        project.build(
-            opt.build_bin,
-            opt.build_sources,
-            opt.cdrom_size,
-            opt.skip_pkglist,
-            opt.skip_pbuild)
-    except CommandError as ce:
-        print("command in project build failed: %s" % ce.cmd)
-        sys.exit(20)
+        try:
+            project.build(
+                opt.build_bin,
+                opt.build_sources,
+                opt.cdrom_size,
+                opt.skip_pkglist,
+                opt.skip_pbuild)
+        except CommandError as ce:
+            logging.error("Command in project build failed: %s", ce.cmd)
+            sys.exit(20)
 
-    try:
-        db = ElbeDB()
-        db.save_project(project)
-    except OperationalError:
-        print("failed to save project in database")
-        sys.exit(20)
+        try:
+            db = ElbeDB()
+            db.save_project(project)
+        except OperationalError:
+            logging.exception("Failed to save project in database")
+            sys.exit(20)

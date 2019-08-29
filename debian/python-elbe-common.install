@@ -23,6 +23,7 @@
 ./usr/lib/python2.*/*-packages/elbepack/isooptions.py
 ./usr/lib/python2.*/*-packages/elbepack/kvm.py
 ./usr/lib/python2.*/*-packages/elbepack/licencexml.py
+./usr/lib/python2.*/*-packages/elbepack/log.py
 ./usr/lib/python2.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python2.*/*-packages/elbepack/pkgutils.py
 ./usr/lib/python2.*/*-packages/elbepack/xmlpreprocess.py

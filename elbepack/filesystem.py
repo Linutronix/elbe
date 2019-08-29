@@ -14,6 +14,8 @@ from tempfile import mkdtemp
 from string import digits
 import gzip
 
+from elbepack.shellhelper import do
+
 def size_to_int(size):
     if size[-1] in digits:
         return int(size)
@@ -326,20 +328,19 @@ class TmpdirFilesystem (Filesystem):
 
 
 class ImgMountFilesystem(Filesystem):
-    def __init__(self, mntpoint, dev, log):
+    def __init__(self, mntpoint, dev):
         Filesystem.__init__(self, mntpoint)
 
         self.dev = dev
-        self.log = log
 
     def __enter__(self):
         cmd = 'mount "%s" "%s"' % (self.dev, self.path)
-        self.log.do(cmd)
+        do(cmd)
 
         return self
 
     def __exit__(self, typ, value, traceback):
-        self.log.do('umount "%s"' % self.path)
+        do('umount "%s"' % self.path)
 
 
 hostfs = Filesystem('/')

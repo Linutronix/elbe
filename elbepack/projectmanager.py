@@ -25,6 +25,7 @@ from elbepack.asyncworker import (AsyncWorker, BuildJob, APTUpdateJob,
                                   BuildSDKJob, BuildCDROMsJob)
 
 from elbepack.elbexml import ValidationMode
+from elbepack.log import read_loggingQ
 
 
 class ProjectManagerError(Exception):
@@ -107,9 +108,8 @@ class ProjectManager(object):
                 raise
 
             # Open the new project
-            logpath = path.join(builddir, "log.txt")
-            ep = self.db.load_project(
-                builddir, logpath, url_validation=url_validation)
+            ep = self.db.load_project(builddir,
+                                      url_validation=url_validation)
 
             self.userid2project[userid] = ep
             self.builddir2userid[builddir] = userid
@@ -139,9 +139,8 @@ class ProjectManager(object):
             self._close_current_project(userid)
 
             # Load project from the database
-            logpath = path.join(builddir, "log.txt")
-            ep = self.db.load_project(
-                builddir, logpath, url_validation=url_validation)
+            ep = self.db.load_project(builddir,
+                                      url_validation=url_validation)
 
             # Add project to our dictionaries
             self.userid2project[userid] = ep
@@ -518,28 +517,11 @@ class ProjectManager(object):
             builddir = self._get_current_project(userid).builddir
             return self.db.has_changes(builddir)
 
-    def current_project_is_busy(self, userid, part):
+    def current_project_is_busy(self, userid):
         with self.lock:
             ep = self._get_current_project(userid)
-            count = 0
-
-            # function is called with part=None for elbe 1.0 clients
-            if part is None:
-                return self.db.is_busy(ep.builddir), ""
-
-            logline = None
-            with open(os.path.join(ep.builddir, 'log.txt'), 'r', 0) as lf:
-                for logline in lf:
-                    logline = logline.decode('utf-8','replace')
-                    if count == part:
-                        logline = unicode(part + 1) + u'###' + logline
-                        return self.db.is_busy(ep.builddir), logline
-                    count = count + 1
-            # don't crash if logfile doesn't exist
-            if not logline:
-                logline = u'None'
-            logline = unicode(part) + u'###' + logline
-            return self.db.is_busy(ep.builddir), logline
+            msg = read_loggingQ(ep.builddir)
+            return self.db.is_busy(ep.builddir), msg
 
     def _get_current_project(self, userid, allow_busy=True):
         # Must be called with self.lock held

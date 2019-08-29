@@ -9,6 +9,7 @@
 
 import os
 import shutil
+import logging
 
 from debian.deb822 import Deb822
 
@@ -16,7 +17,7 @@ from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
-from elbepack.shellhelper import CommandError
+from elbepack.shellhelper import CommandError, do
 
 
 class RepoAttributes(object):
@@ -56,7 +57,6 @@ class RepoBase(object):
     def __init__(
             self,
             path,
-            log,
             init_attr,
             repo_attr,
             origin,
@@ -68,7 +68,6 @@ class RepoBase(object):
         self.vol_path = path
         self.volume_count = 0
 
-        self.log = log
         self.init_attr = init_attr
         self.repo_attr = repo_attr
 
@@ -164,28 +163,19 @@ class RepoBase(object):
             shutil.copyfile(keyring, self.fs.fname("/elbe-keyring.gpg"))
 
         if need_update:
-            self.log.do(
-                'reprepro --export=force --basedir "' +
-                self.fs.path +
-                '" update',
-                env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
+            cmd = 'reprepro --export=force --basedir "%s" update' % self.fs.path
+            do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
         else:
             for att in self.attrs:
-                self.log.do(
-                    'reprepro --basedir "' +
-                    self.fs.path +
-                    '" export ' +
-                    att.codename,
-                    env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
+                cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
+                                                             att.codename)
+                do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
 
     def finalize(self):
         for att in self.attrs:
-            self.log.do(
-                'reprepro --basedir "' +
-                self.fs.path +
-                '" export ' +
-                att.codename,
-                env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
+                                                         att.codename)
+            do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, component):
         if self.maxsize:
@@ -193,15 +183,9 @@ class RepoBase(object):
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        self.log.do(
-            'reprepro --keepunreferencedfiles --export=never --basedir "' +
-            self.fs.path +
-            '" -C ' +
-            component +
-            ' includedeb ' +
-            codename +
-            ' ' +
-            path)
+        cmd = ('reprepro --keepunreferencedfiles --export=never '
+               '--basedir "%s" -C %s includedeb %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def includedeb(self, path, component="main", pkgname=None, force=False):
         # pkgname needs only to be specified if force is enabled
@@ -223,26 +207,24 @@ class RepoBase(object):
         self._includedeb(path, self.init_attr.codename, component)
 
     def _include(self, path, codename, component):
-        self.log.do('reprepro --ignore=wrongdistribution '
-                    '--ignore=surprisingbinary --keepunreferencedfiles '
-                    '--export=never --basedir "' + self.fs.path + '" -C ' +
-                    component + ' -P normal -S misc include ' + codename +
-                    ' ' + path)
+        cmd = ('reprepro --ignore=wrongdistribution '
+               '--ignore=surprisingbinary --keepunreferencedfiles '
+               '--export=never --basedir "%s" -C %s -P normal '
+               '-S misc include %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def _removedeb(self, pkgname, codename):
-        self.log.do(
-            "reprepro --basedir %s remove %s %s" %
-            (self.fs.path, codename, pkgname),
-            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        cmd = 'reprepro --basedir %s remove %s %s'
+        do(cmd % (self.fs.path, codename, pkgname),
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removedeb(self, pkgname, component="main"):
         self._removedeb(pkgname, self.repo_attr.codename)
 
     def _removesrc(self, srcname, codename):
-        self.log.do(
-            "reprepro --basedir %s removesrc %s %s" %
-            (self.fs.path, codename, srcname),
-            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        cmd = 'reprepro --basedir %s removesrc %s %s'
+        do(cmd % (self.fs.path, codename, srcname),
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removesrc(self, path, component="main"):
         for p in Deb822.iter_paragraphs(file(path)):
@@ -269,15 +251,9 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        self.log.do(
-            'reprepro --keepunreferencedfiles --export=never --basedir "' +
-            self.fs.path +
-            '" -C ' +
-            component +
-            ' -P normal -S misc includedsc ' +
-            codename +
-            ' ' +
-            path)
+        cmd = ('reprepro --keepunreferencedfiles --export=never '
+               '--basedir "%s" -C %s -P normal -S misc includedsc %s %s')
+        do(cmd % (self.fs.path, component, codename, path))
 
     def includedsc(self, path, component="main", force=False):
         try:
@@ -309,23 +285,22 @@ class RepoBase(object):
         files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
-            self.log.do("genisoimage %s -o %s -J -joliet-long -R %s" %
-                        (options, fname, new_path))
+            do("genisoimage %s -o %s -J -joliet-long -R %s" %
+               (options, fname, new_path))
             files.append(fname)
         else:
             for i in range(self.volume_count + 1):
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
-                self.log.do(
-                    "genisoimage %s -o %s -J -joliet-long -R %s" %
-                    (options, newname, volfs.path))
+                do("genisoimage %s -o %s -J -joliet-long -R %s" %
+                   (options, newname, volfs.path))
                 files.append(newname)
 
         return files
 
 
 class UpdateRepo(RepoBase):
-    def __init__(self, xml, path, log):
+    def __init__(self, xml, path):
         self.xml = xml
 
         arch = xml.text("project/arch", key="arch")
@@ -335,7 +310,6 @@ class UpdateRepo(RepoBase):
 
         RepoBase.__init__(self,
                           path,
-                          log,
                           None,
                           repo_attrs,
                           "Update",
@@ -343,7 +317,7 @@ class UpdateRepo(RepoBase):
 
 
 class CdromInitRepo(RepoBase):
-    def __init__(self, init_codename, path, log, maxsize,
+    def __init__(self, init_codename, path, maxsize,
                  mirror='http://ftp.de.debian.org/debian'):
 
         # pylint: disable=too-many-arguments
@@ -354,7 +328,6 @@ class CdromInitRepo(RepoBase):
 
         RepoBase.__init__(self,
                           path,
-                          log,
                           None,
                           init_attrs,
                           "Elbe",
@@ -369,7 +342,6 @@ class CdromBinRepo(RepoBase):
             codename,
             init_codename,
             path,
-            log,
             maxsize,
             mirror='http://ftp.debian.org/debian'):
 
@@ -385,7 +357,6 @@ class CdromBinRepo(RepoBase):
 
         RepoBase.__init__(self,
                           path,
-                          log,
                           init_attrs,
                           repo_attrs,
                           "Elbe",
@@ -394,7 +365,7 @@ class CdromBinRepo(RepoBase):
 
 
 class CdromSrcRepo(RepoBase):
-    def __init__(self, codename, init_codename, path, log, maxsize,
+    def __init__(self, codename, init_codename, path, maxsize,
                  mirror='http://ftp.debian.org/debian'):
 
         # pylint: disable=too-many-arguments
@@ -414,7 +385,6 @@ class CdromSrcRepo(RepoBase):
 
         RepoBase.__init__(self,
                           path,
-                          log,
                           init_attrs,
                           repo_attrs,
                           "Elbe",
@@ -423,11 +393,10 @@ class CdromSrcRepo(RepoBase):
 
 
 class ToolchainRepo(RepoBase):
-    def __init__(self, arch, codename, path, log):
+    def __init__(self, arch, codename, path):
         repo_attrs = RepoAttributes(codename, arch, "main")
         RepoBase.__init__(self,
                           path,
-                          log,
                           None,
                           repo_attrs,
                           "toolchain",
@@ -435,11 +404,10 @@ class ToolchainRepo(RepoBase):
 
 
 class ProjectRepo(RepoBase):
-    def __init__(self, arch, codename, path, log):
+    def __init__(self, arch, codename, path):
         repo_attrs = RepoAttributes(codename, arch + ' source', "main")
         RepoBase.__init__(self,
                           path,
-                          log,
                           None,
                           repo_attrs,
                           "Local",

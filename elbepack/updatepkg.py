@@ -4,9 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import print_function
-
 import os
+import logging
 
 from shutil import rmtree, copyfile, copytree
 
@@ -14,7 +13,7 @@ from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
 from elbepack.ziparchives import create_zip_archive
 from elbepack.repomanager import UpdateRepo
-from elbepack.shellhelper import system
+from elbepack.shellhelper import system, do
 
 
 class MissingData(Exception):
@@ -75,7 +74,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
             xmlindex[name] = p
 
             if name not in instindex:
-                print("package removed: %s" % name)
+                logging.info("Package removed: %s", name)
                 continue
 
             ipkg = instindex[name]
@@ -84,24 +83,23 @@ def gen_update_pkg(project, xml_filename, upd_filename,
             pfname = ipkg.installed_deb
 
             if comp == 0:
-                print("package ok: %s-%s" % (name, ipkg.installed_version))
+                logging.info("Package ok: %s-%s", name, ipkg.installed_version)
                 if debug:
                     fnamelist.append(pfname)
                 continue
 
             if comp > 0:
-                print("package upgrade: %s" % pfname)
+                logging.info("Package upgrade: %s", pfname)
                 fnamelist.append(pfname)
             else:
-                print(
-                    "package downgrade: %s-%s" %
-                    (name, ipkg.installed_version))
+                logging.info("Package downgrade: %s-%s",
+                             name, ipkg.installed_version)
 
         for p in instpkgs:
             if p.name in xmlindex:
                 continue
 
-            print("package %s newly installed" % p.name)
+            logging.info("Package %s newly installed", p.name)
             pfname = p.installed_deb
             fnamelist.append(pfname)
 
@@ -115,7 +113,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if xml_filename:
         repodir = os.path.join(update, "repo")
 
-        repo = UpdateRepo(xml, repodir, project.log)
+        repo = UpdateRepo(xml, repodir)
 
         for fname in fnamelist:
             path = os.path.join(
@@ -151,9 +149,8 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     create_zip_archive(upd_filename, update, ".")
 
     if project.postbuild_file:
-        project.log.h2("postbuild script")
-        project.log.do(project.postbuild_file + ' "%s %s %s"' % (
-            upd_filename,
-            project.xml.text("project/version"),
-            project.xml.text("project/name")),
-            allow_fail=True)
+        logging.info("Postbuild script")
+        cmd = ' "%s %s %s"' % (upd_filename,
+                               project.xml.text("project/version"),
+                               project.xml.text("project/name"))
+        do(project.postbuild_file + cmd, allow_fail=True)

@@ -12,16 +12,19 @@ import shutil
 import subprocess
 import io
 import stat
+import logging
 
-
-from elbepack.asciidoclog import CommandError
 from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import system
+from elbepack.shellhelper import (system,
+                                  CommandError,
+                                  do,
+                                  chroot,
+                                  get_command_out)
 
 
 def copy_filelist(src, filelist, dst):
@@ -43,7 +46,7 @@ def copy_filelist(src, filelist, dst):
             shutil.copystat(src.fname(f), dst.fname(f))
 
 
-def extract_target(src, xml, dst, log, cache):
+def extract_target(src, xml, dst, cache):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -104,20 +107,18 @@ def extract_target(src, xml, dst, log, cache):
             for item in pkglist:
                 f.write("%s  install\n" % item)
 
-        host_arch = log.get_command_out("dpkg --print-architecture").strip()
+        host_arch = get_command_out("dpkg --print-architecture").strip()
         if xml.is_cross(host_arch):
             ui = "/usr/share/elbe/qemu-elbe/" + str(xml.defs["userinterpr"])
             if not os.path.exists(ui):
                 ui = "/usr/bin/" + str(xml.defs["userinterpr"])
-            log.do('cp %s %s' % (ui, dst.fname("usr/bin")))
+            do('cp %s %s' % (ui, dst.fname("usr/bin")))
 
-        log.chroot(dst.path, "/usr/bin/dpkg --clear-selections")
-        log.chroot(
-            dst.path,
-            "/usr/bin/dpkg --set-selections < %s " %
-            dst.fname(psel))
-        log.chroot(dst.path, "/usr/bin/dpkg --purge -a")
-
+        cmds = ["--clear-selections",
+                "--set-selections < %s" % dst.fname(psel),
+                "--purge -a"]
+        for cmd in cmds:
+            chroot(dst.path, "/usr/bin/dpkg %s" % cmd)
 
 class ElbeFilesystem(Filesystem):
     def __init__(self, path, clean=False):
@@ -138,15 +139,15 @@ class ElbeFilesystem(Filesystem):
         xml.xml.write(elbe_base)
         self.chmod("etc/elbe_base.xml", stat.S_IREAD)
 
-    def write_licenses(self, f, log, xml_fname=None):
+    def write_licenses(self, f, xml_fname=None):
         licence_xml = copyright_xml()
         for d in self.listdir("usr/share/doc/", skiplinks=True):
             try:
                 with io.open(os.path.join(d, "copyright"), "rb") as lic:
                     lic_text = lic.read()
             except IOError as e:
-                log.printo("Error while processing license file %s: '%s'" %
-                           (os.path.join(d, "copyright"), e.strerror))
+                logging.exception("Error while processing license file %s",
+                                  os.path.join(d, "copyright"))
                 lic_text = "Error while processing license file %s: '%s'" % (
                     os.path.join(d, "copyright"), e.strerror)
 
@@ -330,9 +331,8 @@ class ChRootFilesystem(ElbeFilesystem):
 
 
 class TargetFs(ChRootFilesystem):
-    def __init__(self, path, log, xml, clean=True):
+    def __init__(self, path, xml, clean=True):
         ChRootFilesystem.__init__(self, path, xml.defs["userinterpr"], clean)
-        self.log = log
         self.xml = xml
         self.images = []
         self.image_packers = {}
@@ -355,13 +355,11 @@ class TargetFs(ChRootFilesystem):
     def part_target(self, targetdir, grub_version, grub_fw_type=None):
 
         # create target images and copy the rfs into them
-        self.images = do_hdimg(
-            self.log,
-            self.xml,
-            targetdir,
-            self,
-            grub_version,
-            grub_fw_type)
+        self.images = do_hdimg(self.xml,
+                               targetdir,
+                               self,
+                               grub_version,
+                               grub_fw_type)
 
         for i in self.images:
             self.image_packers[i] = default_packer
@@ -379,7 +377,7 @@ class TargetFs(ChRootFilesystem):
                     fname=targz_name,
                     sdir=self.fname('')
                 )
-                self.log.do(cmd % args)
+                do(cmd % args)
                 # only append filename if creating tarball was successful
                 self.images.append(targz_name)
             except CommandError:
@@ -391,10 +389,8 @@ class TargetFs(ChRootFilesystem):
             cpio_name = self.xml.text("target/package/cpio/name")
             os.chdir(self.fname(''))
             try:
-                self.log.do(
-                    "find . -print | cpio -ov -H newc >%s" %
-                    os.path.join(
-                        targetdir, cpio_name))
+                do("find . -print | cpio -ov -H newc >%s" %
+                   os.path.join(targetdir, cpio_name))
                 # only append filename if creating cpio was successful
                 self.images.append(cpio_name)
             except CommandError:
@@ -406,9 +402,8 @@ class TargetFs(ChRootFilesystem):
             sfs_name = self.xml.text("target/package/squashfs/name")
             os.chdir(self.fname(''))
             try:
-                self.log.do(
-                    "mksquashfs %s %s/%s -noappend -no-progress" %
-                    (self.fname(''), targetdir, sfs_name))
+                do("mksquashfs %s %s/%s -noappend -no-progress" %
+                   (self.fname(''), targetdir, sfs_name))
                 # only append filename if creating mksquashfs was successful
                 self.images.append(sfs_name)
             except CommandError as e:
@@ -418,7 +413,7 @@ class TargetFs(ChRootFilesystem):
     def pack_images(self, builddir):
         for img, packer in self.image_packers.items():
             self.images.remove(img)
-            packed = packer.pack_file(self.log, builddir, img)
+            packed = packer.pack_file(builddir, img)
             if packed:
                 self.images.append(packed)
 
