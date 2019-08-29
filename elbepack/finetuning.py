@@ -321,7 +321,7 @@ class AddFileAction(FinetuningAction):
             raise FinetuningException("Invalid encoding %s" % encoding)
         return msg
 
-    def execute(self, log, _buildenv, target):
+    def execute(self, _buildenv, target):
 
         att = self.node.et.attrib
         dst = att["dst"]
@@ -354,13 +354,13 @@ class AddFileAction(FinetuningAction):
             target.write_file(dst, None, content)
 
         if owner is not None:
-            log.chroot(target.path, 'chown "%s" "%s"' % (owner, dst))
+            chroot(target.path, 'chown "%s" "%s"' % (owner, dst))
 
         if group is not None:
-            log.chroot(target.path, 'chgrp "%s" "%s"' % (group, dst))
+            chroot(target.path, 'chgrp "%s" "%s"' % (group, dst))
 
         if mode is not None:
-            log.chroot(target.path, 'chmod "%s" "%s"' % (mode, dst))
+            chroot(target.path, 'chmod "%s" "%s"' % (mode, dst))
 
 
 @FinetuningAction.register('raw_cmd')
