@@ -47,7 +47,8 @@ class FinetuningAction(object):
 
     def __new__(cls, node):
         if node.tag not in cls.actiondict:
-            raise FinetuningException("Invalid finetuning action %s" % node.tag)
+            raise FinetuningException("Invalid finetuning action %s" %
+                                      node.tag)
         action = cls.actiondict[node.tag]
         return object.__new__(action)
 
@@ -117,6 +118,7 @@ class MknodAction(FinetuningAction):
                                self.node.et.attrib['opts'])
         do(cmd)
 
+
 @FinetuningAction.register('buildenv_mkdir')
 class BuildenvMkdirAction(FinetuningAction):
 
@@ -178,6 +180,7 @@ class T2BCpAction(FinetuningAction):
         for f in src:
             do(cmd % f)
 
+
 @FinetuningAction.register('t2p_mv')
 class T2PMvAction(FinetuningAction):
 
@@ -237,6 +240,7 @@ class BuildenvMvAction(FinetuningAction):
         for f in src:
             do(cmd % f)
 
+
 @FinetuningAction.register('adduser')
 class AddUserAction(FinetuningAction):
 
@@ -268,8 +272,8 @@ class AddUserAction(FinetuningAction):
             else:
                 options += '-U '
 
-            cmd =  '/usr/sbin/useradd %s "%s"' % (options,
-                                                  self.node.et.text)
+            cmd = '/usr/sbin/useradd %s "%s"' % (options,
+                                                 self.node.et.text)
             chroot(target.path, cmd)
 
             if 'passwd' in att:
@@ -307,7 +311,8 @@ class AddFileAction(FinetuningAction):
     @staticmethod
     def decode(text, encoding):
         if encoding == "plain":
-            msg = "\n".join([line.lstrip(" \t") for line in text.splitlines()[1:-1]])
+            msg = "\n".join([line.lstrip(" \t")
+                             for line in text.splitlines()[1:-1]])
         elif encoding == "raw":
             msg = "\n".join(text.splitlines()[1:-1])
         elif encoding == "base64":
@@ -333,7 +338,7 @@ class AddFileAction(FinetuningAction):
         if "group" in att:
             group = att["group"]
         if "mode" in att:
-            mode  = att["mode"]
+            mode = att["mode"]
 
         try:
             target.mkdir_p(os.path.dirname(dst))
@@ -553,7 +558,8 @@ class ImgConvertAction(FinetuningAction):
         fmt = self.node.et.attrib['fmt']
 
         if src not in target.images:
-            logging.error("Artifact '%s' does not exist.\nValid Artifcact are: %s",
+            logging.error("Artifact '%s' does not exist.\n"
+                          "Valid Artifcact are: %s",
                           src, ", ".join([str(i) for i in target.images]))
             raise FinetuningException("Artifact '%s' does not exist" % src)
 
@@ -691,6 +697,7 @@ class TestSuites(FinetuningAction):
 
         TestSuite.to_file(output, tss)
 
+
 def do_finetuning(xml, buildenv, target):
 
     if not xml.has('target/finetuning'):
@@ -709,6 +716,7 @@ def do_finetuning(xml, buildenv, target):
             logging.exception("Finetuning Error\n"
                               "Trying to continue anyways")
 
+
 def do_prj_finetuning(xml, buildenv, target, builddir):
 
     if not xml.has('target/project-finetuning'):
@@ -722,7 +730,8 @@ def do_prj_finetuning(xml, buildenv, target, builddir):
             logging.exception("Unimplemented project-finetuning action '%s'",
                               i.et.tag)
         except CommandError:
-            logging.exception("ProjectFinetuning Error, trying to continue anyways")
+            logging.exception("ProjectFinetuning Error, "
+                              "trying to continue anyways")
         except FinetuningException:
             logging.exception("Finetuning Error\n"
                               "Trying to continue anyways")
