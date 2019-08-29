@@ -274,10 +274,10 @@ class BuildEnv (object):
     def add_key(self, key):
         cmd = 'echo "%s" > %s' % (key, self.rfs.fname("tmp/key.pub"))
         clean = 'rm -f %s' % self.rfs.fname("tmp/key.pub")
-        self.log.do(cmd)
+        do(cmd)
         with self.rfs:
-            self.log.chroot(self.rfs.path, 'apt-key add /tmp/key.pub')
-        self.log.do(clean)
+            chroot(self.rfs.path, 'apt-key add /tmp/key.pub')
+        do(clean)
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
