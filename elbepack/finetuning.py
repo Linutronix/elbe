@@ -685,8 +685,8 @@ class TestSuites(FinetuningAction):
     def execute_prj(self, buildenv, target, builddir):
 
         tss = []
-        output = os.path.join(builddir, elbe_junit)
-        target.images.append(elbe_junit)
+        output = os.path.join(builddir, self.elbe_junit)
+        target.images.append(self.elbe_junit)
 
         for test_suite in self.node:
             ts = TestSuite(test_suite, target)
