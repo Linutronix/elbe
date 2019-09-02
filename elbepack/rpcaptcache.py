@@ -12,7 +12,6 @@ import logging
 import os
 import sys
 import time
-import warnings
 
 from multiprocessing.util import Finalize
 from multiprocessing.managers import BaseManager
@@ -217,16 +216,12 @@ class RPCAPTCache(InChRootObject):
         return [APTPackage(p, cache=self.cache) for p in deps]
 
     def get_installed_pkgs(self, section='all'):
-        # avoid DeprecationWarning: MD5Hash is deprecated, use Hashes instead
-        # triggerd by python-apt
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=DeprecationWarning)
-            if section == 'all':
-                pl = [APTPackage(p) for p in self.cache if p.is_installed]
-            else:
-                pl = [APTPackage(p) for p in self.cache if (
-                    p.section == section and p.is_installed)]
-            return pl
+        if section == 'all':
+            pl = [APTPackage(p) for p in self.cache if p.is_installed]
+        else:
+            pl = [APTPackage(p) for p in self.cache if (
+                p.section == section and p.is_installed)]
+        return pl
 
     def get_fileindex(self):
         index = {}
@@ -287,15 +282,9 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.installed
         else:
             pkgver = p.versions[version]
-        # avoid DeprecationWarning:
-        # "MD5Hash is deprecated, use Hashes instead"
-        # triggerd by python-apt
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore",
-                                    category=DeprecationWarning)
-            rel_filename = pkgver.fetch_binary(path,
-                                               ElbeAcquireProgress())
-            return self.rfs.fname(rel_filename)
+        rel_filename = pkgver.fetch_binary(path,
+                                           ElbeAcquireProgress())
+        return self.rfs.fname(rel_filename)
 
     def download_source(self, pkgname, path, version=None):
         p = self.cache[pkgname]
@@ -304,16 +293,10 @@ class RPCAPTCache(InChRootObject):
         else:
             pkgver = p.versions[version]
 
-        # avoid DeprecationWarning:
-        # "MD5Hash is deprecated, use Hashes instead"
-        # triggerd by python-apt
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore",
-                                    category=DeprecationWarning)
-            rel_filename = pkgver.fetch_source(path,
-                                               ElbeAcquireProgress(),
-                                               unpack=False)
-            return self.rfs.fname(rel_filename)
+        rel_filename = pkgver.fetch_source(path,
+                                           ElbeAcquireProgress(),
+                                           unpack=False)
+        return self.rfs.fname(rel_filename)
 
 def get_rpcaptcache(rfs, arch,
                     notifier=None, norecommend=False, noauth=True):

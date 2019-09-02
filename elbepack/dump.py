@@ -5,7 +5,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import warnings
 import logging
 
 from datetime import datetime
@@ -22,11 +21,9 @@ report = logging.getLogger("report")
 validation = logging.getLogger("validation")
 
 def get_initvm_pkglist():
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        cache = Cache()
-        cache.open()
-        pkglist = [APTPackage(p) for p in cache if p.is_installed]
+    cache = Cache()
+    cache.open()
+    pkglist = [APTPackage(p) for p in cache if p.is_installed]
 
     return pkglist
 
