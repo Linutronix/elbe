@@ -23,6 +23,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.efilesystem import TargetFs
 from elbepack.efilesystem import extract_target
+from elbepack.filesystem import size_to_int
 
 from elbepack.dump import elbe_report
 from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs
@@ -454,6 +455,9 @@ class ElbeProject (object):
                                                     self.xml,
                                                     self.builddir)
             if build_sources:
+                if not cdrom_size and self.xml.has("src-cdrom/size"):
+                    cdrom_size = size_to_int(self.xml.text("src-cdrom/size"))
+
                 validation.info("Source CD %s", sysrootstr)
                 try:
                     self.repo_images += mk_source_cdrom(env.rfs,

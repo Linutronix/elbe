@@ -2526,10 +2526,19 @@
       </documentation>
     </annotation>
     <all>
-      <element name="src-opts" type="rfs:iso-opts" minOccurs="0" maxOccurs="1">
-	<annotation>
+      <element name="size" type="rfs:memory" minOccurs="0" maxOccurs="1">
+        <annotation>
           <documentation>
-	    Give options for the source cdrom ISO image.
+            The size limit for each source cdrom ISO image.
+            The files are distributed on several cdroms as needed.
+            Omitting this element means no size limit.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="src-opts" type="rfs:iso-opts" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Options for the source cdrom ISO images.
           </documentation>
         </annotation>
       </element>

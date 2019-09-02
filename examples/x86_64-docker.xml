@@ -37,6 +37,7 @@
 		</pkg-list>
 	</target>
 	<src-cdrom>
+		<size>50M</size>
 		<src-opts>
 			<publisher>TUX</publisher>
 		</src-opts>
