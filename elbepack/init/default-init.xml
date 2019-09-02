@@ -51,16 +51,6 @@
 		<swap-size>10GiB</swap-size>
 		<img>qcow2</img>
 		<portforwarding>
-			<forward>
-				<proto>tcp</proto>
-				<buildenv>22</buildenv>
-				<host>5022</host>
-			</forward>
-			<forward>
-				<proto>tcp</proto>
-				<buildenv>7588</buildenv>
-				<host>7587</host>
-			</forward>
 		</portforwarding>
 	</initvm>
 </ns0:RootFileSystem>

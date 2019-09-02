@@ -744,7 +744,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="forward" type="rfs:forward" minOccurs="1" maxOccurs="unbounded">
+      <element name="forward" type="rfs:forward" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
             describes a single port forward

@@ -13,6 +13,7 @@ class Config(dict):
         dict.__init__(self)
         self['soaphost'] = "localhost"
         self['soapport'] = "7587"
+        self['sshport'] = "5022"
         self['elbeuser'] = "root"
         self['elbepass'] = "foo"
         self['pbuilder_jobs'] = "auto"
@@ -20,6 +21,9 @@ class Config(dict):
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
+
+        if 'ELBE_SSHPORT' in os.environ:
+            self['sshport'] = os.environ['ELBE_SSHPORT']
 
         if 'ELBE_SOAPHOST' in os.environ:
             self['soaphost'] = os.environ['ELBE_SOAPHOST']
