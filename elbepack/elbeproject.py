@@ -452,8 +452,7 @@ class ElbeProject (object):
                                                     self.codename,
                                                     init_codename,
                                                     self.xml,
-                                                    self.builddir,
-                                                    cdrom_size=cdrom_size)
+                                                    self.builddir)
             if build_sources:
                 validation.info("Source CD %s", sysrootstr)
                 try:

@@ -317,7 +317,7 @@ class UpdateRepo(RepoBase):
 
 
 class CdromInitRepo(RepoBase):
-    def __init__(self, init_codename, path, maxsize,
+    def __init__(self, init_codename, path,
                  mirror='http://ftp.de.debian.org/debian'):
 
         # pylint: disable=too-many-arguments
@@ -331,8 +331,7 @@ class CdromInitRepo(RepoBase):
                           None,
                           init_attrs,
                           "Elbe",
-                          "Elbe InitVM Cdrom Repo",
-                          maxsize)
+                          "Elbe InitVM Cdrom Repo")
 
 
 class CdromBinRepo(RepoBase):
@@ -342,7 +341,6 @@ class CdromBinRepo(RepoBase):
             codename,
             init_codename,
             path,
-            maxsize,
             mirror='http://ftp.debian.org/debian'):
 
         # pylint: disable=too-many-arguments
@@ -360,8 +358,7 @@ class CdromBinRepo(RepoBase):
                           init_attrs,
                           repo_attrs,
                           "Elbe",
-                          "Elbe Binary Cdrom Repo",
-                          maxsize)
+                          "Elbe Binary Cdrom Repo")
 
 
 class CdromSrcRepo(RepoBase):

@@ -96,8 +96,7 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
 
     return repo.buildiso(os.path.join(target, "src-cdrom.iso"), options=options)
 
-def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target,
-                    cdrom_size=CDROM_SIZE):
+def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -130,10 +129,10 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target,
 
         do('mkdir -p "%s"' % repo_path)
 
-    repo = CdromInitRepo(init_codename, repo_path, cdrom_size, mirror)
+    repo = CdromInitRepo(init_codename, repo_path, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
-                               target_repo_path, cdrom_size, mirror)
+                               target_repo_path, mirror)
 
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)

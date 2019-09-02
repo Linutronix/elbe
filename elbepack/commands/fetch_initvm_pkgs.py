@@ -91,7 +91,7 @@ def run_command(argv):
 
         # Binary Repo
         #
-        repo = CdromInitRepo(init_codename, opt.binrepo, 0, mirror)
+        repo = CdromInitRepo(init_codename, opt.binrepo, mirror)
 
         hostfs.mkdir_p(opt.archive)
 

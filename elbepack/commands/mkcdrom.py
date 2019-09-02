@@ -101,8 +101,7 @@ def run_command(argv):
                                                    codename,
                                                    init_codename,
                                                    xml,
-                                                   builddir,
-                                                   opt.cdrom_size)
+                                                   builddir)
 
         logging.info("Image Build finished.")
         logging.info("Files generated:\n%s",
