@@ -2540,7 +2540,7 @@
   <complexType name="iso-opts">
     <annotation>
       <documentation>
-        ISO image options passed to genisoimage(1) or mkisofs(8).
+        ISO image options passed to genisoimage(1).
       </documentation>
     </annotation>
     <all>
