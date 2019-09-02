@@ -65,6 +65,7 @@ def get_dsc_size(fname):
             files = [f.strip().split(' ') for f in files]
             for f in files:
                 sz += int(f[1])
+            break
 
     return sz
 
