@@ -61,7 +61,7 @@ def run_command(argv):
         action="store",
         dest="cdrom_size",
         default=CDROM_SIZE,
-        help="ISO CD size in MB")
+        help="Source ISO CD size in bytes")
 
     oparser.add_option("--skip-validation", action="store_true",
                        dest="skip_validation", default=False,

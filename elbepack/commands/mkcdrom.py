@@ -53,7 +53,7 @@ def run_command(argv):
         action="store",
         dest="cdrom_size",
         default=CDROM_SIZE,
-        help="ISO CD size in MB")
+        help="Source ISO CD size in bytes")
 
     (opt, args) = oparser.parse_args(argv)
 
