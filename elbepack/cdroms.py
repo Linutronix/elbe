@@ -90,7 +90,7 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
     repo.finalize()
 
     if xml is not None:
-        options = get_iso_options(log, xml)
+        options = get_iso_options(xml)
     else:
         options = ""
 

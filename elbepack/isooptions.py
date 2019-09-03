@@ -3,6 +3,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
+
 # https://wiki.osdev.org/ISO_9660
 iso_options = {
     "sysid":     ("-sysid",      32, "Specifies the system ID",              "strA"),
@@ -17,9 +19,11 @@ iso_options = {
 }
 
 encoding = {
-    "strA":"""ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!"%&'()*+,-./:;<=>? """,
-    "strD":"""ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"""
+    "strA": """ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!"%&'()*+,-./:;<=>? """,
+    "strD": """ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"""
 }
+
+
 def iso_option_valid(opt_name, text):
     if opt_name not in iso_options:
         return False
@@ -31,7 +35,8 @@ def iso_option_valid(opt_name, text):
             return c
     return True
 
-def get_iso_options(log, xml):
+
+def get_iso_options(xml):
     options = []
     src_opts = xml.node("src-cdrom/src-opts")
     if src_opts is None:
@@ -40,7 +45,7 @@ def get_iso_options(log, xml):
         if node.tag not in iso_options:
             continue
         option = iso_options[node.tag]
-        log.printo("Adding option %s\n%s" % (node.tag, option[2]))
+        logging.info("Adding option %s\n%s", node.tag, option[2])
         text = node.et.text[:option[1]]
         options.append('%s "%s"' % (option[0], text.replace('"', '\\"')))
     return " ".join(options)
