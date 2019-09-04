@@ -706,10 +706,12 @@ def do_finetuning(xml, buildenv, target):
     for i in xml.node('target/finetuning'):
         try:
             action = FinetuningAction(i)
-            action.execute(buildenv, target)
         except KeyError:
             logging.exception("Unimplemented finetuning action '%s'",
                               i.et.tag)
+            return
+        try:
+            action.execute(buildenv, target)
         except CommandError:
             logging.exception("Finetuning Error, trying to continue anyways")
         except FinetuningException:
