@@ -70,6 +70,9 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <video>
       <model type='cirrus' vram='9216' heads='1' />
     </video>
+    <rng model='virtio'>
+      <backend model='random' />
+    </rng>
     <memballoon model='none' />
     <disk type='file' device='disk'>
     <driver name='qemu' type='${imagetype}' />
