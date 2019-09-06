@@ -136,7 +136,7 @@ d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools \
                           btrfs-tools \
                           openssh-client \
-                          acpi-support \
+                          dbus \
                           debathena-transform-lighttpd \
                           gnupg2 \
 % for p in elbe_initvm_packagelist:
