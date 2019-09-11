@@ -146,4 +146,4 @@ class fstabentry(object):
 
     def tuning(self, loopdev):
         if self.tune:
-            do('tune2fs "%s" %s' % (self.tune, loopdev))
+            do('tune2fs %s %s' % (self.tune, loopdev))
