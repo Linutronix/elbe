@@ -17,6 +17,7 @@ from lxml import etree
 from lxml.etree import XMLParser, parse
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
+from elbepack.config import cfg
 from elbepack.directories import elbe_exe
 from elbepack.shellhelper import command_out_stderr, CommandError
 from elbepack.isooptions import iso_option_valid
@@ -67,6 +68,20 @@ def preprocess_iso_option(xml):
         if strict:
             raise XMLPreprocessError(violation)
         print("[WARN] %s" % violation)
+
+def preprocess_initvm_ports(xml):
+    "Filters out the default port forwardings to prevent qemu conflict"
+
+    for forward in xml.iterfind('initvm/portforwarding/forward'):
+        prot = forward.find('proto')
+        benv = forward.find('buildenv')
+        host = forward.find('host')
+        if prot is None or benv is None or host is None:
+            continue
+        if prot.text == 'tcp' and (
+                host.text == cfg['sshport'] and benv.text == '22' or
+                host.text == cfg['soapport'] and benv.text == '7588'):
+            forward.getparent().remove(forward)
 
 
 def xmlpreprocess(fname, output, variants=None):
@@ -140,6 +155,8 @@ def xmlpreprocess(fname, output, variants=None):
         preprocess_pgp_key(xml)
 
         preprocess_iso_option(xml)
+
+        preprocess_initvm_ports(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
