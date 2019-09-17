@@ -192,16 +192,12 @@ def elbe_report(xml, buildenv, cache, targetfs):
     index = cache.get_fileindex()
     mt_index = targetfs.mtime_snap()
 
-    report.info("Archive extract")
-
     if xml.has("archive") and not xml.text("archive") is None:
         with xml.archive_tmpfile() as fp:
             do('tar xvfj "%s" -h -C "%s"' % (fp.name, targetfs.path))
         mt_index_postarch = targetfs.mtime_snap()
     else:
         mt_index_postarch = mt_index
-
-    report.info("Finetuning log")
 
     if xml.has("target/finetuning"):
         do_finetuning(xml, buildenv, targetfs)
