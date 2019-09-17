@@ -105,7 +105,7 @@ def add_project_handlers(projects):
 
         validation.addFilter(ThreadFilter(['validation']))
         report.addFilter(ThreadFilter(['report']))
-        log.addFilter(ThreadFilter(['root', 'log']))
+        log.addFilter(ThreadFilter(['root', 'log', 'report', 'validation']))
         echo.addFilter(ThreadFilter(['root', 'report', 'validation']))
         soap.addFilter(ThreadFilter(['soap']))
 
