@@ -81,7 +81,11 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
 
     validation.info("ELBE Package validation")
+    validation.info("=======================")
+    validation.info("")
     validation.info("Package List validation")
+    validation.info("-----------------------")
+    validation.info("")
 
     errors = 0
 
@@ -114,6 +118,8 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
         return
 
     validation.info("Full Packagelist validation")
+    validation.info("---------------------------")
+    validation.info("")
     errors = 0
 
     pindex = {}
@@ -166,7 +172,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     rfs = buildenv.rfs
 
-    report.info("ELBE Report for Project %s\n"
+    report.info("ELBE Report for Project %s\n\n"
                 "Report timestamp: %s\n"
                 "elbe: %s",
                 xml.text("project/name"),
@@ -174,16 +180,27 @@ def elbe_report(xml, buildenv, cache, targetfs):
                 str(elbe_version))
 
     slist = rfs.read_file('etc/apt/sources.list')
-    report.info("Apt Sources dump\n%s", slist)
+    report.info("")
+    report.info("Apt Sources dump")
+    report.info("----------------")
+    report.info("")
+    report.info("%s", slist)
+    report.info("")
 
     try:
         prefs = rfs.read_file("etc/apt/preferences")
     except IOError:
         prefs = ""
 
-    report.info("Apt Preferences dump\n%s", prefs)
-
+    report.info("")
+    report.info("Apt Preferences dump")
+    report.info("--------------------")
+    report.info("")
+    report.info("%s", prefs)
+    report.info("")
     report.info("Installed Packages List")
+    report.info("-----------------------")
+    report.info("")
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
@@ -207,7 +224,10 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
 
 
-    report.info("Fileslist")
+    report.info("")
+    report.info("File List")
+    report.info("---------")
+    report.info("")
 
     tgt_pkg_list = set()
 
@@ -235,7 +255,11 @@ def elbe_report(xml, buildenv, cache, targetfs):
         report.info("|+%s+|%s", fpath, pkg)
 
 
+    report.info("")
     report.info("Deleted Files")
+    report.info("-------------")
+    report.info("")
+
     for fpath in list(mt_index.keys()):
         if fpath not in mt_index_post_fine:
             if fpath in index:
@@ -244,7 +268,10 @@ def elbe_report(xml, buildenv, cache, targetfs):
                 pkg = "postinst generated"
             report.info("|+%s+|%s", fpath, pkg)
 
+    report.info("")
     report.info("Target Package List")
+    report.info("-------------------")
+    report.info("")
 
     instpkgs = cache.get_installed_pkgs()
     pkgindex = {}
@@ -274,8 +301,10 @@ def elbe_report(xml, buildenv, cache, targetfs):
     if not xml.has("archive") or xml.text("archive") is None:
         return
 
-
+    validation.info("")
     validation.info("Archive validation")
+    validation.info("------------------")
+    validation.info("")
 
     errors = 0
 
