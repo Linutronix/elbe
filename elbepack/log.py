@@ -16,6 +16,8 @@ root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 local = threading.local()
 context_fmt = logging.Formatter("%(context)s%(message)s")
+msgonly_fmt = logging.Formatter("%(message)s")
+
 logging_methods = []
 
 
@@ -74,7 +76,6 @@ def logging_method(name):
         def wrapper(*args, **kwargs):
             for handlers in func(*args, **kwargs):
                 for h in handlers:
-                    h.setFormatter(context_fmt)
                     local.handlers.append(h)
                     root.addHandler(h)
         logging_methods.append((name, wrapper))
@@ -88,6 +89,7 @@ def add_stream_handlers(streams):
     for stream in streams:
         out = logging.StreamHandler(stream)
         out.addFilter(ThreadFilter(['root' 'log', 'report', 'validation', 'echo', 'soap']))
+        out.setFormatter(context_fmt)
         yield [out]
 
 @logging_method("projects")
@@ -107,6 +109,12 @@ def add_project_handlers(projects):
         echo.addFilter(ThreadFilter(['root', 'report', 'validation']))
         soap.addFilter(ThreadFilter(['soap']))
 
+        validation.setFormatter(msgonly_fmt)
+        report.setFormatter(msgonly_fmt)
+        log.setFormatter(context_fmt)
+        echo.setFormatter(context_fmt)
+        soap.setFormatter(context_fmt)
+
         yield [validation, report, log, echo, soap]
 
 @logging_method("files")
@@ -119,6 +127,8 @@ def add_file_handlers(files):
         else:
             out = logging.FileHandler(f)
         out.addFilter(ThreadFilter(['root' 'log', 'report', 'validation', 'echo', 'soap']))
+        out.setFormatter(context_fmt)
+
         yield [out]
 
 
@@ -131,6 +141,8 @@ def add_projectQ_handlers(projects):
         soap = QHandler(proj)
         echo.addFilter(ThreadFilter(['root', 'report', 'validation']))
         soap.addFilter(ThreadFilter(['soap']))
+        echo.setFormatter(context_fmt)
+        soap.setFormatter(context_fmt)
         yield [echo, soap]
 
 
