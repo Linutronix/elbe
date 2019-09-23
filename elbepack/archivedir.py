@@ -16,6 +16,7 @@ except ImportError:
 from base64 import standard_b64encode
 from bz2 import compress as bz2compress
 from subprocess import CalledProcessError
+from tempfile import NamedTemporaryFile
 
 from elbepack.treeutils import etree
 from elbepack.shellhelper import system
@@ -66,6 +67,14 @@ def chg_archive(xml, path, keep):
         os.remove(archive)
 
     return xml
+
+
+def archive_tmpfile(arch_elem):
+    fp = NamedTemporaryFile()
+    fp.write(standard_b64decode(arch_elem))
+    fp.file.flush()
+    return fp
+
 
 def prepare_path(url):
     url = urlparse(url)

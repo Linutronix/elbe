@@ -12,9 +12,6 @@ import os
 import re
 import urllib2
 
-from base64 import standard_b64decode
-from tempfile import NamedTemporaryFile
-
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
@@ -363,12 +360,6 @@ class ElbeXML(object):
 
     def append_initvm_pkg(self, aptpkg):
         self.append_pkg(aptpkg, 'initvmpkgs')
-
-    def archive_tmpfile(self):
-        fp = NamedTemporaryFile()
-        fp.write(standard_b64decode(self.text("archive")))
-        fp.file.flush()
-        return fp
 
     def get_debootstrappkgs_from(self, other):
         tree = self.xml.ensure_child('debootstrappkgs')

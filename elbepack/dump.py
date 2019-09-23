@@ -11,6 +11,7 @@ from datetime import datetime
 
 from apt import Cache
 
+from elbepack.archivedir import archive_tmpfile
 from elbepack.finetuning import do_finetuning
 from elbepack.filesystem import hostfs
 from elbepack.version import elbe_version
@@ -210,7 +211,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
     mt_index = targetfs.mtime_snap()
 
     if xml.has("archive") and not xml.text("archive") is None:
-        with xml.archive_tmpfile() as fp:
+        with archive_tmpfile(xml.text("archive")) as fp:
             do('tar xvfj "%s" -h -C "%s"' % (fp.name, targetfs.path))
         mt_index_postarch = targetfs.mtime_snap()
     else:
