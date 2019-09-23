@@ -13,13 +13,15 @@ try:
 except ImportError:
     from urlparse import urljoin,urlparse
 
-from base64 import standard_b64encode
+from base64 import standard_b64encode, standard_b64decode
 from bz2 import compress as bz2compress
 from subprocess import CalledProcessError
 from tempfile import NamedTemporaryFile
 
 from elbepack.treeutils import etree
 from elbepack.shellhelper import system
+from elbepack.filesystem import TmpdirFilesystem
+
 
 class ArchivedirError(Exception):
     pass
@@ -99,32 +101,51 @@ def get_and_append_method(url):
         'file': get_and_append_local,
     }.get(urlparse(url).scheme, get_and_append_unknown)
 
-def _combinearchivedir(xml):
+def _combinearchivedir(xml, xpath, use_volume):
     elbexml = etree(None)
     elbexml.et = xml
 
-    archive = '.combinedarchive.tar'
-    for archivedir in xml.iterfind("archivedir"):
+    tmp = TmpdirFilesystem()
+    for archivedir in elbexml.all(xpath):
+
         try:
-            archiveurl = urljoin(archivedir.base, archivedir.text)
-            keep = elbexml.check_boolean(archivedir, "keep-attributes")
+            archiveurl = urljoin(archivedir.et.base, archivedir.et.text)
+            keep = archivedir.bool_attr("keep-attributes")
+            parent = archivedir.get_parent()
+
+            if use_volume:
+                volume_attr = archivedir.et.get('volume', default='all')
+                fname_suffix = volume_attr
+
+                arch = parent.node("archive[@volume='%s']" % volume_attr)
+
+                if arch is None:
+                    arch = parent.append("archive")
+                    arch.et.set("volume", volume_attr)
+
+            else:
+                arch = parent.ensure_child("archive")
+                fname_suffix = ''
+
+
             get_and_append = get_and_append_method(archiveurl)
-            get_and_append(archiveurl, archive, keep)
-            archivedir.getparent().remove(archivedir)
+
+            archname = tmp.fname('archive%s.tar.bz2' % fname_suffix)
+            get_and_append(archiveurl, archname, keep)
+            arch.set_text(enbase(archname, True))
+
+            parent.remove_child(archivedir)
         except (CalledProcessError, OSError):
             msg = "Failure while processing \"" + archivedir.text + "\":\n"
             msg += str(sys.exc_info()[1])
             raise ArchivedirError(msg)
 
-    arch = elbexml.ensure_child("archive")
-    arch.set_text(enbase(archive, True))
-
-    os.remove(archive)
-
-    return xml
 
 def combinearchivedir(xml):
-    if xml.find("archivedir") is None:
+    if xml.find("//archivedir") is None:
         return xml
 
-    return _combinearchivedir(xml)
+    _combinearchivedir(xml, "archivedir", False)
+    _combinearchivedir(xml, "src-cdrom/archivedir", True)
+
+    return xml
