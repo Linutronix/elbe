@@ -169,12 +169,14 @@ def run_command(argv):
             (out_path, e.strerror))
         sys.exit(30)
 
+    initvm_http_proxy = http_proxy.replace('http://localhost:',
+                                           'http://10.0.2.2:')
     d = {"elbe_version": elbe_version,
          "defs": defs,
          "opt": opt,
          "xml": xml,
          "prj": xml.node("/initvm"),
-         "http_proxy": http_proxy,
+         "http_proxy": initvm_http_proxy,
          "pkgs": xml.node("/initvm/pkg-list") or [],
          "preseed": get_initvm_preseed(xml),
          "machine_type": machine_type,
