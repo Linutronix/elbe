@@ -113,6 +113,9 @@ class elem(ebase):
         elif attr in ['false', '0']:
             return False
 
+    def get_parent(self):
+        return elem(self.et.getparent())
+
 
 class etree(ebase):
     def __init__(self, fname):
