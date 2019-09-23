@@ -12,6 +12,8 @@ import logging
 from shutil import copyfile
 
 from apt.package import FetchError
+
+from elbepack.archivedir import archive_tmpfile
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.repomanager import CdromSrcRepo
 from elbepack.repomanager import CdromBinRepo
@@ -91,6 +93,22 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
 
     if xml is not None:
         options = get_iso_options(xml)
+
+        for arch_vol in xml.node('src-cdrom').all('archive'):
+            volume_attr = arch_vol.et.get('volume')
+
+            if volume_attr == 'all':
+                volume_list = repo.volume_indexes
+            else:
+                volume_list = [int(v) for v in volume_attr.split(",")]
+            for volume_number in volume_list:
+                with archive_tmpfile(arch_vol.text(".")) as fp:
+                    if volume_number in repo.volume_indexes:
+                        do('tar xvfj "%s" -h -C "%s"' % (fp.name,
+                                repo.get_volume_fs(volume_number).path))
+                    else:
+                        logging.warning("The src-cdrom archive's volume value "
+                                "is not contained in the actual volumes")
     else:
         options = ""
 

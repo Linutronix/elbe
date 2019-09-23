@@ -98,7 +98,13 @@ class RepoBase(object):
 
     def get_volume_fs(self, volume):
         if self.maxsize:
-            volname = os.path.join(self.vol_path, "vol%02d" % volume)
+            if volume >= 0:
+                volume_no = volume
+            else:
+                # negative numbers represent the volumes counted from last
+                # (-1: last, -2: second last, ...)
+                volume_no = self.volume_count + 1 + volume
+            volname = os.path.join(self.vol_path, "vol%02d" % volume_no)
             return Filesystem(volname)
 
         return Filesystem(self.vol_path)
@@ -289,7 +295,7 @@ class RepoBase(object):
                (options, fname, new_path))
             files.append(fname)
         else:
-            for i in range(self.volume_count + 1):
+            for i in self.volume_indexes:
                 volfs = self.get_volume_fs(i)
                 newname = fname + ("%02d" % i)
                 do("genisoimage %s -o %s -J -joliet-long -R %s" %
@@ -298,6 +304,9 @@ class RepoBase(object):
 
         return files
 
+    @property
+    def volume_indexes(self):
+        return range(self.volume_count + 1)
 
 class UpdateRepo(RepoBase):
     def __init__(self, xml, path):
