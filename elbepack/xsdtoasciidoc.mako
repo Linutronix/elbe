@@ -17,7 +17,7 @@ MINI = "{http://www.w3.org/2001/XMLSchema}minInclusive"
 
 def docindent(node, indent=0):
   try:
-    s = node.text(e.text(".//%s" % DOC))
+    s = node.text(".//%s" % DOC)
   except:
     return "FIXME - I have no documentation"
   else:
