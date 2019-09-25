@@ -21,6 +21,11 @@ msgonly_fmt = logging.Formatter("%(message)s")
 logging_methods = []
 
 
+class LoggingQueue(collections.deque):
+    def __init__(self):
+        super(LoggingQueue, self).__init__(maxlen=1024)
+
+
 class QHandler(logging.Handler):
 
     queues = {}
@@ -28,7 +33,7 @@ class QHandler(logging.Handler):
     def __init__(self, target, *args, **kwargs):
         super(QHandler, self).__init__(*args, **kwargs)
         if target not in QHandler.queues:
-            QHandler.queues[target] = collections.deque(maxlen=1024)
+            QHandler.queues[target] = LoggingQueue()
         self.Q = QHandler.queues[target]
 
     def emit(self, record):
