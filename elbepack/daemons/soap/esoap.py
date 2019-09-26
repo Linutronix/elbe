@@ -161,7 +161,8 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def get_file(self, uid, builddir, filename, part):
-        # pylint: disable=unused-argument
+        self.app.pm.open_project(uid, builddir)
+
         size = 1024 * 1024 * 5
         pos = size * part
         file_name = builddir + "/" + filename
@@ -340,7 +341,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def reset_project(self, uid, builddir):
-        # pylint: disable=unused-argument
+        self.app.pm.open_project(uid, builddir)
         self.app.pm.db.reset_project(builddir, True)
 
     @rpc(String)
@@ -395,7 +396,7 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def list_packages(self, uid, builddir):
-        # pylint: disable=unused-argument
+        self.app.pm.open_project(uid, builddir)
         s = ''
         for _, _, filenames in os.walk(
                 os.path.join(builddir, "repo/pool/main")):
