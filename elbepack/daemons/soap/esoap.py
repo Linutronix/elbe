@@ -114,11 +114,11 @@ class ESoap (ServiceBase):
     def list_projects(self):
         return self.app.pm.db.list_projects()
 
-    @rpc(String, String, _returns=Array(SoapFile))
+    @rpc(String, _returns=Array(SoapFile))
     @authenticated_uid
     @soap_faults
-    def get_files(self, uid, builddir, _returns=Array(SoapFile)):
-        # pylint: disable=unused-argument
+    def get_files(self, uid, builddir):
+        self.app.pm.open_project(uid, builddir)
         files = self.app.pm.db.get_project_files(builddir)
         return [SoapFile(f) for f in files]
 
