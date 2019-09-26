@@ -24,6 +24,11 @@ logging_methods = []
 class LoggingQueue(collections.deque):
     def __init__(self):
         super(LoggingQueue, self).__init__(maxlen=1024)
+        self.max_level = logging.NOTSET
+
+    def note_level(self, level):
+        if level > self.max_level:
+            self.max_level = level
 
 
 class QHandler(logging.Handler):
@@ -38,6 +43,7 @@ class QHandler(logging.Handler):
 
     def emit(self, record):
         self.Q.append(self.format(record))
+        self.Q.note_level(record.levelno)
 
     @classmethod
     def pop(cls, target):
@@ -46,9 +52,20 @@ class QHandler(logging.Handler):
         except (IndexError, KeyError):
             return ''
 
+    @classmethod
+    def max_level(cls, target):
+        try:
+            return cls.queues[target].max_level
+        except (IndexError, KeyError):
+            return logging.NOTSET
+
 
 def read_loggingQ(proj):
     return QHandler.pop(proj)
+
+
+def read_maxlevel(proj):
+    return QHandler.max_level(proj)
 
 
 class ThreadFilter(logging.Filter):
