@@ -49,6 +49,7 @@ class ESoap (ServiceBase):
     @rpc(_returns=String)
     @soap_faults
     def get_version(self):
+        # pylint: disable=no-self-use
         return elbe_version
 
     @rpc(String, String, _returns=Boolean)
@@ -69,6 +70,7 @@ class ESoap (ServiceBase):
     @soap_faults
     @authenticated_admin
     def install_elbe_version(self, version, pkglist):
+        # pylint: disable=no-self-use
         if is_devel:
             return SoapCmdReply(10,
                                 'Initvm is in devel mode: installing another\n'
