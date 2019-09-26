@@ -379,10 +379,10 @@ class ESoap (ServiceBase):
         return msg
 
     @rpc()
-    @authenticated_uid
+    @authenticated_admin
     @soap_faults
-    def shutdown_initvm(self, uid):
-        # pylint: disable=unused-argument
+    def shutdown_initvm(self):
+        # pylint: disable=no-self-use
         system("systemctl --no-block poweroff")
 
     @rpc(String)
