@@ -289,9 +289,23 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     try:
         system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
     except CommandError:
-        print("elbe control wait_busy Failed", file=sys.stderr)
-        print("Giving up", file=sys.stderr)
-        sys.exit(20)
+        print('elbe control wait_busy Failed', file=sys.stderr)
+        print('', file=sys.stderr)
+        print('The project will not be deleted from the initvm.',
+              file=sys.stderr)
+        print('The files, that have been built, can be downloaded using:',
+              file=sys.stderr)
+        print('%s control get_files --output "%s" "%s"' % (elbe_exe,
+                                                           opt.outdir,
+                                                           prjdir),
+              file=sys.stderr)
+        print("", file=sys.stderr)
+        print('The project can then be removed using:',
+              file=sys.stderr)
+        print('%s control del_project "%s"' % (elbe_exe, prjdir),
+              file=sys.stderr)
+        print("", file=sys.stderr)
+        sys.exit(10)
 
     print("")
     print("Build finished !")
@@ -312,9 +326,24 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         try:
             system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
         except CommandError:
-            print("elbe control wait_busy Failed", file=sys.stderr)
-            print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            print('elbe control wait_busy Failed, while waiting for the SDK',
+                  file=sys.stderr)
+            print('', file=sys.stderr)
+            print('The project will not be deleted from the initvm.',
+                  file=sys.stderr)
+            print('The files, that have been built, can be downloaded using:',
+                  file=sys.stderr)
+            print('%s control get_files --output "%s" "%s"' % (elbe_exe,
+                                                               opt.outdir,
+                                                               prjdir),
+                  file=sys.stderr)
+            print("", file=sys.stderr)
+            print('The project can then be removed using:',
+                  file=sys.stderr)
+            print('%s control del_project "%s"' % (elbe_exe, prjdir),
+                  file=sys.stderr)
+            print("", file=sys.stderr)
+            sys.exit(10)
 
         print("")
         print("SDK Build finished !")
