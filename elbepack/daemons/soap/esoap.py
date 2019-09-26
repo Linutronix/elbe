@@ -114,6 +114,13 @@ class ESoap (ServiceBase):
     def list_projects(self):
         return self.app.pm.db.list_projects()
 
+    @rpc(String, _returns=SoapProject)
+    @soap_faults
+    @authenticated_uid
+    def get_project(self, uid, builddir):
+        self.app.pm.open_project(uid, builddir)
+        return self.app.pm.db.get_project_data(builddir)
+
     @rpc(String, _returns=Array(SoapFile))
     @authenticated_uid
     @soap_faults
