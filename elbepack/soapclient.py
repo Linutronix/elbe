@@ -607,6 +607,15 @@ class WaitProjectBusyAction(ClientAction):
 
             print(msg)
 
+        # exited the while loop -> the project is not busy anymore,
+        # check, whether everything is ok.
+
+        prj = client.service.get_project(builddir)
+        if prj.status != "build_done":
+            print("Project build was not successful, current status: "
+                  "%s" % prj.status, file=sys.stderr)
+            sys.exit(10)
+
 ClientAction.register(WaitProjectBusyAction)
 
 
