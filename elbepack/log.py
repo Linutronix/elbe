@@ -93,6 +93,7 @@ def with_list(func):
         return func(_list)
     return wrapper
 
+
 def logging_method(name):
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -104,15 +105,22 @@ def logging_method(name):
         return wrapper
     return decorator
 
+
 @logging_method("streams")
 @with_list
 def add_stream_handlers(streams):
 
     for stream in streams:
         out = logging.StreamHandler(stream)
-        out.addFilter(ThreadFilter(['root' 'log', 'report', 'validation', 'echo', 'soap']))
+        out.addFilter(ThreadFilter(['root',
+                                    'log',
+                                    'report',
+                                    'validation',
+                                    'echo',
+                                    'soap']))
         out.setFormatter(context_fmt)
         yield [out]
+
 
 @logging_method("projects")
 @with_list
@@ -139,6 +147,7 @@ def add_project_handlers(projects):
 
         yield [validation, report, log, echo, soap]
 
+
 @logging_method("files")
 @with_list
 def add_file_handlers(files):
@@ -148,7 +157,12 @@ def add_file_handlers(files):
             out = logging.StreamHandler(os.sys.stdout)
         else:
             out = logging.FileHandler(f)
-        out.addFilter(ThreadFilter(['root' 'log', 'report', 'validation', 'echo', 'soap']))
+        out.addFilter(ThreadFilter(['root',
+                                    'log',
+                                    'report',
+                                    'validation',
+                                    'echo',
+                                    'soap']))
         out.setFormatter(context_fmt)
 
         yield [out]
@@ -187,6 +201,7 @@ def open_logging(targets):
         if key in targets:
             call(targets[key])
 
+
 def close_logging():
     if hasattr(local, "handlers"):
         for h in local.handlers:
@@ -202,7 +217,7 @@ class AsyncLogging(object):
         self.atmost = atmost
         self.fd = None
         calling_thread = threading.current_thread().ident
-        extra = {"_thread":calling_thread}
+        extra = {"_thread": calling_thread}
         extra["context"] = ""
         self.stream = logging.LoggerAdapter(stream, extra)
         self.block = logging.LoggerAdapter(block, extra)
@@ -221,7 +236,7 @@ class AsyncLogging(object):
         rest = ""
         while alive:
             events = self.epoll.poll()
-            for fd, event in events:
+            for _, event in events:
                 if event & select.EPOLLIN:
                     rest = self.read(rest)
                 if event & select.EPOLLHUP:
