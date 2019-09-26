@@ -19,7 +19,7 @@ from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive
 from elbepack.rfs import DebootstrapException
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.shellhelper import do
-from elbepack.log import elbe_logging
+from elbepack.log import elbe_logging, read_maxlevel
 
 
 class AsyncWorkerJob(object):
@@ -58,8 +58,11 @@ class BuildSysrootJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Build sysroot failed")
         else:
-            logging.info("Build finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Build finished with Error")
+            else:
+                logging.info("Build finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -84,8 +87,11 @@ class BuildSDKJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Build SDK Failed")
         else:
-            logging.info("Build finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Build finished with Error")
+            else:
+                logging.info("Build finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -112,8 +118,11 @@ class BuildCDROMsJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Build CDROMs failed")
         else:
-            logging.info("Build finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Build finished with Error")
+            else:
+                logging.info("Build finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -137,8 +146,11 @@ class BuildChrootTarJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Build chrroot tarball failed")
         else:
-            logging.info("Build finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Build finished with Error")
+            else:
+                logging.info("Build finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -182,8 +194,11 @@ class BuildJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Build failed")
         else:
-            logging.info("Build finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Build finished with Error")
+            else:
+                logging.info("Build finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -209,8 +224,11 @@ class PdebuildJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Pdebuild failed")
         else:
-            logging.info("Pdeb finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Pdeb finished with Error")
+            else:
+                logging.info("Pdeb finished successfully")
+                success = self.build_done
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
@@ -261,8 +279,11 @@ class UpdatePbuilderJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             logging.exception("update Pbuilder failed")
         else:
-            logging.info("Updating Pbuilder finished successfully")
-            success = self.build_done
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Updating Pbuilder finished with Error")
+            else:
+                logging.info("Updating Pbuilder finished successfully")
+                success = self.build_done
         finally:
             db.reset_busy(self.project.builddir, success)
 
@@ -286,8 +307,11 @@ class APTUpdateJob(AsyncWorkerJob):
         except Exception:
             logging.exception("APT cache update failed")
         else:
-            logging.info("APT cache update finished successfully")
-            success = self.has_changes
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("APT cache update finished with Error")
+            else:
+                logging.info("APT cache update finished successfully")
+                success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
 
@@ -311,8 +335,11 @@ class APTUpdUpgrJob(AsyncWorkerJob):
         except Exception:
             logging.exception("APT update & upgrade failed")
         else:
-            logging.info("APT upgrade finished")
-            success = self.has_changes
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("APT upgrade finished with Error")
+            else:
+                logging.info("APT upgrade finished")
+                success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
 
@@ -347,8 +374,11 @@ class APTCommitJob(AsyncWorkerJob):
         except Exception:
             logging.exception("Applying package changes failed")
         else:
-            logging.info("Package changes applied successfully")
-            succes = self.has_changes
+            if read_maxlevel(self.project.builddir) >= logging.ERROR:
+                logging.info("Package changes applied with Error")
+            else:
+                logging.info("Package changes applied successfully")
+                succes = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
 
