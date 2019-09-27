@@ -81,6 +81,8 @@ class Kernel(Panel):
                  'debian/linux-image-' + pkg_name + '.install')
         copyfile(os.path.join(self.tmpl_dir, 'linux-headers.install'),
                  'debian/linux-headers-' + pkg_name + '.install')
+        copyfile(os.path.join(self.tmpl_dir, 'linux-libc-dev.install'),
+                 'debian/linux-libc-dev-' + pkg_name + '.install')
 
         self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
                 self.deb['p_arch'])
