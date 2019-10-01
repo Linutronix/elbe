@@ -231,12 +231,26 @@ def run_command(argv):
         keys = []
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
             keys.append(key.et.text)
+
         import_keyring = os.path.join(out_path, "elbe-keyring")
-        do('gpg --no-options --no-default-keyring --keyring %s --import' % import_keyring,
-                    stdin="".join(keys), allow_fail=True)
+
+        do('gpg --no-options \
+                --no-default-keyring \
+                --keyring %s --import' % import_keyring,
+           stdin="".join(keys),
+           allow_fail=True,
+           env_add={'GNUPGHOME': out_path})
+
         export_keyring = import_keyring + ".gpg"
-        do('gpg --no-options --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
-                                                                                    export_keyring))
+
+        # No need to set GNUPGHOME because both input and output
+        # keyring files are specified.
+
+        do('gpg --no-options \
+                --no-default-keyring \
+                --keyring %s \
+                --export \
+                --output %s' % (import_keyring, export_keyring))
 
     if opt.devel:
         out_real = os.path.realpath(out_path)
