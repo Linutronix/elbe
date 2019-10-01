@@ -2554,38 +2554,39 @@
     <attribute ref="xml:base"/>
   </complexType>
 
-     <complexType name="src-cdrom-archive">
-       <annotation>
-         <documentation>
-           Holds a base64 encoded tar.bz2 file that is added to the src-cdrom.
-         </documentation>
-       </annotation>
-       <simpleContent>
-         <extension base="base64Binary">
-           <attribute name="volume">
-             <annotation>
-               <documentation>
-                 Use this to control where the archive is stored when using
-                 split src-cdroms.
-                 It consists of a comma-separated list of volume numbers.
-                 A volume number can be 0 to n-1 for n equals the number
-                 of volumes if the src-cdrom is split.
-                 A volume number can also be negative to identify a volume
-                 beginning from the last index.
-                 (-1: last, -2: second last, ...)
-                 If you do not specify this attribute, the archive is added
-                 to each volume.
-               </documentation>
-             </annotation>
-             <simpleType>
-                 <restriction base="string">
-                   <pattern value="(-?\d+,)*-?\d+|all"/>
-                 </restriction>
-             </simpleType>
-           </attribute>
-         </extension>
-       </simpleContent>
-     </complexType>
+  <complexType name="src-cdrom-archive">
+   <annotation>
+     <documentation>
+       Holds a base64 encoded tar.bz2 file that is added to the src-cdrom.
+     </documentation>
+   </annotation>
+   <simpleContent>
+     <extension base="base64Binary">
+       <attribute name="volume" type="rfs:volume-type">
+	 <annotation>
+	   <documentation>
+	     Use this to control where the archive is stored when using
+	     split src-cdroms.
+	     It consists of a comma-separated list of volume numbers.
+	     A volume number can be 0 to n-1 for n equals the number
+	     of volumes if the src-cdrom is split.
+	     A volume number can also be negative to identify a volume
+	     beginning from the last index.
+	     (-1: last, -2: second last, ...)
+	     If you do not specify this attribute, the archive is added
+	     to each volume.
+	   </documentation>
+	 </annotation>
+       </attribute>
+     </extension>
+   </simpleContent>
+  </complexType>
+
+  <simpleType name="volume-type">
+     <restriction base="string">
+       <pattern value="(-?\d+,)*-?\d+|all"/>
+     </restriction>
+  </simpleType>
 
   <complexType name="iso-opts">
     <annotation>
