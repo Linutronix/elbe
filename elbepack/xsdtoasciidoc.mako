@@ -72,7 +72,7 @@ def element_doc(e):
     _type = e.et.attrib["type"]
     return "%s %s %s::\n%s" % (name,
                                genlink(_type),
-                               cardinality(n),
+                               cardinality(e),
                                doc(e))
 def attr_doc(a):
     if "name" in a.et.attrib:
