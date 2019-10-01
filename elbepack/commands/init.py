@@ -21,7 +21,7 @@ from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
-from elbepack.shellhelper import command_out, system
+from elbepack.shellhelper import command_out, system, do
 
 
 def run_command(argv):
@@ -232,10 +232,10 @@ def run_command(argv):
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
             keys.append(key.et.text)
         import_keyring = os.path.join(out_path, "elbe-keyring")
-        command_out('gpg --no-options --no-default-keyring --keyring %s --import' % import_keyring,
-                    stdin="".join(keys))
+        do('gpg --no-options --no-default-keyring --keyring %s --import' % import_keyring,
+                    stdin="".join(keys), allow_fail=True)
         export_keyring = import_keyring + ".gpg"
-        command_out('gpg --no-options --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
+        do('gpg --no-options --no-default-keyring --keyring %s --export --output %s' % (import_keyring,
                                                                                     export_keyring))
 
     if opt.devel:
