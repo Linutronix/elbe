@@ -103,8 +103,8 @@
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
-			<artifact>usr/lib/u-boot/am335x_boneblack/MLO</artifact>
-			<artifact>usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb</artifact>
+			<artifact>/usr/lib/u-boot/am335x_boneblack/MLO</artifact>
+			<artifact>/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb</artifact>
 		</finetuning>
 		<!-- generate a pbuilder environment (before image will be build) -->
 		<pbuilder>
