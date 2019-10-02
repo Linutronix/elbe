@@ -1,6 +1,1 @@
-/etc/lighttpd/lighttpd.conf.debathena sed \
--e 's/^server.bind.*//' \
--e 's/^\(server.\)port\(.*=\).*/\1port\2 8080\n\1bind\2 "127.0.0.1"\n$HTTP["url"] =~ "^\/var\/cache\/elbe\/" { url.access-deny = ( "disable" ) }/' \
--e 's/^\(server.document-root.*=\).*/\1 "\/"/' \
--e 's/^\(url.access-deny.*=\).*/\1 ( "" )/' \
--e 's/create-mime.assign.pl/create-mime.conf.pl/'
+/etc/lighttpd/lighttpd.conf.debathena sed -e 's/^server.bind.*//' -e 's/^\(server.\)port\(.*=\).*/\1port\2 8080\n\1bind\2 "127.0.0.1"\n$HTTP["url"] =~ "^\/var\/cache\/elbe\/" { url.access-deny = ( "disable" ) }/' -e 's/^\(server.document-root.*=\).*/\1 "\/"/' -e 's/^\(url.access-deny.*=\).*/\1 ( "" )/' -e 's/create-mime.assign.pl/create-mime.conf.pl/'
