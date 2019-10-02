@@ -10,12 +10,12 @@ root-filesystem from the XML file and to simple modifications.
 
 Steps necessary
 ---------------
-. install Debian 8 (Jessie) on your Host
+. install Debian 10 (Buster) on your Host
 . install ELBE on Host Linux
 . generate the `initvm` running the buildenvironment
 . build the root-filesystem inside the initvm
 
-Steps 1 and 2 need only be performed once.
+Steps 1,2 and 3 need only be performed once.
 
 NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
       that nested KVM is working.
@@ -38,7 +38,7 @@ Installing ELBE
 ---------------
 There are several possibilities to install ELBE.
 The simplest method is by installing prebuilt binary packages
-via Linutronix package repository on a Debian 8 (Jessie) system.
+via Linutronix package repository on a Debian 10 (Buster) system.
 
 But ELBE can also be installed from git.
 
@@ -54,8 +54,8 @@ http://debian.linutronix.de/elbe-common
 Create the file `/etc/apt/sources.list.d/elbe.list`
 with the following contents:
 --------------------------------------------------------
-deb http://debian.linutronix.de/elbe stretch main
-deb http://debian.linutronix.de/elbe-common stretch main
+deb http://debian.linutronix.de/elbe buster main
+deb http://debian.linutronix.de/elbe-common buster main
 --------------------------------------------------------
 
 Add a repository key to the list of trusted keys (as root):
@@ -69,34 +69,6 @@ $ apt-get update
 $ apt-get install elbe
 --------------------------------------------------------
 
-Git Version
-~~~~~~~~~~~
-If you can not use Debian Jessie, you can also checkout the current
-ELBE source-code via git from github.
-
---------------------------------------------------------
-$ git clone https://github.com/Linutronix/elbe.git
-Cloning into 'elbe'...
-remote: Counting objects: 5435, done.
-remote: Compressing objects: 100% (8/8), done.
-remote: Total 5435 (delta 1), reused 0 (delta 0), pack-reused 5427
-Receiving objects: 100% (5435/5435), 1.94 MiB | 1.92 MiB/s, done.
-Resolving deltas: 100% (3943/3943), done.
-Checking connectivity... done.
-$ cd elbe
-$ ls
-AUTHORS  ChangeLog  COPYING  debian  dockerfile  docs  elbe   elbepack
-examples INSTALL    Makefile README  setup.py    test  THANKS TODO
---------------------------------------------------------
-
-ELBE can run without being installed from the git checkout.
-Just note that file paths are different under this situation.
-
---------------------------------------------------------
-elbe -> ./elbe
-/usr/share/doc/elbe-doc/examples -> examples/
---------------------------------------------------------
-
 
 Create initvm and submit XML files
 ----------------------------------
@@ -108,50 +80,37 @@ initvm to be the same architecture as your workstation. This allows
 using hardware accelerated virtualization implemented by kvm.
 
 In order to be able to work with virtual machines as a regular user,
-that user needs to be added to some groups depending on Debian version:
+that user needs to be added to libvirt groups:
 
-For Debian/stretch, jessie-backports, and newer:
+For Debian/stretch, buster, and newer:
 
 $ adduser <youruser> libvirt
 $ adduser <youruser> libvirt-qemu
 
-For jessie and older:
-
-$ adduser <youruser> kvm
-$ adduser <youruser> libvirt
-
 -------------------------------------------------------------------------------
-$ elbe initvm create --directory=initvm
-/home/torbenh/elbe/elbe/initvm
-gpg: keyring `/tmp/tmpPfPXt4/secring.gpg' created
-gpg: keyring `/tmp/tmpPfPXt4/etc/apt/trusted.gpg.d/linutronix-elbe.gpg' created
-gpg: key 22BB8F84: public key "ELBE Devel (Linutronix ELBE developers) <elbe-devel@linutronix.de>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1  (RSA: 1)
---2015-08-17 15:26:26--  http://debian.linutronix.de/elbe/elbe-repo.pub
-Resolving debian.linutronix.de (debian.linutronix.de)... 2001:470:1f0b:db:abcd:42:0:1, 62.245.132.108
-Connecting to debian.linutronix.de (debian.linutronix.de)|2001:470:1f0b:db:abcd:42:0:1|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 1763 (1.7K)
-Saving to: ‘/tmp/tmpPfPXt4/tmpkey.gpg’
-
-/tmp/tmpPfPXt4/tmpkey.gpg             100%[========================================================================>]   1.72K  --.-KB/s   in 0s
-
-2015-08-17 15:26:26 (346 MB/s) - ‘/tmp/tmpPfPXt4/tmpkey.gpg’ saved [1763/1763]
-
+$ elbe initvm create
+Import debian-archive-buster-automatic.gpg:
+gpg: key DC30D7C23CBBABEE: 4 Beglaubigungen wegen fehlender Schlüssel nicht geprüft
+gpg: Schlüssel DC30D7C23CBBABEE: Öffentlicher Schlüssel "Debian Archive Automatic Signing Key (10/buster) <ftpmaster@debian.org>" importiert
+gpg: Anzahl insgesamt bearbeiteter Schlüssel: 1
+gpg:                              importiert: 1
 ...
 
-Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%... 100%
-Configuring apt  ... 16%... 25%... 32%... 41%... 50%... 66%... 75%... 83%... 91%... 100%
-Select and install software  ... 10%... 26%... 31%... 40%... 50%... 61%... 70%... 80%... 90%... 100%
+Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%
+           ... 100%
+Configuring apt  ... 14%... 21%... 35%... 40%... 50%... 64%... 71%... 85%... 92%... 100%
+Select and install software
+                             ... 10%... 20%... 30%... 40%... 50%... 61%... 71%... 81%... 78%... 80%... 90%
+                          ... 100%
 Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
-The system is going down NOW!.. 14%... 23%... 33%... 42%... 52%... 61%... 71%... 80%... 90%
-Sent SIGTERM to all processes
+The system is going down NOW!.. 12%... 20%... 33%... 41%... 50%... 62%... 70%... 83%... 91%
 Sent SIGKILL to all processes
 Requesting system reboot
-[  589.432092] Restarting system.
+[  656.391904] reboot: Restarting system
 mkdir -p .stamps
 touch .stamps/stamp-install-initial-image
+*****
+
 -------------------------------------------------------------------------------
 
 
@@ -164,34 +123,49 @@ Submitting an XML file triggers an image build inside the initvm.
 Once the initvm has been created and is running, you can submit XML files using
 
 -------------------------------------------------------------------------------
-$ elbe initvm submit --directory=initvm /usr/share/doc/elbe-doc/examples/rescue.xml
+$ elbe initvm submit examples/x86_64-pc-rescue-busybox-dyn-cpio.xml
 Build started, waiting till it finishes
-project still busy, waiting
-project still busy, waiting
+[INFO] Build started
+[INFO] ELBE Report for Project x86_64-rescue-image
+Report timestamp: 20191001-135512
+[CMD] reprepro --basedir "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/repo" export stretch
+[CMD] mkdir -p "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot"
+[INFO] Debootstrap log
+[CMD] dpkg --print-architecture
+[CMD] debootstrap  --include="gnupg" --arch=amd64 "stretch" "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot" "http://ftp.de.debian.org//debian"
+I: Retrieving InRelease
+I: Retrieving Release
+I: Retrieving Release.gpg
+I: Checking Release signature
+I: Valid Release signature (key id 067E3C456BAE240ACEE88F6FEF0F382A1A7B6500)
+I: Retrieving Packages
+I: Validating Packages
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+I: Checking component main on http://ftp.de.debian.org//debian...
+I: Retrieving libacl1 2.2.52-3+b1
+I: Validating libacl1 2.2.52-3+b1
 
 ...
 
-project still busy, waiting
-project still busy, waiting
-project still busy, waiting
+[INFO] Build finished successfully
 
 Build finished !
-
 
 ELBE Package validation
 =======================
 
-
 Package List validation
- ----------------------
 
 No Errors found
 
 Getting generated Files
 
-Saving generated Files to /home/torbenh/elbe/elbe/elbe-build-20150817-155038
+Saving generated Files to elbe-build-20191001-164821
 source.xml      (Current source.xml of the project)
 rescue.cpio     (Image)
+licence.txt     (License file)
+licence.xml     (xml License file)
 validation.txt  (Package list validation result)
 elbe-report.txt         (Report)
 log.txt         (Log file)
@@ -210,21 +184,31 @@ Advanced usage
 
 ELBE Archive
 ~~~~~~~~~~~~
-The ELBE XML file contains an archive which is extracted into the
+The ELBE XML file can contain an archivedir which is copied into the
 root-filesystem during the image generation phase.
 
-It is acessed with the following commands:
+It is done with the following XML node:
+[source,xml]
 ------------------------------------------------------------------------------
-$ elbe get_archive fun.xml archive.tar.bz2
+<archivedir>foo</archivedir>
 ------------------------------------------------------------------------------
 
-It is a normal tar.bz2 which can be manipulated and reinjected into the XML:
-----------------------------------
-$ mkdir arch
-$ tar xvfj archive.tar.bz2 -C arch
-$ echo hello > arch/hello
-$ elbe chg_archive fun.xml arch
-----------------------------------
+archivedir
+~~~~~~~~~~
+
+The new XML element ‘archivedir’ points to a local directory and adds
+the content into a newly created archive. ‘archivedir’ can be specified
+more then once. The content of the direcories is copied in order of
+appearance. Existing files are overwritten by the later ones.
+
+Example snippet to use ‘archivedir’:
+
+[source,xml]
+------------------------------------------------------------------------------
+<archivedir>foo</archivedir>
+<archivedir variant="production">bar</archivedir>
+------------------------------------------------------------------------------
+
 
 Adding packages to the "list of packages to install"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -295,9 +279,6 @@ The repositories and architecture specified in the xml File will be used
 to satisfy build dependencies.
 Pbuilder will only build debianised Software.
 
-NOTE: Currently only source formats `3.0 (native)` and `3.0 (git)` are supported
-      and tested. `3.0 (quilt)` does not work. 
-
 A pbuilder instance is always associated with a project inside the initvm.
 The `pbuilder create` command will write the project uuid to a file, if instructed to
 do so.
@@ -309,10 +290,30 @@ created earlier.
 Here is an example:
 
 ---------------------------------------------------------
-$ elbe pbuilder create --xmlfile fun.xml --writeproject fun.prj
-$ cd program
-$ elbe pbuilder build --project `cat ../fun.prj` --output ../out
+$ elbe pbuilder create --xmlfile examples/x86_64-pc-rescue-busybox-dyn-cpio.xml --writeproject ../pbuilder.prj
+$ git clone https://github.com/Linutronix/libgpio.git
+$ cd  libgpio/
+$ elbe pbuilder build --project `cat ~/repos/elbe/pbuilder.prj` --out ../out/
 ---------------------------------------------------------
+
+With these steps, elbe builds the libgpio project inside the initvm and stores the built packages in an internal repository. Every package, built in this manner, will also be stored in that repository.
+This repository can be used for later RFS builds.
+
+List contents of the repository with the following command:
+---------------------------------------------------------
+$ elbe prjrepo list_packages `cat ~/repos/elbe/pbuilder.prj`
+libgpio-dev_3.0.0_amd64.deb
+libgpio1_3.0.0_amd64.deb
+libgpio1-dbgsym_3.0.0_amd64.deb
+---------------------------------------------------------
+
+To use this repository for further RFS builds download the repo with:
+---------------------------------------------------------
+$ elbe prjrepo download `cat ~/repos/elbe/pbuilder.prj`
+---------------------------------------------------------
+The repository is download as elbe-projectrepo-20191002-114244.tar.gz.
+This should be unpacked in the DocumentRoot of your webserver and customized with
+your key as explained in the next chapter.
 
 Custom Repository
 -----------------
@@ -320,7 +321,7 @@ Custom Repository
 You might have your own packages which should be installed into your image. This
 can be done with a custom repository. You can use
 link:https://mirrorer.alioth.debian.org/[reprepro] to create your own
-repository.
+repository or the above mentioned pbuilder feature.
 
 Repository Key
 ~~~~~~~~~~~~~~
@@ -371,7 +372,7 @@ gpg --export --armor CF837F1AAAC35E084062AE4468E68615BB6CB47C > repo.pub
 reprepro configuration
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To create your own repository with reprepro you need only the `distributions`
+To create your own repository with reprepro or the elbe pbuilder feature you need only the `distributions`
 configuration file. For an `amd64` and `source` repository for Debian `stretch` it
 might look as follows:
 
