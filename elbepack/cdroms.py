@@ -94,7 +94,7 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
     if xml is not None:
         options = get_iso_options(xml)
 
-        for arch_vol in xml.node('src-cdrom').all('archive'):
+        for arch_vol in xml.all('src-cdrom/archive'):
             volume_attr = arch_vol.et.get('volume')
 
             if volume_attr == 'all':
