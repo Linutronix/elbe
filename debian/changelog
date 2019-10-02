@@ -1,3 +1,29 @@
+elbe (12) unstable; urgency=medium
+
+  * initvm is now using buster (debian 10)
+  * logging has been completely reimplemented, and uses
+    the python logging framework. (Fixes #109)
+  * Errors now result in build_failures, and build_failure results
+    in error return codes, and no files to download. This is especially
+    the case for finetuning errors which have been ignored before.
+    (Fixes: #208, #146, #131, #127, #144, #70)
+  * honour ELBE_SOAPPORT and ELBE_SSHPORT in "elbe initvm create"
+  * src-cdrom: add size limit in XML
+  * init: replace localhost with 10.0.2.2 in initvm proxy setting
+    (Fixes: proxy on localhost)
+  * xsdtoasciidoc: dont set all docstrings to FIXME (Fixes
+    https://elbe-rfs.org/docs/sphinx/article-elbe-schema-reference.html)
+  * debianize kernel: fix linux-libc-dev package being empty
+  * debian elbe-debianize.install: add missing mako templates
+    (Fixes: #238)
+  * cdrom: implement <archive> for source cdroms
+  * fstab: allow to pass more than one argument to tune2fs command
+  * examples armel-rescue-busybox-cpio: use <file> -> better + workaround bug
+  * examples arm64-qemu-virt: fix vmlinuz version number
+  * examples armhf-ti-beaglebone-black: fix artifact paths
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Wed, 02 Oct 2019 12:13:25 +0200
+
 elbe (11) unstable; urgency=medium
 
   * move <src-opts> into <src-cdrom> node
