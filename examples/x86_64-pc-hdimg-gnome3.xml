@@ -82,6 +82,7 @@
 			<pkg>nfs-kernel-server</pkg>
 			<pkg>task-gnome-desktop</pkg>
 			<pkg>gdm3</pkg>
+			<pkg>locales</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
