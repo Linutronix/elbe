@@ -571,27 +571,15 @@ class ElbeProject (object):
         elbe_report(self.xml, self.buildenv, self.get_rpcaptcache(),
                     self.targetfs)
 
-        # the current license code raises an exception that interrupts the hole
-        # build if a licence can't be converted to utf-8. Exception handling
-        # can be removed as soon as the licence code is more stable
-        lic_err = False
-        try:
-            f = io.open(
-                os.path.join(
-                    self.builddir,
-                    "licence.txt"),
-                "w+",
-                encoding='utf-8')
-            self.buildenv.rfs.write_licenses(f,
-                                             os.path.join(self.builddir, "licence.xml"))
-        except Exception:
-            logging.exception("Error during generating licence.txt/xml")
-            lic_err = True
-        finally:
-            f.close()
-        if lic_err:
-            os.remove(os.path.join(self.builddir, "licence.txt"))
-            os.remove(os.path.join(self.builddir, "licence.xml"))
+        # Collect Licence Files
+        lic_txt_fname = os.path.join(self.builddir, "licence.txt")
+        lic_xml_fname = os.path.join(self.builddir, "licence.xml")
+
+        with io.open(lic_txt_fname,
+                     'w+',
+                     encoding='utf-8',
+                     errors='replace') as f:
+            self.buildenv.rfs.write_licenses(f, lic_xml_fname)
 
         # Use some handwaving to determine grub version
         #
