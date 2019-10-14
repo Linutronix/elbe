@@ -51,5 +51,8 @@ def run_command(argv):
         else:
             f = io.open('licence.txt', "w+", encoding='utf-8')
 
-        project.buildenv.rfs.write_licenses(f, opt.xml)
+        pkglist = project.get_rpcaptcache().get_installed_pkgs()
+        pkgnames = [p.name for p in pkglist]
+
+        project.buildenv.rfs.write_licenses(f, pkgnames, opt.xml)
         f.close()

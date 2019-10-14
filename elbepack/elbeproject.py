@@ -575,11 +575,14 @@ class ElbeProject (object):
         lic_txt_fname = os.path.join(self.builddir, "licence.txt")
         lic_xml_fname = os.path.join(self.builddir, "licence.xml")
 
+        pkglist = self.get_rpcaptcache().get_installed_pkgs()
+        pkgnames = [p.name for p in pkglist]
+
         with io.open(lic_txt_fname,
                      'w+',
                      encoding='utf-8',
                      errors='replace') as f:
-            self.buildenv.rfs.write_licenses(f, lic_xml_fname)
+            self.buildenv.rfs.write_licenses(f, pkgnames, lic_xml_fname)
 
         # Use some handwaving to determine grub version
         #

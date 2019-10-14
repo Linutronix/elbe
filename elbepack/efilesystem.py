@@ -139,22 +139,24 @@ class ElbeFilesystem(Filesystem):
         xml.xml.write(elbe_base)
         self.chmod("etc/elbe_base.xml", stat.S_IREAD)
 
-    def write_licenses(self, f, xml_fname=None):
+    def write_licenses(self, f, pkglist, xml_fname=None):
         licence_xml = copyright_xml()
-        for d in self.listdir("usr/share/doc/", skiplinks=True):
+        for pkg in pkglist:
+            copyright_file = os.path.join('/usr/share/doc', pkg, 'copyright')
+            copyright_fname = self.fname(copyright_file)
             try:
-                with io.open(os.path.join(d, "copyright"), "rb") as lic:
+                with io.open(copyright_fname, "rb") as lic:
                     lic_text = lic.read()
             except IOError as e:
                 logging.exception("Error while processing license file %s",
-                                  os.path.join(d, "copyright"))
+                                  copyright_fname)
                 lic_text = "Error while processing license file %s: '%s'" % (
-                    os.path.join(d, "copyright"), e.strerror)
+                    copyright_file, e.strerror)
 
             lic_text = unicode(lic_text, encoding='utf-8', errors='replace')
 
             if f is not None:
-                f.write(unicode(os.path.basename(d)))
+                f.write(unicode(pkg))
                 f.write(u":\n======================================"
                         "==========================================")
                 f.write(u"\n")
@@ -162,7 +164,7 @@ class ElbeFilesystem(Filesystem):
                 f.write(u"\n\n")
 
             if xml_fname is not None:
-                licence_xml.add_copyright_file(os.path.basename(d), lic_text)
+                licence_xml.add_copyright_file(pkg, lic_text)
 
         if xml_fname is not None:
             licence_xml.write(xml_fname)
