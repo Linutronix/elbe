@@ -8,7 +8,6 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import sys
-import os
 import io
 import logging
 
@@ -36,7 +35,7 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
-    with elbe_logging({"streams":sys.stdout}):
+    with elbe_logging({"streams": sys.stdout}):
         try:
             project = ElbeProject(args[0],
                                   override_buildtype=opt.buildtype,
