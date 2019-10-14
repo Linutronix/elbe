@@ -8,7 +8,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys
 import os
 import datetime
 import io
