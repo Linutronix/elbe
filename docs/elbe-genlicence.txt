@@ -10,8 +10,9 @@ SYNOPSIS
 --------
 [verse]
 'elbe genlicence' \
-	[ --output <filename> \
-	<builddir>
+	[ --output <filename> ] \
+	[ --xml <xmlfilename> ] \
+	<project-dir>
 
 
 DESCRIPTION
@@ -28,17 +29,26 @@ OPTIONS
 --output <filename>::
 	Write the result to <filename> instead of 'licence.txt'.
 
-<builddir>::
+--xml <xmlfilename>::
+	Write an xml file with all the licenses to <xmlfilename>.
+
+--buildtype <buildtype>::
+	Override the buildtype.
+
+--skip-validation::
+	Skip xml schema validation.
+
+<project>::
 	The build directory of the project to process.
 
 
 EXAMPLES
 --------
-* Generate a licence file for the project in 'myproject' and name the result
+* Generate a licence file for the project in '/var/cache/elbe/<uuid>' and name the result
   'myproject-licences.txt'.
 +
 ---------
-# elbe genlicence --output myproject-licences.txt myproject
+# elbe genlicence --output myproject-licences.txt /var/cache/elbe/<uuid>
 ---------
 
 
