@@ -22,7 +22,6 @@
 			<msdoshd>
 				<name>powerpc.img</name>
 				<size>1900MiB</size>
-				<grub-install/>
 				<partition>
 					<size>remain</size>
 					<label>rfs</label>
@@ -51,6 +50,7 @@
 		</finetuning>
 		<pkg-list>
 			<pkg>linux-image-powerpc64le</pkg>
+			<pkg>grub-ieee1275</pkg>
 			<pkg>openssh-client</pkg>
 			<pkg>openssh-server</pkg>
 			<pkg>less</pkg>
