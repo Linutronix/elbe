@@ -20,6 +20,7 @@
 			<url-list>
 				<url>
 					<binary>http://security.debian.org stretch/updates main</binary>
+					<source>http://security.debian.org stretch/updates main</source>
 				</url>
 			</url-list>
 		</mirror>
