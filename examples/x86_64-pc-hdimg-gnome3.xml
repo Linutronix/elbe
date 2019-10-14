@@ -4,7 +4,7 @@
 		<version>1.0</version>
 		<description>
 			use this command to generate a vmware image:
-			qemu-img convert -O vmdk debian-jessie-amd64-gnome3.img debian-jessie-amd64-gnome3.vmdk
+			qemu-img convert -O vmdk debian-amd64-gnome3.img debian-amd64-gnome3.vmdk
 		</description>
 		<buildtype>amd64</buildtype>
 		<mirror>
@@ -21,7 +21,7 @@
 		<console>ttyS0,115200</console>
 		<images>
 			<msdoshd>
-				<name>debian-jessie-amd64-gnome3.img</name>
+				<name>debian-amd64-gnome3.img</name>
 				<size>8000MiB</size>
 				<grub-install/>
 				<partition>
