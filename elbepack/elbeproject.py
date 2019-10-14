@@ -81,6 +81,7 @@ def gen_sdk_scripts(triplet,
                     prj_version,
                     builddir,
                     sdkpath):
+    # pylint: disable=too-many-arguments
 
     prj_name = prj_name.replace(" ", "_")
     prj_version = prj_version.replace(" ", "_")
@@ -653,7 +654,8 @@ class ElbeProject (object):
             for orig_fname in self.orig_files:
                 ofname = os.path.join(self.builddir, orig_fname)
                 do('mv "%s" "%s"' % (ofname,
-                                     os.path.join(self.builddir, "pdebuilder")))
+                                     os.path.join(self.builddir,
+                                                  "pdebuilder")))
         finally:
             self.orig_fname = None
             self.orig_files = []
@@ -894,7 +896,9 @@ class ElbeProject (object):
                 except KeyError:
                     logging.exception("No Package %s", p)
                 except SystemError:
-                    logging.exception("Unable to correct problems in package %s", p)
+                    logging.exception("Unable to correct problems "
+                                      "in package %s",
+                                      p)
 
             # temporary disabled because of
             # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776057
