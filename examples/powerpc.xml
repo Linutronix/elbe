@@ -11,7 +11,7 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>sid</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
 		<hostname>elbe-ppc</hostname>
