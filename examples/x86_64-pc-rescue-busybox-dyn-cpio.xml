@@ -70,9 +70,10 @@
 			<mknod opts="c 5 1">/dev/console</mknod>
 			<mknod opts="c 1 3">/dev/null</mknod>
 			<!-- Add start script (may be moved to archive) -->
-			<command>echo "#!/bin/sh" | tee    /etc/init.d/rcS</command>
-			<command>echo "mount -a"  | tee -a /etc/init.d/rcS</command>
-			<command>chmod +x /etc/init.d/rcS</command>
+			<file dst="/etc/init.d/rcS" mode="755">
+				#!/bin/sh
+				mount -a
+			</file>
 			<!-- Delete documentation and unused files -->
 			<rm>/usr/share</rm>
 		</finetuning>
