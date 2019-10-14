@@ -10,17 +10,24 @@ from optparse import OptionParser
 import sys
 import os
 import io
+import logging
 
-from elbepack.efilesystem import ElbeFilesystem
+from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.elbeproject import ElbeProject
 from elbepack.log import elbe_logging
 
 
 def run_command(argv):
-    oparser = OptionParser(usage="usage: %prog genlicence [options] <rfs>")
+    oparser = OptionParser(usage="usage: %prog genlicence [options] <project>")
     oparser.add_option("--output", dest="output",
                        help="outputfilename")
     oparser.add_option("--xml", dest="xml", default=None,
                        help="xml outputfilename")
+    oparser.add_option("--buildtype", dest="buildtype",
+                       help="Override the buildtype")
+    oparser.add_option("--skip-validation", action="store_true",
+                       dest="skip_validation", default=False,
+                       help="Skip xml schema validation")
 
     (opt, args) = oparser.parse_args(argv)
 
@@ -29,15 +36,20 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
-    chroot = os.path.abspath(args[0])
-
     with elbe_logging({"streams":sys.stdout}):
-        rfs = ElbeFilesystem(chroot)
+        try:
+            project = ElbeProject(args[0],
+                                  override_buildtype=opt.buildtype,
+                                  skip_validate=opt.skip_validation,
+                                  url_validation=ValidationMode.NO_CHECK)
+        except ValidationError:
+            logging.exception("XML validation failed.  Bailing out")
+            sys.exit(20)
 
         if opt.output:
             f = io.open(opt.output, "w+", encoding='utf-8')
         else:
             f = io.open('licence.txt', "w+", encoding='utf-8')
 
-        rfs.write_licenses(f, opt.xml)
+        project.buildenv.rfs.write_licenses(f, opt.xml)
         f.close()
