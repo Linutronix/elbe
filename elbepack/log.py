@@ -59,6 +59,12 @@ class QHandler(logging.Handler):
         except (IndexError, KeyError):
             return logging.NOTSET
 
+    @classmethod
+    def reset_level(cls, target):
+        try:
+            cls.queues[target].max_level = logging.NOTSET
+        except (IndexError, KeyError):
+            pass
 
 def read_loggingQ(proj):
     return QHandler.pop(proj)
@@ -67,6 +73,8 @@ def read_loggingQ(proj):
 def read_maxlevel(proj):
     return QHandler.max_level(proj)
 
+def reset_level(proj):
+    QHandler.reset_level(proj)
 
 class ThreadFilter(logging.Filter):
 
