@@ -19,7 +19,7 @@ from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive
 from elbepack.rfs import DebootstrapException
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.shellhelper import do
-from elbepack.log import elbe_logging, read_maxlevel
+from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
 
 class AsyncWorkerJob(object):
@@ -32,6 +32,7 @@ class AsyncWorkerJob(object):
         self.project = project
 
     def enqueue(self, queue, db):
+        reset_level(self.project.builddir)
         queue.put(self)
 
     def execute(self, db):
