@@ -357,13 +357,14 @@ class TargetFs(ChRootFilesystem):
     def part_target(self, targetdir, grub_version, grub_fw_type=None):
 
         # create target images and copy the rfs into them
-        self.images = do_hdimg(self.xml,
-                               targetdir,
-                               self,
-                               grub_version,
-                               grub_fw_type)
+        hdimages = do_hdimg(self.xml,
+                            targetdir,
+                            self,
+                            grub_version,
+                            grub_fw_type)
 
-        for i in self.images:
+        for i in hdimages:
+            self.images.append(i)
             self.image_packers[i] = default_packer
 
         if self.xml.has("target/package/tar"):
