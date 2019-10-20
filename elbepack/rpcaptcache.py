@@ -21,7 +21,7 @@ from apt import Cache
 
 from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
                                   ElbeOpProgress)
-from elbepack.aptpkgutils import getalldeps, APTPackage
+from elbepack.aptpkgutils import getalldeps, APTPackage, fetch_binary
 from elbepack.log import async_logging
 
 
@@ -282,8 +282,9 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.installed
         else:
             pkgver = p.versions[version]
-        rel_filename = pkgver.fetch_binary(path,
-                                           ElbeAcquireProgress())
+        rel_filename = fetch_binary(pkgver,
+                                    path,
+                                    ElbeAcquireProgress())
         return self.rfs.fname(rel_filename)
 
     def download_source(self, pkgname, path, version=None):
