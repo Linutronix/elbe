@@ -1,3 +1,10 @@
+elbe (12.2) unstable; urgency=medium
+
+  * Fix problems in elbe fetch_initvm_pkgs, resulting in
+    in problems to build binary and source cdroms.
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Sun, 20 Oct 2019 13:06:42 +0200
+
 elbe (12.1) unstable; urgency=medium
 
   * Fix licence extraction code failing on pkg xserver-xorg.
