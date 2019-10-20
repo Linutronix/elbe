@@ -5,6 +5,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
+import logging
+
+import apt_pkg
+import apt
+from apt.package import FetchError
+
 MARKED_INSTALL = 0
 MARKED_UPGRADE = 1
 MARKED_DELETE = 2
@@ -77,6 +84,44 @@ def pkgorigin(pkg):
         origin = None
 
     return origin
+
+def _file_is_same(path, size, sha256):
+    # type: (str, int, str) -> bool
+    """Return ``True`` if the file is the same."""
+    if os.path.exists(path) and os.path.getsize(path) == size:
+        with open(path) as fobj:
+            return apt_pkg.sha256sum(fobj) == sha256
+    return False
+
+def fetch_binary(version, destdir='', progress=None):
+    # type: (str, AcquireProgress) -> str
+    """Fetch the binary version of the package.
+
+    The parameter *destdir* specifies the directory where the package will
+    be fetched to.
+
+    The parameter *progress* may refer to an apt_pkg.AcquireProgress()
+    object. If not specified or None, apt.progress.text.AcquireProgress()
+    is used.
+
+    taken from python-apt, and fixed up to use sha256.
+    """
+    base = os.path.basename(version._records.filename)
+    destfile = os.path.join(destdir, base)
+    if _file_is_same(destfile, version.size, version._records.sha256_hash):
+        logging.debug('Ignoring already existing file: %s', destfile)
+        return os.path.abspath(destfile)
+    acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
+    acqfile = apt_pkg.AcquireFile(acq, version.uri, "SHA256:" + version._records.sha256_hash,  # type: ignore # TODO: Do not use MD5 # nopep8
+                                  version.size, base, destfile=destfile)
+    acq.run()
+
+    if acqfile.status != acqfile.STAT_DONE:
+        raise FetchError("The item %r could not be fetched: %s",
+                         acqfile.destfile,
+                         acqfile.error_text)
+
+    return os.path.abspath(destfile)
 
 
 class PackageBase(object):
