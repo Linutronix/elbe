@@ -72,9 +72,9 @@ in-target update-initramfs -u
 in-target haveged
 
 % if prj.has("mirror/cdrom"):
-  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 /var/cache/elbe/source.xml
+  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 --skip-validation /var/cache/elbe/source.xml
 % else:
-  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} /var/cache/elbe/source.xml
+  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} --skip-validation /var/cache/elbe/source.xml
 % endif
 
 exit 0
