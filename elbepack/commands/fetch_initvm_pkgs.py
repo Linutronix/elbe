@@ -20,6 +20,7 @@ from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.filesystem import hostfs
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import do
+from elbepack.aptpkgutils import fetch_binary
 
 
 def run_command(argv):
@@ -104,8 +105,9 @@ def run_command(argv):
                 try:
                     p = cache[pkg.name]
                     pkgver = p.installed
-                    deb = pkgver.fetch_binary(opt.archive,
-                                              ElbeAcquireProgress(cb=None))
+                    deb = fetch_binary(pkgver,
+                                       opt.archive,
+                                       ElbeAcquireProgress(cb=None))
                     repo.includedeb(deb, 'main')
                 except ValueError:
                     logging.exception('No package "%s"', pkg_id)
