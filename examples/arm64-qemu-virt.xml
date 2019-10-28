@@ -24,7 +24,7 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>stretch</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
 		<hostname>lx64</hostname>
@@ -80,7 +80,7 @@
 		<project-finetuning>
 			<losetup img="sdcard.img">
 				<!-- globs work, but must make sure, that only a single file is matched -->
-				<copy_from_partition part="1" artifact="vmlinuz">/vmlinuz-4.9.0-*-arm64</copy_from_partition>
+				<copy_from_partition part="1" artifact="vmlinuz">/vmlinuz-4.19.0-*-arm64</copy_from_partition>
 			</losetup>
 			<img_convert fmt="qcow2" dst="sdcard.qcow2">sdcard.img</img_convert>
 			<set_packer packer="tarxz">sdcard.qcow2</set_packer>
