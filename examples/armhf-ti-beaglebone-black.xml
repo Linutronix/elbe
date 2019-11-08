@@ -4,7 +4,7 @@
 		<name>beaglebone-black</name>
 		<version>1.0</version>
 		<description>
-			debian stretch rootfs for beaglebone black
+			debian buster rootfs for beaglebone black
 		</description>
 		<!-- buildtype is used to configure qemu-user and debian arch -->
 		<buildtype>armhf</buildtype>
@@ -15,18 +15,14 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://ftp.debian.org/debian stretch-backports main non-free contrib</binary>
-					<source>http://ftp.debian.org/debian stretch-backports main non-free contrib</source>
-				</url>
-				<url>
-					<binary>http://security.debian.org/ stretch/updates main contrib non-free</binary>
-					<source>http://security.debian.org/ stretch/updates main contrib non-free</source>
+					<binary>http://security.debian.org/ buster/updates main contrib non-free</binary>
+					<source>http://security.debian.org/ buster/updates main contrib non-free</source>
 				</url>
 			</url-list>
 		</mirror>
 
 		<!-- debian testing? stable? unstable?? -->
-		<suite>stretch</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
 		<!-- content for /etc/hostname -->
@@ -141,8 +137,8 @@
 			-->
 			<pkg>systemd</pkg>
 			<!-- install a package from backports -->
-			<pkg pin="stretch-backports">btrfs-progs</pkg>
-			<pkg pin="stretch-backports">libzstd1</pkg>
+			<pkg>btrfs-progs</pkg>
+			<pkg>libzstd1</pkg>
 			<!-- install the gpiotest built by pbuilder  -->
 			<pkg>gpiotest</pkg>
 		</pkg-list>
