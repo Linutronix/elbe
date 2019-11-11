@@ -1,6 +1,6 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>amd64-grub-uefi-stretch</name>
+		<name>amd64-grub-uefi-buster</name>
 		<version>1.0</version>
 		<description>
 			verify successful UEFI boot by checking
@@ -17,12 +17,12 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://security.debian.org stretch/updates main</binary>
-					<source>http://security.debian.org stretch/updates main</source>
+					<binary>http://security.debian.org buster/updates main</binary>
+					<source>http://security.debian.org buster/updates main</source>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>stretch</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
 		<hostname>lxvm</hostname>
@@ -38,12 +38,12 @@
 			<!-- use GPT for UEFI -->
 			<gpthd>
 				<name>sda.img</name>
-				<size>1GiB</size>
+				<size>2GiB</size>
 				<!-- install grub -->
 				<grub-install/>
 				<!-- the EFI system partition -->
 				<partition> 
-					<size>100MiB</size>
+					<size>200MiB</size>
 					<label>uefi</label>
 					<bootable>true</bootable>
 				</partition>
@@ -73,8 +73,9 @@
 		</fstab>
 		<install-recommends />
 		<pkg-list>
-			<!-- install the EFI version of grub -->
-			<pkg>grub-efi-amd64</pkg>
+			<!-- install the signed EFI version of grub -->
+			<pkg>grub-efi-amd64-signed</pkg>
+			<pkg>shim-signed</pkg>
 			<pkg>linux-image-amd64</pkg>
 		</pkg-list>
 		<project-finetuning>
