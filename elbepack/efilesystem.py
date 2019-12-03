@@ -78,7 +78,8 @@ def extract_target(src, xml, dst, cache):
                 "var/lib/dpkg/info/%s:%s.conffiles" %
                 (line, arch))
 
-        file_list = list(sorted(set(file_list)))
+        file_list = sorted(set(file_list),
+                           key = lambda k: k[4:] if k.startswith('/usr') else k)
         copy_filelist(src, file_list, dst)
     else:
         # first copy most diretories
