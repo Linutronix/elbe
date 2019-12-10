@@ -687,7 +687,7 @@ class ElbeProject (object):
                    cfg['pbuilder_jobs'],
                    os.path.join(self.builddir, "pbuilderrc"),
                    os.path.join(self.builddir, "pbuilder", "result")),
-               env_add={'DEB_BUILD_PROFILES': profile})
+               env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
 
             self.repo.remove(os.path.join(self.builddir,
                                           "pdebuilder",
