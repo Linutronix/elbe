@@ -8,7 +8,7 @@
 <%
   from elbepack.version import elbe_version, elbe_initvm_packagelist
   from elbepack.filesystem import size_to_int
-  swap = size_to_int(prj.text('swap-size', default=defs, key='swap-size')) / 1024 / 1024
+  swap = size_to_int(prj.text('swap-size', default=defs, key='swap-size')) // 1024 // 1024
 %>
 d-i keyboard-configuration/layoutcode string us
 d-i keyboard-configuration/xkb-keymap select us
