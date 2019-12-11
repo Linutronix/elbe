@@ -39,7 +39,7 @@ def preprocess_pgp_key(xml):
         print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
         try:
             keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
-            myKey = urllib2.urlopen(keyurl).read()
+            myKey = urllib2.urlopen(keyurl).read().decode('ascii')
             key.tag = "raw-key"
             key.text = "\n%s\n" % myKey
         except urllib2.HTTPError as E:
