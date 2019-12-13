@@ -87,7 +87,7 @@ class ElbeSoapClient(object):
         self.service.login(user, passwd)
 
     def download_file(self, builddir, filename, dst_fname):
-        fp = file(dst_fname, "w")
+        fp = open(dst_fname, "w")
         part = 0
 
         # XXX the retry logic might get removed in the future, if the error
@@ -641,7 +641,7 @@ class SetCdromAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = file(filename, "r")
+        fp = open(filename, "r")
         client.service.start_cdrom(builddir)
         while True:
             bindata = fp.read(size)
@@ -674,7 +674,7 @@ class SetOrigAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = file(filename, "r")
+        fp = open(filename, "r")
         client.service.start_upload_orig(builddir, os.path.basename(filename))
         while True:
             bindata = fp.read(size)
@@ -729,7 +729,7 @@ class SetPdebuilderAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = file(filename, "r")
+        fp = open(filename, "r")
         client.service.start_pdebuild(builddir)
         while True:
             bindata = fp.read(size)
@@ -946,11 +946,11 @@ class UploadPackageAction(RepoAction):
 
         # Parse .dsc-File and append neccessary source files to files
         if filetype == '.dsc':
-            for f in deb822.Dsc(file(filename))['Files']:
+            for f in deb822.Dsc(open(filename))['Files']:
                 files.append(f['name'])
 
         if filetype == '.changes':
-            for f in deb822.Changes(file(filename))['Files']:
+            for f in deb822.Changes(open(filename))['Files']:
                 files.append(f['name'])
 
         # Check whether all files are available

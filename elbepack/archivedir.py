@@ -27,7 +27,7 @@ class ArchivedirError(Exception):
     pass
 
 def enbase(fname, compress=True):
-    infile = file(fname, "r")
+    infile = open(fname, "r")
     s = infile.read()
     if compress:
         s = bz2compress(s)

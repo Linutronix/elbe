@@ -34,7 +34,7 @@ def gen_controlfile(name, version, arch, description, deps):
 
 
 def write_file(fname, mode, cont):
-    f = file(fname, "w")
+    f = open(fname, "w")
     f.write(cont)
     f.close()
     os.chmod(fname, mode)

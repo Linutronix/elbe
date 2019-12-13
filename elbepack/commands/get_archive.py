@@ -16,7 +16,7 @@ from elbepack.treeutils import etree
 
 
 def unbase(s, fname):
-    outfile = file(fname, "w")
+    outfile = open(fname, "w")
     outfile.write(standard_b64decode(s))
     outfile.close()
 

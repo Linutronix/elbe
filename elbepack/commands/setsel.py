@@ -14,7 +14,7 @@ from elbepack.treeutils import etree
 
 
 def parse_selections(fname):
-    fp = file(fname, "r")
+    fp = open(fname, "r")
 
     sels = []
 
