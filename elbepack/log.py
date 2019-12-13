@@ -264,7 +264,7 @@ class AsyncLogging(object):
         buff = rest + os.read(self.fd, self.atmost)
         j = 0
         count = 0
-        for i in xrange(len(buff)):
+        for i in range(len(buff)):
             if buff[i] == '\n':
                 self.lines.append(buff[j:i])
                 count += 1

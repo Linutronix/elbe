@@ -30,7 +30,7 @@ statestring = {
 
 def apt_pkg_md5(pkg):
     hashes = pkg._records.hashes
-    for i in xrange(len(hashes)):
+    for i in range(len(hashes)):
         h = str(hashes[i])
         if h.startswith("MD5"):
             return h.split(':')[1]
