@@ -21,7 +21,7 @@ uid = uuid.uuid4()
 name = cfg['initvm_domain']
 cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
 cpus = min(multiprocessing.cpu_count(), cpus)
-memory = size_to_int(prj.text('mem', default=defs, key='mem')) / 1024
+memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024
 
 imagetype = prj.text('img', default=defs, key='img')
 img = os.path.join(opt.directory, 'buildenv.img')
