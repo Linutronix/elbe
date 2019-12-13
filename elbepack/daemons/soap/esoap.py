@@ -159,7 +159,7 @@ class ESoap (ServiceBase):
                 self.app.pm.set_current_project_xml(uid, fn)
             return -2
 
-        with open(fn, 'a') as fp:
+        with open(fn, 'ab') as fp:
             fp.write(binascii.a2b_base64(blob))
 
         return part + 1
@@ -264,7 +264,7 @@ class ESoap (ServiceBase):
         cdrom_fname = os.path.join(builddir, "uploaded_cdrom.iso")
 
         # Now append data to cdrom_file
-        fp = open(cdrom_fname, "a")
+        fp = open(cdrom_fname, "ab")
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
@@ -297,7 +297,7 @@ class ESoap (ServiceBase):
         pdebuild_fname = os.path.join(builddir, "current_pdebuild.tar.gz")
 
         # Now write empty File
-        fp = open(pdebuild_fname, "a")
+        fp = open(pdebuild_fname, "ab")
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
@@ -331,7 +331,7 @@ class ESoap (ServiceBase):
         orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(uid))
 
         # Now append to File
-        fp = open(orig_fname, "a")
+        fp = open(orig_fname, "ab")
         fp.write(binascii.a2b_base64(data))
         fp.close()
 

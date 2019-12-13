@@ -12,6 +12,7 @@ from subprocess import Popen, PIPE, STDOUT, call
 
 from elbepack.log import async_logging
 
+from io import TextIOWrapper, BytesIO
 
 log = logging.getLogger("log")
 soap = logging.getLogger("soap")
@@ -54,6 +55,8 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
                   stdout=output, stderr=STDOUT, stdin=PIPE, env=new_env)
         out, _ = p.communicate(input=stdin)
 
+    out = TextIOWrapper(BytesIO(out), encoding='utf-8', errors='replace').read()
+
     return p.returncode, out
 
 
@@ -80,6 +83,9 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
         p = Popen(cmd, shell=True,
                   stdout=PIPE, stderr=PIPE, stdin=PIPE, env=new_env)
         output, stderr = p.communicate(input=stdin)
+
+    output = TextIOWrapper(BytesIO(output), encoding='utf-8', errors='replace').read()
+    stderr = TextIOWrapper(BytesIO(stderr), encoding='utf-8', errors='replace').read()
 
     return p.returncode, output, stderr
 

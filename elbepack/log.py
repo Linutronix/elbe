@@ -11,6 +11,7 @@ import select
 import threading
 from contextlib import contextmanager
 
+from io import TextIOWrapper, BytesIO
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -241,7 +242,7 @@ class AsyncLogging(object):
 
     def run(self):
         alive = True
-        rest = ""
+        rest = bytes()
         while alive:
             events = self.epoll.poll()
             for _, event in events:
@@ -255,6 +256,8 @@ class AsyncLogging(object):
             rest = self.read(rest)
             if not rest:
                 break
+
+        rest = TextIOWrapper(BytesIO(rest), encoding='utf-8', errors='replace').read()
 
         if self.lines:
             self.lines[-1] += rest

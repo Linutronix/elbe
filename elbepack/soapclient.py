@@ -87,7 +87,7 @@ class ElbeSoapClient(object):
         self.service.login(user, passwd)
 
     def download_file(self, builddir, filename, dst_fname):
-        fp = open(dst_fname, "w")
+        fp = open(dst_fname, "wb")
         part = 0
 
         # XXX the retry logic might get removed in the future, if the error
@@ -327,7 +327,7 @@ class SetXmlAction(ClientAction):
         part = 0
         with open(filename, "rb") as fp:
             while True:
-                xml_base64 = binascii.b2a_base64(fp.read(size))
+                xml_base64 = binascii.b2a_base64(fp.read(size)).decode('ascii')
                 # finish upload
                 if len(xml_base64) == 1:
                     part = client.service.upload_file(builddir,

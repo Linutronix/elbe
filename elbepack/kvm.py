@@ -6,7 +6,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import subprocess
+
+from elbepack.shellhelper import command_out
 
 kvm_exe_list = [
     '/usr/bin/kvm',
@@ -21,11 +22,8 @@ def find_kvm_exe():
     for fname in kvm_exe_list:
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
             # determine kvm version
-            cmd = subprocess.Popen(
-                fname + ' --version',
-                shell=True,
-                stdout=subprocess.PIPE)
-            for line in cmd.stdout:
+            _, stdout = command_out(fname + ' --version')
+            for line in stdout.splitlines():
                 if "version" in line:
                     version = line.split()[3].split('(')[0].strip()
 
