@@ -44,7 +44,8 @@ OPTIONS
 	yield problem with e.g. java.
 
 --profile string::
-	Specify the build profile to build. (dpkg-buildpackage -P<profile>)
+	Specify the build profile(s) to build. (dpkg-buildpackage -P<profile>)
+	Provide multiple profiles as a comma separated list.
 
 COMMANDS
 --------

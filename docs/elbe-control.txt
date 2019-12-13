@@ -79,7 +79,7 @@ OPTIONS
 	Only list/download pbuilder files.
 
 --profile::
-	Specify pbuilder profile to build.
+	Specify pbuilder profile(s) to build. Provide multiple profiles as a comma separated list.
 
 COMMANDS
 --------
