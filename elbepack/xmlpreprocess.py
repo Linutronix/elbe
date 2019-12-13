@@ -8,7 +8,11 @@
 from __future__ import print_function
 
 import sys
-import urllib2
+try:
+    from urllib.request import urlopen
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import urlopen, HTTPError
 
 from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
@@ -39,10 +43,10 @@ def preprocess_pgp_key(xml):
         print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
         try:
             keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
-            myKey = urllib2.urlopen(keyurl).read().decode('ascii')
+            myKey = urlopen(keyurl).read().decode('ascii')
             key.tag = "raw-key"
             key.text = "\n%s\n" % myKey
-        except urllib2.HTTPError as E:
+        except HTTPError:
             raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" % keyurl)
 
 def preprocess_iso_option(xml):

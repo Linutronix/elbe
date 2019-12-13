@@ -11,8 +11,12 @@ import socket
 import sys
 
 from optparse import (OptionParser, OptionGroup)
-from urllib2 import URLError
-from httplib import BadStatusLine
+try:
+    from urllib.error import URLError
+    from http.client import BadStatusLine
+except ImportError:
+    from urllib2 import URLError
+    from httplib import BadStatusLine
 
 from suds import WebFault
 

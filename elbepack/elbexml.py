@@ -10,14 +10,19 @@
 
 import os
 import re
-import urllib2
-
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 
 from elbepack.version import elbe_version, is_devel
-
+try:
+    from urllib.request import (urlopen, install_opener, build_opener,
+                                HTTPPasswordMgrWithDefaultRealm,
+                                HTTPBasicAuthHandler)
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import (urlopen, install_opener, build_opener, URLError,
+                         HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler)
 
 class ValidationError(Exception):
     def __init__(self, validation):
@@ -178,11 +183,11 @@ class ElbeXML(object):
 
     def validate_repo(self, r):
         try:
-            fp = urllib2.urlopen(r["url"] + "InRelease", None, 10)
-        except urllib2.URLError:
+            fp = urlopen(r["url"] + "InRelease", None, 10)
+        except URLError:
             try:
-                fp = urllib2.urlopen(r["url"] + "Release", None, 10)
-            except urllib2.URLError:
+                fp = urlopen(r["url"] + "Release", None, 10)
+            except URLError:
                 return False
 
         ret = False
@@ -269,10 +274,10 @@ class ElbeXML(object):
             os.environ["https_proxy"] = ""
             os.environ["no_proxy"] = ""
 
-        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
-        authhandler = urllib2.HTTPBasicAuthHandler(passman)
-        opener = urllib2.build_opener(authhandler)
-        urllib2.install_opener(opener)
+        passman = HTTPPasswordMgrWithDefaultRealm()
+        authhandler = HTTPBasicAuthHandler(passman)
+        opener = build_opener(authhandler)
+        install_opener(opener)
 
         for r in repos:
             if '@' in r["url"]:

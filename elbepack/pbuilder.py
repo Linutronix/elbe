@@ -7,8 +7,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import urllib2
-
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 
 def pbuilder_write_config(builddir, xml):
     distname = xml.prj.text('suite')
@@ -95,7 +97,7 @@ def mirror_script_add_key_text(mirror, key_text):
 
 def mirror_script_add_key_url(mirror, key_url):
     key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
-    key_conn = urllib2.urlopen(key_url, None, 10)
+    key_conn = urlopen(key_url, None, 10)
     key_text = key_conn.read()
     key_conn.close()
 

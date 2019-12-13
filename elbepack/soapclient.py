@@ -16,8 +16,12 @@ import os
 import fnmatch
 
 from datetime import datetime
-from urllib2 import URLError
-from httplib import BadStatusLine
+try:
+    from urllib.error import URLError
+    from http.client import BadStatusLine
+except ImportError:
+    from urllib2 import URLError
+    from httplib import BadStatusLine
 
 import deb822   # package for dealing with Debian related data
 
@@ -27,7 +31,6 @@ from suds import WebFault
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version, elbe_initvm_packagelist
-
 
 def set_suds_debug(debug):
     import logging
