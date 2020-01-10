@@ -518,7 +518,7 @@ class DumpFileAction(ClientAction):
             if ret == "EndOfFile":
                 return
 
-            sys.stdout.write(binascii.a2b_base64(ret))
+            os.write(sys.stdout.fileno(), binascii.a2b_base64(ret))
             part = part + 1
 
 
