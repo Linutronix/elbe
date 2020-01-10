@@ -6,10 +6,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from threading import Thread
-from Queue import Queue
 from os import path, getcwd, chdir
 from contextlib import contextmanager
-from urllib import quote
 import logging
 
 from elbepack.db import get_versioned_filename
@@ -21,6 +19,12 @@ from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.shellhelper import do
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
+try:
+    from Queue import Queue
+    from urllib import quote
+except ImportError:
+    from queue import Queue
+    from urllib.parse import quote
 
 class AsyncWorkerJob(object):
 

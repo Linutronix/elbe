@@ -8,14 +8,17 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import urlparse
-import urllib2
 import logging
 
 from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import (write_pack_template, get_preseed,
                                 preseed_to_text)
 from elbepack.shellhelper import CommandError, do, chroot, get_command_out
+
+try:
+    from urlparse import urlsplit
+except ImportError:
+    from urllib.parse import urlsplit
 
 
 def create_apt_prefs(xml, rfs):
@@ -37,7 +40,7 @@ def create_apt_prefs(xml, rfs):
             if 'pin' not in repo.et.attrib:
                 continue
 
-            origin = urlparse.urlsplit(repo.et.text.strip()).hostname
+            origin = urlsplit(repo.et.text.strip()).hostname
             pin = repo.et.attrib['pin']
             if 'package' in repo.et.attrib:
                 package = repo.et.attrib['package']
