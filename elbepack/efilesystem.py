@@ -153,10 +153,10 @@ class ElbeFilesystem(Filesystem):
                 lic_text = "Error while processing license file %s: '%s'" % (
                     copyright_file, e.strerror)
 
-            lic_text = unicode(lic_text, encoding='utf-8', errors='replace')
+            lic_text = lic_text.encode(encoding='utf-8', errors='replace')
 
             if f is not None:
-                f.write(unicode(pkg))
+                f.write(pkg.encode(encoding='utf-8', errors='replace'))
                 f.write(u":\n======================================"
                         "==========================================")
                 f.write(u"\n")
