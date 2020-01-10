@@ -6,7 +6,7 @@
 
 from functools import wraps
 
-from faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
+from .faults import SoapElbeNotLoggedIn, SoapElbeNotAuthorized
 
 
 def authenticated_uid(func):
