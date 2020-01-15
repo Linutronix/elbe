@@ -418,8 +418,18 @@ class ElbeProject (object):
                 pass
         elif p.tag == 'svn':
             do("svn co --non-interactive %s %s" % (src_uri, src_path))
+        elif p.tag == 'src-pkg':
+            pdb_path = os.path.join(self.builddir, "pdebuilder")
+            os.mkdir(pdb_path)
+
+            apt_args = '--yes -q --download-only'
+            if self.xml.prj.has('noauth'):
+                apt_args += ' --allow-unauthenticated'
+            do('cd "%s";apt-get source %s "%s"' % (pdb_path, apt_args, src_uri))
+
+            do('dpkg-source -x %s/*.dsc "%s"' % (pdb_path, src_path))
         else:
-            logging.info("Unknown pbuild source vcs: %s", p.tag)
+            logging.info("Unknown pbuild source: %s", p.tag)
 
         # pdebuild_build(-1) means use all cpus
         self.pdebuild_build(cpuset=-1, profile="")
