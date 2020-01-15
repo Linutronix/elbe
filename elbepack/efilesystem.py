@@ -36,8 +36,8 @@ def copy_filelist(src, filelist, dst):
             st = src.stat(f)
             dst.chown(f, st.st_uid, st.st_gid)
         else:
-            subprocess.call(["cp", "-a", "--reflink=auto",
-                             src.fname(f), dst.fname(f)])
+            system('cp -a --reflink=auto "%s" "%s"' % (src.fname(f),
+                                                       dst.fname(f)))
     # update utime which will change after a file has been copied into
     # the directory
     for f in filelist:
