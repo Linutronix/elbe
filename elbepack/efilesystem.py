@@ -121,6 +121,7 @@ def extract_target(src, xml, dst, cache):
         for cmd in cmds:
             chroot(dst.path, "/usr/bin/dpkg %s" % cmd)
 
+
 class ElbeFilesystem(Filesystem):
     def __init__(self, path, clean=False):
         Filesystem.__init__(self, path, clean)
@@ -169,6 +170,7 @@ class ElbeFilesystem(Filesystem):
 
         if xml_fname is not None:
             licence_xml.write(xml_fname)
+
 
 class Excursion(object):
 
