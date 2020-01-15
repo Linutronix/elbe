@@ -2319,9 +2319,7 @@
         <annotation>
           <documentation>
             reference to a git tree hosting a debian source package. The source
-            will be build with a pbuilder before the image generation. Use the
-            'install' attribute to specify which binary packages should be
-            installed in the target image.
+            will be built with a pbuilder before the image generation.
           </documentation>
         </annotation>
       </element>
@@ -2329,9 +2327,7 @@
         <annotation>
           <documentation>
             reference to a svn repository hosting a debian source package. The
-            source will be build with a pbuilder before the image generation.
-            Use the 'install' attribute to specify which binary packages should
-            be installed in the target image.
+            source will be built with a pbuilder before the image generation.
           </documentation>
         </annotation>
       </element>
