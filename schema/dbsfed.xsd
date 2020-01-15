@@ -2315,6 +2315,14 @@
       </documentation>
     </annotation>
     <sequence>
+      <element name="src-pkg" type="rfs:string" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            reference to a debian source package from a deb-src archive. The
+            source will be built with a pbuilder before the image generation.
+          </documentation>
+        </annotation>
+      </element>
       <element name="git" type="rfs:git_src" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
