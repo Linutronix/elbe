@@ -413,7 +413,7 @@ class TargetFs(ChRootFilesystem):
                    (self.fname(''), targetdir, sfs_name))
                 # only append filename if creating mksquashfs was successful
                 self.images.append(sfs_name)
-            except CommandError as e:
+            except CommandError:
                 # error was logged; continue
                 pass
             os.chdir(oldwd)
