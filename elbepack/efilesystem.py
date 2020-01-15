@@ -402,6 +402,7 @@ class TargetFs(ChRootFilesystem):
             except CommandError:
                 # error was logged; continue
                 pass
+            os.chdir(oldwd)
 
         if self.xml.has("target/package/squashfs"):
             oldwd = os.getcwd()
@@ -415,6 +416,7 @@ class TargetFs(ChRootFilesystem):
             except CommandError as e:
                 # error was logged; continue
                 pass
+            os.chdir(oldwd)
 
     def pack_images(self, builddir):
         for img, packer in self.image_packers.items():
