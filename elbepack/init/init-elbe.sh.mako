@@ -7,7 +7,7 @@
 ##
 #! /bin/sh
 <%
-elbe_exe = 'elbe'
+elbe_exe = '/usr/bin/elbe'
 
 if opt.devel:
     elbe_exe = '/var/cache/elbe/devel/elbe'
