@@ -97,15 +97,15 @@ Package: elbe-debianize
 Architecture: all
 Conflicts: elbe-debianize
 Depends: ${misc:Depends},
-  python (>= 2.7~),
+  python (>= 2.7~) | python3,
   devscripts,
   libdistro-info-perl,
   libparse-debcontrol-perl,
-  python-elbe-common (= ${binary:Version}),
-  python-mako,
-  python-urwid,
-  python-pkg-resources
-Description: Wizard for debian foler generation
+  python-elbe-common (= ${binary:Version}) | python3-elbe-common (= ${binary:Version}),
+  python-mako | python3-mako,
+  python-urwid | python3-urwid,
+  python-pkg-resources | python3-pkg-resources
+Description: Wizard for debian folder generation
  Assists users in generating a debianization for a given source code project.
 
 Package: elbe
