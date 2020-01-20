@@ -27,12 +27,12 @@ class ArchivedirError(Exception):
     pass
 
 def enbase(fname, compress=True):
-    infile = open(fname, "r")
+    infile = open(fname, "rb")
     s = infile.read()
     if compress:
         s = bz2compress(s)
 
-    enc = standard_b64encode(s)
+    enc = standard_b64encode(s).decode()
     splited = ""
     i = 0
     l_enc = len(enc)
