@@ -111,12 +111,11 @@ Description: Wizard for debian foler generation
 Package: elbe
 Architecture: all
 Depends: ${misc:Depends},
-  python (>= 2.7~),
-  python-elbe-bin (= ${binary:Version}),
-  python-elbe-control (= ${binary:Version}),
+  python-elbe-bin (= ${binary:Version}) | python3-elbe-bin (= ${binary:Version}),
+  python-elbe-control (= ${binary:Version}) | python3-elbe-control (= ${binary:Version}),
   qemu-utils,
   qemu-kvm (>= 1:2.1),
-  python-mako,
+  python-mako | python3-mako,
   p7zip-full,
   make,
   lsb-release
