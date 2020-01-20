@@ -5,6 +5,7 @@ debian/elbe-bootup-check/
 debian/python-elbe-buildenv/
 debian/python3-elbe-buildenv/
 debian/python-elbe-bin/
+debian/python3-elbe-bin/
 debian/python-elbe-common/
 debian/python3-elbe-common/
 debian/python-elbe-control/

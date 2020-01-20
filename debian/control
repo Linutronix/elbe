@@ -50,6 +50,16 @@ Description: elbe executable
  Common files for ELBE (embedded linux build environment). These
  python-modules are shared by several elbe subcommands.
 
+Package: python3-elbe-bin
+Conflicts: elbe-common
+Architecture: all
+Depends: python3-elbe-common (= ${binary:Version}),
+  python3,
+  debian-archive-keyring (>= 2017.5+deb9u1)
+Description: elbe executable
+ Common files for ELBE (embedded linux build environment). These
+ python modules are shared by several elbe subcommands.
+
 Package: python-elbe-common
 Architecture: all
 Conflicts: elbe-common
@@ -71,6 +81,7 @@ Package: python3-elbe-common
 Architecture: all
 Depends: ${misc:Depends},
   elbe-schema (= ${binary:Version}),
+  python3-elbe-bin (= ${binary:Version}),
   python3,
   python3-lxml,
   python3-apt,
