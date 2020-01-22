@@ -71,7 +71,7 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	rm -rf include/config
 	$(MAKE) $(MAKE_OPTS) ${imgtype} modules
-	if test${k_arch} = arm -o ${k_arch} = arm64; then \
+	if test ${k_arch} = arm -o ${k_arch} = arm64; then \
 		make -j`nproc` $(MAKE_OPTS) dtbs; \
 	fi
 
