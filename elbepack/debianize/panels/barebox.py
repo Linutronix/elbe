@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import stat
 
 from shutil import copyfile
 
@@ -44,6 +45,9 @@ class BareBox(Panel):
             with open(os.path.join('debian/', tmpl), 'w') as f:
                 mako = os.path.join(self.tmpl_dir, tmpl + '.mako')
                 f.write(template(mako, self.deb))
+
+        st = os.stat(os.path.join('debian', 'rules'))
+        os.chmod(os.path.join('debian', 'rules'), st.st_mode | stat.S_IEXEC)
 
         cmd = 'dch --package barebox-' + pkg_name + \
             ' -v ' + self.deb['p_version'] + \
