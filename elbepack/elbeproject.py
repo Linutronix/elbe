@@ -589,8 +589,6 @@ class ElbeProject (object):
             self.buildenv.rfs.write_licenses(f, pkgnames, lic_xml_fname)
 
         # Use some handwaving to determine grub version
-        #
-        # We might also want support for legacy grub
         grub_arch = "ia32" if self.arch == "i386" else self.arch
         grub_fw_type = []
         grub_version = 0
@@ -608,8 +606,9 @@ class ElbeProject (object):
             grub_fw_type.append("shimfix")
         if self.get_rpcaptcache().is_installed('grub-legacy'):
             logging.warning("package grub-legacy is installed, "
-                            "this is obsolete, skipping grub")
-            grub_fw_type = []
+                            "this is obsolete.")
+            grub_version = 97
+            grub_fw_type.append("bios")
         elif not grub_fw_type:
             logging.warning("neither package grub-pc nor grub-efi-%s-bin "
                             "are installed, skipping grub",

@@ -40,7 +40,7 @@ def run_command(argv):
         type="int",
         dest="grub_version",
         default=202,
-        help="use specific grub version (possible values are 0 and 202)")
+        help="use specific grub version (possible values are 0, 97, and 202)")
 
     (opt, args) = oparser.parse_args(argv)
 
@@ -62,7 +62,7 @@ def run_command(argv):
     if opt.skip_grub:
         opt.grub_version = 0
 
-    if opt.grub_version not in [0, 202]:
+    if opt.grub_version not in [0, 97, 202]:
         print("invalid grub version")
         oparser.print_help()
         sys.exit(20)
