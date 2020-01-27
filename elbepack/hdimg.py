@@ -219,6 +219,62 @@ class grubinstaller202(grubinstaller_base):
             do("losetup -d /dev/poop0", allow_fail=True)
 
 
+class grubinstaller97(grubinstaller_base):
+
+    def install(self, target):
+        if '/' not in self.fs:
+            return
+
+        imagemnt = os.path.join(target, "imagemnt")
+        imagemntfs = Filesystem(imagemnt)
+        try:
+            do('cp -a /dev/loop0 /dev/poop0')
+
+            do('losetup /dev/poop0 "%s"' % self.fs['/'].filename)
+            do('kpartx -as /dev/poop0')
+
+            for entry in self.fs.depthlist():
+                do('mount /dev/mapper/poop0p%d %s' %
+                   (entry.partnum, imagemntfs.fname(entry.mountpoint)))
+
+            do("mount --bind /dev %s" % imagemntfs.fname("dev"))
+            do("mount --bind /proc %s" % imagemntfs.fname("proc"))
+            do("mount --bind /sys %s" % imagemntfs.fname("sys"))
+
+            do('mkdir -p "%s"' % imagemntfs.fname("boot/grub"))
+
+            devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
+            devmap.write("(hd0) /dev/poop0\n")
+            devmap.close()
+
+            chroot(imagemnt, "update-initramfs -u -k all")
+
+            # Replace groot and kopt because
+            # else they will be given bad values
+            do('chroot %s sed -in "s/^# groot=.*$/# groot=\(hd0,%d\)/" %s' %
+               (imagemnt, int(entry.partnum) - 1, "/boot/grub/menu.lst"))
+            do('chroot %s sed -in "s/^# kopt=.*$/# kopt=root=LABEL=%s/" %s' %
+               (imagemnt, entry.label, "/boot/grub/menu.lst"))
+
+            chroot(imagemnt, "update-grub")
+
+            do("chroot %s grub-install --no-floppy /dev/poop0" %
+               (imagemnt))
+
+        finally:
+            os.unlink(imagemntfs.fname("boot/grub/device.map"))
+            do("umount %s" % imagemntfs.fname("dev"), allow_fail=True)
+            do("umount %s" % imagemntfs.fname("proc"), allow_fail=True)
+            do("umount %s" % imagemntfs.fname("sys"), allow_fail=True)
+
+            for entry in reversed(self.fs.depthlist()):
+                do('umount /dev/mapper/poop0p%d' % entry.partnum,
+                   allow_fail=True)
+
+            do('kpartx -d /dev/poop0', allow_fail=True)
+            do("losetup -d /dev/poop0", allow_fail=True)
+
+
 class simple_fstype(object):
     def __init__(self, typ):
         self.type = typ
@@ -347,6 +403,8 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
 
     if grub_version == 202:
         grub = grubinstaller202(grub_fw_type)
+    elif grub_version == 97:
+        grub = grubinstaller97(grub_fw_type)
     else:
         grub = grubinstaller_base()
 

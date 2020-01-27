@@ -83,6 +83,8 @@ class BuildEnv (object):
         if not self.rfs.isfile("etc/elbe_version"):
             # avoid starting daemons inside the buildenv
             self.rfs.mkdir_p("usr/sbin")
+            # grub-legacy postinst will fail if /boot/grub does not exist
+            self.rfs.mkdir_p("boot/grub")
             self.rfs.write_file(
                 "usr/sbin/policy-rc.d",
                 0o755,
