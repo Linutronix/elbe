@@ -82,6 +82,9 @@ def pbuilder_write_apt_conf(builddir, xml):
     # Also for safety add this:
     fp.write('APT::Get::AllowUnauthenticated "true";\n')
 
+    # Force apt-secure to issue only warnings for the unsigned repositories
+    fp.write('Acquire::AllowInsecureRepositories "true";\n')
+
     # Make aptitude install untrusted packages without asking
     fp.write('Aptitude::CmdLine::Ignore-Trust-Violations "true";\n')
     fp.close()
