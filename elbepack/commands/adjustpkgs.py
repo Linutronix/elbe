@@ -96,24 +96,20 @@ def run_command(argv):
     xml_pkglist = xml.node("/target/pkg-list")
     xml_pkgs = [p.et.text for p in xml_pkglist]
 
-    mandatory_pkgs = ["python-elbe-buildenv"]
-    if xml.has("target/images/msdoshd/grub-install"):
-        mandatory_pkgs = ["python-elbe-buildenv", "grub-pc"]
-
     # TODO: install buildimage packages after target image generation
     #         and remove theme before target image generation
     #         we need to introduce additional arguments for this
     #       in default copy mode chroot to the target and remove elbe-daemon
     #         and its dependencies (if it is not in  target/pkg-list.
-    buildenv_pkgs = []
+    buildenv_pkgs = ["python-elbe-buildenv"]
     if xml.has("./project/buildimage/pkg-list"):
-        buildenv_pkgs = [p.et.text for p in xml.node(
-            "project/buildimage/pkg-list")]
+        buildenv_pkgs.extend([p.et.text for p in xml.node(
+            "project/buildimage/pkg-list")])
 
 
     with elbe_logging({"files":opt.output}):
         adj = adjpkg(opt.name)
-        return adj.set_pkgs(xml_pkgs + mandatory_pkgs + buildenv_pkgs)
+        return adj.set_pkgs(xml_pkgs + buildenv_pkgs)
 
 
 if __name__ == "__main__":
