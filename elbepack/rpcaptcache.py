@@ -145,6 +145,9 @@ class RPCAPTCache(InChRootObject):
         src_list = [
             p.candidate.source_name for p in self.cache if (
                 p.is_installed and p.name not in ignore_pkgs)]
+        version_dict = {
+            p.name: p.candidate.version for p in self.cache if (
+                p.is_installed and p.name not in ignore_pkgs)}
         # go through all packages, remember package if its source package
         # matches one of the installed packages and the binary package is a
         # '-dev' package
@@ -154,6 +157,12 @@ class RPCAPTCache(InChRootObject):
                     s.name.endswith('-dev')))]
         for p in dev_list:
             if p.name not in ignore_dev_pkgs:
+                name_no_suffix = p.name[:-len('-dev')]
+                if name_no_suffix in version_dict:
+                    version = version_dict[name_no_suffix]
+                    candidate = p.versions.get(version)
+                    if candidate:
+                        p.candidate = candidate
                 p.mark_install()
         # ensure that the symlinks package will be installed (it's needed for
         # fixing links inside the sysroot
@@ -168,7 +177,14 @@ class RPCAPTCache(InChRootObject):
 
         for p in dbgsym_list:
             if p in self.cache:
-                self.cache[p].mark_install()
+                pkg = self.cache[p]
+                name_no_suffix = pkg.name[:-len('-dbgsym')]
+                if name_no_suffix in version_dict:
+                    version = version_dict[name_no_suffix]
+                    candidate = pkg.versions.get(version)
+                    if candidate:
+                        pkg.candidate = candidate
+                pkg.mark_install()
 
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
