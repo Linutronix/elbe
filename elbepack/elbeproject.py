@@ -235,7 +235,6 @@ class ElbeProject (object):
             './lib/*.so.*',
             './lib/' + triplet,
             './usr/lib/*.so',
-            './usr/lib/*.so',
             './usr/lib/*.so.*',
             './usr/lib/' + triplet]
 
