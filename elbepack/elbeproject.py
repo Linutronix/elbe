@@ -228,7 +228,7 @@ class ElbeProject (object):
             './etc/ld.so.conf*',
             './opt/*/lib/*.so',
             './opt/*lib/*.so.*',
-            './opt/*/include/',
+            './opt/*/include',
             './opt/*/lib/' + triplet,
             './opt/*/include/' + triplet,
             './lib/*.so',
