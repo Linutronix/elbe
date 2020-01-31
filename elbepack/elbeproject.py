@@ -234,6 +234,7 @@ class ElbeProject (object):
             './lib/*.so',
             './lib/*.so.*',
             './lib/' + triplet,
+            './usr/lib/debug/.build-id/*/*.debug',
             './usr/lib/*.so',
             './usr/lib/*.so.*',
             './usr/lib/' + triplet]
