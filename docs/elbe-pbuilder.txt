@@ -20,10 +20,6 @@ DESCRIPTION
 Creates a pbuilder for a specified project and builds the Debian package
 like pbuilder, but for the configured ELBE project.
 
-Currently only the source formats 3.0 (git) and 3.0 (native) are supported.
-3.0 (quilt) requires Files in the parent directory, which are not uploaded,
-because only the curent Workdirectory is uploaded.
-
 OPTIONS
 -------
 
@@ -40,7 +36,7 @@ OPTIONS
 --cpuset <int>::
 	When this value is not -1 (the default), the pbuilder is run using
 	'taskset <cpuset>' which allows to limit the number of cpus used
-	for the build. This is usefule when multithreading and qemu-user
+	for the build. This is useful when multithreading and qemu-user
 	yield problem with e.g. java.
 
 --profile string::
@@ -59,9 +55,9 @@ A pbuilder environment for the given project or xml File will be created.
 
 Build the 'Debianized Project' in the current working directory. (A valid
 ./debian directory needs to exist.) If --project was specified, the specified
-build environment will be used. If --xmlfile is specified a new build
-environment will be created for the given ELBE XML File and the 'Debianized
-Project' in the current working directory will be build. The result of the
+build environment will be used. If --xmlfile is specified, a new build
+environment will be created for the given ELBE XML File, and the 'Debianized
+Project' in the current working directory will be built. The result of the
 package build is stored in ../ like pbuilder does.
 
 EXAMPLES
@@ -82,7 +78,7 @@ EXAMPLES
 --------
 
 * Use the pbuilder we have built, to build 'program', using the prj
-  File generated in parent directory. And dont use more than one CPU
+  File generated in parent directory. And don't use more than one CPU
   as a workaround for qemu-user and java problems.
 +
 --------
