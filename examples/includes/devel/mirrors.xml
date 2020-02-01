@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <url-list>
   <url>
-    <binary>http://debian.linutronix.de/elbe stretch main</binary>
-    <source>http://debian.linutronix.de/elbe stretch main</source>
+    <binary>http://debian.linutronix.de/elbe buster main</binary>
+    <source>http://debian.linutronix.de/elbe buster main</source>
     <raw-key>
       -----BEGIN PGP PUBLIC KEY BLOCK-----
 
