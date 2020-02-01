@@ -16,7 +16,7 @@ try:
     from http.client import BadStatusLine
 except ImportError:
     from urllib2 import URLError
-    from httplib import BadStatusline
+    from httplib import BadStatusLine
 
 from suds import WebFault
 
