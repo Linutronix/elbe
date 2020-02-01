@@ -11,8 +11,6 @@ import select
 import threading
 from contextlib import contextmanager
 
-from io import TextIOWrapper, BytesIO
-
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 local = threading.local()
@@ -256,8 +254,6 @@ class AsyncLogging(object):
             rest = self.read(rest)
             if not rest:
                 break
-
-        rest = TextIOWrapper(BytesIO(rest), encoding='utf-8', errors='replace').read()
 
         if self.lines:
             self.lines[-1] += rest
