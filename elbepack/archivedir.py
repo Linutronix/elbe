@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import bz2
 import os
 import re
 import sys
@@ -13,8 +14,7 @@ try:
 except ImportError:
     from urlparse import urljoin,urlparse
 
-from base64 import standard_b64encode, standard_b64decode
-from bz2 import compress as bz2compress
+from base64 import encodestring, standard_b64decode
 from subprocess import CalledProcessError
 from tempfile import NamedTemporaryFile
 
@@ -27,20 +27,12 @@ class ArchivedirError(Exception):
     pass
 
 def enbase(fname, compress=True):
-    infile = open(fname, "rb")
-    s = infile.read()
-    if compress:
-        s = bz2compress(s)
+    with open(fname, "rb") as infile:
+        s = infile.read()
+        if compress:
+            s = bz2.compress(s)
 
-    enc = standard_b64encode(s).decode()
-    splited = ""
-    i = 0
-    l_enc = len(enc)
-    while i < l_enc:
-        splited += (enc[i:i + 60] + "\n")
-        i += 60
-
-    return splited
+        return encodestring(s)
 
 def collect(tararchive, path, keep):
     if keep:
