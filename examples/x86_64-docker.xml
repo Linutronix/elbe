@@ -9,8 +9,8 @@
 			all that is needed to run apt, but no init daemon.
 
 			These images are designed for running inside a docker container.
-			Use 'docker import docker-stretch.tgz debian-stretch' to load
-			the image into docker and 'docker run -ti debian-stretch /bin/bash'
+			Use 'docker import docker-debianmin.tgz debianmin' to load
+			the image into docker and 'docker run -ti debianmin /bin/bash'
 			to run a bash inside the image.
 		</description>
 		<buildtype>amd64</buildtype>
@@ -19,16 +19,16 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>stretch</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
-		<hostname>stretch</hostname>
+		<hostname>debianmin</hostname>
 		<domain>docker</domain>
 		<passwd>docker</passwd>
 		<debootstrapvariant>minbase</debootstrapvariant>
 		<package>
 			<tar>
-				<name>docker-stretch.tgz</name>
+				<name>docker-debianmin.tgz</name>
 			</tar>
 		</package>
 		<diet variant='minimal' />
