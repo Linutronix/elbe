@@ -33,6 +33,7 @@ import apt_pkg
 
 from elbepack.aptprogress import (ElbeInstallProgress,
                                   ElbeAcquireProgress, ElbeOpProgress)
+from elbepack.config import cfg
 from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.shellhelper import CommandError, system
@@ -150,7 +151,7 @@ class UpdateService (ServiceBase):
 
     @rpc(String)
     def register_monitor(self, wsdl_url):
-        self.app.status.monitor = Client(wsdl_url)
+        self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
         self.app.status.log("connection established")
 
 

@@ -28,6 +28,7 @@ import deb822   # package for dealing with Debian related data
 from suds.client import Client
 from suds import WebFault
 
+from elbepack.config import cfg
 from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version, elbe_initvm_packagelist
@@ -65,7 +66,7 @@ class ElbeSoapClient(object):
         while self.control is None:
             self.retries += 1
             try:
-                self.control = Client(self.wsdl)
+                self.control = Client(self.wsdl, timeout=cfg['soaptimeout'])
             except socket.error as e:
                 if self.retries > retries:
                     raise e
