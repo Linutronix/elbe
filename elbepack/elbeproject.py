@@ -203,7 +203,7 @@ class ElbeProject (object):
         else:
             self.targetfs = None
 
-        # dont create sysroot instance, it should be build from scratch
+        # don't create sysroot instance, it should be built from scratch
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
         self.sysrootenv = None
@@ -809,7 +809,7 @@ class ElbeProject (object):
         self.targetfs = None
         self.buildenv = None
 
-        # dont create sysroot instance, it should be build from scratch
+        # don't create sysroot instance, it should be built from scratch
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
         self.sysrootenv = None

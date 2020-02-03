@@ -583,7 +583,7 @@ the 'project' tag isn't closed yet.
 ************************************************
 
 The following section describes the virtual machine in which the
-debian-installer is executed and custom packages can be build.
+debian-installer is executed and custom packages can be built.
 
 [xml]
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

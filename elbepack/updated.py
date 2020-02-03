@@ -118,7 +118,7 @@ class UpdateService (ServiceBase):
     @rpc(_returns=String)
     def list_snapshots(self):
         # pylint: disable=no-self-use
-        # use comma seperated string because array of string triggers a bug in
+        # use comma separated string because array of strings triggers a bug in
         # python suds :(
         snapshots = ""
 

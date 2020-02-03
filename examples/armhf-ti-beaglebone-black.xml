@@ -102,7 +102,7 @@
 			<artifact>/usr/lib/u-boot/am335x_boneblack/MLO</artifact>
 			<artifact>/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb</artifact>
 		</finetuning>
-		<!-- generate a pbuilder environment (before image will be build) -->
+		<!-- generate a pbuilder environment (before image will be built) -->
 		<pbuilder>
 			<src-pkg>zlib</src-pkg>
 			<src-pkg>minicoredumper</src-pkg>
@@ -131,7 +131,6 @@
 			    variant minbase has no default init system.
 			-->
 			<pkg>systemd</pkg>
-			<!-- install a package from backports -->
 			<pkg>btrfs-progs</pkg>
 			<pkg>libzstd1</pkg>
 		</pkg-list>
