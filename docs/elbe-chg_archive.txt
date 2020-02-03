@@ -35,7 +35,7 @@ OPTIONS
 <directory>::
 	A local directory that will be used as archive. The content of the directory
 	will be archived in a tar.bz2 format and then stored uuencoded in the
-	<archive> tag of the specifed <xmlfile>.
+	<archive> tag of the specified <xmlfile>.
 
 EXAMPLES
 --------

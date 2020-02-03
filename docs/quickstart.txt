@@ -198,7 +198,7 @@ archivedir
 
 The new XML element ‘archivedir’ points to a local directory and adds
 the content into a newly created archive. ‘archivedir’ can be specified
-more then once. The content of the direcories is copied in order of
+more then once. The content of the directories is copied in order of
 appearance. Existing files are overwritten by the later ones.
 
 Example snippet to use ‘archivedir’:

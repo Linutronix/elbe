@@ -24,7 +24,7 @@ OPTIONS
 -------
 
 --verbose::
-	Give more informations, e.g. the package list of the target root-filesystem.
+	Give more information, e.g. the package list of the target root-filesystem.
 
 <xmlfile>::
 	The xmlfile to be shown.

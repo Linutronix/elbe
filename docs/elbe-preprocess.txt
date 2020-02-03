@@ -27,7 +27,7 @@ OPTIONS
 -------
 
 --variant <variant>::
-	comma seperated list of variants
+	comma separated list of variants
 
 --output <filename>::
 	preprocessed output file, defaults to preprocess.xml

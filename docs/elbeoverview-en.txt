@@ -34,7 +34,7 @@ Elbe takes a different approach for solving these problems:
 - The root-filesystem is a subset of the Debian system inside the chroot
   environment. This implicitly ensures, that the same toolchain is used
   on the development machine and on the target.
-- Updating, adding or removing a package is done via Debians package-management
+- Updating, adding or removing a package is done via Debian's package-management
   (apt) which also resolves package dependencies.
 
 
@@ -522,7 +522,7 @@ Debian package.
 Validation
 ----------
 
-After a build the +source.xml+ file includes informations about all
+After a build the +source.xml+ file includes information about all
 installed packages and versions. If this information is already present in
 a file used with +elbe create+ the installed package versions and md5 hashes
 are validated and a report is printed and saved to +validation.txt+. This
