@@ -246,8 +246,8 @@ def copy_kinitrd(prj, target_dir):
                  os.path.join(target_dir, "vmlinuz"))
 
     except IOError as e:
-        raise NoKinitrdException('IoError %s' % e.message)
+        raise NoKinitrdException('IoError %s' % str(e))
     except InvalidSignature as e:
-        raise NoKinitrdException('InvalidSignature %s' % e.message)
+        raise NoKinitrdException('InvalidSignature %s' % str(e))
     except HashValidationFailed as e:
-        raise NoKinitrdException('HashValidationFailed %s' % e.message)
+        raise NoKinitrdException('HashValidationFailed %s' % str(e))

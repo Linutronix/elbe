@@ -103,7 +103,7 @@ class ElbeSoapClient(object):
 
                 print("get_file part %d failed, retry %d times" % (part, retry),
                       file=sys.stderr)
-                print(e.message, file=sys.stderr)
+                print(str(e), file=sys.stderr)
                 print(repr(e.line), file=sys.stderr)
 
                 if not retry:
@@ -596,7 +596,7 @@ class WaitProjectBusyAction(ClientAction):
             # code should be reworked as soon as it's clear what is going on
             # here
             except socket.error as e:
-                print(e.message, file=sys.stderr)
+                print(str(e), file=sys.stderr)
                 print("socket error during wait busy occured, retry..",
                       file=sys.stderr)
                 continue

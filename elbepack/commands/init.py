@@ -197,12 +197,13 @@ def run_command(argv):
         try:
             copy_kinitrd(xml.node("/initvm"), out_path)
         except NoKinitrdException as e:
+            msg = str(e)
             logging.error("Failure to download kernel/initrd debian Package:")
             logging.error("")
-            logging.error(e.message)
+            logging.error(msg)
             logging.error("")
             logging.error("Check Mirror configuration")
-            if 'SHA256SUMS' in e.message:
+            if 'SHA256SUMS' in msg:
                 logging.error("If you use debmirror please read "
                               "https://github.com/Linutronix/elbe/issues/188 "
                               "on how to work around the issue")

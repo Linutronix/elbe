@@ -167,9 +167,9 @@ def unsign_file(fname):
         return outfilename
 
     except IOError as ex:
-        print(ex.message)
+        print(str(ex))
     except Exception as ex:
-        print("Error checking the file %s: %s" % (fname, ex.message))
+        print("Error checking the file %s: %s" % (fname, str(ex)))
 
     return None
 
@@ -195,7 +195,7 @@ def sign(infile, outfile, fingerprint):
     try:
         key = ctx.get_key(fingerprint, 0)
     except Exception as ex:
-        print("no key with fingerprint %s: %s" % (fingerprint, ex.message))
+        print("no key with fingerprint %s: %s" % (fingerprint, str(ex)))
 
     unlock_key(key.fpr)
     ctx.signers_add(key)
@@ -210,7 +210,7 @@ def sign(infile, outfile, fingerprint):
         with open(outfile, 'w') as fd:
             fd.write(signature)
     except Exception as ex:
-        print("Error signing file %s" % ex.message)
+        print("Error signing file %s" % str(ex))
 
 
 def sign_file(fname, fingerprint):
@@ -219,7 +219,7 @@ def sign_file(fname, fingerprint):
     try:
         sign(fname, outfilename, fingerprint)
     except Exception as ex:
-        print("Error signing file %s" % ex.message)
+        print("Error signing file %s" % str(ex))
 
 
 def get_fingerprints():
