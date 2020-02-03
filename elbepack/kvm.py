@@ -16,10 +16,20 @@ kvm_exe_list = [
     '/usr/bin/qemu-system-x86_64'
 ]
 
+cached_kvm_infos = None
 
 def find_kvm_exe():
+
+    global cached_kvm_infos
+
+    if cached_kvm_infos:
+        return cached_kvm_infos
+
     version = "0.0.0"
+    args = []
+
     for fname in kvm_exe_list:
+
         if os.path.isfile(fname) and os.access(fname, os.X_OK):
             # determine kvm version
             _, stdout = command_out(fname + ' --version')
@@ -28,8 +38,18 @@ def find_kvm_exe():
                     version = line.split()[3].split('(')[0].strip()
 
             if fname == "/usr/bin/qemu-system-x86_64":
-                fname += " -enable-kvm"
+                args.append("-enable-kvm")
 
-            return fname, version
+            cached_kvm_infos = {
+                "exec_name": fname,
+                "version": version,
+                "args":args
+            }
 
-    return 'kvm_executable_not_found'
+            return cached_kvm_infos
+
+    return {
+        "exec_name": "kvm_executable_not_found",
+        "version": version,
+        "args": args
+    }

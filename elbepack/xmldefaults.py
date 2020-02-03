@@ -146,8 +146,9 @@ ppc64el_defaults = {
 
 amd64_defaults = {
     "arch": "amd64",
-    "interpreter": find_kvm_exe()[0],
-    "interpreterversion": find_kvm_exe()[1],
+    "interpreter": find_kvm_exe()["exec_name"],
+    "interpreterversion": find_kvm_exe()["version"],
+    "interpreter-args": find_kvm_exe()["args"],
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",
