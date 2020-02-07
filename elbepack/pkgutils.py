@@ -12,6 +12,7 @@ import re
 import logging
 
 from apt_pkg import TagFile
+from elbepack.filesystem import TmpdirFilesystem
 from elbepack.shellhelper import CommandError, system, do
 
 
