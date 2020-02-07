@@ -4,12 +4,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from platform import linux_distribution
 
 from elbepack.directories import pack_dir
 
 elbe_version = "12.1"
-running_os = linux_distribution()
 
 elbe_initvm_packagelist = ['python-elbe-buildenv',
                            'elbe-soap',

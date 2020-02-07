@@ -14,7 +14,7 @@ import os
 import sys
 
 import elbepack.commands
-from elbepack.version import elbe_version, running_os
+from elbepack.version import elbe_version
 from elbepack.directories import init_directories, get_cmdlist
 
 
@@ -37,7 +37,7 @@ if (len(sys.argv) < 2):
     sys.exit(20)
 
 if sys.argv[1] == "--version":
-    print("elbe v %s %s %s" % (elbe_version, running_os[0], running_os[1]))
+    print("elbe v%s" % (elbe_version))
     sys.exit(0)
 
 cmd_list = get_cmdlist()
