@@ -45,6 +45,7 @@ Conflicts: elbe-common
 Architecture: all
 Depends: python-elbe-common (= ${binary:Version}),
   python (>= 2.7~),
+  python-mako,
   debian-archive-keyring (>= 2017.5+deb9u1)
 Description: elbe executable
  Common files for ELBE (embedded linux build environment). These
@@ -55,6 +56,7 @@ Conflicts: elbe-common
 Architecture: all
 Depends: python3-elbe-common (= ${binary:Version}),
   python3,
+  python3-mako,
   debian-archive-keyring (>= 2017.5+deb9u1)
 Description: elbe executable
  Common files for ELBE (embedded linux build environment). These
@@ -102,7 +104,6 @@ Depends: ${misc:Depends},
   libdistro-info-perl,
   libparse-debcontrol-perl,
   python-elbe-common (= ${binary:Version}) | python3-elbe-common (= ${binary:Version}),
-  python-mako | python3-mako,
   python-urwid | python3-urwid,
   python-pkg-resources | python3-pkg-resources
 Description: Wizard for debian folder generation
@@ -115,7 +116,6 @@ Depends: ${misc:Depends},
   python-elbe-control (= ${binary:Version}) | python3-elbe-control (= ${binary:Version}),
   qemu-utils,
   qemu-kvm (>= 1:2.1),
-  python-mako | python3-mako,
   p7zip-full,
   make,
   lsb-release
