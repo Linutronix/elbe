@@ -105,7 +105,7 @@
 		<!-- generate a pbuilder environment (before image will be build) -->
 		<pbuilder>
 			<src-pkg>zlib</src-pkg>
-			<src-pkg>libpng1.6</src-pkg>
+			<src-pkg>minicoredumper</src-pkg>
 		</pbuilder>
 		<project-finetuning>
 			<losetup img="sdcard.img">
