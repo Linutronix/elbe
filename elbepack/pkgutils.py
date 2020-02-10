@@ -9,11 +9,10 @@ from __future__ import print_function
 
 import os
 import re
-import logging
 
 from apt_pkg import TagFile
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.shellhelper import CommandError, system, do
+from elbepack.shellhelper import system
 
 
 class NoPackageException(Exception):
