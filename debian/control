@@ -41,7 +41,7 @@ Description: xml schema files
  schemas are used by ELBE.
 
 Package: python-elbe-bin
-Conflicts: elbe-common
+Conflicts: elbe (<< 12.3), elbe-common, python3-elbe-bin
 Architecture: all
 Depends: python-elbe-common (= ${binary:Version}),
   python (>= 2.7~),
@@ -52,7 +52,7 @@ Description: elbe executable
  python-modules are shared by several elbe subcommands.
 
 Package: python3-elbe-bin
-Conflicts: elbe-common
+Conflicts: elbe (<< 12.3), elbe-common, python-elbe-bin
 Architecture: all
 Depends: python3-elbe-common (= ${binary:Version}),
   python3,
