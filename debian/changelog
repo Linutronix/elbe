@@ -1,3 +1,21 @@
+elbe (12.3) unstable; urgency=medium
+
+  * Make SDK install script buster compatible (Fixes #246)
+  * Fix problems with buster/update not having md5sums
+  * Support Python3 outside of the initvm
+  * Support more than one build profile in pbuilder
+  * Fix problems with the UsrMerge in buster
+  * move examples to buster
+  * Add support for grub-legacy
+  * Support <src-pkg> in <pbuilder>
+  * archivedir: reimplement enbase more perfomantly
+  * config/soap: socket timeout env variable
+  * xmlprepocess: search and replace urls based on ELBE_MIRROR_SED
+  * cleanup broken examples
+  * fix problems with pbuilder and <noauth>
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Mon, 04 Mar 2020 12:28:03 +0100
+
 elbe (12.1) unstable; urgency=medium
 
   * Fix licence extraction code failing on pkg xserver-xorg.

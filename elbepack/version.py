@@ -7,7 +7,7 @@
 
 from elbepack.directories import pack_dir
 
-elbe_version = "12.1"
+elbe_version = "12.3"
 
 elbe_initvm_packagelist = ['python-elbe-buildenv',
                            'elbe-soap',
