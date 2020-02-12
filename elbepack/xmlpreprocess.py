@@ -16,6 +16,7 @@ except ImportError:
 
 from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
+from itertools import islice
 
 from lxml import etree
 from lxml.etree import XMLParser, parse
@@ -36,6 +37,7 @@ mergepaths = ['//target/finetuning',
 
 class XMLPreprocessError(Exception):
     pass
+
 
 def preprocess_pgp_key(xml):
 
@@ -86,6 +88,37 @@ def preprocess_initvm_ports(xml):
                 host.text == cfg['sshport'] and benv.text == '22' or
                 host.text == cfg['soapport'] and benv.text == '7588'):
             forward.getparent().remove(forward)
+
+
+def preprocess_mirror_replacement(xml):
+    """Do search and replace on mirror urls
+       The sed patterns are a space separate list
+       in cfg['mirrorsed']
+    """
+
+    ms = cfg['mirrorsed'].split()
+    if (len(ms) % 2) == 1:
+        raise XMLPreprocessError("Uneven number of (search, replace) Values !")
+
+    # now zip even and uneven elements of mirrorsed.split()
+    replacements = list(zip(islice(ms, 0, None, 2), islice(ms, 1, None, 2)))
+
+    # do the replace in the text nodes
+    victims = ['.//mirror/url-list/url/binary',
+               './/mirror/url-list/url/source',
+               './/mirror/url-list/url/key',
+               './/mirror/primary_host']
+
+    for v in victims:
+        for u in xml.iterfind(v):
+            for r in replacements:
+                u.text = u.text.replace(r[0], r[1])
+
+    # mirrorsite is special, because the url to be replaced is
+    # in the 'value' attrib
+    for u in xml.iterfind('//initvm/preseed/conf[@key="pbuilder/mirrorsite"]'):
+        for r in replacements:
+            u.attrib['value'] = u.attrib['value'].replace(r[0], r[1])
 
 
 def xmlpreprocess(fname, output, variants=None):
@@ -154,6 +187,8 @@ def xmlpreprocess(fname, output, variants=None):
 
         # handle archivedir elements
         xml = combinearchivedir(xml)
+
+        preprocess_mirror_replacement(xml)
 
         # Change public PGP url key to raw key
         preprocess_pgp_key(xml)
