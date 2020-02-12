@@ -19,6 +19,7 @@ class Config(dict):
         self['elbepass'] = "foo"
         self['pbuilder_jobs'] = "auto"
         self['initvm_domain'] = "initvm"
+        self['mirrorsed'] = ""
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
@@ -44,5 +45,7 @@ class Config(dict):
         if 'ELBE_INITVM_DOMAIN' in os.environ:
             self['initvm_domain'] = os.environ['ELBE_INITVM_DOMAIN']
 
+        if 'ELBE_MIRROR_SED' in os.environ:
+            self['mirrorsed'] = os.environ['ELBE_MIRROR_SED']
 
 cfg = Config()
