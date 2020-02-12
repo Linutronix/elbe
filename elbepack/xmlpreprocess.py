@@ -42,21 +42,27 @@ class XMLPreprocessError(Exception):
 def preprocess_pgp_key(xml):
 
     for key in xml.iterfind('.//mirror/url-list/url/key'):
-        print("[WARN] <key>%s</key> is deprecated.  You should use raw-key instead." % key.text)
+        print("[WARN] <key>%s</key> is deprecated. "
+              "You should use raw-key instead." % key.text)
         try:
             keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
             myKey = urlopen(keyurl).read().decode('ascii')
             key.tag = "raw-key"
             key.text = "\n%s\n" % myKey
         except HTTPError:
-            raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" % keyurl)
+            raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" %
+                                     keyurl)
+
 
 def preprocess_iso_option(xml):
 
     src_opts = xml.find(".//src-cdrom/src-opts")
     if src_opts is None:
         return
-    strict = "strict" in src_opts.attrib and src_opts.attrib["strict"] == "true"
+
+    strict = ("strict" in src_opts.attrib
+              and src_opts.attrib["strict"] == "true")
+
     for opt in src_opts.iterfind("./*"):
         valid = iso_option_valid(opt.tag, opt.text)
         if valid is True:
@@ -67,13 +73,16 @@ def preprocess_iso_option(xml):
         if valid is False:
             violation = "Invalid ISO option %s" % tag
         elif isinstance(valid, int):
-            violation = "Option %s will be truncated by %d characters" % (tag, valid)
+            violation = ("Option %s will be truncated by %d characters" %
+                         (tag, valid))
         elif isinstance(valid, str):
-            violation = ("Character '%c' (%d) in ISO option %s violated ISO-9660" %
+            violation = ("Character '%c' (%d) in ISO option %s "
+                         "violated ISO-9660" %
                          (valid, ord(valid[0]), tag))
         if strict:
             raise XMLPreprocessError(violation)
         print("[WARN] %s" % violation)
+
 
 def preprocess_initvm_ports(xml):
     "Filters out the default port forwardings to prevent qemu conflict"
