@@ -454,15 +454,15 @@ class GetFileAction(ClientAction):
                 file=sys.stderr)
             sys.exit(20)
 
-        builddir = args[0]
-        filename = args[1]
-        dst_fname = filename
+        builddir = args[0].encode()
+        filename = args[1].encode()
+        dst_fname = filename.encode()
 
         if opt.output:
             fs = Filesystem('/')
             dst = os.path.abspath(opt.output)
             fs.mkdir_p(dst)
-            dst_fname = str(os.path.join(dst, filename))
+            dst_fname = str(os.path.join(dst, filename)).encode()
 
         client.download_file(builddir, filename, dst_fname)
         print("%s saved" % dst_fname)

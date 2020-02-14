@@ -193,13 +193,13 @@ class ElbeXML(object):
         ret = False
         if "srcstr" in r:
             for line in fp:
-                needle = bytes(r["srcstr"])
+                needle = r["srcstr"].encode(encoding='utf-8')
                 if line.find(needle) != -1:
                     ret = True
                     break
         elif "binstr" in r:
             for line in fp:
-                needle = bytes(r["binstr"])
+                needle = r["binstr"].encode(encoding='utf-8')
                 if line.find(needle) != -1:
                     ret = True
                     break

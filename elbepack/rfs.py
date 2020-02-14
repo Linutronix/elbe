@@ -186,7 +186,7 @@ class BuildEnv (object):
         if arch == "default":
             arch = self.xml.text("project/buildimage/arch", key="arch")
 
-        host_arch = get_command_out("dpkg --print-architecture").strip()
+        host_arch = get_command_out("dpkg --print-architecture").strip().decode()
 
         includepkgs = None
         strapcmd  = 'debootstrap '
@@ -317,7 +317,7 @@ class BuildEnv (object):
 
 
     def seed_etc(self):
-        passwd = self.xml.text("target/passwd")
+        passwd = self.xml.text("target/passwd").encode(encoding='utf-8')
         stdin = "%s\n%s\n" % (passwd, passwd)
         chroot(self.rfs.path, "passwd", stdin=stdin)
 

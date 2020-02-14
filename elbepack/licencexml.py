@@ -59,8 +59,13 @@ class copyright_xml (object):
         xmlpkg.et.attrib['name'] = pkg_name
         txtnode = xmlpkg.append('text')
         txtnode.et.text = copyright_text
-
-        bytesio = io.StringIO(unicode(txtnode.et.text))
+        # in Python2 'txtnode.et.text' is a binary string whereas in Python3 it
+        # is a unicode string. So make sure that 'txtnode.et.text' ends up as a
+        # unicode string in both Python2 and Python3.
+        bytesio = io.StringIO(txtnode.et.text.encode(encoding='utf-8',
+                                                     errors='replace')
+                                             .decode(encoding='utf-8',
+                                                     errors='replace'))
         try:
             c = Copyright(bytesio)
             files = []

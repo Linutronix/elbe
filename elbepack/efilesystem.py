@@ -151,18 +151,21 @@ class ElbeFilesystem(Filesystem):
             copyright_file = os.path.join('/usr/share/doc', pkg, 'copyright')
             copyright_fname = self.fname(copyright_file)
             try:
-                with io.open(copyright_fname, "rb") as lic:
+                with io.open(copyright_fname, "r",
+                             encoding='utf-8', errors='replace') as lic:
                     lic_text = lic.read()
             except IOError as e:
                 logging.exception("Error while processing license file %s",
                                   copyright_fname)
-                lic_text = "Error while processing license file %s: '%s'" % (
+                lic_text = u"Error while processing license file %s: '%s'" % (
                     copyright_file, e.strerror)
-
-            lic_text = unicode(lic_text, encoding='utf-8', errors='replace')
+            # in Python2 'pkg' is a binary string whereas in Python3 it is a
+            # unicode string. So make sure that pkg ends up as a unicode string
+            # in both Python2 and Python3.
+            pkg = pkg.encode(encoding='utf-8').decode(encoding='utf-8')
 
             if f is not None:
-                f.write(unicode(pkg))
+                f.write(pkg)
                 f.write(u":\n======================================"
                         "==========================================")
                 f.write(u"\n")
