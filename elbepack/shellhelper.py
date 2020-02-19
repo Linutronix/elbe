@@ -20,14 +20,12 @@ soap = logging.getLogger("soap")
 
 class CommandError(Exception):
     def __init__(self, cmd, returncode):
-        Exception.__init__(self)
         self.returncode = returncode
         self.cmd = cmd
 
-    def __repr__(self):
+    def __str__(self):
         return "Error: %d returned from Command %s" % (
             self.returncode, self.cmd)
-
 
 def system(cmd, allow_fail=False, env_add=None):
     new_env = os.environ.copy()
