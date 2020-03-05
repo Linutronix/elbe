@@ -27,25 +27,66 @@ from elbepack.shellhelper import (system,
                                   get_command_out)
 
 
-def copy_filelist(src, filelist, dst):
-    for f in filelist:
-        f = f.rstrip("\n")
-        if src.isdir(f) and not src.islink(f):
+def copy_filelist(src, file_lst, dst):
+
+    files  = set()
+    copied = set()
+
+    # Make sure to copy parent directories
+    #
+    # For example, if file_lst = ['/usr/bin/bash'],
+    # we might get {'/usr/bin', '/usr', '/usr/bin/bash'}
+    for f in file_lst:
+        parts = f.rstrip('\n')
+        while parts != os.sep:
+            files.add(parts)
+            parts, _ = os.path.split(parts)
+
+    # Start from closest to root first
+    files = list(files)
+    files.sort()
+    files.reverse()
+
+    while files:
+
+        f = files.pop()
+        copied.add(f)
+
+        if src.islink(f):
+
+            tgt = src.readlink(f)
+
+            # If the target of the symlink is relative, we need the
+            # absolute path of it
+            if not os.path.isabs(tgt):
+                tgt = os.path.join(os.path.dirname(f), tgt)
+
+            # If the target is not yet in the destination RFS, we need
+            # to defer the copy of the symlink after the target is
+            # resolved.  Thus, we put the symlink back on the stack
+            # and we add the target to resolve on top of it.
+            #
+            # Not that this will result in an infinite loop for
+            # circular symlinks
+            if not dst.lexists(tgt):
+                files.append(f)
+                files.append(tgt)
+            else:
+                dst.symlink(tgt, f)
+
+        elif src.isdir(f):
             if not dst.isdir(f):
                 dst.mkdir(f)
             st = src.stat(f)
             dst.chown(f, st.st_uid, st.st_gid)
+
         else:
-            if src.isdir(f) and src.islink(f):
-                tgt = src.readlink(f)
-                if not dst.isdir(tgt):
-                    dst.mkdir(tgt)
-            system('cp -a --reflink=auto "%s" "%s"' % (src.fname(f),
-                                                       dst.fname(f)))
+            system('cp -a --reflink=auto "%s" "%s"' % (src.realpath(f),
+                                                       dst.realpath(f)))
+
     # update utime which will change after a file has been copied into
     # the directory
-    for f in filelist:
-        f = f.rstrip("\n")
+    for f in copied:
         if src.isdir(f) and not src.islink(f):
             shutil.copystat(src.fname(f), dst.fname(f))
 
