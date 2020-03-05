@@ -834,13 +834,15 @@ class ElbeDB(object):
                                       "application/xml",
                                       "Current source.xml of the project")
 
-            _update_project_file(s, p.builddir, "licence.txt",
-                                      "text/plain; charset=utf-8",
-                                      "License file")
+            for name in ["chroot", "target", "sysroot-target", "sysroot-host"]:
 
-            _update_project_file(s, p.builddir, "licence.xml",
-                                      "application/xml",
-                                      "xml License file")
+                _update_project_file(s, p.builddir, "licence-%s.txt" % name,
+                                     "text/plain; charset=utf-8",
+                                     "License file")
+
+                _update_project_file(s, p.builddir, "licence-%s.xml" % name,
+                                     "application/xml",
+                                     "xml License file")
 
             _update_project_file(s, p.builddir, "validation.txt",
                                       "text/plain; charset=utf-8",
