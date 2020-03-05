@@ -8,6 +8,7 @@ from __future__ import print_function
 
 import os
 import shutil
+import errno
 
 from glob import glob
 from tempfile import mkdtemp
@@ -144,7 +145,7 @@ class Filesystem(object):
         try:
             os.symlink(src, self.fname(path))
         except OSError as e:
-            if e.errno != os.errno.EEXIST:
+            if e.errno != errno.EEXIST:
                 raise
             elif not allow_exists:
                 raise
