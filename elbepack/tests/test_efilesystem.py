@@ -43,3 +43,20 @@ class TestCopyFilelist(unittest.TestCase):
         # /DST/usr/bin/bla
         self.assertEqual(self.src.read_file('/usr/bin/bla'),
                          self.dst.read_file('/usr/bin/bla'))
+
+    def test_deeplinks(self):
+
+        self.src.mkdir_p('/a/b/c')
+
+        # c <- /a/b/d
+        self.src.symlink('c', '/a/b/d')
+
+        # This write into /a/b/c/bla (c instead of d)
+        self.src.write_file('/a/b/d/bla', 0o644, 'bla')
+
+        copy_filelist(self.src, ['/a/b/d/bla'], self.dst)
+
+        # We should now have the same content from /SRC/a/b/c/bla in
+        # /DST/a/b/c/bla
+        self.assertEqual(self.src.read_file('/a/b/c//bla'),
+                         self.dst.read_file('/a/b/c/bla'))
