@@ -923,3 +923,15 @@ class ElbeProject (object):
             except SystemError as e:
                 logging.exception("Commiting changes failed")
                 raise AptCacheCommitError(str(e))
+
+    def gen_licenses(self, rfs, env, pkg_list):
+
+        lic_txt_fname = os.path.join(self.builddir,
+                                     "licence-%s.txt" % rfs)
+        lic_xml_fname = os.path.join(self.builddir,
+                                     "licence-%s.xml" % rfs)
+        pkg_list.sort()
+
+        with io.open(lic_txt_fname, 'w+',
+                     encoding='utf-8', errors='replace') as f:
+            env.rfs.write_licenses(f, pkg_list, lic_xml_fname)
