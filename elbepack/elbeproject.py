@@ -266,21 +266,24 @@ class ElbeProject (object):
 
         with self.sysrootenv:
             try:
-                self.get_rpcaptcache(env=self.sysrootenv).update()
+                cache = self.get_rpcaptcache(env=self.sysrootenv)
+                cache.update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
 
             try:
-                self.get_rpcaptcache(
-                        env=self.sysrootenv).mark_install_devpkgs(
-                                set(ignore_pkgs), set(ignore_dev_pkgs))
+                cache.mark_install_devpkgs(set(ignore_pkgs),
+                                           set(ignore_dev_pkgs))
             except SystemError as e:
                 logging.exception("Mark install devpkgs failed")
             try:
-                self.get_rpcaptcache(env=self.sysrootenv).commit()
+                cache.commit()
             except SystemError as e:
                 logging.exception("Commiting changes failed")
                 raise AptCacheCommitError(str(e))
+
+            self.gen_licenses("sysroot-target", self.sysrootenv,
+                              [p.name for p in cache.get_installed_pkgs()])
 
         try:
             self.sysrootenv.rfs.dump_elbeversion(self.xml)
@@ -306,6 +309,7 @@ class ElbeProject (object):
         do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
            (self.builddir, self.sysrootpath, sysrootfilelist))
 
+
     def build_host_sysroot(self, pkgs, hostsysrootpath):
         do('rm -rf %s; mkdir "%s"' % (hostsysrootpath, hostsysrootpath))
 
@@ -322,7 +326,6 @@ class ElbeProject (object):
             try:
                 cache = self.get_rpcaptcache(env=self.host_sysrootenv,
                                              norecommend=True)
-
                 cache.update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
@@ -342,6 +345,9 @@ class ElbeProject (object):
             except SystemError as e:
                 logging.exception("Commiting changes failed")
                 raise AptCacheCommitError(str(e))
+
+            self.gen_licenses("sysroot-host", self.host_sysrootenv,
+                              [p.name for p in cache.get_installed_pkgs()])
 
         # This is just a sysroot, some directories
         # need to be removed.
@@ -582,21 +588,14 @@ class ElbeProject (object):
             logging.exception("Write source.xml failed (archive to huge?)")
 
         # Elbe report
-        elbe_report(self.xml, self.buildenv, self.get_rpcaptcache(),
-                    self.targetfs)
+        cache = self.get_rpcaptcache()
+        tgt_pkgs = elbe_report(self.xml, self.buildenv, cache, self.targetfs)
 
-        # Collect Licence Files
-        lic_txt_fname = os.path.join(self.builddir, "licence.txt")
-        lic_xml_fname = os.path.join(self.builddir, "licence.xml")
+        # chroot' licenses
+        self.gen_licenses("chroot", self.buildenv,
+                          [p.name for p in cache.get_installed_pkgs()])
 
-        pkglist = self.get_rpcaptcache().get_installed_pkgs()
-        pkgnames = [p.name for p in pkglist]
-
-        with io.open(lic_txt_fname,
-                     'w+',
-                     encoding='utf-8',
-                     errors='replace') as f:
-            self.buildenv.rfs.write_licenses(f, pkgnames, lic_xml_fname)
+        self.gen_licenses("target", self.buildenv, tgt_pkgs)
 
         # Use some handwaving to determine grub version
         grub_arch = "ia32" if self.arch == "i386" else self.arch
