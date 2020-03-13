@@ -300,7 +300,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
         f.close()
 
     if not xml.has("archive") or xml.text("archive") is None:
-        return
+        return list(tgt_pkg_list)
 
     validation.info("")
     validation.info("Archive validation")
@@ -316,3 +316,4 @@ def elbe_report(xml, buildenv, cache, targetfs):
             elif mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
                 validation.warning("Archive file %s modified in finetuning",
                                    fpath)
+    return list(tgt_pkg_list)
