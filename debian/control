@@ -67,7 +67,6 @@ Architecture: all
 Conflicts: elbe-common
 Depends: ${misc:Depends},
   elbe-schema (= ${binary:Version}),
-  python-elbe-bin (= ${binary:Version}),
   python (>= 2.7~),
   python-lxml,
   python-apt,
@@ -83,7 +82,6 @@ Package: python3-elbe-common
 Architecture: all
 Depends: ${misc:Depends},
   elbe-schema (= ${binary:Version}),
-  python3-elbe-bin (= ${binary:Version}),
   python3,
   python3-lxml,
   python3-apt,
@@ -133,6 +131,7 @@ Package: elbe-daemon
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
+  python-elbe-bin (= ${binary:Version}),
   python-elbe-common (= ${binary:Version}),
   python-elbe-buildenv (= ${binary:Version}),
   python-cherrypy3, python-beaker, openssh-server, lsb-base (>= 3.0-6)
@@ -148,6 +147,7 @@ Depends: ${misc:Depends},
   debootstrap,
   dosfstools,
   dpkg-dev,
+  python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
   genisoimage,
   mtd-utils,
@@ -187,6 +187,7 @@ Depends: ${misc:Depends},
   debootstrap,
   dosfstools,
   dpkg-dev,
+  python-elbe-bin (= ${binary:Version}),
   python-elbe-common (= ${binary:Version}),
   genisoimage,
   mtd-utils,
@@ -221,6 +222,7 @@ Package: elbe-bootup-check
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
+  python-elbe-bin (= ${binary:Version}),
   python-elbe-common (= ${binary:Version}),
   python-apt, lsb-base (>= 3.0-6)
 Description: bootup checker
@@ -267,6 +269,7 @@ Package: elbe-updated
 Architecture: all
 Depends: ${misc:Depends},
   python (>= 2.7~),
+  python-elbe-bin (= ${binary:Version}),
   python-elbe-common (= ${binary:Version}),
   python-lxml (>= 2.3.2-1),
   python-pyinotify,
