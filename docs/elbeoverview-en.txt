@@ -138,7 +138,7 @@ To create an initvm and make that initvm build a first Rootfilesystem,
 use the following command:
 
 ----------------------------------------------------------------------------------------------------------
-elbe initvm create --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-wheezy.xml
+elbe initvm create --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-buster.xml
 ----------------------------------------------------------------------------------------------------------
 
 This will take quite a while.
@@ -153,7 +153,7 @@ command will exit with a failure notice.
 The initvm will keep on running, after this command. Further xml Files may be built using
 
 ----------------------------------------------------------------------------------------------------------
-elbe initvm submit --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-wheezy.xml
+elbe initvm submit --directory ~/elbe-initvm /usr/share/doc/elbe-doc/examples/x86_32-pc-hdimg-minimal-grub-buster.xml
 ----------------------------------------------------------------------------------------------------------
 
 .Note
@@ -195,14 +195,9 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<primary_host>debian.tu-bs.de</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
-			<url-list>
-				<url>
-					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
-				</url>
-			</url-list>
 		</mirror>
 		<noauth />
-		<suite>wheezy</suite>
+		<suite>buster</suite>
 	</project>
 	<target>
 		<hostname>myARM</hostname>
@@ -556,13 +551,14 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			<primary_proto>http</primary_proto>
 			<url-list>					<2>
 				<url>
-					<binary>http://debian.linutronix.de/elbe wheezy main</binary>
+					<binary>http://debian.linutronix.de/elbe buster main</binary>
+					<source>http://debian.linutronix.de/elbe buster main</source>
 				</url>
 			</url-list>
 
 		</mirror>
 		<noauth /> 						<3>
-		<suite>wheezy</suite>					<4>
+		<suite>buster</suite>					<4>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <1> The 'mirror' tag contains

@@ -26,10 +26,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* Validate 'mywheezy.xml'
+* Validate 'project.xml'
 +
 ------------
-$ elbe validate mywheezy.xml 
+$ elbe validate project.xml
 ------------
 
 

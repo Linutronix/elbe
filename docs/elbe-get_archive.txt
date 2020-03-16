@@ -30,10 +30,10 @@ OPTIONS
 EXAMPLES
 --------
 
-* Extract the archive in 'mywheezy.xml' to 'archive.tar.bz2'
+* Extract the archive in 'project.xml' to 'archive.tar.bz2'
 +
 ------------
-$ elbe get_archive mywheezy.xml archive.tar.bz2
+$ elbe get_archive project.xml archive.tar.bz2
 ------------
 
 

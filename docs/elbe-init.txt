@@ -70,11 +70,11 @@ OPTIONS
 EXAMPLES
 --------
 
-* Generate a build VM directory for the project specified in 'mywheezy.xml'
+* Generate a build VM directory for the project specified in 'project.xml'
 and build the target root filesystem.
 +
 ------------
-$ elbe init --directory=/scratch/example mywheezy.xml
+$ elbe init --directory=/scratch/example project.xml
 $ cd /scratch/example
 $ make
 ------------
