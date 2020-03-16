@@ -89,16 +89,18 @@
 			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
 			<!-- move the 2nd stage bootloader to the path where the 1 stage expects it -->
 			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
-			<!-- move the devicetree to the path where the bootloader expects it -->
-			<cp path="/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb">/boot/dtb-4.9.0-3-armmp</cp>
+			<!-- move boot files to the path where the bootloader expects them to be -->
+			<mv path="/usr/lib/linux-image-*-armmp/am335x-boneblack.dtb">/boot/am335x-boneblack.dtb</mv>
+			<mv path="/boot/initrd.img-*-armmp">/boot/initrd.img-armmp</mv>
+			<mv path="/boot/vmlinuz-*-armmp">/boot/vmlinuz-armmp</mv>
 			<!-- set a proper u-boot environment -->
-			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-4.9.0-3-armmp;load mmc 0:1 0x82000000 dtb-4.9.0-3-armmp;load mmc 0:1 0x88000000 initrd.img-4.9.0-3-armmp;bootz 0x84000000 0x88000000:\${filesize} 0x82000000" > /boot/uEnv.txt</command>
+			<command>echo "uenvcmd=setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:1 0x84000000 vmlinuz-armmp;load mmc 0:1 0x82000000 am335x-boneblack.dtb;load mmc 0:1 0x88000000 initrd.img-armmp;bootz 0x84000000 0x88000000:\${filesize} 0x82000000" > /boot/uEnv.txt</command>
 			<!-- shrink target image -->
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
 			<artifact>/usr/lib/u-boot/am335x_boneblack/MLO</artifact>
-			<artifact>/usr/lib/linux-image-4.9.0-3-armmp/am335x-boneblack.dtb</artifact>
+			<artifact>/boot/am335x-boneblack.dtb</artifact>
 		</finetuning>
 		<!-- generate a pbuilder environment (before image will be built) -->
 		<pbuilder>
