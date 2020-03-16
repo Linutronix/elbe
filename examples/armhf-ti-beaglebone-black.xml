@@ -84,8 +84,6 @@
 				</fs>
 			</bylabel>
 		</fstab>
-		<!-- don't auto install recommended packages -->
-		<install-recommends />
 		<finetuning>
 			<!-- move the 1st stage bootloader to the path where the bootrom expects it -->
 			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
