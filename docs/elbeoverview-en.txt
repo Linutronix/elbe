@@ -47,7 +47,7 @@ dependencies.
 Configure `/etc/apt/sources.list.d` appropriately:
 
 -----------------------------------------------------------------------------------
-echo 'deb http://debian.linutronix.de/elbe jessie main' >> /etc/apt/sources.list.d/elbe.list
+echo 'deb http://debian.linutronix.de/elbe buster main' >> /etc/apt/sources.list.d/elbe.list
 -----------------------------------------------------------------------------------
 
 Optionally the public key for the repo can be installed:
@@ -911,7 +911,7 @@ VM and to work with it.
 
 During this process, 'elbe init' will download a linux kernel and initrd.gz
 from the debian mirror. In case of a local mirror, be sure, that
-`dists/jessie/main/installer-amd64/` is also mirrored.
+`dists/<codename>/main/installer-amd64/` is also mirrored.
 
 After 'elbe init' has generated the project directory, change to the
 project directory and run 'make'. This will start the installation of the
