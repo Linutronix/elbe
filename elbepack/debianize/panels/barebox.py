@@ -24,14 +24,15 @@ class BareBox(Panel):
 
     def __init__(self):
 
-        imgname = Edit("Image name", "barebox-phytec-phycore-imx6dl-som-nand-256mb.img")
+        imgname = Edit(
+            "Image name", "barebox-phytec-phycore-imx6dl-som-nand-256mb.img")
         defconfig = Edit("Def config", "imx_v7_defconfig")
         cross = Edit("CROSS_COMPILE", "arm-linux-gnueabihf-")
         k_version = Edit("BareBox Version", "2016.10")
 
         grid_elements = [
-            {"imgname":imgname, "defconfig":defconfig},
-            {"cross_compile":cross, "k_version":k_version}
+            {"imgname": imgname, "defconfig": defconfig},
+            {"cross_compile": cross, "k_version": k_version}
         ]
 
         super(BareBox, self).__init__(grid_elements)
@@ -61,4 +62,4 @@ class BareBox(Panel):
                  'debian/barebox-tools-' + pkg_name + '.install')
 
         self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
-                self.deb['p_arch'])
+            self.deb['p_arch'])
