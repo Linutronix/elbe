@@ -31,7 +31,7 @@ class BareBox(Panel):
 
         grid_elements = [
             {"imgname":imgname, "defconfig":defconfig},
-            {"cross":cross, "k_version":k_version}
+            {"cross_compile":cross, "k_version":k_version}
         ]
 
         super(BareBox, self).__init__(grid_elements)
