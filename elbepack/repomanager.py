@@ -378,7 +378,11 @@ class CdromSrcRepo(RepoBase):
 
         repo_attrs = RepoAttributes(codename,
                                     "source",
-                                    ["main", "added"],
+                                    ["main",
+                                     "added",
+                                     "target",
+                                     "chroot",
+                                     "sysroot-host"],
                                     mirror)
 
         if init_codename is not None:
