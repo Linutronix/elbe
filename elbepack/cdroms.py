@@ -25,30 +25,35 @@ from elbepack.isooptions import get_iso_options
 
 CDROM_SIZE = 640 * 1000 * 1000
 
+def add_source_pkg(repo, component, cache, pkg, version, forbid):
+    if pkg in forbid:
+        return
+    pkg_id = "%s-%s" % (pkg, version)
+    try:
+        dsc = cache.download_source(pkg,
+                                    '/var/cache/elbe/sources',
+                                    version=version)
+        repo.includedsc(dsc, component=component, force=True)
+    except ValueError:
+        logging.error("No sources for package '%s'", pkg_id)
+    except FetchError:
+        logging.error("Source for package '%s' could not be downloaded", pkg_id)
 
-def mk_source_cdrom(rfs, arch, codename, init_codename, target,
-                    cdrom_size=CDROM_SIZE, xml=None):
+def mk_source_cdrom(components, codename,
+                    init_codename, target,
+                    cdrom_size=CDROM_SIZE, xml=None,
+                    mirror='http://ftp.de.debian.org/debian'):
 
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
 
     hostfs.mkdir_p('/var/cache/elbe/sources')
-    rfs.mkdir_p('/var/cache/elbe/sources')
-
-    if xml is not None:
-        mirror = xml.get_primary_mirror(rfs.fname("cdrom"))
-    else:
-        mirror = 'http://ftp.de.debian.org/debian'
 
     repo = CdromSrcRepo(codename, init_codename,
                         os.path.join(target, "srcrepo"),
                         cdrom_size,
                         mirror)
-
-    cache = get_rpcaptcache(rfs, arch)
-    cache.update()
-    pkglist = cache.get_installed_pkgs()
 
     forbiddenPackages = []
     if xml is not None and xml.has('target/pkg-list'):
@@ -56,22 +61,15 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
             try:
                 if i.tag == 'pkg' and i.et.attrib['on_src_cd'] == 'False':
                     forbiddenPackages.append(i.text('.').strip())
-
             except KeyError:
                 pass
 
-    for pkg in pkglist:
-        # Do not include forbidden packages in src cdrom
-        if pkg.name in forbiddenPackages:
-            continue
-        pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
-        try:
-            dsc = cache.download_source(pkg.name, '/var/cache/elbe/sources')
-            repo.includedsc(dsc, force=True)
-        except ValueError:
-            logging.error("No sources for package '%s'", pkg_id)
-        except FetchError:
-            logging.error("Source for package '%s' could not be downloaded", pkg_id)
+    for component, (rfs, cache, pkg_lst) in components.items():
+        rfs.mkdir_p('/var/cache/elbe/sources')
+        for pkg, version in pkg_lst:
+            add_source_pkg(repo, component,
+                           cache, pkg, version,
+                           forbiddenPackages)
 
     # elbe fetch_initvm_pkgs has downloaded all sources to
     # /var/cache/elbe/sources
@@ -105,10 +103,10 @@ def mk_source_cdrom(rfs, arch, codename, init_codename, target,
                 with archive_tmpfile(arch_vol.text(".")) as fp:
                     if volume_number in repo.volume_indexes:
                         do('tar xvfj "%s" -h -C "%s"' % (fp.name,
-                                repo.get_volume_fs(volume_number).path))
+                                                         repo.get_volume_fs(volume_number).path))
                     else:
                         logging.warning("The src-cdrom archive's volume value "
-                                "is not contained in the actual volumes")
+                                        "is not contained in the actual volumes")
     else:
         options = ""
 
