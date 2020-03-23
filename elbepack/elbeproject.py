@@ -25,6 +25,8 @@ from elbepack.efilesystem import TargetFs
 from elbepack.efilesystem import extract_target
 from elbepack.filesystem import size_to_int
 
+from elbepack.aptpkgutils import XMLPackage
+
 from elbepack.dump import elbe_report
 from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs
 from elbepack.dump import check_full_pkgs
@@ -443,7 +445,8 @@ class ElbeProject (object):
         self.pdebuild_build(cpuset=-1, profile="", cross=False)
 
     def build_cdroms(self, build_bin=True,
-                     build_sources=False, cdrom_size=None):
+                     build_sources=False, cdrom_size=None,
+                     tgt_pkg_lst=[]):
         self.repo_images = []
 
         env = None
@@ -481,14 +484,62 @@ class ElbeProject (object):
                     cdrom_size = size_to_int(self.xml.text("src-cdrom/size"))
 
                 validation.info("Source CD %s", sysrootstr)
+
+                # Target component
+                cache = self.get_rpcaptcache(env=self.buildenv)
+                tgt_lst = []
+                for pkg_name in tgt_pkg_lst:
+                    pkg = cache.get_pkg(pkg_name)
+                    tgt_lst.append((pkg.name, pkg.installed_version))
+                components = {"target":(self.targetfs, cache, tgt_lst)}
+
+                # Main component
+                main_lst = []
+                if self.xml is not None:
+                    for pkg_node in self.xml.node("debootstrappkgs"):
+                        pkg = XMLPackage(pkg_node, self.arch)
+                        main_lst.append((pkg.name, pkg.installed_version))
+                components["main"] = (env.rfs, cache, main_lst)
+
+                # Added component
+                other_components = [(env, "added")]
+
+                # Let's build a list of (build_env, name) for the
+                # other RFS if they exist
+                host_sysroot_path = os.path.join(self.sdkpath, "sysroots", "host")
+                for path, name in [(self.chrootpath, "chroot"),
+                                   (host_sysroot_path, "sysroot-host")]:
+                    if os.path.exists(path) and env.path != path:
+                        tmp_env = BuildEnv(self.xml, path)
+                        with tmp_env:
+                            tmp_env.seed_etc()
+                        other_components.append((tmp_env, name))
+
+                # Now let's generate the correct (rfs, cache, pkg_lst)
+                # components using the full installed packages
+                for build_env, name in other_components:
+                    cache = self.get_rpcaptcache(env=build_env)
+                    tmp_lst = []
+                    for pkg in cache.get_installed_pkgs():
+                        tmp_lst.append((pkg.name, pkg.installed_version))
+                    components[name] = (build_env.rfs, cache, tmp_lst)
+
                 try:
-                    self.repo_images += mk_source_cdrom(env.rfs,
-                                                        self.arch,
+                    # Using kwargs here allows us to avoid making
+                    # special case for when self.xml is None
+                    kwargs = {
+                        "cdrom_size":cdrom_size,
+                        "xml":self.xml
+                        }
+
+                    if self.xml is not None:
+                        kwargs["mirror"] = self.xml.get_primary_mirror(env.rfs.fname("cdrom"))
+
+                    self.repo_images += mk_source_cdrom(components,
                                                         self.codename,
                                                         init_codename,
                                                         self.builddir,
-                                                        cdrom_size=cdrom_size,
-                                                        xml=self.xml)
+                                                        **kwargs)
                 except SystemError as e:
                     # e.g. no deb-src urls specified
                     validation.error(str(e))
@@ -627,7 +678,7 @@ class ElbeProject (object):
 
         self.targetfs.part_target(self.builddir, grub_version, grub_fw_type)
 
-        self.build_cdroms(build_bin, build_sources, cdrom_size)
+        self.build_cdroms(build_bin, build_sources, cdrom_size, tgt_pkg_lst=tgt_pkgs)
 
         if self.postbuild_file:
             logging.info("Postbuild script")
