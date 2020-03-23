@@ -7,7 +7,7 @@
 
 import os
 
-from elbepack.shellhelper import do
+from elbepack.shellhelper import do, get_command_out
 
 
 def get_mtdnum(xml, label):
@@ -140,9 +140,10 @@ class fstabentry(object):
         self.partnum = ppart.number
         self.number = '{}{}'.format(disk.type, ppart.number)
 
-    def losetup(self, loopdev):
-        do('losetup -o%d --sizelimit %d /dev/%s "%s"' %
-           (self.offset, self.size, loopdev, self.filename))
+    def losetup(self):
+        loopdev = get_command_out('losetup --offset %d --sizelimit %d --find --show "%s"' %
+                                  (self.offset, self.size, self.filename))
+        return loopdev.rstrip('\n')
 
     def tuning(self, loopdev):
         if self.tune:
