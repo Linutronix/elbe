@@ -307,19 +307,12 @@ def elbe_report(xml, buildenv, cache, targetfs):
     validation.info("------------------")
     validation.info("")
 
-    errors = 0
-
     for fpath in list(mt_index_postarch.keys()):
-        if fpath not in mt_index or \
-                mt_index_postarch[fpath] != mt_index[fpath]:
+        if (fpath not in mt_index or
+            mt_index_postarch[fpath] != mt_index[fpath]):
             if fpath not in mt_index_post_fine:
-                validation.error("Archive file %s deleted in finetuning",
-                                 fpath)
-                errors += 1
+                validation.warning("Archive file %s deleted in finetuning",
+                                   fpath)
             elif mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
-                validation.error("Archive file %s modified in finetuning",
-                                 fpath)
-                errors += 1
-
-    if errors == 0:
-        validation.info("No Errors found")
+                validation.warning("Archive file %s modified in finetuning",
+                                   fpath)
