@@ -331,20 +331,21 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     grub.add_fs_entry(entry)
 
-    entry.losetup("loop0")
-    do('mkfs.%s %s %s /dev/loop0' %
+    loopdev = entry.losetup()
+    do('mkfs.%s %s %s %s' %
        (entry.fstype,
         entry.mkfsopt,
-        entry.get_label_opt()))
+        entry.get_label_opt(),
+        loopdev))
 
-    do('mount /dev/loop0 %s' % os.path.join(target, "imagemnt"))
+    do('mount %s %s' % (loopdev, os.path.join(target, "imagemnt")))
     do('cp -a "%s/." "%s/"' %
        (os.path.join(target, "filesystems", entry.id),
         os.path.join(target, "imagemnt")),
        allow_fail=True)
-    entry.tuning("/dev/loop0")
-    do('umount /dev/loop0')
-    do('losetup -d /dev/loop0')
+    entry.tuning(loopdev)
+    do('umount %s' % loopdev)
+    do('losetup -d %s' % loopdev)
 
     return ppart
 
