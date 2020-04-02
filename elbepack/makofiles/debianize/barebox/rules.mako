@@ -58,6 +58,8 @@ override_dh_auto_build:
 	make -j`nproc` $(MAKE_OPTS) O=debian/build-aux
 % endif
 
+override_dh_auto_test:
+
 override_dh_auto_install:
 	mkdir -p $(TOOL_PATH) $(BOOT_PATH)
 	cp debian/build/images/${img_name} $(BOOT_PATH)
