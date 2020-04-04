@@ -238,14 +238,16 @@ class grubinstaller97(grubinstaller_base):
         imagemnt = os.path.join(target, "imagemnt")
         imagemntfs = Filesystem(imagemnt)
         try:
-            do('cp -a /dev/loop0 /dev/poop0')
+            loopdev = self.losetup(self.fs['/'].filename)
+            loopnum = loopdev.replace("/dev/loop", "")
+            poopdev = "/dev/poop" + loopnum
 
-            do('losetup /dev/poop0 "%s"' % self.fs['/'].filename)
-            do('kpartx -as /dev/poop0')
+            do('cp -a %s %s' % (loopdev, poopdev))
+            do('kpartx -as %s' % poopdev)
 
             for entry in self.fs.depthlist():
-                do('mount /dev/mapper/poop0p%d %s' %
-                   (entry.partnum, imagemntfs.fname(entry.mountpoint)))
+                do('mount /dev/mapper/poop%sp%d %s' %
+                   (loopnum, entry.partnum, imagemntfs.fname(entry.mountpoint)))
 
             do("mount --bind /dev %s" % imagemntfs.fname("dev"))
             do("mount --bind /proc %s" % imagemntfs.fname("proc"))
@@ -254,7 +256,7 @@ class grubinstaller97(grubinstaller_base):
             do('mkdir -p "%s"' % imagemntfs.fname("boot/grub"))
 
             devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
-            devmap.write("(hd0) /dev/poop0\n")
+            devmap.write("(hd0) %s\n" % poopdev)
             devmap.close()
 
             chroot(imagemnt, "update-initramfs -u -k all")
@@ -268,8 +270,11 @@ class grubinstaller97(grubinstaller_base):
 
             chroot(imagemnt, "update-grub")
 
-            do("chroot %s grub-install --no-floppy /dev/poop0" %
-               (imagemnt))
+            do("chroot %s grub-install --no-floppy %s" %
+               (imagemnt, poopdev))
+
+        except Exception as E:
+            logging.exception(E)
 
         finally:
             os.unlink(imagemntfs.fname("boot/grub/device.map"))
@@ -278,11 +283,11 @@ class grubinstaller97(grubinstaller_base):
             do("umount %s" % imagemntfs.fname("sys"), allow_fail=True)
 
             for entry in reversed(self.fs.depthlist()):
-                do('umount /dev/mapper/poop0p%d' % entry.partnum,
+                do('umount /dev/mapper/poop%sp%d' % (loopnum, entry.partnum),
                    allow_fail=True)
 
-            do('kpartx -d /dev/poop0', allow_fail=True)
-            do("losetup -d /dev/poop0", allow_fail=True)
+            do("kpartx -d %s" % poopdev, allow_fail=True)
+            do("losetup -d %s" % poopdev, allow_fail=True)
 
 
 class simple_fstype(object):
