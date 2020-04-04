@@ -16,7 +16,7 @@ import _ped
 
 from elbepack.fstab import fstabentry, mountpoint_dict
 from elbepack.filesystem import Filesystem, size_to_int
-from elbepack.shellhelper import do, CommandError, chroot
+from elbepack.shellhelper import do, CommandError, chroot, get_command_out
 
 
 def mkfs_mtd(mtd, fslabel, target):
@@ -154,6 +154,10 @@ class grubinstaller_base(object):
 
     def install(self, target):
         pass
+
+    def losetup(self, f):
+        loopdev = get_command_out('losetup --find --show "%s"' % f)
+        return loopdev.rstrip('\n')
 
 
 class grubinstaller202(grubinstaller_base):
