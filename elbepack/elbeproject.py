@@ -378,7 +378,7 @@ class ElbeProject (object):
                     host_pkglist.append(p.et.text.strip())
         else:
             try:
-                host_pkglist.append("g++-%s" % self.xml.defs["sdkarch"])
+                host_pkglist.append(self.xml.defs["sdkgccpkg"])
             except KeyError:
                 raise UnsupportedSDKException(triplet)
 

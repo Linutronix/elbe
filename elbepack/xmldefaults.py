@@ -22,7 +22,7 @@ armel_defaults = {
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
-    "sdkarch": "arm-linux-gnueabi",
+    "sdkgccpkg": "g++-arm-linux-gnueabi",
     "elfcode": "ARM",
 }
 
@@ -35,7 +35,7 @@ armel_linaro48_defaults = {
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
-    "sdkarch": "arm-linux-gnueabi",
+    "sdkgccpkg": "g++-arm-linux-gnueabi",
     "toolchaintype": "linaro_armel",
     "toolchainver": "4.8.3",
     "elfcode": "ARM",
@@ -50,7 +50,7 @@ armel_virtio_defaults = {
     "machine": "versatilepb",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabi",
-    "sdkarch": "arm-linux-gnueabi",
+    "sdkgccpkg": "g++-arm-linux-gnueabi",
     "elfcode": "ARM",
 }
 
@@ -63,7 +63,7 @@ armhf_defaults = {
     "machine": "versatilepb -cpu cortex-a9",
     "nicmodel": "smc91c111",
     "triplet": "arm-linux-gnueabihf",
-    "sdkarch": "arm-linux-gnueabihf",
+    "sdkgccpkg": "g++-arm-linux-gnueabihf",
     "elfcode": "ARM",
 }
 
@@ -90,7 +90,7 @@ armhf_virtio_defaults = {
     "machine": "versatilepb -cpu cortex-a9",
     "nicmodel": "virtio",
     "triplet": "arm-linux-gnueabihf",
-    "sdkarch": "arm-linux-gnueabihf",
+    "sdkgccpkg": "g++-arm-linux-gnueabihf",
     "elfcode": "ARM"
 }
 
@@ -103,7 +103,7 @@ aarch64_defaults = {
     "machine": "virt -cpu cortex-a57",
     "nicmodel": "virtio",
     "triplet": "aarch64-linux-gnu",
-    "sdkarch": "aarch64-linux-gnu",
+    "sdkgccpkg": "g++-aarch64-linux-gnu",
     "elfcode": "ARM aarch64",
 }
 
@@ -116,7 +116,7 @@ ppc_defaults = {
     "machine": "mac99",
     "nicmodel": "rtl8139",
     "triplet": "powerpc-linux-gnu",
-    "sdkarch": "powerpc-linux-gnu",
+    "sdkgccpkg": "g++-powerpc-linux-gnu",
     "elfcode": "PowerPC or cisco 4500",
 }
 
@@ -140,7 +140,7 @@ ppc64el_defaults = {
     "machine": "none",
     "nicmodel": "virtio",
     "triplet": "ppc64le-linux-gnu",
-    "sdkarch": "powerpc64le-linux-gnu",
+    "sdkgccpkg": "g++-powerpc64le-linux-gnu",
     "elfcode": "64-bit PowerPC or cisco 7500",
 }
 
@@ -153,6 +153,7 @@ amd64_defaults = {
     "machine": "pc",
     "nicmodel": "virtio",
     "triplet": "x86_64-linux-gnu",
+    "sdkgccpkg": "g++",
 }
 
 i386_defaults = {
@@ -163,6 +164,7 @@ i386_defaults = {
     "machine": "pc",
     "nicmodel": "virtio",
     "triplet": "i386-linux-gnu",
+    "sdkgccpkg": "g++-i686-linux-gnu",
 }
 
 archindep_defaults = {
