@@ -1,3 +1,15 @@
+elbe (12.4) unstable; urgency=medium
+
+  * change loglevel for archive validation
+  * more python3 fixes
+  * fix elbe debianize packaging
+  * finalize porting all examples to buster
+  * fix debianize barebox
+  * separate licence generation for all rootfs generated.
+  * fix problems with losetup (Fixes #254)
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Thu, 30 Apr 2020 10:48:53 +0200
+
 elbe (12.3) unstable; urgency=medium
 
   * Make SDK install script buster compatible (Fixes #246)
