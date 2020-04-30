@@ -7,7 +7,7 @@
 
 import os
 
-from elbepack.shellhelper import do, get_command_out
+from elbepack.shellhelper import do, get_command_out, CommandError
 
 
 def get_mtdnum(xml, label):
@@ -141,8 +141,16 @@ class fstabentry(object):
         self.number = '{}{}'.format(disk.type, ppart.number)
 
     def losetup(self):
-        loopdev = get_command_out('losetup --offset %d --sizelimit %d --find --show "%s"' %
-                                  (self.offset, self.size, self.filename))
+        cmd = ('losetup --offset %d --sizelimit %d --find --show "%s"' %
+               (self.offset, self.size, self.filename))
+        try:
+            loopdev = get_command_out(cmd)
+        except CommandError as e:
+            if e.returncode != 1:
+                raise
+            do('sync')
+            loopdev = get_command_out(cmd)
+
         return loopdev.rstrip('\n')
 
     def tuning(self, loopdev):
