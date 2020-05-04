@@ -208,26 +208,26 @@ class Filesystem(object):
 
         return flist
 
-    def write_file(self, path, mode, cont):
-        f = self.open(path, "w")
+    def _write_file(self, path, f, cont, mode):
         f.write(cont)
         f.close()
         if mode is not None:
-            self.chmod(path, mode)
+            os.chmod(path, mode)
 
-    def append_file(self, path, content, mode=None):
-        f = self.open(path, "a")
-        f.write(content)
-        f.close()
-        if mode is not None:
-            self.chmod(path, mode)
+    def write_file(self, path, mode, cont):
+        path = self.realpath(path)
+        self._write_file(path, open(path, "w"), cont, mode)
+
+    def append_file(self, path, cont, mode=None):
+        path = self.realpath(path)
+        self._write_file(path, open(path, "a"), cont, mode)
 
     def read_file(self, path, gzip=False):
+        path = self.realpath(path)
         if gzip:
-            print('read gzip '+path)
-            fp = self.open_gz(path, "r")
+            fp = gzip.open(path, mode)
         else:
-            fp = self.open(path, "r")
+            fp = open(path, "r")
 
         with fp:
             retval = fp.read()
