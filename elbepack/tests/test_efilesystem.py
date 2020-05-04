@@ -78,3 +78,8 @@ class TestCopyFilelist(unittest.TestCase):
         # We should now have the content from /SRC/a/bla in /DST/a/bla
         self.assertEqual(self.src.read_file('/a/bla'),
                          self.dst.read_file('/a/bla'))
+
+    @unittest.expectedFailure
+    def test_badfile(self):
+        # This should throw a CommandError
+        copy_filelist(self.src, ['/doesnt/exist'], self.dst)
