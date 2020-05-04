@@ -60,3 +60,21 @@ class TestCopyFilelist(unittest.TestCase):
         # /DST/a/b/c/bla
         self.assertEqual(self.src.read_file('/a/b/c//bla'),
                          self.dst.read_file('/a/b/c/bla'))
+
+    def test_multilinks(self):
+
+        self.src.mkdir_p('/a')
+
+        # a <- b
+        # ../b <- /a/c
+        self.src.symlink('a', '/b')
+        self.src.symlink('../b', '/a/c')
+
+        # This write into /a/bla
+        self.src.write_file('a/c/bla', 0o644, 'bla')
+
+        copy_filelist(self.src, ['/a/c/bla'], self.dst)
+
+        # We should now have the content from /SRC/a/bla in /DST/a/bla
+        self.assertEqual(self.src.read_file('/a/bla'),
+                         self.dst.read_file('/a/bla'))
