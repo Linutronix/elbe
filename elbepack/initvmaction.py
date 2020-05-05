@@ -628,3 +628,21 @@ class SubmitAction(InitVMAction):
 
             submit_and_dl_result(xmlfile, cdrom, opt)
 
+@InitVMAction.register('sync')
+class SyncAction(InitVMAction):
+
+    def __init__(self, node):
+        super(SyncAction, self).__init__(node)
+
+    def execute(self, _initvmdir, opt, args):
+        top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        try:
+            system("rsync --info=name1,stats1  --archive --times "
+                   "--exclude='.git*' --exclude='*.pyc' --exclude='elbe-build*' "
+                   "--exclude='initvm' --exclude='__pycache__' --exclude='docs' "
+                   "--exclude='examples' "
+                   "--rsh='ssh -p %s' --chown=root:root "
+                   "%s/ root@localhost:/var/cache/elbe/devel" %
+                   (cfg["sshport"], top_dir))
+        except CommandError as E:
+            print(E)
