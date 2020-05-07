@@ -667,15 +667,17 @@ class ElbeProject (object):
     def pdebuild(self, cpuset, profile, cross):
         cross_pbuilderrc = os.path.join(self.builddir, "cross_pbuilderrc")
         if cross and not os.path.exists(cross_pbuilderrc):
-            logging.error("Please make sure that you create the pbuilder environment "
-                          "with the --cross option if you want to use the build "
-                          "command with --cross.")
+            logging.error("Please make sure that you create the pbuilder "
+                          "environment with the --cross option if you want to "
+                          "use the build command with --cross.")
             sys.exit(20)
+
         if os.path.exists(cross_pbuilderrc) and not cross:
             logging.error("Please make sure that if you created the pbuilder "
                           "environment without the --cross option, you use the "
                           "build command without --cross too.")
             sys.exit(20)
+
         self.pdebuild_init()
 
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")

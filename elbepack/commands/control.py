@@ -86,6 +86,12 @@ def run_command(argv):
     oparser.add_option("--profile", dest="profile", default="",
                        help="Make pbuilder commands build the specified profile")
 
+    oparser.add_option("--cross", dest="cross", default=False,
+                       action="store_true",
+                       help="Creates an environment for crossbuilding if "
+                            "combined with create. Combined with build it"
+                            " will use this environment.")
+
     devel = OptionGroup(
         oparser,
         "options for elbe developers",

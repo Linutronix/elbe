@@ -209,10 +209,11 @@ class BuildJob(AsyncWorkerJob):
             db.reset_busy(self.project.builddir, success)
 
 class PdebuildJob(AsyncWorkerJob):
-    def __init__(self, project, cpuset=-1, profile=""):
+    def __init__(self, project, cpuset=-1, profile="", cross=False):
         AsyncWorkerJob.__init__(self, project)
         self.cpuset=cpuset
         self.profile=profile
+        self.cross=cross
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -225,7 +226,7 @@ class PdebuildJob(AsyncWorkerJob):
         success = self.build_failed
         try:
             logging.info("Pdebuild started")
-            self.project.pdebuild(self.cpuset, self.profile)
+            self.project.pdebuild(self.cpuset, self.profile, self.cross)
         except Exception:
             logging.exception("Pdebuild failed")
         else:
@@ -239,8 +240,9 @@ class PdebuildJob(AsyncWorkerJob):
             db.reset_busy(self.project.builddir, success)
 
 class CreatePbuilderJob(AsyncWorkerJob):
-    def __init__(self, project):
+    def __init__(self, project, cross=False):
         AsyncWorkerJob.__init__(self, project)
+        self.cross = cross
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -253,7 +255,7 @@ class CreatePbuilderJob(AsyncWorkerJob):
         success = self.build_failed
         try:
             logging.info("Building pbuilder started")
-            self.project.create_pbuilder()
+            self.project.create_pbuilder(self.cross)
         except Exception:
             logging.exception("Pbuilder failed")
         else:

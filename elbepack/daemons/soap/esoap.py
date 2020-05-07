@@ -227,12 +227,12 @@ class ESoap (ServiceBase):
         self.app.pm.build_current_project(uid, build_bin, build_src,
                                           skip_pbuilder)
 
-    @rpc(String)
+    @rpc(String, Boolean)
     @authenticated_uid
     @soap_faults
-    def build_pbuilder(self, uid, builddir):
+    def build_pbuilder(self, uid, builddir, cross):
         self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_pbuilder(uid)
+        self.app.pm.build_pbuilder(uid, cross)
 
     @rpc(String)
     @authenticated_uid
@@ -301,12 +301,12 @@ class ESoap (ServiceBase):
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
-    @rpc(String, Integer, String)
+    @rpc(String, Integer, String, Boolean)
     @authenticated_uid
     @soap_faults
-    def finish_pdebuild(self, uid, builddir, cpuset, profile):
+    def finish_pdebuild(self, uid, builddir, cpuset, profile, cross):
         self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_current_pdebuild(uid, cpuset, profile)
+        self.app.pm.build_current_pdebuild(uid, cpuset, profile, cross)
 
     @rpc(String, String)
     @authenticated_uid

@@ -67,6 +67,9 @@ class CreateAction(PBuilderAction):
         PBuilderAction.__init__(self, node)
 
     def execute(self, opt, _args):
+        crossopt = ""
+        if opt.cross:
+            crossopt = "--cross"
 
         if opt.xmlfile:
             try:
@@ -111,7 +114,9 @@ class CreateAction(PBuilderAction):
         print("Creating pbuilder")
 
         try:
-            system('%s control build_pbuilder "%s"' % (elbe_exe, prjdir))
+            system('%s control build_pbuilder "%s" "%s"' % (elbe_exe,
+                                                            prjdir,
+                                                            crossopt))
         except CommandError:
             print("elbe control build_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -176,6 +181,9 @@ class BuildAction(PBuilderAction):
         # pylint: disable=too-many-statements
         # pylint: disable=too-many-branches
 
+        crossopt = ""
+        if opt.cross:
+            crossopt = "--cross"
         tmp = TmpdirFilesystem()
 
         if opt.xmlfile:
@@ -244,9 +252,9 @@ class BuildAction(PBuilderAction):
         print("")
 
         try:
-            system('%s control set_pdebuild --cpuset "%d" --profile "%s" '
+            system('%s control set_pdebuild --cpuset "%d" --profile "%s" "%s" '
                    '"%s" "%s"' %
-                   (elbe_exe, opt.cpuset, opt.profile,
+                   (elbe_exe, opt.cpuset, opt.profile, crossopt,
                     prjdir, tmp.fname("pdebuild.tar.gz")))
         except CommandError:
             print("elbe control set_pdebuild Failed", file=sys.stderr)

@@ -46,6 +46,12 @@ def run_command(argv):
     oparser.add_option("--profile", dest="profile", default="",
                        help="profile that shall be built")
 
+    oparser.add_option("--cross", dest="cross", default=False,
+                       action="store_true",
+                       help="Creates an environment for crossbuilding if "
+                            "combined with create. Combined with build it"
+                            " will use this environment.")
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
