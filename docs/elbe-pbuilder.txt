@@ -43,13 +43,18 @@ OPTIONS
 	Specify the build profile(s) to build. (dpkg-buildpackage -P<profile>)
 	Provide multiple profiles as a comma separated list.
 
+--cross::
+        Combined with the create command it creates a chroot environment to make
+        crossbuilding possible. Combined with the build command it will use
+        this environment for crossbuilding.
+
 COMMANDS
 --------
 
 'create'::
 
 A pbuilder environment for the given project or xml File will be created.
-
+If --cross is given the pbuilder environment will be created to crossbuild packages.
 
 'build'::
 
