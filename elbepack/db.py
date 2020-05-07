@@ -884,10 +884,17 @@ class ElbeDB(object):
                                           "Repository IsoImage")
 
             # Scan pbuilder/build directory if that exists
-            pbresult_path = os.path.join(p.builddir, "pbuilder", "result")
+            if os.path.exists(os.path.join(p.builddir, "pbuilder", "result")):
+                pbresult_path = os.path.join(p.builddir, "pbuilder", "result")
+                pfile_path = os.path.join("pbuilder", "result")
+            else:
+                pbresult_path = os.path.join(p.builddir, "pbuilder_cross",
+                                             "result")
+                pfile_path = os.path.join("pbuilder_cross", "result")
+
             if os.path.isdir(pbresult_path):
                 for f in os.listdir(pbresult_path):
-                    pfile = os.path.join("pbuilder", "result", f)
+                    pfile = os.path.join(pfile_path, f)
                     _update_project_file(s, p.builddir, pfile,
                                               "application/octet-stream",
                                               "Pbuilder artifact")

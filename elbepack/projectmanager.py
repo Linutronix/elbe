@@ -308,24 +308,26 @@ class ProjectManager(object):
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(UpdatePbuilderJob(ep))
 
-    def build_pbuilder(self, userid):
+    def build_pbuilder(self, userid, cross):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            self.worker.enqueue(CreatePbuilderJob(ep))
+            self.worker.enqueue(CreatePbuilderJob(ep, cross))
 
-    def build_current_pdebuild(self, userid, cpuset, profile):
+    def build_current_pdebuild(self, userid, cpuset, profile, cross):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if not path.isdir(path.join(ep.builddir, "pbuilder")):
+            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
+                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    'create --project %s" first' % ep.builddir)
 
-            self.worker.enqueue(PdebuildJob(ep, cpuset, profile))
+            self.worker.enqueue(PdebuildJob(ep, cpuset, profile, cross))
 
     def set_orig_fname(self, userid, fname):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if not path.isdir(path.join(ep.builddir, "pbuilder")):
+            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
+                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    'create --project %s" first' % ep.builddir)
 
@@ -335,7 +337,8 @@ class ProjectManager(object):
     def get_orig_fname(self, userid):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if not path.isdir(path.join(ep.builddir, "pbuilder")):
+            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
+                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    'create --project %s" first' % ep.builddir)
 

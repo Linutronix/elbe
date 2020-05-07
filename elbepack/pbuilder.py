@@ -62,6 +62,29 @@ def pbuilder_write_config(builddir, xml):
 
     fp.close()
 
+def pbuilder_write_cross_config(builddir, xml):
+    distname = xml.prj.text('suite')
+    pbuilderrc_fname = os.path.join(builddir, "cross_pbuilderrc")
+    fp = open(pbuilderrc_fname, "w")
+
+    fp.write('#!/bin/sh\n')
+    fp.write('set -e\n')
+    fp.write('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False))
+    fp.write('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo %s main"\n' %
+             (builddir, distname))
+    fp.write('BASETGZ="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'base.tgz'))
+
+    fp.write('DISTRIBUTION="%s"\n' % distname)
+
+    fp.write('BUILDRESULT="%s"\n' %
+             os.path.join(builddir, 'pbuilder_cross', 'result'))
+    fp.write('APTCACHE="%s"\n' %
+             os.path.join(builddir, 'pbuilder_cross','aptcache'))
+    fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'hooks.d'))
+    fp.write('PBUILDERSATISFYDEPENDSCMD='
+             '/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n')
+    fp.close()
+
 
 def pbuilder_write_apt_conf(builddir, xml):
 
@@ -107,9 +130,12 @@ def mirror_script_add_key_url(mirror, key_url):
     return mirror_script_add_key_text(mirror, key_text)
 
 
-def pbuilder_write_repo_hook(builddir, xml):
+def pbuilder_write_repo_hook(builddir, xml, cross):
 
-    pbuilder_hook_dir = os.path.join(builddir, "pbuilder", "hooks.d")
+    if cross:
+        pbuilder_hook_dir = os.path.join(builddir, "pbuilder_cross", "hooks.d")
+    else:
+        pbuilder_hook_dir = os.path.join(builddir, "pbuilder", "hooks.d")
 
     with open(os.path.join(pbuilder_hook_dir, "H10elbe_apt_update"), "w") as f:
         f.write("#!/bin/sh\napt update\n")

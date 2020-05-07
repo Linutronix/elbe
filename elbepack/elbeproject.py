@@ -12,6 +12,7 @@ import os
 import datetime
 import io
 import logging
+import sys
 
 from elbepack.shellhelper import CommandError, system, do, chroot
 
@@ -31,6 +32,7 @@ from elbepack.dump import check_full_pkgs
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
+                               pbuilder_write_cross_config,
                                pbuilder_write_apt_conf)
 
 from elbepack.repomanager import ProjectRepo
@@ -512,7 +514,7 @@ class ElbeProject (object):
 
         if self.xml.has('target/pbuilder') and not skip_pbuild:
             if not os.path.exists(os.path.join(self.builddir, "pbuilder")):
-                self.create_pbuilder()
+                self.create_pbuilder(cross=False)
             for p in self.xml.node('target/pbuilder'):
                 self.pbuild(p)
                 # the package might be needed by a following pbuild, so update
@@ -649,14 +651,31 @@ class ElbeProject (object):
                                         "pdebuilder"))
 
         # Remove pbuilder/result directory
-        do('rm -rf "%s"' % os.path.join(self.builddir,
-                                        "pbuilder", "result"))
+        do('rm -rf "%s" "%s"' % (os.path.join(self.builddir,
+                                         "pbuilder", "result"),
+                                 os.path.join(self.builddir,
+                                         "pbuilder_cross","result")))
 
         # Recreate the directories removed
-        do('mkdir -p "%s"' % os.path.join(self.builddir,
-                                          "pbuilder", "result"))
+        if os.path.exists(os.path.join(self.builddir, "pbuilder_cross")):
+            do('mkdir -p "%s"' % os.path.join(self.builddir,
+                                              "pbuilder_cross","result"))
+        else:
+            do('mkdir -p "%s"' % os.path.join(self.builddir,
+                                              "pbuilder", "result"))
 
-    def pdebuild(self, cpuset, profile):
+    def pdebuild(self, cpuset, profile, cross):
+        cross_pbuilderrc = os.path.join(self.builddir, "cross_pbuilderrc")
+        if cross and not os.path.exists(cross_pbuilderrc):
+            logging.error("Please make sure that you create the pbuilder environment "
+                          "with the --cross option if you want to use the build "
+                          "command with --cross.")
+            sys.exit(20)
+        if os.path.exists(cross_pbuilderrc) and not cross:
+            logging.error("Please make sure that if you created the pbuilder "
+                          "environment without the --cross option, you use the "
+                          "build command without --cross too.")
+            sys.exit(20)
         self.pdebuild_init()
 
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
@@ -676,10 +695,10 @@ class ElbeProject (object):
         do('tar xfz "%s" -C "%s"' %
            (os.path.join(self.builddir, "current_pdebuild.tar.gz"), pbdir))
 
-        self.pdebuild_build(cpuset, profile)
+        self.pdebuild_build(cpuset, profile, cross)
         self.repo.finalize()
 
-    def pdebuild_build(self, cpuset, profile):
+    def pdebuild_build(self, cpuset, profile, cross):
         # check whether we have to use taskset to run pdebuild
         # this might be useful, when things like java dont
         # work with multithreading
@@ -691,15 +710,35 @@ class ElbeProject (object):
             cpuset_cmd = ''
 
         try:
-            do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
-               '--configfile "%s" '
-               '--use-pdebuild-internal --buildresult "%s"' % (
-                   os.path.join(self.builddir, "pdebuilder", "current"),
-                   cpuset_cmd,
-                   cfg['pbuilder_jobs'],
-                   os.path.join(self.builddir, "pbuilderrc"),
-                   os.path.join(self.builddir, "pbuilder", "result")),
-               env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
+            if cross:
+                do('cd "%s"; dpkg-source -b .; %s '
+                   'pbuilder build --host-arch %s --configfile "%s" '
+                   '--basetgz "%s" --buildresult "%s" '
+                   '../*.dsc' % (
+                       os.path.join(self.builddir, "pdebuilder", "current"),
+                       cpuset_cmd, self.arch,
+                       os.path.join(self.builddir, "cross_pbuilderrc"),
+                       os.path.join(self.builddir, "pbuilder_cross", "base.tgz"),
+                       os.path.join(self.builddir, "pbuilder_cross", "result")),
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
+                self.repo.include(os.path.join(self.builddir,
+                                               "pbuilder_cross",
+                                               "result",
+                                               "*.changes"))
+            else:
+                do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
+                   '--configfile "%s" '
+                   '--use-pdebuild-internal --buildresult "%s"' % (
+                       os.path.join(self.builddir, "pdebuilder", "current"),
+                       cpuset_cmd,
+                       cfg['pbuilder_jobs'],
+                       os.path.join(self.builddir, "pbuilderrc"),
+                       os.path.join(self.builddir, "pbuilder", "result")),
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
+                self.repo.include(os.path.join(self.builddir,
+                                               "pbuilder",
+                                               "result",
+                                               "*.changes"))
 
             self.repo.remove(os.path.join(self.builddir,
                                           "pdebuilder",
@@ -707,11 +746,9 @@ class ElbeProject (object):
                                           "debian",
                                           "control"))
 
-            self.repo.include(os.path.join(self.builddir,
-                                           "pbuilder", "result", "*.changes"))
         except CommandError:
             logging.exception("Package fails to build.\n"
-                              "Please make sure, that the submited package "
+                              "Please make sure, that the submitted package "
                               "builds in pbuilder")
 
     def update_pbuilder(self):
@@ -719,30 +756,51 @@ class ElbeProject (object):
            (os.path.join(self.builddir, "pbuilderrc"),
             os.path.join(self.builddir, "aptconfdir")))
 
-    def create_pbuilder(self):
+    def create_pbuilder(self, cross):
         # Remove old pbuilder directory, if it exists
-        do('rm -rf "%s"' % os.path.join(self.builddir, "pbuilder"))
+        do('rm -rf "%s" "%s"' % (os.path.join(self.builddir, "pbuilder"),
+                                 os.path.join(self.builddir, "pbuilder_cross")))
 
         # make hooks.d and pbuilder directory
-        do('mkdir -p "%s"' %
-           os.path.join(self.builddir, "pbuilder", "hooks.d"))
-        do('mkdir -p "%s"' %
-           os.path.join(self.builddir, "pbuilder", "aptcache"))
+        if cross:
+            do('mkdir -p "%s"' %
+               os.path.join(self.builddir, "pbuilder_cross", "hooks.d"))
+            do('mkdir -p "%s"' %
+               os.path.join(self.builddir, "pbuilder_cross", "aptcache"))
+        else:
+            do('mkdir -p "%s"' %
+               os.path.join(self.builddir, "pbuilder", "hooks.d"))
+            do('mkdir -p "%s"' %
+               os.path.join(self.builddir, "pbuilder", "aptcache"))
         do('mkdir -p "%s"' %
            os.path.join(self.builddir, "aptconfdir", "apt.conf.d"))
 
         # write config files
-        pbuilder_write_config(self.builddir, self.xml)
+        if cross:
+            pbuilder_write_cross_config(self.builddir, self.xml)
+            pbuilder_write_repo_hook(self.builddir, self.xml, cross)
+            do('chmod -R 755 "%s"' %
+               os.path.join(self.builddir, "pbuilder_cross", "hooks.d"))
+        else:
+            pbuilder_write_config(self.builddir, self.xml)
+            pbuilder_write_repo_hook(self.builddir, self.xml, cross)
+            do('chmod -R 755 "%s"' %
+               os.path.join(self.builddir, "pbuilder", "hooks.d"))
         pbuilder_write_apt_conf(self.builddir, self.xml)
-        pbuilder_write_repo_hook(self.builddir, self.xml)
-        do('chmod -R 755 "%s"' %
-           os.path.join(self.builddir, "pbuilder", "hooks.d"))
 
         # Run pbuilder --create
-        do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-           '--debootstrapopts --include="git gnupg"' %
-           (os.path.join(self.builddir, "pbuilderrc"),
-            os.path.join(self.builddir, "aptconfdir")))
+        if cross:
+            do('pbuilder --create --buildplace "%s" '
+               '--configfile "%s" --aptconfdir "%s" '
+               '--debootstrapopts --include="git gnupg";' %
+               (os.path.join(self.builddir, "pbuilder_cross"),
+                os.path.join(self.builddir, "cross_pbuilderrc"),
+                os.path.join(self.builddir, "aptconfdir")))
+        else:
+            do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
+               '--debootstrapopts --include="git gnupg"' %
+               (os.path.join(self.builddir, "pbuilderrc"),
+                os.path.join(self.builddir, "aptconfdir")))
 
     def sync_xml_to_disk(self):
         try:

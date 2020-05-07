@@ -546,7 +546,7 @@ class GetFilesAction(ClientAction):
         nfiles = 0
 
         for f in files[0]:
-            if opt.pbuilder_only and not f.name.startswith('pbuilder'):
+            if (opt.pbuilder_only and not f.name.startswith('pbuilder_cross')):
                 continue
 
             if opt.matches and not fnmatch.fnmatch(f.name, opt.matches):
@@ -722,7 +722,7 @@ class SetPdebuilderAction(ClientAction):
     def execute(self, client, opt, args):
         size = 1024 * 1024
 
-        if len(args) != 2:
+        if len(args) != 2 and len(args) != 3:
             print("usage: elbe control set_pdebuild "
                   "<project_dir> <pdebuild file>", file=sys.stderr)
             sys.exit(20)
@@ -739,7 +739,8 @@ class SetPdebuilderAction(ClientAction):
             if len(bindata) != size:
                 break
 
-        client.service.finish_pdebuild(builddir, opt.cpuset, opt.profile)
+        client.service.finish_pdebuild(builddir, opt.cpuset,
+                                       opt.profile, opt.cross)
 
 
 ClientAction.register(SetPdebuilderAction)
@@ -752,15 +753,15 @@ class BuildPbuilderAction(ClientAction):
     def __init__(self, node):
         ClientAction.__init__(self, node)
 
-    def execute(self, client, _opt, args):
-        if len(args) != 1:
+    def execute(self, client, opt, args):
+        if len(args) != 1 and len(args) != 2:
             print(
                 "usage: elbe control build_pbuilder <project_dir>",
                 file=sys.stderr)
             sys.exit(20)
 
         builddir = args[0]
-        client.service.build_pbuilder(builddir)
+        client.service.build_pbuilder(builddir, opt.cross)
 
 
 ClientAction.register(BuildPbuilderAction)
