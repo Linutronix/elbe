@@ -21,9 +21,9 @@
 					<source>
 						http://debian.linutronix.de/elbe buster main
 					</source>
-					<key>
+					<raw-key>
 						http://debian.linutronix.de/elbe/elbe-repo.pub
-					</key>
+					</raw-key>
 				</url>
 				<url>
 					<binary>
@@ -32,9 +32,9 @@
 					<source>
 						http://debian.linutronix.de/elbe-common buster main
 					</source>
-					<key>
+					<raw-key>
 						http://debian.linutronix.de/elbe-common/elbe-repo.pub
-					</key>
+					</raw-key>
 				</url>
 			</url-list>
 		</mirror>
