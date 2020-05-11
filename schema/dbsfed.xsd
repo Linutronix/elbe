@@ -391,6 +391,14 @@
           </documentation>
         </annotation>
       </element>
+      <element name="finetuning" type="rfs:initvm-finetuning" minOccurs="0" maxOccurs="1">
+	<annotation>
+	  <documentation>
+	    Lists of commands to execute or files to create on the
+	    initvm at the very end after the debian-installer.
+	  </documentation>
+	</annotation>
+      </element>
     </all>
     <attribute ref="xml:base"/>
   </complexType>
@@ -1727,6 +1735,37 @@
       <enumeration value="devtmpfs" />
     </restriction>
   </simpleType>
+
+
+  <complexType name="initvm-finetuning">
+    <annotation>
+      <documentation>
+         container for initvm-finetuning actions; these actions are
+         executed at the end of the init-elbe.sh script in the target.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:initvm-action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute ref="xml:base"/>
+  </complexType>
+
+  <group name="initvm-action">
+    <annotation>
+      <documentation>
+        definition of initvm-finetuning actions
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="command" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+	    execute a shell command in the target
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
 
   <complexType name="finetuning">
     <annotation>
