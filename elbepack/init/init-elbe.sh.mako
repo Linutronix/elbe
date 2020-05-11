@@ -77,4 +77,15 @@ in-target haveged
   in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} /var/cache/elbe/source.xml
 % endif
 
+% if prj.has("finetuning"):
+%   for node in prj.all("./finetuning/"):
+%     if "command" == node.tag:
+	cat <<ELBE_INITVM_FINETUNING_EOF > /buildenv/tmp/elbe-initvm
+${"\n".join(line.lstrip(" \t") for line in node.et.text.strip("\n").splitlines())}
+ELBE_INITVM_FINETUNING_EOF
+	in-target sh /tmp/elbe-initvm
+%     endif
+%   endfor
+% endif
+
 exit 0
