@@ -17,6 +17,7 @@ from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.efilesystem import ChRootFilesystem
 from elbepack.log import elbe_logging
+from elbepack.rpcaptcache import get_rpcaptcache
 
 from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 
@@ -90,7 +91,11 @@ def run_command(argv):
         generated_files = []
         if opt.source:
             with rfs:
-                generated_files += mk_source_cdrom(rfs, arch, codename,
+                cache = get_rpcaptcache(rfs, arch)
+                pkg_lst = [(pkg.name, pkg.installed_version)
+                           for pkg in cache.get_installed_pkgs()]
+                components = {"main":(rfs, cache, pkg_lst)}
+                generated_files += mk_source_cdrom(components, codename,
                                                    init_codename, builddir,
                                                    opt.cdrom_size)
 
