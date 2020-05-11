@@ -1,0 +1,59 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://security.debian.org/debian-security buster/updates main
+					</binary>
+					<source>
+						http://security.debian.org/debian-security buster/updates main
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe buster main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe buster main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe/elbe-repo.pub
+					</key>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-common buster main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-common buster main
+					</source>
+					<key>
+						http://debian.linutronix.de/elbe-common/elbe-repo.pub
+					</key>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>buster</suite>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+			<pkg>debootstrap</pkg>
+			<pkg>pbuilder</pkg>
+		</pkg-list>
+		<preseed>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+		</preseed>
+		<size>80G</size>
+		<swap-size>10GiB</swap-size>
+		<img>qcow2</img>
+		<portforwarding>
+		</portforwarding>
+		<finetuning>
+			<command>sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config</command>
+		</finetuning>
+	</initvm>
+</ns0:RootFileSystem>
