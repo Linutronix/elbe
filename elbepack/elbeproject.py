@@ -440,7 +440,7 @@ class ElbeProject (object):
             logging.info("Unknown pbuild source: %s", p.tag)
 
         # pdebuild_build(-1) means use all cpus
-        self.pdebuild_build(cpuset=-1, profile="")
+        self.pdebuild_build(cpuset=-1, profile="", cross=False)
 
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None):
