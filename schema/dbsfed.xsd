@@ -1243,7 +1243,7 @@
           </documentation>
         </annotation>
       </element>
-      <element name="binary" type="rfs:binaryblob" minOccurs="0">
+      <element name="binary" type="rfs:binaryblob" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
             binary blob that is dd'ed to the specified offset
