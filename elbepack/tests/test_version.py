@@ -12,7 +12,7 @@ from elbepack.version import elbe_version
 class TestElbepackVersion(unittest.TestCase):
 
     # This is a read-only state that is the same for every tests
-    expected_version = "12.3"
+    expected_version = "12.4"
 
     def setUp(self):
         # This is a mutable state that is different for every tests
@@ -22,11 +22,6 @@ class TestElbepackVersion(unittest.TestCase):
         # You might want to cleanup your mutable states here
         pass
 
-    @unittest.skip
     def test_version(self):
         self.my_list.append(1)
         self.assertEqual(elbe_version, self.expected_version)
-
-    @unittest.skip
-    def test_mutable_state(self):
-        self.assertEqual(len(self.my_list), 0)
