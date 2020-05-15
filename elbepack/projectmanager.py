@@ -309,10 +309,11 @@ class ProjectManager(object):
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(UpdatePbuilderJob(ep))
 
-    def build_pbuilder(self, userid, cross):
+    def build_pbuilder(self, userid, cross, noccache, ccachesize):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            self.worker.enqueue(CreatePbuilderJob(ep, cross))
+            self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross,
+                                                  noccache))
 
     def build_current_pdebuild(self, userid, cpuset, profile, cross):
         with self.lock:

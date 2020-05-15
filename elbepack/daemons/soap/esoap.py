@@ -227,12 +227,12 @@ class ESoap (ServiceBase):
         self.app.pm.build_current_project(uid, build_bin, build_src,
                                           skip_pbuilder)
 
-    @rpc(String, Boolean)
+    @rpc(String, Boolean, Boolean, String)
     @authenticated_uid
     @soap_faults
-    def build_pbuilder(self, uid, builddir, cross):
+    def build_pbuilder(self, uid, builddir, cross, noccache, ccachesize):
         self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_pbuilder(uid, cross)
+        self.app.pm.build_pbuilder(uid, cross, noccache, ccachesize)
 
     @rpc(String)
     @authenticated_uid

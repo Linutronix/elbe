@@ -815,7 +815,7 @@ class ElbeProject (object):
            (os.path.join(self.builddir, "pbuilderrc"),
             os.path.join(self.builddir, "aptconfdir")))
 
-    def create_pbuilder(self, cross):
+    def create_pbuilder(self, cross, noccache, ccachesize):
         # Remove old pbuilder directory, if it exists
         do('rm -rf "%s" "%s"' % (os.path.join(self.builddir, "pbuilder"),
                                  os.path.join(self.builddir, "pbuilder_cross")))
@@ -834,14 +834,22 @@ class ElbeProject (object):
         do('mkdir -p "%s"' %
            os.path.join(self.builddir, "aptconfdir", "apt.conf.d"))
 
+        if not noccache:
+            ccache_path = os.path.join(self.builddir, "ccache")
+            do('mkdir -p "%s"' % ccache_path)
+            do('chmod a+w "%s"' % ccache_path)
+            ccache_fp = open(os.path.join(ccache_path, "ccache.conf"), "w")
+            ccache_fp.write("max_size = %s" % ccachesize)
+            ccache_fp.close()
+
         # write config files
         if cross:
-            pbuilder_write_cross_config(self.builddir, self.xml)
+            pbuilder_write_cross_config(self.builddir, self.xml, noccache)
             pbuilder_write_repo_hook(self.builddir, self.xml, cross)
             do('chmod -R 755 "%s"' %
                os.path.join(self.builddir, "pbuilder_cross", "hooks.d"))
         else:
-            pbuilder_write_config(self.builddir, self.xml)
+            pbuilder_write_config(self.builddir, self.xml, noccache)
             pbuilder_write_repo_hook(self.builddir, self.xml, cross)
             do('chmod -R 755 "%s"' %
                os.path.join(self.builddir, "pbuilder", "hooks.d"))

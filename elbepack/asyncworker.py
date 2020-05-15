@@ -250,9 +250,11 @@ class PdebuildJob(AsyncWorkerJob):
             db.reset_busy(self.project.builddir, success)
 
 class CreatePbuilderJob(AsyncWorkerJob):
-    def __init__(self, project, cross=False):
+    def __init__(self, project, ccachesize, cross=False, noccache=False):
         AsyncWorkerJob.__init__(self, project)
         self.cross = cross
+        self.noccache = noccache
+        self.ccachesize = ccachesize
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -265,7 +267,8 @@ class CreatePbuilderJob(AsyncWorkerJob):
         success = self.build_failed
         try:
             logging.info("Building pbuilder started")
-            self.project.create_pbuilder(self.cross)
+            self.project.create_pbuilder(self.cross, self.noccache,
+                                         self.ccachesize)
         # pylint: disable=broad-except
         except Exception:
             logging.exception("Pbuilder failed")

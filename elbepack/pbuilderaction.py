@@ -71,6 +71,12 @@ class CreateAction(PBuilderAction):
         crossopt = ""
         if opt.cross:
             crossopt = "--cross"
+        if opt.noccache:
+            ccacheopt = "--no-ccache"
+            ccachesize = ""
+        else:
+            ccacheopt = "--ccache-size"
+            ccachesize = opt.ccachesize
 
         if opt.xmlfile:
             try:
@@ -115,9 +121,8 @@ class CreateAction(PBuilderAction):
         print("Creating pbuilder")
 
         try:
-            system('%s control build_pbuilder "%s" "%s"' % (elbe_exe,
-                                                            prjdir,
-                                                            crossopt))
+            system('%s control build_pbuilder "%s" %s %s %s' % (
+                    elbe_exe, prjdir, crossopt, ccacheopt, ccachesize))
         except CommandError:
             print("elbe control build_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -253,7 +258,7 @@ class BuildAction(PBuilderAction):
         print("")
 
         try:
-            system('%s control set_pdebuild --cpuset "%d" --profile "%s" "%s" '
+            system('%s control set_pdebuild --cpuset "%d" --profile "%s" %s '
                    '"%s" "%s"' %
                    (elbe_exe, opt.cpuset, opt.profile, crossopt,
                     prjdir, tmp.fname("pdebuild.tar.gz")))
