@@ -48,6 +48,15 @@ OPTIONS
         crossbuilding possible. Combined with the build command it will use
         this environment for crossbuilding.
 
+--no-ccache::
+        The compiler cache 'ccache' is activated by default. Use this option
+        with the 'create' command to deactivate it.
+
+--ccache-size <string>::
+        Use this option to configure the limit of the compiler cache.
+        Should be a number followed by an optional suffix: k, M, G, T.
+        Use 0 for no limit.
+
 XML OPTIONS
 -----------
 
