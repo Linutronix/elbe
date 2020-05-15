@@ -12,7 +12,7 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
-def pbuilder_write_config(builddir, xml):
+def pbuilder_write_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
     fp = open(pbuilderrc_fname, "w")
@@ -60,9 +60,16 @@ def pbuilder_write_config(builddir, xml):
     fp.write('PBUILDERSATISFYDEPENDSCMD='
              '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
 
+    if not noccache:
+        fp.write('export CCACHE_DIR="%s/ccache"\n' % builddir)
+        fp.write('export PATH="/usr/lib/ccache:${PATH}"\n')
+        fp.write('EXTRAPACKAGES=ccache\n')
+        fp.write('export CCACHE_CONFIGPATH="%s/ccache/ccache.conf"\n' %
+                 builddir)
+        fp.write('BINDMOUNTS="${CCACHE_DIR}"')
     fp.close()
 
-def pbuilder_write_cross_config(builddir, xml):
+def pbuilder_write_cross_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "cross_pbuilderrc")
     fp = open(pbuilderrc_fname, "w")
@@ -83,6 +90,13 @@ def pbuilder_write_cross_config(builddir, xml):
     fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'hooks.d'))
     fp.write('PBUILDERSATISFYDEPENDSCMD='
              '/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n')
+    if not noccache:
+        fp.write('export CCACHE_DIR="%s/ccache"\n' % builddir)
+        fp.write('export PATH="/usr/lib/ccache:${PATH}"\n')
+        fp.write('EXTRAPACKAGES=ccache\n')
+        fp.write('export CCACHE_CONFIGPATH="%s/ccache/ccache.conf"\n' %
+                 builddir)
+        fp.write('BINDMOUNTS="${CCACHE_DIR}"')
     fp.close()
 
 

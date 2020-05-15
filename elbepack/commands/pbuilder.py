@@ -52,6 +52,16 @@ def run_command(argv):
                             "combined with create. Combined with build it"
                             " will use this environment.")
 
+    oparser.add_option("--no-ccache", dest="noccache", default=False,
+                       action="store_true",
+                       help="Deactivates the compiler cache 'ccache'")
+
+    oparser.add_option("--ccache-size", dest="ccachesize", default="10G",
+                       action="store", type="string",
+                       help="set a limit for the compiler cache size "
+                            "(should be a number followed by an optional "
+                            "suffix: k, M, G, T. Use 0 for no limit.)")
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)

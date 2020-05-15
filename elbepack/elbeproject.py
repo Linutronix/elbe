@@ -570,7 +570,8 @@ class ElbeProject (object):
 
         if self.xml.has('target/pbuilder') and not skip_pbuild:
             if not os.path.exists(os.path.join(self.builddir, "pbuilder")):
-                self.create_pbuilder(cross=False)
+                self.create_pbuilder(cross=False, noccache=False,
+                                     ccachesize="10G")
             for p in self.xml.node('target/pbuilder'):
                 self.pbuild(p)
                 # the package might be needed by a following pbuild, so update
