@@ -41,6 +41,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="check-image-list" type="rfs:check-image-list" minOccurs="0">
+        <annotation>
+          <documentation>
+	    Sequence of image to check for emulation.
+          </documentation>
+        </annotation>
+      </element>
       <element name="target" type="rfs:target" minOccurs="0">
         <annotation>
           <documentation>
@@ -535,6 +542,129 @@
     </all>
     <attribute ref="xml:base"/>
   </complexType>
+
+  <complexType name="check-image-list">
+    <annotation>
+      <documentation>
+        Describes a sequence of check to be done on images.
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="check" type="rfs:check-img" minOccurs="0" maxOccurs="10">
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="check-img">
+    <all>
+      <element name="img" type="rfs:string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Name of the image in the build to emulate.  Image that
+            were .tgz are also accepted.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="interpreter" type="rfs:string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Name of the interpreter to use for the emulation.  e.g.,
+            qemu-system-x86_64 or qemu-system-ppc, etc.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="interpreter-opts" type="rfs:string" minOccurs="1" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Options to pass to the interpreter. e.g., -enable-kvm or
+            -drive format=raw,file=$ELBE_IMG or -hda $ELBE_IMG
+
+            Word expansion is done before passing it to the
+            interpreter.  You can safely assume that the environment
+            variable ELBE_IMG contains the absolute path to the target
+            image to emulate.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="action" type="rfs:check-img-action">
+        <annotation>
+          <documentation>
+            Action to be done on the target image to emulate.
+          </documentation>
+        </annotation>
+      </element>
+    </all>
+  </complexType>
+
+  <complexType name="check-img-action">
+    <annotation>
+      <documentation>
+        Action to perform on the images of a build.
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="login" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Try to login into root session and shutdown the machine
+          </documentation>
+        </annotation>
+      </element>
+      <element name="serial" type="rfs:serial" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Serial communication to do with the interpreter.  This
+            requires '-serial stdio' for QEMU's interpreters.
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </complexType>
+
+  <complexType name="serial">
+    <annotation>
+      <documentation>
+        Describes a communication to do over a serial line.  The
+        communication is done sequentially as it.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:serial-action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+  </complexType>
+
+  <group name="serial-action">
+    <annotation>
+      <documentation>
+        Definition of possible action on serial communication.
+      </documentation>
+    </annotation>
+    <choice>
+        <element name="expect" type="rfs:string" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            A regular expression to expect to receive on the line.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="sendline" type="rfs:string" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            Send a string terminated with a newline character on the
+            line.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="EOF" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Expect the connecion to be closed.  This should only be
+            the last item in the sequence.
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
 
   <simpleType name="suite-initvm">
     <restriction base="string">
