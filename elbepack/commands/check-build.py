@@ -10,6 +10,8 @@ import os
 import tempfile
 import traceback
 
+import pexpect
+
 from elbepack.log import elbe_logging
 from elbepack.treeutils import etree
 from elbepack.shellhelper import get_command_out, command_out, do, CommandError
@@ -377,3 +379,155 @@ class CheckCdroms(CheckBase):
         sources, src_cnt = self.do_bin()
         self.do_src(sources, src_cnt)
         return self.ret
+
+@CheckBase.register("img")
+class CheckImage(CheckBase):
+
+    """Check if image can boot"""
+
+    @staticmethod
+    def open_tgz(path):
+        tmp = tempfile.NamedTemporaryFile(prefix='elbe')
+        command_out("tar --to-stdout --extract --gunzip --file %s" % path,
+                    output=tmp)
+        return tmp
+
+    def open_img(self, path):
+        if path.endswith(".tar.gz"):
+            return self.open_tgz(path)
+        return open(path)
+
+    def run(self):
+
+        # pylint: disable=attribute-defined-outside-init
+        self.xml = etree("source.xml")
+
+        fail_cnt  = 0
+        total_cnt = 0
+
+        # For all image
+        for tag in self.xml.all(".//check-image-list/check"):
+            fail_cnt  += self.do_img(tag)
+            total_cnt += 1
+
+        logging.info("Succesfully validate %d images out of %d",
+                     total_cnt - fail_cnt, total_cnt)
+
+        return fail_cnt
+
+    def do_img(self, tag):
+
+        img_name = tag.text("./img")
+        qemu     = tag.text("./interpreter")
+
+        with self.open_img(img_name) as img:
+
+            # ELBE_IMG always points to the opened image
+            os.environ["ELBE_IMG"] = img.name
+
+            opts = os.path.expandvars(tag
+                                      .text("./interpreter-opts")
+                                      .strip(' \t\n')).split(' ')
+
+            for candidate, action in [("login",  self.do_login),
+                                      ("serial", self.do_serial)]:
+
+                element = tag.et.find(os.path.join("./action", candidate))
+
+                if element is not None:
+                    return action(element, img_name, qemu, opts)
+
+        # No valid action!
+        return 1
+
+
+    def do_login(self, _element, img_name, qemu, opts):
+
+        # TODO - We might want to have encrypted password in source.xml
+        passwd = "root"
+        if self.xml.has("./target/passwd"):
+            passwd = self.xml.text("./target/passwd")
+
+        comm = [
+            ("expect", ".*[Ll]ogin:.*"),
+            ("sendline", "root"),
+            ("expect", "[Pp]assword:.*"),
+            ("sendline", passwd),
+            ("expect", ".*#"),
+
+            # This assume systemd is on the system.  We might want to change
+            # this to a more generic way
+            ("sendline", "shutdown --poweroff now bye"),
+
+            ("expect", "bye"),
+
+            # 30 seconds timeout for EOF; This will fail if systemd goes haywire
+            ("EOF", ""),
+        ]
+
+        return self.do_comm(img_name, qemu, opts, comm)
+
+    def do_serial(self, element, img_name, qemu, opts):
+
+        comm = [(action.tag, action.et.text) for action in element]
+
+        return self.do_comm(img_name, qemu, opts, comm)
+
+    def do_comm(self, img_name, qemu, opts, comm):
+
+        child      = pexpect.spawn(qemu, opts)
+        transcript = []
+        ret        = 0
+
+        try:
+            for action, text in comm:
+
+                if action == "expect":
+
+                    # Try to expect something from the guest If there's a
+                    # timeout; the test fails Otherwise; Add to the transcript
+                    # what we received
+                    try:
+                        child.expect(text)
+                    except pexpect.exceptions.TIMEOUT:
+                        logging.error('Was expecting "%s" but got timeout (%ds)',
+                                      text, child.timeout)
+                        ret = 1
+                        break
+                    else:
+                        transcript.append(child.before.decode('utf-8'))
+                        transcript.append(child.after.decode('utf-8'))
+
+                elif action == "sendline":
+                    child.sendline(text)
+
+                # We're expecting the serial line to be closed by the guest.  If
+                # there's a timeout, it means that the guest has not closed the
+                # line and the test has failed.  In every case the test ends
+                # here.
+                elif action == "EOF":
+                    try:
+                        child.expect(pexpect.EOF)
+                    except pexpect.exceptions.TIMEOUT:
+                        print('Was expecting EOF but got timeout (%d)' %
+                              child.timeout)
+                        self.ret = 1
+                    else:
+                        transcript.append(child.before.decode('utf-8'))
+                    break
+
+        # Woops. The guest has die and we didn't expect that!
+        except pexpect.exceptions.EOF as E:
+            logging.error("Communication was interrupted unexpectedly %s", E)
+            ret = 1
+
+        child.close()
+
+        logging.info("Transcript for image %s:\n"
+                     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+                     "%s\n"
+                     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+                     img_name, ''.join(transcript))
+
+        return ret or child.exitstatus
+
