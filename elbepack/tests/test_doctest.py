@@ -7,7 +7,11 @@ import doctest
 import unittest
 
 import elbepack.shellhelper as shellhelper
+import elbepack.filesystem as filesystem
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(shellhelper))
+    fs = filesystem.TmpdirFilesystem()
+    tests.addTests(doctest.DocTestSuite(filesystem, extraglobs={"this":fs}))
+
     return tests
