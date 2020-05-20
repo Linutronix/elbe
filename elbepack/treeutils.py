@@ -13,6 +13,8 @@ from lxml.etree import XMLParser, parse
 
 # ElementTree helpers
 
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class eiter(object):
     def __init__(self, it):
         self.it = it
@@ -33,7 +35,8 @@ class eiter(object):
     def next(self):
         return self.__next__()
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ebase(object):
     def __init__(self, et):
         self.et = et
@@ -59,8 +62,7 @@ class ebase(object):
         retval = self.et.find("./" + path)
         if retval is not None:
             return elem(retval)
-        else:
-            return None
+        return None
 
     def all(self, path):
         return map(elem, self.et.findall(path))
@@ -106,12 +108,9 @@ class elem(ebase):
 
     def bool_attr(self, attrname):
         attr = self.et.attrib.get(attrname)
-        if attr is None:
-            return False
-        elif attr in ['true', '1']:
+        if attr in ('true', '1'):
             return True
-        elif attr in ['false', '0']:
-            return False
+        return False
 
     def get_parent(self):
         return elem(self.et.getparent())
@@ -139,7 +138,6 @@ class etree(ebase):
         retval = self.et.find("./" + tag)
         if retval is not None:
             return elem(retval)
-
         return elem(SubElement(self.et.getroot(), tag))
 
     def set_child_position(self, child, pos):
@@ -149,17 +147,9 @@ class etree(ebase):
 
     def setroot(self, tag):
         retval = elem(Element(tag))
+        # pylint: disable=protected-access
         self.et._setroot(retval.et)
         return retval
-
-    def check_boolean(self, node, attributename):
-        attr = node.get(attributename)
-        if attr is None:
-            return False
-        elif attr in ['true', '1']:
-            return True
-        elif attr in ['false', '0']:
-            return False
 
     @property
     def root(self):
