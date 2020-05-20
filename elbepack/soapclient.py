@@ -34,6 +34,7 @@ from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version, elbe_initvm_packagelist
 
 def set_suds_debug(debug):
+    # pylint: disable=import-outside-toplevel
     import logging
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -48,7 +49,8 @@ def set_suds_debug(debug):
         logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
         logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ElbeSoapClient(object):
     def __init__(self, host, port, user, passwd, retries=10, debug=False):
 
@@ -67,11 +69,11 @@ class ElbeSoapClient(object):
             self.retries += 1
             try:
                 self.control = Client(self.wsdl, timeout=cfg['soaptimeout'])
-            except socket.error as e:
+            except URLError as e:
                 if self.retries > retries:
                     raise e
                 time.sleep(1)
-            except URLError as e:
+            except socket.error as e:
                 if self.retries > retries:
                     raise e
                 time.sleep(1)
@@ -122,7 +124,8 @@ class ElbeSoapClient(object):
             fp.write(binascii.a2b_base64(ret))
             part = part + 1
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ClientAction(object):
     actiondict = {}
 
@@ -897,7 +900,8 @@ class UploadPackageAction(RepoAction):
     def __init__(self, node):
         RepoAction.__init__(self, node)
 
-    def upload_file(self, client, f, builddir):
+    @staticmethod
+    def upload_file(client, f, builddir):
         # Uploads file f into builddir in intivm
         size = 1024 * 1024
         part = 0
