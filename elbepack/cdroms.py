@@ -25,6 +25,7 @@ from elbepack.isooptions import get_iso_options
 
 CDROM_SIZE = 640 * 1000 * 1000
 
+# pylint: disable=too-many-arguments
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
         return
