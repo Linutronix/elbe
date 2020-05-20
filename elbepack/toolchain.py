@@ -5,12 +5,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import string
+
 import glob
 import os
 
 arch2triple = {"armhf": "arm-linux-gnueabihf", "armel": "arm-linux-gnueabi"}
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class Toolchain(object):
     libc_path = "${triple}/libc"
     gcc_libpath = "${triple}/lib"
