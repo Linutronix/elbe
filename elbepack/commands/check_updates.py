@@ -88,7 +88,6 @@ def run_command(argv):
 
     for p in fullp:
         pname = p.et.text
-        pver = p.et.get('version')
         pauto = p.et.get('auto')
 
         if pauto != "true":
@@ -102,7 +101,6 @@ def run_command(argv):
     for p in fullp:
         xp = XMLPackage(p, arch)
         pname = p.et.text
-        pver = p.et.get('version')
         pauto = p.et.get('auto')
 
         if not v.has_pkg(xp.name):
