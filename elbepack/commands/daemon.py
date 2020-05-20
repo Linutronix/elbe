@@ -59,6 +59,7 @@ def run_command(argv):
         return
 
     cherrypy.server.unsubscribe()
+    # pylint: disable=protected-access
     server = cherrypy._cpserver.Server()
     server.socket_host = opt.host
     server.socket_port = int(opt.port)
