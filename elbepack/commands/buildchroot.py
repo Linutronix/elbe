@@ -10,7 +10,6 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import sys
-import os
 import logging
 
 from elbepack.shellhelper import CommandError
