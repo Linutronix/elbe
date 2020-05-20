@@ -8,7 +8,6 @@
 from __future__ import print_function
 
 import sys
-import os
 import logging
 
 from optparse import OptionParser
