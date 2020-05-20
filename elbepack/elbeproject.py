@@ -487,18 +487,17 @@ class ElbeProject (object):
 
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
-                tgt_lst = []
-                for pkg_name in tgt_pkg_lst:
-                    pkg = cache.get_pkg(pkg_name)
-                    tgt_lst.append((pkg.name, pkg.installed_version))
+                tgt_lst = cache.get_corresponding_source_packages(pkg_lst=tgt_pkg_lst)
                 components = {"target":(self.targetfs, cache, tgt_lst)}
 
                 # Main component
                 main_lst = []
                 if self.xml is not None:
+                    tmp_lst = []
                     for pkg_node in self.xml.node("debootstrappkgs"):
                         pkg = XMLPackage(pkg_node, self.arch)
-                        main_lst.append((pkg.name, pkg.installed_version))
+                        tmp_lst.append(pkg.name)
+                    main_lst = cache.get_corresponding_source_packages(pkg_lst=tmp_lst)
                 components["main"] = (env.rfs, cache, main_lst)
 
                 # Added component
@@ -519,10 +518,8 @@ class ElbeProject (object):
                 # components using the full installed packages
                 for build_env, name in other_components:
                     cache = self.get_rpcaptcache(env=build_env)
-                    tmp_lst = []
-                    for pkg in cache.get_installed_pkgs():
-                        tmp_lst.append((pkg.name, pkg.installed_version))
-                    components[name] = (build_env.rfs, cache, tmp_lst)
+                    src_lst = cache.get_corresponding_source_packages()
+                    components[name] = (build_env.rfs, cache, src_lst)
 
                 try:
                     # Using kwargs here allows us to avoid making
