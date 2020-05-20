@@ -15,5 +15,4 @@ def run_command(argv):
         print("Please pass the name of the file to sign "
               "and a valid gnupg fingerprint.")
         return
-    else:
-        sign_file(argv[0], argv[1])
+    sign_file(argv[0], argv[1])
