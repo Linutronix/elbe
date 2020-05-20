@@ -71,6 +71,8 @@ class mountpoint_dict (dict):
         return [self[x] for x in mplist]
 
 
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class fstabentry(object):
 
     # pylint: disable=too-many-instance-attributes
@@ -117,19 +119,10 @@ class fstabentry(object):
             depth += 1
 
     def get_label_opt(self):
-        if self.fstype == "ext4":
-            return "-L " + self.label
-        if self.fstype == "ext2":
-            return "-L " + self.label
-        if self.fstype == "ext3":
+        if self.fstype in ("ext4", "ext3", "ext2", "xfs", "btrfs"):
             return "-L " + self.label
         if self.fstype == "vfat":
             return "-n " + self.label
-        if self.fstype == "xfs":
-            return "-L " + self.label
-        if self.fstype == "btrfs":
-            return "-L " + self.label
-
         return ""
 
     def set_geometry(self, ppart, disk):
