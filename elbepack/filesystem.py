@@ -51,6 +51,8 @@ def size_to_int(size):
 
     return int(s) * unit
 
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class Filesystem(object):
 
     # pylint: disable=too-many-public-methods
@@ -105,7 +107,7 @@ class Filesystem(object):
             candidate = path.pop()
 
             # Don't care
-            if candidate == '' or candidate == os.curdir:
+            if candidate in ('', os.curdir):
                 continue
 
             # Can't go out of RFS
@@ -147,7 +149,7 @@ class Filesystem(object):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-            elif not allow_exists:
+            if not allow_exists:
                 raise
 
     def stat(self, path):
@@ -208,7 +210,8 @@ class Filesystem(object):
 
         return flist
 
-    def _write_file(self, path, f, cont, mode):
+    @staticmethod
+    def _write_file(path, f, cont, mode):
         f.write(cont)
         f.close()
         if mode is not None:
@@ -222,10 +225,10 @@ class Filesystem(object):
         path = self.realpath(path)
         self._write_file(path, open(path, "a"), cont, mode)
 
-    def read_file(self, path, gzip=False):
+    def read_file(self, path, gz=False):
         path = self.realpath(path)
-        if gzip:
-            fp = gzip.open(path, mode)
+        if gz:
+            fp = gzip.open(path, "r")
         else:
             fp = open(path, "r")
 

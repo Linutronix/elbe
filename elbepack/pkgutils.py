@@ -113,12 +113,12 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     ret = ""
 
     if fs.exists(dch_bin):
-        ret += fs.read_file(dch_bin, gzip=True)
+        ret += fs.read_file(dch_bin, gz=True)
     else:
         print("no bin")
 
     if fs.exists(dch_src):
-        ret += fs.read_file(dch_src, gzip=True)
+        ret += fs.read_file(dch_src, gz=True)
     else:
         print("no source")
 
