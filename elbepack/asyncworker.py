@@ -19,6 +19,7 @@ from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.shellhelper import do
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
+# pylint: disable=ungrouped-imports
 try:
     from Queue import Queue
     from urllib import quote
@@ -26,6 +27,9 @@ except ImportError:
     from queue import Queue
     from urllib.parse import quote
 
+
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class AsyncWorkerJob(object):
 
     build_done   = "build_done"
@@ -35,11 +39,11 @@ class AsyncWorkerJob(object):
     def __init__(self, project):
         self.project = project
 
-    def enqueue(self, queue, db):
+    def enqueue(self, queue, _db):
         reset_level(self.project.builddir)
         queue.put(self)
 
-    def execute(self, db):
+    def execute(self, _db):
         pass
 
 
@@ -60,6 +64,7 @@ class BuildSysrootJob(AsyncWorkerJob):
             logging.info("Build sysroot started")
             self.project.build_sysroot()
             db.update_project_files(self.project)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build sysroot failed")
         else:
@@ -89,6 +94,7 @@ class BuildSDKJob(AsyncWorkerJob):
         try:
             logging.info("Build SDK started")
             self.project.build_sdk()
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build SDK Failed")
         else:
@@ -120,6 +126,7 @@ class BuildCDROMsJob(AsyncWorkerJob):
         try:
             logging.info("Build CDROMs started")
             self.project.build_cdroms(self.build_bin, self.build_src)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build CDROMs failed")
         else:
@@ -148,6 +155,7 @@ class BuildChrootTarJob(AsyncWorkerJob):
         try:
             logging.info("Build chroot tarball started")
             self.project.build_chroottarball()
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build chrroot tarball failed")
         else:
@@ -196,6 +204,7 @@ class BuildJob(AsyncWorkerJob):
                               "Probable cause might be:\n"
                               "  - Problems with internet connection\n"
                               "  - Broken mirrors\n", err)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build failed")
         else:
@@ -227,6 +236,7 @@ class PdebuildJob(AsyncWorkerJob):
         try:
             logging.info("Pdebuild started")
             self.project.pdebuild(self.cpuset, self.profile, self.cross)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Pdebuild failed")
         else:
@@ -256,6 +266,7 @@ class CreatePbuilderJob(AsyncWorkerJob):
         try:
             logging.info("Building pbuilder started")
             self.project.create_pbuilder(self.cross)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Pbuilder failed")
         else:
@@ -282,6 +293,7 @@ class UpdatePbuilderJob(AsyncWorkerJob):
         try:
             logging.info("Updating pbuilder started")
             self.project.update_pbuilder()
+        # pylint: disable=broad-except
         except Exception:
             db.update_project_files(self.project)
             logging.exception("update Pbuilder failed")
@@ -311,6 +323,7 @@ class APTUpdateJob(AsyncWorkerJob):
             logging.info("APT cache update started")
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("APT cache update failed")
         else:
@@ -339,6 +352,7 @@ class APTUpdUpgrJob(AsyncWorkerJob):
                 self.project.get_rpcaptcache().update()
             logging.info("APT update finished, upgrade started")
             self.project.get_rpcaptcache().upgrade()
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("APT update & upgrade failed")
         else:
@@ -378,6 +392,7 @@ class APTCommitJob(AsyncWorkerJob):
             sourcexmlpath = path.join(self.project.builddir,
                                       "source.xml")
             self.project.xml.xml.write(sourcexmlpath)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Applying package changes failed")
         else:
@@ -385,17 +400,19 @@ class APTCommitJob(AsyncWorkerJob):
                 logging.info("Package changes applied with Error")
             else:
                 logging.info("Package changes applied successfully")
-                succes = self.has_changes
+                success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
 
 
 class GenUpdateJob(AsyncWorkerJob):
     def __init__(self, project, base_version):
+        AsyncWorkerJob.__init__(self, project)
         self.name = project.xml.text("/project/name")
         self.base_version = base_version
         self.current_version = project.xml.text("/project/version")
-        AsyncWorkerJob.__init__(self, project)
+        self.old_status = None
+        self.base_version_xml = None
 
     def enqueue(self, queue, db):
         self.old_status = db.set_busy(self.project.builddir,
@@ -415,6 +432,7 @@ class GenUpdateJob(AsyncWorkerJob):
         try:
             gen_update_pkg(self.project, self.base_version_xml, upd_pathname)
             logging.info("Update package generated successfully")
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Generating update package failed")
         finally:
@@ -438,12 +456,13 @@ class SaveVersionJob(AsyncWorkerJob):
     def __init__(self, project, description):
         AsyncWorkerJob.__init__(self, project)
         self.description = description
+        self.name = self.project.xml.text("project/name")
+        self.version = self.project.xml.text("project/version")
+        self.old_status = None
 
     def enqueue(self, queue, db):
         self.old_status = db.set_busy(self.project.builddir,
                                       ["build_done", "has_changes"])
-        self.name = self.project.xml.text("project/name")
-        self.version = self.project.xml.text("project/version")
 
         # Create the database entry now. This has the advantage that the
         # user will see an error message immediately, if he tries to use
@@ -451,6 +470,7 @@ class SaveVersionJob(AsyncWorkerJob):
         # the package archive, which is done in execute.
         try:
             db.save_version(self.project.builddir, self.description)
+        # pylint: disable=broad-except
         except BaseException:
             db.reset_busy(self.project.builddir, self.old_status)
             raise
@@ -472,6 +492,7 @@ class SaveVersionJob(AsyncWorkerJob):
                                          ".pkgarchive")
         try:
             gen_binpkg_archive(self.project, repodir)
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Saving version failed")
             db.del_version(self.project.builddir, self.version, force=True)
@@ -485,9 +506,9 @@ class CheckoutVersionJob(AsyncWorkerJob):
     def __init__(self, project, version):
         AsyncWorkerJob.__init__(self, project)
         self.version = version
+        self.name = self.project.xml.text("project/name")
 
     def enqueue(self, queue, db):
-        self.name = self.project.xml.text("project/name")
         old_status = db.set_busy(self.project.builddir,
                                  ["build_done", "has_changes", "build_failed"])
 
@@ -526,6 +547,7 @@ class CheckoutVersionJob(AsyncWorkerJob):
         try:
             checkout_binpkg_archive(self.project, repodir)
             logging.info("Package archive checked out successfully")
+        # pylint: disable=broad-except
         except Exception:
             logging.exception("Checking out package archive failed")
         else:
