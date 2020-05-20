@@ -91,6 +91,7 @@ def checkout_binpkg_archive(ep, repodir):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-branches
 
     repopath = path.join(ep.builddir, repodir)
     sources_list = ep.buildenv.rfs.fname('etc/apt/sources.list')
