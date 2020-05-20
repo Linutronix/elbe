@@ -219,7 +219,8 @@ class ElbeFilesystem(Filesystem):
         if xml_fname is not None:
             licence_xml.write(xml_fname)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class Excursion(object):
 
     RFS = {}
@@ -236,12 +237,14 @@ class Excursion(object):
     def do(cls, rfs):
         r = cls.RFS[rfs.path]
         for tmp in r:
+            # pylint: disable=protected-access
             tmp._do_excursion(rfs)
 
     @classmethod
     def end(cls, rfs):
         r = cls.RFS[rfs.path]
         for tmp in r:
+            # pylint: disable=protected-access
             if tmp.origin not in rfs.protect_from_excursion:
                 tmp._undo_excursion(rfs)
             else:
@@ -268,7 +271,8 @@ class Excursion(object):
             system('cp %s %s' % (self.origin, rfs.fname(dst)))
 
     # This should be a method of rfs
-    def _del_rfs_file(self, filename, rfs):
+    @staticmethod
+    def _del_rfs_file(filename, rfs):
         if rfs.lexists(filename):
             flags = "-f"
             if rfs.isdir(filename):
@@ -359,17 +363,18 @@ class ChRootFilesystem(ElbeFilesystem):
         os.chroot(self.path)
 
     def _umount(self, path):
+        path = os.path.join(self.path, path)
         if os.path.ismount(path):
             system("umount %s" % path)
 
     def umount(self):
         if self.path == '/':
             return
-        self._umount("%s/proc/sys/fs/binfmt_misc" % self.path)
-        self._umount("%s/proc" % self.path)
-        self._umount("%s/sys" % self.path)
-        self._umount("%s/dev/pts" % self.path)
-        self._umount("%s/dev" % self.path)
+        self._umount("proc/sys/fs/binfmt_misc")
+        self._umount("proc")
+        self._umount("sys")
+        self._umount("dev/pts")
+        self._umount("dev")
 
     def leave_chroot(self):
         assert self.inchroot
