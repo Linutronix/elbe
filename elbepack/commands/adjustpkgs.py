@@ -7,7 +7,6 @@
 from __future__ import print_function
 
 import logging
-import os
 import sys
 from optparse import OptionParser
 
@@ -18,61 +17,57 @@ from elbepack.treeutils import etree
 from elbepack.log import elbe_logging
 
 
-class adjpkg(object):
-    def __init__(self, name):
-        logging.info("ELBE Report for Project %s", name)
+def set_pkgs(pkglist):
 
-    def set_pkgs(self, pkglist):
+    cache = apt.Cache()
+    cache.update()
+    cache.open(None)
 
-        cache = apt.Cache()
-        cache.update()
-        cache.open(None)
+    errors = 0
 
-        errors = 0
+    with cache.actiongroup():
 
-        with cache.actiongroup():
+        for p in cache:
+            if not p.is_installed:
+                continue
+            if p.essential or \
+               p.is_auto_installed or \
+               p.name in pkglist or \
+               p.installed.priority == "important" or \
+               p.installed.priority == "required":
+                continue
+            logging.info("MARK REMOVE %s", p.name)
+            p.mark_delete(auto_fix=False, purge=True)
 
-            for p in cache:
-                if not p.is_installed:
-                    continue
-                if p.essential or \
-                   p.is_auto_installed or \
-                   p.name in pkglist or \
-                   p.installed.priority == "important" or \
-                   p.installed.priority == "required":
-                    continue
-                logging.info("MARK REMOVE %s", p.name)
-                p.mark_delete(auto_fix=False, purge=True)
+        for name in pkglist:
 
-            for name in pkglist:
+            if name not in cache:
+                logging.warning('Package "%s" does not exist', name)
+                errors += 1
+                continue
 
-                if name not in cache:
-                    logging.warning('Package "%s" does not exist', name)
-                    errors += 1
-                    continue
+            cp = cache[name]
 
-                cp = cache[name]
-
-                cp.mark_install()
-                logging.info("MARK INSTALL %s", cp.name)
-
-            cache.commit(apt.progress.base.AcquireProgress(),
-                         apt.progress.base.InstallProgress())
-
-            cache.update()
-            cache.open(None)
-
-            for p in cache:
-                if not p.is_installed:
-                    continue
-                if p.is_auto_removable:
-                    p.mark_delete(purge=True)
-                    logging.info("MARKED AS AUTOREMOVE %s", p.name)
+            cp.mark_install()
+            logging.info("MARK INSTALL %s", cp.name)
 
         cache.commit(apt.progress.base.AcquireProgress(),
                      apt.progress.base.InstallProgress())
 
-        return errors
+        cache.update()
+        cache.open(None)
+
+        for p in cache:
+            if not p.is_installed:
+                continue
+            if p.is_auto_removable:
+                p.mark_delete(purge=True)
+                logging.info("MARKED AS AUTOREMOVE %s", p.name)
+
+    cache.commit(apt.progress.base.AcquireProgress(),
+                 apt.progress.base.InstallProgress())
+
+    return errors
 
 
 def run_command(argv):
@@ -108,8 +103,8 @@ def run_command(argv):
 
 
     with elbe_logging({"files":opt.output}):
-        adj = adjpkg(opt.name)
-        return adj.set_pkgs(xml_pkgs + buildenv_pkgs)
+        logging.info("ELBE Report for Project %s", opt.name)
+        return set_pkgs(xml_pkgs + buildenv_pkgs)
 
 
 if __name__ == "__main__":
