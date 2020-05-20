@@ -217,7 +217,7 @@ def run_command(argv):
         for t in templates:
             o = t.replace(".mako", "")
 
-            if t == "Makefile.mako" or t == "libvirt.xml.mako":
+            if t in ("Makefile.mako", "libvirt.xml.mako"):
                 write_template(
                     os.path.join(
                         opt.directory, o), os.path.join(
