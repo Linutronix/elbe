@@ -304,6 +304,7 @@ class ESoap (ServiceBase):
     @rpc(String, Integer, String, Boolean)
     @authenticated_uid
     @soap_faults
+    # pylint: disable=too-many-arguments
     def finish_pdebuild(self, uid, builddir, cpuset, profile, cross):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_current_pdebuild(uid, cpuset, profile, cross)
