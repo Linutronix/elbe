@@ -80,3 +80,5 @@ def run_command(argv):
 
         repo.finalize()
         os.system('rm -r "%s"' % tmpdir)
+
+    return 0
