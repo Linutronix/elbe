@@ -9,7 +9,7 @@ import sys
 
 from optparse import OptionParser
 
-from elbepack.elbexml import ElbeXML
+from elbepack.elbexml import ElbeXML, ValidationError
 
 def run_command(argv):
 
@@ -22,21 +22,26 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(20)
 
+    xmlfile = args[0]
+    pkg_lst = args[1:]
+
     try:
-        xml = ElbeXML(args[0])
-    except Exception as e:
-        print("Error reading xml file: %s" % str(e))
+        xml = ElbeXML(xmlfile)
+    except ValidationError as E:
+        print("Error while reading xml file %s: %s" % (xmlfile, E))
         sys.exit(20)
 
-    for a in args[1:]:
+    for pkg in pkg_lst:
         try:
-            xml.add_target_package(a)
-        except Exception as e:
-            print("Error adding package %s: %s" % (a, str(e)))
+            xml.add_target_package(pkg)
+        except ValueError as E:
+            print("Error while adding package %s to %s: %s" % (pkg, xmlfile, E))
             sys.exit(20)
 
     try:
-        xml.xml.write(args[0])
-    except BaseException:
-        print("Unable to write new xml file")
-        sys.exit(20)
+        xml.xml.write(xmlfile)
+        sys.exit(0)
+    except PermissionError as E:
+        print("Unable to truncate file %s: %s" % (xmlfile, E))
+
+    sys.exit(20)
