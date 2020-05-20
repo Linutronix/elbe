@@ -30,9 +30,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
         return
     pkg_id = "%s-%s" % (pkg, version)
     try:
-        dsc = cache.download_source(pkg,
-                                    '/var/cache/elbe/sources',
-                                    version=version)
+        dsc = cache.download_source(pkg, version, '/var/cache/elbe/sources')
         repo.includedsc(dsc, component=component, force=True)
     except ValueError:
         logging.error("No sources for package '%s'", pkg_id)
@@ -65,6 +63,7 @@ def mk_source_cdrom(components, codename,
                 pass
 
     for component, (rfs, cache, pkg_lst) in components.items():
+        logging.info("Adding %s component", component)
         rfs.mkdir_p('/var/cache/elbe/sources')
         for pkg, version in pkg_lst:
             add_source_pkg(repo, component,
