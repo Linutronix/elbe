@@ -16,7 +16,7 @@ import time
 from multiprocessing.util import Finalize
 from multiprocessing.managers import BaseManager
 
-from apt_pkg import config, version_compare
+from apt_pkg import config, version_compare, TagFile
 from apt import Cache
 
 from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
@@ -288,6 +288,36 @@ class RPCAPTCache(InChRootObject):
             APTPackage(
                 self.cache[p]) for p in sorted(
                 self.cache.keys()) if pkgname in p.lower()]
+
+    def get_corresponding_source_packages(self, pkg_lst=None):
+
+        if pkg_lst is None:
+            pkg_lst = {p.name for p in self.cache if p.is_installed}
+
+        src_set = set()
+
+        with TagFile('/var/lib/dpkg/status') as tagfile:
+            for section in tagfile:
+
+                pkg = section['Package']
+
+                if pkg not in pkg_lst:
+                    continue
+
+                tmp = self.cache[pkg].installed or self.cache[pkg].candidate
+
+                src_set.add((tmp.source_name, tmp.source_version))
+
+                if "Built-Using" not in section:
+                    continue
+
+                built_using_lst = section["Built-Using"].split(', ')
+                for built_using in built_using_lst:
+                    name, version = built_using.split(' ', 1)
+                    version = version.strip('(= )')
+                    src_set.add((name, version))
+
+        return list(src_set)
 
     def compare_versions(self, ver1, ver2):
         return version_compare(ver1, ver2)
