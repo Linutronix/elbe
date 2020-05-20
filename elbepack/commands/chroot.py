@@ -52,7 +52,7 @@ def run_command(argv):
         os.environ["LANGUAGE"] = "C"
         os.environ["LC_ALL"] = "C"
         # TODO: howto set env in chroot?
-        os.environ["PS1"] = project.xml.text('project/name') + ': \w\$'
+        os.environ["PS1"] = project.xml.text('project/name') + r': \w\$'
 
         cmd = "/bin/bash"
 
