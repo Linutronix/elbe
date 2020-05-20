@@ -65,3 +65,5 @@ def run_command(_argv):
     except IOError:
         print("/etc/elbe_version removed by user")
         return -1
+
+    return 0
