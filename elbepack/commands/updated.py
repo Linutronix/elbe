@@ -24,7 +24,7 @@ except ImportError:
     usbmonitor_available = False
 
 
-def shutdown(signum, fname, status):
+def shutdown(_signum, _fname, status):
     status.stop = True
     for mon in status.monitors:
         mon.stop()
