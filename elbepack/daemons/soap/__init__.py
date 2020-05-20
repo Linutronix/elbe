@@ -8,11 +8,12 @@ from __future__ import print_function
 
 import sys
 
-from .esoap import ESoap
-from elbepack.projectmanager import ProjectManager
-
 from beaker.middleware import SessionMiddleware
 from cherrypy.process.plugins import SimplePlugin
+
+from elbepack.projectmanager import ProjectManager
+
+from .esoap import ESoap
 
 try:
     from spyne import Application
