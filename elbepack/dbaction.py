@@ -14,7 +14,8 @@ from getpass import getpass
 from shutil import copyfileobj
 from elbepack.db import ElbeDB, ElbeDBError
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class DbAction(object):
 
     actiondict = {}
@@ -120,8 +121,8 @@ class DelUserAction(DbAction):
 
         try:
             userid = int(arg[0])
-        except BaseException:
-            print("userid must be an integer")
+        except ValueError as E:
+            print("userid must be an integer - %s" % E)
             return
 
         db = ElbeDB()
@@ -269,6 +270,7 @@ class BuildAction(DbAction):
             ep = db.load_project(args[0])
             ep.build()
             db.update_project_files(ep)
+        # pylint: disable=broad-except
         except Exception as e:
             db.update_project_files(ep)
             db.reset_busy(args[0], "build_failed")
