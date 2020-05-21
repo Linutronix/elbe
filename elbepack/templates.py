@@ -8,12 +8,11 @@ from __future__ import print_function
 
 import os
 
-from elbepack.treeutils import etree
-from elbepack.directories import mako_template_dir, default_preseed_fname
-
 from mako.template import Template
 from mako import exceptions
 
+from elbepack.treeutils import etree
+from elbepack.directories import mako_template_dir, default_preseed_fname
 
 def fix_linebreak_escapes(s):
     return s.replace('\\\n', '${"\\\\"}\n')
