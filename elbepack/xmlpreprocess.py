@@ -229,7 +229,9 @@ def xmlpreprocess(fname, output, variants=None):
     raise XMLPreprocessError("\n".join(error_log_to_strings(schema.error_log)))
 
 
-class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
+class PreprocessWrapper(object):
     def __init__(self, xmlfile, opt):
         self.xmlfile = xmlfile
         self.outxml = None
@@ -259,6 +261,8 @@ class PreprocessWrapper(object):    # pylint: disable=too-few-public-methods
     @staticmethod
     def add_options(oparser):
         # import it here because of cyclic imports
+        # pylint: disable=import-outside-toplevel
+        # pylint: disable=cyclic-import
         from elbepack.commands.preprocess import add_pass_through_options
 
         group = OptionGroup(oparser,
