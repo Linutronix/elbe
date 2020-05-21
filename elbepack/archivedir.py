@@ -31,7 +31,8 @@ def enbase(fname, compress=True):
         s = infile.read()
         if compress:
             s = bz2.compress(s)
-
+        # TODO:py3 - Use base64.encodebytes
+        # pylint: disable=deprecated-method
         return encodestring(s)
 
 def collect(tararchive, path, keep):
