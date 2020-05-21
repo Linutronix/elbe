@@ -39,7 +39,7 @@ load-plugins=
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
-disable=bad-whitespace,missing-docstring,bad-continuation,invalid-name,line-too-long
+disable=bad-whitespace,missing-docstring,bad-continuation,invalid-name,line-too-long,too-few-public-methods
 
 
 [REPORTS]

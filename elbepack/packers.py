@@ -8,19 +8,19 @@ from elbepack.shellhelper import CommandError, do
 
 
 class Packer(object):
-    # pylint: disable=too-few-public-methods
+
     def pack_file(self, _builddir, _fname):
         raise NotImplementedError('abstract method called')
 
 
 class NoPacker(Packer):
-    # pylint: disable=too-few-public-methods
+
     def pack_file(self, _builddir, fname):
         return fname
 
 
 class InPlacePacker(Packer):
-    # pylint: disable=too-few-public-methods
+
     def __init__(self, cmd, suffix):
 
         self.cmd = cmd
@@ -40,7 +40,7 @@ class InPlacePacker(Packer):
 
 
 class TarArchiver(Packer):
-    # pylint: disable=too-few-public-methods
+
     def __init__(self, flag, suffix):
         self.flag = flag
         self.suffix = suffix
