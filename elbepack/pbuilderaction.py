@@ -34,7 +34,8 @@ class PBuilderError(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class PBuilderAction(object):
     actiondict = {}
 
