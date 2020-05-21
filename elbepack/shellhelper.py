@@ -10,16 +10,18 @@ import logging
 
 from subprocess import Popen, PIPE, STDOUT, call
 
-from elbepack.log import async_logging
-
 from io import TextIOWrapper, BytesIO
+
+from elbepack.log import async_logging
 
 log = logging.getLogger("log")
 soap = logging.getLogger("soap")
 
 
 class CommandError(Exception):
+
     def __init__(self, cmd, returncode):
+        super(CommandError, self).__init__(cmd, returncode)
         self.returncode = returncode
         self.cmd = cmd
 
@@ -129,9 +131,12 @@ def chroot(directory, cmd, env_add=None, **kwargs):
     chcmd = 'chroot %s %s' % (directory, cmd)
     do(chcmd, env_add=new_env, **kwargs)
 
-def get_command_out(cmd, stdin=None, allow_fail=False, env_add={}):
+def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
+
     new_env = os.environ.copy()
-    new_env.update(env_add)
+
+    if env_add:
+        new_env.update(env_add)
 
     logging.info(cmd, extra={"context":"[CMD] "})
 
@@ -143,7 +148,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add={}):
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
 
     async_logging(r, w, soap, log)
-    stdout, stderr = p.communicate(input=stdin)
+    stdout, _ = p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
         raise CommandError(cmd, p.returncode)
