@@ -8,6 +8,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# pylint: disable=too-many-lines
+
 import os
 import datetime
 import io
@@ -115,10 +117,12 @@ def gen_sdk_scripts(triplet,
 
     return sdkname
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ElbeProject (object):
 
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-public-methods
 
     def __init__(
             self,
@@ -446,7 +450,11 @@ class ElbeProject (object):
 
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None,
-                     tgt_pkg_lst=[]):
+                     tgt_pkg_lst=None):
+
+        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-locals
+
         self.repo_images = []
 
         env = None
@@ -488,10 +496,11 @@ class ElbeProject (object):
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
                 tgt_lst = []
-                for pkg_name in tgt_pkg_lst:
-                    pkg = cache.get_pkg(pkg_name)
-                    tgt_lst.append((pkg.name, pkg.installed_version))
-                components = {"target":(self.targetfs, cache, tgt_lst)}
+                if tgt_pkg_lst is not None:
+                    for pkg_name in tgt_pkg_lst:
+                        pkg = cache.get_pkg(pkg_name)
+                        tgt_lst.append((pkg.name, pkg.installed_version))
+                    components = {"target":(self.targetfs, cache, tgt_lst)}
 
                 # Main component
                 main_lst = []
@@ -867,7 +876,7 @@ class ElbeProject (object):
             env = self.buildenv
 
         if norecommend is None:
-            norecommend = not self.xml.prj.has('install-recommends'),
+            norecommend = not self.xml.prj.has('install-recommends')
 
         if env.arch == "default":
             arch = self.arch
