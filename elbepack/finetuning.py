@@ -31,10 +31,13 @@ from elbepack.shellhelper import chroot, do, get_command_out
 class FinetuningException(Exception):
     pass
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class FinetuningAction(object):
 
     actiondict = {}
+
+    tag = None
 
     @classmethod
     def register(cls, tag, register=True):
@@ -681,6 +684,10 @@ class CopyToPartition(ImageFinetuningAction):
 class TestSuites(FinetuningAction):
 
     elbe_junit = "elbe-junit.xml"
+
+    def execute(self, _buildenv, _target):
+        raise NotImplementedError("<%s> can only be used in the context of a project" %
+                                  self.tag)
 
     def execute_prj(self, buildenv, target, builddir):
 
