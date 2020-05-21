@@ -100,7 +100,8 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
     return filename
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ElbeDB(object):
 
     # pylint: disable=too-many-public-methods
@@ -353,11 +354,9 @@ class ElbeDB(object):
                     directory_created = True
                 except OSError as e:
                     if e.errno == errno.EEXIST:
-                        raise ElbeDBError(
-                            "project directory %s already exists" %
-                            builddir)
-                    else:
-                        raise
+                        raise ElbeDBError("project directory %s already exists" %
+                                          builddir)
+                    raise
 
                 p = Project(builddir=builddir, status="empty_project",
                             owner_id=owner_id)
@@ -537,9 +536,7 @@ class ElbeDB(object):
             return p.status == "busy"
 
     def reset_busy(self, builddir, new_status):
-        assert new_status == "has_changes" or \
-            new_status == "build_done" or \
-            new_status == "build_failed"
+        assert new_status in ("has_changes", "build_done", "build_failed")
 
         with session_scope(self.session) as s:
             try:
@@ -1057,7 +1054,8 @@ class User(Base):
     admin = Column(Boolean)
     projects = relationship("Project", backref="owner")
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class UserData (object):
     def __init__(self, user):
         self.id = int(user.id)
@@ -1080,7 +1078,8 @@ class Project (Base):
     versions = relationship("ProjectVersion", backref="project")
     files = relationship("ProjectFile", backref="project")
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ProjectData (object):
     def __init__(self, project):
         self.builddir = str(project.builddir)
@@ -1103,7 +1102,8 @@ class ProjectVersion (Base):
     description = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ProjectVersionData (object):
     def __init__(self, pv):
         self.builddir = str(pv.builddir)
@@ -1132,7 +1132,8 @@ class ProjectFile (Base):
     mime_type = Column(String, nullable=False)
     description = Column(String)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ProjectFileData (object):
     def __init__(self, pf):
         self.name = str(pf.name)
