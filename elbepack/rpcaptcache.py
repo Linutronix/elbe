@@ -31,6 +31,7 @@ soap = logging.getLogger("soap")
 
 class MyMan(BaseManager):
 
+    # pylint: disable=arguments-differ
     @staticmethod
     def register(typeid):
         """Register to BaseManager through decorator"""
@@ -52,13 +53,15 @@ class MyMan(BaseManager):
         os.sys.__stdout__ = os.sys.stdout
         os.sys.__stderr__ = os.sys.stderr
 
+    # pylint: disable=arguments-differ
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
         r, w = os.pipe()
         super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
         async_logging(r, w, soap, log)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class InChRootObject(object):
     def __init__(self, rfs):
         self.rfs = rfs
@@ -115,7 +118,7 @@ class RPCAPTCache(InChRootObject):
                      p.is_upgradable))
 
     def get_sections(self):
-        ret = list(set([p.section for p in self.cache]))
+        ret = list({p.section for p in self.cache})
         ret.sort()
         return ret
 
@@ -208,7 +211,7 @@ class RPCAPTCache(InChRootObject):
         p = self.cache[pkgname]
         p.mark_delete(purge=True)
 
-    def mark_keep(self, pkgname, version):
+    def mark_keep(self, pkgname, _version):
         p = self.cache[pkgname]
         p.mark_keep()
 
@@ -288,8 +291,8 @@ class RPCAPTCache(InChRootObject):
             APTPackage(
                 self.cache[p]) for p in sorted(
                 self.cache.keys()) if pkgname in p.lower()]
-
-    def compare_versions(self, ver1, ver2):
+    @staticmethod
+    def compare_versions(ver1, ver2):
         return version_compare(ver1, ver2)
 
     def download_binary(self, pkgname, path, version=None):
