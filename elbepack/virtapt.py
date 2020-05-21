@@ -11,9 +11,6 @@ from __future__ import print_function
 import os
 import sys
 
-from multiprocessing.managers import BaseManager
-
-from elbepack.shellhelper import system
 
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
@@ -22,9 +19,8 @@ import apt  # pylint: disable=unused-import
 import apt_pkg
 
 
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import system
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.xmldefaults import ElbeDefaults
 from elbepack.rfs import create_apt_prefs
 
 
@@ -74,10 +70,12 @@ def lookup_uri(v, d, target_pkg):
 
     return target_pkg, uri, hashval
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class VirtApt(object):
     def __init__(self, xml):
 
+        # pylint: disable=too-many-statements
         self.xml = xml
 
         arch = xml.text("project/buildimage/arch", key="arch")
@@ -178,7 +176,8 @@ class VirtApt(object):
     def stop(self):
         pass
 
-    def pulse(self, _obj):
+    @staticmethod
+    def pulse(_obj):
         return True
 
     def initialize_dirs(self):
@@ -246,7 +245,7 @@ class VirtApt(object):
 
     def get_downloaded_files(self):
         ret = []
-        for _, d in self.downloads.iteritems():
+        for _, d in self.downloads.items():
             if d.complete:
                 ret.append(d.destfile)
             else:
