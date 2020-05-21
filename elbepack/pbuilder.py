@@ -185,3 +185,5 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
     fp.write(mirror)
     fp.close()
+
+    return ""
