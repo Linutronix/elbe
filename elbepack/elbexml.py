@@ -45,7 +45,8 @@ class ValidationError(Exception):
 class NoInitvmNode(Exception):
     pass
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ValidationMode(object):
     NO_CHECK = 1
     CHECK_BINARIES = 2
@@ -59,7 +60,8 @@ def replace_localmachine(mirror, initvm=True):
 
     return mirror.replace("LOCALMACHINE", localmachine)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ElbeXML(object):
 
     # pylint: disable=too-many-public-methods
@@ -181,7 +183,9 @@ class ElbeXML(object):
 
         return replace_localmachine(mirror, initvm)
 
-    def validate_repo(self, r):
+    @staticmethod
+    def validate_repo(r):
+        # pylint: disable=too-many-statements
         try:
             fp = urlopen(r["url"] + "InRelease", None, 10)
         except URLError:
@@ -214,6 +218,7 @@ class ElbeXML(object):
 
         # pylint: disable=too-many-locals
         # pylint: disable=too-many-branches
+        # pylint: disable=too-many-statements
 
         slist = self.create_apt_sources_list()
         sources_lines = slist.split('\n')
