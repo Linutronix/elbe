@@ -145,6 +145,8 @@ def build_image_mtd(mtd, target):
     return img_files
 
 
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class grubinstaller_base(object):
     def __init__(self, fw_type=None):
         self.fs = mountpoint_dict()
@@ -156,7 +158,8 @@ class grubinstaller_base(object):
     def install(self, target):
         pass
 
-    def losetup(self, f):
+    @staticmethod
+    def losetup(f):
         loopdev = get_command_out('losetup --find --show "%s"' % f)
         return loopdev.rstrip('\n')
 
@@ -212,8 +215,8 @@ class grubinstaller202(grubinstaller_base):
                 do("chroot %s grub-install --no-floppy %s" %
                    (imagemnt, poopdev))
 
-        except Exception as E:
-            logging.exception(E)
+        except CommandError as E:
+            logging.error("Fail installing grub device: %s", E)
 
         finally:
             os.unlink(imagemntfs.fname("boot/grub/device.map"))
@@ -261,11 +264,15 @@ class grubinstaller97(grubinstaller_base):
 
             chroot(imagemnt, "update-initramfs -u -k all")
 
-            # Replace groot and kopt because
-            # else they will be given bad values
-            do('chroot %s sed -in "s/^# groot=.*$/# groot=\(hd0,%d\)/" %s' %
+            # Replace groot and kopt because else they will be given
+            # bad values
+            #
+            # FIXME - Pylint says: Using possibly undefined loop
+            # variable 'entry' (undefined-loop-variable).  entry is
+            # defined in the previous for-loop.
+            do(r'chroot %s sed -in "s/^# groot=.*$/# groot=\(hd0,%d\)/" %s' %
                (imagemnt, int(entry.partnum) - 1, "/boot/grub/menu.lst"))
-            do('chroot %s sed -in "s/^# kopt=.*$/# kopt=root=LABEL=%s/" %s' %
+            do(r'chroot %s sed -in "s/^# kopt=.*$/# kopt=root=LABEL=%s/" %s' %
                (imagemnt, entry.label, "/boot/grub/menu.lst"))
 
             chroot(imagemnt, "update-grub")
@@ -273,8 +280,8 @@ class grubinstaller97(grubinstaller_base):
             do("chroot %s grub-install --no-floppy %s" %
                (imagemnt, poopdev))
 
-        except Exception as E:
-            logging.exception(E)
+        except CommandError as E:
+            logging.error("Fail installing grub device: %s", E)
 
         finally:
             os.unlink(imagemntfs.fname("boot/grub/device.map"))
@@ -289,7 +296,8 @@ class grubinstaller97(grubinstaller_base):
             do("kpartx -d %s" % poopdev, allow_fail=True)
             do("losetup -d %s" % poopdev, allow_fail=True)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class simple_fstype(object):
     def __init__(self, typ):
         self.type = typ
