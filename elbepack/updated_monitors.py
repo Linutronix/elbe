@@ -16,7 +16,8 @@ except ImportError:
 
 from elbepack.updated import is_update_file, handle_update_file
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class UpdateMonitor(object):
     def __init__(self, status):
         self.status = status
@@ -33,14 +34,15 @@ class UpdateMonitor(object):
 
 if udev_available:
     def get_mountpoint_for_device(dev):
-        for line in file("/proc/mounts"):
-            fields = line.split()
-            try:
-                if fields[0] == dev:
-                    return fields[1]
-            except BaseException:
-                pass
-        return None
+        with open("/proc/mounts") as f:
+            for line in f:
+                fields = line.split()
+                try:
+                    if fields[0] == dev:
+                        return fields[1]
+                except BaseException:
+                    pass
+            return None
 
     class USBMonitor (UpdateMonitor):
         def __init__(self, status, recursive=False):
@@ -90,16 +92,17 @@ if udev_available:
         def join(self):
             self.observer.join()
 
-        def get_mountpoint_for_device(self, dev):
-            for line in file("/proc/mounts"):
-                fields = line.split()
-                try:
-                    if fields[0] == dev:
-                        return fields[1]
-                except BaseException:
-                    pass
-            return None
-
+        @staticmethod
+        def get_mountpoint_for_device(dev):
+            with open("/proc/mounts") as f:
+                for line in f:
+                    fields = line.split()
+                    try:
+                        if fields[0] == dev:
+                            return fields[1]
+                    except BaseException:
+                        pass
+                return None
 
 class FileMonitor (UpdateMonitor):
 
