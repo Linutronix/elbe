@@ -6,7 +6,8 @@
 import os
 from elbepack.shellhelper import CommandError, do
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class Packer(object):
 
     def pack_file(self, _builddir, _fname):
