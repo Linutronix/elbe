@@ -10,7 +10,8 @@ import junit_xml as junit
 class TestException(Exception):
     pass
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class TestSuite(object):
 
     test_dict = {}
@@ -45,16 +46,18 @@ class TestSuite(object):
         for test in self.node:
             try:
                 test_cases.append(self.do_test(test, self.target))
-            except TestException as E:
+            except TestException:
                 pass # TODO - Handle me!
         ts = junit.TestSuite(name=self.node.et.attrib["name"],
                              test_cases=test_cases)
         return ts
 
-
-#pylint: disable=too-few-public-methods,no-member
+# TODO:py3 - Remove object inheritance
+# pylint: disable=useless-object-inheritance
 @TestSuite.register("BaseTest", register=False)
 class BaseTest(object):
+
+    tag = None
 
     def __init__(self, node, target):
         super(BaseTest, self).__init__()
