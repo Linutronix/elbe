@@ -29,7 +29,9 @@ statestring = {
 }
 
 def apt_pkg_md5(pkg):
+    # pylint: disable=protected-access
     hashes = pkg._records.hashes
+    # pylint: disable=consider-using-enumerate
     for i in range(len(hashes)):
         h = str(hashes[i])
         if h.startswith("MD5"):
@@ -64,15 +66,14 @@ def getalldeps(c, pkgname):
 def pkgstate(pkg):
     if pkg.marked_install:
         return MARKED_INSTALL
-    elif pkg.marked_upgrade:
+    if pkg.marked_upgrade:
         return MARKED_UPGRADE
-    elif pkg.marked_delete:
+    if pkg.marked_delete:
         return MARKED_DELETE
-    elif pkg.is_upgradable:
+    if pkg.is_upgradable:
         return UPGRADABLE
-    elif pkg.is_installed:
+    if pkg.is_installed:
         return INSTALLED
-
     return NOTINSTALLED
 
 
@@ -115,12 +116,15 @@ def fetch_binary(version, destdir='', progress=None):
 
     Then fixed up to use sha256 and pass pycodestyle.
     """
+    # pylint: disable=protected-access
     base = os.path.basename(version._records.filename)
     destfile = os.path.join(destdir, base)
+    # pylint: disable=protected-access
     if _file_is_same(destfile, version.size, version._records.sha256_hash):
         logging.debug('Ignoring already existing file: %s', destfile)
         return os.path.abspath(destfile)
     acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
+    # pylint: disable=protected-access
     acqfile = apt_pkg.AcquireFile(acq,
                                   version.uri,
                                   "SHA256:" + version._records.sha256_hash,
@@ -130,13 +134,13 @@ def fetch_binary(version, destdir='', progress=None):
     acq.run()
 
     if acqfile.status != acqfile.STAT_DONE:
-        raise FetchError("The item %r could not be fetched: %s",
-                         acqfile.destfile,
-                         acqfile.error_text)
+        raise FetchError("The item %r could not be fetched: %s" %
+                         (acqfile.destfile, acqfile.error_text))
 
     return os.path.abspath(destfile)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class PackageBase(object):
 
     # pylint: disable=too-many-instance-attributes
