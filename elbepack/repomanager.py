@@ -9,7 +9,6 @@
 
 import os
 import shutil
-import logging
 
 from debian.deb822 import Deb822
 
@@ -19,7 +18,8 @@ from elbepack.pkgutils import get_dsc_size
 from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
 from elbepack.shellhelper import CommandError, do
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class RepoAttributes(object):
     def __init__(self, codename, arch, components,
                  mirror='http://ftp.de.debian.org/debian'):
@@ -49,7 +49,8 @@ class RepoAttributes(object):
 
         return [RepoAttributes(self.codename, ret_arch, ret_comp, self.mirror)]
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class RepoBase(object):
 
     # pylint: disable=too-many-instance-attributes
@@ -183,20 +184,31 @@ class RepoBase(object):
                                                          att.codename)
             do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
-    def _includedeb(self, path, codename, component):
+    def _includedeb(self, path, codename, components=None):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + os.path.getsize(path)
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        cmd = ('reprepro --keepunreferencedfiles --export=never '
-               '--basedir "%s" -C %s includedeb %s %s')
-        do(cmd % (self.fs.path, component, codename, path))
+        cmd        = 'reprepro %s includedeb %s %s'
+        global_opt = ["--keepunreferencedfiles",
+                      "--export=never",
+                      '--basedir "%s"' % self.fs.path]
 
-    def includedeb(self, path, component="main", pkgname=None, force=False):
+        if components is not None:
+            # Compatibility with old callers
+            if isinstance(components, str):
+                components = [components]
+            global_opt.append('--component "%s"' % '|'.join(components))
+
+        global_opt = ' '.join(global_opt)
+
+        do(cmd % (global_opt, codename, path))
+
+    def includedeb(self, path, components=None, pkgname=None, force=False):
         # pkgname needs only to be specified if force is enabled
         try:
-            self._includedeb(path, self.repo_attr.codename, component)
+            self._includedeb(path, self.repo_attr.codename, components)
         except CommandError as ce:
             if force and pkgname is not None:
                 # Including deb did not work.
@@ -204,51 +216,91 @@ class RepoBase(object):
                 # different md5 already.
                 #
                 # Try remove, and add again.
-                self.removedeb(pkgname, component)
-                self._includedeb(path, self.repo_attr.codename, component)
+                self.removedeb(pkgname, components)
+                self._includedeb(path, self.repo_attr.codename, components)
             else:
                 raise ce
 
-    def include_init_deb(self, path, component="main"):
-        self._includedeb(path, self.init_attr.codename, component)
+    def include_init_deb(self, path, components=None):
+        self._includedeb(path, self.init_attr.codename, components)
 
-    def _include(self, path, codename, component):
-        cmd = ('reprepro --ignore=wrongdistribution '
-               '--ignore=surprisingbinary --keepunreferencedfiles '
-               '--export=never --basedir "%s" -C %s -P normal '
-               '-S misc include %s %s')
-        do(cmd % (self.fs.path, component, codename, path))
+    def _include(self, path, codename, components=None):
 
-    def _removedeb(self, pkgname, codename):
-        cmd = 'reprepro --basedir %s remove %s %s'
-        do(cmd % (self.fs.path, codename, pkgname),
+        cmd        = 'reprepro %s include %s %s'
+        global_opt = ["--ignore=wrongdistribution",
+                      "--ignore=surprisingbinary",
+                      "--keepunreferencedfiles",
+                      "--export=never",
+                      '--basedir "%s"' % self.fs.path,
+                      "--priority normal",
+                      "--section misc"]
+
+        if components is not None:
+            # Compatibility with old callers
+            if isinstance(components, str):
+                components = [components]
+            global_opt.append('--component "%s"' % '|'.join(components))
+
+        global_opt = ' '.join(global_opt)
+
+        do(cmd % (global_opt, codename, path))
+
+    def _removedeb(self, pkgname, codename, components=None):
+
+        cmd        = 'reprepro %s remove %s %s'
+        global_opt = ['--basedir "%s"' % self.fs.path]
+
+        if components is not None:
+            # Compatibility with old callers
+            if isinstance(components, str):
+                components = [components]
+            global_opt.append('--component "%s"' % '|'.join(components))
+
+        global_opt = ' '.join(global_opt)
+
+        do(cmd % (global_opt, codename, pkgname),
            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
-    def removedeb(self, pkgname, component="main"):
-        self._removedeb(pkgname, self.repo_attr.codename)
+    def removedeb(self, pkgname, components=None):
+        self._removedeb(pkgname, self.repo_attr.codename, components)
 
-    def _removesrc(self, srcname, codename):
-        cmd = 'reprepro --basedir %s removesrc %s %s'
-        do(cmd % (self.fs.path, codename, srcname),
+    def _removesrc(self, srcname, codename, components=None):
+
+        cmd        = 'reprepro %s removesrc %s %s'
+        global_opt = ["--basedir %s" % self.fs.path]
+
+        if components is not None:
+            # Compatibility with old callers
+            if isinstance(components, str):
+                components = [components]
+            global_opt.append('--component "%s"' % '|'.join(components))
+
+        global_opt = ' '.join(global_opt)
+
+        do(cmd % (global_opt, codename, srcname),
            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
-    def removesrc(self, path, component="main"):
+    def removesrc(self, path, components=None):
+        # pylint: disable=undefined-variable
         for p in Deb822.iter_paragraphs(file(path)):
             if 'Source' in p:
-                self._removesrc(p['Source'], self.repo_attr.codename)
+                self._removesrc(p['Source'],
+                                self.repo_attr.codename,
+                                components)
 
-    def _remove(self, path, codename, component):
+    def _remove(self, path, codename, components=None):
+        # pylint: disable=undefined-variable
         for p in Deb822.iter_paragraphs(file(path)):
             if 'Source' in p:
-                self._removesrc(p['Source'], codename)
+                self._removesrc(p['Source'], codename, components)
             elif 'Package' in p:
-                self._removedeb(p['Package'], codename)
+                self._removedeb(p['Package'], codename, components)
             elif 'Binary' in p:
                 for pp in p['Binary'].split():
-                    self._removedeb(pp, codename)
+                    self._removedeb(pp, codename, components)
 
 
-    def _includedsc(self, path, codename, component):
+    def _includedsc(self, path, codename, components=None):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + get_dsc_size(path)
             if new_size > self.maxsize:
@@ -257,13 +309,26 @@ class RepoBase(object):
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        cmd = ('reprepro --keepunreferencedfiles --export=never '
-               '--basedir "%s" -C %s -P normal -S misc includedsc %s %s')
-        do(cmd % (self.fs.path, component, codename, path))
+        cmd        = 'reprepro %s includedsc %s %s'
+        global_opt = ["--keepunreferencedfiles",
+                      "--export=never",
+                      '--basedir "%s"' % self.fs.path,
+                      "--priority normal",
+                      "--section misc"]
 
-    def includedsc(self, path, component="main", force=False):
+        if components is not None:
+            # Compatibility with old callers
+            if isinstance(components, str):
+                components = [components]
+            global_opt.append('--component "%s"' % '|'.join(components))
+
+        global_opt = ' '.join(global_opt)
+
+        do(cmd % (global_opt, codename, path))
+
+    def includedsc(self, path, components=None, force=False):
         try:
-            self._includedsc(path, self.repo_attr.codename, component)
+            self._includedsc(path, self.repo_attr.codename, components)
         except CommandError as ce:
             if force:
                 # Including dsc did not work.
@@ -271,21 +336,21 @@ class RepoBase(object):
                 # different md5 already.
                 #
                 # Try remove, and add again.
-                self.removesrc(path, component)
-                self._includedsc(path, self.repo_attr.codename, component)
+                self.removesrc(path, components)
+                self._includedsc(path, self.repo_attr.codename, components)
             else:
                 raise ce
 
-    def include(self, path, component="main", force=False):
+    def include(self, path, components=None, force=False):
         if force:
-            self._remove(path, self.repo_attr.codename, component)
-        self._include(path, self.repo_attr.codename, component)
+            self._remove(path, self.repo_attr.codename, components)
+        self._include(path, self.repo_attr.codename, components)
 
-    def remove(self, path, component="main"):
-        self._remove(path, self.repo_attr.codename, component)
+    def remove(self, path, components=None):
+        self._remove(path, self.repo_attr.codename, components)
 
-    def include_init_dsc(self, path, component="main"):
-        self._includedsc(path, self.init_attr.codename, component)
+    def include_init_dsc(self, path, components=None):
+        self._includedsc(path, self.init_attr.codename, components)
 
     def buildiso(self, fname, options=""):
         files = []

@@ -34,7 +34,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
         dsc = cache.download_source(pkg,
                                     '/var/cache/elbe/sources',
                                     version=version)
-        repo.includedsc(dsc, component=component, force=True)
+        repo.includedsc(dsc, components=component, force=True)
     except ValueError:
         logging.error("No sources for package '%s'", pkg_id)
     except FetchError:
