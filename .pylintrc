@@ -27,6 +27,8 @@ persistent=yes
 # usually to register additional checkers.
 load-plugins=
 
+extension-pkg-whitelist=apt_pkg,gpg.constants,lxml,_ped
+
 
 [MESSAGES CONTROL]
 
@@ -226,7 +228,7 @@ valid-classmethod-first-arg=cls
 [IMPORTS]
 
 # Deprecated modules which should not be used, separated by a comma
-deprecated-modules=regsub,string,TERMIOS,Bastion,rexec
+deprecated-modules=regsub,TERMIOS,Bastion,rexec
 
 # Create a graph of every (i.e. internal and external) dependencies in the
 # given file (report RP0402 must not be disabled)
