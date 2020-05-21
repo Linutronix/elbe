@@ -56,14 +56,16 @@ class InvalidState(ProjectManagerError):
     def __init__(self, message):
         ProjectManagerError.__init__(self, message)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class OpenProjectFile(object):
     def __init__(self, pfd, mode='r'):
         self.path = path.join(pfd.builddir, pfd.name)
         self.mime_type = pfd.mime_type
         self.fobj = open(self.path, mode)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ProjectManager(object):
 
     # pylint: disable=too-many-public-methods
@@ -129,11 +131,10 @@ class ProjectManager(object):
                     # Same project selected again by the same user, don't do
                     # anything
                     return
-                else:
-                    # Already opened by a different user
-                    raise AlreadyOpen(builddir,
-                                      self.db.get_username(
-                                          self.builddir2userid[builddir]))
+
+                # Already opened by a different user
+                raise AlreadyOpen(builddir,
+                                  self.db.get_username(self.builddir2userid[builddir]))
 
             # Try to close the old project of the user, if any
             self._close_current_project(userid)
