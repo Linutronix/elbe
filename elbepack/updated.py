@@ -22,11 +22,11 @@ from shutil import copyfile, rmtree, copy
 
 from syslog import syslog
 
+from suds.client import Client
 from spyne import Application
 from spyne.service import ServiceBase
 from spyne.decorator import rpc
 from spyne.model.primitive import String
-from suds.client import Client
 
 import apt
 import apt_pkg
@@ -44,7 +44,8 @@ try:
 except ImportError:
     downgrade_prevention_feature_available = False
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class UpdateStatus(object):
 
     # pylint: disable=too-many-instance-attributes
@@ -141,6 +142,7 @@ class UpdateService (ServiceBase):
 
         try:
             apply_update(fname, self.app.status)
+        # pylint: disable=broad-except
         except Exception as err:
             print("%s" % str(err))
             self.app.status.set_finished('error')
@@ -154,11 +156,13 @@ class UpdateService (ServiceBase):
         self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
         self.app.status.log("connection established")
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class rw_access_file(object):
     def __init__(self, filename, status):
         self.filename = filename
         self.rw = rw_access(filename, status)
+        self.f = None
 
     def __enter__(self):
         self.rw.__enter__()
@@ -170,7 +174,8 @@ class rw_access_file(object):
             self.f.close()
         self.rw.__exit__(typ, value, traceback)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class rw_access(object):
     def __init__(self, directory, status):
         self.status = status
@@ -478,6 +483,7 @@ def action_select(upd_file, status):
         try:
             if reject_downgrade(status, "/tmp/new.xml"):
                 return
+        # pylint: disable=broad-except
         except Exception as e:
             status.log('Error while reading XML files occurred: ' + str(e))
             return
@@ -503,17 +509,13 @@ def action_select(upd_file, status):
         if os.path.isfile(prefix + '/' + 'pre.sh'):
             try:
                 copy(prefix + '/' + 'pre.sh', '/var/cache/elbe/' + 'pre.sh')
-            except OSError as e:
-                status.log('presh-copy failed: ' + str(e))
-            except IOError as e:
+            except (OSError, IOError) as e:
                 status.log('presh-copy failed: ' + str(e))
 
         if os.path.isfile(prefix + '/' + 'post.sh'):
             try:
                 copy(prefix + '/' + 'post.sh', '/var/cache/elbe/' + 'post.sh')
-            except OSError as e:
-                status.log('postsh-copy failed: ' + str(e))
-            except IOError as e:
+            except (OSError, IOError) as e:
                 status.log('postsh-copy failed: ' + str(e))
 
     if os.path.isdir(prefix + "conf"):
@@ -527,9 +529,7 @@ def action_select(upd_file, status):
                     try:
                         mkdir_p(dst)
                         copyfile(src, dst + '/' + f)
-                    except OSError as e:
-                        status.log('failed: ' + str(e))
-                    except IOError as e:
+                    except (OSError, IOError) as e:
                         status.log('failed: ' + str(e))
         with rw_access(prefix + "conf", status):
             rmtree(prefix + "conf")
@@ -551,6 +551,7 @@ def action_select(upd_file, status):
     if os.path.isdir(prefix + "repo"):
         try:
             update_sourceslist(xml, prefix + "repo", status)
+        # pylint: disable=broad-except
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')
@@ -559,6 +560,7 @@ def action_select(upd_file, status):
 
         try:
             apply_update("/tmp/new.xml", status)
+        # pylint: disable=broad-except
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')
@@ -612,7 +614,7 @@ def handle_update_file(upd_file, status, remove=False):
             status.log("ignore file: " + str(upd_file))
 
 
-def shutdown(signum, fname, status):
+def shutdown(_signum, _fname, status):
     status.stop = True
     for mon in status.monitors:
         mon.stop()
