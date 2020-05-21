@@ -21,6 +21,11 @@ class ElbeInstallProgress (InstallProgress):
 
     def write(self, line):
         if line == 'update finished':
+            # This is class attribute inherited by InstallProgress.
+            # Pylint is confused by this but the attribute does exists
+            # on this type!
+            #
+            # pylint: disable=attribute-defined-outside-init
             self.percent = 100
 
         line = str(self.percent) + "% " + line
@@ -50,6 +55,11 @@ class ElbeInstallProgress (InstallProgress):
     def fork(self):
         retval = os.fork()
         if retval:
+            # This is class attribute inherited by InstallProgress.
+            # Pylint is confused by this but the attribute does exists
+            # on this type!
+            #
+            # pylint: disable=attribute-defined-outside-init
             self.child_pid = retval
         return retval
 
@@ -92,7 +102,8 @@ class ElbeAcquireProgress (AcquireProgress):
 
         self.write(line)
 
-    def pulse(self, owner):
+    @staticmethod
+    def pulse(_owner):
         return True
 
 
