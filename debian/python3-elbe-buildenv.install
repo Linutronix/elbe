@@ -22,7 +22,6 @@
 ./usr/lib/python3.*/*-packages/elbepack/junit.py
 ./usr/lib/python3.*/*-packages/elbepack/rfs.py
 ./usr/lib/python3.*/*-packages/elbepack/aptpkgutils.py
-./usr/lib/python3.*/*-packages/elbepack/asciidoclog.py
 ./usr/lib/python3.*/*-packages/elbepack/cdroms.py
 ./usr/lib/python3.*/*-packages/elbepack/debianreleases.py
 ./usr/lib/python3.*/*-packages/elbepack/debpkg.py
