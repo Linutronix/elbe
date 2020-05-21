@@ -11,6 +11,7 @@ import os
 
 from gpg import core
 from gpg.constants import sigsum, sig, PROTOCOL_OpenPGP
+from gpg.errors import GPGMEError, KeyNotFound, InvalidSigners
 
 from elbepack.filesystem import hostfs
 from elbepack.shellhelper import system
@@ -28,7 +29,9 @@ elbe_internal_key_param = """
 </GnupgKeyParms>
 """
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
+# pylint: disable=too-many-instance-attributes
 class OverallStatus(object):
 
     def __init__(self):
@@ -79,54 +82,63 @@ class OverallStatus(object):
         return 0
 
 
-def check_signature(ctx, sig):
+def check_signature(ctx, signature):
     status = OverallStatus()
 
-    if sig.summary & sigsum.KEY_MISSING:
-        print("Signature with unknown key: %s" % sig.fpr)
+    if signature.summary & sigsum.KEY_MISSING:
+        print("Signature with unknown key: %s" % signature.fpr)
         status.key_missing = 1
         return status
 
     # there should be a key
-    key = ctx.get_key(sig.fpr, 0)
-    print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, sig.fpr))
-    if sig.summary & sigsum.VALID == sigsum.VALID:
+    key = ctx.get_key(signature.fpr, 0)
+    print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, signature.fpr))
+
+    if signature.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
         print("VALID (Trusted)")
         status.valid = 1
         return status
 
     # print detailed status in case it's not fully valid and trusted
-    if sig.summary == 0:
+    if signature.summary == 0:
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
         print("VALID (Untrusted).")
         status.valid = 1
-    if sig.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
+
+    if signature.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
         print("SIGNATURE EXPIRED!")
         status.sig_expired = 1
         status.valid_threshold = 1
-    if sig.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
+
+    if signature.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
         print("KEY EXPIRED!")
         status.key_expired = 1
         status.valid_threshold = 1
-    if sig.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
+
+    if signature.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
         print("KEY REVOKED!")
         status.key_revoked = 1
         status.valid_threshold = 1
-    if sig.summary & sigsum.RED == sigsum.RED:
+
+    if signature.summary & sigsum.RED == sigsum.RED:
         print("INVALID SIGNATURE!")
         status.invalid = 1
-    if sig.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
+
+    if signature.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
         print("CRL MISSING!")
         status.gpg_error = 1
-    if sig.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
+
+    if signature.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
         print("CRL TOO OLD!")
         status.gpg_error = 1
-    if sig.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
+
+    if signature.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
         print("UNMET POLICY REQUIREMENT!")
         status.gpg_error = 1
-    if sig.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
+
+    if signature.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
         print("SYSTEM ERROR!'")
         status.gpg_error = 1
 
@@ -147,29 +159,27 @@ def unsign_file(fname):
                         '/var/cache/elbe/gnupg')
     ctx.set_armor(False)
 
+    overall_status = OverallStatus()
+
     try:
-        overall_status = OverallStatus()
+        infile  = core.Data(file=fname)
+        outfile = core.Data(file=outfilename)
+    except (GPGMEError, ValueError) as E:
+        print("Error: Opening file %s or %s - %s" %
+              (fname, outfilename, E))
+    else:
+        # obtain signature and write unsigned file
+        ctx.op_verify(infile, None, outfile)
+        vres = ctx.op_verify_result()
 
-        with core.Data(file=fname) as infile:
-            with core.Data(file=outfilename) as outfile:
-
-                # obtain signature and write unsigned file
-                ctx.op_verify(infile, None, outfile)
-                vres = ctx.op_verify_result()
-
-                for sig in vres.signatures:
-                    status = check_signature(ctx, sig)
-                    overall_status.add(status)
+        for signature in vres.signatures:
+            status = check_signature(ctx, signature)
+            overall_status.add(status)
 
         if overall_status.to_exitcode():
             return None
 
         return outfilename
-
-    except IOError as ex:
-        print(str(ex))
-    except Exception as ex:
-        print("Error checking the file %s: %s" % (fname, str(ex)))
 
     return None
 
@@ -187,40 +197,49 @@ def unlock_key(fingerprint):
 def sign(infile, outfile, fingerprint):
 
     ctx = core.Context()
-    ctx.set_engine_info(PROTOCOL_OpenPGP,
-                        None,
-                        '/var/cache/elbe/gnupg')
+
+    try:
+        ctx.set_engine_info(PROTOCOL_OpenPGP,
+                            None,
+                            '/var/cache/elbe/gnupg')
+    except GPGMEError as E:
+        print("Error: Can't set engine info - %s", E)
+        return
+
     key = None
 
     try:
         key = ctx.get_key(fingerprint, 0)
-    except Exception as ex:
-        print("no key with fingerprint %s: %s" % (fingerprint, str(ex)))
-
-    unlock_key(key.fpr)
-    ctx.signers_add(key)
-    ctx.set_armor(False)
+    except (KeyNotFound, GPGMEError, AssertionError) as E:
+        print("Error: No key with fingerprint %s - %s" % (fingerprint, E))
+        return
+    else:
+        unlock_key(key.fpr)
+        ctx.signers_add(key)
+        ctx.set_armor(False)
 
     try:
         indata = core.Data(file=infile)
+    except (GPGMEError, ValueError) as E:
+        print("Error: Opening file %s - %s" %
+              (infile, E))
+    else:
         outdata = core.Data()
-        ctx.op_sign(indata, outdata, sig.mode.NORMAL)
-        outdata.seek(0, os.SEEK_SET)
-        signature = outdata.read()
-        with open(outfile, 'w') as fd:
-            fd.write(signature)
-    except Exception as ex:
-        print("Error signing file %s" % str(ex))
-
+        try:
+            ctx.op_sign(indata, outdata, sig.mode.NORMAL)
+        except InvalidSigners as E:
+            print("Error: Invalid signer - %s", E)
+        except GPGMEError as E:
+            print("Error: While signing - %s", E)
+        else:
+            outdata.seek(0, os.SEEK_SET)
+            signature = outdata.read()
+            with open(outfile, 'w') as fd:
+                fd.write(signature)
 
 def sign_file(fname, fingerprint):
     outfilename = fname + '.gpg'
-
-    try:
-        sign(fname, outfilename, fingerprint)
-    except Exception as ex:
-        print("Error signing file %s" % str(ex))
-
+    sign(fname, outfilename, fingerprint)
 
 def get_fingerprints():
     ctx = core.Context()
