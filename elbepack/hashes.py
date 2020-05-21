@@ -23,7 +23,8 @@ def validate_sha256(fname, expected_hash):
                 'file "%s" failed to verify ! got: "%s" expected: "%s"' %
                 (fname, m.hexdigest(), expected_hash))
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class HashValidator(object):
     def __init__(self, base_url):
         self.hashes = {}
