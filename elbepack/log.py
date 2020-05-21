@@ -84,6 +84,8 @@ class ThreadFilter(logging.Filter):
 
     def filter(self, record):
         if hasattr(record, '_thread'):
+            # Hack to fake logging for another thread
+            # pylint: disable=protected-access
             thread = record._thread
         else:
             thread = record.thread
@@ -215,7 +217,8 @@ def close_logging():
             root.removeHandler(h)
     local.handlers = []
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class AsyncLogging(object):
 
     def __init__(self, atmost, stream, block):
@@ -263,6 +266,7 @@ class AsyncLogging(object):
         buff = rest + os.read(self.fd, self.atmost)
         j = 0
         count = 0
+        # pylint: disable=consider-using-enumerate
         for i in range(len(buff)):
             if buff[i] == '\n':
                 self.lines.append(buff[j:i])
