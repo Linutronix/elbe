@@ -9,8 +9,9 @@ import io
 import re
 
 import warnings
+import logging
 
-from debian.copyright import Copyright, LicenseParagraph
+from debian.copyright import Copyright, LicenseParagraph, NotMachineReadableError, MachineReadableFormatError
 from elbepack.treeutils import etree
 
 warnings.simplefilter('error')
@@ -42,7 +43,8 @@ def get_heuristics_license_list(c):
 
     return set(licenses)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class copyright_xml (object):
     def __init__(self):
         self.outxml = etree(None)
@@ -67,7 +69,13 @@ class copyright_xml (object):
                                              .decode(encoding='utf-8',
                                                      errors='replace'))
         try:
-            c = Copyright(bytesio)
+            c = Copyright(bytesio, strict=True)
+        except (NotMachineReadableError, MachineReadableFormatError) as E:
+            logging.warning("Error in copyright of package '%s': %s", pkg_name, E)
+        except Warning as W:
+            logging.warning("Warning in copyrigh of package '%s' : %s", pkg_name, W)
+        else:
+
             files = []
 
             for cc in c.all_files_paragraphs():
@@ -97,9 +105,6 @@ class copyright_xml (object):
                 cc.et.text = f[2]
 
             return
-
-        except Exception:
-            pass
 
         bytesio.seek(0)
 
