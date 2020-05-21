@@ -20,6 +20,7 @@ cached_kvm_infos = None
 
 def find_kvm_exe():
 
+    # pylint: disable=global-statement
     global cached_kvm_infos
 
     if cached_kvm_infos:
