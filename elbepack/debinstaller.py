@@ -23,9 +23,10 @@ except ImportError:
     import urllib2
     urlopen = urllib2.urlopen
 
+from shutil import copyfile
+
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
-from shutil import copyfileobj, copyfile
 
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.egpg import OverallStatus, check_signature
