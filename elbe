@@ -10,10 +10,17 @@
 
 from __future__ import print_function
 
-import os
 import sys
 
+# We need to import elbepack.commands so that
+# elbepack/commands/__init__.py is run and the commands package is
+# register into the elbepack namespace.  This is later use by
+# get_cmd_list() and the magic stuff with __import__() at the end of
+# this file
+#
+# pylint: disable=unused-import
 import elbepack.commands
+
 from elbepack.version import elbe_version
 from elbepack.directories import init_directories, get_cmdlist
 
@@ -32,7 +39,7 @@ def usage():
 
 init_directories(__file__)
 
-if (len(sys.argv) < 2):
+if len(sys.argv) < 2:
     usage()
     sys.exit(20)
 
