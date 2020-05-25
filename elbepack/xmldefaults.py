@@ -9,7 +9,6 @@
 from __future__ import print_function
 
 import random
-import sys
 
 from elbepack.kvm import find_kvm_exe
 
@@ -198,7 +197,8 @@ def get_random_mac():
 
     return ':'.join(s)
 
-
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
 class ElbeDefaults(object):
 
     def __init__(self, build_type):
