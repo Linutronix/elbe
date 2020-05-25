@@ -300,10 +300,10 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add={}):
     if stdin is None:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=w, env=new_env)
     else:
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
 
     async_logging(r, w, soap, log)
-    stdout, stderr = p.communicate(input=stdin)
+    stdout, _ = p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
         raise CommandError(cmd, p.returncode)
