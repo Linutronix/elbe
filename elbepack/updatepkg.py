@@ -69,7 +69,6 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         for p in xmlpkgs:
             name = p.et.text
             ver = p.et.get('version')
-            md5 = p.et.get('md5')
 
             xmlindex[name] = p
 
