@@ -52,6 +52,8 @@
 				<!-- name of the image file -->
 				<name>sdcard.img</name>
 				<size>1500MiB</size>
+				<binary offset="256" blocksize="512">/usr/lib/u-boot/am335x_boneblack/MLO</binary>
+				<binary offset="768" blocksize="512">/usr/lib/u-boot/am335x_boneblack/u-boot.img</binary>
 					<!-- partition layout -->
 					<partition>
 						<size>50MiB</size>
@@ -85,10 +87,6 @@
 			</bylabel>
 		</fstab>
 		<finetuning>
-			<!-- move the 1st stage bootloader to the path where the bootrom expects it -->
-			<cp path="/usr/lib/u-boot/am335x_boneblack/MLO">/boot/MLO</cp>
-			<!-- move the 2nd stage bootloader to the path where the 1 stage expects it -->
-			<cp path="/usr/lib/u-boot/am335x_boneblack/u-boot.img">/boot/u-boot.img</cp>
 			<!-- move boot files to the path where the bootloader expects them to be -->
 			<mv path="/usr/lib/linux-image-*-armmp/am335x-boneblack.dtb">/boot/am335x-boneblack.dtb</mv>
 			<mv path="/boot/initrd.img-*-armmp">/boot/initrd.img-armmp</mv>
@@ -99,7 +97,6 @@
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
-			<artifact>/usr/lib/u-boot/am335x_boneblack/MLO</artifact>
 			<artifact>/boot/am335x-boneblack.dtb</artifact>
 		</finetuning>
 		<!-- generate a pbuilder environment (before image will be built) -->
@@ -112,9 +109,6 @@
 				<extract_partition part="1">scard1.img</extract_partition>
 				<extract_partition part="2">scard2.img</extract_partition>
 			</losetup>
-			<rm_artifact>target/usr/lib/u-boot/am335x_boneblack/MLO</rm_artifact>
-			<t2p_mv path="/usr/lib/u-boot/am335x_boneblack/MLO">MLO</t2p_mv>
-			<artifact>MLO</artifact>
 		</project-finetuning>
 		<pkg-list>
 			<pkg>u-boot-omap</pkg>
