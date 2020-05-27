@@ -17,6 +17,10 @@ def add_pass_through_options(oparser):
                        default=None,
                        help="enable only tags with empty or given variant")
 
+    oparser.add_option("-p", "--proxy", dest="proxy",
+                       default=None,
+                       help="add proxy to mirrors")
+
 
 def run_command(argv):
     oparser = OptionParser(usage="usage: %prog preprocess [options] <xmlfile>")
@@ -40,7 +44,7 @@ def run_command(argv):
         variants = opt.variant.split(',')
 
     try:
-        xmlpreprocess(args[0], opt.output, variants)
+        xmlpreprocess(args[0], opt.output, variants, opt.proxy)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(20)
