@@ -48,9 +48,6 @@ def run_command(argv):
         help="Use FILE as cdrom iso, and use that to build the initvm",
         metavar="FILE")
 
-    oparser.add_option("--proxy", dest="proxy",
-                       help="Override the http Proxy")
-
     oparser.add_option("--buildtype", dest="buildtype",
                        help="Override the buildtype")
 
@@ -133,11 +130,7 @@ def run_command(argv):
         defs = ElbeDefaults(buildtype)
 
         http_proxy = ""
-        if os.getenv("http_proxy"):
-            http_proxy = os.getenv("http_proxy")
-        elif opt.proxy:
-            http_proxy = opt.proxy
-        elif xml.has("initvm/mirror/primary_proxy"):
+        if xml.has("initvm/mirror/primary_proxy"):
             http_proxy = xml.text("initvm/mirror/primary_proxy")
             http_proxy = http_proxy.strip().replace("LOCALMACHINE",
                                                     "localhost")
