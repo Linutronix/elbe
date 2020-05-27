@@ -7,6 +7,7 @@
 
 from __future__ import print_function
 
+import os
 import sys
 try:
     from urllib.request import urlopen
@@ -19,7 +20,7 @@ from optparse import OptionGroup
 from itertools import islice
 
 from lxml import etree
-from lxml.etree import XMLParser, parse
+from lxml.etree import XMLParser, parse, Element
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
@@ -98,6 +99,33 @@ def preprocess_initvm_ports(xml):
                 host.text == cfg['soapport'] and benv.text == '7588'):
             forward.getparent().remove(forward)
 
+def preprocess_proxy_add(xml, opt_proxy=None):
+    """Add proxy to mirrors from CLI arguments or environment variable"""
+
+    # Add proxy from CLI or env?
+    set_proxy = opt_proxy or os.getenv("http_proxy")
+
+    if set_proxy is None:
+        return
+
+    proxy_tag = "primary_proxy"
+
+    # For all mirrors
+    for mirror in xml.iterfind(".//mirror"):
+
+        current_proxy = mirror.find(proxy_tag)
+
+        # If there's already a proxy and we're trying to override it
+        if current_proxy is not None:
+            print('[WARN] Trying to override proxy "%s"!' %
+                  current_proxy.text)
+            continue
+
+        # Add proxy to mirror
+        proxy_e      = Element(proxy_tag)
+        proxy_e.text = set_proxy
+
+        mirror.append(proxy_e)
 
 def preprocess_mirror_replacement(xml):
     """Do search and replace on mirror urls
@@ -130,7 +158,7 @@ def preprocess_mirror_replacement(xml):
             u.attrib['value'] = u.attrib['value'].replace(r[0], r[1])
 
 
-def xmlpreprocess(fname, output, variants=None):
+def xmlpreprocess(fname, output, variants=None, proxy=None):
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -198,6 +226,8 @@ def xmlpreprocess(fname, output, variants=None):
         xml = combinearchivedir(xml)
 
         preprocess_mirror_replacement(xml)
+
+        preprocess_proxy_add(xml, proxy)
 
         # Change public PGP url key to raw key
         preprocess_pgp_key(xml)
