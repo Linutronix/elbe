@@ -7,6 +7,7 @@ import glob
 import logging
 import optparse
 import os
+import shutil
 import tempfile
 import traceback
 
@@ -530,4 +531,84 @@ class CheckImage(CheckBase):
                      img_name, ''.join(transcript))
 
         return ret or child.exitstatus
+
+@CheckBase.register("sdk")
+class CheckSDK(CheckBase):
+    """Check if SDK is working"""
+
+    script = b"""
+set -x
+
+mkdir project
+
+. $ELBE_SDK_ENV
+
+cd project || exit 1
+
+touch README
+
+cat -> hello.c <<EOF
+#include <stdio.h>
+int main(void)
+{
+    printf("Hello World!");
+    return 0;
+}
+EOF
+
+cat -> configure.ac <<EOF
+AC_INIT(hello,0.1)
+AM_INIT_AUTOMAKE([foreign])
+AC_PROG_CC
+AC_CONFIG_FILES(Makefile)
+AC_OUTPUT
+EOF
+
+cat -> Makefile.am <<EOF
+bin_PROGRAMS  = hello
+hello_SOURCES = hello.c
+hello_LDFLAGS = -static
+EOF
+
+autoreconf -i
+
+./configure ${CONFIGURE_FLAGS}
+
+make
+make install DESTDIR=./tmp
+
+out=$(./hello)
+
+if [ $? -eq 0 ] && [ "$out" = "Hello World!" ] ;
+then
+    exit 0
+fi
+exit 1
+"""
+
+    def do_sdk(self, sdk):
+
+        with TmpdirFilesystem() as tmp:
+
+            # Make a copy of the installer
+            shutil.copyfile(sdk, tmp.fname(sdk))
+
+            # Let's work in our temp dir from now on
+            os.chdir(tmp.path)
+
+            # The script is self extracting; it needs to be executable
+            os.chmod(sdk, 0o744)
+
+            # Extract here with 'yes' to all answers
+            do("./%s -y -d ." % sdk)
+
+            # Get environment file
+            env = tmp.glob("environment-setup*")[0]
+
+            # NOTE!  This script requires binfmt to be installed.
+            do("/bin/sh", stdin=self.script, env_add={"ELBE_SDK_ENV": env})
+
+    def run(self):
+        for sdk in glob.glob("setup-elbe-sdk*"):
+            self.do_sdk(sdk)
 
