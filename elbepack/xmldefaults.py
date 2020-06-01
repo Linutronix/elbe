@@ -138,7 +138,7 @@ ppc64el_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "none",
     "nicmodel": "virtio",
-    "triplet": "ppc64le-linux-gnu",
+    "triplet": "powerpc64le-linux-gnu",
     "sdkgccpkg": "g++-powerpc64le-linux-gnu",
     "elfcode": "64-bit PowerPC or cisco 7500",
 }
@@ -162,7 +162,7 @@ i386_defaults = {
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",
-    "triplet": "i386-linux-gnu",
+    "triplet": "i686-linux-gnu",
     "sdkgccpkg": "g++-i686-linux-gnu",
 }
 
