@@ -7,7 +7,6 @@
 import collections
 import logging
 import os
-import select
 import threading
 from contextlib import contextmanager
 
@@ -220,7 +219,6 @@ class AsyncLogging(object):
 
     def __init__(self, atmost, stream, block):
         self.lines = []
-        self.epoll = select.epoll()
         self.atmost = atmost
         self.fd = None
         calling_thread = threading.current_thread().ident
@@ -231,7 +229,6 @@ class AsyncLogging(object):
 
     def __call__(self, r, w):
         os.close(w)
-        self.epoll.register(r, select.EPOLLIN | select.EPOLLHUP)
         self.fd = r
         try:
             self.run()
@@ -239,41 +236,41 @@ class AsyncLogging(object):
             os.close(r)
 
     def run(self):
-        alive = True
-        rest = bytes()
-        while alive:
-            events = self.epoll.poll()
-            for _, event in events:
-                if event & select.EPOLLIN:
-                    rest = self.read(rest)
-                if event & select.EPOLLHUP:
-                    alive = False
+        rest = ""
 
-        # Reading rest after pipe hang up
         while True:
-            rest = self.read(rest)
-            if not rest:
+
+            buf  = os.read(self.fd, self.atmost).decode("utf-8", errors="ignore")
+
+            # Pipe broke
+            if not buf:
                 break
+
+            buf = rest + buf
+            cnt = 0
+            j   = 0
+
+            # Line buffering
+            for i in range(len(buf)):
+                if buf[i] == '\n':
+                    self.lines.append(buf[j:i])
+                    cnt += 1
+                    j = i + 1
+
+            # Log the line now for echo back
+            if cnt:
+                self.stream.info("\n".join(self.lines[-cnt:]))
+
+            # Keep rest for next line buffering
+            rest = buf[j:]
 
         if self.lines:
             self.lines[-1] += rest
             self.block.info("\n".join(self.lines))
 
-    def read(self, rest):
-        buff = rest + os.read(self.fd, self.atmost)
-        j = 0
-        count = 0
-        for i in range(len(buff)):
-            if buff[i] == '\n':
-                self.lines.append(buff[j:i])
-                count += 1
-                j = i + 1
-        if count:
-            self.stream.info("\n".join(self.lines[-count:]))
-        return buff[j:]
 
 
-def async_logging(r, w, stream, block, atmost=80):
+def async_logging(r, w, stream, block, atmost=4096):
     t = threading.Thread(target=AsyncLogging(atmost, stream, block),
                          args=(r, w))
     t.daemon = True
