@@ -72,6 +72,17 @@ def soap_faults(func):
     """ decorator, which wraps Exceptions to the proper
         Soap Faults, and raises these.
     """
+
+    # Do not edit this code.  Although using *args is tempting here,
+    # it will not work because Spyne is doing introspection on the
+    # function's signature.  I think it would be possible to do
+    # something with func.__code__.replace, but this requires deep
+    # Python's internal knowledges.
+
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-statements
+    # pylint: disable=function-redefined
+
     if func.__code__.co_argcount == 1:
         @wraps(func)
         def wrapped(self):
@@ -92,7 +103,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 2:
+    if func.__code__.co_argcount == 2:
         @wraps(func)
         def wrapped(self, arg1):
             try:
@@ -112,7 +123,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 3:
+    if func.__code__.co_argcount == 3:
         @wraps(func)
         def wrapped(self, arg1, arg2):
             try:
@@ -132,7 +143,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 4:
+    if func.__code__.co_argcount == 4:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3):
             try:
@@ -152,7 +163,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 5:
+    if func.__code__.co_argcount == 5:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4):
             try:
@@ -172,7 +183,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 6:
+    if func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
             # pylint: disable=too-many-arguments
@@ -193,7 +204,7 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    elif func.__code__.co_argcount == 7:
+    if func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5, arg6):
             # pylint: disable=too-many-arguments
@@ -214,7 +225,6 @@ def soap_faults(func):
             except Exception as e:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
-    else:
-        raise Exception(
-            "arg count %d not implemented" %
-            func.__code__.co_argcount)
+
+    raise Exception("arg count %d not implemented" %
+                    func.__code__.co_argcount)
