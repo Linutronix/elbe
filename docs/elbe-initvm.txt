@@ -71,6 +71,15 @@ OPTIONS
 --build-sdk::
 	Also make 'initvm submit' build an SDK.
 
+XML OPTIONS
+-----------
+
+--variant <variant>::
+	comma separated list of variants
+
+--proxy <proxy>::
+	add proxy to mirrors
+
 COMMANDS
 --------
 

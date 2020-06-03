@@ -50,9 +50,6 @@ OPTIONS
 	Build a Debian source CD-ROM image, containing the source packages used by the
 	project.
 
---proxy <addr>::
-	Override the HTTP proxy setting specified in the XML file.
-
 --debug::
 	Enables a few features that allow for better debugging of the build process.
 

@@ -14,7 +14,6 @@ SYNOPSIS
 	[ --buildtype <buildtype> ] \
 	[ --debug ] \
 	[ --directory <directory> ] \
-	[ --proxy <addr> ] \
 	[ --skip-cds ] \
 	[ --skip-validation ] \
 	<xmlfile>
@@ -52,9 +51,6 @@ OPTIONS
 	The location of the project directory. If this option isn't given, a directory
 	'build' is created in the current working directory. The directory must not
 	exist.
-
---proxy <addr>::
-	Override the HTTP proxy setting specified in the XML file.
 
 --skip-cds::
 	Skip the generation of Debian binary cdroms. This makes the build faster.

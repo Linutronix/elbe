@@ -29,6 +29,9 @@ OPTIONS
 --variant <variant>::
 	comma separated list of variants
 
+--proxy <proxy>::
+	add proxy to mirrors
+
 --output <filename>::
 	preprocessed output file, defaults to preprocess.xml
 

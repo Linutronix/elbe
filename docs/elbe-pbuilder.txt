@@ -48,6 +48,15 @@ OPTIONS
         crossbuilding possible. Combined with the build command it will use
         this environment for crossbuilding.
 
+XML OPTIONS
+-----------
+
+--variant <variant>::
+	comma separated list of variants
+
+--proxy <proxy>::
+	add proxy to mirrors
+
 COMMANDS
 --------
 
