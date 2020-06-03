@@ -49,9 +49,6 @@ def run_command(argv):
                        dest="build_sources", default=False,
                        help="Build Source CD")
 
-    oparser.add_option("--proxy", dest="proxy",
-                       help="Override the http proxy")
-
     oparser.add_option("--buildtype", dest="buildtype",
                        help="Override the buildtype")
 
