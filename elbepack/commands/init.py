@@ -24,6 +24,7 @@ from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
 from elbepack.shellhelper import command_out, system, do
 from elbepack.log import elbe_logging
+from elbepack.filesystem import Filesystem
 
 
 def run_command(argv):
@@ -269,3 +270,32 @@ def run_command(argv):
             system('tar cfj "%s" %s -C "%s" .' % (tar_fname,
                                                   " ".join(opts),
                                                   elbe_dir))
+
+        to_cpy = [("apt.conf", "etc/apt"),
+                  ("init-elbe.sh", ""),
+                  ("source.xml", ""),
+                  ("initrd-cdrom.gz", ""),
+                  ("vmlinuz", ""),
+                  ("preseed.cfg", "")]
+
+        elbe_in  = Filesystem(out_path)
+
+        if opt.devel:
+            to_cpy.append(("elbe-devel.tar.bz2", ""))
+
+        # Convert relative rfs path to absolute in the system
+        to_cpy = [(elbe_in.fname(src), elbe_in.fname(os.path.join("initrd-tree", dst)))
+                  for src, dst
+                  in to_cpy]
+
+        # These are already absolute path!
+        keyrings = elbe_in.fname(os.path.join("initrd-tree", "usr/share/keyrings"))
+        for gpg in elbe_in.glob("*.gpg"):
+            to_cpy.append((gpg, keyrings))
+
+        for src, dst in to_cpy:
+            try:
+                os.makedirs(dst)
+            except FileExistsError:
+                pass
+            shutil.copy(src, dst)

@@ -16,7 +16,9 @@ memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024 // 1024
 MEMSIZE?=${memory}
 SMP?=$$((`nproc` > ${max_cpus} ? ${max_cpus} : `nproc`))
 INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
-
+% if defs["interpreter-args"] is not None:
+INTERPRETER-ARGS= ${" ".join(defs["interpreter-args"])}
+% endif
 # this is a workaround for
 # http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
 VIRT=$(shell test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt)
@@ -49,55 +51,43 @@ interpreter_v_minor = int(prj.text('interpreterversion',
                                    key='interpreterversion').split('.')[1])
 fwd = ""
 if prj.has("portforwarding"):
-	for f in prj.node("portforwarding"):
-		fwd += ",hostfwd=%s::%s-:%s" % (f.text("proto"),
-																		f.text("host"),
-																		f.text("buildenv"))
+    for f in prj.node("portforwarding"):
+        fwd += ",hostfwd=%s::%s-:%s" % (f.text("proto"),
+                                        f.text("host"),
+                                        f.text("buildenv"))
 %>
 
-all: .stamps/stamp-install-initial-image
 
-.elbe-gen/initrd-preseeded.gz: .elbe-in/*
-	rm -rf tmp-tree
-	mkdir tmp-tree
-	cp .elbe-in/*.cfg tmp-tree/
-	-cp .elbe-in/apt.conf tmp-tree/
-	mkdir -p tmp-tree/etc/apt
-	-cp .elbe-in/apt.conf tmp-tree/etc/apt
-	mkdir -p tmp-tree/usr/lib/post-base-installer.d
-	cp .elbe-in/init-elbe.sh tmp-tree/
-	cp .elbe-in/source.xml tmp-tree/
-	cp .elbe-in/initrd-cdrom.gz tmp-tree/
-	cp .elbe-in/vmlinuz tmp-tree/
-% if opt.devel:
-	cp .elbe-in/elbe-devel.tar.bz2 tmp-tree/
-% endif
-	mkdir -p tmp-tree/usr/share/keyrings
-	-cp .elbe-in/*.gpg tmp-tree/usr/share/keyrings
-	mkdir -p tmp-tree/usr/lib/base-installer.d
-	echo 'mkdir -p /target/etc/apt/trusted.gpg.d/; cp /usr/share/keyrings/elbe-keyring.gpg /target/etc/apt/trusted.gpg.d/' > tmp-tree/usr/lib/base-installer.d/10copyelbekeyring
-	chmod 755 tmp-tree/usr/lib/base-installer.d/*
-	mkdir -p .elbe-gen
-	gzip -cd .elbe-in/initrd.gz >.elbe-gen/initrd-preseeded
-	cd tmp-tree && find . | cpio -H newc -o --append -F ../.elbe-gen/initrd-preseeded
-	gzip -9f .elbe-gen/initrd-preseeded
-	rm -rf tmp-tree
+GEN=.elbe-gen
+IN=.elbe-in
 
-.stamps/stamp-create-buildenv-img buildenv.img: .elbe-gen/initrd-preseeded.gz
-	qemu-img create -f ${img} buildenv.img ${imgsize}
-	mkdir -p .stamps
-	touch .stamps/stamp-create-buildenv-img
+INITRD=$(GEN)/initrd-preseeded.gz
+VMLINUZ=$(IN)/vmlinuz
 
-.stamps/stamp-install-initial-image: .stamps/stamp-create-buildenv-img
+INITRD_FILES=$(shell find $(IN)/initrd-tree -type f)
+
+BASE=initvm-base.img
+INITVM=initvm.img
+
+CLEAN=$(BASE) $(INITVM) $(GEN)
+
+all: $(INITVM)
+
+$(INITVM): $(BASE)
+	qemu-img create -f ${img} -F ${img} -b $< $@
+
+$(BASE): $(INITRD)
+	qemu-img create -f ${img} $@ ${imgsize}
 	@ echo $(INTERPRETER)
 	@ $(INTERPRETER) -M $(MACHINE) \
+		$(INTERPRETER-ARGS) \
 		-device virtio-rng-pci \
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+		-drive file=$@,if=$(HD_TYPE),bus=1,unit=0 \
 % if prj.has("mirror/cdrom"):
 		-drive file=${prj.text("mirror/cdrom")},if=$(CDROM_TYPE),media=cdrom,bus=1,unit=0 \
 % endif
-		-kernel .elbe-in/vmlinuz \
-		-initrd .elbe-gen/initrd-preseeded.gz \
+		-kernel $(VMLINUZ) \
+		-initrd $(INITRD)  \
 		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' \
 		-no-reboot \
 		-nographic \
@@ -106,6 +96,7 @@ all: .stamps/stamp-install-initial-image
 		-m $(MEMSIZE) \
 		-smp $(SMP) \
 		-usb \
+		-cpu host \
 		|| ( echo; \
 		     echo "------------------------------------------------------------------"; \
 		     echo "kvm failed to start"; \
@@ -117,14 +108,21 @@ all: .stamps/stamp-install-initial-image
 		     false \
 		)
 
-	mkdir -p .stamps
-	touch .stamps/stamp-install-initial-image
+$(INITRD): $(INITRD_FILES)
+	mkdir -p $(IN)/initrd-tree/usr/lib/base-installer.d
+	echo 'mkdir -p /target/etc/apt/trusted.gpg.d/; cp /usr/share/keyrings/elbe-keyring.gpg /target/etc/apt/trusted.gpg.d/' > $(IN)/initrd-tree/usr/lib/base-installer.d/10copyelbekeyring
+	chmod 755 $(IN)/initrd-tree/usr/lib/base-installer.d/*
+	mkdir -p .elbe-gen
+	gzip -cd $(IN)/initrd.gz > $(GEN)/initrd-preseeded
+	cd $(IN)/initrd-tree && find . | cpio -H newc -o --append -F ../../$(GEN)/initrd-preseeded
+	gzip -9f $(GEN)/initrd-preseeded
 
 run:
 	$(INTERPRETER) -M $(MACHINE) \
+		$(INTERPRETER-ARGS) \
 		-device virtio-rng-pci \
 		-device virtio-net-pci,netdev=user.0 \
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 % if ((interpreter_v_major == 2) and (interpreter_v_minor >= 8)) or (interpreter_v_major > 2):
 		-netdev user,ipv4,id=user.0${fwd} \
@@ -140,9 +138,10 @@ run:
 
 run-con:
 	$(INTERPRETER) -M $(MACHINE) \
+		$(INTERPRETER-ARGS)
 		-device virtio-rng-pci \
 		-device virtio-net-pci,netdev=user.0 \
-		-drive file=buildenv.img,if=$(HD_TYPE),bus=1,unit=0 \
+		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 % if ((interpreter_v_major == 2) and (interpreter_v_minor >= 8)) or (interpreter_v_major > 2):
 		-netdev user,ipv4,id=user.0${fwd} \
@@ -158,7 +157,9 @@ run-con:
 		-smp $(SMP)
 
 clean:
-	rm -fr .stamps/stamp* buildenv.img .elbe-vm .elbe-gen
+	rm -fr $(CLEAN)
 
 distclean: clean
-	echo clean
+	@echo clean
+
+.PHONY: all clean distclean run run-con
