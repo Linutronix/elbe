@@ -785,10 +785,7 @@ class ElbeProject (object):
                        os.path.join(self.builddir, "pbuilder_cross", "result")),
                    env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
                             'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
-                self.repo.include(os.path.join(self.builddir,
-                                               "pbuilder_cross",
-                                               "result",
-                                               "*.changes"))
+                pbuilderdir = "pbuilder_cross"
             else:
                 do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
                    '--configfile "%s" '
@@ -799,10 +796,7 @@ class ElbeProject (object):
                        os.path.join(self.builddir, "pbuilder", "result")),
                    env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
                             'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
-                self.repo.include(os.path.join(self.builddir,
-                                               "pbuilder",
-                                               "result",
-                                               "*.changes"))
+                pbuilderdir = "pbuilder"
 
             self.repo.remove(os.path.join(self.builddir,
                                           "pdebuilder",
@@ -810,6 +804,10 @@ class ElbeProject (object):
                                           "debian",
                                           "control"))
 
+            self.repo.include(os.path.join(self.builddir,
+                                           pbuilderdir,
+                                           "result",
+                                           "*.changes"))
         except CommandError:
             logging.exception("Package fails to build.\n"
                               "Please make sure, that the submitted package "
