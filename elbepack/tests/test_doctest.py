@@ -9,9 +9,24 @@ import unittest
 import elbepack.shellhelper as shellhelper
 import elbepack.filesystem as filesystem
 
-def load_tests(loader, tests, ignore):
-    tests.addTests(doctest.DocTestSuite(shellhelper))
-    fs = filesystem.TmpdirFilesystem()
-    tests.addTests(doctest.DocTestSuite(filesystem, extraglobs={"this":fs}))
+from elbepack.commands.test import ElbeTestCase
 
-    return tests
+class ElbeDocTest(ElbeTestCase):
+
+    params = [shellhelper, filesystem]
+
+    def setUp(self):
+
+        self.kwargs = {}
+
+        if self.params is filesystem:
+            self.kwargs["extraglobs"] = {"this":filesystem.TmpdirFilesystem()}
+
+    def tearDown(self):
+
+        if self.params is filesystem:
+            self.kwargs["extraglobs"]["this"].delete()
+
+    def test_doctest(self):
+        fail, _ = doctest.testmod(self.params, **self.kwargs)
+        self.assertEqual(fail, 0)

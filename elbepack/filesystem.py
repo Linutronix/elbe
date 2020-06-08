@@ -502,7 +502,10 @@ class TmpdirFilesystem (Filesystem):
         if self.debug:
             print('leaving TmpdirFilesystem in "%s"' % self.path)
         else:
-            shutil.rmtree(self.path, True)
+            self.delete()
+
+    def delete(self):
+        shutil.rmtree(self.path, True)
 
 
 class ImgMountFilesystem(Filesystem):
