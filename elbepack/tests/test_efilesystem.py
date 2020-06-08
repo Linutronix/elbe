@@ -15,6 +15,10 @@ class TestCopyFilelist(unittest.TestCase):
         self.src = TmpdirFilesystem()
         self.dst = TmpdirFilesystem()
 
+    def tearDown(self):
+        del self.src
+        del self.dst
+
     def test_usrmerge_abs(self):
 
         self.src.mkdir_p('/usr/bin')
