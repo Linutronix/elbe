@@ -92,9 +92,9 @@ def run_command(argv):
         if opt.source:
             with rfs:
                 cache = get_rpcaptcache(rfs, arch)
-                pkg_lst = [(pkg.name, pkg.installed_version)
-                           for pkg in cache.get_installed_pkgs()]
-                components = {"main":(rfs, cache, pkg_lst)}
+                components = {"main": (rfs,
+                                       cache,
+                                       cache.get_corresponding_source_packages())}
                 generated_files += mk_source_cdrom(components, codename,
                                                    init_codename, builddir,
                                                    opt.cdrom_size)

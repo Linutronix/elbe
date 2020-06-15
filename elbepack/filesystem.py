@@ -58,6 +58,11 @@ class Filesystem(object):
     # pylint: disable=too-many-public-methods
 
     def __init__(self, path, clean=False):
+        """
+        >>> os.path.isdir(this.path)
+        True
+        """
+
         self.path = os.path.abspath(path)
 
         if clean:
@@ -65,39 +70,151 @@ class Filesystem(object):
             os.makedirs(self.path)
 
     def fname(self, path):
+        """
+        >>> expect = os.path.join(this.path, "fname")
+        >>> this.fname("/fname") == expect == this.fname("fname")
+        True
+        """
         if path.startswith('/'):
             path = path[1:]
         return os.path.join(self.path, path)
 
     def open(self, path, mode="r"):
+        """
+        >>> this.open("open") # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: [Errno 2] ...
+
+        >>> this.open("open", mode="w") # doctest: +ELLIPSIS
+        <_io.TextIOWrapper ...>
+
+        >>> _.close()
+        """
         return open(self.fname(path), mode)
 
     def open_gz(self, path, mode="r"):
+        """
+        >>> this.open_gz("open_gz") # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: [Errno 2] ...
+
+        >>> this.open_gz("open_gz", mode="w") # doctest: +ELLIPSIS
+        <gzip _io.BufferedWriter ...>
+
+        >>> _.close()
+        """
         return gzip.open(self.fname(path), mode)
 
     def isdir(self, path):
+        """
+        >>> this.isdir("isdir")
+        False
+
+        >>> os.makedirs(this.fname("isdir"))
+        >>> this.isdir("isdir")
+        True
+        """
         return os.path.isdir(self.fname(path))
 
     def islink(self, path):
+        """
+        >>> this.islink("islink")
+        False
+
+        >>> os.symlink("target", this.fname("islink"))
+        >>> this.islink("islink")
+        True
+        """
         return os.path.islink(self.fname(path))
 
     def isfile(self, path):
+        """
+        >>> this.isfile("isfile")
+        False
+
+        >>> open(this.fname("isfile"), mode="w").close()
+        >>> this.isfile("isfile")
+        True
+        """
         return os.path.isfile(self.fname(path))
 
     def exists(self, path):
+        """
+        >>> this.exists("exists")
+        False
+
+        >>> os.symlink("broken", this.fname("exixsts-broken-link"))
+        >>> this.exists("exists-broken-link")
+        False
+
+        >>> open(this.fname("exists"), mode="w").close()
+        >>> this.exists("exists")
+        True
+        """
         return os.path.exists(self.fname(path))
 
     def lexists(self, path):
+        """
+        >>> this.lexists("lexists")
+        False
+
+        >>> os.symlink("target", this.fname("lexists"))
+        >>> os.path.lexists(this.fname("lexists"))
+        True
+        """
         return os.path.lexists(self.fname(path))
 
     def mkdir(self, path):
+        """
+        >>> os.path.isdir(this.fname("mkdir"))
+        False
+        >>> this.mkdir("mkdir")
+        >>> os.path.isdir(this.fname("mkdir"))
+        True
+        """
         os.makedirs(self.realpath(path))
 
     def readlink(self, path):
+        """
+        >>> this.symlink("target", "readlink")
+        >>> this.readlink("readlink")
+        'target'
+        """
         return os.readlink(self.fname(path))
 
     def realpath(self, path):
+        """
+        >>> this.realpath(".") == this.path
+        True
 
+        >>> this.realpath("..") == this.path
+        True
+
+        >>> this.realpath("/realpath") == this.fname("/realpath")
+        True
+
+        >>> this.symlink("/target", "realpath-abs-symlink")
+        >>> this.realpath("realpath-abs-symlink") == this.fname("/target")
+        True
+
+        >>> this.symlink("target", "/realpath-symlink")
+        >>> this.realpath("realpath-symlink") == this.fname("/target")
+        True
+
+        >>> this.symlink(".././realpath-symlink", "realpath-multi-symlink")
+        >>> this.realpath("realpath-multi-symlink") == this.fname("/target")
+        True
+
+        >>> this.symlink("realpath-loop-A", "realpath-loop-B")
+        >>> this.symlink("realpath-loop-B", "realpath-loop-A")
+        >>> this.realpath("realpath-loop-A") == this.fname("/realpath-loop-A")
+        True
+
+        >>> this.realpath("realpath-loop-B") == this.fname("realpath-loop-B")
+        True
+        """
         path = path.split(os.sep)
         path.reverse()
         following = []
@@ -144,6 +261,23 @@ class Filesystem(object):
         return os.sep.join(real_path)
 
     def symlink(self, src, path, allow_exists=False):
+        """
+        >>> this.symlink("target", "symlink-link")
+        >>> os.readlink(this.fname("symlink-link"))
+        'target'
+
+        >>> this.symlink("target", "symlink-link") # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        FileExistsError: [Errno 17] ...
+
+        >>> os.readlink(this.fname("not-a-link")) # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: [Errno 2] ...
+
+        >>> this.symlink("target", "symlink-link", allow_exists=True)
+        """
         try:
             os.symlink(src, self.fname(path))
         except OSError as e:
@@ -175,6 +309,20 @@ class Filesystem(object):
         return content
 
     def remove(self, path, noerr=False):
+        """
+        >>> this.remove("remove") # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: [Errno 2] ...
+
+        >>> this.remove("remove", noerr=True)
+
+        >>> open(this.fname("remove"), "w").close()
+        >>> this.remove("remove")
+
+        >>> this.lexists("remove")
+        False
+        """
         try:
             return os.remove(self.fname(path))
         except BaseException:
@@ -182,6 +330,14 @@ class Filesystem(object):
                 raise
 
     def rmtree(self, path):
+        """
+        >>> this.mkdir("/rmtree/rmtree")
+        >>> this.rmtree("/rmtree")
+        >>> this.lexists("/rmtree/rmtree")
+        False
+        >>> this.lexists("/rmtree")
+        False
+        """
         shutil.rmtree(self.fname(path))
 
     def listdir(self, path='', ignore=None, skiplinks=False):
@@ -242,6 +398,24 @@ class Filesystem(object):
                 - already exists, silently complete
                 - regular file in the way, raise an exception
                 - parent directory(ies) does not exist, make them as well
+
+        --
+        >>> this.mkdir_p("mkdir_p/foo/bar")
+        >>> this.isdir("mkdir_p")
+        True
+
+        >>> this.isdir("mkdir_p/foo")
+        True
+
+        >>> this.isdir("mkdir_p/foo/bar")
+        True
+
+        >>> open(this.fname("mkdir_p/foo/bar/baz"), "w").close()
+
+        >>> this.mkdir_p("mkdir_p/foo/bar/baz") # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        OSError: a file with the same name as the desired dir, ...
         """
         if self.isdir(newdir):
             pass

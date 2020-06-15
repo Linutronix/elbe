@@ -30,6 +30,22 @@ class CommandError(Exception):
             self.returncode, self.cmd)
 
 def system(cmd, allow_fail=False, env_add=None):
+    """system() - Execute cmd in a shell.
+
+    Throws a CommandError if cmd returns none-zero and allow_fail=False
+
+    --
+
+    >>> system("true")
+
+    >>> system("false", allow_fail=True)
+
+    >>> system("$FALSE", env_add={"FALSE":"false"}) # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+
+    """
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
@@ -42,6 +58,28 @@ def system(cmd, allow_fail=False, env_add=None):
 
 
 def command_out(cmd, stdin=None, output=PIPE, env_add=None):
+    """command_out() - Execute cmd in a shell.
+
+    Returns a tuple with the exitcode and the output of cmd.
+
+    --
+
+    >>> command_out("true")
+    (0, '')
+
+    >>> command_out("$TRUE && true", env_add={"TRUE":"true"})
+    (0, '')
+
+    >>> command_out("cat -", stdin=b"ELBE")
+    (0, 'ELBE')
+
+    >>> command_out("2>&1 cat -", stdin=b"ELBE")
+    (0, 'ELBE')
+
+    >>> command_out("false")
+    (1, '')
+
+    """
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
@@ -61,6 +99,22 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
 
 
 def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
+    """system_out() - Wrapper around command_out().
+
+    On failure, raises an exception if allow_fail=False, on success,
+    returns the output of cmd.
+
+    --
+
+    >>> system_out("false") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+
+    >>> system_out("false", allow_fail=True)
+    ''
+
+    """
     code, out = command_out(cmd, stdin=stdin, env_add=env_add)
 
     if code != 0:
@@ -71,6 +125,22 @@ def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
 
 def command_out_stderr(cmd, stdin=None, env_add=None):
+    """command_out_stderr() - Execute cmd in a shell.
+
+    Returns a tuple of the exitcode, stdout and stderr of cmd.
+
+    --
+
+    >>> command_out_stderr("$TRUE && cat -", stdin=b"ELBE", env_add={"TRUE":"true"})
+    (0, 'ELBE', '')
+
+    >>> command_out_stderr("1>&2 cat - && false", stdin=b"ELBE")
+    (1, '', 'ELBE')
+
+    >>> command_out_stderr("true")
+    (0, '', '')
+
+    """
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
@@ -91,6 +161,24 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
 
 
 def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
+    """system_out_stderr() - Wrapper around command_out_stderr()
+
+    Throws CommandError if cmd failed and allow_fail=False.  Otherwise,
+    returns the stdout and stderr of cmd.
+
+    --
+
+    >>> system_out_stderr("false") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+
+    >>> system_out_stderr("cat - && false", allow_fail=True, stdin=b"ELBE")
+    ('ELBE', '')
+
+    >>> system_out_stderr("1>&2 cat -", allow_fail=True, stdin=b"ELBE")
+    ('', 'ELBE')
+    """
     code, out, err = command_out_stderr(cmd, stdin, env_add)
 
     if code != 0:
@@ -101,6 +189,37 @@ def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
 
 
 def do(cmd, allow_fail=False, stdin=None, env_add=None):
+    """do() - Execute cmd in a shell and redirect outputs to logging.
+
+    Throws a CommandError if cmd failed with allow_Fail=False.
+
+    --
+
+    Let's redirect the loggers to current stdout
+    >>> import sys
+    >>> from elbepack.log import open_logging
+    >>> open_logging({"streams":sys.stdout})
+
+    >>> do("true")
+    [CMD] true
+
+    >>> do("false", allow_fail=True)
+    [CMD] false
+
+    >>> do("cat -", stdin=b"ELBE")
+    [CMD] cat -
+
+    >>> do("cat - && false", stdin=b"ELBE") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+
+    >>> do("false") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+    """
+
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
@@ -123,6 +242,22 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
 
 
 def chroot(directory, cmd, env_add=None, **kwargs):
+    """chroot() - Wrapper around do().
+
+    --
+
+    Let's redirect the loggers to current stdout
+
+    >>> import sys
+    >>> from elbepack.log import open_logging
+    >>> open_logging({"streams":sys.stdout})
+
+    >>> chroot("/", "true") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+    """
+
     new_env = {"LANG":"C",
                "LANGUAGE":"C",
                "LC_ALL":"C"}
@@ -132,6 +267,30 @@ def chroot(directory, cmd, env_add=None, **kwargs):
     do(chcmd, env_add=new_env, **kwargs)
 
 def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
+    """get_command_out() - Like do() but returns stdout.
+
+    --
+
+    Let's quiet the loggers
+
+    >>> import os
+    >>> from elbepack.log import open_logging
+    >>> open_logging({"files":os.devnull})
+
+    >>> get_command_out("echo ELBE")
+    b'ELBE\\n'
+
+    >>> get_command_out("false") # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    elbepack.shellhelper.CommandError: ...
+
+    >>> get_command_out("false", allow_fail=True)
+    b''
+
+    >>> get_command_out("cat -", stdin=b"ELBE", env_add={"TRUE":"true"})
+    b'ELBE'
+    """
 
     new_env = os.environ.copy()
 
@@ -145,7 +304,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if stdin is None:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=w, env=new_env)
     else:
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
 
     async_logging(r, w, soap, log)
     stdout, _ = p.communicate(input=stdin)

@@ -53,8 +53,12 @@ class InitVMAction(object):
     actiondict = {}
 
     @classmethod
-    def register(cls, action):
-        cls.actiondict[action.tag] = action
+    def register(cls, tag):
+        def _register(action):
+            action.tag = tag
+            cls.actiondict[action.tag] = action
+            return action
+        return _register
 
     @classmethod
     def print_actions(cls):
@@ -120,9 +124,8 @@ class InitVMAction(object):
         return self.initvm.info()[0]
 
 
+@InitVMAction.register('start')
 class StartAction(InitVMAction):
-
-    tag = 'start'
 
     def __init__(self, node):
         InitVMAction.__init__(self, node)
@@ -144,12 +147,8 @@ class StartAction(InitVMAction):
             print("*")
 
 
-InitVMAction.register(StartAction)
-
-
+@InitVMAction.register('ensure')
 class EnsureAction(InitVMAction):
-
-    tag = 'ensure'
 
     def __init__(self, node):
         InitVMAction.__init__(self, node)
@@ -164,12 +163,9 @@ class EnsureAction(InitVMAction):
             sys.exit(20)
 
 
-InitVMAction.register(EnsureAction)
 
-
+@InitVMAction.register('stop')
 class StopAction(InitVMAction):
-
-    tag = 'stop'
 
     def __init__(self, node):
         InitVMAction.__init__(self, node)
@@ -196,12 +192,8 @@ class StopAction(InitVMAction):
                 time.sleep(1)
 
 
-InitVMAction.register(StopAction)
-
-
+@InitVMAction.register('attach')
 class AttachAction(InitVMAction):
-
-    tag = 'attach'
 
     def __init__(self, node):
         InitVMAction.__init__(self, node)
@@ -214,8 +206,6 @@ class AttachAction(InitVMAction):
         print('Attaching to initvm console.')
         system('virsh --connect qemu:///system console %s' % cfg['initvm_domain'])
 
-
-InitVMAction.register(AttachAction)
 
 
 def submit_and_dl_result(xmlfile, cdrom, opt):
@@ -453,9 +443,9 @@ def extract_cdrom(cdrom):
 
     return tmp
 
-class CreateAction(InitVMAction):
 
-    tag = 'create'
+@InitVMAction.register('create')
+class CreateAction(InitVMAction):
 
     def __init__(self, node):
         InitVMAction.__init__(self, node, initvmNeeded=False)
@@ -602,12 +592,8 @@ class CreateAction(InitVMAction):
             submit_and_dl_result(xmlfile, cdrom, opt)
 
 
-InitVMAction.register(CreateAction)
-
-
+@InitVMAction.register('submit')
 class SubmitAction(InitVMAction):
-
-    tag = 'submit'
 
     def __init__(self, node):
         InitVMAction.__init__(self, node)
@@ -641,4 +627,21 @@ class SubmitAction(InitVMAction):
 
             submit_and_dl_result(xmlfile, cdrom, opt)
 
-InitVMAction.register(SubmitAction)
+@InitVMAction.register('sync')
+class SyncAction(InitVMAction):
+
+    def __init__(self, node):
+        super(SyncAction, self).__init__(node)
+
+    def execute(self, _initvmdir, opt, args):
+        top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        try:
+            system("rsync --info=name1,stats1  --archive --times "
+                   "--exclude='.git*' --exclude='*.pyc' --exclude='elbe-build*' "
+                   "--exclude='initvm' --exclude='__pycache__' --exclude='docs' "
+                   "--exclude='examples' "
+                   "--rsh='ssh -p %s' --chown=root:root "
+                   "%s/ root@localhost:/var/cache/elbe/devel" %
+                   (cfg["sshport"], top_dir))
+        except CommandError as E:
+            print(E)

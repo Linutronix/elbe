@@ -263,12 +263,16 @@ def run_command(argv):
 
         if opt.devel:
             out_real = os.path.realpath(out_path)
-            ignore = ''
+            opts = []
             if out_real.startswith(elbe_dir + os.sep):
-                ignore = '--exclude "%s"' % os.path.relpath(out_path,
-                                                            start=elbe_dir)
+                opts.append('--exclude "%s"' %
+                            os.path.relpath(out_path, start=elbe_dir))
 
+            opts.append("--exclude-vcs")
+            opts.append("--exclude-vcs-ignores")
+            opts.append("--exclude='elbe-build*'")
+            opts.append("--exclude='docs/*'")
             tar_fname = os.path.join(out_path, "elbe-devel.tar.bz2")
             system('tar cfj "%s" %s -C "%s" .' % (tar_fname,
-                                                  ignore,
+                                                  " ".join(opts),
                                                   elbe_dir))

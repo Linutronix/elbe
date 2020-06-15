@@ -16,8 +16,9 @@ import time
 from multiprocessing.util import Finalize
 from multiprocessing.managers import BaseManager
 
-from apt_pkg import config, version_compare
+from apt_pkg import config, version_compare, TagFile, SourceRecords, Acquire, AcquireFile
 from apt import Cache
+from apt.package import FetchError
 
 from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
                                   ElbeOpProgress)
@@ -291,8 +292,39 @@ class RPCAPTCache(InChRootObject):
             APTPackage(
                 self.cache[p]) for p in sorted(
                 self.cache.keys()) if pkgname in p.lower()]
+
+    def get_corresponding_source_packages(self, pkg_lst=None):
+
+        if pkg_lst is None:
+            pkg_lst = {p.name for p in self.cache if p.is_installed}
+
+        src_set = set()
+
+        with TagFile('/var/lib/dpkg/status') as tagfile:
+            for section in tagfile:
+
+                pkg = section['Package']
+
+                if pkg not in pkg_lst:
+                    continue
+
+                tmp = self.cache[pkg].installed or self.cache[pkg].candidate
+
+                src_set.add((tmp.source_name, tmp.source_version))
+
+                if "Built-Using" not in section:
+                    continue
+
+                built_using_lst = section["Built-Using"].split(', ')
+                for built_using in built_using_lst:
+                    name, version = built_using.split(' ', 1)
+                    version = version.strip('(= )')
+                    src_set.add((name, version))
+
+        return list(src_set)
+
     @staticmethod
-    def compare_versions(ver1, ver2):
+    def compare_versions(self, ver1, ver2):
         return version_compare(ver1, ver2)
 
     def download_binary(self, pkgname, path, version=None):
@@ -306,17 +338,61 @@ class RPCAPTCache(InChRootObject):
                                     ElbeAcquireProgress())
         return self.rfs.fname(rel_filename)
 
-    def download_source(self, pkgname, path, version=None):
-        p = self.cache[pkgname]
-        if version is None:
-            pkgver = p.installed
-        else:
-            pkgver = p.versions[version]
+    def download_source(self, src_name, src_version, dest_dir):
 
-        rel_filename = pkgver.fetch_source(path,
-                                           ElbeAcquireProgress(),
-                                           unpack=False)
-        return self.rfs.fname(rel_filename)
+        allow_untrusted = config.find_b("APT::Get::AllowUnauthenticated",
+                                        False)
+
+        rec = SourceRecords()
+        acq = Acquire(ElbeAcquireProgress())
+
+        # poorman's iterator
+        while True:
+            next_p = rec.lookup(src_name)
+            # End of the list?
+            if not next_p:
+                raise ("No source found for %s_%s" % (src_name, src_version))
+            if src_version == rec.version:
+                break
+
+        # We don't allow untrusted package and the package is not
+        # marks as trusted
+        if not (allow_untrusted or rec.index.is_trusted):
+            raise FetchError("Can't fetch source %s_%s; Source %r is not trusted" %
+                             (src_name, src_version, rec.index.describe))
+
+        # Copy from src to dst all files of the source package
+        dsc = None
+        files = []
+        for _file in rec.files:
+            src = os.path.basename(_file.path)
+            dst = os.path.join(dest_dir, src)
+
+            if 'dsc' ==  _file.type:
+                dsc = dst
+
+            if not (allow_untrusted or _file.hashes.usable):
+                raise FetchError("Can't fetch file %s. No trusted hash found." % dst)
+
+            # acq is accumlating the AcquireFile, the files list only
+            # exists to prevent Python from GC the object .. I guess.
+            # Anyway, if we don't keep the list, We will get an empty
+            # directory
+            files.append(AcquireFile(acq, rec.index.archive_uri(_file.path),
+                                     _file.hashes, _file.size, src, destfile=dst))
+        acq.run()
+
+        if dsc is None:
+            raise ValueError("No source found for %s_%s" %
+                             (src_name, src_version))
+
+        for item in acq.items:
+            if item.STAT_DONE != item.status:
+                raise FetchError("Can't fetch item %s: %s" %
+                                  (item.destfile, item.error_text))
+
+        return self.rfs.fname(os.path.abspath(dsc))
+
 
 def get_rpcaptcache(rfs, arch,
                     notifier=None, norecommend=False, noauth=True):
