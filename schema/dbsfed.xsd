@@ -519,6 +519,11 @@
       <enumeration value="buster" />
       <enumeration value="sid" />
       <enumeration value="stretch" />
+      <enumeration value="bionic" />
+      <enumeration value="focal" />
+      <enumeration value="groovy" />
+      <enumeration value="xenial" />
+      <enumeration value="trusty" />
     </restriction>
   </simpleType>
 
