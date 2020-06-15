@@ -324,7 +324,8 @@ class ElbeProject (object):
         self.host_sysrootenv = BuildEnv(self.xml,
                                         hostsysrootpath,
                                         clean=True,
-                                        arch="amd64")
+                                        arch="amd64",
+                                        hostsysroot=True)
         # Import keyring
         self.host_sysrootenv.import_keys()
         logging.info("Keys imported")

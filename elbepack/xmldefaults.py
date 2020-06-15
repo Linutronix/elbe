@@ -174,7 +174,8 @@ archindep_defaults = {
     "img": "qcow2",
     "mem": "1GiB",
     "swap-size": "0",
-    "max-cpus": "8"
+    "max-cpus": "8",
+    "sdkarch": "amd64",
 }
 
 defaults = {"armel": armel_defaults,

@@ -273,6 +273,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="host" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Url of the host mirror.
+          </documentation>
+        </annotation>
+      </element>
       <element name="url-list" type="rfs:url-list" minOccurs="0">
         <annotation>
           <documentation>

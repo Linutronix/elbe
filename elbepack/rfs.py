@@ -66,7 +66,7 @@ class DebootstrapException (Exception):
 # TODO:py3 Remove object inheritance
 # pylint: disable=useless-object-inheritance
 class BuildEnv (object):
-    def __init__(self, xml, path, build_sources=False, clean=False, arch="default"):
+    def __init__(self, xml, path, build_sources=False, clean=False, arch="default", hostsysroot=False):
 
         # pylint: disable=too-many-arguments
 
@@ -74,6 +74,7 @@ class BuildEnv (object):
         self.path = path
         self.rpcaptcache = None
         self.arch = arch
+        self.hostsysroot = hostsysroot
 
         self.rfs = BuildImgFs(path, xml.defs["userinterpr"])
 
@@ -163,7 +164,7 @@ class BuildEnv (object):
         suite = self.xml.prj.text("suite")
 
         primary_mirror = self.xml.get_primary_mirror(
-            self.rfs.fname('/cdrom/targetrepo'))
+            self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
@@ -299,7 +300,8 @@ class BuildEnv (object):
                     self.add_key(key)
 
     def initialize_dirs(self, build_sources=False):
-        mirror = self.xml.create_apt_sources_list(build_sources=build_sources)
+        mirror = self.xml.create_apt_sources_list(build_sources=build_sources,
+                                                  hostsysroot=self.hostsysroot)
 
         if self.rfs.lexists("etc/apt/sources.list"):
             self.rfs.remove("etc/apt/sources.list")

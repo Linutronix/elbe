@@ -134,13 +134,16 @@ class ElbeXML(object):
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
-    def get_primary_mirror(self, cdrompath, initvm=True):
+    def get_primary_mirror(self, cdrompath, initvm=True, hostsysroot=False):
         if self.prj.has("mirror/primary_host"):
             m = self.prj.node("mirror")
 
-            mirror = m.text("primary_proto") + "://"
-            mirror += m.text("primary_host") + "/"
-            mirror += m.text("primary_path")
+            if hostsysroot and self.prj.has("mirror/host"):
+                mirror = m.text("host")
+            else:
+                mirror = m.text("primary_proto") + "://"
+                mirror += m.text("primary_host") + "/"
+                mirror += m.text("primary_path")
 
         elif self.prj.has("mirror/cdrom") and cdrompath:
             mirror = "file://%s" % cdrompath
@@ -148,40 +151,48 @@ class ElbeXML(object):
         return replace_localmachine(mirror, initvm)
 
     # XXX: maybe add cdrom path param ?
-    def create_apt_sources_list(self, build_sources=False, initvm=True):
+    def create_apt_sources_list(self, build_sources=False, initvm=True, hostsysroot=False):
         if self.prj is None:
             return "# No Project"
 
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
-        noauth = ""
+        options = []
         if self.prj.has("noauth"):
-            noauth = "[trusted=yes] "
+            options.append("trusted=yes")
 
-        mirror = ""
+        if hostsysroot:
+            arch = self.text("project/buildimage/sdkarch", key="sdkarch")
+        else:
+            arch = self.text("project/buildimage/arch", key="arch")
+
+        options.append("arch=%s" % arch)
+
+        mirror = []
         if self.prj.has("mirror/primary_host"):
-            mirror += "deb " + noauth + self.get_primary_mirror(None)
-            mirror += " " + self.prj.text("suite") + " main\n"
+            pmirror = self.get_primary_mirror(None, hostsysroot=hostsysroot)
+            mirror.append("deb [%s] %s %s main" %
+                          (' '.join(options), pmirror, self.prj.text("suite")))
 
             if build_sources:
-                mirror += "deb-src " + noauth + self.get_primary_mirror(None)
-                mirror += " " + self.prj.text("suite") + " main\n"
+                mirror.append("deb-src [%s] %s %s main" %
+                              (' '.join(options), pmirror, self.prj.text("suite")))
 
-            if self.prj.has("mirror/url-list"):
+            if self.prj.has("mirror/url-list") and not hostsysroot:
                 for url in self.prj.node("mirror/url-list"):
                     if url.has("binary"):
-                        mirror += "deb " + noauth + \
-                                   url.text("binary").strip() + "\n"
+                        mirror.append("deb [%s] %s" %
+                                      (' '.join(options), url.text("binary").strip()))
                     if url.has("source"):
-                        mirror += "deb-src " + noauth + \
-                            url.text("source").strip() + "\n"
+                        mirror.append("deb-src [%s] %s" %
+                                      (' '.join(options), url.text("source").strip()))
 
         if self.prj.has("mirror/cdrom"):
-            mirror += "deb copy:///cdrom/targetrepo %s main added\n" % (
-                self.prj.text("suite"))
+            mirror.append("deb copy:///cdrom/targetrepo %s main added" %
+                          (self.prj.text("suite")))
 
-        return replace_localmachine(mirror, initvm)
+        return replace_localmachine('\n'.join(mirror), initvm)
 
     @staticmethod
     def validate_repo(r):
