@@ -21,7 +21,7 @@ class TestPylint(unittest.TestCase):
     def test_lint(self):
         ret = True
         try:
-            system("pylint %s" % " ".join(self.pylint_opts))
+            system("pylint3 %s" % " ".join(self.pylint_opts))
         except CommandError as E:
             print(E)
             ret = False
