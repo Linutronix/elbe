@@ -12,5 +12,5 @@ from elbepack.shellhelper import system
 def run_command(argv):
     this_dir = os.path.dirname(os.path.realpath(__file__))
     top_dir  = os.path.join(this_dir, "..", "..")
-    system("python -m unittest discover --start-directory '%s' %s" %
+    system("python3 -m unittest discover --start-directory '%s' %s" %
            (top_dir, " ".join(argv)), allow_fail=True)
