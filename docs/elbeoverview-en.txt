@@ -562,10 +562,12 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <1> The 'mirror' tag contains
-    'primary_host', 'primary_path' and 'primary_proto'.
+    'primary_host', 'primary_path', 'primary_proto' and 'host'
+    'host' is optional, used in case of a primary mirror different for the sdk
+    architecture.
     It describes the Debian mirror used.
 
-<2> The 'url-list' can contain additional package sources.
+<2> The 'url-list' can contain additional package sources in 'url' tag.
 
 <3> The 'noauth' tag can be used to disable authentication if custom
     unsigned packages are supposed to be installed.
