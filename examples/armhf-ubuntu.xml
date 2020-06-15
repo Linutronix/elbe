@@ -1,0 +1,80 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>armhf-ubuntu</name>
+		<version>1.0</version>
+		<description>
+			creates ubuntu image for arm based systems
+		</description>
+		<buildtype>armhf</buildtype>
+		<mirror>
+			<primary_host>ports.ubuntu.com</primary_host>
+			<primary_path>/ubuntu-ports</primary_path>
+			<primary_proto>http</primary_proto>
+			<host>http://archive.ubuntu.com/ubuntu</host>
+			<url-list>
+				<url>
+					<binary>
+						http://ports.ubuntu.com/ubuntu-ports [arch=armhf] bionic universe
+					</binary>
+					<source>
+						http://ports.ubuntu.com/ubuntu-ports bionic universe
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://ports.ubuntu.com/ubuntu-ports [arch=armhf] bionic-security main universe
+					</binary>
+					<source>
+						http://ports.ubuntu.com/ubuntu-ports bionic-security main universe
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://archive.ubuntu.com/ubuntu [arch=amd64] bionic universe
+					</binary>
+					<source>
+						http://archive.ubuntu.com/ubuntu bionic universe
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://archive.ubuntu.com/ubuntu [arch=amd64] main universe
+					</binary>
+					<source>
+						http://archive.ubuntu.com/ubuntu main universe
+					</source>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>bionic</suite>
+	</project>
+	<target>
+		<hostname>myUbuntu</hostname>
+		<domain>linutronix.de</domain>
+		<passwd>foo</passwd>
+		<console>ttyS0,115200</console>
+		<package>
+			<tar>
+				<name>image.tgz</name>
+			</tar>
+		</package>
+		<debootstrapvariant>minbase</debootstrapvariant>
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<rm>/var/cache/apt/*.bin</rm>
+			<rm>/var/lib/apt/lists/ftp*</rm>
+			<rm>var/cache/man/*</rm>
+			<rm>var/cache/elbe</rm>
+			<rm>var/cache/debconf/*</rm>
+		</finetuning>
+		<pkg-list>
+			<pkg>systemd</pkg>
+			<pkg>init</pkg>
+			<pkg>bash</pkg>
+			<pkg>vim-tiny</pkg>
+			<pkg>busybox</pkg>
+			<pkg>openssh-server</pkg>
+			<pkg>less</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
