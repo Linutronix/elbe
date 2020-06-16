@@ -46,6 +46,7 @@ Binary Debian packages
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The latest packages for elbe reside in the following repository
+
 --------------------------------------------------------
 http://debian.linutronix.de/elbe
 http://debian.linutronix.de/elbe-common
@@ -53,17 +54,20 @@ http://debian.linutronix.de/elbe-common
 
 Create the file `/etc/apt/sources.list.d/elbe.list`
 with the following contents:
+
 --------------------------------------------------------
 deb http://debian.linutronix.de/elbe buster main
 deb http://debian.linutronix.de/elbe-common buster main
 --------------------------------------------------------
 
 Add a repository key to the list of trusted keys (as root):
+
 --------------------------------------------------------
 $ wget -q -O - http://debian.linutronix.de/elbe-common/elbe-repo.pub | apt-key add -
 --------------------------------------------------------
 
 Then run (as root):
+
 --------------------------------------------------------
 $ apt-get update
 $ apt-get install elbe
@@ -188,6 +192,7 @@ The ELBE XML file can contain an archivedir which is copied into the
 root-filesystem during the image generation phase.
 
 It is done with the following XML node:
+
 [source,xml]
 ------------------------------------------------------------------------------
 <archivedir>foo</archivedir>
@@ -247,6 +252,7 @@ The adduser node allows to create a user.
 The following example creates the user `elbe` with the password `foo`.
 
 It is also possible to specify groups the new user should be part of:
+
 [source,xml]
 ------------------------------------------------------------------------------
 <adduser passwd="foo" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
@@ -300,6 +306,7 @@ With these steps, elbe builds the libgpio project inside the initvm and stores t
 This repository can be used for later RFS builds.
 
 List contents of the repository with the following command:
+
 ---------------------------------------------------------
 $ elbe prjrepo list_packages `cat ~/repos/elbe/pbuilder.prj`
 libgpio-dev_3.0.0_amd64.deb
@@ -308,9 +315,11 @@ libgpio1-dbgsym_3.0.0_amd64.deb
 ---------------------------------------------------------
 
 To use this repository for further RFS builds download the repo with:
+
 ---------------------------------------------------------
 $ elbe prjrepo download `cat ~/repos/elbe/pbuilder.prj`
 ---------------------------------------------------------
+
 The repository is download as elbe-projectrepo-20191002-114244.tar.gz.
 This should be unpacked in the DocumentRoot of your webserver and customized with
 your key as explained in the next chapter.
