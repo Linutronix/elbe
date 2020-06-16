@@ -79,17 +79,21 @@ Create initvm and submit XML files
 The first thing you need to do is set up a virtual-machine for
 generating root-filesystems.
 
-This virtual-machine is referred to as "initvm". You will want your
+This virtual-machine is referred to as `initvm`. You will want your
 initvm to be the same architecture as your workstation. This allows
 using hardware accelerated virtualization implemented by kvm.
 
 In order to be able to work with virtual machines as a regular user,
 that user needs to be added to libvirt groups:
 
-For Debian/stretch, buster, and newer:
+For Debian 9 (Stretch) or newer, run (as root):
 
+--------------------------------------------------------
 $ adduser <youruser> libvirt
 $ adduser <youruser> libvirt-qemu
+--------------------------------------------------------
+
+Now create an `initvm` subdirectory and builds the initvm inside this directory.
 
 -------------------------------------------------------------------------------
 $ elbe initvm create
@@ -114,11 +118,7 @@ Requesting system reboot
 mkdir -p .stamps
 touch .stamps/stamp-install-initial-image
 *****
-
 -------------------------------------------------------------------------------
-
-
-This creates an "initvm" subdirectory and builds the initvm inside this directory.
 
 Submitting an XML file
 ----------------------
