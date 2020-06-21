@@ -70,16 +70,18 @@ class copyright_xml (object):
                                                      errors='replace'))
         try:
             c = Copyright(bytesio, strict=True)
+
+            files = []
+
+            # Note!  Getters of cc can throw nasty exceptions!
+            for cc in c.all_files_paragraphs():
+                files.append((cc.files, cc.license.synopsis, cc.copyright))
+
         except (NotMachineReadableError, MachineReadableFormatError) as E:
             logging.warning("Error in copyright of package '%s': %s", pkg_name, E)
         except Warning as W:
             logging.warning("Warning in copyrigh of package '%s' : %s", pkg_name, W)
         else:
-
-            files = []
-
-            for cc in c.all_files_paragraphs():
-                files.append((cc.files, cc.license.synopsis, cc.copyright))
 
             xmlpkg.append('machinereadable')
             xmllic = xmlpkg.append('debian_licenses')
