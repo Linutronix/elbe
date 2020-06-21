@@ -2059,6 +2059,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="command" type="rfs:partition-command" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+	    Execute a command with a partition mounted.  Before the
+	    comand is executed, the environment variable ELBE_MNT is
+	    set to the absolute filepath to the mount point.
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
@@ -2068,6 +2077,19 @@
         Describe the partition to be extracted (nr) and the destination filename.
 	The value of the tag describes the filename of the generated Imagefile.
 	The Image is per default compressed with gzip afterwards.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="part" type="integer" use="required" />
+      </extension>
+    </simpleContent>
+  </complexType>
+
+    <complexType name="partition-command">
+    <annotation>
+      <documentation>
+	The node's text should be a valid shell commands
       </documentation>
     </annotation>
     <simpleContent>
