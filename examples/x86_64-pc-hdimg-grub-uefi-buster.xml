@@ -82,6 +82,9 @@
 			<losetup img="sda.img">
 				<extract_partition part="1">sda1.img</extract_partition>
 				<extract_partition part="2">sda2.img</extract_partition>
+				<command part="1">
+				  ls $ELBE_MNT
+				</command>
 			</losetup>
 			<set_packer packer="none">sda1.img</set_packer>
 			<set_packer packer="tarxz">sda2.img</set_packer>
