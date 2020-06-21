@@ -378,10 +378,23 @@ class RawCmdAction(FinetuningAction):
 
 
 @FinetuningAction.register('command')
-class CmdAction(FinetuningAction):
+class CmdAction(ImageFinetuningAction):
 
     def __init__(self, node):
-        FinetuningAction.__init__(self, node)
+        ImageFinetuningAction.__init__(self, node)
+
+    def execute_img(self, _buildenv, _target, builddir, loop_dev):
+
+        script = '\n'.join(line.lstrip(" \t")
+                           for line
+                           in self.node.et.text.strip("\n").splitlines())
+
+        mnt   = os.path.join(builddir, 'imagemnt')
+        dev   = "%sp%s" % (loop_dev, self.node.et.attrib["part"])
+
+        with ImgMountFilesystem(mnt, dev) as fs:
+            do("/bin/sh", stdin=script,
+               env_add={"ELBE_MNT": fs.path})
 
     def execute(self, _buildenv, target):
         with target:
