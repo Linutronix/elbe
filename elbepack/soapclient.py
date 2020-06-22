@@ -457,9 +457,9 @@ class GetFileAction(ClientAction):
                 file=sys.stderr)
             sys.exit(20)
 
-        builddir = args[0].encode()
-        filename = args[1].encode()
-        dst_fname = filename.encode()
+        builddir = args[0]
+        filename = args[1]
+        dst_fname = filename
 
         if opt.output:
             fs = Filesystem('/')
