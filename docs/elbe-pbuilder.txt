@@ -72,7 +72,13 @@ COMMANDS
 'create'::
 
 A pbuilder environment for the given project or xml File will be created.
-If --cross is given the pbuilder environment will be created to crossbuild packages.
+If --cross is given the pbuilder environment will be created to crossbuild
+packages. (If --cross is given with the create command you have to use --cross
+with the build command also.) The compiler cache `ccache` gets installed by
+default to speed up recompilations. To deactivate use `--no-ccache` with the
+create command. It is possible to change the size with `--ccache-size <string>`
+where string should be a number followed by an optional suffix: k, M, G, T.
+For no limit use 0.
 
 'build'::
 
@@ -82,6 +88,30 @@ build environment will be used. If --xmlfile is specified, a new build
 environment will be created for the given ELBE XML File, and the 'Debianized
 Project' in the current working directory will be built. The result of the
 package build is stored in ../ like pbuilder does.
+
+NOTES
+-----
+In this benchmark all opportunitys for creating a pbuilder environment and
+building a package with it were tested. All environments were created with the
+'armhf-ti-beaglebone-black.xml' example and with cross, ccache, no-cross or
+no-ccache in all possible variations. The build command was tested with the zlib
+package. All times are real-time captures. The build command with ccache was
+tested twice to see the impact of ccache.
+
+
+pbuilder no-ccache create        6m35,003s
+pbuilder no-ccache build         7m19,467s
+
+pbuilder no-ccache cross create  4m2,553s
+pbuilder no-ccache build         2m39,151s
+
+pbuilder ccache create           6m44,117s
+pbuilder ccache build         1. 7m36,130s
+                              2. 4m47,050s
+
+pbuilder ccache cross create     4m4,190s
+pbuilder ccache cross build   1. 2m40,159s
+                              2. 2m32,650s
 
 EXAMPLES
 --------

@@ -282,8 +282,15 @@ Since Version 1.9.2, elbe is able to create a pbuilder Environment.
 You can create a pbuilder for a specific xml File inside the initvm.
 
 The repositories and architecture specified in the xml File will be used
-to satisfy build dependencies.
-Pbuilder will only build debianised Software.
+to satisfy build dependencies. It is possible to crosscompile packages for a
+foreign architecture. To do so use the 'elbe pbuilder create' command with the
+--cross option. This will setup the right environment for crosscompiling. To
+use this environment you have to use the --cross option with the build command.
+(If the environment was created with the --cross option, the build command
+must be used with --cross too. Otherwise it will throw an error.) By creating
+an environment the compiler cache `ccache` gets installed by default to speed
+up recompilations. It is possible to change the size or to deactivate it if it
+is not needed. Pbuilder will only build debianised Software.
 
 A pbuilder instance is always associated with a project inside the initvm.
 The `pbuilder create` command will write the project uuid to a file, if instructed to
@@ -323,6 +330,15 @@ $ elbe prjrepo download `cat ~/repos/elbe/pbuilder.prj`
 The repository is download as elbe-projectrepo-20191002-114244.tar.gz.
 This should be unpacked in the DocumentRoot of your webserver and customized with
 your key as explained in the next chapter.
+
+Here is an example for crosscompiling a linux kernel with debian profiles:
+
+---------------------------------------------------------
+$ elbe pbuilder --cross create --xmlfile examples/armhf-ti-beaglebone-black.xml --writeproject pbuilder.prj
+$ apt source linux
+$ cd linux*/
+$ ../elbe pbuilder --cross --origfile ../linux*.orig.tar.xz --profile nodoc,nopython build --project `cat ../pbuilder.prj`
+---------------------------------------------------------
 
 Custom Repository
 -----------------
