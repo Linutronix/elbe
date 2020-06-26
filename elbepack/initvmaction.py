@@ -20,7 +20,8 @@ import libvirt
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.directories import elbe_exe
-from elbepack.shellhelper import CommandError, system, command_out_stderr
+from elbepack.shellhelper import CommandError, system, command_out_stderr, \
+                                 command_out
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
@@ -172,7 +173,15 @@ class EnsureAction(InitVMAction):
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             system('%s initvm start' % elbe_exe)
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
-            pass
+            stop = time.time() + 300
+            while time.time() < stop:
+                if command_out('%s control list_projects' % elbe_exe)[0] == 0:
+                    break
+                time.sleep(10)
+            if time.time() > stop:
+                print("Waited for 5 minutes and the daemon is still not active."
+                      " Exit.")
+                sys.exit(20)
         else:
             print("Elbe initvm in bad state.")
             sys.exit(20)
