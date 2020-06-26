@@ -351,7 +351,7 @@ class RPCAPTCache(InChRootObject):
             next_p = rec.lookup(src_name)
             # End of the list?
             if not next_p:
-                raise ("No source found for %s_%s" % (src_name, src_version))
+                raise ValueError("No source found for %s_%s" % (src_name, src_version))
             if src_version == rec.version:
                 break
 
