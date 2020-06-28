@@ -26,6 +26,8 @@ from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
 from elbepack.xmlpreprocess import PreprocessWrapper
 
+def is_soap_local():
+    return cfg["soaphost"] in ("localhost", "127.0.0.1")
 
 def cmd_exists(x):
     return any(os.access(os.path.join(path, x), os.X_OK)
@@ -71,6 +73,15 @@ class InitVMAction(object):
         return object.__new__(action)
 
     def __init__(self, node, initvmNeeded=True):
+
+        self.initvm = None
+        self.node   = node
+
+        # initvm might be running on a different host.  Thus there's
+        # no need to talk with libvirt
+        if not is_soap_local():
+            return
+
         # The tag initvmNeeded is required in order to be able to run `elbe
         # initvm create`
         try:
@@ -107,7 +118,6 @@ class InitVMAction(object):
 
         doms = self.conn.listAllDomains()
 
-        self.initvm = None
         for d in doms:
             if d.name() == cfg['initvm_domain']:
                 self.initvm = d
@@ -115,7 +125,6 @@ class InitVMAction(object):
         if not self.initvm and initvmNeeded:
             sys.exit(20)
 
-        self.node = node
 
     def execute(self, _initvmdir, _opt, _args):
         raise NotImplementedError('execute() not implemented')
@@ -154,6 +163,12 @@ class EnsureAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
+
+        # initvm might be running on a different host, thus skipping
+        # the check
+        if not is_soap_local():
+            return
+
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             system('%s initvm start' % elbe_exe)
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
