@@ -205,6 +205,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="options" type="rfs:mirror-options" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            List of options for this mirror
+          </documentation>
+        </annotation>
+      </element>
     </all>
     <attribute ref="xml:base"/>
   </complexType>
@@ -234,6 +241,13 @@
       </documentation>
     </annotation>
     <all>
+      <element name="options" type="rfs:mirror-options" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Options for the primary mirror.
+          </documentation>
+        </annotation>
+      </element>
       <element name="primary_host" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -288,6 +302,24 @@
         </annotation>
       </element>
     </all>
+    <attribute ref="xml:base"/>
+  </complexType>
+
+  <complexType name="mirror-options">
+    <annotation>
+      <documentation>
+        List of options for a mirror
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="option" type="rfs:string" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            e.g. trusted=yes or check-valid-until=no
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
     <attribute ref="xml:base"/>
   </complexType>
 
