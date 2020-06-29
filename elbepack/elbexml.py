@@ -152,65 +152,76 @@ class ElbeXML(object):
 
     # XXX: maybe add cdrom path param ?
     def create_apt_sources_list(self, build_sources=False, initvm=True, hostsysroot=False):
+
+        # pylint: disable=too-many-branches
+
         if self.prj is None:
             return "# No Project"
 
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
-        global_options = []
-        primary_options = []
-        if self.prj.has("noauth"):
-            global_options.append("trusted=yes")
+        goptions = []
+        mirrors  = []
+        suite    = self.prj.text("suite")
 
-        if hostsysroot:
-            arch = self.text("project/buildimage/sdkarch", key="sdkarch")
-        else:
-            arch = self.text("project/buildimage/arch", key="arch")
-
-        primary_options.append("arch=%s" % arch)
-
-        mirror = []
         if self.prj.has("mirror/primary_host"):
+
             pmirror = self.get_primary_mirror(None, hostsysroot=hostsysroot)
-            mirror.append("deb [%s] %s %s main" %
-                          (' '.join(global_options+primary_options), pmirror, self.prj.text("suite")))
+
+            if self.prj.has("mirror/options"):
+                poptions = [opt.et.text.strip(' \t\n')
+                            for opt
+                            in self.prj.all("mirror/options/option")]
+            else:
+                poptions = []
+
+            if hostsysroot:
+                arch = self.text("project/buildimage/sdkarch", key="sdkarch")
+            else:
+                arch = self.text("project/buildimage/arch", key="arch")
+
+            poptions.append("arch=%s" % arch)
+
+            poptions = goptions + poptions
+
+            mirrors.append("deb [%s] %s %s main" %
+                           (' '.join(poptions),
+                            pmirror, suite))
 
             if build_sources:
-                mirror.append("deb-src [%s] %s %s main" %
-                              (' '.join(global_options+primary_options), pmirror, self.prj.text("suite")))
+                mirrors.append("deb-src [%s] %s %s main" %
+                               (' '.join(poptions),
+                                pmirror, suite))
 
             if self.prj.has("mirror/url-list") and not hostsysroot:
+
                 for url in self.prj.node("mirror/url-list"):
 
+                    if url.has("options"):
+                        options = [opt.et.text.strip(' \t\n')
+                                   for opt
+                                   in url.all("options/option")]
+                    else:
+                        options = []
+
+                    options = goptions + options
+
                     if url.has("binary"):
-                        binurl = url.text("binary").strip()
-                        m = re.match(r'\[(.*)\] (.*)', binurl)
+                        bin_url = url.text("binary").strip()
+                        mirrors.append("deb [%s] %s" %
+                                       (' '.join(options), bin_url))
 
-                        local_options = []
-                        if m:
-                            local_options.append(m.group(1))
-                            binurl = m.group(2)
-
-                        mirror.append("deb [%s] %s" %
-                                      (' '.join(global_options+local_options), binurl))
                     if url.has("source"):
-                        srcurl = url.text("source").strip()
-                        m = re.match(r'\[(.*)\] (.*)', srcurl)
-
-                        local_options = []
-                        if m:
-                            local_options.append(m.group(1))
-                            srcurl = m.group(2)
-
-                        mirror.append("deb-src [%s] %s" %
-                                      (' '.join(global_options+local_options), srcurl))
+                        src_url = url.text("source").strip()
+                        mirrors.append("deb-src [%s] %s" %
+                                       (' '.join(options), src_url))
 
         if self.prj.has("mirror/cdrom"):
-            mirror.append("deb copy:///cdrom/targetrepo %s main added" %
-                          (self.prj.text("suite")))
+            mirrors.append("deb copy:///cdrom/targetrepo %s main added" %
+                           suite)
 
-        return replace_localmachine('\n'.join(mirror), initvm)
+        return replace_localmachine('\n'.join(mirrors), initvm)
 
     @staticmethod
     def validate_repo(r):
