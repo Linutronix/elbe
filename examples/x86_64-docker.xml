@@ -18,6 +18,18 @@
 			<primary_host>ftp.de.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
+			<options>
+				<option>check-valid-until=yes</option>
+			</options>
+			<url-list>
+				<url>
+					<binary>http://security.debian.org buster/updates main</binary>
+					<source>http://security.debian.org buster/updates main</source>
+					<options>
+						<option>check-date=no</option>
+					</options>
+				</url>
+			</url-list>
 		</mirror>
 		<suite>buster</suite>
 	</project>
