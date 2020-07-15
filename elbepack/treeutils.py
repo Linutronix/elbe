@@ -52,7 +52,7 @@ class ebase(object):
 
             raise Exception("Cant find path %s" % path)
 
-        return el.text
+        return el.text or ""
 
     @property
     def tag(self):
