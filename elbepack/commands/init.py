@@ -130,11 +130,8 @@ def run_command(argv):
 
         defs = ElbeDefaults(buildtype)
 
-        http_proxy = ""
-        if xml.has("initvm/mirror/primary_proxy"):
-            http_proxy = xml.text("initvm/mirror/primary_proxy")
-            http_proxy = http_proxy.strip().replace("LOCALMACHINE",
-                                                    "localhost")
+        http_proxy = xml.text("/initvm/mirror/primary_proxy", default="")
+        http_proxy = http_proxy.strip().replace("LOCALMACHINE", "localhost")
 
         if opt.cdrom:
             mirror = xml.node("initvm/mirror")
