@@ -1168,6 +1168,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="first_partition_sector" type="rfs:part_size" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Starting sector for the first partition
+          </documentation>
+        </annotation>
+      </element>
       <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -1232,6 +1239,13 @@
         <annotation>
           <documentation>
             size of the harddisk
+          </documentation>
+        </annotation>
+      </element>
+      <element name="first_partition_sector" type="rfs:part_size" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Starting sector for the first partition
           </documentation>
         </annotation>
       </element>

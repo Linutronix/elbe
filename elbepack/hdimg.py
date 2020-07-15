@@ -432,7 +432,9 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     else:
         grub = grubinstaller_base()
 
-    current_sector = 2048
+    current_sector = size_to_int(hd.text("first_partition_sector",
+                                         default="2048"))
+
     for part in hd:
 
         if part.tag == "partition":
