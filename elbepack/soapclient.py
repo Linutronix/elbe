@@ -645,7 +645,7 @@ class SetCdromAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = open(filename, "r")
+        fp = open(filename, "rb")
         client.service.start_cdrom(builddir)
         while True:
             bindata = fp.read(size)
