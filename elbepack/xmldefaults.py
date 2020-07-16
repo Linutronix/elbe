@@ -153,6 +153,7 @@ amd64_defaults = {
     "nicmodel": "virtio",
     "triplet": "x86_64-linux-gnu",
     "sdkgccpkg": "g++",
+    "elfcode": "x86-64",
 }
 
 i386_defaults = {
@@ -164,6 +165,7 @@ i386_defaults = {
     "nicmodel": "virtio",
     "triplet": "i686-linux-gnu",
     "sdkgccpkg": "g++-i686-linux-gnu",
+    "elfcode": "Intel 80386",
 }
 
 archindep_defaults = {
