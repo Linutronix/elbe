@@ -8,6 +8,7 @@
 from __future__ import print_function
 
 import os
+import re
 import sys
 try:
     from urllib.request import urlopen
@@ -157,6 +158,78 @@ def preprocess_mirror_replacement(xml):
         for r in replacements:
             u.attrib['value'] = u.attrib['value'].replace(r[0], r[1])
 
+def preprocess_mirrors(xml):
+    """Insert a trusted=yes mirror option for all mirrors if <noauth> is
+    present.  Also convert binary option <binary> [opts] url </binary>
+    to <option> tags.
+
+    """
+
+    # global noauth
+    for node in xml.iterfind(".//noauth"):
+        print("[WARN] <noauth> is deprecated. "
+              "Use <option>trusted=yes</option> instead.")
+
+        parent = node.getparent()
+
+        # Add trusted=yes to primary mirror
+        poptions = parent.find(".//mirror/options")
+        if poptions is None:
+            poptions = etree.Element("options")
+            parent.find(".//mirror").append(poptions)
+
+        ptrusted = etree.Element("option")
+        ptrusted.text = "trusted=yes"
+        poptions.append(ptrusted)
+
+        # Add trusted=yes to all secondary mirrors
+        for url in parent.iterfind(".//mirror/url-list/url"):
+            options = url.find("options")
+            if options is None:
+                options = etree.Element("options")
+                url.append(options)
+
+            trusted = etree.Element("option")
+            trusted.text = "trusted=yes"
+            options.append(trusted)
+
+        # TODO:old - Uncomment the following whenever there's no more
+        # prj.has("noauth") in Elbe.  When this is done, also remove
+        # noauth from dbsfed.xsd
+        #
+        # parent.remove(node)
+
+    preg = re.compile(r".*\[(.*)\](.*)", re.DOTALL)
+
+    # binary's and source's options
+    for path in (".//mirror/url-list/url/binary",
+                 ".//mirror/url-list/url/source"):
+
+        for node in xml.iterfind(path):
+
+            # e.g: <binary> [arch=amd64] http://LOCALMACHINE/something </binary>
+            m = preg.match(node.text)
+
+            if not m:
+                continue
+
+            # arch=amd64
+            opt = m.group(1)
+
+            # http://LOCALMACHINE/something
+            node.text = m.group(2)
+
+            # No <options>? Create it
+            parent  = node.getparent()
+            options = parent.find("options")
+            if options is None:
+                options = etree.Element("options")
+                parent.append(options)
+
+            # Adding subelement <option>
+            option      = etree.Element("option")
+            option.text = opt
+            options.append(option)
 
 def xmlpreprocess(fname, output, variants=None, proxy=None):
 
@@ -235,6 +308,8 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
         preprocess_iso_option(xml)
 
         preprocess_initvm_ports(xml)
+
+        preprocess_mirrors(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
