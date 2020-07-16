@@ -165,9 +165,7 @@ class RepoBase(object):
             fp.write("\n")
         fp.close()
 
-        keyring = export_key(self.keyid, self.fs.fname("/repo.pub"))
-        if keyring:
-            shutil.copyfile(keyring, self.fs.fname("/elbe-keyring.gpg"))
+        export_key(self.keyid, self.fs.fname("/repo.pub"))
 
         if need_update:
             cmd = 'reprepro --export=force --basedir "%s" update' % self.fs.path

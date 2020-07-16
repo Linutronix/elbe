@@ -278,4 +278,3 @@ def generate_elbe_internal_key():
 def export_key(fingerprint, outfile):
     system("/usr/bin/gpg -a -o %s --export %s" % (outfile, fingerprint),
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
-    return '/var/cache/elbe/gnupg/pubring.kbx'

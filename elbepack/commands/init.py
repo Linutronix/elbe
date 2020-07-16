@@ -22,7 +22,7 @@ from elbepack.version import elbe_version
 from elbepack.templates import write_template, get_initvm_preseed
 from elbepack.directories import init_template_dir, elbe_dir
 from elbepack.config import cfg
-from elbepack.shellhelper import command_out, system, do
+from elbepack.shellhelper import command_out, system, do, system_out
 from elbepack.log import elbe_logging
 from elbepack.filesystem import Filesystem
 
@@ -225,32 +225,34 @@ def run_command(argv):
         shutil.copyfile(args[0],
                         os.path.join(out_path, "source.xml"))
 
+
+        keys = []
+        for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
+            keys.append(key.et.text)
+
         if opt.cdrom:
-            system('7z x -o%s "%s" elbe-keyring.gpg' % (out_path, opt.cdrom))
-        else:
-            keys = []
-            for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
-                keys.append(key.et.text)
+            cmd = '7z x -so "%s" repo.pub' % opt.cdrom
+            keys.append(system_out(cmd))
 
-            import_keyring = os.path.join(out_path, "elbe-keyring")
+        import_keyring = os.path.join(out_path, "elbe-keyring")
 
-            do('gpg --no-options \
-                    --no-default-keyring \
-                    --keyring %s --import' % import_keyring,
-               stdin="".join(keys).encode('ascii'),
-               allow_fail=True,
-               env_add={'GNUPGHOME': out_path})
+        do('gpg --no-options \
+                --no-default-keyring \
+                --keyring %s --import' % import_keyring,
+           stdin="".join(keys).encode('ascii'),
+           allow_fail=True,
+           env_add={'GNUPGHOME': out_path})
 
-            export_keyring = import_keyring + ".gpg"
+        export_keyring = import_keyring + ".gpg"
 
-            # No need to set GNUPGHOME because both input and output
-            # keyring files are specified.
+        # No need to set GNUPGHOME because both input and output
+        # keyring files are specified.
 
-            do('gpg --no-options \
-                    --no-default-keyring \
-                    --keyring %s \
-                    --export \
-                    --output %s' % (import_keyring, export_keyring))
+        do('gpg --no-options \
+                --no-default-keyring \
+                --keyring %s \
+                --export \
+                --output %s' % (import_keyring, export_keyring))
 
         if opt.devel:
             out_real = os.path.realpath(out_path)
