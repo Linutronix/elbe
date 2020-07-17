@@ -146,6 +146,26 @@ class ClientAction(object):
     def __init__(self, node):
         self.node = node
 
+    @staticmethod
+    def upload_file(append, build_dir, filename):
+
+        size = 1024 * 1024
+
+        with open(filename, "rb") as f:
+
+            while True:
+
+                bin_data = f.read(size)
+                data = binascii.b2a_base64(bin_data)
+
+                if not isinstance(data, str):
+                    data = data.decode("ascii")
+
+                append(build_dir, data)
+
+                if len(bin_data) != size:
+                    break
+
     def execute(self, _client, _opt, _args):
         raise NotImplementedError('execute() not implemented')
 
@@ -331,7 +351,12 @@ class SetXmlAction(ClientAction):
         part = 0
         with open(filename, "rb") as fp:
             while True:
-                xml_base64 = binascii.b2a_base64(fp.read(size)).decode('ascii')
+
+                xml_base64 = binascii.b2a_base64(fp.read(size))
+
+                if not isinstance(xml_base64, str):
+                    xml_base64 = xml_base64.decode('ascii')
+
                 # finish upload
                 if len(xml_base64) == 1:
                     part = client.service.upload_file(builddir,
@@ -634,7 +659,6 @@ class SetCdromAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
-        size = 1024 * 1024
 
         if len(args) != 2:
             print(
@@ -645,16 +669,9 @@ class SetCdromAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = open(filename, "rb")
         client.service.start_cdrom(builddir)
-        while True:
-            bindata = fp.read(size)
-            client.service.append_cdrom(builddir, binascii.b2a_base64(bindata))
-            if len(bindata) != size:
-                break
-
+        self.upload_file(client.service.append_cdrom, builddir, filename)
         client.service.finish_cdrom(builddir)
-
 
 ClientAction.register(SetCdromAction)
 
@@ -667,7 +684,6 @@ class SetOrigAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
-        size = 1024 * 1024
 
         if len(args) != 2:
             print(
@@ -678,17 +694,9 @@ class SetOrigAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = open(filename, "r")
         client.service.start_upload_orig(builddir, os.path.basename(filename))
-        while True:
-            bindata = fp.read(size)
-            client.service.append_upload_orig(
-                builddir, binascii.b2a_base64(bindata))
-            if len(bindata) != size:
-                break
-
+        self.upload_file(client.service.append_upload_orig, builddir, filename)
         client.service.finish_upload_orig(builddir)
-
 
 ClientAction.register(SetOrigAction)
 
@@ -723,7 +731,6 @@ class SetPdebuilderAction(ClientAction):
         ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
-        size = 1024 * 1024
 
         if len(args) != 2 and len(args) != 3:
             print("usage: elbe control set_pdebuild "
@@ -733,15 +740,8 @@ class SetPdebuilderAction(ClientAction):
         builddir = args[0]
         filename = args[1]
 
-        fp = open(filename, "r")
         client.service.start_pdebuild(builddir)
-        while True:
-            bindata = fp.read(size)
-            client.service.append_pdebuild(
-                builddir, binascii.b2a_base64(bindata))
-            if len(bindata) != size:
-                break
-
+        self.upload_file(client.service.append_pdebuild, builddir, filename)
         client.service.finish_pdebuild(builddir, opt.cpuset,
                                        opt.profile, opt.cross)
 
@@ -901,6 +901,7 @@ class UploadPackageAction(RepoAction):
     def __init__(self, node):
         RepoAction.__init__(self, node)
 
+    # pylint: disable=arguments-differ
     @staticmethod
     def upload_file(client, f, builddir):
         # Uploads file f into builddir in intivm
@@ -908,7 +909,12 @@ class UploadPackageAction(RepoAction):
         part = 0
         with open(f, "rb") as fp:
             while True:
+
                 xml_base64 = binascii.b2a_base64(fp.read(size))
+
+                if not isinstance(xml_base64, str):
+                    xml_base64 = xml_base64.decode("ascii")
+
                 # finish upload
                 if len(xml_base64) == 1:
                     part = client.service.upload_file(builddir,
