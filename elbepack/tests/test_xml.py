@@ -53,3 +53,34 @@ class TestSimpleXML(ElbeTestCase):
                 system('%s control del_project %s' % (elbe_exe, uuid),
                        allow_fail=True)
 
+@unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
+                 "Test level not set to INITVM")
+class TestPbuilder(ElbeTestCase):
+
+    params = [os.path.join(elbe_dir, "tests", fname)
+              for fname
+              in os.listdir(os.path.join(elbe_dir, "tests"))
+              if fname.startswith("pbuilder") and fname.endswith(".xml")]
+
+    def test_pbuilder_build(self):
+
+        with tempfile.TemporaryDirectory(prefix="elbe-test-pbuilder-xml-") as build_dir:
+
+            prj  = os.path.join(build_dir, "uuid.prj")
+            uuid = None
+
+            try:
+                system('%s pbuilder create --xmlfile "%s" --writeproject "%s"' %
+                       (elbe_exe, self.param, prj))
+
+                with open(prj, "r") as f:
+                    uuid = f.read()
+                    os.chdir(build_dir)
+                    system('%s pbuilder build --project %s' % (elbe_exe, uuid))
+            # pylint: disable=try-except-raise
+            except:
+                raise
+            else:
+                # This is a tearDown of the project, it's okay if it fails
+                system('%s control del_project %s' % (elbe_exe, uuid),
+                       allow_fail=True)
