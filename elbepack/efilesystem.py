@@ -56,23 +56,20 @@ def copy_filelist(src, file_lst, dst):
 
             tgt = src.readlink(f)
 
-            # If the target of the symlink is relative, we need the
-            # absolute path of it
-            if not os.path.isabs(tgt):
-                tgt = os.path.join(os.path.dirname(f), tgt)
-
             # If the target is not yet in the destination RFS, we need
             # to defer the copy of the symlink after the target is
-            # resolved.  Thus, we put the symlink back on the stack
-            # and we add the target to resolve on top of it.
+            # resolved.  Thus, we recusively call copy_filelist
             #
             # Not that this will result in an infinite loop for
             # circular symlinks
             if not dst.lexists(tgt):
-                files.append(f)
-                files.append(tgt)
-            else:
-                dst.symlink(tgt, f)
+                if not os.path.isabs(tgt):
+                    lst = [os.path.join(os.path.dirname(f), tgt)]
+                else:
+                    lst = [tgt]
+                copy_filelist(src, lst, dst)
+
+            dst.symlink(tgt, f, allow_exists=True)
 
         elif src.isdir(f):
             if not dst.isdir(f):
