@@ -962,6 +962,24 @@ class ElbeProject (object):
                      "Report timestamp: %s", self.name,
                      datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
+    def copy_initvmnode(self):
+        source = self.xml
+        source_path = "/var/cache/elbe/source.xml"
+        try:
+            initxml = ElbeXML(source_path,
+                              skip_validate=self.skip_validate,
+                              url_validation=ValidationMode.NO_CHECK)
+            self.xml.get_initvmnode_from(initxml)
+        except ValidationError:
+            logging.exception("%s validation failed.  "
+                              "Will not copy initvm node", source_path)
+        except IOError:
+            logging.exception("%s not available.  "
+                              "Can not copy initvm node", source_path)
+        except NoInitvmNode:
+            logging.exception("%s is available.  But it does not "
+                              "contain an initvm node", source_path)
+
     def install_packages(self, target, buildenv=False):
 
         # pylint: disable=too-many-statements
@@ -981,22 +999,8 @@ class ElbeProject (object):
                                          self.get_rpcaptcache(env=target))
                     dump_initvmpkgs(self.xml)
                 target.need_dumpdebootstrap = False
-                source = self.xml
-                source_path = "/var/cache/elbe/source.xml"
-                try:
-                    initxml = ElbeXML(source_path,
-                                      skip_validate=self.skip_validate,
-                                      url_validation=ValidationMode.NO_CHECK)
-                    self.xml.get_initvmnode_from(initxml)
-                except ValidationError:
-                    logging.exception("%s validation failed.  "
-                                      "Will not copy initvm node", source_path)
-                except IOError:
-                    logging.exception("%s not available.  "
-                                      "Can not copy initvm node", source_path)
-                except NoInitvmNode:
-                    logging.exception("%s is available.  But it does not "
-                                      "contain an initvm node", source_path)
+
+                self.copy_initvmnode()
             else:
                 sourcepath = os.path.join(self.builddir, "source.xml")
                 source = ElbeXML(sourcepath,
@@ -1008,8 +1012,10 @@ class ElbeProject (object):
                 try:
                     self.xml.get_initvmnode_from(source)
                 except NoInitvmNode:
-                    logging.exception("source.xml is available.  "
-                                      "But it does not contain an initvm node")
+                    logging.warning("source.xml is available. "
+                                    "But it does not contain an initvm node")
+                    self.copy_initvmnode()
+
 
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
             if not buildenv:
