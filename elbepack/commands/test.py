@@ -181,7 +181,7 @@ def run_command(argv):
 
     ts = junit.TestSuite(name="test", test_cases=cases)
 
-    results = junit.to_xml_report_string([ts], encoding="utf-8")
+    results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
 
     if opt.output is None:
         print(results)
