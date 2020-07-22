@@ -158,35 +158,53 @@ class ElbeXML(object):
         if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
             return "# no mirrors configured"
 
-        options = []
+        global_options = []
+        primary_options = []
         if self.prj.has("noauth"):
-            options.append("trusted=yes")
+            global_options.append("trusted=yes")
 
         if hostsysroot:
             arch = self.text("project/buildimage/sdkarch", key="sdkarch")
         else:
             arch = self.text("project/buildimage/arch", key="arch")
 
-        options.append("arch=%s" % arch)
+        primary_options.append("arch=%s" % arch)
 
         mirror = []
         if self.prj.has("mirror/primary_host"):
             pmirror = self.get_primary_mirror(None, hostsysroot=hostsysroot)
             mirror.append("deb [%s] %s %s main" %
-                          (' '.join(options), pmirror, self.prj.text("suite")))
+                          (' '.join(global_options+primary_options), pmirror, self.prj.text("suite")))
 
             if build_sources:
                 mirror.append("deb-src [%s] %s %s main" %
-                              (' '.join(options), pmirror, self.prj.text("suite")))
+                              (' '.join(global_options+primary_options), pmirror, self.prj.text("suite")))
 
             if self.prj.has("mirror/url-list") and not hostsysroot:
                 for url in self.prj.node("mirror/url-list"):
+
                     if url.has("binary"):
+                        binurl = url.text("binary").strip()
+                        m = re.match(r'\[(.*)\] (.*)', binurl)
+
+                        local_options = []
+                        if m:
+                            local_options.append(m.group(1))
+                            binurl = m.group(2)
+
                         mirror.append("deb [%s] %s" %
-                                      (' '.join(options), url.text("binary").strip()))
+                                      (' '.join(global_options+local_options), binurl))
                     if url.has("source"):
+                        srcurl = url.text("source").strip()
+                        m = re.match(r'\[(.*)\] (.*)', srcurl)
+
+                        local_options = []
+                        if m:
+                            local_options.append(m.group(1))
+                            srcurl = m.group(2)
+
                         mirror.append("deb-src [%s] %s" %
-                                      (' '.join(options), url.text("source").strip()))
+                                      (' '.join(global_options+local_options), srcurl))
 
         if self.prj.has("mirror/cdrom"):
             mirror.append("deb copy:///cdrom/targetrepo %s main added" %
