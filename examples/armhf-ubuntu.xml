@@ -14,7 +14,7 @@
 			<url-list>
 				<url>
 					<binary>
-						http://ports.ubuntu.com/ubuntu-ports [arch=armhf] bionic universe
+						[arch=armhf] http://ports.ubuntu.com/ubuntu-ports bionic universe
 					</binary>
 					<source>
 						http://ports.ubuntu.com/ubuntu-ports bionic universe
@@ -22,7 +22,7 @@
 				</url>
 				<url>
 					<binary>
-						http://ports.ubuntu.com/ubuntu-ports [arch=armhf] bionic-security main universe
+						[arch=armhf] http://ports.ubuntu.com/ubuntu-ports bionic-security main universe
 					</binary>
 					<source>
 						http://ports.ubuntu.com/ubuntu-ports bionic-security main universe
@@ -30,7 +30,7 @@
 				</url>
 				<url>
 					<binary>
-						http://archive.ubuntu.com/ubuntu [arch=amd64] bionic universe
+						[arch=amd64] http://archive.ubuntu.com/ubuntu bionic universe
 					</binary>
 					<source>
 						http://archive.ubuntu.com/ubuntu bionic universe
@@ -38,10 +38,10 @@
 				</url>
 				<url>
 					<binary>
-						http://archive.ubuntu.com/ubuntu [arch=amd64] main universe
+						[arch=amd64] http://archive.ubuntu.com/ubuntu bionic main universe
 					</binary>
 					<source>
-						http://archive.ubuntu.com/ubuntu main universe
+						http://archive.ubuntu.com/ubuntu bionic main universe
 					</source>
 				</url>
 			</url-list>
