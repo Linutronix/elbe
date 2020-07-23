@@ -10,6 +10,7 @@ import optparse
 import os
 import re
 import unittest
+import warnings
 
 import junit_xml as junit
 
@@ -191,7 +192,9 @@ def run_command(argv):
 
     ts = junit.TestSuite(name="test", test_cases=cases)
 
-    results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
 
     if opt.output is None:
         print(results)
