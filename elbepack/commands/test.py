@@ -5,7 +5,6 @@
 
 # elbepack/commands/test.py - Elbe unit test wrapper
 
-import copy
 import enum
 import optparse
 import os
@@ -25,11 +24,19 @@ class ElbeTestCase(unittest.TestCase):
 
     level = ElbeTestLevel.BASE
 
+    def __init__(self, methodName='runTest', param=None):
+        self.methodName = methodName
+        self.param = param
+        super().__init__(methodName)
+
     def __str__(self):
         name = super(ElbeTestCase, self).__str__()
-        if hasattr(self, "params"):
-            return "%s : params=%s" % (name, getattr(self, "params"))
+        if self.param:
+            return "%s : param=%s" % (name, self.param)
         return name
+
+    def parameterize(self, param):
+        return self.__class__(methodName=self.methodName, param=param)
 
 # TODO:py3 - Remove useless object inheritance
 # pylint: disable=useless-object-inheritance
@@ -49,10 +56,13 @@ class ElbeTestSuite(object):
                 self.tests.append(test)
                 continue
 
-            for param in test.params:
-                clone        = copy.deepcopy(test)
-                clone.params = param
-                self.tests.append(clone)
+            if callable(test.params):
+                params = test.params()
+            else:
+                params = test.params
+
+            for param in params:
+                self.tests.append(test.parameterize(param))
 
     def __iter__(self):
         for test in self.tests:
