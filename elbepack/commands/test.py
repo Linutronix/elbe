@@ -80,7 +80,7 @@ class ElbeTestSuite(object):
 
         rc = re.compile(regex, re.IGNORECASE)
 
-        self.tests.sort(key=lambda x: str(x))
+        self.tests.sort(key=str)
 
         # Tests filtered here are skipped quietly
         i = 0
@@ -156,12 +156,11 @@ def run_command(argv):
     # then filter them
     suite.filter_test(opt.parallel, opt.filter, opt.invert_re)
 
-    # print them
-    suite.ls()
-
     # Dry run? Just exit gently
     if opt.dry_run:
-        print("This was a dry run. No tests were executed")
+        suite.ls()
+        print("======================================================================\n"
+              "This was a dry run. No tests were executed")
         os.sys.exit(0)
 
     cases = []
@@ -170,6 +169,8 @@ def run_command(argv):
     fail_cnt = 0
 
     for test in suite:
+
+        print(test)
 
         result = unittest.TestResult()
 
@@ -184,6 +185,10 @@ def run_command(argv):
         for failure in result.failures:
             case.add_failure_info(message=failure[1])
             fail_cnt += 1
+
+        for us in result.unexpectedSuccesses:
+            case.add_failure_info(message=us[1])
+            err_cnt += 1
 
         for skip in result.skipped:
             case.add_skipped_info(message=skip[1])
