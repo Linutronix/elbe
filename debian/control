@@ -115,7 +115,7 @@ Depends: ${misc:Depends},
   python3-elbe-bin (= ${binary:Version}) | python-elbe-bin (= ${binary:Version}),
   python3-elbe-control (= ${binary:Version}) | python-elbe-control (= ${binary:Version}),
   qemu-utils,
-  qemu-kvm (>= 1:2.1),
+  qemu-kvm,
   p7zip-full,
   make,
   lsb-release
