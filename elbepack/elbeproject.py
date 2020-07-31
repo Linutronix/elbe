@@ -769,6 +769,9 @@ class ElbeProject (object):
             # cpuset == -1 means empty cpuset_cmd
             cpuset_cmd = ''
 
+        profile_list = profile.split(",")
+        deb_build_opts = [i for i in profile_list if i=="nodoc" or i=="nocheck"]
+
         try:
             if cross:
                 do('cd "%s"; dpkg-source -b .; %s '
@@ -780,7 +783,8 @@ class ElbeProject (object):
                        os.path.join(self.builddir, "cross_pbuilderrc"),
                        os.path.join(self.builddir, "pbuilder_cross", "base.tgz"),
                        os.path.join(self.builddir, "pbuilder_cross", "result")),
-                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
+                            'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
                 self.repo.include(os.path.join(self.builddir,
                                                "pbuilder_cross",
                                                "result",
@@ -790,11 +794,11 @@ class ElbeProject (object):
                    '--configfile "%s" '
                    '--use-pdebuild-internal --buildresult "%s"' % (
                        os.path.join(self.builddir, "pdebuilder", "current"),
-                       cpuset_cmd,
-                       cfg['pbuilder_jobs'],
+                       cpuset_cmd, cfg['pbuilder_jobs'],
                        os.path.join(self.builddir, "pbuilderrc"),
                        os.path.join(self.builddir, "pbuilder", "result")),
-                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " ")})
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
+                            'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
                 self.repo.include(os.path.join(self.builddir,
                                                "pbuilder",
                                                "result",
