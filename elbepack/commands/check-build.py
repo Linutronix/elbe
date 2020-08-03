@@ -13,6 +13,7 @@ import traceback
 
 import pexpect
 
+from elbepack.directories import elbe_exe
 from elbepack.log import elbe_logging
 from elbepack.treeutils import etree
 from elbepack.shellhelper import get_command_out, command_out, do, CommandError
@@ -612,3 +613,8 @@ exit 1
         for sdk in glob.glob("setup-elbe-sdk*"):
             self.do_sdk(sdk)
 
+@CheckBase.register("rebuild")
+class CheckRebuild(CheckBase):
+
+    def run(self):
+        do("%s initvm submit bin-cdrom.iso" % elbe_exe)
