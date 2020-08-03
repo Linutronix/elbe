@@ -195,25 +195,31 @@ class StopAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
+
         if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
             print('Initvm is not running.')
             sys.exit(20)
-        else:
-            while True:
-                try:
-                    self.initvm.shutdown()
-                except libvirt.libvirtError as e:
-                    # ignore that initvm is already shutoff or is currently
-                    # shutting down but raise all other errors
-                    if (self.initvm_state() != libvirt.VIR_DOMAIN_SHUTOFF and
-                        self.initvm_state() != libvirt.VIR_DOMAIN_SHUTDOWN):
-                        raise e
-                sys.stdout.write("*")
-                sys.stdout.flush()
-                if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
-                    print("\nInitvm shut off.")
-                    break
-                time.sleep(1)
+
+        while True:
+
+            sys.stdout.write("*")
+            sys.stdout.flush()
+            time.sleep(1)
+
+            state = self.initvm_state()
+
+            if state == libvirt.VIR_DOMAIN_SHUTDOWN:
+                continue
+
+            if state == libvirt.VIR_DOMAIN_SHUTOFF:
+                break
+
+            try:
+                self.initvm.shutdown()
+            except libvirt.libvirtError as e:
+                raise e
+
+        print("\nInitvm shutoff")
 
 
 @InitVMAction.register('attach')
