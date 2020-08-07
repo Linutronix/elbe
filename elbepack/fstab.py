@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import time
 
 from elbepack.shellhelper import do, get_command_out, CommandError
 
@@ -134,15 +135,21 @@ class fstabentry(object):
         self.number = '{}{}'.format(disk.type, ppart.number)
 
     def losetup(self):
+
         cmd = ('losetup --offset %d --sizelimit %d --find --show "%s"' %
                (self.offset, self.size, self.filename))
-        try:
-            loopdev = get_command_out(cmd)
-        except CommandError as e:
-            if e.returncode != 1:
-                raise
-            do('sync')
-            loopdev = get_command_out(cmd)
+
+        while True:
+
+            try:
+                loopdev = get_command_out(cmd)
+            except CommandError as e:
+                if e.returncode != 1:
+                    raise
+                do('sync')
+                time.sleep(1)
+            else:
+                break
 
         return loopdev.rstrip('\n')
 
