@@ -508,11 +508,19 @@ class ArtifactAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, _buildenv, target):
-        target.images.append('target' + self.node.et.text)
+    def execute(self, buildenv, target):
+        if os.path.isfile("../target/" + self.node.et.text):
+            target.images.append('target' + self.node.et.text)
+        else:
+            logging.error("The specified artifact: '%s' doesn't exist" %
+                           self.node.et.text)
 
-    def execute_prj(self, _buildenv, target, _builddir):
-        target.images.append(self.node.et.text)
+    def execute_prj(self, buildenv, target, builddir):
+        if os.path.isfile("../" + self.node.et.text):
+            target.images.append(self.node.et.text)
+        else:
+            logging.error("The specified artifact: '%s' doesn't exist" %
+                           self.node.et.text)
 
 
 @FinetuningAction.register('rm_artifact')
