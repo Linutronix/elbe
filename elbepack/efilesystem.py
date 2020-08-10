@@ -56,6 +56,10 @@ def copy_filelist(src, file_lst, dst):
 
             tgt = src.readlink(f)
 
+            if not src.lexists(tgt):
+                dst.symlink(tgt, f, allow_exists=True)
+                continue
+
             # If the target is not yet in the destination RFS, we need
             # to defer the copy of the symlink after the target is
             # resolved.  Thus, we recusively call copy_filelist
@@ -78,8 +82,12 @@ def copy_filelist(src, file_lst, dst):
             dst.chown(f, st.st_uid, st.st_gid)
 
         else:
-            system('cp -a --reflink=auto "%s" "%s"' % (src.realpath(f),
-                                                       dst.realpath(f)))
+            try:
+                system('cp -a --reflink=auto "%s" "%s"' % (src.realpath(f),
+                                                           dst.realpath(f)))
+            except CommandError as E:
+                logging.warning("Error while copying from %s to %s of file %s - %s",
+                                src.path, dst.path, f, E)
 
     # update utime which will change after a file has been copied into
     # the directory
