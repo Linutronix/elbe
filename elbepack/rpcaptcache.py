@@ -141,54 +141,87 @@ class RPCAPTCache(InChRootObject):
                        from_user=from_user)
 
     def mark_install_devpkgs(self, ignore_pkgs, ignore_dev_pkgs):
-        ignore_pkgs.discard('libc6')  # we don't want to ignore libc
+
+        # we don't want to ignore libc
+        ignore_pkgs.discard('libc6')
         ignore_pkgs.discard('libstdc++5')
         ignore_pkgs.discard('libstdc++6')
-        # list all debian src packages of all installed packages that don't
-        # come from debootstrap
-        src_list = [
-            p.candidate.source_name for p in self.cache if (
-                p.is_installed and p.name not in ignore_pkgs)]
-        version_dict = {
-            p.name: p.candidate.version for p in self.cache if (
-                p.is_installed and p.name not in ignore_pkgs)}
-        # go through all packages, remember package if its source package
-        # matches one of the installed packages and the binary package is a
-        # '-dev' package
-        dev_list = [
-            s for s in self.cache if (
-                s.candidate.source_name in src_list and (
-                    s.name.endswith('-dev')))]
-        for p in dev_list:
-            if p.name not in ignore_dev_pkgs:
-                name_no_suffix = p.name[:-len('-dev')]
+
+        # list all debian src packages of all installed packages that
+        # don't come from debootstrap
+        src_name_lst = []
+        version_dict = {}
+
+        for pkg in self.cache:
+            if pkg.is_installed and pkg.name not in ignore_pkgs:
+                src_name = pkg.candidate.source_name
+                src_name_lst.append(src_name)
+                version_dict[pkg.name] = pkg.candidate.version
+                version_dict[src_name] = pkg.candidate.version
+
+        def mark_install(pkg_lst, suffix):
+
+            for pkg in pkg_lst:
+
+                if pkg.name in ignore_dev_pkgs:
+                    continue
+
+                name_no_suffix = pkg.name[:-len(suffix)]
+
                 if name_no_suffix in version_dict:
-                    version = version_dict[name_no_suffix]
-                    candidate = p.versions.get(version)
-                    if candidate:
-                        p.candidate = candidate
-                p.mark_install()
-        # ensure that the symlinks package will be installed (it's needed for
-        # fixing links inside the sysroot
-        self.cache['symlinks'].mark_install()
 
-        for p in ignore_dev_pkgs:
-            self.cache[p].mark_delete()
-
-        dbgsym_list = [
-                s.name + '-dbgsym' for s in self.cache if (
-                    s.is_installed or s.marked_install)]
-
-        for p in dbgsym_list:
-            if p in self.cache:
-                pkg = self.cache[p]
-                name_no_suffix = pkg.name[:-len('-dbgsym')]
-                if name_no_suffix in version_dict:
-                    version = version_dict[name_no_suffix]
+                    version   = version_dict[name_no_suffix]
                     candidate = pkg.versions.get(version)
+
                     if candidate:
                         pkg.candidate = candidate
+
                 pkg.mark_install()
+
+        # go through all packages, remember package if its source
+        # package matches one of the installed packages and the binary
+        # package is a '-dev' package
+        dev_lst = []
+
+        for pkg in self.cache:
+
+            if not pkg.name.endswith("-dev"):
+                continue
+
+            src_name = pkg.candidate.source_name
+
+            if src_name not in version_dict:
+                continue
+
+            src_version = pkg.candidate.source_version
+
+            if src_version != version_dict[src_name]:
+                continue
+
+            dev_lst.append(pkg)
+
+        mark_install(dev_lst, "-dev")
+
+        # ensure that the symlinks package will be installed (it's
+        # needed for fixing links inside the sysroot
+        self.cache['symlinks'].mark_install()
+
+        for pkg in ignore_dev_pkgs:
+            self.cache[pkg].mark_delete()
+
+        dbgsym_lst = []
+
+        for pkg in self.cache:
+
+            if pkg.is_installed or pkg.marked_install:
+
+                dbg_pkg = "%s-dbgsym" % pkg.name
+
+                if dbg_pkg in self.cache:
+                    dbgsym_lst.append(self.cache[dbg_pkg])
+
+        mark_install(dbgsym_lst, "-dbgsym")
+
 
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
