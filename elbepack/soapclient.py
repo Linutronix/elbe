@@ -637,7 +637,7 @@ class WaitProjectBusyAction(ClientAction):
             if msg == 'ELBE-FINISH':
                 break
 
-            print(msg)
+            print(msg.encode(encoding="utf-8", errors="replace"))
 
         # exited the while loop -> the project is not busy anymore,
         # check, whether everything is ok.
