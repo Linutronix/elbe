@@ -187,7 +187,7 @@ def run_command(argv):
             fail_cnt += 1
 
         for us in result.unexpectedSuccesses:
-            case.add_failure_info(message=us[1])
+            case.add_failure_info(message=us)
             err_cnt += 1
 
         for skip in result.skipped:
