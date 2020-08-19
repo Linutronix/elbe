@@ -1,0 +1,48 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>debian docker systemd base image</name>
+		<version>1.0</version>
+		<description>
+			Debian buster base including systemd.
+			Several systemd related files are removed, so that it does
+			not try to mount /.
+		</description>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>http://security.debian.org buster/updates main</binary>
+					<source>http://security.debian.org buster/updates main</source>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>buster</suite>
+	</project>
+	<target>
+		<hostname>debdocker</hostname>
+		<domain>docker</domain>
+		<passwd>docker</passwd>
+		<package>
+			<tar>
+				<name>docker-systemd.tgz</name>
+			</tar>
+		</package>
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+
+			<rm>lib/systemd/system/multi-user.target.wants/*</rm>
+			<rm>etc/systemd/system/*.wants/*</rm>
+			<rm>lib/systemd/system/local-fs.target.wants/*</rm>
+			<rm>lib/systemd/system/sockets.target.wants/*udev*</rm>
+			<rm>lib/systemd/system/sockets.target.wants/*initctl*</rm>
+			<command>cd /lib/systemd/system/sysinit.target.wants/ &amp;&amp; ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f</command>
+			<rm>lib/systemd/system/systemd-update-utmp*</rm>
+
+			<command>systemctl set-default multi-user.target</command>
+			<command>sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!'</command>
+		</finetuning>
+	</target>
+</ns0:RootFileSystem>
