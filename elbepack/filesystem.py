@@ -507,6 +507,13 @@ class TmpdirFilesystem (Filesystem):
     def delete(self):
         shutil.rmtree(self.path, True)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exec_type, exec_value, tb):
+        shutil.rmtree(self.path)
+        return False
+
 
 class ImgMountFilesystem(Filesystem):
     def __init__(self, mntpoint, dev):
