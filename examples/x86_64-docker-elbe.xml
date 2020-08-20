@@ -160,6 +160,10 @@ a6EqDGtKLEkEM5G1qtDILnp3cIEZm3CFO8ll
 		</package>
 		<pkg-list>
 			<pkg>elbe</pkg>
+			<pkg>sbuild</pkg>
+			<pkg>schroot</pkg>
+			<pkg>debootstrap</pkg>
+
 		</pkg-list>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
@@ -192,6 +196,12 @@ a6EqDGtKLEkEM5G1qtDILnp3cIEZm3CFO8ll
 
 			<adduser groups="kvm,libvirt" passwd="elbe" shell="/bin/bash">elbe</adduser>
 			<command>systemctl enable libvirtd</command>
+
+			<command>cp /usr/share/doc/sbuild/examples/example.sbuildrc /home/elbe/.sbuildrc</command>
+			<command>chown elbe:elbe /home/elbe/.sbuildrc</command>
+			<command>sbuild-createchroot --include=eatmydata,ccache,gnupg unstable /srv/chroot/unstable-amd64-sbuild http://ftp.de.debian.org/debian</command>
+			<command>sbuild-createchroot --include=eatmydata,ccache,gnupg stable /srv/chroot/stable-amd64-sbuild http://ftp.de.debian.org/debian</command>
+			<command>sbuild-adduser elbe</command>
 		</finetuning>
 	</target>
 </ns0:RootFileSystem>
