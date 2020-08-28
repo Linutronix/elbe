@@ -1,4 +1,0 @@
-#!/bin/bash
-set -e
-/usr/bin/python2 /usr/bin/elbe db init --name=root --password=foo
-#DEBHELPER#

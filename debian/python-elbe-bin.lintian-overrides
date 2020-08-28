@@ -1,2 +1,0 @@
-# documentation is provided in elbe-doc
-python-elbe-bin: binary-without-manpage usr/bin/elbe

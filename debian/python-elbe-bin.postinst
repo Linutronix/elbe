@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-
-# force usage of python2 for the moment
-sed -i'' -e s#/usr/bin/python3#/usr/bin/python2#g /usr/bin/elbe
