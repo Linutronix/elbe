@@ -96,7 +96,7 @@ def run_command(argv):
     #         we need to introduce additional arguments for this
     #       in default copy mode chroot to the target and remove elbe-daemon
     #         and its dependencies (if it is not in  target/pkg-list.
-    buildenv_pkgs = ["python-elbe-buildenv"]
+    buildenv_pkgs = ["python3-elbe-buildenv"]
     if xml.has("./project/buildimage/pkg-list"):
         buildenv_pkgs.extend([p.et.text for p in xml.node(
             "project/buildimage/pkg-list")])

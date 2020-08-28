@@ -9,14 +9,14 @@ from elbepack.directories import pack_dir
 
 elbe_version = "12.5"
 
-elbe_initvm_packagelist = ['python-elbe-buildenv',
+elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'elbe-soap',
-                           'python-elbe-common',
+                           'python3-elbe-common',
                            'elbe-daemon',
                            'elbe-schema',
-                           'python-elbe-bin']
+                           'python3-elbe-bin']
 
-if pack_dir == '/usr/lib/python2.7/dist-packages/elbepack':
+if pack_dir.startswith('/usr/lib/python'):
     is_devel = False
 else:
     is_devel = True

@@ -106,7 +106,7 @@ def fetch_binary(version, destdir='', progress=None):
     is used.
 
     taken from python-apt-1.8.4
-    (/usr/lib/python2.7/dist-packages/apt/package.py).
+    https://salsa.debian.org/apt-team/python-apt/-/blob/1.8.4/apt/package.py
 
     ---------------------------------------------------------
     Copyright (c) 2005-2009 Canonical

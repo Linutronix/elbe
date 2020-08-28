@@ -4,8 +4,8 @@ Only useful in --devel mode. And its required, that some dependencies
 are installed manually into the initvm
 
 --------------------------------------------------------------------
-apt-get install python-pip
-pip install dozer
+apt install python3-pip
+pip3 install Dozer
 /etc/init.d/elbe-daemon restart
 --------------------------------------------------------------------
 

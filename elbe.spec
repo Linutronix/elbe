@@ -11,12 +11,12 @@ URL:            http://elbe-rfs.org
 Source0:        http://elbe-rfs.org/download/elbe-2.0/elbe-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires: python-devel
-BuildRequires: python-setuptools
+BuildRequires: python3-devel
+BuildRequires: python3-setuptools
 BuildRequires: asciidoc
 BuildRequires: xmlto
 
-requires: qemu-kvm, python-lxml, python-mako, wget, python-suds, libvirt-python
+requires: qemu-kvm, python3-lxml, python3-mako, wget, python3-suds, libvirt-python
 
 %description
 ELBE (Embedded Linux Build Environment)
@@ -26,11 +26,11 @@ Debian based system to generate root-filesystems for embedded devices.
 %setup -q -n elbe-%{version}
 
 %build
-python setup.py build
+python3 setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-python setup.py install --skip-build --root $RPM_BUILD_ROOT --install-lib=%{python_sitearch}
+python3 setup.py install --skip-build --root $RPM_BUILD_ROOT --install-lib=%{python_sitearch}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
