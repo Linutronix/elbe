@@ -3,8 +3,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import print_function
-
 from optparse import OptionParser
 import sys
 import logging
