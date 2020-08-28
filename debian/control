@@ -1,7 +1,7 @@
 Source: elbe
 Section: misc
 Priority: optional
-Maintainer: Manuel Traut <manut@linutronix.de>
+Maintainer: Linutronix GmbH <info@linutronix.de>
 Build-Depends: debhelper (>= 9),
   dh-python,
   dh-systemd,
