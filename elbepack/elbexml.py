@@ -194,7 +194,7 @@ class ElbeXML(object):
                                (' '.join(poptions),
                                 pmirror, suite))
 
-            if self.prj.has("mirror/url-list") and not hostsysroot:
+            if self.prj.has("mirror/url-list"):
 
                 for url in self.prj.node("mirror/url-list"):
 
