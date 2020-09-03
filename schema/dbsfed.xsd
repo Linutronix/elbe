@@ -603,7 +603,7 @@
       </documentation>
     </annotation>
     <choice>
-      <element name="login" minOccurs="0" maxOccurs="1">
+      <element name="login" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Try to login into root session and shutdown the machine
