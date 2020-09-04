@@ -726,6 +726,23 @@ class TestSuites(FinetuningAction):
         TestSuite.to_file(output, tss)
 
 
+@FinetuningAction.register("rm_apt_source")
+class RmAptSource(FinetuningAction):
+
+    def execute(self, buildenv, _target):
+
+        src_path = "%s/../target/etc/apt/sources.list" % buildenv.path
+
+        with open(src_path, "r") as f:
+            src_lst = f.read().split("\n")
+
+        rm_src = self.node.et.text.replace("LOCALMACHINE", "10.0.2.2")
+        src_lst = [src for src in src_lst if rm_src not in src]
+
+        with open(src_path, "w") as f:
+            f.write("\n".join(src_lst))
+
+
 def do_finetuning(xml, buildenv, target):
 
     if not xml.has('target/finetuning'):

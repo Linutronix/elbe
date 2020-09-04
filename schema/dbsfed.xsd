@@ -2124,6 +2124,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="rm_apt_source" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            remove the specified source from the sources.list on the target
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
