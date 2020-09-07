@@ -574,7 +574,8 @@ class GetFilesAction(ClientAction):
         nfiles = 0
 
         for f in files[0]:
-            if (opt.pbuilder_only and not f.name.startswith('pbuilder_cross')):
+            if (opt.pbuilder_only and not f.name.startswith('pbuilder_cross')
+                and not f.name.startswith('pbuilder')):
                 continue
 
             if opt.matches and not fnmatch.fnmatch(f.name, opt.matches):
