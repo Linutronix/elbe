@@ -149,21 +149,25 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
     with open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w") as f:
 
-        mirrors, keys = get_apt_mirrors_and_keys(builddir, xml, cross)
+        local_http = "deb http://127.0.0.1:8080%s/repo %s main\n" %
+			(builddir, xml.prj.text("suite"))
+        mirrors = xml.create_apt_sources_list(hostsysroot=cross)
+        mirrors = local_http + mirrors
+
+        keys = get_apt_keys(builddir, xml)
 
         f.write("#!/bin/sh\n")
 
         # cat reads from stdin (-) and redirect (>) to
         # /etc/apt/sources.list
-        f.write("cat -> /etc/apt/sources.list <<EOF\n%s\nEOF\n" %
-                '\n'.join(mirrors).replace("LOCALMACHINE", "10.0.2.2"))
+        f.write("cat -> /etc/apt/sources.list <<EOF\n%s\nEOF\n" % mirrors)
 
         for key in keys:
             f.write("cat << EOF | apt-key add -\n%s\nEOF\n" % key)
 
         f.write("apt-get update\n")
 
-def get_apt_mirrors_and_keys(builddir, xml, _cross):
+def get_apt_keys(builddir, xml):
 
     if xml.prj is None:
         return (["# No Project"], [])
@@ -171,51 +175,26 @@ def get_apt_mirrors_and_keys(builddir, xml, _cross):
     if not xml.prj.has("mirror") and not xml.prj.has("mirror/cdrom"):
         return (["# No mirrors configured"], [])
 
-    suite = xml.prj.text("suite")
-
-    local_http = "deb http://127.0.0.1:8080%s/repo %s main" % (builddir, suite)
-
-    mirrors = [local_http]
     keys    = [Filesystem(builddir).read_file("repo/repo.pub")]
-    suite   = xml.prj.text("suite")
 
-    if xml.prj.has("mirror/primary_host"):
+    if xml.prj.has("mirror/primary_host") and xml.prj.has("mirror/url-list")
 
-        if xml.prj.has("mirror/options"):
-            poptions = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
-                                          for opt
-                                          in xml.prj.all("mirror/options/option")])
-        else:
-            poptions = ""
+        for url in xml.prj.node("mirror/url-list"):
 
-        pmirror = xml.get_primary_mirror(None)
+             if url.has("options"):
+                 options = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
+                                              for opt
+                                              in url.all("options/option")])
+             else:
+                 options = ""
 
-        mirrors.append("deb %s %s %s main" % (poptions, pmirror, suite))
 
-        if xml.prj.has("mirror/url-list"):
+            if url.has("raw-key") and not "trusted=yes" in options:
 
-            for url in xml.prj.node("mirror/url-list"):
+                key = "\n".join(line.strip(" \t")
+                                for line
+                                in url.text('raw-key').splitlines()[1:-1])
 
-                if url.has("options"):
-                    options = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
-                                                 for opt
-                                                 in url.all("options/option")])
-                else:
-                    options = ""
+                keys.append(key)
 
-                if url.has("binary"):
-                    bin_url = url.text("binary").strip()
-                    mirrors.append("deb %s %s" % (options, bin_url))
-
-                if url.has("raw-key") and not "trusted=yes" in options:
-
-                    key = "\n".join(line.strip(" \t")
-                                    for line
-                                    in url.text('raw-key').splitlines()[1:-1])
-
-                    keys.append(key)
-
-    if xml.prj.has("mirror/cdrom"):
-        mirrors.append("deb copy:///cdrom/targetrepo %s main added" % suite)
-
-    return (mirrors, keys)
+    return (keys)
