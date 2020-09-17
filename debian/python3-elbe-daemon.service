@@ -3,7 +3,7 @@ Description=ELBE Daemon
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/default/elbe-daemon
+EnvironmentFile=/etc/default/python3-elbe-daemon
 ExecStart=/usr/bin/elbe $DAEMON_ARGS
 
 [Install]

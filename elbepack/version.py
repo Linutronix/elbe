@@ -10,9 +10,9 @@ from elbepack.directories import pack_dir
 elbe_version = "12.5"
 
 elbe_initvm_packagelist = ['python3-elbe-buildenv',
-                           'elbe-soap',
+                           'python3-elbe-soap',
                            'python3-elbe-common',
-                           'elbe-daemon',
+                           'python3-elbe-daemon',
                            'elbe-schema',
                            'python3-elbe-bin']
 

@@ -62,7 +62,7 @@ Description: common files
  Common files for ELBE (embedded linux build environment). These
  python-modules are shared by several elbe subcommands.
 
-Package: elbe-debianize
+Package: python3-elbe-debianize
 Architecture: all
 Conflicts: elbe-debianize
 Depends: ${misc:Depends},
@@ -86,13 +86,13 @@ Depends: ${misc:Depends},
   p7zip-full,
   make,
   lsb-release
-Recommends: elbe-doc (= ${binary:Version}), elbe-debianize, haveged
+Recommends: elbe-doc (= ${binary:Version}), python3-elbe-debianize, haveged
 Description: Embedded Linux Build Environment
  A flexible Root Filesystem builder. ELBE uses Debian packages to build a RFS
  for (embedded) targets. A target is described with a single XML file. Besides
  the target image, licence information, source cdroms, etc. are generated.
 
-Package: elbe-daemon
+Package: python3-elbe-daemon
 Architecture: all
 Depends: ${misc:Depends},
   python3,
@@ -144,7 +144,7 @@ Description: Embedded Linux Build Environment Server Component
  subcommands need to be executed with root privileges. It is not recommended to
  install this package on a native system.
 
-Package: elbe-bootup-check
+Package: python3-elbe-bootup-check
 Architecture: all
 Depends: ${misc:Depends},
   python3,
@@ -156,13 +156,13 @@ Description: bootup checker
  This package is typically installed on a embedded system. The bootup checker
  shows some information about the installed software on the embedded device.
 
-Package: elbe-soap
+Package: python3-elbe-soap
 Architecture: all
 Depends: ${misc:Depends},
   python3,
   python3-spyne,
   python3-elbe-buildenv (= ${binary:Version}),
-  elbe-daemon (= ${binary:Version})
+  python3-elbe-daemon (= ${binary:Version})
 Description: SOAP Interface for elbe buildenv
  Enables remote control of the elbe buildenv via SOAP.
 
@@ -179,7 +179,7 @@ Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
 
-Package: elbe-updated
+Package: python3-elbe-updated
 Architecture: all
 Depends: ${misc:Depends},
   python3,
