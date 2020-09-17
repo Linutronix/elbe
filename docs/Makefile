@@ -150,7 +150,7 @@ elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
 	$(ASCIIDOC) -b html5 -a icons -a toc2 -a theme=flask -o elbeoverview-en.html elbeoverview-en.txt
 
 elbe-schema-reference.txt: ../schema/dbsfed.xsd ../elbepack/xsdtoasciidoc.mako
-	python3 ../elbe xsdtoasciidoc --output elbe-schema-reference.txt ../schema/dbsfed.xsd
+	../elbe xsdtoasciidoc --output elbe-schema-reference.txt ../schema/dbsfed.xsd
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbe-schema-reference.txt
 
 elbe-schema-reference.html: %.html : %.txt
