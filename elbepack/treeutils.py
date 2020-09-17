@@ -30,9 +30,6 @@ class eiter(object):
 
         return elem(n)
 
-    def next(self):
-        return self.__next__()
-
 # TODO:py3 Remove object inheritance
 # pylint: disable=useless-object-inheritance
 class ebase(object):
