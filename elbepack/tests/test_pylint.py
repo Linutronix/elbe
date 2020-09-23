@@ -7,7 +7,7 @@ import os
 
 from elbepack.commands.test import ElbeTestCase
 from elbepack.shellhelper import command_out, system_out
-from elbepack.directories import elbe_dir
+from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
 class TestPylint(ElbeTestCase):
 
@@ -16,44 +16,42 @@ class TestPylint(ElbeTestCase):
                    "--rcfile=%s" % os.path.join(elbe_dir, ".pylintrc"),
                    "--disable=W0511,R0801"]
 
-    failure_set = {os.path.join(elbe_dir, path)
+    failure_set = {os.path.join(pack_dir, path)
                    for path
                    in [
-                       "docs/conf.py",
-                       "elbepack/daemons/soap/esoap.py",
+                       "daemons/soap/esoap.py",
 
                        # These are not needed to be fixed since
                        # debianize is going to be rewritten
-                       "elbepack/debianize/base/tui.py",
-                       "elbepack/debianize/panels/base.py",
-                       "elbepack/debianize/panels/kernel.py",
-                       "elbepack/debianize/widgets/button.py",
-                       "elbepack/debianize/widgets/edit.py",
-                       "elbepack/debianize/widgets/form.py",
-                       "elbepack/debianize/widgets/grid.py",
-                       "elbepack/debianize/widgets/radio.py",
+                       "debianize/base/tui.py",
+                       "debianize/panels/base.py",
+                       "debianize/panels/kernel.py",
+                       "debianize/widgets/button.py",
+                       "debianize/widgets/edit.py",
+                       "debianize/widgets/form.py",
+                       "debianize/widgets/grid.py",
+                       "debianize/widgets/radio.py",
 
-                       "elbepack/elbeproject.py",
-                       "elbepack/elbexml.py",
+                       "elbeproject.py",
+                       "elbexml.py",
 
                        # FIXME: This one is an actual bug to be fixed
                        # 274:30: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
                        # 276:26: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
-                       "elbepack/hdimg.py",
+                       "hdimg.py",
 
-                       "elbepack/initvmaction.py",
-                       "elbepack/log.py",
-                       "elbepack/pbuilderaction.py",
-                       "elbepack/repomanager.py",
-                       "elbepack/rfs.py",
-                       "elbepack/rpcaptcache.py",
-                       "test/updated.py",
+                       "initvmaction.py",
+                       "log.py",
+                       "pbuilderaction.py",
+                       "repomanager.py",
+                       "rfs.py",
+                       "rpcaptcache.py",
                    ]}
 
     @staticmethod
     def params():
-        files = system_out("find %s -iname '*.py'" % elbe_dir).splitlines()
-        files.append("elbe")
+        files = system_out("find %s -iname '*.py'" % pack_dir).splitlines()
+        files.append(elbe_exe)
         return files
 
     def test_lint(self):
