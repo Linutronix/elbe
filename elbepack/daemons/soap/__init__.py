@@ -6,6 +6,7 @@
 
 import sys
 import logging
+import warnings
 
 from beaker.middleware import SessionMiddleware
 from cherrypy.process.plugins import SimplePlugin
@@ -26,6 +27,8 @@ except ImportError as e:
 
 logging.getLogger('spyne').setLevel(logging.INFO)
 
+warnings.simplefilter('ignore', category=PendingDeprecationWarning)
+warnings.simplefilter('ignore', category=ResourceWarning)
 
 class EsoapApp(Application):
     def __init__(self, *args, **kargs):
