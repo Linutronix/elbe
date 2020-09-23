@@ -1,5 +1,6 @@
 [Unit]
 Description=ELBE initvm
+Documentation=man:elbe-daemon(1)
 
 [Service]
 Type=forking

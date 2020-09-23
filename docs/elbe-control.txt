@@ -37,7 +37,7 @@ DESCRIPTION
 
 Low Level interface to
 control an elbe daemon running inside an initvm.
-It allows to submit xml files etc.
+It allows one to submit xml files etc.
 
 For the high level interface, see 'elbe initvm'
 

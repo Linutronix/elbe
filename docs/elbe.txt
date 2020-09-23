@@ -24,7 +24,7 @@ Elbe COMMANDS
 -------------
 
 linkgit:elbe-initvm[1]::
-	build and manage initvm. Also allows to submit xml Files into the initvm
+	build and manage initvm. Also allows one to submit xml Files into the initvm
 
 linkgit:elbe-control[1]::
 	low-level interface to projects inside the initvm.

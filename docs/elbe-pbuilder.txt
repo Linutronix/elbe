@@ -4,7 +4,7 @@ elbe-pbuilder(1)
 NAME
 ----
 elbe-pbuilder - High Level Interface to the ELBE Package Build System.
-              Allows to create a package builder for a project and to build
+              Allows one to create a package builder for a project and to build
               Debian packages.
 
 
@@ -35,7 +35,7 @@ OPTIONS
 
 --cpuset <int>::
 	When this value is not -1 (the default), the pbuilder is run using
-	'taskset <cpuset>' which allows to limit the number of cpus used
+	'taskset <cpuset>' which allows one to limit the number of cpus used
 	for the build. This is useful when multithreading and qemu-user
 	yield problem with e.g. java.
 

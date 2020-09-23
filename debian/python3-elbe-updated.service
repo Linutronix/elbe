@@ -1,5 +1,6 @@
 [Unit]
 Description=ELBE Update Daemon
+Documentation=man:elbe-updated(1)
 
 [Service]
 Type=simple

@@ -962,7 +962,7 @@ elbe (0.5.4~wheezy) unstable; urgency=low
 elbe (0.5.4~squeeze) unstable; urgency=low
 
   * BUGFIX dump.py crashed because of missing version.py on target
-  * add dump.py output to elbe-report.txt 
+  * add dump.py output to elbe-report.txt
 
  -- Manuel Traut <manut@linutronix.de>  Tue, 01 Oct 2013 17:20:53 +0200
 

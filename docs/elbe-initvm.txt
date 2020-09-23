@@ -4,7 +4,7 @@ elbe-initvm(1)
 NAME
 ----
 elbe-initvm - High Level Interface to the ELBE System.
-              Allows to create an initvm and directly build Rootfilesystems using ELBE.
+              Allows one to create an initvm and directly build Rootfilesystems using ELBE.
 
 
 SYNOPSIS
@@ -20,7 +20,7 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-This command allows to build and manage an initvm.
+This command allows one to build and manage an initvm.
 
 Initvms are managed via libvirt, and its necessary, that a user is a member of the
 libvirt group.

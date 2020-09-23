@@ -1,5 +1,6 @@
 [Unit]
 Description=ELBE Daemon
+Documentation=man:elbe-daemon(1)
 
 [Service]
 Type=simple

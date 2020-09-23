@@ -1,4 +1,7 @@
 #!/bin/sh
+set -e
+
+#DEBHELPER#
 
 # ATTENTION: don't add code that restarts the elbe-updated here
 #  the update itself might be running inside an elbe-updated process if

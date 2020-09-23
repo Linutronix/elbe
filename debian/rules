@@ -18,11 +18,8 @@ override_dh_clean:
 override_dh_compress:
 	dh_compress -X.xml
 
-override_dh_systemd_start:
-	dh_systemd_start --no-package=elbe
-
-override_dh_systemd_stop:
-	dh_systemd_stop --no-package=elbe
+override_dh_installinit:
+	dh_installinit --no-package=elbe
 
 override_dh_install:
 	dh_install

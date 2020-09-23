@@ -1,0 +1,4 @@
+# The shell script is a template
+python3-elbe-buildenv: shell-script-fails-syntax-check usr/lib/python3/dist-packages/elbepack/makofiles/toolchain-shar-extract.sh.mako
+# The shell script is a template
+python3-elbe-buildenv: script-not-executable usr/lib/python3/dist-packages/elbepack/makofiles/toolchain-shar-extract.sh.mako
