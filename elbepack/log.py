@@ -214,6 +214,7 @@ def close_logging():
     if hasattr(local, "handlers"):
         for h in local.handlers:
             root.removeHandler(h)
+            h.close()
     local.handlers = []
 
 # TODO:py3 Remove object inheritance
