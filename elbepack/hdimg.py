@@ -159,7 +159,7 @@ class grubinstaller_base(object):
     @staticmethod
     def losetup(f):
         loopdev = get_command_out('losetup --find --show "%s"' % f)
-        return loopdev.rstrip('\n')
+        return loopdev.decode().rstrip('\n')
 
 
 class grubinstaller202(grubinstaller_base):
