@@ -29,4 +29,4 @@ override_dh_install:
 	dh_installxmlcatalogs
 
 %:
-	dh $@ --with systemd --buildsystem=pybuild --with python3
+	dh $@ --buildsystem=pybuild --with python3
