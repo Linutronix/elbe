@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import sys
+import logging
 
 from beaker.middleware import SessionMiddleware
 from cherrypy.process.plugins import SimplePlugin
@@ -22,6 +23,8 @@ except ImportError as e:
     print("please install python(3)-spyne", file=sys.stderr)
     sys.exit(20)
 
+
+logging.getLogger('spyne').setLevel(logging.INFO)
 
 
 class EsoapApp(Application):
