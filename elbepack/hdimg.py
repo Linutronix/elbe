@@ -317,7 +317,7 @@ def create_partition(
     elif part.text("size") == "remain":
         sz = size_in_sectors - current_sector
     else:
-        sz = size_to_int(part.text("size")) / sector_size
+        sz = size_to_int(part.text("size")) // sector_size
 
     g = parted.Geometry(device=disk.device, start=current_sector, length=sz)
     if ptype != parted.PARTITION_EXTENDED and \
@@ -409,7 +409,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
 
     sector_size = 512
     s = size_to_int(hd.text("size"))
-    size_in_sectors = s / sector_size
+    size_in_sectors = s // sector_size
 
     imagename = os.path.join(target, hd.text("name"))
     do('rm -f "%s"' % imagename, allow_fail=True)
