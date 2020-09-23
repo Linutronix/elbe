@@ -151,7 +151,7 @@ class fstabentry(object):
             else:
                 break
 
-        return loopdev.rstrip('\n')
+        return loopdev.decode().rstrip('\n')
 
     def tuning(self, loopdev):
         if self.tune:
