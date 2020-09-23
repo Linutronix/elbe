@@ -149,8 +149,7 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
     with open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w") as f:
 
-        local_http = "deb http://127.0.0.1:8080%s/repo %s main\n" %
-			(builddir, xml.prj.text("suite"))
+        local_http = "deb http://127.0.0.1:8080%s/repo %s main\n" % (builddir, xml.prj.text("suite"))
         mirrors = xml.create_apt_sources_list(hostsysroot=cross)
         mirrors = local_http + mirrors
 
@@ -177,7 +176,7 @@ def get_apt_keys(builddir, xml):
 
     keys    = [Filesystem(builddir).read_file("repo/repo.pub")]
 
-    if xml.prj.has("mirror/primary_host") and xml.prj.has("mirror/url-list")
+    if xml.prj.has("mirror/primary_host") and xml.prj.has("mirror/url-list"):
 
         for url in xml.prj.node("mirror/url-list"):
 
@@ -188,13 +187,12 @@ def get_apt_keys(builddir, xml):
              else:
                  options = ""
 
+             if url.has("raw-key") and not "trusted=yes" in options:
 
-            if url.has("raw-key") and not "trusted=yes" in options:
+                 key = "\n".join(line.strip(" \t")
+                                 for line
+                                 in url.text('raw-key').splitlines()[1:-1])
 
-                key = "\n".join(line.strip(" \t")
-                                for line
-                                in url.text('raw-key').splitlines()[1:-1])
-
-                keys.append(key)
+                 keys.append(key)
 
     return (keys)
