@@ -76,6 +76,9 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
     >>> command_out("2>&1 cat -", stdin=b"ELBE")
     (0, 'ELBE')
 
+    >>> command_out("2>&1 cat -", stdin="ELBE")
+    (0, 'ELBE')
+
     >>> command_out("false")
     (1, '')
 
@@ -83,6 +86,9 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
+
+    if type(stdin) == str:
+        stdin = stdin.encode()
 
     if stdin is None:
         p = Popen(cmd, shell=True,
@@ -137,6 +143,9 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
     >>> command_out_stderr("1>&2 cat - && false", stdin=b"ELBE")
     (1, '', 'ELBE')
 
+    >>> command_out_stderr("1>&2 cat - && false", stdin="ELBE")
+    (1, '', 'ELBE')
+
     >>> command_out_stderr("true")
     (0, '', '')
 
@@ -144,6 +153,9 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
+
+    if type(stdin) == str:
+        stdin = stdin.encode()
 
     if stdin is None:
         p = Popen(cmd, shell=True,
@@ -177,6 +189,9 @@ def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
     ('ELBE', '')
 
     >>> system_out_stderr("1>&2 cat -", allow_fail=True, stdin=b"ELBE")
+    ('', 'ELBE')
+
+    >>> system_out_stderr("1>&2 cat -", allow_fail=True, stdin="ELBE")
     ('', 'ELBE')
     """
     code, out, err = command_out_stderr(cmd, stdin, env_add)
@@ -223,6 +238,9 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
+
+    if type(stdin) == str:
+        stdin = stdin.encode()
 
     logging.info(cmd, extra={"context":"[CMD] "})
 
@@ -296,6 +314,9 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
     if env_add:
         new_env.update(env_add)
+
+    if type(stdin) == str:
+        stdin = stdin.encode()
 
     logging.info(cmd, extra={"context":"[CMD] "})
 
