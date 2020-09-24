@@ -8,6 +8,8 @@ import collections
 import logging
 import os
 import threading
+import re
+
 from contextlib import contextmanager
 
 root = logging.getLogger()
@@ -263,7 +265,12 @@ class AsyncLogging(object):
 
             # Log the line now for echo back
             if cnt:
-                self.stream.info("\n".join(self.lines[-cnt:]))
+                logbuf = "\n".join(self.lines[-cnt:])
+
+                # filter out ansi sequences.
+                logbuf = re.sub('\u001b\[.*?[@-~]', '', logbuf)
+
+                self.stream.info(logbuf)
 
             # Keep rest for next line buffering
             rest = buf[j:]
