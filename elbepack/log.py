@@ -246,7 +246,7 @@ class AsyncLogging(object):
 
         while True:
 
-            buf  = os.read(self.fd, self.atmost).decode("utf-8", errors="ignore")
+            buf  = os.read(self.fd, self.atmost).decode("utf-8", errors="replace")
 
             # Pipe broke
             if not buf:
