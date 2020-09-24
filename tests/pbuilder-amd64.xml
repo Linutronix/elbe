@@ -26,6 +26,7 @@
 		<domain>elbe-ci</domain>
 		<console>ttyO0,115200</console>
 		<debootstrapvariant>minbase</debootstrapvariant>
+		<passwd>foo</passwd>
 
 		<!-- generate a pbuilder environment (before image will be built) -->
 		<pbuilder>
