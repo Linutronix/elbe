@@ -181,18 +181,18 @@ class ElbeXML(object):
             else:
                 arch = self.text("project/buildimage/arch", key="arch")
 
-            poptions.append("arch=%s" % arch)
-
             poptions = goptions + poptions
-
-            mirrors.append("deb [%s] %s %s main" %
-                           (' '.join(poptions),
-                            pmirror, suite))
 
             if build_sources:
                 mirrors.append("deb-src [%s] %s %s main" %
                                (' '.join(poptions),
                                 pmirror, suite))
+
+            poptions.append("arch=%s" % arch)
+
+            mirrors.append("deb [%s] %s %s main" %
+                           (' '.join(poptions),
+                            pmirror, suite))
 
             if self.prj.has("mirror/url-list"):
 
