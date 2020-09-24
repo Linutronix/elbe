@@ -496,7 +496,7 @@ class ProjectManager(object):
 
     def rm_log(self, userid):
         ep = self._get_current_project(userid)
-        with open(os.path.join(ep.builddir, 'log.txt'), 'w', 0):
+        with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
             pass
 
     def add_deb_package(self, userid, filename):
