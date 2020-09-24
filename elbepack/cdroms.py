@@ -35,10 +35,10 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
                                     version,
                                     '/var/cache/elbe/sources')
         repo.includedsc(dsc, components=component, force=True)
-    except ValueError:
-        logging.error("No sources for package '%s'", pkg_id)
-    except FetchError:
-        logging.error("Source for package '%s' could not be downloaded", pkg_id)
+    except ValueError as e:
+        logging.error("No sources for package '%s': %s", pkg_id, str(e))
+    except FetchError as e:
+        logging.error("Source for package '%s' could not be downloaded: %s", pkg_id, str(e))
 
 def mk_source_cdrom(components, codename,
                     init_codename, target,
