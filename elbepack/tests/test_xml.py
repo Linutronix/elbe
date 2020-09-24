@@ -75,8 +75,9 @@ class TestPbuilder(ElbeTestCase):
 
                 with open(prj, "r") as f:
                     uuid = f.read()
-                    os.chdir(build_dir)
-                    system('%s pbuilder build --project %s' % (elbe_exe, uuid))
+                    system('cd "%s"; %s pbuilder build --project %s' % (build_dir,
+                                                                        elbe_exe,
+                                                                        uuid))
             # pylint: disable=try-except-raise
             except:
                 raise
