@@ -497,7 +497,7 @@ class ElbeProject (object):
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
                 tgt_lst = cache.get_corresponding_source_packages(pkg_lst=tgt_pkg_lst)
-                components = {"target":(self.targetfs, cache, tgt_lst)}
+                components = {"target":(self.buildenv.rfs, cache, tgt_lst)}
 
                 # Main component
                 main_lst = []
