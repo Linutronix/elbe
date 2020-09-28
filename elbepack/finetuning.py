@@ -554,7 +554,7 @@ class LosetupAction(FinetuningAction):
         imgpath = os.path.join(builddir, imgname)
         cmd = 'losetup --find --show --partscan "%s"' % imgpath
 
-        loop_dev = get_command_out(cmd).strip()
+        loop_dev = get_command_out(cmd).decode().strip()
         try:
             for i in self.node:
                 action = ImageFinetuningAction(i)
