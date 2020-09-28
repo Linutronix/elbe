@@ -280,22 +280,24 @@ class RepoBase(object):
 
     def removesrc(self, path, components=None):
         # pylint: disable=undefined-variable
-        for p in Deb822.iter_paragraphs(file(path)):
-            if 'Source' in p:
-                self._removesrc(p['Source'],
-                                self.repo_attr.codename,
-                                components)
+        with open(path) as fp:
+            for p in Deb822.iter_paragraphs(fp):
+                if 'Source' in p:
+                    self._removesrc(p['Source'],
+                                    self.repo_attr.codename,
+                                    components)
 
     def _remove(self, path, codename, components=None):
         # pylint: disable=undefined-variable
-        for p in Deb822.iter_paragraphs(file(path)):
-            if 'Source' in p:
-                self._removesrc(p['Source'], codename, components)
-            elif 'Package' in p:
-                self._removedeb(p['Package'], codename, components)
-            elif 'Binary' in p:
-                for pp in p['Binary'].split():
-                    self._removedeb(pp, codename, components)
+        with open(path) as fp:
+            for p in Deb822.iter_paragraphs(fp):
+                if 'Source' in p:
+                    self._removesrc(p['Source'], codename, components)
+                elif 'Package' in p:
+                    self._removedeb(p['Package'], codename, components)
+                elif 'Binary' in p:
+                    for pp in p['Binary'].split():
+                        self._removedeb(pp, codename, components)
 
 
     def _includedsc(self, path, codename, components=None):
