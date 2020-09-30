@@ -1,3 +1,25 @@
+elbe (13.0) unstable; urgency=medium
+
+  * Team upload
+  * initvm:
+    * fix initvm ensure
+    * fix problems with initvm stop
+  * allow specifying mirror options via <options>
+  * test:
+    * pylint test is now parameterized
+    * test xml builds
+    * test pbuilder
+    * check-build tester
+  * finetuning: generate an error if an artifact does not exist
+  * sysroot: fix problems with 
+  * fix problems with losetup
+  * debianize: fix problems with kernel build
+  * examples: add docker related examples
+  * pbuilder: fix adding built packages to internal repo.
+  * python3: remove python2 packages and switch to python3 everywhere
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Wed, 30 Sep 2020 17:32:51 +0200
+
 elbe (12.5) unstable; urgency=medium
 
   * Fix building sdk for amd64
