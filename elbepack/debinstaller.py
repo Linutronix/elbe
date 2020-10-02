@@ -7,21 +7,8 @@ import sys
 import os
 import re
 
-# different module names in python 2 and 3
-try:
-    import urllib.request
-
-    # when running inside pylint this import fails
-    # disable no-member here
-    #
-    # pylint: disable=no-member
-
-    urlopen = urllib.request.urlopen
-except ImportError:
-    import urllib2
-    urlopen = urllib2.urlopen
-
 from shutil import copyfile
+from urllib.request import urlopen
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP

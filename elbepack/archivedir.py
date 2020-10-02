@@ -8,11 +8,7 @@ import os
 import re
 import sys
 
-# The urlparse module is renamed to urllib.parse in Python 3.
-try:
-    from urllib.parse import urljoin,urlparse
-except ImportError:
-    from urlparse import urljoin,urlparse
+from urllib.parse import urljoin,urlparse
 
 from base64 import encodebytes, standard_b64decode
 from subprocess import CalledProcessError

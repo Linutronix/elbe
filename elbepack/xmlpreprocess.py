@@ -8,15 +8,12 @@
 import os
 import re
 import sys
-try:
-    from urllib.request import urlopen
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import urlopen, HTTPError
 
 from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
 from itertools import islice
+from urllib.error import HTTPError
+from urllib.request import urlopen
 
 from lxml import etree
 from lxml.etree import XMLParser, parse, Element

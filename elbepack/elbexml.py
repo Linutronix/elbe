@@ -10,19 +10,17 @@
 
 import os
 import re
+
+from urllib.error import URLError
+from urllib.request import (urlopen, install_opener, build_opener,
+                            HTTPPasswordMgrWithDefaultRealm,
+                            HTTPBasicAuthHandler)
+
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 from elbepack.xmldefaults import ElbeDefaults
 
 from elbepack.version import elbe_version, is_devel
-try:
-    from urllib.request import (urlopen, install_opener, build_opener,
-                                HTTPPasswordMgrWithDefaultRealm,
-                                HTTPBasicAuthHandler)
-    from urllib.error import URLError
-except ImportError:
-    from urllib2 import (urlopen, install_opener, build_opener, URLError,
-                         HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler)
 
 class ValidationError(Exception):
     def __init__(self, validation):

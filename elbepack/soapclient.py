@@ -14,12 +14,8 @@ import os
 import fnmatch
 
 from datetime import datetime
-try:
-    from urllib.error import URLError
-    from http.client import BadStatusLine
-except ImportError:
-    from urllib2 import URLError
-    from httplib import BadStatusLine
+from http.client import BadStatusLine
+from urllib.error import URLError
 
 import deb822   # package for dealing with Debian related data
 
