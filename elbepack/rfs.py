@@ -10,15 +10,12 @@
 import os
 import logging
 
+from urllib.parse import urlsplit
+
 from elbepack.efilesystem import BuildImgFs
 from elbepack.templates import (write_pack_template, get_preseed,
                                 preseed_to_text)
 from elbepack.shellhelper import CommandError, do, chroot, get_command_out
-
-try:
-    from urlparse import urlsplit
-except ImportError:
-    from urllib.parse import urlsplit
 
 
 def create_apt_prefs(xml, rfs):

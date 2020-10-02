@@ -16,6 +16,7 @@ import glob
 from datetime import datetime
 from shutil import (rmtree, copyfile, copyfileobj)
 from contextlib import contextmanager
+from urllib.parse import quote
 from threading import Thread
 
 from passlib.hash import pbkdf2_sha512
@@ -33,10 +34,6 @@ from sqlalchemy.exc import OperationalError
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import (ElbeXML, ValidationMode)
 from elbepack.dosunix import dos2unix
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib import quote
 
 Base = declarative_base()
 
