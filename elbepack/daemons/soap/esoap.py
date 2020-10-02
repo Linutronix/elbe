@@ -14,6 +14,11 @@ import sys
 
 from tempfile import NamedTemporaryFile
 
+from spyne.service import ServiceBase
+from spyne.decorator import rpc
+from spyne.model.primitive import String, Boolean, Integer
+from spyne.model.complex import Array
+
 from elbepack.shellhelper import system, command_out
 from elbepack.version import elbe_version, is_devel
 from elbepack.elbexml import ValidationMode
@@ -22,16 +27,6 @@ from elbepack.filesystem import hostfs
 from .faults import soap_faults
 from .datatypes import SoapProject, SoapFile, SoapCmdReply
 from .authentication import authenticated_admin, authenticated_uid
-
-try:
-    from spyne.service import ServiceBase
-    from spyne.decorator import rpc
-    from spyne.model.primitive import String, Boolean, Integer
-    from spyne.model.complex import Array
-except ImportError as e:
-    print("failed to import spyne", file=sys.stderr)
-    print("please install python(3)-spyne", file=sys.stderr)
-    sys.exit(20)
 
 
 class ESoap (ServiceBase):

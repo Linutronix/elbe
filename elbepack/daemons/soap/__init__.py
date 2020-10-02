@@ -11,18 +11,13 @@ import warnings
 from beaker.middleware import SessionMiddleware
 from cherrypy.process.plugins import SimplePlugin
 
+from spyne import Application
+from spyne.protocol.soap import Soap11
+from spyne.server.wsgi import WsgiApplication
+
 from elbepack.projectmanager import ProjectManager
 
 from .esoap import ESoap
-
-try:
-    from spyne import Application
-    from spyne.protocol.soap import Soap11
-    from spyne.server.wsgi import WsgiApplication
-except ImportError as e:
-    print("failed to import spyne", file=sys.stderr)
-    print("please install python(3)-spyne", file=sys.stderr)
-    sys.exit(20)
 
 
 logging.getLogger('spyne').setLevel(logging.INFO)
