@@ -18,6 +18,7 @@ from multiprocessing import Process
 from zipfile import (ZipFile, BadZipfile)
 from shutil import copyfile, rmtree, copy
 
+from packaging import version
 from syslog import syslog
 
 from suds.client import Client
@@ -35,12 +36,6 @@ from elbepack.config import cfg
 from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.shellhelper import CommandError, system
-
-downgrade_prevention_feature_available = True
-try:
-    from packaging import version
-except ImportError:
-    downgrade_prevention_feature_available = False
 
 # TODO:py3 Remove object inheritance
 # pylint: disable=useless-object-inheritance
@@ -477,14 +472,13 @@ def action_select(upd_file, status):
         upd_file_z.extract("new.xml", "/tmp/")
 
     # prevent downgrades (if available)
-    if downgrade_prevention_feature_available:
-        try:
-            if reject_downgrade(status, "/tmp/new.xml"):
-                return
-        # pylint: disable=broad-except
-        except Exception as e:
-            status.log('Error while reading XML files occurred: ' + str(e))
+    try:
+        if reject_downgrade(status, "/tmp/new.xml"):
             return
+    # pylint: disable=broad-except
+    except Exception as e:
+        status.log('Error while reading XML files occurred: ' + str(e))
+        return
 
     xml = etree("/tmp/new.xml")
     prefix = status.repo_dir + "/" + fname_replace(xml.text("/project/name"))

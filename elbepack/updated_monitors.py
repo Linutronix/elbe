@@ -7,12 +7,7 @@
 import os
 import threading
 import pyinotify
-
-try:
-    import pyudev
-    udev_available = True
-except ImportError:
-    udev_available = False
+import pyudev
 
 from elbepack.updated import is_update_file, handle_update_file
 
