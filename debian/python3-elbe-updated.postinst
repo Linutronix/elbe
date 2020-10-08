@@ -8,5 +8,5 @@ set -e
 #  elbe-updated is updating itself
 
 if which pycompile >/dev/null 2>&1; then
-	pycompile -p elbe-updated 
+	pycompile -p python3-elbe-updated 
 fi
