@@ -9,9 +9,9 @@ set -e
 #  elbe-updated is updating itself
 
 if which pyclean >/dev/null 2>&1; then
-	pyclean -p elbe-updated 
+	pyclean -p python3-elbe-updated
 else
-	dpkg -L elbe-updated | grep \.py$ | while read file
+	dpkg -L python3-elbe-updated | grep \.py$ | while read file
 	do
 		rm -f "${file}"[co] >/dev/null
 	done
