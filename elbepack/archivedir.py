@@ -14,7 +14,7 @@ try:
 except ImportError:
     from urlparse import urljoin,urlparse
 
-from base64 import encodestring, standard_b64decode
+from base64 import encodebytes, standard_b64decode
 from subprocess import CalledProcessError
 from tempfile import NamedTemporaryFile
 
@@ -31,9 +31,7 @@ def enbase(fname, compress=True):
         s = infile.read()
         if compress:
             s = bz2.compress(s)
-        # TODO:py3 - Use base64.encodebytes
-        # pylint: disable=deprecated-method
-        return encodestring(s)
+        return encodebytes(s)
 
 def collect(tararchive, path, keep):
     if keep:
