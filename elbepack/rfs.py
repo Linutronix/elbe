@@ -320,7 +320,7 @@ class BuildEnv (object):
 
 
     def seed_etc(self):
-        passwd = self.xml.text("target/passwd").encode(encoding='utf-8')
+        passwd = self.xml.text("target/passwd")
         stdin = "%s\n%s\n" % (passwd, passwd)
         chroot(self.rfs.path, "passwd", stdin=stdin)
 
