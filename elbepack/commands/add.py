@@ -39,8 +39,7 @@ def run_command(argv):
     try:
         xml.xml.write(xmlfile)
         sys.exit(0)
-    # TODO:py3 - Change exception to PermissionError
-    except IOError as E:
+    except PermissionError as E:
         print("Unable to truncate file %s: %s" % (xmlfile, E))
 
     sys.exit(20)

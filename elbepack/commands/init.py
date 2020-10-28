@@ -293,7 +293,6 @@ def run_command(argv):
         for src, dst in to_cpy:
             try:
                 os.makedirs(dst)
-            # TODO:py3 - Change exception to FileExistsError
-            except OSError:
+            except FileExistsError:
                 pass
             shutil.copy(src, dst)
