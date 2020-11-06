@@ -62,7 +62,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # create elbe user
 RUN groupadd -g @KVMGID@ -o -r kvm-elbe
-RUN useradd -d /home/elbe -U -G kvm-elbe,libvirt -m -s /bin/bash -u @USERID@ elbe
+RUN useradd -d /home/elbe -l -U -G kvm-elbe,libvirt -m -s /bin/bash -u @USERID@ elbe
 RUN echo "root:elbe" | chpasswd
 RUN echo "elbe:elbe" | chpasswd
 
