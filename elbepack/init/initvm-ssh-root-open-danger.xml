@@ -46,14 +46,13 @@
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+			<!-- See https://bugs.debian.org/837733 for this counter-intuitive setting -->
+			<conf owner="openssh-server" key="openssh-server/permit-root-login" type="boolean" value="false"/>
 		</preseed>
 		<size>80G</size>
 		<swap-size>10GiB</swap-size>
 		<img>qcow2</img>
 		<portforwarding>
 		</portforwarding>
-		<finetuning>
-			<command>sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config</command>
-		</finetuning>
 	</initvm>
 </ns0:RootFileSystem>
