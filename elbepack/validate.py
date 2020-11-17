@@ -77,15 +77,17 @@ def validate_xml_content(xml):
 
     if (not https
         and (dbsv is None
-             or "apt-transport-https" not in dbsv.get("includepkgs", ""))):
+             or ("apt-transport-https" not in dbsv.get("includepkgs", "")
+             and "ca-certificates" not in dbsv.get("includepkgs", "")))):
         for url in xml.findall("/project/mirror/url-list/url"):
             b = url.findtext("binary", "")
             s = url.findtext("source", "")
             if b.startswith("https") or s.startswith("https"):
                 errors.append("\nThe XML contains an HTTPS mirror. "
                               "Use debootstrapvariant's attribute includepkgs "
-                              "to make apt-transport-https available in "
-                              "debootstrap.\n")
+                              "to make apt-transport-https (stretch and older) "
+                              "or ca-certificates (buster and newer) available "
+                              "in debootstrap.\n")
                 break
 
     return errors
