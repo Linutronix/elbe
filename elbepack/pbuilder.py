@@ -76,7 +76,7 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
-    fp.write('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False))
+    fp.write('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False, hostsysroot=True))
     fp.write('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo %s main"\n' %
              (builddir, distname))
     fp.write('BASETGZ="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'base.tgz'))
