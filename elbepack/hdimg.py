@@ -190,7 +190,6 @@ class grubinstaller202(grubinstaller_base):
             devmap.write("(hd0) %s\n" % poopdev)
             devmap.close()
 
-            chroot(imagemnt, "update-initramfs -u -k all")
             chroot(imagemnt, "update-grub2")
 
             if "efi" in self.fw_type:
@@ -266,8 +265,6 @@ class grubinstaller97(grubinstaller_base):
             devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
             devmap.write("(hd0) %s\n" % poopdev)
             devmap.close()
-
-            chroot(imagemnt, "update-initramfs -u -k all")
 
             # Replace groot and kopt because else they will be given
             # bad values
