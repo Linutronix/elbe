@@ -308,6 +308,9 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
     >>> get_command_out("cat -", stdin=b"ELBE", env_add={"TRUE":"true"})
     b'ELBE'
+
+    >>> get_command_out("cat -", stdin="ELBE", env_add={"TRUE":"true"})
+    b'ELBE'
     """
 
     new_env = os.environ.copy()
