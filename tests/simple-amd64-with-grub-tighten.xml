@@ -26,10 +26,9 @@
 		<domain>elbe-ci</domain>
 		<passwd>root</passwd>
 		<console>ttyS0,115200</console>
-		<debootstrapvariant>minbase</debootstrapvariant>
 
 		<images>
-			<gpthd>
+			<msdoshd>
 				<name>sda.img</name>
 				<size>2000MiB</size>
 				<grub-install />
@@ -37,7 +36,7 @@
 					<size>remain</size>
 					<label>rfs</label>
 				</partition>
-			</gpthd>
+			</msdoshd>
 		</images>
 
 		<fstab>
@@ -49,10 +48,11 @@
 		</fstab>
 
 		<pkg-list>
-		  <pkg>busybox-static</pkg>
+		  <pkg>grub-pc</pkg>
+		  <pkg>linux-image-amd64</pkg>
+		  <pkg>systemd</pkg>
 		</pkg-list>
 
-		<tighten />
 		<install-recommends />
 
 		<finetuning>
@@ -63,4 +63,13 @@
 			<artifact>/etc/hosts</artifact>
 		</finetuning>
 	</target>
+	<check-image-list>
+		<check>
+			<img>sda.img.tar.gz</img>
+			<interpreter>qemu-system-x86_64</interpreter>
+			<interpreter-opts>-m 2G -enable-kvm -cpu host -drive format=raw,file=$ELBE_IMG -nographic</interpreter-opts>
+
+			<action> <login /> </action>
+		</check>
+	</check-image-list>
 </ns0:RootFileSystem>
