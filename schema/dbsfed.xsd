@@ -1770,6 +1770,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="binary" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            path and filename of a binary image which will be used as a source
+	    for this volume; this can be used for example to store a bootloader
+	    in a partition.
+          </documentation>
+        </annotation>
+      </element>
       <element name="bootable" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>

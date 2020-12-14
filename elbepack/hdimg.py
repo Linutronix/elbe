@@ -13,7 +13,7 @@ import os
 import parted
 import _ped
 
-from elbepack.fstab import fstabentry, mountpoint_dict
+from elbepack.fstab import fstabentry, mountpoint_dict, hdpart
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.shellhelper import do, CommandError, chroot, get_command_out
 
@@ -370,6 +370,23 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     return ppart
 
+def create_binary(disk, part, ppart, target):
+
+    entry = hdpart()
+    entry.set_geometry(ppart, disk)
+
+    loopdev = entry.losetup()
+
+    # copy from buildenv if path starts with /
+    if part.text("binary")[0] == '/':
+        tmp = target + "/" + "chroot" + part.text("binary")
+    # copy from project directory
+    else:
+        tmp = target + "/" + part.text("binary")
+
+    do(f'dd if="{tmp}" of="{loopdev}"')
+
+    do(f'losetup -d "{loopdev}"')
 
 def create_logical_partitions(disk,
                               extended,
@@ -395,7 +412,9 @@ def create_logical_partitions(disk,
             fslabel,
             size_in_sectors,
             current_sector)
-        if logical.has("label") and logical.text("label") in fslabel:
+        if logical.has('binary'):
+            create_binary(disk, logical, lpart, target)
+        elif logical.has("label") and logical.text("label") in fslabel:
             create_label(disk, logical, lpart, fslabel, target, grub)
 
         current_sector += lpart.getLength()
@@ -443,7 +462,9 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
                 fslabel,
                 size_in_sectors,
                 current_sector)
-            if part.text("label") in fslabel:
+            if part.has("binary"):
+                create_binary(disk, part, ppart, target)
+            elif part.text("label") in fslabel:
                 create_label(disk, part, ppart, fslabel, target, grub)
         elif part.tag == "extended":
             ppart = create_partition(
