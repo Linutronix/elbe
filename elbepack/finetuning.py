@@ -698,6 +698,25 @@ class CopyToPartition(ImageFinetuningAction):
             cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
             do(cmd)
 
+@FinetuningAction.register('set_partition_type')
+class SetPartitionTypeAction(ImageFinetuningAction):
+
+    def __init__(self, node):
+        ImageFinetuningAction.__init__(self, node)
+
+    def execute(self, _buildenv, _target):
+        raise NotImplementedError("<set_partition_type> may only be "
+                                  "used in <mount_drive>")
+
+    def execute_img(self, _buildenv, target, builddir, loop_dev):
+        part_nr = self.node.et.attrib['part']
+        part_type = self.node.et.attrib['type']
+
+        cmd = f'fdisk {loop_dev}'
+        inp = f't\n{part_nr}\n{part_type}\nw\n'
+
+        do(cmd, stdin=inp)
+
 
 @FinetuningAction.register("unit-tests")
 class TestSuites(FinetuningAction):

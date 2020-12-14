@@ -2263,6 +2263,14 @@
           </documentation>
         </annotation>
       </element>
+      <element name="set_partition_type" type="rfs:set_partition_type" minOccurs="0">
+        <annotation>
+          <documentation>
+	    Set the type of a partition via fdisk. (to support esoteric partition types,
+	    that parted does not support.)
+          </documentation>
+        </annotation>
+      </element>
       <element name="command" type="rfs:partition-command" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
@@ -2334,6 +2342,17 @@
         <attribute name="artifact" type="string" use="required" />
       </extension>
     </simpleContent>
+  </complexType>
+  <complexType name="set_partition_type">
+    <annotation>
+      <documentation>
+        Attribute 'part' describes the partition to be modified (nr).
+	Attribute 'type' is the numerical partition id, as understood by
+	fdisk.
+      </documentation>
+    </annotation>
+    <attribute name="part" type="integer" use="required" />
+    <attribute name="type" type="string" use="required" />
   </complexType>
   <complexType name="addgroup">
     <annotation>
