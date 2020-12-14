@@ -71,30 +71,8 @@ class mountpoint_dict (dict):
 
         return [self[x] for x in mplist]
 
-
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class fstabentry(object):
-
-    # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, xml, entry, fsid=0):
-        if entry.has("source"):
-            self.source = entry.text("source")
-        else:
-            self.source = get_devicelabel(xml, entry)
-
-        if entry.has("label"):
-            self.label = entry.text("label")
-
-        self.mountpoint = entry.text("mountpoint")
-        self.options = entry.text("options", default="defaults")
-        if entry.has("fs"):
-            self.fstype = entry.text("fs/type")
-            self.mkfsopt = entry.text("fs/mkfs", default="")
-            self.passno = entry.text("fs/passno", default="0")
-            self.tune = entry.text("fs/tune2fs", default=None)
-
+class hdpart:
+    def __init__(self):
         # These attributes are filled later
         # using set_geometry()
         self.size = 0
@@ -102,29 +80,6 @@ class fstabentry(object):
         self.filename = ''
         self.partnum = 0
         self.number = ''
-
-        self.id = str(fsid)
-
-    def get_str(self):
-        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint,
-                                       self.fstype, self.options, self.passno)
-
-    def mountdepth(self):
-        h = self.mountpoint
-        depth = 0
-
-        while True:
-            h, t = os.path.split(h)
-            if t == '':
-                return depth
-            depth += 1
-
-    def get_label_opt(self):
-        if self.fstype in ("ext4", "ext3", "ext2", "xfs", "btrfs"):
-            return "-L " + self.label
-        if self.fstype == "vfat":
-            return "-n " + self.label
-        return ""
 
     def set_geometry(self, ppart, disk):
         sector_size = 512
@@ -152,6 +107,55 @@ class fstabentry(object):
                 break
 
         return loopdev.decode().rstrip('\n')
+
+
+# TODO:py3 Remove object inheritance
+# pylint: disable=useless-object-inheritance
+class fstabentry(hdpart):
+
+    # pylint: disable=too-many-instance-attributes
+
+    def __init__(self, xml, entry, fsid=0):
+        super().__init__()
+
+        if entry.has("source"):
+            self.source = entry.text("source")
+        else:
+            self.source = get_devicelabel(xml, entry)
+
+        if entry.has("label"):
+            self.label = entry.text("label")
+
+        self.mountpoint = entry.text("mountpoint")
+        self.options = entry.text("options", default="defaults")
+        if entry.has("fs"):
+            self.fstype = entry.text("fs/type")
+            self.mkfsopt = entry.text("fs/mkfs", default="")
+            self.passno = entry.text("fs/passno", default="0")
+            self.tune = entry.text("fs/tune2fs", default=None)
+
+        self.id = str(fsid)
+
+    def get_str(self):
+        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint,
+                                       self.fstype, self.options, self.passno)
+
+    def mountdepth(self):
+        h = self.mountpoint
+        depth = 0
+
+        while True:
+            h, t = os.path.split(h)
+            if t == '':
+                return depth
+            depth += 1
+
+    def get_label_opt(self):
+        if self.fstype in ("ext4", "ext3", "ext2", "xfs", "btrfs"):
+            return "-L " + self.label
+        if self.fstype == "vfat":
+            return "-n " + self.label
+        return ""
 
     def tuning(self, loopdev):
         if self.tune:
