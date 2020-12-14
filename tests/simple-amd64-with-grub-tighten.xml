@@ -67,6 +67,13 @@
 			<cp path="/etc/bash.bashrc">/root/.bashrc</cp>
 			<artifact>/etc/hosts</artifact>
 		</finetuning>
+
+		<project-finetuning>
+			<losetup img="sda.img">
+				<!-- globs work, but must make sure, that only a single file is matched -->
+				<set_partition_type part="2" type="14"/>
+			</losetup>
+		</project-finetuning>
 	</target>
 	<check-image-list>
 		<check>
