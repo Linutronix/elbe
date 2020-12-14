@@ -33,8 +33,13 @@
 				<size>2000MiB</size>
 				<grub-install />
 				<partition>
-					<size>remain</size>
+					<size>1000MiB</size>
 					<label>rfs</label>
+				</partition>
+				<partition>
+					<size>64kB</size>
+					<label>bindata</label>
+					<binary>/etc/hosts</binary>
 				</partition>
 			</msdoshd>
 		</images>
