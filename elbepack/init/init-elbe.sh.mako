@@ -62,8 +62,8 @@ in-target update-initramfs -u
    mkdir /buildenv/var/cache/elbe/devel
    tar xj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
-   sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/etc/init.d/elbe-daemon
-   sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/lib/systemd/system/elbe-daemon.service
+   sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/etc/init.d/python3-elbe-daemon
+   sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/lib/systemd/system/python3-elbe-daemon.service
 % endif
 
 # since elbe fetch_initvm_pkgs generates repo keys,
