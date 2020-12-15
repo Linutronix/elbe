@@ -143,9 +143,7 @@ def build_image_mtd(mtd, target):
     return img_files
 
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class grubinstaller_base(object):
+class grubinstaller_base:
     def __init__(self, fw_type=None):
         self.fs = mountpoint_dict()
         self.fw_type = fw_type if fw_type else []
@@ -294,9 +292,7 @@ class grubinstaller97(grubinstaller_base):
             do("kpartx -d %s" % poopdev, allow_fail=True)
             do("losetup -d %s" % poopdev, allow_fail=True)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class simple_fstype(object):
+class simple_fstype:
     def __init__(self, typ):
         self.type = typ
 

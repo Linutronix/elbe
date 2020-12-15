@@ -109,8 +109,6 @@ class hdpart:
         return loopdev.decode().rstrip('\n')
 
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
 class fstabentry(hdpart):
 
     # pylint: disable=too-many-instance-attributes

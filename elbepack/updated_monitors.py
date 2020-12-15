@@ -11,9 +11,7 @@ import pyudev
 
 from elbepack.updated import is_update_file, handle_update_file
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class UpdateMonitor(object):
+class UpdateMonitor:
     def __init__(self, status):
         self.status = status
 

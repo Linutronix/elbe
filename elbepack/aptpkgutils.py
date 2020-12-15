@@ -139,9 +139,7 @@ def fetch_binary(version, destdir='', progress=None):
 
     return os.path.abspath(destfile)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class PackageBase(object):
+class PackageBase:
 
     # pylint: disable=too-many-instance-attributes
 

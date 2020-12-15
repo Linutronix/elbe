@@ -95,9 +95,7 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
     return filename
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeDB(object):
+class ElbeDB:
 
     # pylint: disable=too-many-public-methods
 
@@ -1049,9 +1047,7 @@ class User(Base):
     admin = Column(Boolean)
     projects = relationship("Project", backref="owner")
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class UserData (object):
+class UserData:
     def __init__(self, user):
         self.id = int(user.id)
         self.name = str(user.name)
@@ -1073,9 +1069,7 @@ class Project (Base):
     versions = relationship("ProjectVersion", backref="project")
     files = relationship("ProjectFile", backref="project")
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ProjectData (object):
+class ProjectData:
     def __init__(self, project):
         self.builddir = str(project.builddir)
         self.name = str(project.name)
@@ -1097,9 +1091,7 @@ class ProjectVersion (Base):
     description = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ProjectVersionData (object):
+class ProjectVersionData:
     def __init__(self, pv):
         self.builddir = str(pv.builddir)
         self.version = str(pv.version)
@@ -1127,9 +1119,7 @@ class ProjectFile (Base):
     mime_type = Column(String, nullable=False)
     description = Column(String)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ProjectFileData (object):
+class ProjectFileData:
     def __init__(self, pf):
         self.name = str(pf.name)
         self.builddir = str(pf.builddir)

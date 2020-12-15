@@ -68,9 +68,7 @@ def lookup_uri(v, d, target_pkg):
 
     return target_pkg, uri, hashval
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class VirtApt(object):
+class VirtApt:
     def __init__(self, xml):
 
         # pylint: disable=too-many-statements

@@ -59,9 +59,7 @@ class MyMan(BaseManager):
         super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
         async_logging(r, w, soap, log)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class InChRootObject(object):
+class InChRootObject:
     def __init__(self, rfs):
         self.rfs = rfs
         self.rfs.enter_chroot()

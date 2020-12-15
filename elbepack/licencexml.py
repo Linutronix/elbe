@@ -43,9 +43,7 @@ def get_heuristics_license_list(c):
 
     return set(licenses)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class copyright_xml (object):
+class copyright_xml:
     def __init__(self):
         self.outxml = etree(None)
         self.pkglist = self.outxml.setroot('pkglicenses')

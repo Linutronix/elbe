@@ -6,9 +6,7 @@
 import os
 from elbepack.shellhelper import CommandError, do
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class Packer(object):
+class Packer:
 
     def pack_file(self, _builddir, _fname):
         raise NotImplementedError('abstract method called')

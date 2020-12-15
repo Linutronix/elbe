@@ -43,9 +43,7 @@ def set_suds_debug(debug):
         logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
         logging.getLogger('suds.client').setLevel(logging.CRITICAL)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeSoapClient(object):
+class ElbeSoapClient:
     def __init__(self, host, port, user, passwd, retries=10, debug=False):
 
         # pylint: disable=too-many-arguments
@@ -118,9 +116,7 @@ class ElbeSoapClient(object):
             fp.write(binascii.a2b_base64(ret))
             part = part + 1
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ClientAction(object):
+class ClientAction:
     actiondict = {}
 
     @classmethod

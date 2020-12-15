@@ -198,9 +198,7 @@ def get_random_mac():
 
     return ':'.join(s)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeDefaults(object):
+class ElbeDefaults:
 
     def __init__(self, build_type):
 

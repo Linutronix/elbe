@@ -66,9 +66,7 @@ def run_command(argv):
 class CheckException(Exception):
     pass
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class CheckBase(object):
+class CheckBase:
 
     tests = dict()
 

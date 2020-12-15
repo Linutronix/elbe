@@ -11,9 +11,7 @@ from lxml.etree import XMLParser, parse
 
 # ElementTree helpers
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class eiter(object):
+class eiter:
     def __init__(self, it):
         self.it = it
 
@@ -30,9 +28,7 @@ class eiter(object):
 
         return elem(n)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ebase(object):
+class ebase:
     def __init__(self, et):
         self.et = et
 

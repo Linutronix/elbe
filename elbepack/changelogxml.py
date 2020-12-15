@@ -9,9 +9,7 @@ from elbepack.treeutils import etree
 
 remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class changelogs_xml(object):
+class changelogs_xml:
     def __init__(self):
         self.outxml = etree(None)
         self.pkglist = self.outxml.setroot('pkgchangelogs')

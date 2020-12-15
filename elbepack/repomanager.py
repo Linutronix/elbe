@@ -18,9 +18,7 @@ from elbepack.pkgutils import get_dsc_size
 from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
 from elbepack.shellhelper import CommandError, do
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class RepoAttributes(object):
+class RepoAttributes:
     def __init__(self, codename, arch, components,
                  mirror='http://ftp.de.debian.org/debian'):
         self.codename = codename
@@ -49,9 +47,7 @@ class RepoAttributes(object):
 
         return [RepoAttributes(self.codename, ret_arch, ret_comp, self.mirror)]
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class RepoBase(object):
+class RepoBase:
 
     # pylint: disable=too-many-instance-attributes
 

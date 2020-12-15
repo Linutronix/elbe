@@ -37,9 +37,7 @@ from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.shellhelper import CommandError, system
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class UpdateStatus(object):
+class UpdateStatus:
 
     # pylint: disable=too-many-instance-attributes
 
@@ -149,9 +147,7 @@ class UpdateService (ServiceBase):
         self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
         self.app.status.log("connection established")
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class rw_access_file(object):
+class rw_access_file:
     def __init__(self, filename, status):
         self.filename = filename
         self.rw = rw_access(filename, status)
@@ -167,9 +163,7 @@ class rw_access_file(object):
             self.f.close()
         self.rw.__exit__(typ, value, traceback)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class rw_access(object):
+class rw_access:
     def __init__(self, directory, status):
         self.status = status
         self.directory = directory

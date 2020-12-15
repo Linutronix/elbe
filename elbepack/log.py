@@ -219,9 +219,7 @@ def close_logging():
             h.close()
     local.handlers = []
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class AsyncLogging(object):
+class AsyncLogging:
 
     def __init__(self, atmost, stream, block):
         self.lines = []

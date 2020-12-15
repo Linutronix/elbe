@@ -11,9 +11,7 @@ import os
 
 arch2triple = {"armhf": "arm-linux-gnueabihf", "armel": "arm-linux-gnueabi"}
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class Toolchain(object):
+class Toolchain:
     libc_path = "${triple}/libc"
     gcc_libpath = "${triple}/lib"
     pkg_libs = {}

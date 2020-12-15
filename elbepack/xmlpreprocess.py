@@ -329,9 +329,7 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
     raise XMLPreprocessError("\n".join(error_log_to_strings(schema.error_log)))
 
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class PreprocessWrapper(object):
+class PreprocessWrapper:
     def __init__(self, xmlfile, opt):
         self.xmlfile = xmlfile
         self.outxml = None

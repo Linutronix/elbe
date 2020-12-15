@@ -39,9 +39,7 @@ class ElbeTestCase(unittest.TestCase):
     def parameterize(self, param):
         return self.__class__(methodName=self.methodName, param=param)
 
-# TODO:py3 - Remove useless object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeTestSuite(object):
+class ElbeTestSuite:
 
     # This must be a list not a set!!!
     tests  = []

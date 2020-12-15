@@ -27,10 +27,8 @@ elbe_internal_key_param = """
 </GnupgKeyParms>
 """
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
 # pylint: disable=too-many-instance-attributes
-class OverallStatus(object):
+class OverallStatus:
 
     def __init__(self):
         self.invalid = 0

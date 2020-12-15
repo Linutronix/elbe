@@ -49,9 +49,7 @@ def size_to_int(size):
 
     return int(s) * unit
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class Filesystem(object):
+class Filesystem:
 
     # pylint: disable=too-many-public-methods
 

@@ -29,9 +29,7 @@ from elbepack.shellhelper import chroot, do, get_command_out
 class FinetuningException(Exception):
     pass
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class FinetuningAction(object):
+class FinetuningAction:
 
     actiondict = {}
 

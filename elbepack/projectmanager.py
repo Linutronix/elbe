@@ -56,17 +56,13 @@ class InvalidState(ProjectManagerError):
     def __init__(self, message):
         ProjectManagerError.__init__(self, message)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class OpenProjectFile(object):
+class OpenProjectFile:
     def __init__(self, pfd, mode='r'):
         self.path = path.join(pfd.builddir, pfd.name)
         self.mime_type = pfd.mime_type
         self.fobj = open(self.path, mode)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ProjectManager(object):
+class ProjectManager:
 
     # pylint: disable=too-many-public-methods
 

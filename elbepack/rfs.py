@@ -60,9 +60,7 @@ class DebootstrapException (Exception):
     def __init__(self):
         Exception.__init__(self, "Debootstrap Failed")
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class BuildEnv (object):
+class BuildEnv:
     def __init__(self, xml, path, build_sources=False, clean=False, arch="default", hostsysroot=False):
 
         # pylint: disable=too-many-arguments

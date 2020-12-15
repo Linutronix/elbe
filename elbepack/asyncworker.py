@@ -22,9 +22,7 @@ from elbepack.shellhelper import do
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class AsyncWorkerJob(object):
+class AsyncWorkerJob:
 
     build_done   = "build_done"
     build_failed = "build_failed"

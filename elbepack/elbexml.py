@@ -43,9 +43,7 @@ class ValidationError(Exception):
 class NoInitvmNode(Exception):
     pass
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ValidationMode(object):
+class ValidationMode:
     NO_CHECK = 1
     CHECK_BINARIES = 2
     CHECK_ALL = 0
@@ -58,9 +56,7 @@ def replace_localmachine(mirror, initvm=True):
 
     return mirror.replace("LOCALMACHINE", localmachine)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeXML(object):
+class ElbeXML:
 
     # pylint: disable=too-many-public-methods
 

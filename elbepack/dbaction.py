@@ -12,9 +12,7 @@ from getpass import getpass
 from shutil import copyfileobj
 from elbepack.db import ElbeDB, ElbeDBError
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class DbAction(object):
+class DbAction:
 
     actiondict = {}
 

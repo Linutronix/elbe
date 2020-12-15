@@ -10,9 +10,7 @@ import junit_xml as junit
 class TestException(Exception):
     pass
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class TestSuite(object):
+class TestSuite:
 
     test_dict = {}
 
@@ -52,10 +50,8 @@ class TestSuite(object):
                              test_cases=test_cases)
         return ts
 
-# TODO:py3 - Remove object inheritance
-# pylint: disable=useless-object-inheritance
 @TestSuite.register("BaseTest", register=False)
-class BaseTest(object):
+class BaseTest:
 
     tag = None
 

@@ -224,9 +224,7 @@ class ElbeFilesystem(Filesystem):
         if xml_fname is not None:
             licence_xml.write(xml_fname)
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class Excursion(object):
+class Excursion:
 
     RFS = {}
 

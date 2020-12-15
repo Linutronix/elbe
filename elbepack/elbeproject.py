@@ -117,9 +117,7 @@ def gen_sdk_scripts(triplet,
 
     return sdkname
 
-# TODO:py3 Remove object inheritance
-# pylint: disable=useless-object-inheritance
-class ElbeProject (object):
+class ElbeProject:
 
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-public-methods
