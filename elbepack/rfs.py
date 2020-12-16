@@ -200,19 +200,25 @@ class BuildEnv:
         strapcmd += ' --include="%s"' % includepkgs
 
         if not self.xml.is_cross(host_arch):
-            # ignore gpg verification if install from cdrom, cause debootstrap
-            # seems to ignore /etc/apt/trusted.gpg.d/elbe-keyring.gpg
-            # 01/2017 manut
-            if self.xml.has(
-                    "project/noauth") or self.xml.has("project/mirror/cdrom"):
+            if self.xml.has("project/noauth"):
                 cmd = '%s --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                     strapcmd, arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = '%s --arch=%s "%s" "%s" "%s"' % (
-                    strapcmd, arch, suite, self.rfs.path, primary_mirror)
+                if self.xml.has("project/mirror/cdrom"):
+                    keyring = ' --keyring="%s"' % (
+                        self.rfs.fname('/elbe.keyring'))
+                else:
+                    keyring = ''
+
+                cmd = '%s --arch=%s %s "%s" "%s" "%s"' % (
+                    strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
 
             try:
                 self.cdrom_mount()
+                if keyring:
+                    do('apt-key --keyring "%s" add "%s/targetrepo/repo.pub"' % (
+                        self.rfs.fname('/elbe.keyring'),
+                        self.rfs.fname("cdrom")))
                 do(cmd)
             except CommandError:
                 cleanup = True
@@ -229,8 +235,8 @@ class BuildEnv:
                 strapcmd, arch, suite, self.rfs.path, primary_mirror)
         else:
             if self.xml.has("project/mirror/cdrom"):
-                keyring = ' --keyring="%s/targetrepo/elbe-keyring.gpg"' % (
-                    self.rfs.fname("cdrom"))
+                keyring = ' --keyring="%s"' % (
+                    self.rfs.fname('/elbe.keyring'))
             else:
                 keyring = ''
 
@@ -239,6 +245,10 @@ class BuildEnv:
 
         try:
             self.cdrom_mount()
+            if keyring:
+                do('apt-key --keyring "%s" add "%s/targetrepo/repo.pub"' % (
+                    self.rfs.fname('/elbe.keyring'),
+                    self.rfs.fname("cdrom")))
             do(cmd)
 
             ui = "/usr/share/elbe/qemu-elbe/" + self.xml.defs["userinterpr"]
