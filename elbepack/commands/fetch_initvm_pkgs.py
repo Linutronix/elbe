@@ -116,7 +116,7 @@ def run_command(argv):
                     deb = fetch_binary(pkgver,
                                        opt.archive,
                                        ElbeAcquireProgress(cb=None))
-                    repo.includedeb(deb, 'main')
+                    repo.includedeb(deb, 'main', prio=pkgver.priority)
                 except ValueError:
                     logging.exception('No package "%s"', pkg_id)
                 except FetchError:

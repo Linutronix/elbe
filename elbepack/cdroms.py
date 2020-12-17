@@ -161,7 +161,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
                 deb = cache.download_binary(pkg.name,
                                             '/var/cache/elbe/binaries/main',
                                             pkg.installed_version)
-                target_repo.includedeb(deb, 'main')
+                target_repo.includedeb(deb, 'main', prio=pkg.installed_prio)
             except ValueError:
                 logging.error("No package '%s'", pkg_id)
             except FetchError:
@@ -177,7 +177,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
             deb = cache.download_binary(pkg.name,
                                         '/var/cache/elbe/binaries/added',
                                         pkg.installed_version)
-            target_repo.includedeb(deb, 'added', pkg.name, True)
+            target_repo.includedeb(deb, 'added', pkg.name, prio=pkg.installed_prio, force=True)
         except KeyError as ke:
             logging.error(str(ke))
         except ValueError:

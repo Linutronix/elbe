@@ -143,8 +143,10 @@ class PackageBase:
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, name, installed_version,
-                 candidate_version, installed_md5, candidate_md5,
+    def __init__(self, name,
+                 installed_version, candidate_version,
+                 installed_md5, candidate_md5,
+                 installed_prio, candidate_prio,
                  state, is_auto_installed, origin, architecture):
 
         # pylint: disable=too-many-arguments
@@ -154,6 +156,8 @@ class PackageBase:
         self.candidate_version = candidate_version
         self.installed_md5 = installed_md5
         self.candidate_md5 = candidate_md5
+        self.installed_prio = installed_prio
+        self.candidate_prio = candidate_prio
         self.state = state
         self.is_auto_installed = is_auto_installed
         self.origin = origin
@@ -179,6 +183,8 @@ class APTPackage(PackageBase):
         cver = pkg.candidate and pkg.candidate.version
         imd5 = pkg.installed and apt_pkg_md5(pkg.installed)
         cmd5 = pkg.candidate and apt_pkg_md5(pkg.candidate)
+        iprio = pkg.installed and pkg.installed.priority
+        cprio = pkg.candidate and pkg.candidate.priority
 
         self.state = pkgstate(pkg)
         self.is_auto_installed = pkg.is_auto_installed
@@ -195,15 +201,19 @@ class APTPackage(PackageBase):
             arch = None
             self.installed_deb = None
 
-        PackageBase.__init__(self, pkg.name, iver,
-                             cver, imd5, cmd5,
+        PackageBase.__init__(self, pkg.name,
+                             iver, cver,
+                             imd5, cmd5,
+                             iprio, cprio,
                              pkgstate(pkg), pkg.is_auto_installed,
                              origin, arch)
 
 
 class XMLPackage(PackageBase):
     def __init__(self, node, arch):
-        PackageBase.__init__(self, node.et.text, node.et.get('version'),
-                             None, node.et.get('md5'), None,
+        PackageBase.__init__(self, node.et.text,
+                             node.et.get('version'), None,
+                             node.et.get('md5'), None,
+                             node.et.get('prio'), None,
                              INSTALLED, node.et.get('auto') == 'true',
                              None, arch)

@@ -2581,6 +2581,13 @@
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="prio" type="string" use="optional">
+          <annotation>
+            <documentation>
+              priority of the package in the original repository.
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="on_src_cd" type="string" use="optional">
           <annotation>
             <documentation>

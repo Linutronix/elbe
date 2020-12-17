@@ -380,9 +380,11 @@ class ElbeXML:
         if aptpkg.installed_version is not None:
             pak.et.set('version', aptpkg.installed_version)
             pak.et.set('md5', aptpkg.installed_md5)
+            pak.et.set('prio', aptpkg.installed_prio)
         else:
             pak.et.set('version', aptpkg.candidate_version)
             pak.et.set('md5', aptpkg.candidate_md5)
+            pak.et.set('prio', aptpkg.candidate_prio)
 
         if aptpkg.is_auto_installed:
             pak.et.set('auto', 'true')

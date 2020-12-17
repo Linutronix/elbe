@@ -178,7 +178,7 @@ class RepoBase:
                                                          att.codename)
             do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
-    def _includedeb(self, path, codename, components=None):
+    def _includedeb(self, path, codename, components=None, prio=None):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + os.path.getsize(path)
             if new_size > self.maxsize:
@@ -188,6 +188,9 @@ class RepoBase:
         global_opt = ["--keepunreferencedfiles",
                       "--export=never",
                       '--basedir "%s"' % self.fs.path]
+
+        if prio is not None:
+            global_opt.append(f'--priority {prio}')
 
         if components is not None:
             # Compatibility with old callers
@@ -199,10 +202,12 @@ class RepoBase:
 
         do(cmd % (global_opt, codename, path))
 
-    def includedeb(self, path, components=None, pkgname=None, force=False):
+    def includedeb(self, path, components=None, pkgname=None, force=False, prio=None):
         # pkgname needs only to be specified if force is enabled
         try:
-            self._includedeb(path, self.repo_attr.codename, components)
+            self._includedeb(path, self.repo_attr.codename,
+                             components=components,
+                             prio=prio)
         except CommandError as ce:
             if force and pkgname is not None:
                 # Including deb did not work.
@@ -211,12 +216,11 @@ class RepoBase:
                 #
                 # Try remove, and add again.
                 self.removedeb(pkgname, components)
-                self._includedeb(path, self.repo_attr.codename, components)
+                self._includedeb(path, self.repo_attr.codename,
+                                 components=components,
+                                 prio=prio)
             else:
                 raise ce
-
-    def include_init_deb(self, path, components=None):
-        self._includedeb(path, self.init_attr.codename, components)
 
     def _include(self, path, codename, components=None):
 
