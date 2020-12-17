@@ -44,11 +44,9 @@ class TestSimpleXML(ElbeTestCase):
                            "grep %s | grep build_done || false" %
                            (elbe_exe, uuid))
 
-                # TODO:old - Uncomment this when elbe check-build is available
-                #
-                #for cmd in ("cdrom", "img", "sdk", "rebuild"):
-                #    with self.subTest(cmd=cmd):
-                #        system('%s check-build %s "%s"' % (elbe_exe, cmd, build_dir))
+                for cmd in ("cdrom", "img", "sdk", "rebuild"):
+                    with self.subTest(cmd=cmd):
+                        system('%s check-build %s "%s"' % (elbe_exe, cmd, build_dir))
 
             # pylint: disable=try-except-raise
             except:
