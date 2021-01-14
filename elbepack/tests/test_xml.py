@@ -76,6 +76,8 @@ class TestPbuilder(ElbeTestCase):
                 system('%s pbuilder create --xmlfile "%s" --writeproject "%s"' %
                        (elbe_exe, self.param, prj))
 
+                # TODO: checkout some source code
+
                 with open(prj, "r") as f:
                     uuid = f.read()
                     system('cd "%s"; %s pbuilder build --project %s' % (build_dir,
