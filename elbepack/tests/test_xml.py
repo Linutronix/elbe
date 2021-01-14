@@ -45,7 +45,7 @@ class TestSimpleXML(ElbeTestCase):
                            (elbe_exe, uuid))
 
                 for cmd in ("cdrom", "img", "sdk", "rebuild"):
-                    with self.subTest(cmd=cmd):
+                    with self.subTest(f'check build {cmd}'):
                         system('%s check-build %s "%s"' % (elbe_exe, cmd, build_dir))
 
             # pylint: disable=try-except-raise
