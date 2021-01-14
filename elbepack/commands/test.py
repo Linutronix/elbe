@@ -103,6 +103,64 @@ class ElbeTestSuite:
         for test in self:
             print(test)
 
+class ElbeTestResult(unittest.TestResult):
+
+    def __init__(self):
+        super().__init__()
+        self.cases = []
+        self.current_case = None
+
+    def startTest(self, test):
+        self.current_case = junit.TestCase(name=str(test))
+        self.cases.append(self.current_case)
+        super().startTest(test)
+
+    def addError(self, test, err):
+        """Called when an error has occurred. 'err' is a tuple of values as
+           returned by sys.exc_info().
+        """
+        self.current_case.add_error_info(self._exc_info_to_string(err, test))
+        super().addError(test, err)
+
+    def addFailure(self, test, err):
+        """Called when an error has occurred. 'err' is a tuple of values as
+           returned by sys.exc_info()."""
+
+        self.current_case.add_failure_info(self._exc_info_to_string(err, test))
+        super().addFailure(test, err)
+
+    def addSubTest(self, test, subtest, err):
+        """Called at the end of a subtest.
+           'err' is None if the subtest ended successfully, otherwise it's a
+           tuple of values as returned by sys.exc_info().
+        """
+
+        self.current_case = junit.TestCase(name=str(subtest))
+        self.cases.append(self.current_case)
+
+        if err is not None:
+            if issubclass(err[0], test.failureException):
+                self.current_case.add_failure_info(message=self._exc_info_to_string(err, test))
+            else:
+                self.current_case.add_error_info(message=self._exc_info_to_string(err, test))
+
+        super().addSubTest(test, subtest, err)
+
+    def addSkip(self, test, reason):
+        """Called when a test is skipped."""
+        self.current_case.add_skipped_info(message=reason)
+        super().addSkip(test, reason)
+
+    def get_xml(self):
+        ts = junit.TestSuite(name="test", test_cases=self.cases)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
+
+        return results
+
+
 def run_command(argv):
 
     # pylint: disable=too-many-locals
@@ -161,48 +219,17 @@ def run_command(argv):
               "This was a dry run. No tests were executed")
         os.sys.exit(0)
 
-    cases = []
-
-    err_cnt  = 0
-    fail_cnt = 0
+    result = ElbeTestResult()
 
     for test in suite:
-
         print(test)
-
-        result = unittest.TestResult()
-
         test.run(result)
 
-        case = junit.TestCase(name=str(test))
-
-        for error in result.errors:
-            case.add_error_info(message=error[1])
-            err_cnt += 1
-
-        for failure in result.failures:
-            case.add_failure_info(message=failure[1])
-            fail_cnt += 1
-
-        for us in result.unexpectedSuccesses:
-            case.add_failure_info(message=us)
-            err_cnt += 1
-
-        for skip in result.skipped:
-            case.add_skipped_info(message=skip[1])
-
-        cases.append(case)
-
-    ts = junit.TestSuite(name="test", test_cases=cases)
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
-
     if opt.output is None:
-        print(results)
+        print(result.get_xml())
     else:
         with open(opt.output, "w") as f:
-            f.write(results)
+            f.write(result.get_xml())
 
-    os.sys.exit(err_cnt | fail_cnt)
+    if not result.wasSuccessful():
+        os.sys.exit(20)
