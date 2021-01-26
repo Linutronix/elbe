@@ -9,7 +9,12 @@ import tempfile
 
 from elbepack.directories import elbe_dir, elbe_exe
 from elbepack.commands.test import ElbeTestCase, ElbeTestLevel
-from elbepack.shellhelper import system
+from elbepack.shellhelper import command_out
+
+def system(cmd, allow_fail=False):
+    ret, out = command_out(cmd)
+    if ret != 0 and not allow_fail:
+        raise Exception(out)
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
