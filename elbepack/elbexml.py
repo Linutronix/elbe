@@ -84,7 +84,7 @@ class ElbeXML:
         self.defs = ElbeDefaults(buildtype)
 
         if not skip_validate and url_validation != ValidationMode.NO_CHECK:
-            self.validate_apt_sources(url_validation, buildtype)
+            self.validate_apt_sources(url_validation, self.defs["arch"])
 
     def text(self, txt, key=None):
         if key:
