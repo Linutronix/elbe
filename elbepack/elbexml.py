@@ -248,7 +248,7 @@ class ElbeXML:
         fp.close()
         return ret
 
-    def validate_apt_sources(self, url_validation, buildtype):
+    def validate_apt_sources(self, url_validation, arch):
 
         # pylint: disable=too-many-locals
         # pylint: disable=too-many-branches
@@ -295,7 +295,7 @@ class ElbeXML:
                     r["url"] = "%s/dists/%s/" % (url, suite)
 
                 if line.startswith("deb "):
-                    r["binstr"] = (section + "/binary-%s/Packages" % buildtype)
+                    r["binstr"] = (section + "/binary-%s/Packages" % arch)
                 else:
                     r["srcstr"] = (section + "/source/Sources")
                 repos.append(r)
