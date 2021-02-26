@@ -51,11 +51,6 @@ def mk_source_cdrom(components, codename,
 
     hostfs.mkdir_p('/var/cache/elbe/sources')
 
-    repo = CdromSrcRepo(codename, init_codename,
-                        os.path.join(target, "srcrepo"),
-                        cdrom_size,
-                        mirror)
-
     forbiddenPackages = []
     if xml is not None and xml.has('target/pkg-list'):
         for i in xml.node('target/pkg-list'):
@@ -65,9 +60,16 @@ def mk_source_cdrom(components, codename,
             except KeyError:
                 pass
 
-    for component, (rfs, cache, pkg_lst) in components.items():
+    repos = {}
+
+    for component in components.keys():
+        rfs, cache, pkg_lst = components[component]
         logging.info("Adding %s component", component)
-        rfs.mkdir_p('/var/cache/elbe/sources')
+        rfs.mkdir_p("/var/cache/elbe/sources")
+        repo = CdromSrcRepo(codename, init_codename,
+                            os.path.join(target, "srcrepo-%s" % component),
+                            cdrom_size, mirror)
+        repos[component] = repo
         for pkg, version in pkg_lst:
             add_source_pkg(repo, component,
                            cache, pkg, version,
@@ -87,9 +89,10 @@ def mk_source_cdrom(components, codename,
         if not dsc_real.endswith('.dsc'):
             continue
 
-        repo.include_init_dsc(dsc_real, 'initvm')
+        repos["main"].include_init_dsc(dsc_real, "initvm")
 
-    repo.finalize()
+    for repo in repos.values():
+        repo.finalize()
 
     if xml is not None:
         options = get_iso_options(xml)
@@ -97,22 +100,25 @@ def mk_source_cdrom(components, codename,
         for arch_vol in xml.all('src-cdrom/archive'):
             volume_attr = arch_vol.et.get('volume')
 
-            if volume_attr == 'all':
-                volume_list = repo.volume_indexes
-            else:
-                volume_list = [int(v) for v in volume_attr.split(",")]
-            for volume_number in volume_list:
-                with archive_tmpfile(arch_vol.text(".")) as fp:
-                    if volume_number in repo.volume_indexes:
-                        do('tar xvfj "%s" -h -C "%s"' % (fp.name,
-                                                         repo.get_volume_fs(volume_number).path))
-                    else:
-                        logging.warning("The src-cdrom archive's volume value "
-                                        "is not contained in the actual volumes")
+            for repo in repos.values():
+
+                if volume_attr == 'all':
+                    volume_list = repo.volume_indexes
+                else:
+                    volume_list = [int(v) for v in volume_attr.split(",")]
+                for volume_number in volume_list:
+                    with archive_tmpfile(arch_vol.text(".")) as fp:
+                        if volume_number in repo.volume_indexes:
+                            do('tar xvfj "%s" -h -C "%s"' % (fp.name,
+                                                             repo.get_volume_fs(volume_number).path))
+                        else:
+                            logging.warning("The src-cdrom archive's volume value "
+                                            "is not contained in the actual volumes")
     else:
         options = ""
 
-    return repo.buildiso(os.path.join(target, "src-cdrom.iso"), options=options)
+    return [(repo.buildiso(os.path.join(target, "src-cdrom-%s.iso" % component),
+            options=options)) for component, repo in repos.items()]
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # pylint: disable=too-many-arguments

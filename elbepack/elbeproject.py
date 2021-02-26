@@ -539,11 +539,12 @@ class ElbeProject:
                     if self.xml is not None:
                         kwargs["mirror"] = self.xml.get_primary_mirror(env.rfs.fname("cdrom"))
 
-                    self.repo_images += mk_source_cdrom(components,
-                                                        self.codename,
-                                                        init_codename,
-                                                        self.builddir,
-                                                        **kwargs)
+                    for iso in mk_source_cdrom(components,
+                                               self.codename,
+                                               init_codename,
+                                               self.builddir,
+                                               **kwargs):
+                        self.repo_images += iso
                 except SystemError as e:
                     # e.g. no deb-src urls specified
                     validation.error(str(e))
