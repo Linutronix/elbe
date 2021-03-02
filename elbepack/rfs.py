@@ -335,6 +335,9 @@ class BuildEnv:
             fqdn = ("%s.%s" % (hostname, self.xml.text("target/domain")))
 
         chroot(self.rfs.path,
+               """/bin/sh -c 'echo "127.0.0.1 localhost" >> /etc/hosts'""")
+
+        chroot(self.rfs.path,
                """/bin/sh -c 'echo "127.0.1.1 %s %s elbe-daemon" >> """
                """/etc/hosts'""" % (fqdn,hostname))
 
