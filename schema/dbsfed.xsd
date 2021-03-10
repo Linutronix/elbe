@@ -776,6 +776,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="triplet" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            The triplet that is used to generate the SDK environment.
+          </documentation>
+        </annotation>
+      </element>
       <element name="NIC" type="rfs:NIC" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
