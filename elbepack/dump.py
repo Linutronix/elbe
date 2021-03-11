@@ -7,6 +7,7 @@
 
 import logging
 
+from fnmatch import fnmatchcase
 from datetime import datetime
 
 from apt import Cache
@@ -106,7 +107,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
             ver = p.et.get('version')
             pkg = cache.get_pkg(nomulti_name)
-            if ver and (pkg.installed_version != ver):
+            if ver and not fnmatchcase(pkg.installed_version, ver):
                 validation.error("Package '%s' version '%s' does not match installed version %s",
                                  name, ver, pkg.installed_version)
                 errors += 1
@@ -143,7 +144,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
         pkg = cache.get_pkg(name)
 
-        if pkg.installed_version != ver:
+        if not fnmatchcase(pkg.installed_version, ver):
             validation.error("Package '%s' version %s does not match installed version %s",
                              name, ver, pkg.installed_version)
             errors += 1
