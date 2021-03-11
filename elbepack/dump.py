@@ -6,7 +6,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import logging
-import re
 
 from datetime import datetime
 
@@ -107,7 +106,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
             ver = p.et.get('version')
             pkg = cache.get_pkg(nomulti_name)
-            if ver and (not re.match(ver, pkg.installed_version)):
+            if ver and (pkg.installed_version != ver):
                 validation.error("Package '%s' version '%s' does not match installed version %s",
                                  name, ver, pkg.installed_version)
                 errors += 1
@@ -144,7 +143,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
         pkg = cache.get_pkg(name)
 
-        if not re.match(ver, pkg.installed_version):
+        if pkg.installed_version != ver:
             validation.error("Package '%s' version %s does not match installed version %s",
                              name, ver, pkg.installed_version)
             errors += 1
