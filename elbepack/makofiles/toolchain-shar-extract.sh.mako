@@ -355,7 +355,11 @@ done
 #       do not skip the interpreter, and do not handle target_executable
 #       files yet.
 for exe in $target_elf_files; do
-	\$PATCHELF --set-rpath $native_sysroot/usr/lib/${real_multimach_target_sys}/:$native_sysroot/lib/${real_multimach_target_sys}/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
+        if [ "${target_elfcode}" = "x86-64" -a \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
+            echo SKIP \$exe
+        else
+           \$PATCHELF --set-rpath $native_sysroot/usr/lib/${real_multimach_target_sys}/:$native_sysroot/lib/${real_multimach_target_sys}/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
+        fi
 done
 
 for exe in $ascii_so_files; do
