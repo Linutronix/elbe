@@ -1,3 +1,30 @@
+elbe (13.2) unstable; urgency=medium
+
+  * Team upload
+  * test:
+    * add simple-arm64.xml
+    * add simple-armhf.xml
+    * add boottest for simple-amd64-with-grub-tighten.xml
+  * sdk: fix sdk for amd64
+  * hdimg: implement partition filles with binary data from file
+  * Fix validation for arm64
+  * Fix init create --devel not starting the devel version of the daemon
+  * finetuning: implement <set_partition_type>
+  * cleanup / maintain contrib patches
+  * debianize: Synchronize build deps with vanilla kernel
+  * validate: Amend HTTPS mirror package check for buster
+  * test_xml: make sure the full traceback ends up in the test result
+  * test_xml: activate invocation of elbe check-build after a build test
+  * test: rework collection of TestResults by implementing class ElbeTestResult
+  * cdroms: fix difference in pkg lists after bin-cdrom.iso rebuild
+  * pbuilder: Use host mirror when cross building
+  * rfs: fix cdrom build keyring problems
+  * rfs: fix /etc/hosts localhost mapping
+  * python3: Fix get_archive file mode
+  * cleanup python2 compatibility things
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Wed, 17 Mar 2021 12:23:19 +0100
+
 elbe (13.1) unstable; urgency=medium
 
   * Team upload
