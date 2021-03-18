@@ -624,7 +624,7 @@ class ExtractPartitionAction(ImageFinetuningAction):
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError("<extract_partition> may only be "
-                                  "used in <mount_drive>")
+                                  "used in <losetup>")
 
     def execute_img(self, _buildenv, target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
@@ -646,7 +646,7 @@ class CopyFromPartition(ImageFinetuningAction):
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError("<copy_from_partition> may only be "
-                                  "used in <mount_drive>")
+                                  "used in <losetup>")
 
     def execute_img(self, _buildenv, target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
@@ -682,7 +682,7 @@ class CopyToPartition(ImageFinetuningAction):
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError("<copy_to_partition> may only be "
-                                  "used in <mount_drive>")
+                                  "used in <losetup>")
 
     def execute_img(self, _buildenv, _target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
@@ -704,7 +704,7 @@ class SetPartitionTypeAction(ImageFinetuningAction):
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError("<set_partition_type> may only be "
-                                  "used in <mount_drive>")
+                                  "used in <losetup>")
 
     def execute_img(self, _buildenv, target, builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
