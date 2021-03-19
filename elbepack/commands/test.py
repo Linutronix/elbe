@@ -14,12 +14,31 @@ import warnings
 
 import junit_xml as junit
 
+from elbepack.shellhelper import command_out
+
 class ElbeTestLevel(enum.IntEnum):
     BASE   = enum.auto()
     EXTEND = enum.auto()
     INITVM = enum.auto()
     FULL   = enum.auto()
 
+class ElbeTestException(Exception):
+
+    def __init__(self, cmd, ret, out):
+        self.cmd = cmd
+        self.ret = ret
+        self.out = out
+
+    def __repr__(self):
+        return f"ElbeTestException: \"{self.cmd}\" returns {self.ret}"
+
+    def __str__(self):
+        return f"ElbeTestException: \"{self.cmd}\" returns {self.ret}"
+
+def system(cmd, allow_fail=False):
+    ret, out = command_out(cmd)
+    if ret != 0 and not allow_fail:
+        raise ElbeTestException(cmd, ret, out)
 
 class ElbeTestCase(unittest.TestCase):
 
