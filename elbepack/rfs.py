@@ -198,6 +198,7 @@ class BuildEnv:
             includepkgs = "gnupg"
 
         strapcmd += ' --include="%s"' % includepkgs
+        keyring = ''
 
         if not self.xml.is_cross(host_arch):
             if self.xml.has("project/noauth"):
@@ -207,8 +208,6 @@ class BuildEnv:
                 if self.xml.has("project/mirror/cdrom"):
                     keyring = ' --keyring="%s"' % (
                         self.rfs.fname('/elbe.keyring'))
-                else:
-                    keyring = ''
 
                 cmd = '%s --arch=%s %s "%s" "%s" "%s"' % (
                     strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
@@ -237,8 +236,6 @@ class BuildEnv:
             if self.xml.has("project/mirror/cdrom"):
                 keyring = ' --keyring="%s"' % (
                     self.rfs.fname('/elbe.keyring'))
-            else:
-                keyring = ''
 
             cmd = '%s --foreign --arch=%s %s "%s" "%s" "%s"' % (
                 strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
