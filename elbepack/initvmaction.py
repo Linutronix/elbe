@@ -89,11 +89,29 @@ class InitVMAction:
             if not isinstance(verr.args[0], str):
                 raise
             if verr.args[0].startswith('Failed to connect socket to'):
-                print("", file=sys.stderr)
-                print("Accessing libvirt provider system not possible.", file=sys.stderr)
-                print("Make sure that package 'libvirt-daemon-system' is", file=sys.stderr)
-                print("installed, and the service is running properly", file=sys.stderr)
-                sys.exit(20)
+                retries = 18
+                while retries > 0:
+                    retries -= 1
+                    time.sleep(10)
+                    try:
+                        self.conn = libvirt.open("qemu:///system")
+                    except libvirt.libvirtError as verr:
+                        if not isinstance(verr.args[0], str):
+                            raise
+                        if verr.args[0].startswith('Failed to connect socket to'):
+                            pass
+
+                    if self.conn:
+                        break
+
+
+                if not self.conn:
+                    print("", file=sys.stderr)
+                    print("Accessing libvirt provider system not possible.", file=sys.stderr)
+                    print("Even after waiting 180 seconds.", file=sys.stderr)
+                    print("Make sure that package 'libvirt-daemon-system' is", file=sys.stderr)
+                    print("installed, and the service is running properly", file=sys.stderr)
+                    sys.exit(20)
 
             elif verr.args[0].startswith('authentication unavailable'):
                 print("", file=sys.stderr)
