@@ -72,7 +72,9 @@ class InitVMAction:
     def __init__(self, node, initvmNeeded=True):
 
         self.initvm = None
-        self.node   = node
+        self.conn = None
+        self.node = node
+
 
         # initvm might be running on a different host.  Thus there's
         # no need to talk with libvirt
