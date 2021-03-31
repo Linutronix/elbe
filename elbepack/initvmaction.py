@@ -95,7 +95,7 @@ class InitVMAction:
                 print("installed, and the service is running properly", file=sys.stderr)
                 sys.exit(20)
 
-            if verr.args[0].startswith('authentication unavailable'):
+            elif verr.args[0].startswith('authentication unavailable'):
                 print("", file=sys.stderr)
                 print("Accessing libvirt provider system not allowed.", file=sys.stderr)
                 print("Users which want to use elbe need to be members of the 'libvirt' group.", file=sys.stderr)
@@ -103,7 +103,7 @@ class InitVMAction:
                 print("should fix the problem.", file=sys.stderr)
                 sys.exit(20)
 
-            if verr.args[0].startswith('error from service: CheckAuthorization'):
+            elif verr.args[0].startswith('error from service: CheckAuthorization'):
                 print("", file=sys.stderr)
                 print("Accessing libvirt failed.", file=sys.stderr)
                 print("Probably entering the password for accssing libvirt", file=sys.stderr)
@@ -112,8 +112,9 @@ class InitVMAction:
                 print("continue.", file=sys.stderr)
                 sys.exit(20)
 
-            # In case we get here, the exception is unknown, and we want to see it
-            raise
+            else:
+                # In case we get here, the exception is unknown, and we want to see it
+                raise
 
         doms = self.conn.listAllDomains()
 
