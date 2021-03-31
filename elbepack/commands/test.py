@@ -138,14 +138,29 @@ class ElbeTestResult(unittest.TestResult):
         """Called when an error has occurred. 'err' is a tuple of values as
            returned by sys.exc_info().
         """
-        self.current_case.add_error_info(self._exc_info_to_string(err, test))
+
+        message = str(err[1])
+        output = self._exc_info_to_string(err, test)
+
+        if err is not None:
+            if issubclass(err[0], ElbeTestException):
+                self.current_case.stdout = err[1].out
+
+        self.current_case.add_error_info(message, output)
         super().addError(test, err)
 
     def addFailure(self, test, err):
         """Called when an error has occurred. 'err' is a tuple of values as
            returned by sys.exc_info()."""
 
-        self.current_case.add_failure_info(self._exc_info_to_string(err, test))
+        message = str(err[1])
+        output = self._exc_info_to_string(err, test)
+
+        if err is not None:
+            if issubclass(err[0], ElbeTestException):
+                self.current_case.stdout = err[1].out
+
+        self.current_case.add_failure_info(message, output)
         super().addFailure(test, err)
 
     def addSubTest(self, test, subtest, err):
@@ -157,11 +172,17 @@ class ElbeTestResult(unittest.TestResult):
         self.current_case = junit.TestCase(name=str(subtest))
         self.cases.append(self.current_case)
 
+        message = str(err[1])
+        output = self._exc_info_to_string(err, test)
+
         if err is not None:
+            if issubclass(err[0], ElbeTestException):
+                self.current_case.stdout = err[1].out
+
             if issubclass(err[0], test.failureException):
-                self.current_case.add_failure_info(message=self._exc_info_to_string(err, test))
+                self.current_case.add_failure_info(message, output)
             else:
-                self.current_case.add_error_info(message=self._exc_info_to_string(err, test))
+                self.current_case.add_error_info(message, output)
 
         super().addSubTest(test, subtest, err)
 
