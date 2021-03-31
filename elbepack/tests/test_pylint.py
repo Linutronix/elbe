@@ -5,7 +5,7 @@
 
 import os
 
-from elbepack.commands.test import ElbeTestCase
+from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
 from elbepack.shellhelper import command_out, system_out
 from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
@@ -56,10 +56,14 @@ class TestPylint(ElbeTestCase):
 
     def test_lint(self):
 
-        ret, out = command_out("pylint3 %s %s" % (' '.join(self.pylint_opts), self.param))
-
-        if ret:
+        try:
+            system("pylint3 %s %s" % (' '.join(self.pylint_opts), self.param))
+        except ElbeTestException as e:
             if self.param in TestPylint.failure_set:
-                self.skipTest("Pylint test for %s is expected to fail\n%s" % (self.param, out))
+                self.skipTest("Pylint test for %s is expected to fail" % (self.param))
+                self.stdout = e.out
             else:
-                self.fail(msg=out)
+                raise
+        else:
+            if self.param in TestPylint.failure_set:
+                raise Exception(f"Pylint test for {self.param} is expected to fail, but did not !")
