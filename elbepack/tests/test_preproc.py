@@ -26,7 +26,7 @@ class TestPreproc(ElbeTestCase):
     def test_preproc(self):
 
         try:
-            system(f'{elbe_exe} "{self.param}"')
+            system(f'{elbe_exe} preprocess "{self.param}"')
         except ElbeTestException as e:
             if self.param in TestPreproc.failure_set:
                 self.skipTest("Preproc test for %s is expected to fail" % (self.param))

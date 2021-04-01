@@ -1,0 +1,81 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    created="2009-05-20T08:50:56" revision="6"
+		    xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+
+	<project>
+		<name>simple-armhf-with-grub-tighten</name>
+		<version>1.0</version>
+		<suite>buster</suite>
+		<buildtype>armhf</buildtype>
+
+		<description>
+			Testing armhf
+		</description>
+
+		<mirror>
+			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+	</project>
+
+	<target>
+		<hostname>armhf-buster</hostname>
+		<domain>elbe-ci</domain>
+		<passwd>root</passwd>
+		<console>ttyS0,115200</console>
+
+		<images>
+			<msdoshd>
+				<name>sda.img</name>
+				<size>2000MiB</size>
+				<grub-install />
+				<partition>
+					<size>1000MiB</size>
+					<label>rfs</label>
+				</partition>
+				<partition>
+					<size>64kB</size>
+					<label>bindata</label>
+					<binary>/etc/hosts</binary>
+				</partition>
+			</msdoshd>
+		</images>
+
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs><type>ext4</type></fs>
+			</bylabel>
+		</fstab>
+
+		<pkg-list>
+			<pkg>linux-image-armmp</pkg>
+		</pkg-list>
+
+		<install-recommends />
+
+		<finetuning>
+			<file dst="/etc/hosts" append="true" encoding="plain">
+				192.168.0.165  mydomain  mydomain-host
+			</file>
+			<cp path="/etc/bash.bashrc">/root/.bashrc</cp>
+			<artifact>/boot/vmlinuz-4.19.0-14-armmp</artifact>
+			<artifact>/boot/initrd.img-4.19.0-14-armmp</artifact>
+			<artifact>/usr/lib/linux-image-4.19.0-14-armmp/vexpress-v2p-ca15-tc1.dtb</artifact>
+		</finetuning>
+
+		<project-finetuning>
+		</project-finetuning>
+	</target>
+	<check-image-list>
+		<check>
+			<img>sda.img.tar.gz</img>
+			<interpreter>qemu-system-arm</interpreter>
+			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG -nographic -kernel vmlinuz-4.19.0-14-armmp -initrd initrd.img-4.19.0-14-armmp -dtb vexpress-v2p-ca15-tc1.dtb</interpreter-opts>
+			<action> <login /> </action>
+		</check>
+	</check-image-list>
+</ns0:RootFileSystem>
