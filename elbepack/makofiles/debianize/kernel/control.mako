@@ -9,7 +9,7 @@ Source: linux-${k_version}-${p_name}
 Section: kernel
 Priority: optional
 Maintainer: ${m_name} <${m_mail}>
-Build-Depends: debhelper (>= 9), bc, rsync, kmod, cpio, bison, flex | flex:native, libelf-dev:native, libssl-dev:native, lzop:native, u-boot-tools
+Build-Depends: debhelper (>= 9), bc, rsync, kmod, cpio, bison, flex | flex:native, libelf-dev:native, libssl-dev:native, lzop | lzop:native, u-boot-tools
 Standards-Version: 3.8.4
 Homepage: http://www.kernel.org/
 
