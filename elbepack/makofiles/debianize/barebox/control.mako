@@ -8,7 +8,7 @@ Source: barebox-${p_name}-${k_version}
 Section: admin
 Priority: optional
 Maintainer: ${m_name} <${m_mail}>
-Build-Depends: debhelper (>= 9), bc, lzop:native, flex, bison
+Build-Depends: debhelper (>= 9), bc, lzop | lzop:native, flex | flex:native, bison
 Standards-Version: 3.8.4
 Homepage: http://www.barebox.org/
 
