@@ -244,9 +244,18 @@ class grubinstaller97(grubinstaller_base):
             do('cp -a %s %s' % (loopdev, poopdev))
             do('kpartx -as %s' % poopdev)
 
+            bootentry = 0
+
             for entry in self.fs.depthlist():
+                if entry.mountpoint.startswith("/boot"):
+                    bootentry_label = entry.label
+                    bootentry = int(entry.partnum)
                 do('mount /dev/mapper/poop%sp%d %s' %
                    (loopnum, entry.partnum, imagemntfs.fname(entry.mountpoint)))
+
+            if not bootentry:
+                bootentry_label = entry.label
+                bootentry = int(entry.partnum)
 
             do("mount --bind /dev %s" % imagemntfs.fname("dev"))
             do("mount --bind /proc %s" % imagemntfs.fname("proc"))
@@ -267,9 +276,9 @@ class grubinstaller97(grubinstaller_base):
             # variable 'entry' (undefined-loop-variable).  entry is
             # defined in the previous for-loop.
             do(r'chroot %s sed -in "s/^# groot=.*$/# groot=\(hd0,%d\)/" %s' %
-               (imagemnt, int(entry.partnum) - 1, "/boot/grub/menu.lst"))
+               (imagemnt, bootentry - 1, "/boot/grub/menu.lst"))
             do(r'chroot %s sed -in "s/^# kopt=.*$/# kopt=root=LABEL=%s/" %s' %
-               (imagemnt, entry.label, "/boot/grub/menu.lst"))
+               (imagemnt, bootentry_label, "/boot/grub/menu.lst"))
 
             chroot(imagemnt, "update-grub")
 
