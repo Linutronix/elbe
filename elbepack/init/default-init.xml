@@ -33,6 +33,8 @@
 		<suite>jessie</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
+                        <pkg>apt-transport-https</pkg>
+                        <pkg>ca-certificates</pkg>
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
