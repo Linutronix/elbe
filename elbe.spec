@@ -1,7 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           elbe
-Version:        1.9.10
+Version:        1.9.15.1
 Release:        1
 Summary:        Elbe (Embedded Linux Build Environment)
 
@@ -47,6 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 19 2021 Bastian Germann <bage@linutronix.de> - 1.9.15.1-1
+- bump to 1.9.15.1-1
 * Mon Nov 09 2016 Manuel Traut <manut@linutronix.de> - 1.9.15-1
 - bump to 1.9.15-1
 * Mon Nov 07 2016 Manuel Traut <manut@linutronix.de> - 1.9.14-1
