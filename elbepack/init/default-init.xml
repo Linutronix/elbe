@@ -41,6 +41,8 @@
 		<suite>jessie</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
+			<pkg>apt-transport-https</pkg>
+			<pkg>ca-certificates</pkg>
 			<pkg pin="jessie-backports">debootstrap</pkg>
 			<pkg pin="jessie-backports">qemu-user-static</pkg>
 		</pkg-list>
