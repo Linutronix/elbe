@@ -1,3 +1,11 @@
+elbe (2.9.10.1) unstable; urgency=medium
+
+  * Team upload
+  * rfs: make debootstrap install apt-transport-https
+  * default-init: make initvm install apt-transport-https
+
+ -- Bastian Germann <bage@linutronix.de>  Thu, 22 Apr 2021 15:08:02 +0200
+
 elbe (2.9.10) unstable; urgency=medium
 
   * use libvirt system instead of user session
