@@ -122,10 +122,10 @@ class BuildEnv ():
             # 01/2017 manut
             if self.xml.has(
                     "project/noauth") or self.xml.has("project/mirror/cdrom"):
-                cmd = 'debootstrap --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-transport-https,ca-certificates --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
                     arch, suite, self.rfs.path, primary_mirror)
             else:
-                cmd = 'debootstrap --arch=%s "%s" "%s" "%s"' % (
+                cmd = 'debootstrap --include=apt-transport-https,ca-certificates --arch=%s "%s" "%s" "%s"' % (
                     arch, suite, self.rfs.path, primary_mirror)
 
             try:
@@ -142,7 +142,7 @@ class BuildEnv ():
             return
 
         if self.xml.has("project/noauth"):
-            cmd = 'debootstrap --no-check-gpg --foreign ' \
+            cmd = 'debootstrap --include=apt-transport-https,ca-certificates --no-check-gpg --foreign ' \
                   '--arch=%s "%s" "%s" "%s"' % (arch, suite, self.rfs.path,
                                                 primary_mirror)
         else:
@@ -151,7 +151,7 @@ class BuildEnv ():
                     self.rfs.fname("cdrom"))
             else:
                 keyring = ''
-            cmd = 'debootstrap --foreign --arch=%s %s "%s" "%s" "%s"' % (
+            cmd = 'debootstrap --include=apt-transport-https,ca-certificates --foreign --arch=%s %s "%s" "%s" "%s"' % (
                 arch, keyring, suite, self.rfs.path, primary_mirror)
 
         try:
@@ -168,10 +168,10 @@ class BuildEnv ():
             if self.xml.has("project/noauth"):
                 self.log.chroot(
                     self.rfs.path,
-                    '/debootstrap/debootstrap --no-check-gpg --second-stage')
+                    '/debootstrap/debootstrap --include=apt-transport-https,ca-certificates --no-check-gpg --second-stage')
             else:
                 self.log.chroot(self.rfs.path,
-                                '/debootstrap/debootstrap --second-stage')
+                                '/debootstrap/debootstrap --include=apt-transport-https,ca-certificates --second-stage')
 
             self.log.chroot(self.rfs.path, 'dpkg --configure -a')
 
