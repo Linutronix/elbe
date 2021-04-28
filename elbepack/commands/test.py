@@ -172,10 +172,10 @@ class ElbeTestResult(unittest.TestResult):
         self.current_case = junit.TestCase(name=str(subtest))
         self.cases.append(self.current_case)
 
-        message = str(err[1])
-        output = self._exc_info_to_string(err, test)
-
         if err is not None:
+            message = str(err[1])
+            output = self._exc_info_to_string(err, test)
+
             if issubclass(err[0], ElbeTestException):
                 self.current_case.stdout = err[1].out
 
