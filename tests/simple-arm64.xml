@@ -63,8 +63,8 @@
 				192.168.0.165  mydomain  mydomain-host
 			</file>
 			<cp path="/etc/bash.bashrc">/root/.bashrc</cp>
-			<artifact>/boot/vmlinuz-4.19.0-14-arm64</artifact>
-			<artifact>/boot/initrd.img-4.19.0-14-arm64</artifact>
+			<artifact>/vmlinuz</artifact>
+			<artifact>/initrd.img</artifact>
 		</finetuning>
 
 		<project-finetuning>
@@ -74,7 +74,7 @@
 		<check>
 			<img>sda.img.tar.gz</img>
 			<interpreter>qemu-system-aarch64</interpreter>
-			<interpreter-opts>-m 2G -M virt -drive format=raw,file=$ELBE_IMG,id=hd1,if=none -device virtio-blk-pci,drive=hd1 -kernel vmlinuz-4.19.0-14-arm64 -initrd initrd.img-4.19.0-14-arm64 -cpu cortex-a53 -append "root=/dev/vda1" -nographic</interpreter-opts>
+			<interpreter-opts>-m 2G -M virt -drive format=raw,file=$ELBE_IMG,id=hd1,if=none -device virtio-blk-pci,drive=hd1 -kernel vmlinuz -initrd initrd.img -cpu cortex-a53 -append "root=/dev/vda1" -nographic</interpreter-opts>
 			<action> <login /> </action>
 		</check>
 	</check-image-list>
