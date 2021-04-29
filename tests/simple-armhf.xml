@@ -63,9 +63,13 @@
 				192.168.0.165  mydomain  mydomain-host
 			</file>
 			<cp path="/etc/bash.bashrc">/root/.bashrc</cp>
-			<artifact>/boot/vmlinuz-4.19.0-14-armmp</artifact>
-			<artifact>/boot/initrd.img-4.19.0-14-armmp</artifact>
-			<artifact>/usr/lib/linux-image-4.19.0-14-armmp/vexpress-v2p-ca15-tc1.dtb</artifact>
+
+			<cp path="/usr/lib/linux-image-4.19.0-*-armmp/vexpress-v2p-ca15-tc1.dtb">/boot/vexpress-v2p-ca15-tc1.dtb</cp>
+			<ln path="boot/vexpress-v2p-ca15-tc1.dtb">/dtb</ln>
+
+			<artifact>/vmlinuz</artifact>
+			<artifact>/initrd.img</artifact>
+			<artifact>/dtb</artifact>
 		</finetuning>
 
 		<project-finetuning>
@@ -75,7 +79,7 @@
 		<check>
 			<img>sda.img.tar.gz</img>
 			<interpreter>qemu-system-arm</interpreter>
-			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG -nographic -kernel vmlinuz-4.19.0-14-armmp -initrd initrd.img-4.19.0-14-armmp -dtb vexpress-v2p-ca15-tc1.dtb</interpreter-opts>
+			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG -nographic -kernel vmlinuz -initrd initrd.img -dtb dtb</interpreter-opts>
 			<action> <login /> </action>
 		</check>
 	</check-image-list>
