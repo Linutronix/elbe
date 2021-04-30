@@ -50,8 +50,6 @@
 		<pkg-list>
 			<pkg pin="buster-backports">qemu-user-static</pkg>
 			<pkg>openssh-server</pkg>
-			<pkg>debootstrap</pkg>
-			<pkg>pbuilder</pkg>
 			<pkg>ubuntu-keyring</pkg>
 		</pkg-list>
 		<preseed>
