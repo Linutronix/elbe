@@ -79,7 +79,7 @@
 		<check>
 			<img>sda.img.tar.gz</img>
 			<interpreter>qemu-system-arm</interpreter>
-			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG -nographic -kernel vmlinuz -initrd initrd.img -dtb dtb</interpreter-opts>
+			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG,if=sd -nographic -kernel vmlinuz -initrd initrd.img -dtb dtb -append "console=ttyAMA0,115200 root=/dev/mmcblk0p1"</interpreter-opts>
 			<action> <login /> </action>
 		</check>
 	</check-image-list>
