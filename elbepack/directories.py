@@ -23,7 +23,7 @@ def init_directories(elbe_relpath):
     global elbe_dir      #pylint: disable=global-statement
     global examples_dir  #pylint: disable=global-statement
 
-    elbe_exe = os.path.abspath(elbe_relpath)
+    elbe_exe = os.path.abspath(os.path.realpath(elbe_relpath))
     elbe_dir = os.path.dirname(elbe_exe)
 
     if elbe_exe.startswith("/usr/bin/"):
