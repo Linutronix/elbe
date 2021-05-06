@@ -104,7 +104,6 @@ Depends: ${misc:Depends},
   python3-elbe-buildenv (= ${binary:Version}),
   python3-cherrypy3,
   python3-beaker,
-  openssh-server,
   lsb-base (>= 3.0-6)
 Description: wsgi daemon interface
  subcommand to start wsgi services.
