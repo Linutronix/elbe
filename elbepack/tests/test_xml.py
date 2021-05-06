@@ -67,16 +67,15 @@ class TestPbuilder(ElbeTestCase):
             uuid = None
 
             try:
-                system('%s pbuilder create --xmlfile "%s" --writeproject "%s"' %
-                       (elbe_exe, self.param, prj))
-
-                # TODO: checkout some source code
+                system(f'{elbe_exe} pbuilder create --xmlfile "{self.param}" \
+                                                    --writeproject "{prj}"')
+                system(f'cd "{build_dir}"; \
+                         git clone https://github.com/Linutronix/libgpio.git')
 
                 with open(prj, "r") as f:
                     uuid = f.read()
-                    system('cd "%s"; %s pbuilder build --project %s' % (build_dir,
-                                                                        elbe_exe,
-                                                                        uuid))
+                    system(f'cd "{build_dir}/libgpio"; \
+                             {elbe_exe} pbuilder build --project {uuid}')
             # pylint: disable=try-except-raise
             except:
                 raise
