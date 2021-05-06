@@ -480,7 +480,7 @@ class ToolchainRepo(RepoBase):
 
 class ProjectRepo(RepoBase):
     def __init__(self, arch, codename, path):
-        repo_attrs = RepoAttributes(codename, arch + ' source', "main")
+        repo_attrs = RepoAttributes(codename, [arch, 'amd64', 'source'], "main")
         RepoBase.__init__(self,
                           path,
                           None,
