@@ -140,7 +140,8 @@ Depends: ${misc:Depends},
   git,
   ca-certificates,
   subversion,
-  haveged
+  haveged,
+  devscripts
 Description: Embedded Linux Build Environment Server Component
  This package is typically installed in a virtual machine (that can be created
  with the 'elbe initvm create' command from the 'elbe' package). Several

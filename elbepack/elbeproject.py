@@ -15,6 +15,7 @@ import datetime
 import io
 import logging
 import sys
+import glob
 
 from elbepack.shellhelper import CommandError, system, do, chroot
 
@@ -740,16 +741,6 @@ class ElbeProject:
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
         do('mkdir -p "%s"' % os.path.join(pbdir))
 
-        try:
-            for orig_fname in self.orig_files:
-                ofname = os.path.join(self.builddir, orig_fname)
-                do('mv "%s" "%s"' % (ofname,
-                                     os.path.join(self.builddir,
-                                                  "pdebuilder")))
-        finally:
-            self.orig_fname = None
-            self.orig_files = []
-
         # Untar current_pdebuild.tar.gz into pdebuilder/current
         do('tar xfz "%s" -C "%s"' %
            (os.path.join(self.builddir, "current_pdebuild.tar.gz"), pbdir))
@@ -770,6 +761,28 @@ class ElbeProject:
 
         profile_list = profile.split(",")
         deb_build_opts = [i for i in profile_list if i=="nodoc" or i=="nocheck"]
+
+        pdebuilder_current = os.path.join(self.builddir, "pdebuilder", "current")
+
+        formatfile = ""
+
+        if os.path.exists(os.path.join(pdebuilder_current, "debian", "source", "format")):
+            formatfile = open(os.path.join(pdebuilder_current, "debian", "source", "format"), "r").read()
+
+        src_pkg_name = open(os.path.join(pdebuilder_current, "debian", "changelog"), "r").readline().split()[0]
+
+        if "3.0 (quilt)" in formatfile and not self.orig_files:
+            do("cd %s; origtargz --download-only --tar-only" % pdebuilder_current)
+            self.orig_files = glob.glob("%s/../%s*.orig.*" % (pdebuilder_current, src_pkg_name))
+        try:
+            for orig_fname in self.orig_files:
+                    ofname = os.path.join(self.builddir, orig_fname)
+                    do('mv "%s" "%s"' % (ofname,
+                                         os.path.join(self.builddir,
+                                                      "pdebuilder")))
+        finally:
+            self.orig_fname = None
+            self.orig_files = []
 
         try:
             if cross:
