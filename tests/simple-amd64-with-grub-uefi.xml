@@ -61,6 +61,7 @@
 				<mountpoint>/boot/efi</mountpoint>
 				<fs>
 					<type>vfat</type>
+					<mkfs>-I</mkfs>
 				</fs>
 			</bylabel>
 		</fstab>
