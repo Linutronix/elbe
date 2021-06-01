@@ -25,7 +25,7 @@ class RadioGroup(Grid):
 
         self.radio_group = []
         for choice in enum_type.__dict__.keys():
-            if choice.startswith('-'):
+            if choice.startswith('_'):
                 continue
             RadioButton(self.radio_group,
                         label=choice.capitalize(),
