@@ -193,8 +193,9 @@ def get_primary_mirror(prj):
         m = prj.node("mirror")
 
         mirror = m.text("primary_proto") + "://"
-        mirror += m.text("primary_host") + "/"
-        mirror += m.text("primary_path")
+        mirror += "{}/{}".format(m.text("primary_host"),
+                                 m.text("primary_path")
+                                ).replace("//", "/")
     else:
         raise NoKinitrdException("Broken xml file: "
                                  "no cdrom and no primary host")

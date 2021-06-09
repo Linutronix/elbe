@@ -120,8 +120,9 @@ class ElbeXML:
             m = self.node("initvm/mirror")
 
             mirror = m.text("primary_proto") + "://"
-            mirror += m.text("primary_host") + "/"
-            mirror += m.text("primary_path")
+            mirror += "{}/{}".format(m.text("primary_host"),
+                                     m.text("primary_path")
+                                    ).replace("//", "/")
 
         elif self.xml.has("initvm/mirror/cdrom") and cdrompath:
             mirror = "file://%s" % cdrompath
@@ -136,8 +137,9 @@ class ElbeXML:
                 mirror = m.text("host")
             else:
                 mirror = m.text("primary_proto") + "://"
-                mirror += m.text("primary_host") + "/"
-                mirror += m.text("primary_path")
+                mirror += "{}/{}".format(m.text("primary_host"),
+                                         m.text("primary_path")
+                                        ).replace("//", "/")
 
         elif self.prj.has("mirror/cdrom") and cdrompath:
             mirror = "file://%s" % cdrompath
