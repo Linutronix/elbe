@@ -501,7 +501,7 @@ class ElbeDB:
         assert "busy" not in allowed_status
         with session_scope(self.session) as s:
             try:
-                p = s.query(Project).with_lockmode('update'). \
+                p = s.query(Project).with_for_update(). \
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
@@ -533,7 +533,7 @@ class ElbeDB:
 
         with session_scope(self.session) as s:
             try:
-                p = s.query(Project).with_lockmode('update'). \
+                p = s.query(Project).with_for_update(). \
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
