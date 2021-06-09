@@ -280,7 +280,6 @@ class ElbeXML:
                 lsplit = line.split(" ")
                 url = lsplit[1]
                 suite = lsplit[2]
-                section = lsplit[3]
                 r = {}
 
                 #
@@ -294,10 +293,23 @@ class ElbeXML:
                 else:
                     r["url"] = "%s/dists/%s/" % (url, suite)
 
-                if line.startswith("deb "):
-                    r["binstr"] = (section + "/binary-%s/Packages" % arch)
-                else:
-                    r["srcstr"] = (section + "/source/Sources")
+                #
+                # Try to get sections.
+                # If no sections has been passed, this is also valid syntax but
+                # needs some special handling.
+                #
+                try:
+                    section = lsplit[3]
+                    if line.startswith("deb "):
+                        r["binstr"] = (section + "/binary-%s/Packages" % arch)
+                    else:
+                        r["srcstr"] = (section + "/source/Sources")
+                except IndexError:
+                    if line.startswith("deb "):
+                        r["binstr"] = "Packages"
+                    else:
+                        r["srcstr"] = "Sources"
+
                 repos.append(r)
 
         if not self.prj:
