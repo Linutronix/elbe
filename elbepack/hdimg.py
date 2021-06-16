@@ -358,20 +358,26 @@ def create_label(disk, part, ppart, fslabel, target, grub):
     grub.add_fs_entry(entry)
 
     loopdev = entry.losetup()
-    do('mkfs.%s %s %s %s' %
-       (entry.fstype,
-        entry.mkfsopt,
-        entry.get_label_opt(),
-        loopdev))
 
-    do('mount %s %s' % (loopdev, os.path.join(target, "imagemnt")))
-    do('cp -a "%s/." "%s/"' %
-       (os.path.join(target, "filesystems", entry.id),
-        os.path.join(target, "imagemnt")),
-       allow_fail=True)
-    do('umount %s' % loopdev)
-    entry.tuning(loopdev)
-    do('losetup -d %s' % loopdev)
+    try:
+        do('mkfs.%s %s %s %s' %
+           (entry.fstype,
+            entry.mkfsopt,
+            entry.get_label_opt(),
+            loopdev))
+
+        do('mount %s %s' % (loopdev, os.path.join(target, "imagemnt")))
+
+        try:
+            do('cp -a "%s/." "%s/"' %
+               (os.path.join(target, "filesystems", entry.id),
+                os.path.join(target, "imagemnt")),
+               allow_fail=True)
+        finally:
+            do('umount %s' % loopdev)
+        entry.tuning(loopdev)
+    finally:
+        do('losetup -d %s' % loopdev)
 
     return ppart
 
@@ -382,16 +388,17 @@ def create_binary(disk, part, ppart, target):
 
     loopdev = entry.losetup()
 
-    # copy from buildenv if path starts with /
-    if part.text("binary")[0] == '/':
-        tmp = target + "/" + "chroot" + part.text("binary")
-    # copy from project directory
-    else:
-        tmp = target + "/" + part.text("binary")
+    try:
+        # copy from buildenv if path starts with /
+        if part.text("binary")[0] == '/':
+            tmp = target + "/" + "chroot" + part.text("binary")
+        # copy from project directory
+        else:
+            tmp = target + "/" + part.text("binary")
 
-    do(f'dd if="{tmp}" of="{loopdev}"')
-
-    do(f'losetup -d "{loopdev}"')
+        do(f'dd if="{tmp}" of="{loopdev}"')
+    finally:
+        do(f'losetup -d "{loopdev}"')
 
 def create_logical_partitions(disk,
                               extended,
