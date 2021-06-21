@@ -53,6 +53,28 @@ def preprocess_pgp_key(xml):
             raise XMLPreprocessError("Problem with PGP Key URL in <key> tag: %s" %
                                      keyurl)
 
+def preprocess_bootstrap(xml):
+    "Replaces a maybe existing debootstrapvariant element with debootstrap"
+
+    old_node = xml.find(".//debootstrapvariant")
+    if old_node is None:
+        return
+
+    print("[WARN] <debootstrapvariant> is deprecated. Use <debootstrap> instead.")
+
+    bootstrap = Element("debootstrap")
+
+    bootstrap_variant = Element("variant")
+    bootstrap_variant.text = old_node.text
+    bootstrap.append(bootstrap_variant)
+
+    old_includepkgs = old_node.get("includepkgs")
+    if old_includepkgs:
+        bootstrap_include = Element("include")
+        bootstrap_include.text = old_includepkgs
+        bootstrap.append(bootstrap_include)
+
+    old_node.getparent().replace(old_node, bootstrap)
 
 def preprocess_iso_option(xml):
 
@@ -302,6 +324,9 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
 
         # Change public PGP url key to raw key
         preprocess_pgp_key(xml)
+
+        # Replace old debootstrapvariant with debootstrap
+        preprocess_bootstrap(xml)
 
         preprocess_iso_option(xml)
 
