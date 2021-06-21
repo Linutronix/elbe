@@ -39,7 +39,9 @@
 		the emulated part (run in QEMU) of the installation
 		significant.
 		-->
-		<debootstrapvariant>minbase</debootstrapvariant>
+		<debootstrap>
+			<variant>minbase</variant>
+		</debootstrap>
 		<package>
 			<!-- build a tarball of the target image -->
 			<tar>

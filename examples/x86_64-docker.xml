@@ -37,7 +37,9 @@
 		<hostname>debianmin</hostname>
 		<domain>docker</domain>
 		<passwd>docker</passwd>
-		<debootstrapvariant>minbase</debootstrapvariant>
+		<debootstrap>
+			<variant>minbase</variant>
+		</debootstrap>
 		<package>
 			<tar>
 				<name>docker-debianmin.tgz</name>

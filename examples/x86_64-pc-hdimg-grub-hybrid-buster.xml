@@ -31,7 +31,9 @@
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
-		<debootstrapvariant variant="sysv">minbase</debootstrapvariant>
+		<debootstrap variant"sysv">
+			<variant>minbase</variant>
+		</debootstrap>
 		<package>
 			<tar>
 				<name>grub-hybrid-rfs.tgz</name>
