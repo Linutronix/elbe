@@ -25,7 +25,9 @@
 		<hostname>amd64-buster</hostname>
 		<domain>elbe-ci</domain>
 		<console>ttyO0,115200</console>
-		<debootstrapvariant>minbase</debootstrapvariant>
+		<debootstrap>
+			<variant>minbase</variant>
+		</debootstrap>
 		<passwd>foo</passwd>
 
 		<!-- generate a pbuilder environment (before image will be built) -->
