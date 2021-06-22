@@ -504,18 +504,18 @@ class ArtifactAction(FinetuningAction):
     def __init__(self, node):
         FinetuningAction.__init__(self, node)
 
-    def execute(self, buildenv, target):
+    def execute(self, _buildenv, target):
         if os.path.isfile("../target/" + self.node.et.text):
             target.images.append('target' + self.node.et.text)
         else:
-            logging.error("The specified artifact: '%s' doesn't exist" %
+            logging.error("The specified artifact: '%s' doesn't exist",
                            self.node.et.text)
 
-    def execute_prj(self, buildenv, target, builddir):
+    def execute_prj(self, _buildenv, target, _builddir):
         if os.path.isfile("../" + self.node.et.text):
             target.images.append(self.node.et.text)
         else:
-            logging.error("The specified artifact: '%s' doesn't exist" %
+            logging.error("The specified artifact: '%s' doesn't exist",
                            self.node.et.text)
 
 
@@ -706,7 +706,7 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         raise NotImplementedError("<set_partition_type> may only be "
                                   "used in <losetup>")
 
-    def execute_img(self, _buildenv, target, builddir, loop_dev):
+    def execute_img(self, _buildenv, _target, _builddir, loop_dev):
         part_nr = self.node.et.attrib['part']
         part_type = self.node.et.attrib['type']
 
