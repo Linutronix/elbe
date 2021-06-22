@@ -6,7 +6,7 @@
 import os
 
 from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
-from elbepack.shellhelper import command_out, system_out
+from elbepack.shellhelper import system_out
 from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
 class TestPylint(ElbeTestCase):
