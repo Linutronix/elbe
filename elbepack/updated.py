@@ -18,8 +18,8 @@ from multiprocessing import Process
 from zipfile import (ZipFile, BadZipfile)
 from shutil import copyfile, rmtree, copy
 
-from packaging import version
 from syslog import syslog
+from packaging import version
 
 from suds.client import Client
 from spyne import Application
