@@ -7,8 +7,7 @@
 import os
 
 from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
-from elbepack.shellhelper import command_out, system_out
-from elbepack.directories import pack_dir, elbe_exe, elbe_dir
+from elbepack.directories import elbe_exe, elbe_dir
 
 class TestPreproc(ElbeTestCase):
 
