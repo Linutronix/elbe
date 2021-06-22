@@ -178,19 +178,19 @@ def get_apt_keys(builddir, xml):
 
         for url in xml.prj.node("mirror/url-list"):
 
-             if url.has("options"):
-                 options = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
-                                              for opt
-                                              in url.all("options/option")])
-             else:
-                 options = ""
+            if url.has("options"):
+                options = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
+                                             for opt
+                                             in url.all("options/option")])
+            else:
+                options = ""
 
-             if url.has("raw-key") and not "trusted=yes" in options:
+            if url.has("raw-key") and not "trusted=yes" in options:
 
-                 key = "\n".join(line.strip(" \t")
-                                 for line
-                                 in url.text('raw-key').splitlines()[1:-1])
+                key = "\n".join(line.strip(" \t")
+                                for line
+                                in url.text('raw-key').splitlines()[1:-1])
 
-                 keys.append(key)
+                keys.append(key)
 
-    return (keys)
+    return keys
