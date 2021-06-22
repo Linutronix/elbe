@@ -29,6 +29,8 @@ from elbepack.shellhelper import (system,
 
 def copy_filelist(src, file_lst, dst):
 
+    # pylint: disable=too-many-branches
+
     files  = set()
     copied = set()
 
