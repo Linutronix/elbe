@@ -87,7 +87,7 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
     if env_add:
         new_env.update(env_add)
 
-    if type(stdin) == str:
+    if isinstance(stdin, str):
         stdin = stdin.encode()
 
     if stdin is None:
@@ -154,7 +154,7 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
     if env_add:
         new_env.update(env_add)
 
-    if type(stdin) == str:
+    if isinstance(stdin, str):
         stdin = stdin.encode()
 
     if stdin is None:
@@ -239,7 +239,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
     if env_add:
         new_env.update(env_add)
 
-    if type(stdin) == str:
+    if isinstance(stdin, str):
         stdin = stdin.encode()
 
     logging.info(cmd, extra={"context":"[CMD] "})
@@ -318,7 +318,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if env_add:
         new_env.update(env_add)
 
-    if type(stdin) == str:
+    if isinstance(stdin, str):
         stdin = stdin.encode()
 
     logging.info(cmd, extra={"context":"[CMD] "})
