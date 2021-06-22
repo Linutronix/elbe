@@ -25,7 +25,55 @@ class UpdateMonitor:
         raise NotImplementedError
 
 
-if udev_available:
+class USBMonitor (UpdateMonitor):
+    def __init__(self, status, recursive=False):
+        super(USBMonitor, self).__init__(status)
+        self.recursive = recursive
+        self.context = pyudev.Context()
+        self.monitor = pyudev.Monitor.from_netlink(self.context)
+        self.observer = pyudev.MonitorObserver(
+            self.monitor, self.handle_event)
+
+    def handle_event(self, action, device):
+        if (action == 'add'
+            and device.get('ID_BUS') == 'usb'
+                and device.get('DEVTYPE') == 'partition'):
+
+            mnt = self.get_mountpoint_for_device(device.device_node)
+            if not mnt:
+                self.status.log(
+                    "Detected USB drive but it was not mounted.")
+                return
+
+            for (dirpath, dirnames, filenames) in os.walk(mnt):
+                # Make sure we process the files in alphabetical order
+                # to get a deterministic behaviour
+                dirnames.sort()
+                filenames.sort()
+                for f in filenames:
+                    upd_file = os.path.join(dirpath, f)
+                    if is_update_file(upd_file):
+                        self.status.log(
+                            "Found update file '%s' on USB-Device." %
+                            upd_file)
+                        handle_update_file(
+                            upd_file, self.status, remove=False)
+                    if self.status.stop:
+                        break
+                if (not self.recursive) or self.status.stop:
+                    break
+
+    def start(self):
+        self.status.log("monitoring USB")
+        self.observer.start()
+
+    def stop(self):
+        self.observer.send_stop()
+
+    def join(self):
+        self.observer.join()
+
+    @staticmethod
     def get_mountpoint_for_device(dev):
         with open("/proc/mounts") as f:
             for line in f:
@@ -36,66 +84,6 @@ if udev_available:
                 except BaseException:
                     pass
             return None
-
-    class USBMonitor (UpdateMonitor):
-        def __init__(self, status, recursive=False):
-            super(USBMonitor, self).__init__(status)
-            self.recursive = recursive
-            self.context = pyudev.Context()
-            self.monitor = pyudev.Monitor.from_netlink(self.context)
-            self.observer = pyudev.MonitorObserver(
-                self.monitor, self.handle_event)
-
-        def handle_event(self, action, device):
-            if (action == 'add'
-                and device.get('ID_BUS') == 'usb'
-                    and device.get('DEVTYPE') == 'partition'):
-
-                mnt = self.get_mountpoint_for_device(device.device_node)
-                if not mnt:
-                    self.status.log(
-                        "Detected USB drive but it was not mounted.")
-                    return
-
-                for (dirpath, dirnames, filenames) in os.walk(mnt):
-                    # Make sure we process the files in alphabetical order
-                    # to get a deterministic behaviour
-                    dirnames.sort()
-                    filenames.sort()
-                    for f in filenames:
-                        upd_file = os.path.join(dirpath, f)
-                        if is_update_file(upd_file):
-                            self.status.log(
-                                "Found update file '%s' on USB-Device." %
-                                upd_file)
-                            handle_update_file(
-                                upd_file, self.status, remove=False)
-                        if self.status.stop:
-                            break
-                    if (not self.recursive) or self.status.stop:
-                        break
-
-        def start(self):
-            self.status.log("monitoring USB")
-            self.observer.start()
-
-        def stop(self):
-            self.observer.send_stop()
-
-        def join(self):
-            self.observer.join()
-
-        @staticmethod
-        def get_mountpoint_for_device(dev):
-            with open("/proc/mounts") as f:
-                for line in f:
-                    fields = line.split()
-                    try:
-                        if fields[0] == dev:
-                            return fields[1]
-                    except BaseException:
-                        pass
-                return None
 
 class FileMonitor (UpdateMonitor):
 
