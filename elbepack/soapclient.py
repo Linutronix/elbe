@@ -7,6 +7,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import binascii
+import logging
 import socket
 import time
 import sys
@@ -28,8 +29,6 @@ from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version, elbe_initvm_packagelist
 
 def set_suds_debug(debug):
-    # pylint: disable=import-outside-toplevel
-    import logging
     if debug:
         logging.basicConfig(level=logging.INFO)
         logging.getLogger('suds.client').setLevel(logging.DEBUG)
