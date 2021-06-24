@@ -138,6 +138,11 @@ a6EqDGtKLEkEM5G1qtDILnp3cIEZm3CFO8ll
 			<adduser groups="kvm,libvirt" passwd="elbe" shell="/bin/bash">elbe</adduser>
 			<command>systemctl enable libvirtd</command>
 
+			<file dst="/etc/libvirt/qemu.conf" append="true">
+			        # Bug#935734 error: Operation not supported: operation 'setCpusetMemoryMigrate' not supported
+			        cgroup_controllers = []
+			</file>
+
 			<command>cp /usr/share/doc/sbuild/examples/example.sbuildrc /home/elbe/.sbuildrc</command>
 			<command>chown elbe:elbe /home/elbe/.sbuildrc</command>
 			<command>sbuild-createchroot --include=eatmydata,ccache,gnupg unstable /srv/chroot/unstable-amd64-sbuild http://ftp.de.debian.org/debian</command>
