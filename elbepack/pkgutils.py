@@ -82,12 +82,11 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     m = re.match(re_pkgfilename, pkgname)
 
     pkgname = m.group('name')
-    # pkgver = m.group('ver')
     pkgarch = m.group('arch')
 
     print('pkg: %s, arch: %s' % (pkgname, pkgarch))
 
-    fs = TmpdirFilesystem(debug=True)
+    fs = TmpdirFilesystem()
 
     if extra_pkg:
         print('with extra ' + extra_pkg)
@@ -105,21 +104,14 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     dch_bin = '/usr/share/doc/%s/changelog.Debian.%s.gz' % (pkgname, pkgarch)
     dch_src = '/usr/share/doc/%s/changelog.Debian.gz' % pkgname
 
-    print(fs.listdir('/usr/share/doc/'))
-    print(fs.listdir('/usr/share/doc/%s' % pkgname))
-
     ret = ""
 
     if fs.exists(dch_bin):
         ret += fs.read_file(dch_bin, gz=True).decode(encoding='utf-8',
                                                      errors='replace')
-    else:
-        print("no bin")
 
     if fs.exists(dch_src):
         ret += fs.read_file(dch_src, gz=True).decode(encoding='utf-8',
                                                      errors='replace')
-    else:
-        print("no source")
 
     return ret

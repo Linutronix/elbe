@@ -236,8 +236,7 @@ class VirtApt:
         self.downloads[pkgname] = acq
 
     def do_downloads(self):
-        res = self.acquire.run()
-        print(res)
+        return self.acquire.run()
 
     def get_downloaded_files(self):
         ret = []
