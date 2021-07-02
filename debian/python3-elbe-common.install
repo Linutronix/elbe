@@ -26,6 +26,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/log.py
 ./usr/lib/python3.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python3.*/*-packages/elbepack/pkgutils.py
+./usr/lib/python3.*/*-packages/elbepack/rfs.py
 ./usr/lib/python3.*/*-packages/elbepack/xmlpreprocess.py
 ./usr/lib/python3.*/*-packages/elbepack/shellhelper.py
 ./usr/lib/python3.*/*-packages/elbepack/templates.py
