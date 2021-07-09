@@ -15,6 +15,7 @@ import datetime
 import io
 import logging
 import sys
+import glob
 
 from elbepack.shellhelper import CommandError, system, do, chroot
 
@@ -987,6 +988,17 @@ class ElbeProject (object):
 
         # pylint: disable=too-many-statements
         # pylint: disable=too-many-branches
+
+        # to workaround debian bug no. 872543
+        if self.xml.prj.has('noauth'):
+            inrelease = glob.glob("%s/var/lib/apt/lists/*InRelease" % self.chrootpath)
+            release_gpg = glob.glob("%s/var/lib/apt/lists/*.gpg" % self.chrootpath)
+            if inrelease:
+                system("rm %s;" % inrelease[0])
+                logging.info("Removed InRelease file!")
+            if release_gpg:
+                system("rm %s;" % release_gpg[0])
+                logging.info("Removed Release.gpg file!")
 
         with target:
             # First update the apt cache
