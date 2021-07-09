@@ -109,7 +109,7 @@ def download(url, local_fname):
         raise NoKinitrdException('Failed to download %s' % url)
 
 
-def download_release(tmp, base_url):
+def verify_release(tmp, base_url):
 
     # setup gpg context, for verifying
     # the Release.gpg signature.
@@ -117,10 +117,6 @@ def download_release(tmp, base_url):
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                       None,
                       tmp.fname('/'))
-
-    # download the Relase file to a tmp file,
-    # because we need it 2 times
-    download(base_url + "Release", tmp.fname('Release'))
 
     # validate signature.
     # open downloaded plaintext file, and
@@ -149,16 +145,17 @@ def download_release(tmp, base_url):
         sig.close()
 
 
-def download_kinitrd(tmp, suite, mirror):
+def download_kinitrd(tmp, suite, mirror, skip_signature=False):
     base_url = "%s/dists/%s/" % (
         mirror.replace("LOCALMACHINE", "localhost"), suite)
     installer_path = "main/installer-amd64/current/images/"
 
     setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
 
-    # download release file and check
-    # signature
-    download_release(tmp, base_url)
+    # download release file
+    download(base_url + "Release", tmp.fname('Release'))
+    if not skip_signature:
+        verify_release(tmp, base_url)
 
     # parse Release file, and remember hashvalues
     # we are interested in
@@ -220,7 +217,7 @@ def copy_kinitrd(prj, target_dir):
                      os.path.join(target_dir, "initrd.gz"))
         else:
             mirror = get_primary_mirror(prj)
-            download_kinitrd(tmp, suite, mirror)
+            download_kinitrd(tmp, suite, mirror, prj.has("noauth"))
 
             copyfile(tmp.fname("initrd.gz"),
                      os.path.join(target_dir, "initrd.gz"))
