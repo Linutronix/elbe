@@ -121,7 +121,7 @@ def verify_release(tmp, base_url):
     # validate signature.
     # open downloaded plaintext file, and
     # use the urlopen object of the Release.gpg
-    # directtly.
+    # directly.
     sig = urlopen(base_url + 'Release.gpg', None, 10)
     try:
         with tmp.open("Release", "r") as signed:
