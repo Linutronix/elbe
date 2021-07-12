@@ -1,3 +1,10 @@
+elbe (13.1.1) unstable; urgency=medium
+
+  * Team upload
+  * Backport two upcoming patches for noauth handling
+
+ -- Bastian Germann <bage@linutronix.de>  Mon, 12 Jul 2021 12:01:02 +0200
+
 elbe (13.1) unstable; urgency=medium
 
   * Team upload
