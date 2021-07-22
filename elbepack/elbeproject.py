@@ -872,18 +872,23 @@ class ElbeProject:
         pbuilder_write_apt_conf(self.builddir, self.xml)
 
         # Run pbuilder --create
+        no_check_gpg = ""
+        if self.xml.prj.has('noauth'):
+            no_check_gpg = "--debootstrapopts --no-check-gpg"
         if cross:
             do('pbuilder --create --buildplace "%s" '
                '--configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git,gnupg";' %
+               '--debootstrapopts --include="git,gnupg" %s;' %
                (os.path.join(self.builddir, "pbuilder_cross"),
                 os.path.join(self.builddir, "cross_pbuilderrc"),
-                os.path.join(self.builddir, "aptconfdir")))
+                os.path.join(self.builddir, "aptconfdir"),
+                no_check_gpg))
         else:
             do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git,gnupg"' %
+               '--debootstrapopts --include="git,gnupg" %s' %
                (os.path.join(self.builddir, "pbuilderrc"),
-                os.path.join(self.builddir, "aptconfdir")))
+                os.path.join(self.builddir, "aptconfdir"),
+                no_check_gpg))
 
     def sync_xml_to_disk(self):
         try:

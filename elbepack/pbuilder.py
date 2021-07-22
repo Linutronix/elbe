@@ -90,6 +90,13 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
     fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'hooks.d'))
     fp.write('PBUILDERSATISFYDEPENDSCMD='
              '/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n')
+
+    if xml.prj.has('noauth'):
+        fp.write(
+            'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
+        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]} == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
+        fp.write('export ALLOWUNTRUSTED="yes"\n')
+
     if not noccache:
         fp.write('export CCACHE_DIR="%s/ccache"\n' % builddir)
         fp.write('export PATH="/usr/lib/ccache:${PATH}"\n')
