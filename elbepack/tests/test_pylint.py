@@ -60,8 +60,8 @@ class TestPylint(ElbeTestCase):
             system("pylint3 %s %s" % (' '.join(self.pylint_opts), self.param))
         except ElbeTestException as e:
             if self.param in TestPylint.failure_set:
-                self.skipTest("Pylint test for %s is expected to fail" % (self.param))
                 self.stdout = e.out
+                self.skipTest("Pylint test for %s is expected to fail" % (self.param))
             else:
                 raise
         else:
