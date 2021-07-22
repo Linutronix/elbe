@@ -47,6 +47,7 @@ class ElbeTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest', param=None):
         self.methodName = methodName
         self.param = param
+        self.stdout = None
         super().__init__(methodName)
 
     def __str__(self):
@@ -189,6 +190,8 @@ class ElbeTestResult(unittest.TestResult):
     def addSkip(self, test, reason):
         """Called when a test is skipped."""
         self.current_case.add_skipped_info(message=reason)
+        if test.stdout is not None:
+            self.current_case.stdout = test.stdout
         super().addSkip(test, reason)
 
     def get_xml(self):
