@@ -774,15 +774,16 @@ class ElbeProject:
         if "3.0 (quilt)" in formatfile and not self.orig_files:
             do("cd %s; origtargz --download-only --tar-only" % pdebuilder_current)
             self.orig_files = glob.glob("%s/../%s*.orig.*" % (pdebuilder_current, src_pkg_name))
-        try:
-            for orig_fname in self.orig_files:
-                    ofname = os.path.join(self.builddir, orig_fname)
-                    do('mv "%s" "%s"' % (ofname,
-                                         os.path.join(self.builddir,
-                                                      "pdebuilder")))
-        finally:
-            self.orig_fname = None
-            self.orig_files = []
+        else:
+            try:
+                for orig_fname in self.orig_files:
+                        ofname = os.path.join(self.builddir, orig_fname)
+                        do('mv "%s" "%s"' % (ofname,
+                                             os.path.join(self.builddir,
+                                                          "pdebuilder")))
+            finally:
+                self.orig_fname = None
+                self.orig_files = []
 
         try:
             if cross:
