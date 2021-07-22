@@ -12,7 +12,7 @@ import sys
 from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
 from itertools import islice
-from urllib.error import HTTPError
+from urllib.error import HTTPError,URLError
 from urllib.request import urlopen
 
 from lxml import etree
@@ -48,6 +48,9 @@ def preprocess_pgp_key(xml):
             key.text = "\n%s\n" % myKey
         except HTTPError:
             raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" %
+                                     keyurl)
+        except URLError:
+            raise XMLPreprocessError("Problem with PGP Key URL in <key> tag: %s" %
                                      keyurl)
 
 
