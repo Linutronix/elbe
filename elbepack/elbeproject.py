@@ -875,13 +875,13 @@ class ElbeProject:
         if cross:
             do('pbuilder --create --buildplace "%s" '
                '--configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git gnupg";' %
+               '--debootstrapopts --include="git,gnupg";' %
                (os.path.join(self.builddir, "pbuilder_cross"),
                 os.path.join(self.builddir, "cross_pbuilderrc"),
                 os.path.join(self.builddir, "aptconfdir")))
         else:
             do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git gnupg"' %
+               '--debootstrapopts --include="git,gnupg"' %
                (os.path.join(self.builddir, "pbuilderrc"),
                 os.path.join(self.builddir, "aptconfdir")))
 
