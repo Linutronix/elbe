@@ -59,7 +59,7 @@ def run_command(argv):
 
     (opt, args) = oparser.parse_args(argv)
 
-    if len(args) < 1:
+    if not args:
         print("elbe prjrepo - no subcommand given", file=sys.stderr)
         RepoAction.print_actions()
         return
