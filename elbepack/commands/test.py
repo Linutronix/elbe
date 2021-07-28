@@ -25,6 +25,7 @@ class ElbeTestLevel(enum.IntEnum):
 class ElbeTestException(Exception):
 
     def __init__(self, cmd, ret, out):
+        super().__init__()
         self.cmd = cmd
         self.ret = ret
         self.out = out
