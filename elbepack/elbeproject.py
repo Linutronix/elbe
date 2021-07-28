@@ -760,7 +760,7 @@ class ElbeProject:
             cpuset_cmd = ''
 
         profile_list = profile.split(",")
-        deb_build_opts = [i for i in profile_list if i=="nodoc" or i=="nocheck"]
+        deb_build_opts = [i for i in profile_list if i in ("nodoc", "nocheck")]
 
         pdebuilder_current = os.path.join(self.builddir, "pdebuilder", "current")
 
@@ -777,10 +777,10 @@ class ElbeProject:
         else:
             try:
                 for orig_fname in self.orig_files:
-                        ofname = os.path.join(self.builddir, orig_fname)
-                        do('mv "%s" "%s"' % (ofname,
-                                             os.path.join(self.builddir,
-                                                          "pdebuilder")))
+                    ofname = os.path.join(self.builddir, orig_fname)
+                    do('mv "%s" "%s"' % (ofname,
+                                         os.path.join(self.builddir,
+                                                      "pdebuilder")))
             finally:
                 self.orig_fname = None
                 self.orig_files = []
@@ -979,7 +979,6 @@ class ElbeProject:
                      datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     def copy_initvmnode(self):
-        source = self.xml
         source_path = "/var/cache/elbe/source.xml"
         try:
             initxml = ElbeXML(source_path,
