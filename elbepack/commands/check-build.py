@@ -94,6 +94,7 @@ class CheckBase:
     # pylint: disable=no-self-use
     def run(self):
         raise Exception("Check run method not implemented")
+        return 0
 
     def fail(self, reason):
         raise CheckException(reason)
