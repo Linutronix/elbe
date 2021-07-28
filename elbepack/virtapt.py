@@ -60,6 +60,7 @@ def lookup_uri(v, d, target_pkg):
         return target_pkg, uri, ""
 
     try:
+        # pylint: disable=no-member
         hashval = str(r.hashes.find('SHA256')).split(':')[1]
     except AttributeError:
         # TODO: this fallback Code can be removed on stretch
@@ -224,6 +225,7 @@ class VirtApt:
 
         x = self.source.find_index(c.file_list[0][0])
         uri = x.archive_uri(r.filename)
+        # pylint: disable=no-member
         hashval = str(r.hashes.find('SHA256'))
 
         acq = apt_pkg.AcquireFile(self.acquire,
