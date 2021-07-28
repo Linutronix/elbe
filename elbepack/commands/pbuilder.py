@@ -64,7 +64,7 @@ def run_command(argv):
 
     (opt, args) = oparser.parse_args(argv)
 
-    if len(args) < 1:
+    if not args:
         print("elbe pbuilder - no subcommand given", file=sys.stderr)
         PBuilderAction.print_actions()
         return
