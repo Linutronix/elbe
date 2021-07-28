@@ -362,7 +362,6 @@ class PreprocessWrapper:
     @staticmethod
     def add_options(oparser):
         # import it here because of cyclic imports
-        # pylint: disable=import-outside-toplevel
         # pylint: disable=cyclic-import
         from elbepack.commands.preprocess import add_pass_through_options
 
