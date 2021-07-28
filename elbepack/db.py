@@ -19,8 +19,6 @@ from contextlib import contextmanager
 from urllib.parse import quote
 from threading import Thread
 
-from passlib.hash import pbkdf2_sha512
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, ForeignKey)
 from sqlalchemy import (Integer, String, Boolean, Sequence, DateTime)
@@ -30,6 +28,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
+
+from passlib.hash import pbkdf2_sha512
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import (ElbeXML, ValidationMode)
