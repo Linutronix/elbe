@@ -10,7 +10,6 @@ import binascii
 import os
 import tarfile
 import fnmatch
-import sys
 
 from tempfile import NamedTemporaryFile
 
