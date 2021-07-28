@@ -32,9 +32,6 @@ class TestPylint(ElbeTestCase):
                        "debianize/widgets/grid.py",
                        "debianize/widgets/radio.py",
 
-                       "elbeproject.py",
-                       "elbexml.py",
-
                        # FIXME: This one is an actual bug to be fixed
                        # 274:30: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
                        # 276:26: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
