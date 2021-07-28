@@ -8,9 +8,10 @@
 import os
 import logging
 
-import apt_pkg
 import apt
 from apt.package import FetchError
+
+import apt_pkg
 
 MARKED_INSTALL = 0
 MARKED_UPGRADE = 1
