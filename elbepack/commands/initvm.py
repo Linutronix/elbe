@@ -75,7 +75,7 @@ def run_command(argv):
 
     (opt, args) = oparser.parse_args(argv)
 
-    if len(args) < 1:
+    if not args:
         print("elbe initvm - no subcommand given", file=sys.stderr)
         InitVMAction.print_actions()
         sys.exit(20)
