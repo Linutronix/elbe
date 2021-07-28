@@ -19,7 +19,7 @@ def run_command(argv):
 
     (opt, args) = oparser.parse_args(argv)
 
-    if len(args) < 1:
+    if not args:
         oparser.print_help()
         sys.exit(20)
 
