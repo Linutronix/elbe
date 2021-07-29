@@ -432,6 +432,7 @@ class Filesystem:
             fp.close()
 
     def walk_files(self, directory='', exclude_dirs=None):
+        # pylint: disable=too-many-locals
         if not exclude_dirs:
             exclude_dirs = []
 
