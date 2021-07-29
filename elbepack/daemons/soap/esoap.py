@@ -119,7 +119,7 @@ class ESoap (ServiceBase):
     def get_files(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         files = self.app.pm.db.get_project_files(builddir)
-        return [SoapFile(f) for f in files]
+        return files
 
     @rpc(String, String, String, Integer, _returns=Integer)
     @authenticated_uid
