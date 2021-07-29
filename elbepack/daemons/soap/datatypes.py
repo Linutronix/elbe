@@ -17,23 +17,12 @@ class SoapProject (ComplexModel):
     status = Unicode()
     edit = DateTime()
 
-    def __init__(self, prj):
-        self.builddir = prj.builddir
-        self.name = prj.name
-        self.version = prj.version
-        self.status = prj.status
-        self.edit = prj.edit
-
 
 class SoapFile (ComplexModel):
     __namespace__ = 'soap'
 
     name = Unicode()
     description = Unicode()
-
-    def __init__(self, fi):
-        self.name = fi.name
-        self.description = fi.description
 
 
 class SoapCmdReply (ComplexModel):
