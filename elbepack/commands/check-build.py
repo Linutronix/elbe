@@ -94,6 +94,7 @@ class CheckBase:
     # pylint: disable=no-self-use
     def run(self):
         raise Exception("Check run method not implemented")
+        # pylint: disable=unreachable
         return 0
 
     def fail(self, reason):
@@ -262,6 +263,8 @@ class CheckCdroms(CheckBase):
 
         # For every bin-cdrom, create a temporary directory where to
         # extract it and find all *.deb files
+        #
+        # pylint: disable=too-many-nested-blocks
         for cdrom in glob.glob("bin-cdrom*"):
             with TmpdirFilesystem() as tmp:
                 self.extract_cdrom(tmp.path, cdrom)
