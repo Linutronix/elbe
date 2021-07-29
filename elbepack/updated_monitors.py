@@ -118,6 +118,8 @@ class FileMonitor (UpdateMonitor):
         super(FileMonitor, self).__init__(status)
         self.wm = pyinotify.WatchManager()
         self.notifier = pyinotify.Notifier(self.wm)
+
+        # pylint: disable=no-member
         self.wm.add_watch(update_dir, pyinotify.IN_CLOSE_WRITE,
                           proc_fun=FileMonitor.EventHandler(self.status))
         self.observer = FileMonitor.ObserverThread(self.status, self)
