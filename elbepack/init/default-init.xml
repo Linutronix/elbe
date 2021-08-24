@@ -8,18 +8,10 @@
 			<url-list>
 				<url>
 					<binary>
-						http://security.debian.org/debian-security buster/updates main
+						http://security.debian.org/debian-security bullseye-security main
 					</binary>
 					<source>
-						http://security.debian.org/debian-security buster/updates main
-					</source>
-				</url>
-				<url>
-					<binary>
-						http://ftp.debian.org/debian buster-backports main
-					</binary>
-					<source>
-						http://ftp.debian.org/debian buster-backports main
+						http://security.debian.org/debian-security bullseye-security main
 					</source>
 				</url>
 				<url>
@@ -46,11 +38,9 @@
 				</url>
 			</url-list>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bullseye</suite>
 		<pkg-list>
-			<pkg pin="buster-backports">qemu-user-static</pkg>
 			<pkg>openssh-server</pkg>
-			<pkg>ubuntu-keyring</pkg>
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
