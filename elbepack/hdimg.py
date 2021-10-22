@@ -208,7 +208,7 @@ class grubinstaller202(grubinstaller_base):
                    "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'"  %
                    imagemnt)
             if not self.fw_type or "bios" in self.fw_type:
-                do("chroot %s grub-install --no-floppy %s" %
+                do("chroot %s grub-install --target=i386-pc --no-floppy %s" %
                    (imagemnt, poopdev))
 
         except CommandError as E:
