@@ -668,7 +668,7 @@ class CopyFromPartition(ImageFinetuningAction):
                              self.node.et.text, len(fname))
                 raise FinetuningException('Patter matches too many files')
 
-            cmd = 'cp "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
+            cmd = 'cp -av "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
             do(cmd)
 
             target.images.append(aname)
@@ -693,7 +693,7 @@ class CopyToPartition(ImageFinetuningAction):
 
         with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.fname(self.node.et.text)
-            cmd = 'cp "%s" "%s"' % (os.path.join(builddir, aname), fname)
+            cmd = 'cp -av "%s" "%s"' % (os.path.join(builddir, aname), fname)
             do(cmd)
 
 @FinetuningAction.register('set_partition_type')
