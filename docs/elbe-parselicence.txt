@@ -25,14 +25,14 @@ This xml file is generated during an elbe build.
 SPDX Licenses information is generated using mappings and overrides found
 in the mapping file.
 
-This information is written to an output xml File, and to a tagvalue based
+This information is written to an output xml file, and to a tagvalue based
 SPDX File.
 
 OPTIONS
 -------
 
 --mapping <filename>::
-	Use <filename> to aid with packages which contain non-machinereadable
+	Use <filename> to aid with packages which contain non-machine-readable
 	or incomplete Licence infos. The format is explained in the chapter MAPPING FILE.
 
 --output <filename>::
@@ -79,18 +79,18 @@ elbe parselicence --mapping my_mapping.xml /path/to/license.xml --tvout spdx_lic
 LICENSE.XML FILE
 ----------------
 
-When elbe builds an image, it will look at all /usr/share/doc/*/COPYING Files,
-and concatenate them into `license.txt`. New Versions of elbe will also generate
-`license.xml`, which also contains meta-data extracted from machinereadable COPYING
+When elbe builds an image, it will look at all /usr/share/doc/*/copyright Files,
+and concatenate them into `license.txt`. Elbe will also generate
+`license.xml`, which also contains meta-data extracted from machine-readable copyright
 files, or generated via heuristics.
 
 There are 3 possibitlities per Package:
 
-COPYING File is machinereadable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Copyright File is machine-readable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the Copying File is machinereadable. The debian Licenses and
-all per file Information is put into the xml File.
+The debian Licenses and all per file information is put into the xml file
+if the copyright file is machine-readable.
 
 The `<pkglicense>` tag will contain a `<machinereadable />` tag,
 and also `<debian_licenses>` and a `<detailed>` tag.
@@ -143,7 +143,7 @@ License: BSD-2-Clause
 Some information can be extracted via heuristics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are quite a COPYING Files, which almost adopted the
+There are quite a few copyright files which almost adopted the
 new machine readable Format. But the parser does not accept it.
 
 The heuristic will look for lines containing `License: *` and will
@@ -337,7 +337,7 @@ Its not allowed to mix `<license>` and `<mapping>` in a single <package> node.
 NOMOS
 -----
 
-Nomos is part of fossology. See http://www.fossology.org/projects/fossology/wiki/Debian_Install_2_5
+Nomos is part of fossology. See https://www.fossology.org/get-started/
 to find out, how to install the nomos executable.
 
 
