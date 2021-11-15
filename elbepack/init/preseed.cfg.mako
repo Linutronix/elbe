@@ -137,7 +137,7 @@ d-i pkgsel/include string rng-tools \
                           btrfs-progs \
                           openssh-client \
                           dbus \
-                          debathena-transform-lighttpd \
+                          lighttpd \
                           gnupg2 \
 % for p in elbe_initvm_packagelist:
                           ${p}=${elbe_version}* \

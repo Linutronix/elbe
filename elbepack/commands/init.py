@@ -269,6 +269,7 @@ def run_command(argv):
                                                   elbe_dir))
 
         to_cpy = [("apt.conf", "etc/apt"),
+                  ("lighttpd.conf", "etc/lighttpd"),
                   ("init-elbe.sh", ""),
                   ("source.xml", ""),
                   ("initrd-cdrom.gz", ""),

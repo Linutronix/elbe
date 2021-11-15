@@ -35,6 +35,11 @@ mkdir -p /buildenv/var/cache/elbe
 cp source.xml /buildenv/var/cache/elbe/
 cp /etc/apt/apt.conf /buildenv/etc/apt/apt.conf.d/50elbe
 
+# Replace lighttpd configuration
+cp /etc/lighttpd/lighttpd.conf /buildenv/etc/lighttpd/lighttpd.conf
+in-target systemctl stop lighttpd.service
+in-target systemctl start lighttpd.service
+
 ln -s /lib/systemd/system/serial-getty@.service /buildenv/etc/systemd/system/getty.target.wants/serial-getty@ttyS0.service
 
 mkdir /buildenv/var/cache/elbe/installer
