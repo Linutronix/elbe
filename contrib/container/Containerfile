@@ -1,0 +1,32 @@
+# ELBE development container
+# Copyright (c) 2021 Daniel Braunwarth <daniel@braunwarth.dev>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM debian:bullseye-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update --yes && apt-get install --yes --no-install-recommends \
+        systemd \
+        python3 \
+        python3-libvirt \
+        python3-lxml \
+        python3-gpg \
+        python3-mako \
+        python3-suds \
+        python3-debian \
+        wget \
+        bzip2 \
+        make \
+        cpio \
+        rsync \
+        ssh \
+        qemu-system-x86 \
+        qemu-utils \
+        libvirt-daemon-system \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN systemctl enable libvirtd.service
+
+CMD [ "/lib/systemd/systemd" ]
