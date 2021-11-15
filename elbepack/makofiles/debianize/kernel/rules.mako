@@ -106,6 +106,9 @@ override_dh_auto_install:
 	ln -sf "/usr/src/linux-headers-$(REL)" "$(TMP_DIR)/lib/modules/$(REL)/build"
 	rm -f "$(DEB_DIR)/hdrsrcfiles" "$(DEB_DIR)/hdrobjfiles"
 
+override_dh_install:
+	dh_install -X/scripts/
+
 override_dh_auto_test:
 
 %%:
