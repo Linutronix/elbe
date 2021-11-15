@@ -18,7 +18,7 @@ from elbepack.debianize.widgets.radio import RadioGroup
 from elbepack.directories import mako_template_dir
 from elbepack.templates import template
 from elbepack.shellhelper import system
-
+from pkg_resources import parse_version
 
 class ImgType(object):
     BZ = "bzImage"
@@ -55,11 +55,23 @@ class Kernel(Panel):
             return "uinstall"
         return "install"
 
+    def pattern_delete(filename, pattern):
+        f_r = open(filename,"r")
+        lines = f_r.readlines()
+        f_r.close()
+        f_w = open(filename,"w")
+        for line in lines:
+            if not pattern in line:
+                f_w.write(line)
+        f_w.close()
+
     def debianize(self):
 
         self.deb['imgtype_install'] = Kernel.imgtype_to_install(self.deb['imgtype'])
         self.tmpl_dir = os.path.join(mako_template_dir, 'debianize/kernel')
         pkg_name = self.deb['k_version'] + '-' + self.deb['p_name']
+        self.deb['in_kernel_firmware'] = int(parse_version(self.deb['k_version']) <= parse_version('v4.13'))
+        self.image_dst = 'debian/linux-image-%s.install' % pkg_name
 
         for tmpl in [
             'control',
@@ -90,3 +102,6 @@ class Kernel(Panel):
 
         self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
                 self.deb['p_arch'])
+
+        if not self.deb['in_kernel_firmware']:
+            Kernel.pattern_delete(self.image_dst, "firmware")
