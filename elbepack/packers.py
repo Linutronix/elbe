@@ -68,9 +68,11 @@ class TarArchiver(Packer):
 
 packers = {'none': NoPacker(),
            'gzip': InPlacePacker('gzip -f', '.gz'),
+           'zstd': InPlacePacker('zstd -T0', '.zst'),
            'tar':  TarArchiver('--auto-compress', '.tar'),
            'tarxz': TarArchiver('--auto-compress', '.tar.xz'),
            'targz': TarArchiver('--auto-compress', '.tar.gz'),
+           'tarzstd': TarArchiver('--use-compress-program="zstd -T0"', '.tar.zst'),
            }
 
 default_packer = packers['targz']

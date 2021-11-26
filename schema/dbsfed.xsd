@@ -2412,7 +2412,7 @@
         Set the packer to use for an artifaxct.
 	The value of the tag describes the filename of the Imagefile.
 	The packer attribute may take the following values:
-	(none, gzip, tar, targz, tarxz)
+	(none, gzip, zstd, tar, targz, tarxz, tarzstd)
       </documentation>
     </annotation>
     <simpleContent>
@@ -2426,9 +2426,11 @@
     <restriction base="string">
       <enumeration value="none" />
       <enumeration value="gzip" />
+      <enumeration value="zstd" />
       <enumeration value="tar" />
       <enumeration value="tarxz" />
       <enumeration value="targz" />
+      <enumeration value="tarzstd" />
     </restriction>
   </simpleType>
 
