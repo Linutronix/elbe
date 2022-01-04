@@ -8,8 +8,12 @@ elbe (14.0) unstable; urgency=medium
   * initvm: Update to bullseye
   * schema: Support <binary> for gpthd
   * many pylint fixes
+  * Support GRUB 2.06
+  * finetuning: use archive option for CopyFrom/ToPartition
+  * Remove duplicated slashes from primary mirror
+  * Use new debootstrap configuration
 
- -- Torben Hohn <torben.hohn@linutronix.de>  Wed, 08 Sep 2021 17:02:00 +0200
+ -- Torben Hohn <torben.hohn@linutronix.de>  Tue, 04 Jan 2022 12:37:00 +0100
 
 elbe (13.3) unstable; urgency=medium
 
