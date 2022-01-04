@@ -185,19 +185,22 @@ class BuildEnv:
 
         host_arch = get_command_out("dpkg --print-architecture").strip().decode()
 
-        includepkgs = None
-        strapcmd  = 'debootstrap '
-        if self.xml.has("target/debootstrapvariant"):
-            bootstrapvariant = self.xml.text("target/debootstrapvariant")
-            includepkgs = self.xml.node("target/debootstrapvariant").et.get("includepkgs")
-            strapcmd += '--variant="%s" ' % bootstrapvariant
+        strapcmd  = "debootstrap"
 
-        if includepkgs and not "gnupg" in includepkgs.split(','):
-            includepkgs += ",gnupg"
-        if not includepkgs:
-            includepkgs = "gnupg"
+        # Should we use a special bootstrap variant?
+        if self.xml.has("target/debootstrap/variant"):
+            strapcmd += " --variant=%s" % self.xml.text("target/debootstrap/variant")
 
-        strapcmd += ' --include="%s"' % includepkgs
+        # Should we include additional packages into bootstrap?
+        includepkgs = "gnupg"  # These are the packages which are included in any case
+        if self.xml.has("target/debootstrap/include"):
+            includepkgs += ", %s" % self.xml.text("target/debootstrap/include")
+        strapcmd += " --include=\"%s\"" % includepkgs
+
+        # Should we exclude some packages from bootstrap?
+        if self.xml.has("target/debootstrap/exclude"):
+            strapcmd += " --exclude=\"%s\"" % self.xml.text("target/debootstrap/exclude")
+
         keyring = ''
 
         if not self.xml.is_cross(host_arch):

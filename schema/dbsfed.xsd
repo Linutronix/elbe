@@ -979,18 +979,10 @@
           </documentation>
         </annotation>
       </element>
-      <element name="debootstrapvariant" type="rfs:debootstrapvarianttype" minOccurs="0" maxOccurs="1">
+      <element name="debootstrap" type="rfs:debootstrap" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-	    Name of the bootstrap script variant to use. Currently, the
-	    variants supported are minbase, which only includes essential
-	    packages and apt; buildd, which installs the buildessential
-	    packages into TARGET; and fakechroot, which installs the packages
-	    without root privileges. The default, with no --variant=X
-	    argument, is to create a base Debian installation in TARGET.
-            Some documentation mentioned the variant scratchbox too, but this
-	    variant is not supported by the debootstrap used and therefore
-	    not allowed.
+            Bootstrap configuration
           </documentation>
         </annotation>
       </element>
@@ -1099,39 +1091,51 @@
     <attribute ref="xml:base"/>
   </complexType>
 
-  <complexType name="debootstrapvarianttype">
+  <complexType name="debootstrap">
     <annotation>
       <documentation>
-        Enhanced restriction type specifying debootstrap variants.
+        Container for debootstrap configuration.
       </documentation>
     </annotation>
-    <simpleContent>
-      <extension base="rfs:debootstrapvarianttype_restriction">
-        <attribute name="includepkgs" type="string" use="optional">
-          <annotation>
-            <documentation>
-              A comma-separated list of additional packages at debootstrap runtime.
-            </documentation>
-          </annotation>
-        </attribute>
-      </extension>
-    </simpleContent>
+    <all>
+      <element name="variant" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Name  of  the  bootstrap  script  variant to use.
+            The following variants are supported:
+            * minbase: required packages and apt.
+            * buildd: build-essential packages.
+            * fakechroot: installs the packages without root privileges.
+          </documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="minbase" />
+            <enumeration value="buildd" />
+            <enumeration value="fakechroot" />
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="include" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Comma separated list of packages which will be added to download and
+            extract lists.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="exclude" type="string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Comma separated list of packages which will be removed from download
+            and extract lists.
+            WARNING: you can and probably will exclude essential packages, be
+            careful using this option.
+          </documentation>
+        </annotation>
+      </element>
+    </all>
   </complexType>
-
-  <simpleType name="debootstrapvarianttype_restriction">
-    <annotation>
-      <documentation>
-	Restriction type specifying debootstrap variants.
-        Supported debootstrap variants are minbase, buildd and fakechroot.
-	The variant scratchbox is not supported by th used debootstrap.
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <enumeration value="minbase" />
-      <enumeration value="buildd" />
-      <enumeration value="fakechroot" />
-    </restriction>
-  </simpleType>
 
   <complexType name="ubi_type">
     <annotation>
