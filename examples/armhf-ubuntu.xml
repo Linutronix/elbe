@@ -70,7 +70,9 @@
 				<name>image.tgz</name>
 			</tar>
 		</package>
-		<debootstrapvariant>minbase</debootstrapvariant>
+		<debootstrap>
+			<variant>minbase</variant>
+		</debootstrap>
 		<finetuning>
 			<rm>var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
