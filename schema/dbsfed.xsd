@@ -1764,6 +1764,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="options" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+             options passed to the mksquashfs command
+          </documentation>
+        </annotation>
+      </element>
     </all>
     <attribute ref="xml:base"/>
   </complexType>

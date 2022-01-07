@@ -468,8 +468,12 @@ class TargetFs(ChRootFilesystem):
             sfs_name = self.xml.text("target/package/squashfs/name")
             os.chdir(self.fname(''))
             try:
-                do("mksquashfs %s %s/%s -noappend -no-progress" %
-                   (self.fname(''), targetdir, sfs_name))
+                options = ''
+                if self.xml.has("target/package/squashfs/options"):
+                    options = self.xml.text("target/package/squashfs/options")
+
+                do("mksquashfs %s %s/%s -noappend -no-progress %s" %
+                   (self.fname(''), targetdir, sfs_name, options))
                 # only append filename if creating mksquashfs was successful
                 self.images.append(sfs_name)
             except CommandError:
