@@ -50,7 +50,7 @@ class TarArchiver(Packer):
             dirname = os.path.dirname(fpath)
             basename = os.path.basename(fpath)
             archname = fpath + self.suffix
-            do('tar cv%sf "%s" --sparse -C "%s" "%s"' %
+            do('tar --create --verbose --sparse %s --file "%s" --directory "%s" "%s"' %
                (self.flag, archname, dirname, basename))
             do('rm -f "%s"' % fpath)
         except CommandError:
@@ -68,8 +68,9 @@ class TarArchiver(Packer):
 
 packers = {'none': NoPacker(),
            'gzip': InPlacePacker('gzip -f', '.gz'),
-           'tar':  TarArchiver('', '.tar'),
-           'tarxz': TarArchiver('J', '.tar.xz'),
-           'targz': TarArchiver('z', '.tar.gz')}
+           'tar':  TarArchiver('--auto-compress', '.tar'),
+           'tarxz': TarArchiver('--auto-compress', '.tar.xz'),
+           'targz': TarArchiver('--auto-compress', '.tar.gz'),
+           }
 
 default_packer = packers['targz']
