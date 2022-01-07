@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 all:
-	./test/testdeb.sh
 	dpkg-buildpackage
 	lintian
 	cd contrib/debathena-transform-lighttpd && \
