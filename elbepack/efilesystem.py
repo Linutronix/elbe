@@ -379,6 +379,7 @@ class ChRootFilesystem(ElbeFilesystem):
         self._umount("proc")
         self._umount("sys")
         self._umount("dev/pts")
+        time.sleep(0.5)
         self._umount("dev")
 
     def leave_chroot(self):
