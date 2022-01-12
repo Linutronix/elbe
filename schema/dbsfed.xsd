@@ -1091,6 +1091,32 @@
     <attribute ref="xml:base"/>
   </complexType>
 
+  <complexType name="debootstrap_variant">
+    <annotation>
+      <documentation>
+        Helper around debootstrap_variant_restriction to allow XML base attribute
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:debootstrap_variant_restriction">
+	<attribute ref="xml:base"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <simpleType name="debootstrap_variant_restriction">
+    <annotation>
+      <documentation>
+	Restrict the possible debootstrap variants
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="minbase" />
+      <enumeration value="buildd" />
+      <enumeration value="fakechroot" />
+    </restriction>
+  </simpleType>
+
   <complexType name="debootstrap">
     <annotation>
       <documentation>
@@ -1098,7 +1124,7 @@
       </documentation>
     </annotation>
     <all>
-      <element name="variant" minOccurs="0" maxOccurs="1">
+      <element name="variant" type="rfs:debootstrap_variant" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Name  of  the  bootstrap  script  variant to use.
@@ -1108,13 +1134,6 @@
             * fakechroot: installs the packages without root privileges.
           </documentation>
         </annotation>
-        <simpleType>
-          <restriction base="string">
-            <enumeration value="minbase" />
-            <enumeration value="buildd" />
-            <enumeration value="fakechroot" />
-          </restriction>
-        </simpleType>
       </element>
       <element name="include" type="string" minOccurs="0" maxOccurs="1">
         <annotation>
