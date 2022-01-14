@@ -9,10 +9,8 @@
 ./usr/lib/python3.*/*-packages/elbepack/commands/hdimg.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/mkcdrom.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/toolchainextract.py
-./usr/lib/python3.*/*-packages/elbepack/makofiles/preferences.mako
 ./usr/lib/python3.*/*-packages/elbepack/makofiles/environment-setup-elbe.mako
 ./usr/lib/python3.*/*-packages/elbepack/makofiles/toolchain-shar-extract.sh.mako
-./usr/lib/python3.*/*-packages/elbepack/hdimg.py
 ./usr/lib/python3.*/*-packages/elbepack/db.py
 ./usr/lib/python3.*/*-packages/elbepack/dbaction.py
 ./usr/lib/python3.*/*-packages/elbepack/dump.py
@@ -20,13 +18,9 @@
 ./usr/lib/python3.*/*-packages/elbepack/repomanager.py
 ./usr/lib/python3.*/*-packages/elbepack/finetuning.py
 ./usr/lib/python3.*/*-packages/elbepack/junit.py
-./usr/lib/python3.*/*-packages/elbepack/aptpkgutils.py
 ./usr/lib/python3.*/*-packages/elbepack/cdroms.py
 ./usr/lib/python3.*/*-packages/elbepack/debianreleases.py
 ./usr/lib/python3.*/*-packages/elbepack/debpkg.py
-./usr/lib/python3.*/*-packages/elbepack/efilesystem.py
-./usr/lib/python3.*/*-packages/elbepack/fstab.py
 ./usr/lib/python3.*/*-packages/elbepack/rpcaptcache.py
 ./usr/lib/python3.*/*-packages/elbepack/updatepkg.py
 ./usr/lib/python3.*/*-packages/elbepack/pbuilder.py
-./usr/lib/python3.*/*-packages/elbepack/packers.py
