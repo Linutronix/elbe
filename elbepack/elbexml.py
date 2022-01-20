@@ -347,6 +347,12 @@ class ElbeXML:
                 usr, passwd = auth.split(':')
                 passman.add_password(None, r["url"], usr, passwd)
             if not self.validate_repo(r):
+                if "srcstr" in r:
+                    raise ValidationError(
+                        ["Repository %s, %s can not be validated" % (r["url"], r["srcstr"])])
+                if "binstr" in r:
+                    raise ValidationError(
+                        ["Repository %s, %s can not be validated" % (r["url"], r["binstr"])])
                 raise ValidationError(
                     ["Repository %s can not be validated" % r["url"]])
 
