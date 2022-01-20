@@ -2344,6 +2344,7 @@
     <simpleContent>
       <extension base="rfs:string">
         <attribute name="part" type="integer" use="required" />
+        <attribute name="nomount" type="boolean" use="optional" />
       </extension>
     </simpleContent>
   </complexType>

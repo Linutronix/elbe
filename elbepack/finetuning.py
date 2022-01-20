@@ -388,9 +388,13 @@ class CmdAction(ImageFinetuningAction):
         mnt   = os.path.join(builddir, 'imagemnt')
         dev   = "%sp%s" % (loop_dev, self.node.et.attrib["part"])
 
-        with ImgMountFilesystem(mnt, dev) as fs:
+        if self.node.bool_attr('nomount'):
             do("/bin/sh", stdin=script,
-               env_add={"ELBE_MNT": fs.path})
+               env_add={"ELBE_DEV": dev})
+        else:
+            with ImgMountFilesystem(mnt, dev) as fs:
+                do("/bin/sh", stdin=script,
+                   env_add={"ELBE_MNT": fs.path})
 
     def execute(self, _buildenv, target):
         with target:
