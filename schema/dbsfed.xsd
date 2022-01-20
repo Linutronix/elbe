@@ -1967,6 +1967,7 @@
       <enumeration value="vfat" />
       <enumeration value="btrfs" />
       <enumeration value="devtmpfs" />
+      <enumeration value="swap" />
     </restriction>
   </simpleType>
 
