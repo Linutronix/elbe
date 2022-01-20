@@ -261,7 +261,7 @@ class AddUserAction(FinetuningAction):
             if 'home' in att:
                 options += '-d "%s" ' % att['home']
             if 'system' in att and att['system'] == 'true':
-                options += '-r'
+                options += '-r '
             if 'create_home' in att and att['create_home'] == 'false':
                 options += '-M '
             else:
