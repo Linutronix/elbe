@@ -1,3 +1,14 @@
+elbe (14.1) unstable; urgency=medium
+
+  * Team upload
+  * debian: fix library dependencies for check_updates
+  * schema: Add swap to valid filesystems
+  * finetuning: Add nomount attribute to <command> in <losetup>
+  * finetuning: Fix <adduser system=true> action
+  * elbexml: Improve xml validation messages
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Thu, 27 Jan 2022 10:54:29 +0100
+
 elbe (14.0) unstable; urgency=medium
 
   * Team upload
