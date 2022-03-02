@@ -677,6 +677,7 @@
 
   <simpleType name="suite-proj">
     <restriction base="string">
+      <enumeration value="bookworm" />
       <enumeration value="bullseye" />
       <enumeration value="buster" />
       <enumeration value="sid" />
