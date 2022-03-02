@@ -4,11 +4,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-suite2codename = {'oldoldoldstable': 'wheezy',
-                  'oldoldstable': 'jessie',
-                  'oldstable': 'stretch',
-                  'stable': 'buster',
-                  'testing': 'bullseye',
+suite2codename = {'oldoldoldstable': 'jessie',
+                  'oldoldstable': 'stretch',
+                  'oldstable': 'buster',
+                  'stable': 'bullseye',
+                  'testing': 'bookworm',
                   'unstable': 'sid',
 
                   'lucid': 'lucid',
