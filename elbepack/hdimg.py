@@ -336,6 +336,10 @@ def create_partition(
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 
+    if disk.type == "gpt" and \
+        part.has("name"):
+        ppart.set_name(part.text("name"))
+
     cons = parted.Constraint(exactGeom=g)
     disk.addPartition(ppart, cons)
 

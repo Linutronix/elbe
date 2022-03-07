@@ -1808,6 +1808,13 @@
           </documentation>
         </annotation>
       </element>
+      <element name="name" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+             human readable name of the partition used for naming a gpt partition
+          </documentation>
+        </annotation>
+      </element>
       <element name="binary" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
