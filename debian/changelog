@@ -1,3 +1,19 @@
+elbe (14.2) unstable; urgency=medium
+
+  * Team upload
+  * Add zstd in-place packer and tar archiver
+  * Use tar GNU-style options and auto compression mode
+  * Add possibility to define squashfs package options
+  * Remove testdeb.sh
+  * hdimg: Add support for partition names in GPT partitions
+  * dbsfed.xsd: Add Debian bookworm release name
+  * Update Debian codenames
+  * Support sha256 sums in <fullpkglist> validation
+  * tests: Bump test xmls to bullseye
+  * tests: Add 1 bookworm test xml
+
+ -- Torben Hohn <torben.hohn@linutronix.de>  Mon, 14 Mar 2022 12:23:16 +0100
+
 elbe (14.1) unstable; urgency=medium
 
   * Team upload
