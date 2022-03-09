@@ -6,7 +6,7 @@
 	<project>
 		<name>simple-arm64</name>
 		<version>1.0</version>
-		<suite>buster</suite>
+		<suite>bullseye</suite>
 		<buildtype>aarch64</buildtype>
 
 		<description>
@@ -22,7 +22,7 @@
 	</project>
 
 	<target>
-		<hostname>arm64-buster</hostname>
+		<hostname>arm64-bullseye</hostname>
 		<domain>elbe-ci</domain>
 		<passwd>root</passwd>
 		<console>ttyS0,115200</console>
