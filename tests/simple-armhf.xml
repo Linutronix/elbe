@@ -4,7 +4,7 @@
 		    xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 
 	<project>
-		<name>simple-armhf-with-grub</name>
+		<name>simple-armhf</name>
 		<version>1.0</version>
 		<suite>bullseye</suite>
 		<buildtype>armhf</buildtype>
