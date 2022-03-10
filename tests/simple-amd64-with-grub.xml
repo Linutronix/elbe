@@ -33,7 +33,7 @@
 				<size>2000MiB</size>
 				<grub-install />
 				<partition>
-					<size>1000MiB</size>
+					<size>1900MiB</size>
 					<label>rfs</label>
 				</partition>
 				<partition>
