@@ -64,7 +64,7 @@
 			</file>
 			<cp path="/etc/bash.bashrc">/root/.bashrc</cp>
 
-			<cp path="/usr/lib/linux-image-4.19.0-*-armmp/vexpress-v2p-ca15-tc1.dtb">/boot/vexpress-v2p-ca15-tc1.dtb</cp>
+			<cp path="/usr/lib/linux-image-*-armmp/vexpress-v2p-ca15-tc1.dtb">/boot/vexpress-v2p-ca15-tc1.dtb</cp>
 			<ln path="boot/vexpress-v2p-ca15-tc1.dtb">/dtb</ln>
 
 			<artifact>/vmlinuz</artifact>
