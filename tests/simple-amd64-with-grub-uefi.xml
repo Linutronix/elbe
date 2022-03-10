@@ -15,8 +15,8 @@
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://security.debian.org bullseye/updates main</binary>
-					<source>http://security.debian.org bullseye/updates main</source>
+					<binary>http://security.debian.org bullseye-security main</binary>
+					<source>http://security.debian.org bullseye-security main</source>
 				</url>
 			</url-list>
 		</mirror>
