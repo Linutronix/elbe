@@ -39,6 +39,16 @@ def apt_pkg_md5(pkg):
             return h.split(':')[1]
     return ""
 
+def apt_pkg_sha256(pkg):
+    # pylint: disable=protected-access
+    hashes = pkg._records.hashes
+    # pylint: disable=consider-using-enumerate
+    for i in range(len(hashes)):
+        h = str(hashes[i])
+        if h.startswith("SHA256"):
+            return h.split(':')[1]
+    return ""
+
 def getdeps(pkg):
     for dd in pkg.dependencies:
         for d in dd:
@@ -147,6 +157,7 @@ class PackageBase:
     def __init__(self, name,
                  installed_version, candidate_version,
                  installed_md5, candidate_md5,
+                 installed_sha256, candidate_sha256,
                  installed_prio, candidate_prio,
                  state, is_auto_installed, origin, architecture):
 
@@ -157,6 +168,8 @@ class PackageBase:
         self.candidate_version = candidate_version
         self.installed_md5 = installed_md5
         self.candidate_md5 = candidate_md5
+        self.installed_sha256 = installed_sha256
+        self.candidate_sha256 = candidate_sha256
         self.installed_prio = installed_prio
         self.candidate_prio = candidate_prio
         self.state = state
@@ -184,6 +197,8 @@ class APTPackage(PackageBase):
         cver = pkg.candidate and pkg.candidate.version
         imd5 = pkg.installed and apt_pkg_md5(pkg.installed)
         cmd5 = pkg.candidate and apt_pkg_md5(pkg.candidate)
+        isha256 = pkg.installed and apt_pkg_sha256(pkg.installed)
+        csha256 = pkg.candidate and apt_pkg_sha256(pkg.candidate)
         iprio = pkg.installed and pkg.installed.priority
         cprio = pkg.candidate and pkg.candidate.priority
 
@@ -205,6 +220,7 @@ class APTPackage(PackageBase):
         PackageBase.__init__(self, pkg.name,
                              iver, cver,
                              imd5, cmd5,
+                             isha256, csha256,
                              iprio, cprio,
                              pkgstate(pkg), pkg.is_auto_installed,
                              origin, arch)
@@ -215,6 +231,7 @@ class XMLPackage(PackageBase):
         PackageBase.__init__(self, node.et.text,
                              node.et.get('version'), None,
                              node.et.get('md5'), None,
+                             node.et.get('sha256'), None,
                              node.et.get('prio'), None,
                              INSTALLED, node.et.get('auto') == 'true',
                              None, arch)
