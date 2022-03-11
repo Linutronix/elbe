@@ -2637,6 +2637,13 @@
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="sha256" type="string" use="optional">
+          <annotation>
+            <documentation>
+              sha256 sum of the package.
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="prio" type="string" use="optional">
           <annotation>
             <documentation>
