@@ -129,6 +129,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
         name = p.et.text
         ver = p.et.get('version')
         md5 = p.et.get('md5')
+        sha256 = p.et.get('sha256')
 
         pindex[name] = p
 
@@ -150,10 +151,22 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
             errors += 1
             continue
 
-        if pkg.installed_md5 != md5:
-            validation.error("Package '%s' md5 %s does not match installed md5 %s",
-                             name, md5, pkg.installed_md5)
-            errors += 1
+        if md5:
+            if pkg.installed_md5 != md5:
+                validation.error("Package '%s' md5 %s does not match installed md5 %s",
+                                 name, md5, pkg.installed_md5)
+                errors += 1
+
+        if sha256:
+            if pkg.installed_sha256 != sha256:
+                validation.error("Package '%s' sha256 %s does not match installed sha256 %s",
+                                 name, sha256, pkg.installed_sha256)
+                errors += 1
+
+        if not md5 and not sha256:
+            validation.error("Package '%s' has no hash setup in package list.",
+                             name)
+            error += 1
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
