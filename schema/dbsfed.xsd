@@ -230,7 +230,7 @@
       </documentation>
     </annotation>
     <sequence>
-      <element name="url" type="rfs:url" minOccurs="0" maxOccurs="10">
+      <element name="url" type="rfs:url" minOccurs="0" maxOccurs="unbounded">
         <annotation>
           <documentation>
             describes an additional debian mirror
