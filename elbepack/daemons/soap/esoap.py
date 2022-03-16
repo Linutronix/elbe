@@ -83,7 +83,7 @@ class ESoap (ServiceBase):
                    'DEBIAN_FRONTEND': 'noninteractive',
                    'DEBCONF_NONINTERACTIVE_SEEN': 'true'}
 
-            cmd = 'apt-get install -y --force-yes %s' % ' '.join(pkgs)
+            cmd = 'apt-get install -y --allow-downgrades %s' % ' '.join(pkgs)
 
             ret, out = command_out(cmd, env_add=env)
         finally:
