@@ -1,7 +1,7 @@
 Authors of ELBE
 
 Torben Hohn
-  mainauthor of elbe
+  main author and former maintainer of elbe
 
 Manuel Traut
   added UBI support and minor improvements to elbe
@@ -11,3 +11,6 @@ Benedikt Spranger
 
 Stefan Gast
   concept and implementation of project management
+
+Bastian Germann
+  current maintainer of elbe
