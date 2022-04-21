@@ -370,7 +370,7 @@
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the initvm.
-            e.g. "lenny", "squeeze", "sid", ..
+            E.g. "buster", "bullseye", "sid", ...
           </documentation>
         </annotation>
       </element>
@@ -520,7 +520,7 @@
           <documentation>
             name of the debian suite that should be used to generate the
             buildenvironment and the rootfilesystem.
-            e.g. "lenny", "squeeze", "sid", ..
+            E.g. "bullseye", "bookworm", "sid", ...
           </documentation>
         </annotation>
       </element>
