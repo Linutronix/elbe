@@ -26,6 +26,9 @@ suite2codename = {'oldoldoldstable': 'jessie',
                   'artful': 'artful',
                   'bionic': 'bionic',
                   'cosmic': 'cosmic',
+                  'focal': 'focal',
+                  'groovy': 'groovy',
+                  'jammy': 'jammy',
                  }
 
 
