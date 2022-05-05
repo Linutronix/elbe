@@ -409,8 +409,8 @@ class TargetFs(ChRootFilesystem):
             else:
                 self.mkdir("etc")
 
-        f = self.open("etc/fstab", "w")
         if xml.tgt.has("fstab"):
+            f = self.open("etc/fstab", "w")
             for fs in xml.tgt.node("fstab"):
                 if not fs.has("nofstab"):
                     fstab = fstabentry(xml, fs)
