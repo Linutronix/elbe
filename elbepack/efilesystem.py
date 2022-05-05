@@ -191,6 +191,7 @@ class ElbeFilesystem(Filesystem):
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
         xml.xml.write(elbe_base)
+        elbe_base.close()
         self.chmod("etc/elbe_base.xml", stat.S_IREAD)
 
     def write_licenses(self, f, pkglist, xml_fname=None):
