@@ -1,5 +1,5 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2015-2017 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2015-2022 Manuel Traut <manut@mecka.net>
 # Copyright (c) 2016-2017 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 # Copyright (c) 2018 Martin Kaistra <martin.kaistra@linutronix.de>
@@ -190,7 +190,8 @@ class ElbeFilesystem(Filesystem):
         version_file.close()
 
         elbe_base = self.open("etc/elbe_base.xml", "wb")
-        xml.xml.write(elbe_base)
+        # project-finetuning is not useful on the target and may contain private keys
+        xml.dump_without_node(elbe_base, 'target/project-finetuning')
         elbe_base.close()
         self.chmod("etc/elbe_base.xml", stat.S_IREAD)
 

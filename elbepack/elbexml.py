@@ -1,5 +1,5 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2017 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2014-2022 Manuel Traut <manut@mecka.net>
 # Copyright (c) 2014-2016 Torben Hohn <torben.hohn@linutronix.de>
 # Copyright (c) 2015 Ferdinand Schwenk <ferdinand.schwenk@emtrion.de>
 # Copyright (c) 2015 Benedikt Spranger <b.spranger@linutronix.de>
@@ -71,6 +71,7 @@ class ElbeXML:
             if validation:
                 raise ValidationError(validation)
 
+        self.fname = os.path.abspath(fname)
         self.xml = etree(fname)
         self.prj = self.xml.node("/project")
         self.tgt = self.xml.node("/target")
@@ -478,6 +479,13 @@ class ElbeXML:
 
         version = self.xml.ensure_child('elbe_version')
         version.set_text(ver_text)
+
+    def dump_without_node(self, f, node):
+        xml = etree(self.fname)
+        if xml.has(node):
+            tree = xml.node(node)
+            tree.clear()
+        xml.write(f)
 
     def get_elbe_version(self):
         if self.has('elbe_version'):
