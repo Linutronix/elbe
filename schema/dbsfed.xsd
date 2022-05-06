@@ -2230,6 +2230,8 @@
       </documentation>
     </annotation>
     <choice>
+      <element name="rauc_bundle" type="rfs:raucbundle" minOccurs="0">
+      </element>
       <element name="t2p_mv" type="rfs:cpmv" minOccurs="0">
         <annotation>
           <documentation>
@@ -2458,6 +2460,52 @@
         <attribute name="keep_src" type="boolean" use="optional" />
       </extension>
     </simpleContent>
+  </complexType>
+
+  <complexType name="raucslot">
+    <simpleContent>
+      <extension base="string">
+        <attribute type="string" name="slot"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="raucinput">
+    <annotation>
+      <documentation>
+        Describes the matching between an elbe generated file and a rauc update slot
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="input" minOccurs="1" type="rfs:raucslot">
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="raucbundle">
+    <annotation>
+      <documentation>
+        Description to generate a RAUC bundle for software updates
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="inputs" type="rfs:raucinput" />
+      <element type="string" name="raw-cert">
+        <annotation>
+          <documentation>
+            certificate used to generate the rauc bundle
+          </documentation>
+        </annotation>
+      </element>
+      <element type="string" name="raw-key">
+        <annotation>
+          <documentation>
+            private key to generate the rauc bundle
+          </documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attribute type="string" name="name"/>
   </complexType>
 
   <complexType name="set_packer">

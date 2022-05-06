@@ -139,6 +139,7 @@ d-i pkgsel/include string rng-tools \
                           dbus \
                           debathena-transform-lighttpd \
                           gnupg2 \
+                          rauc \
 % for p in elbe_initvm_packagelist:
                           ${p}=${elbe_version}* \
 % endfor

@@ -1,6 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # Copyright (c) 2014-2017 Torben Hohn <torben.hohn@linutronix.de>
-# Copyright (c) 2014-2017 Manuel Traut <manut@linutronix.de>
+# Copyright (c) 2014-2022 Manuel Traut <manut@mecka.net>
 # Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
 # Copyright (c) 2017 Kurt Kanzenbach <kurt@linutronix.de>
 #
@@ -24,6 +24,7 @@ from elbepack.packers import default_packer, packers
 from elbepack.egpg import unlock_key
 from elbepack.junit import TestSuite, TestException
 from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.templates import write_template
 
 
 class FinetuningException(Exception):
@@ -522,6 +523,37 @@ class ArtifactAction(FinetuningAction):
             logging.error("The specified artifact: '%s' doesn't exist",
                            self.node.et.text)
 
+@FinetuningAction.register('rauc_bundle')
+class RaucBundleAction(FinetuningAction):
+
+    def __init__(self, node):
+        FinetuningAction.__init__(self, node)
+
+    def execute_prj(self, _buildenv, target, _builddir):
+        # prepare directory to bundle
+        do("mkdir -p ../bundle")
+        elbe_project = _buildenv.xml.prj.text('name')
+        elbe_version = _buildenv.xml.prj.text('version')
+        with open('../bundle/manifest.raucm', 'w') as manifest:
+            manifest.write("[update]\ncompatible=%s\nversion=%s\n\n" % (elbe_project, elbe_version))
+            for f in self.node.node('inputs'):
+                if os.path.isfile('../' + f.et.text):
+                    do("cp ../%s ../bundle/" % f.et.text)
+                    manifest.write("[%s]\nfilename=%s\n\n" % (f.et.attrib['slot'], f.et.text))
+                else:
+                    logging.error("The specified artifact: '%s' doesn't exist - so cannot create a rauc bundle" % f.et.text)
+        # extract cert and key
+        with open('../rauc-key.pem', 'w') as key:
+            key.write("\n".join(line.strip(" \t") for line in self.node.text('raw-key').splitlines()[1:-1]))
+        with open('../rauc-cert.pem', 'w') as cert:
+            cert.write("\n".join(line.strip(" \t") for line in self.node.text('raw-cert').splitlines()[1:-1]))
+
+        # remove maybe existing bundle and create a new rauc bundle
+        bundle = '../' + self.node.et.attrib['name'] + '.raucb'
+        do("rm -f %s" % bundle)
+        do("rauc bundle --key=../rauc-key.pem --cert=../rauc-cert.pem ../bundle %s" % bundle)
+        do("rm -rf ../bundle")
+        target.images.append(bundle)
 
 @FinetuningAction.register('rm_artifact')
 class RmArtifactAction(FinetuningAction):
