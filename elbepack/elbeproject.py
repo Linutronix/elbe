@@ -701,7 +701,8 @@ class ElbeProject:
 
         self.targetfs.pack_images(self.builddir)
 
-        system('cat "%s"' % self.validationpath)
+        if os.path.exists(self.validationpath):
+          system('cat "%s"' % self.validationpath)
 
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
