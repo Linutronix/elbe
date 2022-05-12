@@ -1098,7 +1098,15 @@
       <element name="hostsdk-pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-	    install the given packages into the hostsdk. (ignores pin and versions,
+	    install the given packages into the host sysroot of the sdk. (ignores pin and versions,
+	    with the current implementation)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="sdk-pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+	    install the given packages into target sysroot of the sdk. (ignores pin and versions,
 	    with the current implementation)
           </documentation>
         </annotation>

@@ -271,6 +271,11 @@ class ElbeProject:
             ignore_dev_pkgs = [p.et.text for p in self.xml.node(
                 "target/pkg-blacklist/sysroot")]
 
+        sysroot_pkgs = []
+        if self.xml.tgt.has('sdk-pkg-list'):
+            sysroot_pkgs = [p.et.text for p in self.xml.node(
+                "target/sdk-pkg-list")]
+
         with self.sysrootenv:
             try:
                 cache = self.get_rpcaptcache(env=self.sysrootenv)
@@ -280,7 +285,8 @@ class ElbeProject:
 
             try:
                 cache.mark_install_devpkgs(set(ignore_pkgs),
-                                           set(ignore_dev_pkgs))
+                                           set(ignore_dev_pkgs),
+                                           set(sysroot_pkgs))
             except SystemError as e:
                 logging.exception("Mark install devpkgs failed")
             try:

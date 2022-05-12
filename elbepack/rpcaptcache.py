@@ -136,7 +136,7 @@ class RPCAPTCache(InChRootObject):
                        auto_inst=not nodeps,
                        from_user=from_user)
 
-    def mark_install_devpkgs(self, ignore_pkgs, ignore_dev_pkgs):
+    def mark_install_devpkgs(self, ignore_pkgs, ignore_dev_pkgs, additional_pkgs):
 
         # we don't want to ignore libc
         ignore_pkgs.discard('libc6')
@@ -197,6 +197,8 @@ class RPCAPTCache(InChRootObject):
             dev_lst.append(pkg)
 
         mark_install(dev_lst, "-dev")
+        for p in additional_pkgs:
+            self.mark_install(p, '')
 
         # ensure that the symlinks package will be installed (it's
         # needed for fixing links inside the sysroot
