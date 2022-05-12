@@ -79,6 +79,7 @@ export OECORE_DISTRO_VERSION="${sdk_version}"
 export OECORE_SDK_VERSION="${sdk_version}"
 export ARCH=x86
 export CROSS_COMPILE=${real_multimach_target_sys}-
+export CMAKE_PREFIX_PATH="$SDKTARGETSYSROOT/usr/lib/${real_multimach_target_sys}/cmake"
 
 # Append environment subscripts
 if [ -d "$OECORE_TARGET_SYSROOT/environment-setup.d" ]; then
