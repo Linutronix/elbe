@@ -19,15 +19,7 @@ INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
 % if defs["interpreter-args"] is not None:
 INTERPRETER-ARGS= ${" ".join(defs["interpreter-args"])}
 % endif
-# this is a workaround for
-# http://lists.linutronix.de/pipermail/elbe-devel/2017-July/000541.html
-VIRT=$(shell test -x /usr/bin/systemd-detect-virt && /usr/bin/systemd-detect-virt)
-DIST=$(shell lsb_release -cs)
-ifeq ($(filter-out vmware stretch, $(VIRT) $(DIST)),)
-MACHINE?=pc-i440fx-2.6
-else
 MACHINE?=pc
-endif
 
 CONSOLE?=ttyS0,115200n1
 LOOP_OFFSET?=1048576

@@ -671,7 +671,6 @@
       <enumeration value="sid" />
       <enumeration value="bullseye" />
       <enumeration value="buster" />
-      <enumeration value="stretch" />
     </restriction>
   </simpleType>
 
