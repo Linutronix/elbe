@@ -19,7 +19,7 @@ from elbepack.version import elbe_version
 from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
 from elbepack.licencexml import copyright_xml
-from elbepack.packers import default_packer
+from elbepack.packers import default_packer, packers, DebPacker
 from elbepack.shellhelper import (system,
                                   CommandError,
                                   do,
@@ -401,6 +401,7 @@ class TargetFs(ChRootFilesystem):
         self.xml = xml
         self.images = []
         self.image_packers = {}
+        packers['deb'] = DebPacker(xml.defs['arch'], xml.text('/project/version'))
 
     def write_fstab(self, xml):
         if not self.exists("etc"):

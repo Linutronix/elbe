@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+from elbepack.debpkg import build_binary_deb
 from elbepack.shellhelper import CommandError, do
 
 class Packer:
@@ -64,6 +65,27 @@ class TarArchiver(Packer):
             return None
 
         return fname + self.suffix
+
+
+class DebPacker(Packer):
+    def __init__(self, arch, version):
+        self.arch = arch
+        self.version = version
+
+    def pack_file(self, builddir, fname):
+        pkgname = fname
+        try:
+            pkgname = fname.split('.')[0]
+        except:
+            pass
+
+        return build_binary_deb(pkgname,
+                                self.arch,
+                                self.version,
+                                'description of %s' % pkgname,
+                                [(os.path.join(builddir, fname), '.')],
+                                '',
+                                builddir)
 
 
 packers = {'none': NoPacker(),

@@ -2486,6 +2486,7 @@
       <enumeration value="tarxz" />
       <enumeration value="targz" />
       <enumeration value="tarzstd" />
+      <enumeration value="deb" />
     </restriction>
   </simpleType>
 
