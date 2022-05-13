@@ -400,9 +400,9 @@ def create_binary(disk, part, ppart, target):
         else:
             tmp = target + "/" + part.text("binary")
 
-        do(f'dd if="{tmp}" of="{loopdev}"')
+        do('dd if="%s" of="%s"' % (tmp, loopdev))
     finally:
-        do(f'losetup -d "{loopdev}"')
+        do('losetup -d "%s"' % loopdev)
 
 def create_logical_partitions(disk,
                               extended,
