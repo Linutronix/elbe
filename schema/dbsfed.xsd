@@ -1074,6 +1074,15 @@
           </documentation>
         </annotation>
       </element>
+      <element name="sdk-finetuning" type="rfs:sdk-finetuning" minOccurs="0">
+        <annotation>
+          <documentation>
+            apply the given commands to the sdk directory, after target and host sysroots have
+            been generated. Currently supported use-cases are:
+              * file operations like, cp, mv, ..
+          </documentation>
+        </annotation>
+      </element>
       <element name="pbuilder" type="rfs:pbuilder" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
@@ -2288,6 +2297,78 @@
         <annotation>
           <documentation>
 	    Allows to generate test suites for the project.
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
+
+  <complexType name="sdk-finetuning">
+    <annotation>
+      <documentation>
+         container for sdk-finetuning commands; these commands are executed in the
+         sdk directory, after the host and target sysroots have been generated.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:sdk-action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute ref="xml:base"/>
+  </complexType>
+
+  <group name="sdk-action">
+    <annotation>
+      <documentation>
+        definition of sdk finetuning commands
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="file" type="rfs:file" minOccurs="0">
+        <annotation>
+          <documentation>
+            write or append text to a file
+          </documentation>
+        </annotation>
+      </element>
+      <element name="rm" type="rfs:rm" minOccurs="0">
+        <annotation>
+          <documentation>
+            remove a file or directory (recursive). Also allows specifying an exclude pattern.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="cp" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            copy a file or directory (recursive)
+          </documentation>
+        </annotation>
+      </element>
+      <element name="ln" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a symbolic link
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mv" type="rfs:cpmv" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mkdir" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            create a directory
+          </documentation>
+        </annotation>
+      </element>
+      <element name="mknod" type="rfs:mknod" minOccurs="0">
+        <annotation>
+          <documentation>
+            move a file or directory
           </documentation>
         </annotation>
       </element>

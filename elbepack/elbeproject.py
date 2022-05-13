@@ -26,7 +26,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.efilesystem import TargetFs
 from elbepack.efilesystem import extract_target
-from elbepack.filesystem import size_to_int
+from elbepack.filesystem import size_to_int, Filesystem
 
 from elbepack.aptpkgutils import XMLPackage
 
@@ -43,7 +43,7 @@ from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
 from elbepack.templates import write_pack_template
-from elbepack.finetuning import do_prj_finetuning
+from elbepack.finetuning import do_prj_finetuning, do_sdk_finetuning
 
 
 validation = logging.getLogger("validation")
@@ -408,6 +408,11 @@ class ElbeProject:
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
 
         self.build_host_sysroot(host_pkglist, hostsysrootpath)
+
+        do_sdk_finetuning(self.xml,
+                          self.buildenv,
+                          Filesystem(self.sdkpath),
+                          self.builddir)
 
         n = gen_sdk_scripts(triplet,
                             elfcode,
