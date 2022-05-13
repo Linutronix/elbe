@@ -894,11 +894,7 @@ class ElbeDB:
 
         # pylint: disable=too-many-arguments
 
-        # encrypt is deprecated but hash is not available in jessie
-        try:
-            pwhash = pbkdf2_sha512.hash(password)
-        except AttributeError:
-            pwhash = pbkdf2_sha512.encrypt(password)
+        pwhash = pbkdf2_sha512.hash(password)
 
         u = User(name=name,
                  fullname=fullname,
@@ -936,11 +932,7 @@ class ElbeDB:
 
             # Update password only if given
             if password is not None:
-                # encrypt is deprecated but hash is not available in jessie
-                try:
-                    u.pwhash = pbkdf2_sha512.hash(password)
-                except AttributeError:
-                    u.pwhash = pbkdf2_sha512.encrypt(password)
+                u.pwhash = pbkdf2_sha512.hash(password)
 
     def del_user(self, userid):
         with session_scope(self.session) as s:

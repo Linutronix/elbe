@@ -59,13 +59,8 @@ def lookup_uri(v, d, target_pkg):
     if not x.is_trusted:
         return target_pkg, uri, ""
 
-    try:
-        # pylint: disable=no-member
-        hashval = str(r.hashes.find('SHA256')).split(':')[1]
-    except AttributeError:
-        # TODO: this fallback Code can be removed on stretch
-        #       but it throws DeprecationWarning already
-        hashval = r.sha256_hash
+    # pylint: disable=no-member
+    hashval = str(r.hashes.find('SHA256')).split(':')[1]
 
     return target_pkg, uri, hashval
 
