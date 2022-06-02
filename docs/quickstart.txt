@@ -49,28 +49,26 @@ The latest packages for elbe reside in the following repository
 
 --------------------------------------------------------
 http://debian.linutronix.de/elbe
-http://debian.linutronix.de/elbe-common
---------------------------------------------------------
-
-Create the file `/etc/apt/sources.list.d/elbe.list`
-with the following contents:
-
---------------------------------------------------------
-deb http://debian.linutronix.de/elbe buster main
-deb http://debian.linutronix.de/elbe-common buster main
 --------------------------------------------------------
 
 Add a repository key to the list of trusted keys (as root):
 
 --------------------------------------------------------
-$ wget -q -O - http://debian.linutronix.de/elbe-common/elbe-repo.pub | apt-key add -
+# wget -O /usr/share/keyrings/elbe-archive-keyring.gpg http://debian.linutronix.de/elbe/elbe-repo.pub.gpg
+--------------------------------------------------------
+
+Add the following content to
+the file `/etc/apt/sources.list`
+
+--------------------------------------------------------
+# echo "deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe buster main" >> /etc/apt/sources.list
 --------------------------------------------------------
 
 Then run (as root):
 
 --------------------------------------------------------
-$ apt-get update
-$ apt-get install elbe
+$ apt update
+$ apt install elbe
 --------------------------------------------------------
 
 

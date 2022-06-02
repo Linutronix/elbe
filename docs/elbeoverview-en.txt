@@ -44,28 +44,25 @@ Installation
 Elbe is shipped as Debian package. This package will pull in the necessary
 dependencies.
 
-Configure `/etc/apt/sources.list.d` appropriately:
+Download the OpenPGP key and configure `/etc/apt/sources.list` appropriately:
 
 -----------------------------------------------------------------------------------
-echo 'deb http://debian.linutronix.de/elbe buster main' >> /etc/apt/sources.list.d/elbe.list
------------------------------------------------------------------------------------
-
-Optionally the public key for the repo can be installed:
-
------------------------------------------------------------------------------------
-wget http://debian.linutronix.de/elbe/elbe-repo.pub && apt-key add elbe-repo.pub
+su -
+apt install wget
+wget -O /usr/share/keyrings/elbe-archive-keyring.gpg http://debian.linutronix.de/elbe/elbe-repo.pub.gpg
+echo "deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe buster main" >> /etc/apt/sources.list
 -----------------------------------------------------------------------------------
 
 Update the package list:
 
 --------------------------------------------
-aptitude update
+apt update
 --------------------------------------------
 
 and install elbe using the following command:
 
 --------------------------------------------
-aptitude install elbe
+apt install elbe
 --------------------------------------------
 
 
