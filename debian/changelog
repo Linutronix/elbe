@@ -1,3 +1,28 @@
+elbe (14.3) unstable; urgency=medium
+
+  * Team upload
+  * schema: remove url-list entries limit
+  * daemons: esoap: replace deprecated apt-get parameter
+  * daemons: esoap: update package index before elbe installation
+  * docs: elbe-parselicence: Correct facts and language
+  * AUTHORS: Document current maintainership
+  * ChangeLog: Remove cruft file
+  * Synchronize release names in schema and code
+  * schema: Update codename examples to supported values
+  * dbsfed.xsd: move "options" from cpio to squashfs
+  * efilesystem: close elbe_base.xml after use
+  * efilesystem: fix missing close if no fstab is generated
+  * debian: python3-elbe-bin: add python3-parted dependency
+  * schema: Drop stretch as valid initvm suite
+  * db: Get rid of jessie workaround
+  * hdimg: remove Python 3.6 format string
+  * validation.txt: Only cat it if it exists
+  * initvm: Install debootstrap from bullseye-backports
+  * docs: Describe the installation like on website
+  * initvm: Install reprepro from bullseye-backports
+
+ -- Bastian Germann <bage@linutronix.de>  Fri, 03 Jun 2022 16:51:35 +0200
+
 elbe (14.2) unstable; urgency=medium
 
   * Team upload
