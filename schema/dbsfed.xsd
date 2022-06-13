@@ -982,10 +982,10 @@
           </documentation>
         </annotation>
       </element>
-      <element name="passwd" type="rfs:string" minOccurs="1" maxOccurs="1">
+      <element name="passwd_hashed" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
-            root password
+            hashed root password
           </documentation>
         </annotation>
       </element>
