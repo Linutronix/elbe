@@ -2524,7 +2524,7 @@
         describes an additional user account, the following parameters are
 	available:
 	'shell' - the login shell for the user.
-	'passwd' - the (optional) password for the user.
+	'passwd_hashed' - the (optional) hashed password for the user.
 	'groups' - a comma separated list of groups the user is member of.
 	'uid' - (optional) user of the user.
 	'gid' - (optional) primary group, may be numeric or a name.
@@ -2538,7 +2538,7 @@
     <simpleContent>
       <extension base="rfs:string">
         <attribute name="shell" type="string" use="required" />
-        <attribute name="passwd" type="string" use="optional" />
+        <attribute name="passwd_hashed" type="string" use="optional" />
         <attribute name="groups" type="string" use="optional" />
         <attribute name="uid" type="string" use="optional" />
         <attribute name="gid" type="string" use="optional" />
