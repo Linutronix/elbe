@@ -606,7 +606,9 @@
       <element name="login" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Try to login into root session and shutdown the machine
+            Try to login into root session and shutdown the machine.  The
+            element takes an (optional) plain-text password for root.
+            Default password is "root".
           </documentation>
         </annotation>
       </element>

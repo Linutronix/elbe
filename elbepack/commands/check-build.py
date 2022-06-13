@@ -447,10 +447,9 @@ class CheckImage(CheckBase):
 
     def do_login(self, _element, img_name, qemu, opts):
 
-        # TODO - We might want to have encrypted password in source.xml
         passwd = "root"
-        if self.xml.has("./target/passwd"):
-            passwd = self.xml.text("./target/passwd")
+        if self.xml.find(".//action/login").text:
+            passwd = self.xml.find(".//action/login").text
 
         comm = [
             ("expect", ".*[Ll]ogin:.*"),
