@@ -95,12 +95,6 @@ linkgit:elbe-xsdtoasciidoc[1]::
 	create an asciidoc documentation from an annotated XML Schema file (xsd).
 
 
-Authors
--------
-elbe was first implemented as dbsfed by Benedikt Spranger <bene@linutronix.de>.
-Torben Hohn <torbenh@linutronix.de> did an reimplementation in python.
-This is currently maintained by Manuel Traut <manut@linutronix.de>.
-
 SEE ALSO
 --------
 linkgit:elbe[1]
