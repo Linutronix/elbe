@@ -4,7 +4,7 @@ Documentation=man:elbe-updated(1)
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/default/elbe-updated
+EnvironmentFile=/etc/default/python3-elbe-updated
 ExecStart=/usr/bin/elbe $DAEMON_ARGS
 
 [Install]
