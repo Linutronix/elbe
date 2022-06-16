@@ -326,8 +326,8 @@ class BuildEnv:
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd")
-        stdin = "%s\n%s\n" % (passwd, passwd)
-        chroot(self.rfs.path, "passwd", stdin=stdin)
+        stdin = "root:%s" % (passwd)
+        chroot(self.rfs.path, "chpasswd", stdin=stdin)
 
         hostname = self.xml.text("target/hostname")
         fqdn = hostname
