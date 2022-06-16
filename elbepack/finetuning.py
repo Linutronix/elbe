@@ -276,9 +276,8 @@ class AddUserAction(FinetuningAction):
             chroot(target.path, cmd)
 
             if 'passwd' in att:
-                cmd = "passwd %s" % self.node.et.text
-                stdin = "%s\n%s\n" % (att["passwd"], att["passwd"])
-                chroot(target.path, cmd, stdin=stdin)
+                stdin = "%s:%s" % (self.node.et.text, att["passwd"])
+                chroot(target.path, "chpasswd", stdin=stdin)
 
 
 @FinetuningAction.register('addgroup')
