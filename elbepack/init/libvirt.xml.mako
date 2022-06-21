@@ -67,9 +67,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <input type='mouse' bus='ps2' />
     <input type='keyboard' bus='ps2' />
     <graphics type='spice' autoport='yes' />
-    <video>
-      <model type='cirrus' vram='9216' heads='1' />
-    </video>
     <rng model='virtio'>
       <backend model='random' />
     </rng>
