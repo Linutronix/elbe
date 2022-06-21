@@ -62,7 +62,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
   <on_crash>destroy</on_crash>
   <devices>
     <emulator>${emulator}</emulator>
-    <controller type='usb' index='0' />
     <controller type='pci' index='0' model='pci-root' />
     <input type='mouse' bus='ps2' />
     <input type='keyboard' bus='ps2' />
