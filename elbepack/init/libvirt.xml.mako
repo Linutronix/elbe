@@ -50,7 +50,7 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
   </cpu>
 % endif
   <os>
-    <type arch='x86_64' machine='${machine_type}'>hvm</type>
+    <type arch='x86_64' machine='pc'>hvm</type>
   </os>
   <features>
     <acpi />

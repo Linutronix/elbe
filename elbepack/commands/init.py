@@ -164,7 +164,6 @@ def run_command(argv):
              "http_proxy": initvm_http_proxy,
              "pkgs": xml.node("/initvm/pkg-list") or [],
              "preseed": get_initvm_preseed(xml),
-             "machine_type": "pc",
              "cfg": cfg}
 
         if http_proxy != "":
