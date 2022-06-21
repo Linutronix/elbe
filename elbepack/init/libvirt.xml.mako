@@ -95,6 +95,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <qemu:arg value='-netdev' />
     <qemu:arg value='user,id=user.0${forward}' />
     <qemu:arg value='-device' />
-    <qemu:arg value='virtio-net-pci,netdev=user.0,mac=${nicmac}' />
+    <qemu:arg value='virtio-net-pci,netdev=user.0,mac=${nicmac},addr=05' />
   </qemu:commandline>
 </domain>
