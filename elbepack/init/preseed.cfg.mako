@@ -134,7 +134,6 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 %>
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools \
-                          btrfs-progs \
                           openssh-client \
                           dbus \
                           debathena-transform-lighttpd \
