@@ -1985,7 +1985,6 @@
       <enumeration value="ext2" />
       <enumeration value="ext3" />
       <enumeration value="ext4" />
-      <enumeration value="xfs" />
       <enumeration value="ubifs" />
       <enumeration value="tmpfs" />
       <enumeration value="debugfs" />
