@@ -133,7 +133,7 @@ apt-mirror-setup apt-setup/use_mirror boolean false
         return pkgname + '/' + pkgrel
 %>
 d-i finish-install/reboot_in_progress note
-d-i pkgsel/include string rng-tools \
+d-i pkgsel/include string rng-tools-debian \
                           dbus \
                           debathena-transform-lighttpd \
                           gnupg2 \
