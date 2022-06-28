@@ -26,7 +26,6 @@
 ./usr/lib/python3.*/*-packages/elbepack/hdimg.py
 ./usr/lib/python3.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python3.*/*-packages/elbepack/isooptions.py
-./usr/lib/python3.*/*-packages/elbepack/kvm.py
 ./usr/lib/python3.*/*-packages/elbepack/licencexml.py
 ./usr/lib/python3.*/*-packages/elbepack/log.py
 ./usr/lib/python3.*/*-packages/elbepack/packers.py

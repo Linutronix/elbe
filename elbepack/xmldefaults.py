@@ -8,8 +8,6 @@
 
 import random
 
-from elbepack.kvm import find_kvm_exe
-
 armel_defaults = {
     "arch": "armel",
     "interpreter": "qemu-system-arm",
@@ -133,8 +131,8 @@ ppc64el_defaults = {
 
 amd64_defaults = {
     "arch": "amd64",
-    "interpreter": find_kvm_exe()["exec_name"],
-    "interpreter-args": find_kvm_exe()["args"],
+    "interpreter": "qemu-system-x86_64",
+    "interpreter-args": ["-enable-kvm"],
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",

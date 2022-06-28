@@ -88,7 +88,7 @@ Depends: ${misc:Depends},
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-control (= ${binary:Version}),
   qemu-utils,
-  qemu-kvm,
+  qemu-system-x86 | qemu-kvm,
   p7zip-full,
   make,
   lsb-release
