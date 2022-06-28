@@ -34,13 +34,6 @@ imgsize = prj.text('size', default=defs, key='size')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
 
-interpreter_v_major = int(prj.text('interpreterversion',
-                                   default=defs,
-                                   key='interpreterversion').split('.')[0])
-
-interpreter_v_minor = int(prj.text('interpreterversion',
-                                   default=defs,
-                                   key='interpreterversion').split('.')[1])
 fwd = ""
 if prj.has("portforwarding"):
     for f in prj.node("portforwarding"):
@@ -116,11 +109,7 @@ run:
 		-device virtio-net-pci,netdev=user.0 \
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-% if ((interpreter_v_major == 2) and (interpreter_v_minor >= 8)) or (interpreter_v_major > 2):
 		-netdev user,ipv4,id=user.0${fwd} \
-% else:
-		-netdev user,id=user.0${fwd} \
-% endif
 % if opt.nesting:
 		-cpu host \
 % endif
@@ -135,11 +124,7 @@ run-con:
 		-device virtio-net-pci,netdev=user.0 \
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-% if ((interpreter_v_major == 2) and (interpreter_v_minor >= 8)) or (interpreter_v_major > 2):
 		-netdev user,ipv4,id=user.0${fwd} \
-% else:
-		-netdev user,id=user.0${fwd} \
-% endif
 % if opt.nesting:
 		-cpu host \
 % endif
