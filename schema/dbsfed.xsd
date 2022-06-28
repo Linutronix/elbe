@@ -767,7 +767,7 @@
       <element name="interpreterversion" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            virtual machine interpreter version, e.g. "2.8.0", "1.4.7", ...
+            virtual machine interpreter version, no longer in use
           </documentation>
         </annotation>
       </element>

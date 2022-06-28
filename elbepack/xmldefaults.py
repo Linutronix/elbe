@@ -13,7 +13,6 @@ from elbepack.kvm import find_kvm_exe
 armel_defaults = {
     "arch": "armel",
     "interpreter": "qemu-system-arm",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb",
@@ -26,7 +25,6 @@ armel_defaults = {
 armel_linaro48_defaults = {
     "arch": "armel",
     "interpreter": "qemu-system-arm",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb",
@@ -41,7 +39,6 @@ armel_linaro48_defaults = {
 armel_virtio_defaults = {
     "arch": "armel",
     "interpreter": "qemu-system-arm-virtio",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb",
@@ -54,7 +51,6 @@ armel_virtio_defaults = {
 armhf_defaults = {
     "arch": "armhf",
     "interpreter": "qemu-system-arm",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb -cpu cortex-a9",
@@ -67,7 +63,6 @@ armhf_defaults = {
 armhf_linaro48_defaults = {
     "arch": "armhf",
     "interpreter": "qemu-system-arm",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb -cpu cortex-a9",
@@ -81,7 +76,6 @@ armhf_linaro48_defaults = {
 armhf_virtio_defaults = {
     "arch": "armhf",
     "interpreter": "qemu-system-arm-virtio",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-arm-static",
     "console": "ttyAMA0,115200n1",
     "machine": "versatilepb -cpu cortex-a9",
@@ -94,7 +88,6 @@ armhf_virtio_defaults = {
 aarch64_defaults = {
     "arch": "arm64",
     "interpreter": "qemu-system-aarch64",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-aarch64-static",
     "console": "ttyAMA0,115200n1",
     "machine": "virt -cpu cortex-a57",
@@ -107,7 +100,6 @@ aarch64_defaults = {
 ppc_defaults = {
     "arch": "powerpc",
     "interpreter": "qemu-system-ppc",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-ppc-static",
     "console": "ttyPZ0,115200n1",
     "machine": "mac99",
@@ -120,7 +112,6 @@ ppc_defaults = {
 ppcspe_defaults = {
     "arch": "powerpcspe",
     "interpreter": "qemu-system-ppc",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-ppc-static",
     "console": "ttyS0,115200n1",
     "machine": "mpc8544ds",
@@ -131,7 +122,6 @@ ppcspe_defaults = {
 ppc64el_defaults = {
     "arch": "ppc64el",
     "interpreter": "qemu-system-ppc64",
-    "interpreterversion": "0.0.0",
     "userinterpr": "qemu-ppc64le-static",
     "console": "ttyS0,115200n1",
     "machine": "none",
@@ -144,7 +134,6 @@ ppc64el_defaults = {
 amd64_defaults = {
     "arch": "amd64",
     "interpreter": find_kvm_exe()["exec_name"],
-    "interpreterversion": find_kvm_exe()["version"],
     "interpreter-args": find_kvm_exe()["args"],
     "console": "ttyS0,115200n1",
     "machine": "pc",
@@ -157,7 +146,6 @@ amd64_defaults = {
 i386_defaults = {
     "arch": "i386",
     "interpreter": "kvm",
-    "interpreterversion": "0.0.0",
     "console": "ttyS0,115200n1",
     "machine": "pc",
     "nicmodel": "virtio",
