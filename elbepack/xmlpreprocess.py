@@ -260,6 +260,10 @@ def preprocess_passwd(xml):
 
     # migrate root password
     for passwd in xml.iterfind(".//target/passwd"):
+        # legacy support: move plain-text password to login action
+        if xml.find(".//action/login") is not None:
+            xml.find(".//action/login").text = passwd.text
+
         passwd.tag = "passwd_hashed"
         passwd.text = '%s' % sha512_crypt.hash(passwd.text)
 
