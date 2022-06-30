@@ -61,6 +61,7 @@ Depends: ${misc:Depends},
   python3-apt,
   python3-gpg,
   python3-libvirt,
+  python3-passlib,
   wget,
   cpio
 Description: common files
