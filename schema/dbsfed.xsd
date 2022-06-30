@@ -985,7 +985,12 @@
       <element name="passwd_hashed" type="rfs:string" minOccurs="1" maxOccurs="1">
         <annotation>
           <documentation>
-            hashed root password
+            Hashed root password. The method must be supported by the target system.
+            The default method since bullseye is yescrypt.
+            elbe preprocess generates one from cleartext password with sha512crypt
+            for compatibility reasons.
+            You can generate a crypt hash via mkpasswd from whois package, e.g.:
+            mkpasswd --method=sha512crypt --rounds=656000
           </documentation>
         </annotation>
       </element>

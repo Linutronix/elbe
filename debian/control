@@ -92,7 +92,10 @@ Depends: ${misc:Depends},
   p7zip-full,
   make,
   lsb-release
-Recommends: elbe-doc (= ${binary:Version}), python3-elbe-debianize, haveged
+Recommends: elbe-doc (= ${binary:Version}),
+ python3-elbe-debianize,
+ haveged,
+ whois
 Description: Embedded Linux Build Environment
  A flexible Root Filesystem builder. ELBE uses Debian packages to build a RFS
  for (embedded) targets. A target is described with a single XML file. Besides
