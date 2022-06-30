@@ -14,6 +14,7 @@ from optparse import OptionGroup
 from itertools import islice
 from urllib.error import HTTPError,URLError
 from urllib.request import urlopen
+from passlib.hash import sha512_crypt
 
 from lxml import etree
 from lxml.etree import XMLParser, parse, Element
@@ -251,6 +252,23 @@ def preprocess_mirrors(xml):
             option.text = opt
             options.append(option)
 
+
+def preprocess_passwd(xml):
+    """Preprocess plain-text passwords. Plain-text passwords for root and
+       adduser will be replaced with their hashed values.
+    """
+
+    # migrate root password
+    for passwd in xml.iterfind(".//target/passwd"):
+        passwd.tag = "passwd_hashed"
+        passwd.text = '%s' % sha512_crypt.hash(passwd.text)
+
+    # migrate user passwords
+    for adduser in xml.iterfind(".//target/finetuning/adduser[@passwd]"):
+        passwd = adduser.attrib['passwd']
+        adduser.attrib['passwd_hashed'] = sha512_crypt.hash(passwd)
+        del adduser.attrib['passwd']
+
 def xmlpreprocess(fname, output, variants=None, proxy=None):
 
     # pylint: disable=too-many-locals
@@ -333,6 +351,8 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
         preprocess_initvm_ports(xml)
 
         preprocess_mirrors(xml)
+
+        preprocess_passwd(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
