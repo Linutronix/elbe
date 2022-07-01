@@ -1,3 +1,27 @@
+elbe (14.4) unstable; urgency=medium
+
+  * Team upload
+  * elbe-updated: Fix .default file loading
+  * docs: Drop authors in favour of AUTHORS file
+  * debian: Add buildsdk elbe-command to deb package
+  * Example usage of parts of ELBE in a cloud-based CI
+  * initvm: Remove cirrus vga device
+  * initvm: always use machine type pc
+  * initvm: Remove USB controller
+  * initvm: Define NIC's PCI bus slot
+  * schema: Prevent xfs filesystems
+  * rfs: use chpasswd for root password
+  * finetuning: use chpasswd for user password
+  * commands: check-build: move password to login value
+  * schema: switch to hashed password for root
+  * schema: switch to hashed passwords for users
+  * preprocess: migrate root and user passwords
+  * preprocess: migrate login action
+  * debian: Add passlib for xmlpreprocess
+  * Document mkpasswd call
+
+ -- Bastian Germann <bage@linutronix.de>  Fri, 01 Jul 2022 10:17:35 +0200
+
 elbe (14.3) unstable; urgency=medium
 
   * Team upload
