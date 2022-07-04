@@ -6,6 +6,7 @@ Documentation=man:elbe-daemon(1)
 Type=simple
 EnvironmentFile=/etc/default/python3-elbe-daemon
 ExecStart=/usr/bin/elbe $DAEMON_ARGS
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
