@@ -256,6 +256,27 @@ It is also possible to specify groups the new user should be part of:
 <adduser passwd="foo" shell="/bin/bash" groups="audio,video,dialout">elbe</adduser>
 ------------------------------------------------------------------------------
 
+Instead of specifying a plain-text password, it is also possible to use
+hashed passwords in the XML. Hashed passwords can be either converted by the
+Elbe preprocessing (`elbe preprocess <xml>`), with the tool `mkpasswd` or
+with various hashing libraries like crypt (C/C++) or passlib (Python).
+
+In this example, the command `mkpasswd` is used to hash the plain-text
+password `elbe`. If the salt is not specified, `mkpasswd` will use a random
+salt.
+
+------------------------------------------------------------------------------
+mkpasswd --method=sha512crypt --rounds=656000 --salt=7vWuOPVX0YKaISh5 "elbe"
+------------------------------------------------------------------------------
+
+The generated line contains the hashing parameters and the hashed password
+and has to be copied completely to the `passwd_hashed` attribute in the XML.
+
+[source,xml]
+------------------------------------------------------------------------------
+<adduser passwd_hashed="$6$rounds=656000$7vWuOPVX0YKaISh5$cJhevq/z7kJ215n18dnksv/zOeUf6uPoLgICwLeTSu/2xoLHkyYQABaM7a99sQmpilCV.SlK9jfHZz3m7/s2a." shell="/bin/bash">elbe</adduser>
+------------------------------------------------------------------------------
+
 Changing ownership of directories or files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 There is currently no special finetuning node for `chmod` and `chown`.
