@@ -62,7 +62,8 @@ def run_command(argv):
     for s in xml.text("./project/description").splitlines():
         print("%s" % s.strip())
     if opt.verbose:
-        print("root password: %s" % xml.text("./target/passwd"))
+        if xml.has("./target/passwd"):
+            print("root password: %s" % xml.text("./target/passwd"))
         print("primary_mirror: %s://%s%s" % (
               xml.text("./project/mirror/primary_proto"),
               xml.text("./project/mirror/primary_host"),
