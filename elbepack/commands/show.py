@@ -74,8 +74,9 @@ def run_command(argv):
                     print("    deb %s" % url.text("binary").strip())
                 if url.has("source"):
                     print("    deb-src %s" % url.text("source").strip())
-        print("packages:")
-        for pkg in xml.node("./target/pkg-list"):
-            print("    %s" % pkg.et.text)
+        if xml.has("./target/pkg-list"):
+            print("packages:")
+            for pkg in xml.node("./target/pkg-list"):
+                print("    %s" % pkg.et.text)
         print("skip package validation: %s" % xml.has("./project/noauth"))
         print("archive embedded?        %s" % xml.has("./archive"))
