@@ -1,3 +1,21 @@
+elbe (14.5) unstable; urgency=medium
+
+  * Team upload
+  * debian: Move btrfs-progs from pkgsel to Depends
+  * debian: Move debathena-transform-lighttpd from pkgsel to Depends
+  * debian: Move gnupg from pkgsel to Depends
+  * initvm: preseed: Remove openssh-client
+  * initvm: preseed: Move from transitional rng-tools
+  * initvm: create: Drop support for ancient qemu versions
+  * initvm: xmldefaults: Drop interpreterversion
+  * initvm: Prevent trying old kvm interpreter names
+  * initvm: Use bullseye dist for internal repos
+  * docs: Describe the password handling in XMLs
+  * commands: show: fix pkg-list handling
+  * commands: show: fix passwd handling
+
+ -- Bastian Germann <bage@linutronix.de>  Tue, 19 Jul 2022 12:40:48 +0200
+
 elbe (14.4) unstable; urgency=medium
 
   * Team upload
