@@ -135,7 +135,6 @@ apt-mirror-setup apt-setup/use_mirror boolean false
 d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools-debian \
                           dbus \
-                          debathena-transform-lighttpd \
 % for p in elbe_initvm_packagelist:
                           ${p}=${elbe_version}* \
 % endfor
