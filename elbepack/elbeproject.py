@@ -826,6 +826,9 @@ class ElbeProject:
             logging.exception("Package fails to build.\n"
                               "Please make sure, that the submitted package "
                               "builds in pbuilder")
+        finally:
+            self.orig_fname = None
+            self.orig_files = []
 
     def update_pbuilder(self):
         do('pbuilder --update --configfile "%s" --aptconfdir "%s"' %
