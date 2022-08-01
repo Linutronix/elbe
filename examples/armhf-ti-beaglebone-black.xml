@@ -125,6 +125,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>vim-tiny</pkg>
 			<pkg>wget</pkg>
 			<pkg>ntpdate</pkg>
+			<pkg>minicoredumper</pkg>
 			<pkg>busybox</pkg>
 			<!--
 			    explicit install of systemd, since debootstrap
