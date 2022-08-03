@@ -33,7 +33,26 @@ Crash Course
 
 Report bugs or any other feedback
 ---------------------------------
-Please use the Issue tracker on github.
+Before reporting a new bug, please note that the bug needs to be validated with
+respect to the latest version of elbe.
+Please use the issue tracker on GitHub. When reporting an issue, please provide
+the following information.
+
+* Reproducing steps. In the best case, having an xml file would be good.
+* In case the build failed, please give the exact error message or the log file.
+* If the error message is not helpful, please give the expected message with a
+  valid explanation.
+
+Contributions
+-------------
+
+* Contributions must be certified as given in https://developercertificate.org.
+  Please add a "Signed-off-by" tag to the commit.
+* Please note that we currently target Python 3.6+ before sending any source code.
+* Note that a moderator approval is needed when you send the patches to the mailing list without
+  being subscribed. This approval is available from a confirmation link that you receive once a
+  patch or an e-mail is sent to the the mailing list given below.
+
 
 Send patches to <elbe-devel@linutronix.de>.
 
