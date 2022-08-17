@@ -66,8 +66,6 @@ https://github.com/linutronix/elbe
 To get the source use:
 git clone https://github.com/linutronix/elbe
 
-IRC: irc://irc.freenode.net/elbe
-
 License rules
 -------------
 ELBE is provided under the terms of the GPLv3+ license as provided in the
