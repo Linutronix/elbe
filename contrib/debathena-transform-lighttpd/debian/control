@@ -1,9 +1,10 @@
 Source: debathena-transform-lighttpd
-Section: config
-Priority: extra
-Maintainer: John Ogness <john.ogness@linutronix.de>
-Build-Depends: debhelper (>= 7.0.0~), config-package-dev (>= 4.15), lighttpd
+Section: httpd
+Priority: optional
+Maintainer: Linutronix GmbH <info@linutronix.de>
+Build-Depends: debhelper-compat (= 12), config-package-dev (>= 4.15), lighttpd
 Standards-Version: 3.9.2
+Rules-Requires-Root: no
 
 Package: debathena-transform-lighttpd
 Architecture: all
