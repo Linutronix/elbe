@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+SPDX-License-Identifier: 0BSD
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <url-list>
   <url>
     <binary>http://debian.linutronix.de/elbe buster main</binary>

@@ -1,2 +1,6 @@
 <?xml version="1.0"?>
+<!--
+SPDX-License-Identifier: 0BSD
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <hostname>i386-include-prod</hostname>

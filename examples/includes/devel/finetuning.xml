@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+SPDX-License-Identifier: 0BSD
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <finetuning>
   <adduser shell="/bin/bash" passwd="notsosecure">user</adduser>
   <rm>var/cache/apt/archives/*.deb</rm>

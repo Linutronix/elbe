@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+SPDX-License-Identifier: 0BSD
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <finetuning>
   <adduser shell="/bin/bash" passwd="supersecure">user</adduser>
   <raw_cmd>passwd -d -l root</raw_cmd>
