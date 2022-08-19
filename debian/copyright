@@ -7,6 +7,10 @@ Files: *
 Copyright: (c) 2013, Torben Hohn, Linutronix GmbH, Manuel Traut, Linutronix GmbH
 License: GPL-3+
 
+Files: contrib/k8s/*
+Copyright: Manuel Traut <manuel.traut@mt.com>
+License: GPL-3+
+
 Files: elbepack/makofiles/toolchain-shar-extract.sh.mako
 Copyright: Aníbal Limón <anibal.limon@linux.intel.com>
            Brendan Le Foll <brendan.le.foll@intel.com>

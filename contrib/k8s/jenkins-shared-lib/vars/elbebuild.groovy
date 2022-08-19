@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Manuel Traut <manuel.traut@mt.com>
+
 def call(String elbexml, Boolean buildsdk)
 {
   def podlabel = "elbe-${elbexml}-${UUID.randomUUID().toString()}"

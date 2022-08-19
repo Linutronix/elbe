@@ -1,6 +1,11 @@
 Use ELBE with Jenkins on a k8s cluster
 ======================================
 
+<?
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Manuel Traut <manuel.traut@mt.com>
+?>
+
 ELBE can also be used on a Jenkins/k8s based CI.
 
 For setting up the infrastructure, see e.g.
