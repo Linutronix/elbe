@@ -6,10 +6,6 @@ Source: https://github.com/Linutronix/elbe/
 Files: *
 Copyright: (c) 2013, Torben Hohn, Linutronix GmbH, Manuel Traut, Linutronix GmbH
 License: GPL-3+
- SPDX-License-Identifier: GPL-3.0-or-later
- On Debian systems, the full text of the GNU General Public
- License version 3+ can be found in the file
- `/usr/share/common-licenses/GPL-3'.
 
 Files: elbepack/makofiles/toolchain-shar-extract.sh.mako
 Copyright: Aníbal Limón <anibal.limon@linux.intel.com>
@@ -29,3 +25,13 @@ License: GPL-2
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
+
+Files: examples/armhf-ubuntu.xml
+Copyright: 2020 Kory Maincent <kory.maincent@bootlin.com>
+License: GPL-3+
+
+License: GPL-3+
+ SPDX-License-Identifier: GPL-3.0-or-later
+ On Debian systems, the full text of the GNU General Public
+ License version 3+ can be found in the file
+ `/usr/share/common-licenses/GPL-3'.
