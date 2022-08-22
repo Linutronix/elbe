@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2015-2022 Linutronix GmbH <info@linutronix.de>
 def dos2unix_str(d):
     return d.replace('\r\n', '\n')
 
