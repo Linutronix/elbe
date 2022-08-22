@@ -21,6 +21,6 @@ ELBE TestSpec,,,,
 18,,Repo key verification,URLs to repo keys provide a key that don't belong to the specified repository,error should be reported, also during 'initvm create'
 20,,build invalid project (RFS doesn't fit in IMG),"start build in background, after termination get report from initvm",build state is failed and error report available
 21,grub installation,grub is installed and working with debian kernel,Boot image produced by elbe-desktop.xml in kvm,ssh login is possible
-22,,grub is installed and working with latest stable kernel,"use ellbe/contrib' patches on latest stable kernel, build debian package, specify package in XML (no debian kernel in XML), build XML",ssh login is possible
+22,,grub is installed and working with latest stable kernel,"build kernel debian package, specify package in XML (no debian kernel in XML), build XML",ssh login is possible
 23,Repo key verification,noauth isn't set and no pubkey is provided,error should be detected in xml validation
 24,modes,add tests for diet,tighten and setsel mode,for setsel also creating the xml file should be tested
