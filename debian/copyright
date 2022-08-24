@@ -4,7 +4,7 @@ Upstream-Contact: Linutronix GmbH <info@linutronix.de>
 Source: https://github.com/Linutronix/elbe/
 
 Files: *
-Copyright: (c) 2013, Torben Hohn, Linutronix GmbH, Manuel Traut, Linutronix GmbH
+Copyright: Linutronix GmbH
 License: GPL-3+
 
 Files: contrib/k8s/*
@@ -30,7 +30,8 @@ License: GPL-2
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
 
-Files: examples/*
+Files: .gitignore AUTHORS THANKS examples/*
+       docs/asciidoc.conf docs/conf.py
 Copyright: Linutronix GmbH
 License: 0BSD
  Permission to use, copy, modify, and/or distribute this software for any

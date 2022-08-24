@@ -1,4 +1,7 @@
-﻿Embedded Linux Build Environment (elbe)
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Linutronix GmbH
+
+Embedded Linux Build Environment (elbe)
 =======================================
 
 Debian-based system to generate root filesystems for embedded devices.

@@ -1,10 +1,21 @@
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: Linutronix GmbH
+
 Anna-Maria Gleixner       anna-maria@glx-um.de
 Richard Weinberger        richard@nod.at
-Stefan Gast               stefan.gast@hs-weingarten.de
-Jan Altenberg             jan.altenberg@linutronix.de
+Andreas Messerschmid      andreas@linutronix.de
+Kurt Kanzenbach           kurt@linutronix.de
+John Ogness               john.ogness@linutronix.de
+Martin Kaistra            martin.kaistra@linutronix.de
+Jan Altenberg
+Philipp Arras
+Olivier Dion
+Markus Kreidl
+Philipp Rosenberger
+Matthias Bühler           Matthias.Buehler@de.trumpf.com
 Stefan Städtler           stefan.staedtler@siemens.com
 Christian Eppler          weblooker@silentchris.de
 Silvio Fricke             silvio.fricke@gmail.com
 Ferdinand Schwenk         ferdinand.schwenk@emtrion.de
-Benedikt Spranger         b.spranger@linutronix.de
+Sebastian Andrzej Siewior bigeasy@linutronix.de
 Norbert Nemec             nn@bloks.de

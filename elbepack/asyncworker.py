@@ -1,9 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2015 Torben Hohn <torben.hohn@linutronix.de>
-# Copyright (c) 2014 Stefan Gast <stefan.gast@linutronix.de>
-# Copyright (c) 2015-2018 Manuel Traut <manut@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 from threading import Thread
 from queue import Queue

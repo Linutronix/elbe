@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: Linutronix GmbH
 #
 # ELBE documentation build configuration file, created by
 # sphinx-quickstart on Mon May  8 15:56:24 2017.

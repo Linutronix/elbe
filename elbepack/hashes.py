@@ -1,7 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2018 Torben Hohn <torben.hohn@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import hashlib
 from elbepack.shellhelper import system, CommandError

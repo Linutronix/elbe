@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Linutronix GmbH
+
 Embedded Linux Build Environment (ELBE) Quickstart Guide
 ========================================================
 ELBE is a Debian-based system to generate root filesystems for embedded devices.

@@ -1,12 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2018 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2014-2016 Torben Hohn <torben.hohn@linutronix.de>
-# Copyright (c) 2014 Stefan Gast <stefan.gast@linutronix.de>
-# Copyright (c) 2016-2018 John Ogness <jogness@linutronix.de>
-# Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
-# Copyright (c) 2018 Martin Kaistra <martin.kaistra@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 # pylint: disable=too-many-lines
 

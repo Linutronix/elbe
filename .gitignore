@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: Linutronix GmbH
+
 tags
 .pybuild
 elbe.egg-info

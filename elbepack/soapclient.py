@@ -1,10 +1,7 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2018 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2015-2016, 2018 Torben Hohn <torben.hohn@linutronix.de>
-# Copyright (c) 2016 Claudius Heine <ch@denx.de>
-# Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
+# SPDX-FileCopyrightText: 2016 Claudius Heine <ch@denx.de>
 
 import binascii
 import logging

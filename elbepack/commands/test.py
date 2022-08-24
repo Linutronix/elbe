@@ -1,7 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2020 Olivier Dion <dion@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
 # elbepack/commands/test.py - Elbe unit test wrapper
 

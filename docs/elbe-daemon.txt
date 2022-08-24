@@ -1,5 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Linutronix GmbH
+
 elbe-daemon(1)
-================
+==============
 
 NAME
 ----

@@ -1,3 +1,7 @@
+..
+  SPDX-License-Identifier: GPL-3.0-or-later
+  SPDX-FileCopyrightText: Linutronix GmbH
+
 ELBE docs
 ==========
 

@@ -1,10 +1,7 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2013-2015 Torben Hohn <torbenh@linutronix.de>
-# Copyright (c) 2013-2014, 2016-2017 Manuel Traut <manut@linutronix.de>
-# Copyright (c) 2014 Stefan Gast <stefan.gast@linutronix.de>
-# Copyright (c) 2015 Matthias Buehler <Matthias.Buehler@de.trumpf.com>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
+# SPDX-FileCopyrightText: 2015 Matthias Buehler <Matthias.Buehler@de.trumpf.com>
 
 from optparse import OptionParser
 import sys

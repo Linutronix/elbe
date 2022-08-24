@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <xml>
   <preseed>
     <conf owner="exim4-config" key="exim4/dc_eximconfig_configtype" type="select" value="no configuration at this time"/>

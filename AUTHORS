@@ -1,10 +1,11 @@
-Authors of ELBE
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: Linutronix GmbH
 
 Torben Hohn
   main author and former maintainer of elbe
 
 Manuel Traut
-  added UBI support and minor improvements to elbe
+  added UBI support and major improvements to elbe
 
 Benedikt Spranger
   concept of elbe and creator of the elbe prototype

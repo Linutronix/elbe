@@ -2,10 +2,9 @@
 
 <?
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2014-2015 Silvio Fricke <silvio.fricke@gmail.com>
-# Copyright (c) 2018 Manuel Traut <manut@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2014-2015 Silvio Fricke <silvio.fricke@gmail.com>
+# SPDX-FileCopyrightText: 2018 Linutronix GmbH
 ?>
 
 [elbe][elb] is a debian based system to generate root-filesystems for embedded

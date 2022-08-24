@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
 		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		    created="2009-05-20T08:50:56" revision="6"

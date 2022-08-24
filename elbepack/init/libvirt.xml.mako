@@ -1,10 +1,7 @@
 ## ELBE - Debian Based Embedded Rootfilesystem Builder
-## Copyright (c) 2017 Philipp Arras <philipp.arras@linutronix.de>
-## Copyright (c) 2017 Manuel Traut <manut@linutronix.de>
-## Copyright (c) 2018 Troben Hohn <torben.hohn@linutronix.de>
-##
 ## SPDX-License-Identifier: GPL-3.0-or-later
-##
+## SPDX-FileCopyrightText: 2017-2018 Linutronix GmbH
+
 <%
 # TODO: Add dynamic name support
 # TODO: Relativ file path for diskimage

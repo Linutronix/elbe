@@ -1,8 +1,6 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
-# Copyright (c) 2015 Torben Hohn <torbenh@linutronix.de>
-# Copyright (c) 2016-2017 Manuel Traut <manut@linutronix.de>
-#
 # SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 from spyne.model.complex import ComplexModel
 from spyne.model.primitive import Unicode, DateTime, Integer
