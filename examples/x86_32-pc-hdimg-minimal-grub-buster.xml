@@ -24,10 +24,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<msdoshd>
 				<name>sda.img</name>
 				<size>1900MiB</size>
-				<grub-install/>
+				<grub-install>--no-rs-codes</grub-install>
 				<partition>
-								<size>remain</size>
-								<label>rfs</label>
+					<size>remain</size>
+					<label>rfs</label>
 				</partition>
 			</msdoshd>
 		</images>

@@ -151,7 +151,7 @@ class grubinstaller_base:
     def add_fs_entry(self, entry):
         self.fs[entry.mountpoint] = entry
 
-    def install(self, target):
+    def install(self, target, user_args):
         pass
 
     @staticmethod
@@ -162,7 +162,7 @@ class grubinstaller_base:
 
 class grubinstaller202(grubinstaller_base):
 
-    def install(self, target):
+    def install(self, target, user_args):
         if '/' not in self.fs:
             return
 
@@ -194,9 +194,9 @@ class grubinstaller202(grubinstaller_base):
 
             if "efi" in self.fw_type:
                 grub_tgt = next(t for t in self.fw_type if t.endswith("-efi"))
-                do("chroot %s grub-install --target=%s --removable "
+                do("chroot %s grub-install %s --target=%s --removable "
                    "--no-floppy %s" %
-                   (imagemnt, grub_tgt, poopdev))
+                   (imagemnt, user_args, grub_tgt, poopdev))
             if "shimfix" in self.fw_type:
                 # grub-install is heavily dependent on the running system having
                 # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
@@ -207,8 +207,8 @@ class grubinstaller202(grubinstaller_base):
                    "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'"  %
                    imagemnt)
             if not self.fw_type or "bios" in self.fw_type:
-                do("chroot %s grub-install --target=i386-pc --no-floppy %s" %
-                   (imagemnt, poopdev))
+                do("chroot %s grub-install %s --target=i386-pc --no-floppy %s" %
+                   (imagemnt, user_args, poopdev))
 
         except CommandError as E:
             logging.error("Fail installing grub device: %s", E)
@@ -229,7 +229,7 @@ class grubinstaller202(grubinstaller_base):
 
 class grubinstaller97(grubinstaller_base):
 
-    def install(self, target):
+    def install(self, target, user_args):
         if '/' not in self.fs:
             return
 
@@ -279,8 +279,8 @@ class grubinstaller97(grubinstaller_base):
 
             chroot(imagemnt, "update-grub")
 
-            do("chroot %s grub-install --no-floppy %s" %
-               (imagemnt, poopdev))
+            do("chroot %s grub-install %s --no-floppy %s" %
+               (imagemnt, user_args, poopdev))
 
         except CommandError as E:
             logging.error("Fail installing grub device: %s", E)
@@ -497,7 +497,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     disk.commit()
 
     if hd.has("grub-install") and grub_version:
-        grub.install(target)
+        grub.install(target, hd.text("grub-install"))
 
     return hd.text("name")
 

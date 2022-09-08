@@ -1408,8 +1408,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            human readable name of the harddisk, this will be used as name for
-            the image file
+            Installs grub on this harddisk. The text content will be used as
+            additional command line arguments to Elbe's grub-install call.
           </documentation>
         </annotation>
       </element>
@@ -1489,8 +1489,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            human readable name of the harddisk, this will be used as name for
-            the image file
+            Installs grub on this harddisk. The text content will be used as
+            additional command line arguments to Elbe's grub-install call.
           </documentation>
         </annotation>
       </element>
