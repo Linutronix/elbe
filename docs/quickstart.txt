@@ -150,7 +150,20 @@ I: Retrieving libacl1 2.2.52-3+b1
 I: Validating libacl1 2.2.52-3+b1
 
 ...
-
+ 79.05% done, estimate finish Mon Aug  1 09:53:26 2022
+ 81.77% done, estimate finish Mon Aug  1 09:53:26 2022
+ 84.49% done, estimate finish Mon Aug  1 09:53:26 2022
+ 87.22% done, estimate finish Mon Aug  1 09:53:26 2022
+ 89.95% done, estimate finish Mon Aug  1 09:53:26 2022
+ 92.67% done, estimate finish Mon Aug  1 09:53:27 2022
+ 95.39% done, estimate finish Mon Aug  1 09:53:27 2022
+ 98.12% done, estimate finish Mon Aug  1 09:53:27 2022
+Total translation table size: 0
+Total rockridge attributes bytes: 73534
+Total directory bytes: 355120
+Path table size(bytes): 2354
+Max brk space used bd000
+183454 extents written (358 MB)
 [INFO] Build finished successfully
 
 Build finished !
@@ -159,19 +172,29 @@ ELBE Package validation
 =======================
 
 Package List validation
+-----------------------
 
 No Errors found
+Binary CD
+Source CD
 
 Getting generated Files
 
-Saving generated Files to elbe-build-20191001-164821
-source.xml      (Current source.xml of the project)
-rescue.cpio     (Image)
-licence.txt     (License file)
-licence.xml     (xml License file)
-validation.txt  (Package list validation result)
-elbe-report.txt         (Report)
-log.txt         (Log file)
+Saving generated Files to elbe-build-20220801-095330
+source.xml 	(Current source.xml of the project)
+rescue.cpio 	(Image)
+licence-chroot.txt 	(License file)
+licence-chroot.xml 	(xml License file)
+licence-target.txt 	(License file)
+licence-target.xml 	(xml License file)
+validation.txt 	(Package list validation result)
+elbe-report.txt 	(Report)
+log.txt 	(Log file)
+bin-cdrom.iso 	(Repository IsoImage)
+src-cdrom-target.iso 	(Repository IsoImage)
+src-cdrom-main.iso 	(Repository IsoImage)
+src-cdrom-added.iso 	(Repository IsoImage)
+
 -------------------------------------------------------------------------------
 
 The result of the build is stored in elbe-build-<TIMESTAMP> below your current
