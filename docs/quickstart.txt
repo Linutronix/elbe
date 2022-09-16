@@ -1,26 +1,27 @@
 Embedded Linux Build Environment (ELBE) Quickstart Guide
 ========================================================
-ELBE is a Debian based system to generate root-filesystems for embedded devices.
+ELBE is a Debian-based system to generate root filesystems for embedded devices.
 
-You have probably received a root-filesystem, which has been built with ELBE.
-Additionally you should have an XML file describing the root-filesystem.
+You have probably received a root filesystem, which has been built with ELBE.
+Additionally, you should have an XML file describing the root filesystem.
 
 This quickstart guide describes the steps necessary to rebuild the
 root-filesystem from the XML file and to simple modifications.
 
 Steps necessary
 ---------------
-. install Debian 10 (Buster) on your Host
+. install Debian 10 (buster) or later on your Host. The latest version of elbe should
+  be compatible with this system.
 . install ELBE on Host Linux
-. generate the `initvm` running the buildenvironment
-. build the root-filesystem inside the initvm
+. generate the `initvm` running the build environment
+. build the root filesystem inside the initvm
 
 Steps 1,2 and 3 need only be performed once.
 
 NOTE: When Debian is running inside a VM (vmware etc), you need to make sure,
       that nested KVM is working.
 
-Customisation of the build
+Customization of the build
 --------------------------
 The ELBE XML can contain an archive, which can contain configuration files,
 and additional software. This archive is extracted onto the target-image
@@ -30,9 +31,9 @@ different from the default Debian Install.
 This guide also explains how the archive can be extracted from the XML file,
 and vice versa.
 
-ELBE allows to manipulate the generated root-filesystem through a set of
+ELBE allows manipulating the generated root filesystem through a set of
 `<finetuning>` rules. We also describe, how these can be used to add a user,
-change directory permissions, and remove files from the root-filesystem.
+change directory permissions, and remove files from the root filesystem.
 
 Installing ELBE
 ---------------
@@ -201,7 +202,7 @@ archivedir
 
 The new XML element ‘archivedir’ points to a local directory and adds
 the content into a newly created archive. ‘archivedir’ can be specified
-more then once. The content of the directories is copied in order of
+more than once. The content of the directories is copied in order of
 appearance. Existing files are overwritten by the later ones.
 
 Example snippet to use ‘archivedir’:
