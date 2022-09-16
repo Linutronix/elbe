@@ -1,47 +1,46 @@
 ﻿Embedded Linux Build Environment (elbe)
 =======================================
 
-Debian based system to generate root-filesystems for embedded devices.
-
+Debian-based system to generate root filesystems for embedded devices.
 
 General Notes
 -------------
 
-Generally root-filesystem creation faces the following requirements:
+Generally, root filesystem creation faces the following requirements:
 
-- Creation of root-filesystem for a specific architecture.
+- Creation of root filesystem for a specific architecture.
 - Generation of a development environment for the specific architecture.
 
 Trying to solve this via cross-compilation of the required packages,
 we face the following problems:
 
 - Many packages are not designed and tested for cross-compilation.
-- Big projects consume a significant amount of time to cross compile.
+- Big projects consume a significant amount of time to cross-compile.
 - Dependencies are not resolved automatically. The developer is required to
   manually find out which package versions of dependencies are required.
 - Changes and patches to the packages need to be updated for newer versions.
-  This process makes an update a very time consuming process.
+  This process makes an update a very time-consuming process.
 - One must make sure that the same toolchain is used in the development
-  environment and in the root-filesystem.
+  environment and in the root filesystem.
 
-Elbe takes a different approach for solving these problems:
+Elbe takes a different approach to solve these problems:
 
-- Standard packages are not self compiled.
-  Elbe uses the Debian distributions binary packages.
-- Own applications are not cross compiled.
+- Standard packages are not self-compiled.
+  Elbe uses binary packages from their respective Debian distributions.
+- Own applications are not cross-compiled.
   They are built natively on the target architecture in a chroot environment
   using qemu.
-- The root-filesystem is a subset of the Debian system inside the chroot
-  environment. This implicitly ensures, that the same toolchain is used
+- The root filesystem is a subset of the Debian system inside the chroot
+  environment. This implicitly ensures that the same toolchain is used
   on the development machine and on the target.
-- Updating, adding or removing a package is done via Debian's package-management
+- Updating, adding, or removing a package is done via Debian's package-management
   (apt) which also resolves package dependencies.
 
 
 Installation
 ------------
 
-Elbe is shipped as Debian package. This package will pull in the necessary
+Elbe is shipped as a Debian package. This package will pull in the necessary
 dependencies.
 
 Download the OpenPGP key and configure `/etc/apt/sources.list` appropriately:
@@ -82,7 +81,7 @@ elbe chg_archive example.xml archive.tar.bz2
 
 An Elbe project consists of an XML file that describes the project.
 
-This xml File is processed inside a virtual machine, because we need root
+This xml File is processed inside a virtual machine because we need root
 privileges to create the Rootfilesystem.
 This virtual machine is called 'initvm' in the following text.
 
@@ -90,7 +89,7 @@ When an xml File is now submitted into the initvm, the following happens:
 
 - Debian's 'debootstrap' utility is used to setup a Debian base system.
 - The packages specified in the package list of the XML file are installed
-  to the base system. The result of this is called the build environment.
+  in the base system. The result of this is called the build environment.
 - A copy of the environment is used as the target system.
   There is a set of different modes for this copy.
 - If the XML file contains an archive, it will be unpacked into the target, so
