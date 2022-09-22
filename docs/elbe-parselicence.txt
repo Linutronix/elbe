@@ -79,7 +79,7 @@ elbe parselicence --mapping my_mapping.xml /path/to/license.xml --tvout spdx_lic
 LICENSE.XML FILE
 ----------------
 
-When elbe builds an image, it will look at all /usr/share/doc/*/copyright Files,
+When elbe builds an image, it will look at all `/usr/share/doc/*/copyright` Files,
 and concatenate them into `license.txt`. Elbe will also generate
 `license.xml`, which also contains meta-data extracted from machine-readable copyright
 files, or generated via heuristics.
