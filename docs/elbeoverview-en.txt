@@ -446,25 +446,21 @@ source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <domain>example.com</domain>
     <passwd>foo</passwd>
     <package>
-	    <tar>nfsroot.tar.gz</tar>
+        <tar>nfsroot.tar.gz</tar>
     </package>
 
-    <diet />        <1>
+    <diet /> <!-- The mode is configured at this place.
+                  Leaving it out enables the default mode. -->
 
-    <install-recommends /> <2>
+    <install-recommends />
 
-    <finetuning \>
+    <finetuning />
     <pkg-list>
-	    <pkg>bash</pkg>
+        <pkg>bash</pkg>
     </pkg-list>
 
   </target>
 source~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-<1> The mode is configured at this place, leaving it out, enables the default
-    mode.
-
-<2> 'install-recommends' should be placed here.
 
 install-recommends
 ~~~~~~~~~~~~~~~~~~
