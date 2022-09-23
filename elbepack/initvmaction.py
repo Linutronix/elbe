@@ -13,8 +13,6 @@ import time
 import os
 import datetime
 
-import libvirt
-
 from tempfile import NamedTemporaryFile
 
 import elbepack
@@ -83,6 +81,8 @@ class InitVMAction:
         # no need to talk with libvirt
         if not is_soap_local():
             return
+
+        import libvirt
 
         # The tag initvmNeeded is required in order to be able to run `elbe
         # initvm create`
@@ -161,6 +161,8 @@ class StartAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
+        import libvirt
+
         if self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             print('Initvm already running.')
             sys.exit(20)
@@ -190,6 +192,8 @@ class EnsureAction(InitVMAction):
         if not is_soap_local():
             return
 
+        import libvirt
+
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             system(f'{elbe_exe} initvm start')
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
@@ -215,6 +219,7 @@ class StopAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
+        import libvirt
 
         if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
             print('Initvm is not running.')
@@ -249,6 +254,8 @@ class AttachAction(InitVMAction):
         InitVMAction.__init__(self, node)
 
     def execute(self, _initvmdir, _opt, _args):
+        import libvirt
+
         if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
             print('Error: Initvm not running properly.')
             sys.exit(20)
