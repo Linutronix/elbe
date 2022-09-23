@@ -414,6 +414,7 @@ class ElbeProject:
 
     def pbuild(self, p):
         self.pdebuild_init()
+        os.mkdir(os.path.join(self.builddir, "pdebuilder"))
         src_path = os.path.join(self.builddir, "pdebuilder", "current")
 
         src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
@@ -427,15 +428,13 @@ class ElbeProject:
         elif p.tag == 'svn':
             do(f"svn co --non-interactive {src_uri} {src_path}")
         elif p.tag == 'src-pkg':
-            pdb_path = os.path.join(self.builddir, "pdebuilder")
-            os.mkdir(pdb_path)
-
             apt_args = '--yes -q --download-only'
             if self.xml.prj.has('noauth'):
                 apt_args += ' --allow-unauthenticated'
-            do(f'cd "{pdb_path}";apt-get source {apt_args} "{src_uri}"')
+            chroot(self.chrootpath, '/usr/bin/apt-get update')
+            chroot(self.chrootpath, f'/usr/bin/apt-get source {apt_args} "{src_uri}"')
 
-            do(f'dpkg-source -x {pdb_path}/*.dsc "{src_path}"')
+            do(f'dpkg-source -x {self.chrootpath}/*.dsc "{src_path}"; rm {self.chrootpath}/*.dsc')
         else:
             logging.info("Unknown pbuild source: %s", p.tag)
 
@@ -563,6 +562,20 @@ class ElbeProject:
 
         self.xml.validate_apt_sources(m, self.arch)
 
+        # Create the build environment, if it does not a valid one
+        # self.buildenv might be set when we come here.
+        # However, if its not a full_buildenv, we specify clean here,
+        # so it gets rebuilt properly.
+        if not self.has_full_buildenv():
+            do(f'mkdir -p "{self.chrootpath}"')
+            self.buildenv = BuildEnv(self.xml, self.chrootpath,
+                                     build_sources=build_sources, clean=True)
+            skip_pkglist = False
+
+        # Import keyring
+        self.buildenv.import_keys()
+        logging.info("Keys imported")
+
         if self.xml.has('target/pbuilder') and not skip_pbuild:
             if not os.path.exists(os.path.join(self.builddir, "pbuilder")):
                 self.create_pbuilder(cross=False, noccache=False,
@@ -578,20 +591,6 @@ class ElbeProject:
         # Release and Packages files, even if it's empty. So don't do this
         # in the if case above!
         self.repo.finalize()
-
-        # Create the build environment, if it does not a valid one
-        # self.buildenv might be set when we come here.
-        # However, if its not a full_buildenv, we specify clean here,
-        # so it gets rebuilt properly.
-        if not self.has_full_buildenv():
-            do(f'mkdir -p "{self.chrootpath}"')
-            self.buildenv = BuildEnv(self.xml, self.chrootpath,
-                                     build_sources=build_sources, clean=True)
-            skip_pkglist = False
-
-        # Import keyring
-        self.buildenv.import_keys()
-        logging.info("Keys imported")
 
         # Install packages
         if not skip_pkglist:
