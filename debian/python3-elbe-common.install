@@ -31,6 +31,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/packers.py
 ./usr/lib/python3.*/*-packages/elbepack/pbuilderaction.py
 ./usr/lib/python3.*/*-packages/elbepack/pkgutils.py
+./usr/lib/python3.*/*-packages/elbepack/repodir.py
 ./usr/lib/python3.*/*-packages/elbepack/rfs.py
 ./usr/lib/python3.*/*-packages/elbepack/xmlpreprocess.py
 ./usr/lib/python3.*/*-packages/elbepack/shellhelper.py
