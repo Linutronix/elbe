@@ -91,7 +91,6 @@ clean:
 	$(RM) technical/api-*.html technical/api-index.txt
 	$(RM) $(cmds_txt) *.made
 	$(RM) manpage-base-url.xsl
-	$(RM) elbe-examples.txt elbe-examples.html
 
 $(MAN_HTML): %.html : %.txt
 	$(RM) $@+ $@ && \
@@ -161,7 +160,3 @@ elbe-schema-reference.html: %.html : %.txt
 	sed -i "1s/^/*************************\n/" article-$*.rst
 	sed -i "s/<#/<#type-/g" article-$*.rst
 	$(ASCIIDOC) -a toc $(ASCIIDOC_EXTRA) -b xhtml11 $*.txt
-
-elbe-examples.txt:
-	./build-example-doc.sh
-	$(ASCIIDOC) $(ASIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 elbe-examples.txt
