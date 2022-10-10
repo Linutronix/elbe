@@ -12,6 +12,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/commands/pkgdiff.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/preprocess.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/remove_sign.py
+./usr/lib/python3.*/*-packages/elbepack/commands/repodir.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/setsel.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/show.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/sign.py
