@@ -1,3 +1,36 @@
+elbe (14.6) unstable; urgency=medium
+
+  * README.adoc: Update Dependency as per latest version
+  * README.adoc: Update Readme for updating bugs and contributions
+  * README: Stop advertising IRC channel
+  * contrib: debathena-transform-lighttpd: Release 1.4
+  * elbepack: dosunix: Add missing license header
+  * schema: Add missing license headers
+  * elbe.spec: Add missing license info
+  * setup.py: Replace author with corporate info
+  * examples: Add SPDX header for external contribution
+  * examples: Relicense to 0BSD
+  * contrib: dockerfile: Add markdown comments
+  * contrib: k8s: Add missing license info
+  * contrib: Drop linux patches
+  * schema: Add XSD's missing license info
+  * Prevent rebuild of initramfs on target image
+  * elbeproject: Reliably remove package files after build
+  * examples/beaglebone: Install pbuilder-built package
+  * docs: quickstart: Grammar check
+  * docs: quickstart: Show output example based on latest version
+  * docs: overview: Grammar check
+  * docs: Remove empty indices from index
+  * hdimg: Allow additional arguments for grub-install
+  * docs: elbeoverview: Fix XML markup
+  * docs: elbe-parselicence: Enquote path name
+  * docs: Add new elbe repodir manpage
+  * repodir: Preprocess XML and serve Debian repositories
+  * commands: Add standalone program based on repodir module
+  * initvmaction: Run repodir before preprocess
+
+ -- Bastian Germann <bage@linutronix.de>  Mon, 10 Oct 2022 16:08:55 +0200
+
 elbe (14.5) unstable; urgency=medium
 
   * Team upload

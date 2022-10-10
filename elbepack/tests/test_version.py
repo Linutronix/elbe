@@ -12,7 +12,7 @@ from elbepack.version import elbe_version
 class TestElbepackVersion(unittest.TestCase):
 
     # This is a read-only state that is the same for every tests
-    expected_version = "14.5"
+    expected_version = "14.6"
 
     def setUp(self):
         # This is a mutable state that is different for every tests
