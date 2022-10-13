@@ -12,14 +12,13 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-RUN apt-get update -y && \
+RUN echo "deb http://ftp.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
+    apt-get update -y && \
     apt-get install -y --no-install-recommends \
-        wget gnupg2
+        elbe-archive-keyring
 
 # install current elbe
-RUN echo 'deb http://debian.linutronix.de/elbe buster main' > /etc/apt/sources.list.d/elbe.list && \
-    wget http://debian.linutronix.de/elbe/elbe-repo.pub && \
-    apt-key add elbe-repo.pub && \
+RUN echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bullseye main' > /etc/apt/sources.list.d/elbe.list && \
     apt-get update -y && \
     apt-get install -y --no-install-recommends \
         python3-elbe-buildenv \
