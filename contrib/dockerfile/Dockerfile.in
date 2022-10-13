@@ -5,16 +5,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# This Dockefile generate a image for the elbe buildsystem
-FROM elbeproject/debian-stretch:latest
+# This Dockerfile generate a image for the elbe buildsystem
+FROM debian:bullseye
 
 USER root
 ENV DEBIAN_FRONTEND noninteractive
 
-# use a sources.list including security
-RUN echo "deb http://ftp.de.debian.org/debian stretch main" > /etc/apt/sources.list; \
-    echo "deb http://ftp.de.debian.org/debian stretch-updates main" >> /etc/apt/sources.list; \
-    echo "deb http://security.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
+# use a sources.list including backports and security
+RUN echo "deb http://ftp.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
+    echo "deb http://security.debian.org/ bullseye-security main"   >> /etc/apt/sources.list
 
 # update, upgrade and install elbe runtime-dependencies
 RUN apt-get update -y ;\
@@ -24,7 +23,7 @@ RUN apt-get update -y ;\
         ca-certificates \
         sudo \
         vim-nox \
-        wget \
+        elbe-archive-keyring \
         software-properties-common \
         gnupg \
         python3-setuptools \
@@ -50,9 +49,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 # install current elbe
-RUN apt-add-repository 'deb http://debian.linutronix.de/elbe stretch main'
-RUN wget http://debian.linutronix.de/elbe/elbe-repo.pub
-RUN apt-key add elbe-repo.pub
+RUN echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bullseye main' >> /etc/apt/sources.list
 RUN apt-get update -y
 RUN apt-get install -y --no-install-recommends \
         elbe \
