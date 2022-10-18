@@ -2740,12 +2740,21 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="cpmv">
     <annotation>
       <documentation>
-        describes a copy or move of an element in the rootfilesystem
+        Copies or moves a file within the root file system.
+        The tag's text node is the destination path where file needs to be
+        moved or copied to.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="path" type="string" use="required" />
+        <attribute name="path" type="string" use="required">
+          <annotation>
+            <documentation>
+              This attribute is a source file that needs to be copied to the
+              destination file.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
