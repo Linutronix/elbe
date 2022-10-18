@@ -2387,16 +2387,28 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </simpleContent>
   </complexType>
 
-    <complexType name="partition-command">
+  <complexType name="partition-command">
     <annotation>
       <documentation>
-	The node's text should be a valid shell commands
+        The tag's text node should be valid shell commands.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="part" type="integer" use="required" />
-        <attribute name="nomount" type="boolean" use="optional" />
+        <attribute name="part" type="integer" use="required">
+          <annotation>
+            <documentation>
+              This is the device partition number.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="nomount" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              If true, device will not be mounted.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
