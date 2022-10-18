@@ -2762,12 +2762,22 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="mknod">
     <annotation>
       <documentation>
-        describes a mknod operaition in finetuning
+        Describes a mknod operation in finetuning to make block or character
+        special files.
+        The value of tag's text node is the special block or character file on
+        which mknod needs to be operated.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="opts" type="string" use="required" />
+        <attribute name="opts" type="string" use="required">
+          <annotation>
+            <documentation>
+              This attribute makes node of type, major number, minor number for a
+              given file.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
