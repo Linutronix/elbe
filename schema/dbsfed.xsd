@@ -2370,13 +2370,19 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <annotation>
       <documentation>
         Describe the partition to be extracted (nr) and the destination filename.
-	The value of the tag describes the filename of the generated Imagefile.
-	The Image is per default compressed with gzip afterwards.
+        The value of the tag describes the filename of the generated Imagefile.
+        The Image is per default compressed with gzip afterwards.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="part" type="integer" use="required" />
+        <attribute name="part" type="integer" use="required">
+          <annotation>
+            <documentation>
+              The partition of the rfs image in integer that needs to be extracted.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
