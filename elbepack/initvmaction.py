@@ -258,39 +258,45 @@ class AttachAction(InitVMAction):
 
 
 
-def submit_and_dl_result(input_xmlfile, cdrom, opt):
+def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
+    try:
+        with NamedTemporaryFile(suffix=".xml", prefix="elbe-repodir",
+                dir=os.path.dirname(xmlfile)) as tmpfile:
+            preprocess_xmlfile = tmpfile.name
+            with Repodir(xmlfile, preprocess_xmlfile):
+                submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
+    except RepodirError as err:
+        print("%s repodir failed" % elbe_exe, file=sys.stderr)
+        print(err, file=sys.stderr)
+        sys.exit(20)
+
+
+def submit_and_dl_result(xmlfile, cdrom, opt):
 
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-branches
 
     try:
-        with NamedTemporaryFile(prefix="elbe-repodir", suffix="xml") as tmpfile:
-            xmlfile = tmpfile.name
-            with Repodir(input_xmlfile, xmlfile):
-                with PreprocessWrapper(xmlfile, opt) as ppw:
-                    xmlfile = ppw.preproc
+        with PreprocessWrapper(xmlfile, opt) as ppw:
+            xmlfile = ppw.preproc
 
-                    ret, prjdir, err = command_out_stderr(
-                        '%s control create_project' % (elbe_exe))
-                    if ret != 0:
-                        print("elbe control create_project failed.", file=sys.stderr)
-                        print(err, file=sys.stderr)
-                        print("Giving up", file=sys.stderr)
-                        sys.exit(20)
+            ret, prjdir, err = command_out_stderr(
+                '%s control create_project' % (elbe_exe))
+            if ret != 0:
+                print("elbe control create_project failed.", file=sys.stderr)
+                print(err, file=sys.stderr)
+                print("Giving up", file=sys.stderr)
+                sys.exit(20)
 
-                    prjdir = prjdir.strip()
+            prjdir = prjdir.strip()
 
-                    cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
-                    ret, _, err = command_out_stderr(cmd)
-                    if ret != 0:
-                        print("elbe control set_xml failed2", file=sys.stderr)
-                        print(err, file=sys.stderr)
-                        print("Giving up", file=sys.stderr)
-                        sys.exit(20)
-    except RepodirError as err:
-        print("%s repodir failed" % elbe_exe, file=sys.stderr)
-        print(err, file=sys.stderr)
-        sys.exit(20)
+            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+            ret, _, err = command_out_stderr(cmd)
+            if ret != 0:
+                print("elbe control set_xml failed2", file=sys.stderr)
+                print(err, file=sys.stderr)
+                print("Giving up", file=sys.stderr)
+                sys.exit(20)
     except CommandError:
         # this is the failure from PreprocessWrapper
         # it already printed the error message from
@@ -646,7 +652,7 @@ class CreateAction(InitVMAction):
             elif cdrom is not None:
                 xmlfile = tmp.fname('source.xml')
 
-            submit_and_dl_result(xmlfile, cdrom, opt)
+            submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
 
 
 @InitVMAction.register('submit')
@@ -682,7 +688,7 @@ class SubmitAction(InitVMAction):
                     file=sys.stderr)
                 sys.exit(20)
 
-            submit_and_dl_result(xmlfile, cdrom, opt)
+            submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
 
 @InitVMAction.register('sync')
 class SyncAction(InitVMAction):
