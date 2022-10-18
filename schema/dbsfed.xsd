@@ -2481,18 +2481,32 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="addgroup">
     <annotation>
       <documentation>
-        describes an additional user group to be created. the following parameters are
-	available:
-	'gid' - group id.
-	'system = "True" - system group.
-	The value of the tag describes the group name name
-        for the account.
+       describes an additional user group to be created. the following parameters are
+       available:
+       'gid' - group id.
+       'system = "True" - system group.
+       The value of the tag describes the group name for the account.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="gid" type="string" use="optional" />
-        <attribute name="system" type="boolean" use="optional" />
+       <attribute name="gid" type="string" use="optional">
+        <annotation>
+         <documentation>
+          Describes the numerical value of group's ID. Since the type is string, this
+          can be a numerical or textual alias
+         </documentation>
+        </annotation>
+        </attribute>
+        <attribute name="system" type="boolean" use="optional">
+         <annotation>
+          <documentation>
+           It needs to be True by default to create a new system group. This
+           makes it possible to have the system groups chosen in the range of
+           SYS_GID_MIN-SYS_GID_MAX.
+          </documentation>
+         </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
