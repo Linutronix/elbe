@@ -2514,18 +2514,36 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="img_convert">
     <annotation>
       <documentation>
-        Describe the Image to be converted.
-	The value of the tag describes the filename of the source Imagefile.
-	The dst attribute the destination filename, and the fmt attribute is
-	the format. (See 'qemu-img --help' for a list of possible formats)
-	The Image is per default compressed with gzip afterwards.
+        Gives an opportunity to convert the image to a specific format.
+        The Image is by default compressed with gzip afterwards.
+        The value of the tag describes the name of the image.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="dst" type="string" use="required" />
-        <attribute name="fmt" type="string" use="required" />
-        <attribute name="keep_src" type="boolean" use="optional" />
+        <attribute name="dst" type="string" use="required">
+          <annotation>
+            <documentation>
+              Describes the filename of the converted image file.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="fmt" type="string" use="required">
+          <annotation>
+            <documentation>
+              Describes the format which image file needs to be
+              converted to. Please check supported formats section in
+              "qemu-img --help".
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="keep_src" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              If set to 'true' the original image file is kept.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
