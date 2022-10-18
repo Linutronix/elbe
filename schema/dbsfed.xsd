@@ -2398,16 +2398,28 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="copy_from_partition">
     <annotation>
       <documentation>
-        Attribute 'part' describes the partition to be mounted (nr).
-	The value of the tag describes the filename to be copied from the
-	Filesystem, after it has been mounted.
-	Attribute 'artifact' is the artifact name.
+        Using "copy_from partition", the user gets an opportunity to copy a file
+        from a partition and save it as an atrifact in the build output.
+        This element's content is the file's path mentioned in the "part"
+        partition.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="part" type="integer" use="required" />
-        <attribute name="artifact" type="string" use="required" />
+        <attribute name="part" type="integer" use="required">
+         <annotation>
+          <documentation>
+           Describes the partition to which the required file belongs.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="artifact" type="string" use="required">
+         <annotation>
+          <documentation>
+           The name of the file that needs to be extracted is termed as an "artifact".
+          </documentation>
+         </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
