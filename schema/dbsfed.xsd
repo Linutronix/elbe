@@ -2584,28 +2584,58 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <complexType name="file">
     <annotation>
       <documentation>
-        write or append text to a file, the following parameters
-        are avaible:
-
-        'dst' - the destination to write to
-        'encoding' - the (optional) encoding of the content
-        'append="True"' - append the content to file instead of writing
-        'owner' - (optional) set file owner
-        'group' - (optional) set group ownership
-        'mode' - (optional) set file mode bits
-
-        The value of the tag is the raw/encoded content to
-        write/append to the destination
+       Gives opportunity to write, append, encode data to a specific
+       file on the target image, change permissions, owner and group of file.
+       The value of the tag is the raw/encoded content to
+       write/append to the destination.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="dst"      type="string"  use="required" />
-        <attribute name="encoding" type="string"  use="optional" />
-        <attribute name="append"   type="boolean" use="optional" />
-        <attribute name="owner"    type="string"  use="optional" />
-        <attribute name="group"    type="string"  use="optional" />
-        <attribute name="mode"     type="string"  use="optional" />
+        <attribute name="dst"      type="string"  use="required">
+        <annotation>
+         <documentation>
+           This defines the destination to write to.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="encoding" type="string"  use="optional">
+         <annotation>
+          <documentation>
+           This is an optional attribute for encoding of the content.
+           Please note that available encoding options are plain, raw and
+           base64.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="append"   type="boolean" use="optional">
+         <annotation>
+          <documentation>
+           If true, appends the content to file instead of writing.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="owner"    type="string"  use="optional">
+         <annotation>
+          <documentation>
+           This sets the file owner to the file given in dst attribute.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="group"    type="string"  use="optional">
+         <annotation>
+          <documentation>
+           This sets group ownership for the file given in dst attribute.
+          </documentation>
+         </annotation>
+        </attribute>
+        <attribute name="mode"     type="string"  use="optional">
+         <annotation>
+          <documentation>
+           This sets file permission using mode bits.
+          </documentation>
+         </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
