@@ -2688,13 +2688,20 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="rm">
     <annotation>
       <documentation>
-	      describes a removal of a pattern from the rootfilesystem.
-	      Including an exclude pattern
+        Remove a file or directory from the target.
+        The tag's text node matches on the absolute location of the file to be
+        deleted.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="exclude" type="string" use="optional" />
+        <attribute name="exclude" type="string" use="optional">
+          <annotation>
+            <documentation>
+              This sets an exclude pattern that will not be deleted.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
