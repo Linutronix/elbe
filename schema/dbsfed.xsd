@@ -2307,7 +2307,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <group ref="rfs:image_action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
     <attribute ref="xml:base"/>
-    <attribute name="img" type="string" use="required" />
+    <attribute name="img" type="string" use="required">
+     <annotation>
+      <documentation>
+        Name of the image artifact that would be used for loop mounting.
+      </documentation>
+     </annotation>
+    </attribute>
   </complexType>
 
   <group name="image_action">
