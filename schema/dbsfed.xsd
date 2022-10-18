@@ -2643,31 +2643,78 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="adduser">
     <annotation>
       <documentation>
-        describes an additional user account, the following parameters are
-	available:
-	'shell' - the login shell for the user.
-	'passwd_hashed' - the (optional) hashed password for the user.
-	'groups' - a comma separated list of groups the user is member of.
-	'uid' - (optional) user of the user.
-	'gid' - (optional) primary group, may be numeric or a name.
-	'home' - home directory.
-	'system="True"' - system user.
-	'create_home="False"' - do not create the home directory.
-	'create_group = "False"' - Do not create the primary group.
-	The value of the tag describes the login name for the account.
+        Adds an additional user account for the rfs.
+        It creates a new user or updates the default new user information.
+        The value of the tag defines the name of the user to be added.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="shell" type="string" use="required" />
-        <attribute name="passwd_hashed" type="string" use="optional" />
-        <attribute name="groups" type="string" use="optional" />
-        <attribute name="uid" type="string" use="optional" />
-        <attribute name="gid" type="string" use="optional" />
-        <attribute name="home" type="string" use="optional" />
-        <attribute name="system" type="boolean" use="optional" />
-        <attribute name="create_home" type="boolean" use="optional" />
-        <attribute name="create_group" type="boolean" use="optional" />
+        <attribute name="shell" type="string" use="required">
+          <annotation>
+            <documentation>
+              This specifies the login shell for the user.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="passwd_hashed" type="string" use="optional">
+          <annotation>
+            <documentation>
+              This is an optional attribute for hashed password for the user.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="groups" type="string" use="optional">
+          <annotation>
+            <documentation>
+              This is a comma separated list of groups the user is member of.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="uid" type="string" use="optional">
+          <annotation>
+            <documentation>
+              This gives user id for the required user.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="gid" type="string" use="optional">
+          <annotation>
+            <documentation>
+              This is an optional attribute for primary group, may be numeric or a name.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="home" type="string" use="optional">
+          <annotation>
+            <documentation>
+              The new user will be created using this value as a home directory.
+              This can be used as user's login directory.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="system" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              This needs to be True by default to create a new system account.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="create_home" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              This needs to be False to not create a home directory.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="create_group" type="boolean" use="optional">
+          <annotation>
+            <documentation>
+              This needs to be "False" to not create a group with same
+              name as the user.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
