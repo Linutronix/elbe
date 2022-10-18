@@ -2978,7 +2978,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="unit-tests">
     <annotation>
       <documentation>
-	Sequence of test suites.  The require attribute 'dst' is the
+	Sequence of test suites.  The required attribute 'dst' is the
 	name of the file where the Junit XML file will be dump
 	relative to the project directory.
       </documentation>
