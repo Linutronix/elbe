@@ -2551,15 +2551,20 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="set_packer">
     <annotation>
       <documentation>
-        Set the packer to use for an artifaxct.
-	The value of the tag describes the filename of the Imagefile.
-	The packer attribute may take the following values:
-	(none, gzip, zstd, tar, targz, tarxz, tarzstd)
+       Set the packer to use for an artifact.
+       The value of the tag describes the filename of the Imagefile.
       </documentation>
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
-        <attribute name="packer" type="rfs:packer-type" use="required" />
+        <attribute name="packer" type="rfs:packer-type" use="required">
+         <annotation>
+          <documentation>
+          Describes the compressor for the resulting image from the
+          following values:(none, gzip, zstd, tar, targz, tarxz, tarzstd).
+          </documentation>
+         </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>
