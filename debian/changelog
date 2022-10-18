@@ -1,3 +1,13 @@
+elbe (14.6.1) unstable; urgency=medium
+
+  * Team upload
+  * contrib: k8s: Use elbe-archive-keyring trust anchor
+  * contrib: k8s: Add elbe-common repo
+  * contrib: dockerfile: Update to bullseye
+  * initvmaction: Prevent early repodir webserver termination
+
+ -- Bastian Germann <bage@linutronix.de>  Tue, 18 Oct 2022 16:07:10 +0200
+
 elbe (14.6) unstable; urgency=medium
 
   * README.adoc: Update Dependency as per latest version
