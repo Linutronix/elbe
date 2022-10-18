@@ -3092,16 +3092,25 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="test-suite">
     <annotation>
       <documentation>
-	A test suite is a sequence of test cases.  The required
-	attribute name is the an human readable identifier for the
-	test suite.
+        A test suite is a sequence of test cases.  The required
+        attribute name is the a human readable identifier for the
+        test suite.
+        The value of this tag consists of the test registers
+        defined in elbepack/junit.py to be performed for the
+        specific files.
       </documentation>
     </annotation>
     <sequence>
       <group ref="rfs:test-case" minOccurs="0" maxOccurs="unbounded" >
       </group>
     </sequence>
-    <attribute name="name" type="string" use="required" />
+    <attribute name="name" type="string" use="required">
+      <annotation>
+        <documentation>
+          This attribute describes the name of the test suite.
+        </documentation>
+      </annotation>
+    </attribute>
   </complexType>
 
   <group name="test-case">
