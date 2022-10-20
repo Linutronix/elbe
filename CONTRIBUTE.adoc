@@ -1,0 +1,93 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Linutronix GmbH
+
+CONTRIBUTIONS
+=============
+
+Contributions from everyone are welcome.
+Please follow these guidelines when filing an issue or submitting patches.
+
+Filing Issues and Feature Requests
+----------------------------------
+
+Please use the issue tracker on GitHub.
+When reporting an issue, please provide the following information.
+
+* New issue reports are invalid if they are already fixed in Elbe.
+  You should try to reproduce your bug with the latest Elbe version
+  or with the current development version. For backporting existing bug fixes
+  to old versions, please request commercial support.
+* In case the build failed, please report the exact error message with its
+  context or upload the log file.
+* If the error message is not helpful, please give the expected message with a
+  valid explanation.
+* Give reproducing steps in detail for the reported issue.
+  Providing an Elbe XML file or a complete log is really helpful.
+* In order to retrieve the failed build artifacts after a failed build,
+  please use `elbe control get_file`. If that doesn't work for some reason, a
+  user can attach to the initvm using `elbe initvm attach`. The default root
+  password is "root". The project files are be located in /var/cache/elbe/UUID
+
+For general discussion use <elbe-users@linutronix.de>.
+
+Submitting Patches
+------------------
+
+* The project's git repository is hosted on GitHub:
+  https://github.com/linutronix/elbe
+* Contributions must be certified as given in https://developercertificate.org.
+  Please add a "Signed-off-by" tag to the commit.
+* Please note that we currently target Python 3.6+ before sending any source code.
+* Note that a moderator approval is needed when you send the patches to the
+  mailing list without being subscribed. This approval is available via a
+  confirmation link that you will receive once an e-mail is sent to the mailing
+  list given below.
+
+Send patches to <elbe-devel@linutronix.de>.
+
+License Rules
+-------------
+Elbe is provided under the terms of the GPLv3+ license as provided in the
+COPYING file.
+
+Instead of adding license boilerplate text to the individual files,
+Elbe uses SPDX license identifiers,
+which are machine parseable and considered legally equivalent.
+
+File Headers
+------------
+Elbe files start with a common file header:
+
+----
+# <PATH TO INTERPRETER>               (optional)
+# <SOME TEXT>                         (optional)
+# SPDX-License-Identifier: <SPDX LICENSE ID>
+# SPDX-FileCopyrightText: <COPYRIGHT> (optional)
+----
+
+`#` can be replaced by a comment operator for another programming language, e.g.
+/* <...> */ or // <...> is also allowed.
+
+Empty comment lines are allowed in the header.
+
+
+Before:
+~~~~~~~
+
+* We run the pylint code analyzer on the patches with the .pylintrc
+  configuration file that is contained in the project root.
+  If your patch series creates new pylint messages please change your code
+  accordingly or explain why you cannot get rid of them.
+* Please describe the changes in the commit message. If it is a series of
+  patches, please consider explaining the change in the cover letter of the patch
+* One of the standard methods for generating a series of patches with a cover-letter
+  is using "git format-patch" tool. Also, "git send-email" tool can be used to send
+  a patch.
+
+After:
+~~~~~~
+
+* Please be patient after submitting patches. Sometimes, maintainers are
+  working on multiple projects, so they might not find time to reply immediately.
+  Please give them a gracious time of 1 month before pinging the mailing list
+  about the status of the patch.
