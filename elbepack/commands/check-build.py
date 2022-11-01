@@ -36,10 +36,10 @@ def run_command(argv):
     elif args[0] in CheckBase.tests:
         tests = [CheckBase.tests[args[0]]]
     else:
-        print("Invalid check test %s" % args[0])
+        print(f"Invalid check test {args[0]}")
         print("Valid tests are:\n\tall")
         for tag in CheckBase.tests:
-            print("\t%s" % tag)
+            print(f"\t{tag}")
         os.sys.exit(20)
 
     total_cnt = 0
@@ -107,26 +107,27 @@ class CheckCdroms(CheckBase):
 
     def extract_cdrom(self, tgt, cdrom):
         try:
-            do('7z x -o"%s" "%s"' % (tgt, cdrom))
+            do(f'7z x -o"{tgt}" "{cdrom}"')
         except CommandError as E:
-            self.fail("Failed to extract cdrom %s:\n%s" % (cdrom, E))
+            self.fail(f"Failed to extract cdrom {cdrom}:\n{E}")
 
     def dpkg_get_infos(self, path, fmt):
         """Get dpkg infos for .deb and .dsc file formats"""
         try:
             if path.endswith(".deb"):
-                cmd = 'dpkg -f "%s" %s' % (path, " ".join(fmt))
+                cmd = f'dpkg -f "{path}" {" ".join(fmt)}'
             elif path.endswith(".dsc"):
-                cmd = 'grep -E "^(%s):" %s' % ("|".join(fmt), path)
+                cmd = f'grep -E "^({"|".join(fmt)}):" {path}'
             return get_command_out(cmd).decode("utf-8")
         except CommandError as E:
-            self.fail("Failed to get debian infos (%s) for %s:\n%s" %
-                      ('|'.join(fmt), path, E))
+            self.fail(
+                f"Failed to get debian infos ({'|'.join(fmt)}) "
+                f"for {path}:\n{E}")
 
     @staticmethod
     def cmp_version(v1, v2):
-        return command_out("dpkg --compare-versions %s eq %s" %
-                           (v1, v2), output=DEVNULL)[0]
+        return command_out(
+            f"dpkg --compare-versions {v1} eq {v2}", output=DEVNULL)[0]
 
     def do_src(self, sources, src_total):
         """Check for sources in src-cdrom*"""
@@ -392,8 +393,8 @@ class CheckImage(CheckBase):
     @staticmethod
     def open_tgz(path):
         tmp = tempfile.NamedTemporaryFile(prefix='elbe')
-        command_out("tar --to-stdout --extract --gunzip --file %s" % path,
-                    output=tmp)
+        command_out(
+            f"tar --to-stdout --extract --gunzip --file {path}", output=tmp)
         return tmp
 
     def open_img(self, path):
@@ -512,8 +513,9 @@ class CheckImage(CheckBase):
                     try:
                         child.expect(pexpect.EOF)
                     except pexpect.exceptions.TIMEOUT:
-                        print('Was expecting EOF but got timeout (%d)' %
-                              child.timeout)
+                        print(
+                            'Was expecting EOF but got timeout '
+                            f'({child.timeout})')
                         self.ret = 1
                     else:
                         transcript.append(child.before.decode('utf-8'))
@@ -602,7 +604,7 @@ exit 1
             os.chmod(sdk, 0o744)
 
             # Extract here with 'yes' to all answers
-            do("./%s -y -d ." % sdk)
+            do(f"./{sdk} -y -d .")
 
             # Get environment file
             env = tmp.glob("environment-setup*")[0]
@@ -618,4 +620,4 @@ exit 1
 class CheckRebuild(CheckBase):
 
     def run(self):
-        do("%s initvm submit --skip-build-source bin-cdrom.iso" % elbe_exe)
+        do(f"{elbe_exe} initvm submit --skip-build-source bin-cdrom.iso")
