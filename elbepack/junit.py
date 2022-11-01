@@ -35,7 +35,7 @@ class TestSuite:
 
     def do_test(self, node, target):
         if node.tag not in self.test_dict:
-            raise TestException("Invalid Test %s" % node.tag)
+            raise TestException(f"Invalid Test {node.tag}")
         test = self.test_dict[node.tag]
         return test(node, target)()
 
@@ -61,7 +61,7 @@ class BaseTest:
         self.target = target
 
     def __call__(self):
-        raise TestException("Unimplemented Test %s" % self.tag)
+        raise TestException(f"Unimplemented Test {self.tag}")
 
 
 @TestSuite.register("file-exists")
