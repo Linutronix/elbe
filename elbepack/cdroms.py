@@ -29,7 +29,7 @@ CDROM_SIZE = 640 * 1000 * 1000
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
         return
-    pkg_id = "%s-%s" % (pkg, version)
+    pkg_id = f"{pkg}-{version}"
     try:
         dsc = cache.download_source(pkg,
                                     version,
@@ -67,7 +67,7 @@ def mk_source_cdrom(components, codename,
         logging.info("Adding %s component", component)
         rfs.mkdir_p("/var/cache/elbe/sources")
         repo = CdromSrcRepo(codename, init_codename,
-                            os.path.join(target, "srcrepo-%s" % component),
+                            os.path.join(target, f"srcrepo-{component}"),
                             cdrom_size, mirror)
         repos[component] = repo
         for pkg, version in pkg_lst:
@@ -109,15 +109,16 @@ def mk_source_cdrom(components, codename,
                 for volume_number in volume_list:
                     with archive_tmpfile(arch_vol.text(".")) as fp:
                         if volume_number in repo.volume_indexes:
-                            do('tar xvfj "%s" -h -C "%s"' % (fp.name,
-                                                             repo.get_volume_fs(volume_number).path))
+                            do(
+                                f'tar xvfj "{fp.name}" -h -C '
+                                f'"{repo.get_volume_fs(volume_number).path}"')
                         else:
                             logging.warning("The src-cdrom archive's volume value "
                                             "is not contained in the actual volumes")
     else:
         options = ""
 
-    return [(repo.buildiso(os.path.join(target, "src-cdrom-%s.iso" % component),
+    return [(repo.buildiso(os.path.join(target, f"src-cdrom-{component}.iso"),
             options=options)) for component, repo in repos.items()]
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
@@ -141,7 +142,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # just copy it. the repo __init__() afterwards will
     # not touch the repo config, nor generate a new key.
     try:
-        do('cp -av /var/cache/elbe/initvm-bin-repo "%s"' % repo_path)
+        do(f'cp -av /var/cache/elbe/initvm-bin-repo "{repo_path}"')
     except CommandError:
         # When /var/cache/elbe/initvm-bin-repo has not been created
         # (because the initvm install was an old version or somthing,
@@ -151,7 +152,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
                           "This happened because the initvm was probably\n"
                           "generated with --skip-build-bin")
 
-        do('mkdir -p "%s"' % repo_path)
+        do(f'mkdir -p "{repo_path}"')
 
     repo = CdromInitRepo(init_codename, repo_path, mirror)
 
@@ -162,7 +163,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
         cache = get_rpcaptcache(rfs, arch)
         for p in xml.node("debootstrappkgs"):
             pkg = XMLPackage(p, arch)
-            pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+            pkg_id = f"{pkg.name}-{pkg.installed_version}"
             try:
                 deb = cache.download_binary(pkg.name,
                                             '/var/cache/elbe/binaries/main',
@@ -178,7 +179,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     cache = get_rpcaptcache(rfs, arch)
     pkglist = cache.get_installed_pkgs()
     for pkg in pkglist:
-        pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+        pkg_id = f"{pkg.name}-{pkg.installed_version}"
         try:
             deb = cache.download_binary(pkg.name,
                                         '/var/cache/elbe/binaries/added',
