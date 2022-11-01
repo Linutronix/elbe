@@ -20,7 +20,7 @@ def is_installed(ip, cache):
     try:
         p = cache[ip.et.text]
     except KeyError:
-        print("%s is not in local apt" % ip.et.text)
+        print(f"{ip.et.text} is not in local apt")
         return False
     if p.current_state == apt_pkg.CURSTATE_INSTALLED:
         return True
@@ -38,11 +38,11 @@ def bootup_check(xml):
     for p in hl_cache:
         if p.is_installed:
             if not is_in_fpl(p, fpl):
-                print("%s installed by user" % p.name)
+                print(f"{p.name} installed by user")
 
     for ip in fpl:
         if not is_installed(ip, cache):
-            print("%s removed by user" % ip.et.text)
+            print(f"{ip.et.text} removed by user")
 
 
 def bootup_info():
