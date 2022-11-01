@@ -8,7 +8,7 @@ import urwid
 
 
 def Edit(header='', default='', linebox=True, multiline=False):
-    this = urwid.Edit(("header", "{}\n".format(header)), default, multiline=multiline)
+    this = urwid.Edit(("header", f"{header}\n"), default, multiline=multiline)
     if linebox:
         this = urwid.LineBox(this)
     return this
