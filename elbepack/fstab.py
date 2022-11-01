@@ -35,8 +35,7 @@ def get_mtdnum(xml, label):
 
 def get_devicelabel(xml, node):
     if node.text("fs/type") == "ubifs":
-        return "ubi%s:%s" % (get_mtdnum(xml, node.text("label")),
-                              node.text("label"))
+        return f"ubi{get_mtdnum(xml, node.text('label'))}:{node.text('label')}"
 
     return "LABEL=" + node.text("label")
 
@@ -87,12 +86,12 @@ class hdpart:
         self.size = ppart.getLength() * sector_size
         self.filename = disk.device.path
         self.partnum = ppart.number
-        self.number = '{}{}'.format(disk.type, ppart.number)
+        self.number = f"{disk.type}{ppart.number}"
 
     def losetup(self):
 
-        cmd = ('losetup --offset %d --sizelimit %d --find --show "%s"' %
-               (self.offset, self.size, self.filename))
+        cmd = (f'losetup --offset {self.offset} --sizelimit {self.size} '
+               f'--find --show "{self.filename}"')
 
         while True:
 
@@ -135,8 +134,8 @@ class fstabentry(hdpart):
         self.id = str(fsid)
 
     def get_str(self):
-        return "%s %s %s %s 0 %s\n" % (self.source, self.mountpoint,
-                                       self.fstype, self.options, self.passno)
+        return (f"{self.source} {self.mountpoint} {self.fstype} {self.options} "
+                f"0 {self.passno}\n")
 
     def mountdepth(self):
         h = self.mountpoint
@@ -157,4 +156,4 @@ class fstabentry(hdpart):
 
     def tuning(self, loopdev):
         if self.tune:
-            do('tune2fs %s %s' % (self.tune, loopdev))
+            do(f'tune2fs {self.tune} {loopdev}')
