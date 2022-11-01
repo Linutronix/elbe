@@ -49,7 +49,8 @@ def preprocess_repodir(xml, xmldir):
                 auth_el = Element("raw-key")
                 auth_el.text = "\n" + open(keyfile, encoding='ascii').read()
             except:
-                raise RepodirError("%s is not a valid ascii-armored OpenPGP keyring" % keyfile)
+                raise RepodirError(
+                    f"{keyfile} is not a valid ascii-armored OpenPGP keyring")
         else:
             auth_el = Element("options")
             option_el = Element("option")
@@ -92,10 +93,10 @@ class Repodir:
             return self
 
         except XMLSyntaxError:
-            raise RepodirError("XML Parse error\n" + str(sys.exc_info()[1]))
+            raise RepodirError(f"XML Parse error\n{sys.exc_info()[1]}")
         except BaseException:
-           raise RepodirError(
-                "Unknown Exception during validation\n" + str(sys.exc_info()[1]))
+            raise RepodirError(
+                f"Unknown Exception during validation\n{str(sys.exc_info()[1])}")
 
     def __exit__(self, _typ, _value, _traceback):
         for httpd in self.httpds:

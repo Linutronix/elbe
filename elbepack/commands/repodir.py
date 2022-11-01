@@ -23,7 +23,7 @@ def run_command(argv):
 
     xml_input = args[0]
     if not os.path.isfile(xml_input):
-        print("%s does not exist" % xml_input, file=sys.stderr)
+        print(f"{xml_input} does not exist", file=sys.stderr)
         sys.exit(20)
 
     if os.path.exists(opt.output):
