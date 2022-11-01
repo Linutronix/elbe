@@ -52,10 +52,10 @@ def build_binary_deb(
     # pylint: disable=too-many-arguments
 
     tmpdir = mkdtemp()
-    pkgfname = "%s_%s_%s" % (name, version, arch)
+    pkgfname = f"{name}_{version}_{arch}"
     pkgdir = os.path.join(tmpdir, pkgfname)
 
-    os.system('mkdir -p "%s"' % os.path.join(pkgdir, "DEBIAN"))
+    os.system(f'mkdir -p "{os.path.join(pkgdir, "DEBIAN")}"')
     write_file(
         os.path.join(
             pkgdir,
@@ -71,19 +71,12 @@ def build_binary_deb(
 
     for (fname, instpath) in files:
         full_instpath = os.path.join(pkgdir, instpath)
-        os.system('mkdir -p "%s"' % full_instpath)
-        os.system('cp -a "%s" "%s"' % (fname, full_instpath))
+        os.system(f'mkdir -p "{full_instpath}"')
+        os.system(f'cp -a "{fname}" "{full_instpath}"')
 
-    os.system('dpkg-deb --build "%s"' % pkgdir)
-
+    os.system(f'dpkg-deb --build "{pkgdir}"')
     os.system(
-        'cp -v "%s" "%s"' %
-        (os.path.join(
-            tmpdir,
-            pkgfname +
-            ".deb"),
-            target_dir))
-
-    os.system('rm -r "%s"' % tmpdir)
+        f'cp -v "{os.path.join(tmpdir, pkgfname + ".deb")}" "{target_dir}"')
+    os.system(f'rm -r "{tmpdir}"')
 
     return pkgfname + ".deb"
