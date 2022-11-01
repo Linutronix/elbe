@@ -217,14 +217,13 @@ def run_command(argv):
             keys.append(key.et.text)
 
         if opt.cdrom:
-            cmd = '7z x -so "%s" repo.pub' % opt.cdrom
-            keys.append(system_out(cmd))
+            keys.append(system_out(f'7z x -so "{opt.cdrom}" repo.pub'))
 
         import_keyring = os.path.join(out_path, "elbe-keyring")
 
-        do('gpg --no-options \
-                --no-default-keyring \
-                --keyring %s --import' % import_keyring,
+        do(f'gpg --no-options \
+                 --no-default-keyring \
+                 --keyring {import_keyring} --import',
            stdin="".join(keys).encode('ascii'),
            allow_fail=True,
            env_add={'GNUPGHOME': out_path})
@@ -234,27 +233,25 @@ def run_command(argv):
         # No need to set GNUPGHOME because both input and output
         # keyring files are specified.
 
-        do('gpg --no-options \
+        do(f'gpg --no-options \
                 --no-default-keyring \
-                --keyring %s \
+                --keyring {import_keyring} \
                 --export \
-                --output %s' % (import_keyring, export_keyring))
+                --output {export_keyring}')
 
         if opt.devel:
             out_real = os.path.realpath(out_path)
             opts = []
             if out_real.startswith(elbe_dir + os.sep):
-                opts.append('--exclude "%s"' %
-                            os.path.relpath(out_path, start=elbe_dir))
+                opts.append(
+                    f'--exclude "{os.path.relpath(out_path, start=elbe_dir)}"')
 
             opts.append("--exclude-vcs")
             opts.append("--exclude-vcs-ignores")
             opts.append("--exclude='elbe-build*'")
             opts.append("--exclude='docs/*'")
             tar_fname = os.path.join(out_path, "elbe-devel.tar.bz2")
-            system('tar cfj "%s" %s -C "%s" .' % (tar_fname,
-                                                  " ".join(opts),
-                                                  elbe_dir))
+            system(f'tar cfj "{tar_fname}" {" ".join(opts)} -C "{elbe_dir}" .')
 
         to_cpy = [("apt.conf", "etc/apt"),
                   ("init-elbe.sh", ""),
