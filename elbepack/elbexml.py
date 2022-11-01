@@ -120,12 +120,10 @@ class ElbeXML:
             m = self.node("initvm/mirror")
 
             mirror = m.text("primary_proto") + "://"
-            mirror += "{}/{}".format(m.text("primary_host"),
-                                     m.text("primary_path")
-                                    ).replace("//", "/")
+            mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace("//", "/")
 
         elif self.xml.has("initvm/mirror/cdrom") and cdrompath:
-            mirror = "file://%s" % cdrompath
+            mirror = f"file://{cdrompath}"
 
         return mirror.replace("LOCALMACHINE", "10.0.2.2")
 
@@ -137,12 +135,10 @@ class ElbeXML:
                 mirror = m.text("host")
             else:
                 mirror = m.text("primary_proto") + "://"
-                mirror += "{}/{}".format(m.text("primary_host"),
-                                         m.text("primary_path")
-                                        ).replace("//", "/")
+                mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace("//", "/")
 
         elif self.prj.has("mirror/cdrom") and cdrompath:
-            mirror = "file://%s" % cdrompath
+            mirror = f"file://{cdrompath}"
 
         return replace_localmachine(mirror, initvm)
 
@@ -180,15 +176,12 @@ class ElbeXML:
             poptions = goptions + poptions
 
             if build_sources:
-                mirrors.append("deb-src [%s] %s %s main" %
-                               (' '.join(poptions),
-                                pmirror, suite))
+                mirrors.append(
+                    f"deb-src [{' '.join(poptions)}] {pmirror} {suite} main")
 
-            poptions.append("arch=%s" % arch)
+            poptions.append(f"arch={arch}")
 
-            mirrors.append("deb [%s] %s %s main" %
-                           (' '.join(poptions),
-                            pmirror, suite))
+            mirrors.append(f"deb [{' '.join(poptions)}] {pmirror} {suite} main")
 
             if self.prj.has("mirror/url-list"):
 
@@ -205,17 +198,15 @@ class ElbeXML:
 
                     if url.has("binary"):
                         bin_url = url.text("binary").strip()
-                        mirrors.append("deb [%s] %s" %
-                                       (' '.join(options), bin_url))
+                        mirrors.append(f"deb [{' '.join(options)}] {bin_url}")
 
                     if url.has("source"):
                         src_url = url.text("source").strip()
-                        mirrors.append("deb-src [%s] %s" %
-                                       (' '.join(options), src_url))
+                        mirrors.append(
+                            f"deb-src [{' '.join(options)}] {src_url}")
 
         if self.prj.has("mirror/cdrom"):
-            mirrors.append("deb copy:///cdrom/targetrepo %s main added" %
-                           suite)
+            mirrors.append(f"deb copy:///cdrom/targetrepo {suite} main added")
 
         return replace_localmachine('\n'.join(mirrors), initvm)
 
@@ -291,9 +282,9 @@ class ElbeXML:
                 # deb http://mirror foo/ --> URI-Prefix: http://mirror/foo
                 #
                 if suite.endswith('/'):
-                    r["url"] = "%s/%s" % (url, suite)
+                    r["url"] = f"{url}/{suite}"
                 else:
-                    r["url"] = "%s/dists/%s/" % (url, suite)
+                    r["url"] = f"{url}/dists/{suite}/"
 
                 #
                 # Try to get sections.
@@ -303,9 +294,9 @@ class ElbeXML:
                 try:
                     section = lsplit[3]
                     if line.startswith("deb "):
-                        r["binstr"] = (section + "/binary-%s/Packages" % arch)
+                        r["binstr"] = (f"{section}/binary-{arch}/Packages")
                     else:
-                        r["srcstr"] = (section + "/source/Sources")
+                        r["srcstr"] = (f"{section}/source/Sources")
                 except IndexError:
                     if line.startswith("deb "):
                         r["binstr"] = "Packages"
@@ -349,12 +340,12 @@ class ElbeXML:
             if not self.validate_repo(r):
                 if "srcstr" in r:
                     raise ValidationError(
-                        ["Repository %s, %s can not be validated" % (r["url"], r["srcstr"])])
+                        [f"Repository {r['url']}, {r['srcstr']} can not be validated"])
                 if "binstr" in r:
                     raise ValidationError(
-                        ["Repository %s, %s can not be validated" % (r["url"], r["binstr"])])
+                        [f"Repository {r['url']}, {r['binstr']} can not be validated"])
                 raise ValidationError(
-                    ["Repository %s can not be validated" % r["url"]])
+                    [f"Repository {r['url']} can not be validated"])
 
     def get_target_packages(self):
         if not self.xml.has("/target/pkg-list"):
