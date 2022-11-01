@@ -226,5 +226,4 @@ def soap_faults(func):
                 raise SoapElbeProjectError(format_exc())
         return wrapped
 
-    raise Exception("arg count %d not implemented" %
-                    func.__code__.co_argcount)
+    raise Exception(f"arg count {func.__code__.co_argcount} not implemented")
