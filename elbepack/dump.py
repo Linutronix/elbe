@@ -226,7 +226,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     if xml.has("archive") and not xml.text("archive") is None:
         with archive_tmpfile(xml.text("archive")) as fp:
-            do('tar xvfj "%s" -h -C "%s"' % (fp.name, targetfs.path))
+            do(f'tar xvfj "{fp.name}" -h -C "{targetfs.path}"')
         mt_index_postarch = targetfs.mtime_snap()
     else:
         mt_index_postarch = mt_index
@@ -304,11 +304,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
                     p.is_auto_installed,
                     p.installed_md5)
         if xml.has("target/pkgversionlist"):
-            f.write(
-                "%s %s %s\n" %
-                (p.name,
-                 p.installed_version,
-                 p.installed_md5))
+            f.write(f"{p.name} {p.installed_version} {p.installed_md5}\n")
 
     if xml.has("target/pkgversionlist"):
         f.close()
