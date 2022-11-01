@@ -42,17 +42,15 @@ def mkfs_mtd(mtd, fslabel, target):
             continue
 
         try:
-            cmd = "mkfs.ubifs -r %s -o %s.ubifs -m %s -e %s -c %s %s" % (
-                os.path.join(target, "filesystems", fslabel[label].id),
-                os.path.join(target, label),
-                ubivg.text("miniosize"),
-                ubivg.text("logicaleraseblocksize"),
-                ubivg.text("maxlogicaleraseblockcount"),
-                fslabel[label].mkfsopt
-            )
-            do(cmd)
+            do(f"mkfs.ubifs "
+               f"-r {os.path.join(target, 'filesystems', fslabel[label].id)} "
+               f"-o {os.path.join(target, label)}.ubifs "
+               f"-m {ubivg.text('miniosize')} "
+               f"-e {ubivg.text('logicaleraseblocksize')} "
+               f"-c {ubivg.text('maxlogicaleraseblockcount')} "
+               f"{fslabel[label].mkfsopt}")
             # only append the ubifs file if creation didn't fail
-            img_files.append("%s.ubifs" % label)
+            img_files.append(f"{label}.ubifs")
         except CommandError:
             # continue creating further ubifs filesystems
             pass
@@ -71,13 +69,12 @@ def build_image_mtd(mtd, target):
 
     ubivg = mtd.node("ubivg")
 
-    cfgfilename = "%s_%s.cfg" % (
-        mtd.text("name"), mtd.node("ubivg").text("label"))
+    cfgfilename = f"{mtd.text('name')}_{mtd.node('ubivg').text('label')}.cfg"
     fp = open(os.path.join(target, cfgfilename), "w")
 
     for vol in mtd.node("ubivg"):
         if vol.has("label"):
-            fp.write("[%s]\n" % vol.text("label"))
+            fp.write(f"[{vol.text('label')}]\n")
             fp.write("mode=ubi\n")
             if not vol.has("empty"):
                 if vol.has("binary"):
@@ -88,32 +85,25 @@ def build_image_mtd(mtd, target):
                     # copy from project directory
                     else:
                         tmp = target + "/" + vol.text("binary")
-                    do("cp %s %s/%s.ubibin" %
-                       (tmp, target, vol.text("label")))
+                    do(f"cp {tmp} {target}/{vol.text('label')}.ubibin")
                     img_files.append(vol.text("label") + ".ubibin")
                     fp.write(
-                        "image=%s.ubibin\n" %
-                        os.path.join(
-                            target,
-                            vol.text("label")))
+                        f"image={os.path.join(target, vol.text('label'))}.ubibin\n")
                 else:
                     fp.write(
-                        "image=%s.ubifs\n" %
-                        os.path.join(
-                            target,
-                            vol.text("label")))
+                        f"image={os.path.join(target, vol.text('label'))}.ubifs\n")
             else:
                 empt = open("/tmp/empty", "w")
                 empt.write("EMPTY")
                 empt.close()
                 fp.write("image=/tmp/empty\n")
 
-            fp.write("vol_type=%s\n" % vol.text("type"))
-            fp.write("vol_id=%s\n" % vol.text("id"))
-            fp.write("vol_name=%s\n" % vol.text("label"))
+            fp.write(f"vol_type={vol.text('type')}\n")
+            fp.write(f"vol_id={vol.text('id')}\n")
+            fp.write(f"vol_name={vol.text('label')}\n")
 
             if vol.text("size") != "remain":
-                fp.write("vol_size=%d\n" % size_to_int(vol.text("size")))
+                fp.write(f"vol_size={size_to_int(vol.text('size'))}\n")
             else:
                 fp.write("vol_flags=autoresize\n")
 
@@ -125,14 +115,12 @@ def build_image_mtd(mtd, target):
         subp = ""
 
     try:
-        do("ubinize %s -o %s -p %s -m %s %s/%s_%s.cfg" %
-           (subp,
-            os.path.join(target, mtd.text("name")),
-            ubivg.text("physicaleraseblocksize"),
-            ubivg.text("miniosize"),
-            target,
-            mtd.text("name"),
-            ubivg.text("label")))
+        do(
+            f"ubinize {subp} "
+            f"-o {os.path.join(target, mtd.text('name'))} "
+            f"-p {ubivg.text('physicaleraseblocksize')} "
+            f"-m {ubivg.text('miniosize')} "
+            f"{target}/{mtd.text('name')}_{ubivg.text('label')}.cfg")
         # only add file to list if ubinize command was successful
         img_files.append(mtd.text("name"))
 
@@ -156,7 +144,7 @@ class grubinstaller_base:
 
     @staticmethod
     def losetup(f):
-        loopdev = get_command_out('losetup --find --show "%s"' % f)
+        loopdev = get_command_out(f'losetup --find --show "{f}"')
         return loopdev.decode().rstrip('\n')
 
 
@@ -173,58 +161,63 @@ class grubinstaller202(grubinstaller_base):
             loopnum = loopdev.replace("/dev/loop", "")
             poopdev = "/dev/poop" + loopnum
 
-            do('cp -a %s %s' % (loopdev, poopdev))
-            do('kpartx -as %s' % poopdev)
+            do(f'cp -a {loopdev} {poopdev}')
+            do(f'kpartx -as {poopdev}')
 
             for entry in self.fs.depthlist():
-                do('mount /dev/mapper/poop%sp%d %s' %
-                   (loopnum, entry.partnum, imagemntfs.fname(entry.mountpoint)))
+                do(
+                    'mount '
+                    f'/dev/mapper/poop{loopnum}p{entry.partnum} '
+                    f'{imagemntfs.fname(entry.mountpoint)}')
 
-            do("mount --bind /dev %s" % imagemntfs.fname("dev"))
-            do("mount --bind /proc %s" % imagemntfs.fname("proc"))
-            do("mount --bind /sys %s" % imagemntfs.fname("sys"))
+            do(f"mount --bind /dev {imagemntfs.fname('dev')}")
+            do(f"mount --bind /proc {imagemntfs.fname('proc')}")
+            do(f"mount --bind /sys {imagemntfs.fname('sys')}")
 
-            do('mkdir -p "%s"' % imagemntfs.fname("boot/grub"))
+            do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
             devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
-            devmap.write("(hd0) %s\n" % poopdev)
+            devmap.write(f"(hd0) {poopdev}\n")
             devmap.close()
 
             chroot(imagemnt, "update-grub2")
 
             if "efi" in self.fw_type:
                 grub_tgt = next(t for t in self.fw_type if t.endswith("-efi"))
-                do("chroot %s grub-install %s --target=%s --removable "
-                   "--no-floppy %s" %
-                   (imagemnt, user_args, grub_tgt, poopdev))
+                do(
+                    f"chroot {imagemnt} "
+                    f"grub-install {user_args} --target={grub_tgt} --removable "
+                    f"--no-floppy {poopdev}")
             if "shimfix" in self.fw_type:
                 # grub-install is heavily dependent on the running system having
                 # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
                 # shim installation.
-                do("chroot %s  /bin/bash -c '"
+                do(f"chroot {imagemnt}  /bin/bash -c '"
                    "cp -r /boot/efi/EFI/BOOT /boot/efi/EFI/debian && "
                    "cd /usr/lib/shim && f=( shim*.efi.signed ) && cp "
-                   "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'"  %
-                   imagemnt)
+                   "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'")
             if not self.fw_type or "bios" in self.fw_type:
-                do("chroot %s grub-install %s --target=i386-pc --no-floppy %s" %
-                   (imagemnt, user_args, poopdev))
+                do(
+                    f"chroot {imagemnt} "
+                    f"grub-install {user_args} --target=i386-pc "
+                    f"--no-floppy {poopdev}")
 
         except CommandError as E:
             logging.error("Fail installing grub device: %s", E)
 
         finally:
             os.unlink(imagemntfs.fname("boot/grub/device.map"))
-            do("umount %s" % imagemntfs.fname("dev"), allow_fail=True)
-            do("umount %s" % imagemntfs.fname("proc"), allow_fail=True)
-            do("umount %s" % imagemntfs.fname("sys"), allow_fail=True)
+            do(f"umount {imagemntfs.fname('dev')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('proc')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('sys')}", allow_fail=True)
 
             for entry in reversed(self.fs.depthlist()):
-                do('umount /dev/mapper/poop%sp%d' % (loopnum, entry.partnum),
-                   allow_fail=True)
+                do(
+                    f'umount /dev/mapper/poop{loopnum}p{entry.partnum}',
+                    allow_fail=True)
 
-            do("kpartx -d %s" % poopdev, allow_fail=True)
-            do("losetup -d %s" % poopdev, allow_fail=True)
+            do(f"kpartx -d {poopdev}", allow_fail=True)
+            do(f"losetup -d {poopdev}", allow_fail=True)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -240,8 +233,8 @@ class grubinstaller97(grubinstaller_base):
             loopnum = loopdev.replace("/dev/loop", "")
             poopdev = "/dev/poop" + loopnum
 
-            do('cp -a %s %s' % (loopdev, poopdev))
-            do('kpartx -as %s' % poopdev)
+            do(f'cp -a {loopdev} {poopdev}')
+            do(f'kpartx -as {poopdev}')
 
             bootentry = 0
 
@@ -249,21 +242,23 @@ class grubinstaller97(grubinstaller_base):
                 if entry.mountpoint.startswith("/boot"):
                     bootentry_label = entry.label
                     bootentry = int(entry.partnum)
-                do('mount /dev/mapper/poop%sp%d %s' %
-                   (loopnum, entry.partnum, imagemntfs.fname(entry.mountpoint)))
+                do(
+                    'mount '
+                    f'/dev/mapper/poop{loopnum}p{entry.partnum} '
+                    f'{imagemntfs.fname(entry.mountpoint)}')
 
             if not bootentry:
                 bootentry_label = entry.label
                 bootentry = int(entry.partnum)
 
-            do("mount --bind /dev %s" % imagemntfs.fname("dev"))
-            do("mount --bind /proc %s" % imagemntfs.fname("proc"))
-            do("mount --bind /sys %s" % imagemntfs.fname("sys"))
+            do(f"mount --bind /dev {imagemntfs.fname('dev')}")
+            do(f"mount --bind /proc {imagemntfs.fname('proc')}")
+            do(f"mount --bind /sys {imagemntfs.fname('sys')}")
 
-            do('mkdir -p "%s"' % imagemntfs.fname("boot/grub"))
+            do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
             devmap = open(imagemntfs.fname("boot/grub/device.map"), "w")
-            devmap.write("(hd0) %s\n" % poopdev)
+            devmap.write(f"(hd0) {poopdev}\n")
             devmap.close()
 
             # Replace groot and kopt because else they will be given
@@ -272,31 +267,31 @@ class grubinstaller97(grubinstaller_base):
             # FIXME - Pylint says: Using possibly undefined loop
             # variable 'entry' (undefined-loop-variable).  entry is
             # defined in the previous for-loop.
-            do(r'chroot %s sed -in "s/^# groot=.*$/# groot=\(hd0,%d\)/" %s' %
-               (imagemnt, bootentry - 1, "/boot/grub/menu.lst"))
-            do(r'chroot %s sed -in "s/^# kopt=.*$/# kopt=root=LABEL=%s/" %s' %
-               (imagemnt, bootentry_label, "/boot/grub/menu.lst"))
+            do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')
+            do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')
 
             chroot(imagemnt, "update-grub")
 
-            do("chroot %s grub-install %s --no-floppy %s" %
-               (imagemnt, user_args, poopdev))
+            do(
+                f"chroot {imagemnt} "
+                f"grub-install {user_args} --no-floppy {poopdev}")
 
         except CommandError as E:
             logging.error("Fail installing grub device: %s", E)
 
         finally:
             os.unlink(imagemntfs.fname("boot/grub/device.map"))
-            do("umount %s" % imagemntfs.fname("dev"), allow_fail=True)
-            do("umount %s" % imagemntfs.fname("proc"), allow_fail=True)
-            do("umount %s" % imagemntfs.fname("sys"), allow_fail=True)
+            do(f"umount {imagemntfs.fname('dev')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('proc')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('sys')}", allow_fail=True)
 
             for entry in reversed(self.fs.depthlist()):
-                do('umount /dev/mapper/poop%sp%d' % (loopnum, entry.partnum),
-                   allow_fail=True)
+                do(
+                    f'umount /dev/mapper/poop{loopnum}p{entry.partnum}',
+                    allow_fail=True)
 
-            do("kpartx -d %s" % poopdev, allow_fail=True)
-            do("losetup -d %s" % poopdev, allow_fail=True)
+            do(f"kpartx -d {poopdev}", allow_fail=True)
+            do(f"losetup -d {poopdev}", allow_fail=True)
 
 class simple_fstype:
     def __init__(self, typ):
@@ -361,24 +356,21 @@ def create_label(disk, part, ppart, fslabel, target, grub):
     loopdev = entry.losetup()
 
     try:
-        do('mkfs.%s %s %s %s' %
-           (entry.fstype,
-            entry.mkfsopt,
-            entry.get_label_opt(),
-            loopdev))
-
-        do('mount %s %s' % (loopdev, os.path.join(target, "imagemnt")))
+        do(
+            f'mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} '
+            f'{loopdev}')
+        do(f'mount {loopdev} {os.path.join(target, "imagemnt")}')
 
         try:
-            do('cp -a "%s/." "%s/"' %
-               (os.path.join(target, "filesystems", entry.id),
-                os.path.join(target, "imagemnt")),
+            do(
+                f'cp -a "{os.path.join(target, "filesystems", entry.id)}/." '
+                f'"{os.path.join(target, "imagemnt")}/"',
                allow_fail=True)
         finally:
-            do('umount %s' % loopdev)
+            do(f'umount {loopdev}')
         entry.tuning(loopdev)
     finally:
-        do('losetup -d %s' % loopdev)
+        do(f'losetup -d {loopdev}')
 
     return ppart
 
@@ -397,9 +389,9 @@ def create_binary(disk, part, ppart, target):
         else:
             tmp = target + "/" + part.text("binary")
 
-        do('dd if="%s" of="%s"' % (tmp, loopdev))
+        do(f'dd if="{tmp}" of="{loopdev}"')
     finally:
-        do('losetup -d "%s"' % loopdev)
+        do(f'losetup -d "{loopdev}"')
 
 def create_logical_partitions(disk,
                               extended,
@@ -444,7 +436,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     size_in_sectors = s // sector_size
 
     imagename = os.path.join(target, hd.text("name"))
-    do('rm -f "%s"' % imagename, allow_fail=True)
+    do(f'rm -f "{imagename}"', allow_fail=True)
     f = open(imagename, "wb")
     f.truncate(size_in_sectors * sector_size)
     f.close()
@@ -528,8 +520,9 @@ def add_binary_blob(hd, target):
             # use file from /var/cache/elbe/<uuid> project dir
             bf = os.path.join(target, binary.et.text)
 
-        do('dd if="%s" of="%s" seek="%s" bs="%s" conv=notrunc' %
-           (bf, imagename, offset, bs))
+        do(
+            f'dd if="{bf}" of="{imagename}" seek="{offset}" bs="{bs}" '
+            'conv=notrunc')
 
 
 def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
@@ -568,20 +561,20 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
     # create directories, where we want our
     # filesystems later
     fspath = os.path.join(target, "filesystems")
-    do('mkdir -p %s' % fspath)
+    do(f'mkdir -p {fspath}')
 
     imagemnt = os.path.join(target, "imagemnt")
-    do('mkdir -p %s' % imagemnt)
+    do(f'mkdir -p {imagemnt}')
 
     # now move all mountpoints into own directories
     # begin from deepest mountpoints
     for l in reversed(fslist):
-        do('mkdir -p "%s"' % os.path.join(fspath, l.id))
-        do('mkdir -p "%s"' % rfs.fname('') + l.mountpoint)
+        do(f'mkdir -p "{os.path.join(fspath, l.id)}"')
+        do(f'mkdir -p "{rfs.fname("")}{l.mountpoint}"')
         if rfs.listdir(l.mountpoint):
-            do('mv "%s"/* "%s"' %
-               (rfs.fname(l.mountpoint),
-                os.path.join(fspath, l.id)),
+            do(
+                f'mv "{rfs.fname(l.mountpoint)}"/* '
+                f'"{os.path.join(fspath, l.id)}"',
                allow_fail=True)
 
     try:
@@ -611,8 +604,9 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
         # most shallow fs first...
         for i in fslist:
             if len(os.listdir(os.path.join(fspath, i.id))) > 0:
-                do('mv "%s"/* "%s"' %
-                   (os.path.join(fspath, i.id), rfs.fname(i.mountpoint)),
+                do(
+                    f'mv "{os.path.join(fspath, i.id)}"/* '
+                    f'"{rfs.fname(i.mountpoint)}"',
                    allow_fail=True)
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
