@@ -30,7 +30,7 @@ class Button(WidgetWrap):
         @callback:  The callback to call when the button is clicked.
         """
 
-        widget = LineBox(AttrMap(Text("[{}]".format(text), align="center"),
+        widget = LineBox(AttrMap(Text(f"[{text}]", align="center"),
                                  "default", palette))
         super(Button, self).__init__(widget)
         connect_signal(self, TUISignal.CLICK, callback)
