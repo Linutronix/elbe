@@ -87,12 +87,12 @@ def run_command(argv):
 
         if opt.cdrom_path:
             if opt.cdrom_device:
-                do('mount "%s" "%s"' % (opt.cdrom_device, opt.cdrom_path))
+                do(f'mount "{opt.cdrom_device}" "{opt.cdrom_path}"')
 
             # a cdrom build is identified by the cdrom option
             # the xml file that is copied into the initvm
             # by the initrd does not have the cdrom tags setup.
-            mirror = "file://%s" % opt.cdrom_path
+            mirror = f"file://{opt.cdrom_path}"
         else:
             mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
 
@@ -109,7 +109,7 @@ def run_command(argv):
             cache = Cache()
             cache.open()
             for pkg in pkglist:
-                pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+                pkg_id = f"{pkg.name}-{pkg.installed_version}"
                 try:
                     p = cache[pkg.name]
                     pkgver = p.installed
@@ -141,7 +141,7 @@ def run_command(argv):
 
         if opt.build_sources:
             for pkg in pkglist:
-                pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+                pkg_id = f"{pkg.name}-{pkg.installed_version}"
                 try:
                     p = cache[pkg.name]
                     pkgver = p.installed
@@ -159,4 +159,4 @@ def run_command(argv):
         repo.finalize()
 
         if opt.cdrom_device:
-            do('umount "%s"' % opt.cdrom_device)
+            do(f'umount "{opt.cdrom_device}"')
