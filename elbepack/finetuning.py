@@ -46,8 +46,7 @@ class FinetuningAction:
 
     def __new__(cls, node):
         if node.tag not in cls.actiondict:
-            raise FinetuningException("Invalid finetuning action %s" %
-                                      node.tag)
+            raise FinetuningException(f"Invalid finetuning action {node.tag}")
         action = cls.actiondict[node.tag]
         return object.__new__(action)
 
@@ -68,8 +67,8 @@ class ImageFinetuningAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
-        raise NotImplementedError("<%s> may only be "
-                                  "used in <image-finetuning>" % self.tag)
+        raise NotImplementedError(
+            f"<{self.tag}> may only be used in <image-finetuning>")
 
     def execute_img(self, _buildenv, _target, _builddir, _loop_dev):
         raise NotImplementedError('execute_img() not implemented')
@@ -93,7 +92,7 @@ class RmAction(FinetuningAction):
             if os.path.basename(f) in exclude:
                 continue
 
-            do("rm -rvf '%s'" % f)
+            do(f"rm -rvf '{f}'")
 
 
 @FinetuningAction.register('mkdir')
@@ -103,7 +102,7 @@ class MkdirAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
-        do("mkdir -p %s" % target.fname(self.node.et.text))
+        do(f"mkdir -p {target.fname(self.node.et.text)}")
 
 
 @FinetuningAction.register('mknod')
@@ -113,9 +112,9 @@ class MknodAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
-        cmd = "mknod %s %s" % (target.fname(self.node.et.text),
-                               self.node.et.attrib['opts'])
-        do(cmd)
+        do(
+            f"mknod {target.fname(self.node.et.text)} "
+            f"{self.node.et.attrib['opts']}")
 
 
 @FinetuningAction.register('buildenv_mkdir')
@@ -125,7 +124,7 @@ class BuildenvMkdirAction(FinetuningAction):
         FinetuningAction.__init__(self, node)
 
     def execute(self, buildenv, _target):
-        do("mkdir -p %s" % buildenv.rfs.fname(self.node.et.text))
+        do(f"mkdir -p {buildenv.rfs.fname(self.node.et.text)}")
 
 
 @FinetuningAction.register('cp')
@@ -136,7 +135,7 @@ class CpAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
+        cmd = f"cp -av %s {target.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -149,7 +148,7 @@ class BuildenvCpAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
-        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
+        cmd = f"cp -av %s {buildenv.rfs.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -162,7 +161,7 @@ class B2TCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
-        cmd = "cp -av %s {}".format(target.fname(self.node.et.text))
+        cmd = f"cp -av %s {target.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -175,7 +174,7 @@ class T2BCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = "cp -av %s {}".format(buildenv.rfs.fname(self.node.et.text))
+        cmd = f"cp -av %s {buildenv.rfs.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -194,7 +193,7 @@ class T2PMvAction(FinetuningAction):
         dest = os.path.join('..', dest)
 
         src = target.glob(self.node.et.attrib['path'])
-        cmd = "mv -v %s {}".format(dest)
+        cmd = f"mv -v %s {dest}"
         for f in src:
             do(cmd % f)
 
@@ -207,7 +206,7 @@ class MvAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = "mv -v %s {}".format(target.fname(self.node.et.text))
+        cmd = f"mv -v %s {target.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -222,9 +221,9 @@ class LnAction(FinetuningAction):
         target_name = self.node.et.attrib['path']
         link_name = self.node.et.text
         with target.protect({link_name}):
-            chroot(target.path,
-                   """/bin/sh -c 'ln -sf %s "%s"' """ %
-                   (target_name, link_name))
+            chroot(
+                target.path,
+                f"""/bin/sh -c 'ln -sf {target_name} "{link_name}"' """)
 
 
 @FinetuningAction.register('buildenv_mv')
@@ -235,7 +234,7 @@ class BuildenvMvAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
-        cmd = "mv -v %s {}".format(buildenv.rfs.fname(self.node.et.text))
+        cmd = f"mv -v %s {buildenv.rfs.fname(self.node.et.text)}"
         for f in src:
             do(cmd % f)
 
@@ -251,15 +250,15 @@ class AddUserAction(FinetuningAction):
             att = self.node.et.attrib
             options = ""
             if 'groups' in att:
-                options += '-G "%s" ' % att['groups']
+                options += f'-G "{att["groups"]}" '
             if 'shell' in att:
-                options += '-s "%s" ' % att['shell']
+                options += f'-s "{att["shell"]}" '
             if 'uid' in att:
-                options += '-u "%s" ' % att['uid']
+                options += f'-u "{att["uid"]}" '
             if 'gid' in att:
-                options += '-g "%s" ' % att['gid']
+                options += f'-g "{att["gid"]}" '
             if 'home' in att:
-                options += '-d "%s" ' % att['home']
+                options += f'-d "{att["home"]}" '
             if 'system' in att and att['system'] == 'true':
                 options += '-r '
             if 'create_home' in att and att['create_home'] == 'false':
@@ -271,13 +270,15 @@ class AddUserAction(FinetuningAction):
             else:
                 options += '-U '
 
-            cmd = '/usr/sbin/useradd %s "%s"' % (options,
-                                                 self.node.et.text)
-            chroot(target.path, cmd)
+            chroot(
+                target.path,
+                f'/usr/sbin/useradd {options} "{self.node.et.text}"')
 
             if 'passwd_hashed' in att:
-                stdin = "%s:%s" % (self.node.et.text, att["passwd_hashed"])
-                chroot(target.path, "chpasswd --encrypted", stdin=stdin)
+                chroot(
+                    target.path,
+                    "chpasswd --encrypted",
+                    stdin=f"{self.node.et.text}:{att['passwd_hashed']}")
 
 
 @FinetuningAction.register('addgroup')
@@ -292,12 +293,12 @@ class AddGroupAction(FinetuningAction):
             # we use -f always
             options = "-f "
             if 'gid' in att:
-                options += '-g "%s" ' % att['gid']
+                options += f'-g "{att["gid"]}" '
             if 'system' in att and att['system'] == 'True':
                 options += '-r'
-            cmd = '/usr/sbin/groupadd %s "%s"' % (options,
-                                                  self.node.et.text)
-            chroot(target.path, cmd)
+            chroot(
+                target.path,
+                f'/usr/sbin/groupadd {options} "{self.node.et.text}"')
 
 
 @FinetuningAction.register('file')
@@ -316,7 +317,7 @@ class AddFileAction(FinetuningAction):
         elif encoding == "base64":
             msg = base64.standard_b64decode(text)
         else:
-            raise FinetuningException("Invalid encoding %s" % encoding)
+            raise FinetuningException(f"Invalid encoding {encoding}")
         return msg
 
     def execute(self, _buildenv, target):
@@ -352,13 +353,13 @@ class AddFileAction(FinetuningAction):
             target.write_file(dst, None, content)
 
         if owner is not None:
-            chroot(target.path, 'chown "%s" "%s"' % (owner, dst))
+            chroot(target.path, f'chown "{owner}" "{dst}"')
 
         if group is not None:
-            chroot(target.path, 'chgrp "%s" "%s"' % (group, dst))
+            chroot(target.path, f'chgrp "{group}" "{dst}"')
 
         if mode is not None:
-            chroot(target.path, 'chmod "%s" "%s"' % (mode, dst))
+            chroot(target.path, f'chmod "{mode}" "{dst}"')
 
 
 @FinetuningAction.register('raw_cmd')
@@ -385,7 +386,7 @@ class CmdAction(ImageFinetuningAction):
                            in self.node.et.text.strip("\n").splitlines())
 
         mnt   = os.path.join(builddir, 'imagemnt')
-        dev   = "%sp%s" % (loop_dev, self.node.et.attrib["part"])
+        dev   = f"{loop_dev}p{self.node.et.attrib['part']}"
 
         if self.node.bool_attr('nomount'):
             do("/bin/sh", stdin=script,
@@ -419,7 +420,7 @@ class PurgeAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, "dpkg --purge %s" % (self.node.et.text))
+            chroot(target.path, f"dpkg --purge {self.node.et.text}")
 
 
 @FinetuningAction.register('updated')
@@ -454,9 +455,9 @@ class UpdatedAction(FinetuningAction):
 
             target.mkdir_p("/var/cache/elbe/gnupg", mode=0o700)
             with target:
-                env_add = {'GNUPGHOME': target.path + "/var/cache/elbe/gnupg"}
-                cmd = "gpg --import %s%s" % (target.path, "/pub.key")
-                do(cmd, env_add=env_add)
+                do(
+                    f"gpg --import {target.path}/pub.key",
+                    env_add={'GNUPGHOME': f"{target.path}/var/cache/elbe/gnupg"})
 
         logging.info("generate base repo")
 
@@ -536,8 +537,8 @@ class RmArtifactAction(FinetuningAction):
         try:
             target.images.remove(self.node.et.text)
         except ValueError:
-            raise FinetuningException("Artifact %s doesn't exist" %
-                                      self.node.et.text)
+            raise FinetuningException(
+                f"Artifact {self.node.et.text} doesn't exist")
 
 
 @FinetuningAction.register('losetup')
@@ -553,7 +554,7 @@ class LosetupAction(FinetuningAction):
     def execute_prj(self, buildenv, target, builddir):
         imgname = self.node.et.attrib['img']
         imgpath = os.path.join(builddir, imgname)
-        cmd = 'losetup --find --show --partscan "%s"' % imgpath
+        cmd = f'losetup --find --show --partscan "{imgpath}"'
 
         loop_dev = get_command_out(cmd).decode().strip()
         try:
@@ -561,8 +562,7 @@ class LosetupAction(FinetuningAction):
                 action = ImageFinetuningAction(i)
                 action.execute_img(buildenv, target, builddir, loop_dev)
         finally:
-            cmd = 'losetup --detach "%s"' % loop_dev
-            do(cmd)
+            do(f'losetup --detach "{loop_dev}"')
 
 
 @FinetuningAction.register('img_convert')
@@ -584,15 +584,12 @@ class ImgConvertAction(FinetuningAction):
             logging.error("Artifact '%s' does not exist.\n"
                           "Valid Artifcact are: %s",
                           src, ", ".join([str(i) for i in target.images]))
-            raise FinetuningException("Artifact '%s' does not exist" % src)
+            raise FinetuningException(f"Artifact '{src}' does not exist")
 
         src_fname = os.path.join(builddir, src)
         dst_fname = os.path.join(builddir, dst)
 
-        cmd = 'qemu-img convert -O "%s" "%s" "%s"' % (fmt,
-                                                      src_fname,
-                                                      dst_fname)
-        do(cmd)
+        do(f'qemu-img convert -O "{fmt}" "{src_fname}" "{dst_fname}"')
 
         target.images.append(dst)
         target.image_packers[dst] = default_packer
@@ -633,9 +630,7 @@ class ExtractPartitionAction(ImageFinetuningAction):
         part_nr = self.node.et.attrib['part']
         imgname = os.path.join(builddir, self.node.et.text)
 
-        cmd = 'dd if=%sp%s of="%s"' % (loop_dev, part_nr, imgname)
-
-        do(cmd)
+        do(f'dd if={loop_dev}p{part_nr} of="{imgname}"')
 
         target.images.append(self.node.et.text)
         target.image_packers[self.node.et.text] = default_packer
@@ -656,7 +651,7 @@ class CopyFromPartition(ImageFinetuningAction):
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
-        device = "%sp%s" % (loop_dev, part_nr)
+        device = f"{loop_dev}p{part_nr}"
 
         with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.glob(self.node.et.text)
@@ -671,8 +666,7 @@ class CopyFromPartition(ImageFinetuningAction):
                              self.node.et.text, len(fname))
                 raise FinetuningException('Patter matches too many files')
 
-            cmd = 'cp -av "%s" "%s"' % (fname[0], os.path.join(builddir, aname))
-            do(cmd)
+            do(f'cp -av "{fname[0]}" "{os.path.join(builddir, aname)}"')
 
             target.images.append(aname)
 
@@ -692,12 +686,11 @@ class CopyToPartition(ImageFinetuningAction):
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
-        device = "%sp%s" % (loop_dev, part_nr)
+        device = f"{loop_dev}p{part_nr}"
 
         with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.fname(self.node.et.text)
-            cmd = 'cp -av "%s" "%s"' % (os.path.join(builddir, aname), fname)
-            do(cmd)
+            do(f'cp -av "{os.path.join(builddir, aname)}" "{fname}"')
 
 @FinetuningAction.register('set_partition_type')
 class SetPartitionTypeAction(ImageFinetuningAction):
@@ -725,8 +718,8 @@ class TestSuites(FinetuningAction):
     elbe_junit = "elbe-junit.xml"
 
     def execute(self, _buildenv, _target):
-        raise NotImplementedError("<%s> can only be used in the context of a project" %
-                                  self.tag)
+        raise NotImplementedError(
+            f"<{self.tag}> can only be used in the context of a project")
 
     def execute_prj(self, buildenv, target, builddir):
 
@@ -749,7 +742,7 @@ class RmAptSource(FinetuningAction):
 
     def execute(self, buildenv, _target):
 
-        src_path = "%s/../target/etc/apt/sources.list" % buildenv.path
+        src_path = f"{buildenv.path}/../target/etc/apt/sources.list"
 
         with open(src_path, "r") as f:
             src_lst = f.read().split("\n")
