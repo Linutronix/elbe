@@ -71,7 +71,7 @@ class Kernel(Panel):
         self.tmpl_dir = os.path.join(mako_template_dir, 'debianize/kernel')
         pkg_name = self.deb['k_version'] + '-' + self.deb['p_name']
         self.deb['in_kernel_firmware'] = int(parse_version(self.deb['k_version']) <= parse_version('v4.13'))
-        self.image_dst = 'debian/linux-image-%s.install' % pkg_name
+        self.image_dst = f'debian/linux-image-{pkg_name}.install'
 
         for tmpl in [
             'control',
@@ -100,8 +100,8 @@ class Kernel(Panel):
         copyfile(os.path.join(self.tmpl_dir, 'linux-libc-dev.install'),
                  'debian/linux-libc-dev-' + pkg_name + '.install')
 
-        self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
-                self.deb['p_arch'])
+        self.hint = (f"use 'dpkg-buildpackage -a{self.deb['p_arch']}' "
+                     "to build the package")
 
         if not self.deb['in_kernel_firmware']:
             Kernel.pattern_delete(self.image_dst, "firmware")
