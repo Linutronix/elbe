@@ -51,7 +51,7 @@ class Form(Grid):
             # TODO - Better sanitization handling
             buf = []
             for key, value in sanitize.items():
-                buf.append("{}: {}".format(key, value))
+                buf.append(f"{key}: {value}")
             TUI.printf('\n'.join(buf))
         else:
             self.on_submit(data)
