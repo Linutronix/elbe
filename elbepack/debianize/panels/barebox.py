@@ -61,5 +61,5 @@ class BareBox(Panel):
         copyfile(os.path.join(self.tmpl_dir, 'barebox-tools.install'),
                  'debian/barebox-tools-' + pkg_name + '.install')
 
-        self.hint = "use 'dpkg-buildpackage -a%s' to build the package" % (
-            self.deb['p_arch'])
+        self.hint = (f"use 'dpkg-buildpackage -a{self.deb['p_arch']}' "
+                     "to build the package")
