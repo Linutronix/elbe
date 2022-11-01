@@ -143,8 +143,7 @@ class ElbeDB:
                 p = s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             return ProjectData(p)
 
@@ -159,13 +158,12 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot set postbuild file while project %s is busy" %
-                    builddir)
+                    "cannot set postbuild file while project "
+                    f"{builddir} is busy")
 
             p.edit = datetime.utcnow()
 
@@ -189,13 +187,11 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot set savesh file while project %s is busy" %
-                    builddir)
+                    f"cannot set savesh file while project {builddir} is busy")
 
             p.edit = datetime.utcnow()
             if p.status == "empty_project" or p.status == "build_failed":
@@ -224,13 +220,11 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot set presh file while project %s is busy" %
-                    builddir)
+                    f"cannot set presh file while project {builddir} is busy")
 
             p.edit = datetime.utcnow()
             if p.status == "empty_project" or p.status == "build_failed":
@@ -257,13 +251,11 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot set postsh file while project %s is busy" %
-                    builddir)
+                    f"cannot set postsh file while project {builddir} is busy")
 
             p.edit = datetime.utcnow()
             if p.status == "empty_project" or p.status == "build_failed":
@@ -298,13 +290,11 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot set XML file while project %s is busy" %
-                    builddir)
+                    f"cannot set XML file while project {builddir} is busy")
 
             xml = ElbeXML(
                 xml_file,
@@ -339,16 +329,16 @@ class ElbeDB:
             with session_scope(self.session) as s:
                 if s.query(Project).\
                         filter(Project.builddir == builddir).count() > 0:
-                    raise ElbeDBError("project %s already exists in database" %
-                                      builddir)
+                    raise ElbeDBError(
+                        f"project {builddir} already exists in database")
 
                 try:
                     os.makedirs(builddir)  # OSError
                     directory_created = True
                 except OSError as e:
                     if e.errno == errno.EEXIST:
-                        raise ElbeDBError("project directory %s already exists" %
-                                          builddir)
+                        raise ElbeDBError(
+                            f"project directory {builddir} already exists")
                     raise
 
                 p = Project(builddir=builddir, status="empty_project",
@@ -370,13 +360,11 @@ class ElbeDB:
                 p = s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
-                    "cannot delete project %s while it is busy" %
-                    builddir)
+                    f"cannot delete project {builddir} while it is busy")
 
             if os.path.exists(builddir):
                 # delete project in background to avoid blocking caller for a
@@ -399,8 +387,7 @@ class ElbeDB:
                 p = s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             sourcexmlpath = os.path.join(builddir, "source.xml")
             if os.path.exists(sourcexmlpath):
@@ -494,8 +481,7 @@ class ElbeDB:
                                    url_validation=url_validation)
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
     def set_busy(self, builddir, allowed_status):
         assert "busy" not in allowed_status
@@ -505,8 +491,7 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status not in allowed_status:
                 raise ElbeDBError("project: " + builddir +
@@ -523,8 +508,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             return p.status == "busy"
 
@@ -537,8 +521,7 @@ class ElbeDB:
                     filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status != "busy":
                 raise ElbeDBError(
@@ -556,8 +539,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             return p.status == "has_changes"
 
@@ -568,8 +550,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.owner_id is None:
                 return None
@@ -590,8 +571,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "empty_project" or p.status == "busy":
                 raise ElbeDBError(
@@ -616,8 +596,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             return [ProjectVersionData(v) for v in p.versions]
 
@@ -628,8 +607,7 @@ class ElbeDB:
                     one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             assert p.status == "busy"
 
@@ -642,10 +620,8 @@ class ElbeDB:
                     filter(ProjectVersion.builddir == builddir).\
                     filter(ProjectVersion.version == version).count() > 0:
                 raise ElbeDBError(
-                    "Version %s already exists for project in %s, "
-                    "please change version number first" %
-                    (version, builddir)
-                )
+                    f"Version {version} already exists for project in "
+                    f"{builddir}, please change version number first")
 
             versionxmlname = get_versioned_filename(p.name, version,
                                                     ".version.xml")
@@ -659,7 +635,7 @@ class ElbeDB:
 
             _update_project_file(s, builddir, versionxmlname,
                                       "application/xml",
-                                      "source.xml for version %s" % version)
+                                      f"source.xml for version {version}")
 
     def set_version_description(self, builddir, version, description):
         with session_scope(self.session) as s:
@@ -669,8 +645,7 @@ class ElbeDB:
                     filter(ProjectVersion.version == version).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "no such project version: %s (version %s)" %
-                    (builddir, version))
+                    f"no such project version: {builddir} (version {version})")
 
             v.description = description
 
@@ -682,8 +657,7 @@ class ElbeDB:
                     filter(ProjectVersion.version == version).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "no such project version: %s (version %s)" %
-                    (builddir, version))
+                    f"no such project version: {builddir} (version {version})")
 
             assert v.project.status == "busy"
 
@@ -703,14 +677,13 @@ class ElbeDB:
                     filter(ProjectVersion.version == version).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "no such project version: %s (version %s)" %
-                    (builddir, version))
+                    f"no such project version: {builddir} (version {version})")
 
             if not force:
                 if v.project.status == "busy":
                     raise ElbeDBError(
-                        "cannot delete version of project in %s while "
-                        "it is busy" % builddir)
+                        f"cannot delete version of project in {builddir} while "
+                        "it is busy")
 
             xmlname = get_versioned_filename(v.project.name, version,
                                              ".version.xml")
@@ -728,8 +701,8 @@ class ElbeDB:
                     filter(ProjectVersion.builddir == builddir).\
                     filter(ProjectVersion.version == version).one()
             except NoResultFound:
-                raise ElbeDBError("no such project version: %s (version %s)" %
-                                  (builddir, version))
+                raise ElbeDBError(
+                    f"no such project version: {builddir} (version {version})")
 
             xmlname = get_versioned_filename(v.project.name, version,
                                              ".version.xml")
@@ -742,8 +715,7 @@ class ElbeDB:
                 p = s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
@@ -760,8 +732,7 @@ class ElbeDB:
                 p = s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             if p.status == "busy":
                 raise ElbeDBError(
@@ -776,8 +747,7 @@ class ElbeDB:
                     filter(ProjectFile.name == name).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "no file %s in project %s registered" %
-                    (name, builddir))
+                    f"no file {name} in project {builddir} registered")
 
             return ProjectFileData(f)
 
@@ -787,8 +757,7 @@ class ElbeDB:
                 s.query(Project).filter(Project.builddir == builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    builddir)
+                    f"project {builddir} is not registered in the database")
 
             _update_project_file(s, builddir, name, mime_type,
                                       description)
@@ -800,8 +769,7 @@ class ElbeDB:
                     filter(Project.builddir == ep.builddir).one()
             except NoResultFound:
                 raise ElbeDBError(
-                    "project %s is not registered in the database" %
-                    ep.builddir)
+                    f"project {ep.builddir} is not registered in the database")
 
             # Delete no longer existing files from the database
             files = s.query(ProjectFile).\
@@ -826,11 +794,11 @@ class ElbeDB:
 
             for name in ["chroot", "target", "sysroot-target", "sysroot-host"]:
 
-                _update_project_file(s, p.builddir, "licence-%s.txt" % name,
+                _update_project_file(s, p.builddir, f"licence-{name}.txt",
                                      "text/plain; charset=utf-8",
                                      "License file")
 
-                _update_project_file(s, p.builddir, "licence-%s.xml" % name,
+                _update_project_file(s, p.builddir, f"licence-{name}.xml",
                                      "application/xml",
                                      "xml License file")
 
@@ -904,8 +872,7 @@ class ElbeDB:
 
         with session_scope(self.session) as s:
             if s.query(User).filter(User.name == name).count() > 0:
-                raise ElbeDBError("user %s already exists in the database" %
-                                  name)
+                raise ElbeDBError(f"user {name} already exists in the database")
             s.add(u)
 
     def modify_user(self, userid, name, fullname, email, admin,
@@ -917,13 +884,13 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.id == userid).one()
             except NoResultFound:
-                raise ElbeDBError("no user with id %i" % userid)
+                raise ElbeDBError(f"no user with id {userid}")
 
             # If a user name change is requested, check for uniqueness
             if name != u.name:
                 if s.query(User).filter(User.name == name).count() > 0:
                     raise ElbeDBError(
-                        "user %s already exists in the database" % name)
+                        f"user {name} already exists in the database")
 
             u.name = name
             u.fullname = fullname
@@ -939,7 +906,7 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.id == userid).one()
             except NoResultFound:
-                raise ElbeDBError("no user with id %i" % userid)
+                raise ElbeDBError(f"no user with id {userid}")
 
             # Get a list of all projects owned by the user to delete. Set their
             # owner to nobody and return them to the caller later, so it can
@@ -975,7 +942,7 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.id == userid).one()
             except NoResultFound:
-                raise ElbeDBError("no user with id %i" % userid)
+                raise ElbeDBError(f"no user with id {userid}")
 
             return bool(u.admin)
 
@@ -984,7 +951,7 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.id == userid).one()
             except NoResultFound:
-                raise ElbeDBError("no user with id %i" % userid)
+                raise ElbeDBError(f"no user with id {userid}")
 
             return str(u.name)
 
@@ -993,7 +960,7 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.id == userid).one()
             except NoResultFound:
-                raise ElbeDBError("no user with id %i" % userid)
+                raise ElbeDBError(f"no user with id {userid}")
 
             return UserData(u)
 
@@ -1002,7 +969,7 @@ class ElbeDB:
             try:
                 u = s.query(User).filter(User.name == name).one()
             except NoResultFound:
-                raise ElbeDBError("no user with name %s" % name)
+                raise ElbeDBError(f"no user with name {name}")
 
             return int(u.id)
 
