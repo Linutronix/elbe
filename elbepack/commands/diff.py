@@ -31,9 +31,7 @@ def walk_generated(gen_path, fix_path, exclude):
 
         if not files:
             if not os.path.exists(fix_path + infs_root):
-                print(
-                    "empty directory %s only exists in gen image" %
-                    (infs_root))
+                print(f"empty directory {infs_root} only exists in gen image")
                 file_to_rm.append(infs_root)
         else:
             for f in files:
@@ -47,22 +45,22 @@ def walk_generated(gen_path, fix_path, exclude):
                             if not filecmp.cmp(
                                     gen_fname, fix_fname, shallow=False):
                                 print(
-                                    "files %s and %s differ" %
-                                    (gen_fname, fix_fname))
+                                    f"files {gen_fname} and {fix_fname} differ")
                                 file_differ.append(os.path.join(infs_root, f))
                         else:
                             if not (os.readlink(gen_fname) ==
                                     os.readlink(fix_fname)):
-                                print("symlinks %s and %s differ" % (
-                                    gen_fname, fix_fname))
+                                print(
+                                    f"symlinks {gen_fname} and "
+                                    f"{fix_fname} differ")
                                 file_differ.append(os.path.join(infs_root, f))
 
                 elif not os.path.exists(gen_fname) and \
                         os.path.exists(fix_fname):
-                    print("file %s only exists in fixed image" % (fix_fname))
+                    print(f"file {fix_fname} only exists in fixed image")
                 elif os.path.exists(gen_fname) and not \
                         os.path.exists(fix_fname):
-                    print("file %s only exists in gen image" % (gen_fname))
+                    print(f"file {gen_fname} only exists in gen image")
                     file_to_rm.append(os.path.join(infs_root, f))
 
     return file_differ, file_to_rm
@@ -86,9 +84,7 @@ def walk_fixed(gen_path, fix_path, exclude):
 
         if not files:
             if not os.path.exists(gen_path + infs_root):
-                print(
-                    "empty directory %s only exists in fix image" %
-                    (infs_root))
+                print(f"empty directory {infs_root} only exists in fix image")
                 dir_to_create.append(infs_root.lstrip("/"))
         else:
             for f in files:
@@ -96,7 +92,7 @@ def walk_fixed(gen_path, fix_path, exclude):
                 fix_fname = os.path.join(fix_path + infs_root, f)
 
                 if not os.path.exists(gen_fname) and os.path.exists(fix_fname):
-                    print("file %s only exists in fixed image" % (fix_fname))
+                    print(f"file {fix_fname} only exists in fixed image")
                     file_only.append(os.path.join(infs_root, f))
 
     return file_only, dir_to_create
@@ -127,12 +123,12 @@ def run_command(argv):
     print()
 
     for f in rm:
-        print("<rm>%s</rm>" % f)
+        print(f"<rm>{f}</rm>")
 
     for d in mkdir:
-        print("<mkdir>%s</mkdir>" % d)
+        print(f"<mkdir>{d}</mkdir>")
 
     print("")
 
     for f in differ + only:
-        print("tar rf archive.tar -C %s %s" % (fix_rfs, f))
+        print(f"tar rf archive.tar -C {fix_rfs} {f}")
