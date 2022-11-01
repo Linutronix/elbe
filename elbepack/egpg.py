@@ -82,13 +82,13 @@ def check_signature(ctx, signature):
     status = OverallStatus()
 
     if signature.summary & sigsum.KEY_MISSING:
-        print("Signature with unknown key: %s" % signature.fpr)
+        print(f"Signature with unknown key: {signature.fpr}")
         status.key_missing = 1
         return status
 
     # there should be a key
     key = ctx.get_key(signature.fpr, 0)
-    print("%s <%s> (%s):" % (key.uids[0].name, key.uids[0].email, signature.fpr))
+    print(f"{key.uids[0].name} <{key.uids[0].email}> ({signature.fpr}):")
 
     if signature.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
@@ -161,8 +161,7 @@ def unsign_file(fname):
         infile  = core.Data(file=fname)
         outfile = core.Data(file=outfilename)
     except (GPGMEError, ValueError) as E:
-        print("Error: Opening file %s or %s - %s" %
-              (fname, outfilename, E))
+        print(f"Error: Opening file {fname} or {outfilename} - {E}")
     else:
         # obtain signature and write unsigned file
         ctx.op_verify(infile, None, outfile)
@@ -187,7 +186,7 @@ def unlock_key(fingerprint):
     key = ctx.get_key(fingerprint, secret=True)
     keygrip = key.subkeys[0].keygrip
     system("/usr/lib/gnupg/gpg-preset-passphrase "
-           "--preset -P requiredToAvoidUserInput %s" % str(keygrip),
+           f"--preset -P requiredToAvoidUserInput {keygrip}",
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
 def sign(infile, outfile, fingerprint):
@@ -207,7 +206,7 @@ def sign(infile, outfile, fingerprint):
     try:
         key = ctx.get_key(fingerprint, 0)
     except (KeyNotFound, GPGMEError, AssertionError) as E:
-        print("Error: No key with fingerprint %s - %s" % (fingerprint, E))
+        print(f"Error: No key with fingerprint {fingerprint} - {E}")
         return
     else:
         unlock_key(key.fpr)
@@ -217,8 +216,7 @@ def sign(infile, outfile, fingerprint):
     try:
         indata = core.Data(file=infile)
     except (GPGMEError, ValueError) as E:
-        print("Error: Opening file %s - %s" %
-              (infile, E))
+        print(f"Error: Opening file {infile} - {E}")
     else:
         outdata = core.Data()
         try:
@@ -259,8 +257,8 @@ def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
                       "allow-preset-passphrase\n"
-                      "default-cache-ttl %d\n"
-                      "max-cache-ttl %d\n" % (EOT, EOT))
+                      f"default-cache-ttl {EOT}\n"
+                      f"max-cache-ttl {EOT}\n")
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
@@ -272,5 +270,5 @@ def generate_elbe_internal_key():
 
 
 def export_key(fingerprint, outfile):
-    system("/usr/bin/gpg -a -o %s --export %s" % (outfile, fingerprint),
+    system(f"/usr/bin/gpg -a -o {outfile} --export {fingerprint}",
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
