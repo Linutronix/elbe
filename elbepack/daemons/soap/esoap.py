@@ -68,7 +68,7 @@ class ESoap (ServiceBase):
                                 'Initvm is in devel mode: installing another\n'
                                 'elbe version will not have any effect.\n')
 
-        pkgs = ['"%s=%s*"' % (p, version) for p in pkglist]
+        pkgs = [F'"{p}={version}*"' for p in pkglist]
 
         # Prevent, that elbe daemon is restarted by the
         # prerm/postinst scripts.
@@ -83,7 +83,8 @@ class ESoap (ServiceBase):
                    'DEBIAN_FRONTEND': 'noninteractive',
                    'DEBCONF_NONINTERACTIVE_SEEN': 'true'}
 
-            cmd = 'apt-get update ; apt-get install -y --allow-downgrades %s' % ' '.join(pkgs)
+            cmd = ("apt-get update; "
+                   f"apt-get install -y --allow-downgrades {' '.join(pkgs)}")
 
             ret, out = command_out(cmd, env_add=env)
         finally:
