@@ -36,15 +36,13 @@ class ProjectManagerError(Exception):
 class AlreadyOpen(ProjectManagerError):
     def __init__(self, builddir, username):
         ProjectManagerError.__init__(
-            self, "project in %s is already opened by %s" %
-            (builddir, username))
+            self, f"project in {builddir} is already opened by {username}")
 
 
 class PermissionDenied(ProjectManagerError):
     def __init__(self, builddir):
         ProjectManagerError.__init__(
-            self, "permission denied for project in %s" %
-            builddir)
+            self, f"permission denied for project in {builddir}")
 
 
 class NoOpenProject(ProjectManagerError):
@@ -317,7 +315,7 @@ class ProjectManager:
             if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
                     not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   'create --project %s" first' % ep.builddir)
+                                   f'create --project {ep.builddir}" first')
 
             self.worker.enqueue(PdebuildJob(ep, cpuset, profile, cross))
 
@@ -327,7 +325,7 @@ class ProjectManager:
             if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
                     not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   'create --project %s" first' % ep.builddir)
+                                   f'create --project {ep.builddir}" first')
 
             ep.orig_fname = fname
             ep.orig_files.append(fname)
@@ -338,7 +336,7 @@ class ProjectManager:
             if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
                     not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   'create --project %s" first' % ep.builddir)
+                                   f'create --project {ep.builddir}" first')
 
             return ep.orig_fname
 
@@ -533,7 +531,7 @@ class ProjectManager:
 
         if not allow_busy:
             if self.db.is_busy(ep.builddir):
-                raise InvalidState("project %s is busy" % ep.builddir)
+                raise InvalidState(f"project {ep.builddir} is busy")
 
         return ep
 
@@ -543,9 +541,10 @@ class ProjectManager:
         if userid in self.userid2project:
             builddir = self.userid2project[userid].builddir
             if self.db.is_busy(builddir):
-                raise InvalidState("project in directory %s of user %s is "
-                                   "currently busy and cannot be closed" %
-                                   (builddir, self.db.get_username(userid)))
+                raise InvalidState(
+                    f"project in directory {builddir} of user "
+                    f"{self.db.get_username(userid)} is "
+                    "currently busy and cannot be closed")
 
             del self.builddir2userid[builddir]
             del self.userid2project[userid]
@@ -567,7 +566,7 @@ class ProjectManager:
 
         if not ep.has_full_buildenv():
             raise InvalidState(
-                "project in directory %s does not have a functional "
-                "build environment" % ep.builddir)
+                f"project in directory {ep.builddir} does not have a "
+                "functional build environment")
 
         return ep.get_rpcaptcache()
