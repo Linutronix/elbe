@@ -26,20 +26,20 @@ def run_command(argv):
     try:
         xml = ElbeXML(xmlfile)
     except ValidationError as E:
-        print("Error while reading xml file %s: %s" % (xmlfile, E))
+        print(f"Error while reading xml file {xmlfile}: {E}")
         sys.exit(20)
 
     for pkg in pkg_lst:
         try:
             xml.add_target_package(pkg)
         except ValueError as E:
-            print("Error while adding package %s to %s: %s" % (pkg, xmlfile, E))
+            print(f"Error while adding package {pkg} to {xmlfile}: {E}")
             sys.exit(20)
 
     try:
         xml.xml.write(xmlfile)
         sys.exit(0)
     except PermissionError as E:
-        print("Unable to truncate file %s: %s" % (xmlfile, E))
+        print(f"Unable to truncate file {xmlfile}: {E}")
 
     sys.exit(20)
