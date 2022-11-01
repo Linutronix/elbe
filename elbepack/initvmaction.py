@@ -41,10 +41,10 @@ def cmd_exists(x):
 
 def ensure_outdir(opt):
     if opt.outdir is None:
-        opt.outdir = "elbe-build-%s" % (
-                datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        opt.outdir = (
+            f"elbe-build-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}")
 
-    print("Saving generated Files to %s" % opt.outdir)
+    print(f"Saving generated Files to {opt.outdir}")
 
 
 class InitVMError(Exception):
@@ -66,7 +66,7 @@ class InitVMAction:
     def print_actions(cls):
         print("available subcommands are:", file=sys.stderr)
         for a in cls.actiondict:
-            print("   %s" % a, file=sys.stderr)
+            print(f"   {a}", file=sys.stderr)
 
     def __new__(cls, node):
         action = cls.actiondict[node]
@@ -191,11 +191,11 @@ class EnsureAction(InitVMAction):
             return
 
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
-            system('%s initvm start' % elbe_exe)
+            system(f'{elbe_exe} initvm start')
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             stop = time.time() + 300
             while time.time() < stop:
-                if command_out('%s control list_projects' % elbe_exe)[0] == 0:
+                if command_out(f'{elbe_exe} control list_projects')[0] == 0:
                     break
                 time.sleep(10)
             if time.time() > stop:
@@ -254,7 +254,7 @@ class AttachAction(InitVMAction):
             sys.exit(20)
 
         print('Attaching to initvm console.')
-        system('virsh --connect qemu:///system console %s' % cfg['initvm_domain'])
+        system(f'virsh --connect qemu:///system console {cfg["initvm_domain"]}')
 
 
 
@@ -266,7 +266,7 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
             with Repodir(xmlfile, preprocess_xmlfile):
                 submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
     except RepodirError as err:
-        print("%s repodir failed" % elbe_exe, file=sys.stderr)
+        print(f"{elbe_exe} repodir failed", file=sys.stderr)
         print(err, file=sys.stderr)
         sys.exit(20)
 
@@ -281,7 +281,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             xmlfile = ppw.preproc
 
             ret, prjdir, err = command_out_stderr(
-                '%s control create_project' % (elbe_exe))
+                f'{elbe_exe} control create_project')
             if ret != 0:
                 print("elbe control create_project failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
@@ -290,7 +290,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
             prjdir = prjdir.strip()
 
-            cmd = '%s control set_xml %s %s' % (elbe_exe, prjdir, xmlfile)
+            cmd = f'{elbe_exe} control set_xml {prjdir} {xmlfile}'
             ret, _, err = command_out_stderr(cmd)
             if ret != 0:
                 print("elbe control set_xml failed2", file=sys.stderr)
@@ -311,9 +311,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     if cdrom is not None:
         print("Uploading CDROM. This might take a while")
         try:
-            system(
-                '%s control set_cdrom "%s" "%s"' %
-                (elbe_exe, prjdir, cdrom))
+            system(f'{elbe_exe} control set_cdrom "{prjdir}" "{cdrom}"')
         except CommandError:
             print("elbe control set_cdrom Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -330,9 +328,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         build_opts += '--skip-pbuilder '
 
     try:
-        system(
-            '%s control build "%s" %s' %
-            (elbe_exe, prjdir, build_opts))
+        system(f'{elbe_exe} control build "{prjdir}" {build_opts}')
     except CommandError:
         print("elbe control build Failed", file=sys.stderr)
         print("Giving up", file=sys.stderr)
@@ -341,7 +337,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     print("Build started, waiting till it finishes")
 
     try:
-        system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
+        system(f'{elbe_exe} control wait_busy "{prjdir}"')
     except CommandError:
         print('elbe control wait_busy Failed', file=sys.stderr)
         print('', file=sys.stderr)
@@ -349,14 +345,13 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
               file=sys.stderr)
         print('The files, that have been built, can be downloaded using:',
               file=sys.stderr)
-        print('%s control get_files --output "%s" "%s"' % (elbe_exe,
-                                                           opt.outdir,
-                                                           prjdir),
+        print(
+            f'{elbe_exe} control get_files --output "{opt.outdir}" "{prjdir}"',
               file=sys.stderr)
         print("", file=sys.stderr)
         print('The project can then be removed using:',
               file=sys.stderr)
-        print('%s control del_project "%s"' % (elbe_exe, prjdir),
+        print(f'{elbe_exe} control del_project "{prjdir}"',
               file=sys.stderr)
         print("", file=sys.stderr)
         sys.exit(10)
@@ -367,9 +362,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     if opt.build_sdk:
         try:
-            system(
-                '%s control build_sdk "%s" %s' %
-                (elbe_exe, prjdir, build_opts))
+            system(f'{elbe_exe} control build_sdk "{prjdir}" {build_opts}')
         except CommandError:
             print("elbe control build_sdk Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -378,7 +371,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("SDK Build started, waiting till it finishes")
 
         try:
-            system('%s control wait_busy "%s"' % (elbe_exe, prjdir))
+            system(f'{elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
@@ -387,14 +380,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
                   file=sys.stderr)
             print('The files, that have been built, can be downloaded using:',
                   file=sys.stderr)
-            print('%s control get_files --output "%s" "%s"' % (elbe_exe,
-                                                               opt.outdir,
-                                                               prjdir),
+            print(
+                f'{elbe_exe} control get_files --output "{opt.outdir}" '
+                f'"{prjdir}"',
                   file=sys.stderr)
             print("", file=sys.stderr)
             print('The project can then be removed using:',
                   file=sys.stderr)
-            print('%s control del_project "%s"' % (elbe_exe, prjdir),
+            print(f'{elbe_exe} control del_project "{prjdir}"',
                   file=sys.stderr)
             print("", file=sys.stderr)
             sys.exit(10)
@@ -404,18 +397,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("")
 
     try:
-        system(
-            '%s control dump_file "%s" validation.txt' %
-            (elbe_exe, prjdir))
+        system(f'{elbe_exe} control dump_file "{prjdir}" validation.txt')
     except CommandError:
         print(
             "Project failed to generate validation.txt",
             file=sys.stderr)
         print("Getting log.txt", file=sys.stderr)
         try:
-            system(
-                '%s control dump_file "%s" log.txt' %
-                (elbe_exe, prjdir))
+            system(f'{elbe_exe} control dump_file "{prjdir}" log.txt')
         except CommandError:
 
             print("Failed to dump log.txt", file=sys.stderr)
@@ -427,16 +416,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("Listing available files:")
         print("")
         try:
-            system('%s control get_files "%s"' % (elbe_exe, prjdir))
+            system(f'{elbe_exe} control get_files "{prjdir}"')
         except CommandError:
             print("elbe control get_files Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
             sys.exit(20)
 
         print("")
-        print(
-            'Get Files with: elbe control get_file "%s" <filename>' %
-            prjdir)
+        print(f'Get Files with: elbe control get_file "{prjdir}" <filename>')
     else:
         print("")
         print("Getting generated Files")
@@ -445,8 +432,9 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         ensure_outdir(opt)
 
         try:
-            system('%s control get_files --output "%s" "%s"' % (
-                elbe_exe, opt.outdir, prjdir))
+            system(
+                f'{elbe_exe} control get_files --output "{opt.outdir}" '
+                f'"{prjdir}"')
         except CommandError:
             print("elbe control get_files Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -454,8 +442,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         if not opt.keep_files:
             try:
-                system('%s control del_project "%s"' % (
-                    elbe_exe, prjdir))
+                system(f'{elbe_exe} control del_project "{prjdir}"')
             except CommandError:
                 print("remove project from initvm failed",
                       file=sys.stderr)
@@ -468,7 +455,7 @@ def extract_cdrom(cdrom):
     """
 
     tmp = TmpdirFilesystem()
-    system('7z x -o%s "%s" source.xml' % (tmp.path, cdrom))
+    system(f'7z x -o{tmp.path} "{cdrom}" source.xml')
 
     print("", file=sys.stderr)
 
@@ -500,9 +487,7 @@ def extract_cdrom(cdrom):
         sys.exit(20)
 
     print("Iso Image with valid source.xml detected !")
-    print(
-        "Image was generated using Elbe Version %s" %
-        exml.get_elbe_version())
+    print(f"Image was generated using Elbe Version {exml.get_elbe_version()}")
 
     return tmp
 
@@ -519,11 +504,10 @@ class CreateAction(InitVMAction):
         # pylint: disable=too-many-statements
 
         if self.initvm is not None:
-            print("Initvm is already defined for the libvirt domain '%s'.\n" % cfg['initvm_domain'])
-            print("If you want to build in your old initvm, "
-                  "use `elbe initvm submit <xml>`.")
+            print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")
+            print("If you want to build in your old initvm, use `elbe initvm submit <xml>`.")
             print("If you want to remove your old initvm from libvirt "
-                    "run `virsh --connect qemu:///system undefine %s`.\n" % cfg['initvm_domain'])
+                  f"run `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`.\n")
             print("You can specify another libvirt domain by setting the "
                   "ELBE_INITVM_DOMAIN environment variable to an unused domain name.\n")
             print("Note:")
@@ -554,7 +538,7 @@ class CreateAction(InitVMAction):
                 try:
                     xml = etree(xmlfile)
                 except ValidationError as e:
-                    print("XML file is invalid: %s" % str(e))
+                    print(f"XML file is invalid: {e}")
                 # Use default XML if no initvm was specified
                 if not xml.has("initvm"):
                     xmlfile = os.path.join(
@@ -593,12 +577,14 @@ class CreateAction(InitVMAction):
 
             with PreprocessWrapper(xmlfile, opt) as ppw:
                 if cdrom:
-                    system('%s init %s --directory "%s" --cdrom "%s" "%s"' %
-                           (elbe_exe, init_opts, initvmdir, cdrom, ppw.preproc))
+                    system(
+                        f'{elbe_exe} init {init_opts} '
+                        f'--directory "{initvmdir}" --cdrom "{cdrom}" '
+                        f'"{ppw.preproc}"')
                 else:
                     system(
-                        '%s init %s --directory "%s" "%s"' %
-                        (elbe_exe, init_opts, initvmdir, ppw.preproc))
+                        f'{elbe_exe} init {init_opts} '
+                        f'--directory "{initvmdir}" "{ppw.preproc}"')
 
         except CommandError:
             print("'elbe init' Failed", file=sys.stderr)
@@ -614,20 +600,20 @@ class CreateAction(InitVMAction):
             self.conn.defineXML(xml)
         except CommandError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
-            print('Try `virsh --connect qemu:///system undefine %s` to delete existing initvm' % cfg['initvm_domain'],
+            print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}` to delete existing initvm",
                   file=sys.stderr)
             sys.exit(20)
 
         # Build initvm
         try:
-            system('cd "%s"; make' % (initvmdir))
+            system(f'cd "{initvmdir}"; make')
         except CommandError:
             print("Building the initvm Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
             sys.exit(20)
 
         try:
-            system('%s initvm start' % elbe_exe)
+            system(f'{elbe_exe} initvm start')
         except CommandError:
             print("Starting the initvm Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -641,7 +627,7 @@ class CreateAction(InitVMAction):
                 try:
                     x = etree(args[0])
                 except ValidationError as e:
-                    print("XML file is invalid: %s" % str(e))
+                    print(f"XML file is invalid: {e}")
                     sys.exit(20)
                 if not x.has('project'):
                     print("elbe initvm ready: use 'elbe initvm submit "
@@ -663,7 +649,7 @@ class SubmitAction(InitVMAction):
 
     def execute(self, _initvmdir, opt, args):
         try:
-            system('%s initvm ensure' % elbe_exe)
+            system(f'{elbe_exe} initvm ensure')
         except CommandError:
             print("Starting the initvm Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -703,8 +689,7 @@ class SyncAction(InitVMAction):
                    "--exclude='.git*' --exclude='*.pyc' --exclude='elbe-build*' "
                    "--exclude='initvm' --exclude='__pycache__' --exclude='docs' "
                    "--exclude='examples' "
-                   "--rsh='ssh -p %s' --chown=root:root "
-                   "%s/ root@localhost:/var/cache/elbe/devel" %
-                   (cfg["sshport"], top_dir))
+                   f"--rsh='ssh -p {cfg['sshport']}' --chown=root:root "
+                   f"{top_dir}/ root@localhost:/var/cache/elbe/devel")
         except CommandError as E:
             print(E)
