@@ -13,8 +13,6 @@ import time
 import os
 import datetime
 
-from tempfile import NamedTemporaryFile
-
 import elbepack
 from elbepack.treeutils import etree
 from elbepack.directories import elbe_exe
@@ -266,16 +264,17 @@ class AttachAction(InitVMAction):
 
 
 def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
+    fname = f'elbe-repodir-{time.time_ns()}.xml'
+    preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
-        with NamedTemporaryFile(suffix=".xml", prefix="elbe-repodir",
-                dir=os.path.dirname(xmlfile)) as tmpfile:
-            preprocess_xmlfile = tmpfile.name
-            with Repodir(xmlfile, preprocess_xmlfile):
-                submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
+        with Repodir(xmlfile, preprocess_xmlfile):
+            submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
     except RepodirError as err:
         print("elbe repodir failed", file=sys.stderr)
         print(err, file=sys.stderr)
         sys.exit(20)
+    finally:
+        os.remove(preprocess_xmlfile)
 
 
 def submit_and_dl_result(xmlfile, cdrom, opt):

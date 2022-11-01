@@ -9,8 +9,9 @@ import logging
 import os
 import re
 import sys
+import tempfile
+import time
 
-from tempfile import NamedTemporaryFile
 from optparse import OptionGroup
 from itertools import islice
 from urllib.error import HTTPError,URLError
@@ -18,7 +19,7 @@ from urllib.request import urlopen
 from passlib.hash import sha512_crypt
 
 from lxml import etree
-from lxml.etree import XMLParser, parse, Element
+from lxml.etree import XMLParser, Element
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
@@ -279,7 +280,12 @@ def preprocess_passwd(xml):
                         "The generated sha512crypt hash only applies 5000 rounds for "
                         "backwards compatibility reasons. This is considered insecure nowadays.")
 
-def xmlpreprocess(fname, output, variants=None, proxy=None):
+def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None):
+    """Preprocesses the input XML data to make sure the `output`
+       can be validated against the current schema.
+       `xml_input_file` is either a file-like object or a path (str) to the input file.
+       `xml_output_file` is either a file-like object or a path (str) to the output file.
+    """
 
     # pylint: disable=too-many-locals
     # pylint: disable=too-many-branches
@@ -296,7 +302,7 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
     schema = etree.XMLSchema(schema_tree)
 
     try:
-        xml = parse(fname, parser=parser)
+        xml = etree.parse(xml_input_file, parser=parser)
         xml.xinclude()
 
         # Variant management
@@ -367,7 +373,7 @@ def xmlpreprocess(fname, output, variants=None, proxy=None):
         if schema.validate(xml):
             # if validation succedes write xml file
             xml.write(
-                output,
+                xml_output_file,
                 encoding="UTF-8",
                 pretty_print=True,
                 compression=9)
@@ -397,10 +403,11 @@ class PreprocessWrapper:
             self.options += f' --variants "{opt.variant}"'
 
     def __enter__(self):
-        self.outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
+        fname = f'elbe-{time.time_ns()}.xml'
+        self.outxml = os.path.join(tempfile.gettempdir(), fname)
 
         cmd = (f'{sys.executable} {elbe_exe} preprocess {self.options} '
-               f'-o {self.outxml.name} {self.xmlfile}')
+               f'-o {self.outxml} {self.xmlfile}')
         ret, _, err = command_out_stderr(cmd)
         if ret != 0:
             print("elbe preprocess failed.", file=sys.stderr)
@@ -410,7 +417,7 @@ class PreprocessWrapper:
         return self
 
     def __exit__(self, _typ, _value, _traceback):
-        self.outxml = None
+        os.remove(self.outxml)
 
     @staticmethod
     def add_options(oparser):
@@ -427,4 +434,4 @@ class PreprocessWrapper:
 
     @property
     def preproc(self):
-        return self.outxml.name
+        return self.outxml
