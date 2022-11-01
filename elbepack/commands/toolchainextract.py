@@ -79,6 +79,6 @@ def run_command(argv):
             repo.includedeb(os.path.join(tmpdir, p))
 
         repo.finalize()
-        os.system('rm -r "%s"' % tmpdir)
+        os.system(f'rm -r "{tmpdir}"')
 
     return 0
