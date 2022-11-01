@@ -16,7 +16,7 @@ from elbepack.treeutils import etree
 
 warnings.simplefilter('error')
 
-remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
+remove_re = re.compile('[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 
 
 def do_heuristics(fp):
