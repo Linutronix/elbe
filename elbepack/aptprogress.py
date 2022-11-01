@@ -82,7 +82,7 @@ class ElbeAcquireProgress (AcquireProgress):
     def ims_hit(self, item):
         line = 'Hit ' + item.description
         if item.owner.filesize:
-            line += ' [%sB]' % size_to_str(item.owner.filesize)
+            line += f" [{size_to_str(item.owner.filesize)}B]"
         self.write(line)
 
     def fail(self, item):
@@ -96,7 +96,7 @@ class ElbeAcquireProgress (AcquireProgress):
         self._id += 1
         line = "Get:" + str(item.owner.id) + " " + item.description
         if item.owner.filesize:
-            line += (" [%sB]" % size_to_str(item.owner.filesize))
+            line += (f" [{size_to_str(item.owner.filesize)}B]")
 
         self.write(line)
 
