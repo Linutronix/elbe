@@ -24,7 +24,7 @@ class DbAction:
     def print_actions(cls):
         print("available actions are:")
         for a in cls.actiondict:
-            print("   %s" % a)
+            print(f"   {a}")
 
     def __new__(cls, node):
         action = cls.actiondict[node]
@@ -118,7 +118,7 @@ class DelUserAction(DbAction):
         try:
             userid = int(arg[0])
         except ValueError as E:
-            print("userid must be an integer - %s" % E)
+            print(f"userid must be an integer - {E}")
             return
 
         db = ElbeDB()
@@ -134,14 +134,12 @@ class DelUserAction(DbAction):
 
         for p in projects:
             if not opt.quiet:
-                print(
-                    "%s: %s [%s] %s" %
-                    (p.builddir, p.name, p.version, p.edit))
+                print(f"{p.builddir}: {p.name} [{p.version}] {p.edit}")
             if opt.delete_projects:
                 try:
                     db.del_project(p.builddir)
                 except ElbeDBError as e:
-                    print("  ==> %s " % str(e))
+                    print(f"  ==> {e} ")
 
 
 DbAction.register(DelUserAction)
@@ -159,7 +157,7 @@ class ListProjectsAction(DbAction):
         projects = db.list_projects()
 
         for p in projects:
-            print("%s: %s [%s] %s" % (p.builddir, p.name, p.version, p.edit))
+            print(f"{p.builddir}: {p.name} [{p.version}] {p.edit}")
 
 
 DbAction.register(ListProjectsAction)
@@ -177,7 +175,7 @@ class ListUsersAction(DbAction):
         users = db.list_users()
 
         for u in users:
-            print("%s: %s <%s>" % (u.name, u.fullname, u.email))
+            print(f"{u.name}: {u.fullname} <{u.email}>")
 
 
 DbAction.register(ListUsersAction)
@@ -294,7 +292,7 @@ class GetFilesAction(DbAction):
         files = db.get_project_files(args[0])
         for f in files:
             if f.description:
-                print("%-40s  %s" % (f.name, f.description))
+                print(f"{f.name:40}  {f.description}")
             else:
                 print(f.name)
 
@@ -365,7 +363,7 @@ class ListVersionsAction(DbAction):
 
         for v in versions:
             if v.description:
-                print("%s: %s" % (v.version, v.description))
+                print(f"{v.version}: {v.description}")
             else:
                 print(v.version)
 
