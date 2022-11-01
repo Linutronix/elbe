@@ -26,8 +26,7 @@ class CommandError(Exception):
         self.cmd = cmd
 
     def __str__(self):
-        return "Error: %d returned from Command %s" % (
-            self.returncode, self.cmd)
+        return f"Error: {self.returncode} returned from Command {self.cmd}"
 
 def system(cmd, allow_fail=False, env_add=None):
     """system() - Execute cmd in a shell.
@@ -281,8 +280,7 @@ def chroot(directory, cmd, env_add=None, **kwargs):
                "LC_ALL":"C"}
     if env_add:
         new_env.update(env_add)
-    chcmd = 'chroot %s %s' % (directory, cmd)
-    do(chcmd, env_add=new_env, **kwargs)
+    do(f"chroot {directory} {cmd}", env_add=new_env, **kwargs)
 
 def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     """get_command_out() - Like do() but returns stdout.
