@@ -93,26 +93,16 @@ class RPCAPTCache(InChRootObject):
 
     def dbg_dump(self, filename):
         ts = time.localtime()
-        filename = filename + (
-            '_%02d%02d%02d' % (ts.tm_hour, ts.tm_min, ts.tm_sec))
-        with open(filename, 'w') as dbg:
+        with open(f'{filename}_{ts.tm_hour:02}{ts.tm_min:02}{ts.tm_sec:02}', 'w') as dbg:
             for p in self.cache:
                 dbg.write(
-                    '%s %s %d %d %d %d %d %d %d %d %d %d %d %d\n' %
-                    (p.name,
-                     p.candidate.version,
-                     p.marked_keep,
-                     p.marked_delete,
-                     p.marked_upgrade,
-                     p.marked_downgrade,
-                     p.marked_install,
-                     p.marked_reinstall,
-                     p.is_auto_installed,
-                     p.is_installed,
-                     p.is_auto_removable,
-                     p.is_now_broken,
-                     p.is_inst_broken,
-                     p.is_upgradable))
+                    f"{p.name} {p.candidate.version} {p.marked_keep} "
+                    f"{p.marked_delete} {p.marked_upgrade} "
+                    f" {p.marked_downgrade} {p.marked_install} "
+                    f" {p.marked_reinstall} {p.is_auto_installed} "
+                    f" {p.is_installed} {p.is_auto_removable} "
+                    f"{p.is_now_broken} {p.is_inst_broken} "
+                    f"{p.is_upgradable}\n")
 
     def get_sections(self):
         ret = list({p.section for p in self.cache})
@@ -128,7 +118,7 @@ class RPCAPTCache(InChRootObject):
         return ret
 
     def mark_install(self, pkgname, version, from_user=True, nodeps=False):
-        print('Mark for install "%s"' % pkgname)
+        print(f'Mark for install "{pkgname}"')
         p = self.cache[pkgname]
         if version:
             p.candidate = p.versions[version]
@@ -211,7 +201,7 @@ class RPCAPTCache(InChRootObject):
 
             if pkg.is_installed or pkg.marked_install:
 
-                dbg_pkg = "%s-dbgsym" % pkg.name
+                dbg_pkg = f"{pkg.name}-dbgsym"
 
                 if dbg_pkg in self.cache:
                     dbgsym_lst.append(self.cache[dbg_pkg])
@@ -380,15 +370,17 @@ class RPCAPTCache(InChRootObject):
             next_p = rec.lookup(src_name)
             # End of the list?
             if not next_p:
-                raise ValueError("No source found for %s_%s" % (src_name, src_version))
+                raise ValueError(
+                    f"No source found for {src_name}_{src_version}")
             if src_version == rec.version:
                 break
 
         # We don't allow untrusted package and the package is not
         # marks as trusted
         if not (allow_untrusted or rec.index.is_trusted):
-            raise FetchError("Can't fetch source %s_%s; Source %r is not trusted" %
-                             (src_name, src_version, rec.index.describe))
+            raise FetchError(
+                f"Can't fetch source {src_name}_{src_version}; "
+                f"Source {rec.index.describe} is not trusted")
 
         # Copy from src to dst all files of the source package
         dsc = None
@@ -401,7 +393,8 @@ class RPCAPTCache(InChRootObject):
                 dsc = dst
 
             if not (allow_untrusted or _file.hashes.usable):
-                raise FetchError("Can't fetch file %s. No trusted hash found." % dst)
+                raise FetchError(
+                    f"Can't fetch file {dst}. No trusted hash found.")
 
             # acq is accumlating the AcquireFile, the files list only
             # exists to prevent Python from GC the object .. I guess.
@@ -412,13 +405,12 @@ class RPCAPTCache(InChRootObject):
         acq.run()
 
         if dsc is None:
-            raise ValueError("No source found for %s_%s" %
-                             (src_name, src_version))
+            raise ValueError(f"No source found for {src_name}_{src_version}")
 
         for item in acq.items:
             if item.STAT_DONE != item.status:
-                raise FetchError("Can't fetch item %s: %s" %
-                                  (item.destfile, item.error_text))
+                raise FetchError(
+                    f"Can't fetch item {item.destfile}: {item.error_text}")
 
         return self.rfs.fname(os.path.abspath(dsc))
 
