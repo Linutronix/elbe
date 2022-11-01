@@ -41,7 +41,7 @@ class ebase:
                     return default[kwargs["key"]]
                 return default
 
-            raise Exception("Cant find path %s" % path)
+            raise Exception(f"Cant find path {path}")
 
         return el.text or ""
 
