@@ -57,27 +57,28 @@ def run_command(argv):
         print("no project description available")
         sys.exit(20)
 
-    print("== %s ==" % (args[0]))
-    print("Debian suite: %s" % (xml.text("./project/suite")))
+    print(f"== {args[0]} ==")
+    print(f"Debian suite: {xml.text('./project/suite')}")
     for s in xml.text("./project/description").splitlines():
-        print("%s" % s.strip())
+        print(f"{s.strip()}")
     if opt.verbose:
         if xml.has("./target/passwd"):
-            print("root password: %s" % xml.text("./target/passwd"))
-        print("primary_mirror: %s://%s%s" % (
-              xml.text("./project/mirror/primary_proto"),
-              xml.text("./project/mirror/primary_host"),
-              xml.text("./project/mirror/primary_path")))
+            print(f"root password: {xml.text('./target/passwd')}")
+        print(
+            "primary_mirror: "
+            f"{xml.text('./project/mirror/primary_proto')}://"
+            f"{xml.text('./project/mirror/primary_host')}"
+            f"{xml.text('./project/mirror/primary_path')}")
         if xml.has("./project/mirror/url-list"):
             print("additional mirrors:")
             for url in xml.node("./project/mirror/url-list"):
                 if url.has("binary"):
-                    print("    deb %s" % url.text("binary").strip())
+                    print(f"    deb {url.text('binary').strip()}")
                 if url.has("source"):
-                    print("    deb-src %s" % url.text("source").strip())
+                    print(f"    deb-src {url.text('source').strip()}")
         if xml.has("./target/pkg-list"):
             print("packages:")
             for pkg in xml.node("./target/pkg-list"):
-                print("    %s" % pkg.et.text)
-        print("skip package validation: %s" % xml.has("./project/noauth"))
-        print("archive embedded?        %s" % xml.has("./archive"))
+                print(f"    {pkg.et.text}")
+        print(f"skip package validation: {xml.has('./project/noauth')}")
+        print(f"archive embedded?        {xml.has('./archive')}")
