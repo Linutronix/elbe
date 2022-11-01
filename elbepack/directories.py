@@ -13,7 +13,6 @@ import elbepack
 
 elbe_exe = None
 elbe_dir = None
-examples_dir = None
 
 
 def init_directories(elbe_relpath):
@@ -21,15 +20,11 @@ def init_directories(elbe_relpath):
     # this is the very first function that is called by 'elbe'
     global elbe_exe      #pylint: disable=global-statement
     global elbe_dir      #pylint: disable=global-statement
-    global examples_dir  #pylint: disable=global-statement
 
     elbe_exe = os.path.abspath(os.path.realpath(elbe_relpath))
     elbe_dir = os.path.dirname(elbe_exe)
 
-    if elbe_exe.startswith("/usr/bin/"):
-        examples_dir = "/usr/share/doc/elbe-doc/examples"
-    else:
-        examples_dir = os.path.join(elbe_dir, "examples")
+    if not elbe_exe.startswith("/usr/bin/"):
 
         # Set XML catalog if elbe is run from source
         xmlcat = os.path.join(elbe_dir, "schema/catalog.xml")
