@@ -433,10 +433,11 @@ class GenUpdateJob(AsyncWorkerJob):
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
-            db.add_project_file(self.project.builddir, upd_filename,
-                                "application/octet-stream",
-                                "Update package from %s to %s" %
-                                (self.base_version, self.current_version))
+            db.add_project_file(
+                self.project.builddir, upd_filename,
+                "application/octet-stream",
+                f"Update package from {self.base_version} to "
+                f"{self.current_version}")
             db.reset_busy(self.project.builddir, self.old_status)
 
     def _gen_upd_filename(self):
@@ -472,11 +473,10 @@ class SaveVersionJob(AsyncWorkerJob):
 
         if self.project.savesh_file:
             logging.info("save version script:")
-            do(self.project.savesh_file + ' "%s %s %s"' % (
-                self.project.builddir,
-                self.project.xml.text("project/version"),
-                self.project.xml.text("project/name")),
-                allow_fail=True)
+            do((f'{self.project.savesh_file} "{self.project.builddir} '
+                f'{self.project.xml.text("project/version")} '
+                f'{self.project.xml.text("project/name")}"'
+                ), allow_fail=True)
 
         logging.info("Enqueueing project to save package archive")
         AsyncWorkerJob.enqueue(self, queue, db)
