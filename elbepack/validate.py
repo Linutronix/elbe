@@ -18,7 +18,7 @@ def error_log_to_strings(error_log):
     uses_norecommend = False
 
     for err in error_log:
-        errors.append("%s:%d error %s" % (err.filename, err.line, err.message))
+        errors.append(f"{err.filename}:{err.line} error {err.message}")
         if "http://www.w3.org/2003/XInclude" in err.message:
             uses_xinclude = True
         if "norecommend" in err.message:
@@ -36,8 +36,8 @@ def error_log_to_strings(error_log):
 
 def validate_xml(fname):
     if os.path.getsize(fname) > (1 << 30):
-        return ["%s is greater than 1 GiB. "
-                "Elbe does not support files of this size." % fname]
+        return [f"{fname} is greater than 1 GiB. "
+                "Elbe does not support files of this size."]
 
     schema_file = "https://www.linutronix.de/projects/Elbe/dbsfed.xsd"
     parser = XMLParser(huge_tree=True)
