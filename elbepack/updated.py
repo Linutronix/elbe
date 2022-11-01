@@ -63,11 +63,11 @@ class UpdateStatus:
 
     def set_progress(self, step, percent=''):
         self.step = step
-        self.write_status('in_progress\t%d\t%s' % (step, percent))
+        self.write_status(f"in_progress\t{step}\t{percent}")
 
     def set_finished(self, result):
         self.step = 0
-        self.write_status('finished\t%s' % result)
+        self.write_status(f"finished\t{result}")
 
     def log(self, msg):
         if not msg.endswith('\n'):
@@ -135,12 +135,12 @@ class UpdateService (ServiceBase):
             apply_update(fname, self.app.status)
         # pylint: disable=broad-except
         except Exception as err:
-            print("%s" % str(err))
+            print(f"{err}")
             self.app.status.set_finished('error')
-            return "apply snapshot %s failed" % ver
+            return f"apply snapshot {ver} failed"
 
         self.app.status.set_finished('OK')
-        return "snapshot %s applied" % ver
+        return f"snapshot {ver} applied"
 
     @rpc(String)
     def register_monitor(self, wsdl_url):
@@ -172,23 +172,21 @@ class rw_access:
 
     def __enter__(self):
         if self.mount_orig == 'ro':
-            self.status.log("remount %s read/writeable" % self.mount)
-            cmd = "mount -o remount,rw %s" % self.mount
+            self.status.log(f"remount {self.mount} read/writeable")
             try:
-                system(cmd)
+                system(f"mount -o remount,rw {self.mount}")
             except CommandError as e:
                 self.status.log(repr(e))
 
     def __exit__(self, _typ, _value, _traceback):
         if self.mount_orig == 'ro':
-            self.status.log("remount %s readonly" % self.mount)
+            self.status.log(f"remount {self.mount} readonly")
             try:
                 system("sync")
             except CommandError as e:
                 self.status.log(repr(e))
-            cmd = "mount -o remount,ro %s" % self.mount
             try:
-                system(cmd)
+                system(f"mount -o remount,ro {self.mount}")
             except CommandError as e:
                 self.status.log(repr(e))
 
@@ -267,7 +265,7 @@ def _apply_update(fname, status):
     try:
         xml = etree(fname)
     except BaseException:
-        raise Exception("reading %s failed " % fname)
+        raise Exception(f"reading {fname} failed ")
 
     fpl = xml.node("fullpkgs")
 
@@ -455,7 +453,7 @@ def action_select(upd_file, status):
     try:
         upd_file_z = ZipFile(upd_file)
     except BadZipfile:
-        status.log("update aborted (bad zip file: %s)" % upd_file)
+        status.log(f"update aborted (bad zip file: {upd_file})")
         return
 
     if "new.xml" not in upd_file_z.namelist():
@@ -488,7 +486,7 @@ def action_select(upd_file, status):
                 upd_file_z.extract(zi, prefix)
                 os.chmod(prefix + '/' + i, zi.external_attr >> 16)
             except OSError:
-                status.log("extraction failed: %s" % sys.exc_info()[1])
+                status.log(f"extraction failed: {sys.exc_info()[1]}")
                 return
 
     with rw_access("/var/cache/elbe", status):
