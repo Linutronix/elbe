@@ -92,7 +92,7 @@ class ThreadFilter(logging.Filter):
             thread = record.thread
         retval = record.name in self.allowed and thread == self.thread
         if retval and not hasattr(record, 'context'):
-            record.context = "[%s] " % record.levelname
+            record.context = f"[{record.levelname}]"
         return retval
 
 
