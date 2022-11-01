@@ -41,7 +41,7 @@ def run_command(argv):
             if str(o) == str(d):
                 if getattr(opt, o):
                     active = True
-                    print("enable %s" % str(d))
+                    print(f"enable {d}")
                     module = "elbepack.daemons." + str(d)
                     _ = __import__(module)
                     cmdmod = sys.modules[module]
@@ -52,7 +52,7 @@ def run_command(argv):
     if not active:
         print("no daemon activated, use")
         for d in daemons:
-            print("   --%s" % d)
+            print(f"   --{d}")
         print("to activate at least one daemon")
         return
 
