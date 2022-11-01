@@ -54,7 +54,7 @@ class ElbeTestCase(unittest.TestCase):
     def __str__(self):
         name = super(ElbeTestCase, self).__str__()
         if self.param:
-            return "%s : param=%s" % (name, self.param)
+            return f"{name} : param={self.param}"
         return name
 
     def parameterize(self, param):
@@ -242,8 +242,9 @@ def run_command(argv):
 
     # Set test level threshold
     if opt.level not in ElbeTestLevel.__members__:
-        print("Invalid level value '%s'. Valid values are: %s" %
-              (opt.level, ", ".join(key for key in ElbeTestLevel.__members__)))
+        print(
+            f"Invalid level value '{opt.level}'. Valid values are: "
+            f"{', '.join(key for key in ElbeTestLevel.__members__)}")
         os.sys.exit(20)
 
     ElbeTestCase.level = ElbeTestLevel[opt.level]
