@@ -28,7 +28,7 @@ class InPlacePacker(Packer):
     def pack_file(self, builddir, fname):
         try:
             fpath = os.path.join(builddir, fname)
-            do('%s "%s"' % (self.cmd, fpath))
+            do(f'{self.cmd} "{fpath}"')
         except CommandError:
             # in case of an error, we just return None
             # which means, that the orig file does not
@@ -50,9 +50,10 @@ class TarArchiver(Packer):
             dirname = os.path.dirname(fpath)
             basename = os.path.basename(fpath)
             archname = fpath + self.suffix
-            do('tar --create --verbose --sparse %s --file "%s" --directory "%s" "%s"' %
-               (self.flag, archname, dirname, basename))
-            do('rm -f "%s"' % fpath)
+            do(
+                f'tar --create --verbose --sparse {self.flag} '
+                f'--file "{archname}" --directory "{dirname}" "{basename}"')
+            do(f'rm -f "{fpath}"')
         except CommandError:
             # in case of an error, we just return None
             # which means, that the orig file does not
