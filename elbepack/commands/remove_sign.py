@@ -15,6 +15,6 @@ def run_command(argv):
 
     fname = unsign_file(argv[0])
     if fname:
-        print("unsigned file: %s" % fname)
+        print(f"unsigned file: {fname}")
     else:
         print("removing signature failed")
