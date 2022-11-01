@@ -34,7 +34,7 @@ def run_command(argv):
         sys.exit(20)
 
     if not os.path.isfile(args[0]):
-        print("%s doesn't exist" % args[0], file=sys.stderr)
+        print(f"{args[0]} doesn't exist", file=sys.stderr)
         sys.exit(20)
 
     variants = []
