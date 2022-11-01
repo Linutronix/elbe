@@ -56,7 +56,7 @@ class UBoot(Panel):
         # With v2014.04 the u-boot Makefile knows the 'tools-only' target.
         if V(self.verstr) < V('2014.04'):
             TUI.printf("Only U-Boot >= 2014.04 is supported.\n"
-                      "This is version '%s'" % self.verstr)
+                       f"This is version '{self.verstr}'")
 
         if V(self.verstr) >= V('2017.09'):
             self.deb['envtools'] = 'envtools'
@@ -87,4 +87,6 @@ class UBoot(Panel):
         copyfile(os.path.join(self.tmpl_dir, 'u-boot-tools.install'),
                  'debian/u-boot-tools-' + pkg_name + '.install')
 
-        TUI.printf("use 'dpkg-buildpackage -a%s' to build the package" % self.deb['p_arch'])
+        TUI.printf(
+            f"use 'dpkg-buildpackage -a{self.deb['p_arch']}' "
+            "to build the package")
