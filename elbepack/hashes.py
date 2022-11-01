@@ -20,8 +20,8 @@ def validate_sha256(fname, expected_hash):
             buf = f.read(65536)
     if m.hexdigest() != expected_hash:
         raise HashValidationFailed(
-                'file "%s" failed to verify ! got: "%s" expected: "%s"' %
-                (fname, m.hexdigest(), expected_hash))
+                f'file "{fname}" failed to verify ! got: "{m.hexdigest()}" '
+                f'expected: "{expected_hash}"')
 
 class HashValidator:
     def __init__(self, base_url):
@@ -43,8 +43,8 @@ class HashValidator:
     def download_and_validate_file(self, upstream_fname, local_fname):
         url = self.base_url + upstream_fname
         try:
-            system('wget -O "%s" "%s"' % (local_fname, url))
+            system(f'wget -O "{local_fname}" "{url}"')
         except CommandError:
-            raise HashValidationFailed('Failed to download %s' % url)
+            raise HashValidationFailed(f"Failed to download {url}")
 
         self.validate_file(upstream_fname, local_fname)
