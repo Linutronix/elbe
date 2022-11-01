@@ -95,7 +95,7 @@ class ElbeSoapClient:
             except BadStatusLine as e:
                 retry = retry - 1
 
-                print("get_file part %d failed, retry %d times" % (part, retry),
+                print(f"get_file part {part} failed, retry {retry} times",
                       file=sys.stderr)
                 print(str(e), file=sys.stderr)
                 print(repr(e.line), file=sys.stderr)
@@ -126,7 +126,7 @@ class ClientAction:
     def print_actions(cls):
         print("available subcommands are:", file=sys.stderr)
         for a in cls.actiondict:
-            print("   %s" % a, file=sys.stderr)
+            print(f"   {a}", file=sys.stderr)
 
     def __new__(cls, node):
         action = cls.actiondict[node]
@@ -190,8 +190,9 @@ class ListProjectsAction(ClientAction):
 
         try:
             for p in projects.SoapProject:
-                print("%s\t%s\t%s\t%s\t%s" %
-                      (p.builddir, p.name, p.version, p.status, str(p.edit)))
+                print(
+                    f"{p.builddir}\t{p.name}\t{p.version}\t{p.status}\t"
+                    f"{p.edit}")
         except AttributeError:
             print("No projects configured in initvm")
 
@@ -328,7 +329,7 @@ class SetXmlAction(ClientAction):
                 skip_validate=True,
                 url_validation=ValidationMode.NO_CHECK)
         except IOError:
-            print("%s is not a valid elbe xml file" % filename)
+            print(f"{filename} is not a valid elbe xml file")
             sys.exit(20)
 
         if not x.has('target'):
@@ -482,7 +483,7 @@ class GetFileAction(ClientAction):
             dst_fname = str(os.path.join(dst, filename)).encode()
 
         client.download_file(builddir, filename, dst_fname)
-        print("%s saved" % dst_fname)
+        print(f"{dst_fname} saved")
 
 
 ClientAction.register(GetFileAction)
@@ -572,9 +573,9 @@ class GetFilesAction(ClientAction):
 
             nfiles += 1
             try:
-                print("%s \t(%s)" % (f.name, f.description))
+                print(f"{f.name} \t({f.description})")
             except AttributeError:
-                print("%s" % (f.name))
+                print(f"{f.name}")
 
             if opt.output:
                 fs = Filesystem('/')
@@ -634,8 +635,10 @@ class WaitProjectBusyAction(ClientAction):
 
         prj = client.service.get_project(builddir)
         if prj.status != "build_done":
-            print("Project build was not successful, current status: "
-                  "%s" % prj.status, file=sys.stderr)
+            print(
+                "Project build was not successful, current status: "
+                f"{prj.status}",
+                file=sys.stderr)
             sys.exit(10)
 
 ClientAction.register(WaitProjectBusyAction)
@@ -808,7 +811,7 @@ class InstallElbeVersion(ClientAction):
         if result.ret == 0:
             print('\nSuccess !!!')
         else:
-            print('\nError: apt returns %d' % result.ret)
+            print(f"\nError: apt returns {result.ret}")
 
 
 ClientAction.register(InstallElbeVersion)
@@ -824,7 +827,7 @@ class RepoAction(ClientAction):
     def print_actions(cls):
         print("available subcommands are:", file=sys.stderr)
         for a in cls.repoactiondict:
-            print("   %s" % a, file=sys.stderr)
+            print(f"   {a}", file=sys.stderr)
 
     def __new__(cls, node):
         action = cls.repoactiondict[node]
@@ -878,7 +881,7 @@ class DownloadAction(RepoAction):
             ".tar.gz")
 
         client.download_file(builddir, filename, dst_fname)
-        print("%s saved" % dst_fname)
+        print(f"{dst_fname} saved")
 
 
 RepoAction.register(DownloadAction)
@@ -960,7 +963,7 @@ class UploadPackageAction(RepoAction):
         abort = False
         for f in files:
             if not os.path.isfile(f):
-                print("File %s not found." % f)
+                print(f"File {f} not found.")
                 abort = True
         # Abort if one or more source files are missing
         if abort:
@@ -968,7 +971,7 @@ class UploadPackageAction(RepoAction):
 
         print("Start uploading file(s)...")
         for f in files:
-            print("Upload %s..." % f)
+            print(f"Upload {f}...")
             self.upload_file(client, f, builddir)
 
         print("Including Package in initvm...")
