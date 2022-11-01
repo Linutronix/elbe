@@ -27,28 +27,28 @@ class TestSimpleXML(ElbeTestCase):
             uuid = None
 
             try:
-                system('%s initvm submit "%s" --output "%s" --keep-files '
-                       '--build-sdk --writeproject "%s"' %
-                       (elbe_exe, self.param, build_dir, prj))
+                system(
+                    f'{elbe_exe} initvm submit "{self.param}" '
+                    f'--output "{build_dir}" --keep-files '
+                    f'--build-sdk --writeproject "{prj}"')
 
                 # Ensure project build is done
                 with open(prj, "r") as f:
                     uuid = f.read()
-                    system("%s control list_projects | "
-                           "grep %s | grep build_done || false" %
-                           (elbe_exe, uuid))
+                    system(f"{elbe_exe} control list_projects | "
+                           f"grep {uuid} | grep build_done || false")
 
                 for cmd in ("cdrom", "img", "sdk", "rebuild"):
                     with self.subTest(f'check build {cmd}'):
-                        system('%s check-build %s "%s"' % (elbe_exe, cmd, build_dir))
+                        system(f'{elbe_exe} check-build {cmd} "{build_dir}"')
 
             # pylint: disable=try-except-raise
             except:
                 raise
             else:
                 # This is a tear down of the project, it's okay if it fails
-                system('%s control del_project %s' % (elbe_exe, uuid),
-                       allow_fail=True)
+                system(
+                    f'{elbe_exe} control del_project {uuid}', allow_fail=True)
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
@@ -81,5 +81,5 @@ class TestPbuilder(ElbeTestCase):
                 raise
             else:
                 # This is a tearDown of the project, it's okay if it fails
-                system('%s control del_project %s' % (elbe_exe, uuid),
-                       allow_fail=True)
+                system(
+                    f'{elbe_exe} control del_project {uuid}', allow_fail=True)
