@@ -24,7 +24,7 @@ def parse_selections(fname):
 
         sp = l.split()
 
-        print("%s %s" % (sp[0], sp[1]))
+        print(f"{sp[0]} {sp[1]}")
 
         if sp[1] == 'install':
             sels.append(sp[0])
