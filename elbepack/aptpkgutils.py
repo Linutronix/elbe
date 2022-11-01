@@ -91,7 +91,7 @@ def pkgstate(pkg):
 def pkgorigin(pkg):
     if pkg.installed:
         o = pkg.installed.origins[0]
-        origin = "%s %s %s" % (o.site, o.archive, o.component)
+        origin = f"{o.site} {o.archive} {o.component}"
     else:
         origin = None
 
@@ -145,8 +145,9 @@ def fetch_binary(version, destdir='', progress=None):
     acq.run()
 
     if acqfile.status != acqfile.STAT_DONE:
-        raise FetchError("The item %r could not be fetched: %s" %
-                         (acqfile.destfile, acqfile.error_text))
+        raise FetchError(
+            f"The item {acqfile.destfile} could not be fetched: "
+            f"{acqfile.error_text}")
 
     return os.path.abspath(destfile)
 
@@ -178,8 +179,8 @@ class PackageBase:
         self.architecture = architecture
 
     def __repr__(self):
-        return "<APTPackage %s-%s state: %s>" % (
-            self.name, self.installed_version, statestring[self.state])
+        return (f"<APTPackage {self.name}-{self.installed_version} state: "
+                f"{statestring[self.state]}>")
 
     def __eq__(self, other):
         vereq = (self.installed_version == other.installed_version)
