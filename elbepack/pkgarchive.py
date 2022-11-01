@@ -61,7 +61,7 @@ def gen_binpkg_archive(ep, repodir):
                 logging.warning('Package file "%s" not found in var/cache/apt/archives, downloading it',
                                 filename)
                 abs_path = ep.buildenv.rfs.fname(rel_path)
-                pkg_id = "%s-%s" % (pkg.name, pkg.installed_version)
+                pkg_id = f"{pkg.name}-{pkg.installed_version}"
                 try:
                     abs_path = c.download_binary(pkg.name,
                                                  '/var/cache/elbe/pkgarchive',
