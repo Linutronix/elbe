@@ -461,7 +461,16 @@ def extract_cdrom(cdrom):
     """
 
     tmp = TmpdirFilesystem()
-    system(f'7z x -o{tmp.path} "{cdrom}" source.xml')
+    in_iso_name = "source.xml"
+    try:
+        import pycdlib
+        iso = pycdlib.PyCdlib()
+        iso.open(cdrom)
+        extracted = os.path.join(tmp.path, in_iso_name)
+        iso.get_file_from_iso(extracted, iso_path=f'/{in_iso_name.upper()};1')
+        iso.close()
+    except ImportError:
+        system(f'7z x -o{tmp.path} "{cdrom}" {in_iso_name}')
 
     print("", file=sys.stderr)
 
