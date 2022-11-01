@@ -83,30 +83,29 @@ def setup_apt_keyring(gpg_home, keyring_fname):
         sys.exit(20)
 
     if os.path.exists("/etc/apt/trusted.gpg"):
-        system('cp /etc/apt/trusted.gpg "%s"' % ring_path)
+        system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
 
-    gpg_options = '--keyring "%s" --no-auto-check-trustdb ' \
+    gpg_options = f'--keyring "{ring_path}" --no-auto-check-trustdb ' \
                   '--trust-model always --no-default-keyring ' \
                   '--batch ' \
-                  '--homedir "%s"' % (ring_path, gpg_home)
+                  f'--homedir "{gpg_home}"'
 
     trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
     for key in trustkeys:
-        print("Import %s: " % key)
+        print(f"Import {key}: ")
         try:
-            system('gpg %s --import "%s"' % (
-                gpg_options,
-                os.path.join("/etc/apt/trusted.gpg.d", key)))
+            system(
+                f'gpg {gpg_options} '
+                f'--import "{os.path.join("/etc/apt/trusted.gpg.d", key)}"')
         except CommandError:
-            print('adding keyring "%s" to keyring "%s" failed' % (key,
-                                                                  ring_path))
+            print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
 
 def download(url, local_fname):
     try:
-        system('wget -O "%s" "%s"' % (local_fname, url))
+        system(f'wget -O "{local_fname}" "{url}"')
     except CommandError:
-        raise NoKinitrdException('Failed to download %s' % url)
+        raise NoKinitrdException(f'Failed to download {url}')
 
 
 def verify_release(tmp, base_url):
@@ -146,8 +145,7 @@ def verify_release(tmp, base_url):
 
 
 def download_kinitrd(tmp, suite, mirror, skip_signature=False):
-    base_url = "%s/dists/%s/" % (
-        mirror.replace("LOCALMACHINE", "localhost"), suite)
+    base_url = f"{mirror.replace('LOCALMACHINE', 'localhost')}/dists/{suite}/"
     installer_path = "main/installer-amd64/current/images/"
 
     setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
@@ -193,9 +191,9 @@ def get_primary_mirror(prj):
         m = prj.node("mirror")
 
         mirror = m.text("primary_proto") + "://"
-        mirror += "{}/{}".format(m.text("primary_host"),
-                                 m.text("primary_path")
-                                ).replace("//", "/")
+        mirror += (
+            f"{m.text('primary_host')}/{m.text('primary_path')}"
+            .replace("//", "/"))
     else:
         raise NoKinitrdException("Broken xml file: "
                                  "no cdrom and no primary host")
@@ -210,8 +208,9 @@ def copy_kinitrd(prj, target_dir):
     try:
         tmp = TmpdirFilesystem()
         if prj.has("mirror/cdrom"):
-            system('7z x -o%s "%s" initrd-cdrom.gz vmlinuz' %
-                   (tmp.fname('/'), prj.text("mirror/cdrom")))
+            system(
+                f'7z x -o{tmp.fname("/")} "{prj.text("mirror/cdrom")}" '
+                'initrd-cdrom.gz vmlinuz')
 
             # initrd.gz needs to be cdrom version !
             copyfile(tmp.fname("initrd-cdrom.gz"),
@@ -230,8 +229,8 @@ def copy_kinitrd(prj, target_dir):
                  os.path.join(target_dir, "vmlinuz"))
 
     except IOError as e:
-        raise NoKinitrdException('IoError %s' % str(e))
+        raise NoKinitrdException(f"IoError {e}")
     except InvalidSignature as e:
-        raise NoKinitrdException('InvalidSignature %s' % str(e))
+        raise NoKinitrdException(f"InvalidSignature {e}")
     except HashValidationFailed as e:
-        raise NoKinitrdException('HashValidationFailed %s' % str(e))
+        raise NoKinitrdException(f"HashValidationFailed {e}")
