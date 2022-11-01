@@ -399,7 +399,7 @@ class PreprocessWrapper:
     def __enter__(self):
         self.outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
 
-        cmd = (f'{elbe_exe} preprocess {self.options} '
+        cmd = (f'{sys.executable} {elbe_exe} preprocess {self.options} '
                f'-o {self.outxml.name} {self.xmlfile}')
         ret, _, err = command_out_stderr(cmd)
         if ret != 0:

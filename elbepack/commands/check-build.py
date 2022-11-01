@@ -620,4 +620,4 @@ exit 1
 class CheckRebuild(CheckBase):
 
     def run(self):
-        do(f"{elbe_exe} initvm submit --skip-build-source bin-cdrom.iso")
+        do(f"{sys.executable} {elbe_exe} initvm submit --skip-build-source bin-cdrom.iso")

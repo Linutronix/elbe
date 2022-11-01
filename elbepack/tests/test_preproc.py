@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import sys
 
 from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
 from elbepack.directories import elbe_exe, elbe_dir
@@ -25,7 +26,7 @@ class TestPreproc(ElbeTestCase):
     def test_preproc(self):
 
         try:
-            system(f'{elbe_exe} preprocess "{self.param}"')
+            system(f'{sys.executable} {elbe_exe} preprocess "{self.param}"')
         except ElbeTestException as e:
             if self.param in TestPreproc.failure_set:
                 self.stdout = e.out

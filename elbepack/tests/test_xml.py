@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import sys
 import unittest
 import tempfile
 
@@ -28,19 +29,19 @@ class TestSimpleXML(ElbeTestCase):
 
             try:
                 system(
-                    f'{elbe_exe} initvm submit "{self.param}" '
+                    f'{sys.executable} {elbe_exe} initvm submit "{self.param}" '
                     f'--output "{build_dir}" --keep-files '
                     f'--build-sdk --writeproject "{prj}"')
 
                 # Ensure project build is done
                 with open(prj, "r") as f:
                     uuid = f.read()
-                    system(f"{elbe_exe} control list_projects | "
+                    system(f"{sys.executable} {elbe_exe} control list_projects | "
                            f"grep {uuid} | grep build_done || false")
 
                 for cmd in ("cdrom", "img", "sdk", "rebuild"):
                     with self.subTest(f'check build {cmd}'):
-                        system(f'{elbe_exe} check-build {cmd} "{build_dir}"')
+                        system(f'{sys.executable} {elbe_exe} check-build {cmd} "{build_dir}"')
 
             # pylint: disable=try-except-raise
             except:
@@ -48,7 +49,7 @@ class TestSimpleXML(ElbeTestCase):
             else:
                 # This is a tear down of the project, it's okay if it fails
                 system(
-                    f'{elbe_exe} control del_project {uuid}', allow_fail=True)
+                    f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
@@ -67,7 +68,7 @@ class TestPbuilder(ElbeTestCase):
             uuid = None
 
             try:
-                system(f'{elbe_exe} pbuilder create --xmlfile "{self.param}" \
+                system(f'{sys.executable} {elbe_exe} pbuilder create --xmlfile "{self.param}" \
                                                     --writeproject "{prj}"')
                 system(f'cd "{build_dir}"; \
                          git clone https://github.com/Linutronix/libgpio.git')
@@ -75,11 +76,11 @@ class TestPbuilder(ElbeTestCase):
                 with open(prj, "r") as f:
                     uuid = f.read()
                     system(f'cd "{build_dir}/libgpio"; \
-                             {elbe_exe} pbuilder build --project {uuid}')
+                             {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
             # pylint: disable=try-except-raise
             except:
                 raise
             else:
                 # This is a tearDown of the project, it's okay if it fails
                 system(
-                    f'{elbe_exe} control del_project {uuid}', allow_fail=True)
+                    f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)

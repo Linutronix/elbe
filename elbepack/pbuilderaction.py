@@ -78,7 +78,7 @@ class CreateAction(PBuilderAction):
             try:
                 with PreprocessWrapper(opt.xmlfile, opt) as ppw:
                     ret, prjdir, err = command_out_stderr(
-                        f"{elbe_exe} control create_project")
+                        f'{sys.executable} {elbe_exe} control create_project')
                     if ret != 0:
                         print("elbe control create_project failed.",
                               file=sys.stderr)
@@ -88,7 +88,7 @@ class CreateAction(PBuilderAction):
 
                     prjdir = prjdir.strip()
                     ret, _, err = command_out_stderr(
-                        f'{elbe_exe} control set_xml "{prjdir}" "{ppw.preproc}"')
+                        f'{sys.executable} {elbe_exe} control set_xml "{prjdir}" "{ppw.preproc}"')
 
                     if ret != 0:
                         print("elbe control set_xml failed.", file=sys.stderr)
@@ -116,15 +116,14 @@ class CreateAction(PBuilderAction):
         print("Creating pbuilder")
 
         try:
-            system(
-                f'{elbe_exe} control build_pbuilder "{prjdir}" {crossopt} {ccacheopt} {ccachesize}')
+            system(f'{sys.executable} {elbe_exe} control build_pbuilder "{prjdir}" {crossopt} {ccacheopt} {ccachesize}')
         except CommandError:
             print("elbe control build_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
             sys.exit(20)
 
         try:
-            system(f'{elbe_exe} control wait_busy "{prjdir}"')
+            system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print("elbe control wait_busy Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -156,7 +155,7 @@ class UpdateAction(PBuilderAction):
         print("Updating pbuilder")
 
         try:
-            system(f'{elbe_exe} control update_pbuilder "{prjdir}"')
+            system(f'{sys.executable} {elbe_exe} control update_pbuilder "{prjdir}"')
         except CommandError:
             print("elbe control update_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -189,7 +188,7 @@ class BuildAction(PBuilderAction):
 
         if opt.xmlfile:
             ret, prjdir, err = command_out_stderr(
-                f'{elbe_exe} control create_project --retries 60 "{opt.xmlfile}"')
+                f'{sys.executable} {elbe_exe} control create_project --retries 60 "{opt.xmlfile}"')
             if ret != 0:
                 print("elbe control create_project failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
@@ -199,14 +198,14 @@ class BuildAction(PBuilderAction):
             prjdir = prjdir.strip()
 
             try:
-                system(f'{elbe_exe} control build_pbuilder "{prjdir}"')
+                system(f'{sys.executable} {elbe_exe} control build_pbuilder "{prjdir}"')
             except CommandError:
                 print("elbe control build_pbuilder Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
                 sys.exit(20)
 
             try:
-                system(f'{elbe_exe} control wait_busy "{prjdir}"')
+                system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
             except CommandError:
                 print("elbe control wait_busy Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
@@ -217,7 +216,7 @@ class BuildAction(PBuilderAction):
             print("")
         elif opt.project:
             prjdir = opt.project
-            system(f'{elbe_exe} control rm_log {prjdir}')
+            system(f'{sys.executable} {elbe_exe} control rm_log {prjdir}')
         else:
             print(
                 "you need to specify --project or --xmlfile option",
@@ -239,7 +238,8 @@ class BuildAction(PBuilderAction):
             print(f"Pushing orig file '{of}' into pbuilder")
             print("")
             try:
-                system(f'{elbe_exe} control set_orig "{prjdir}" "{of}"')
+                system(
+                    f'{sys.executable} {elbe_exe} control set_orig "{prjdir}" "{of}"')
             except CommandError:
                 print("elbe control set_orig Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
@@ -251,7 +251,7 @@ class BuildAction(PBuilderAction):
 
         try:
             system(
-                f'{elbe_exe} control set_pdebuild --cpuset "{opt.cpuset}" '
+                f'{sys.executable} {elbe_exe} control set_pdebuild --cpuset "{opt.cpuset}" '
                 f'--profile "{opt.profile}" {crossopt} '
                 f'"{prjdir}" "{tmp.fname("pdebuild.tar.gz")}"')
         except CommandError:
@@ -259,7 +259,7 @@ class BuildAction(PBuilderAction):
             print("Giving up", file=sys.stderr)
             sys.exit(20)
         try:
-            system(f'{elbe_exe} control wait_busy "{prjdir}"')
+            system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print("elbe control wait_busy Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -274,14 +274,14 @@ class BuildAction(PBuilderAction):
             print("")
             try:
                 system(
-                    f'{elbe_exe} control --pbuilder-only get_files "{prjdir}"')
+                    f'{sys.executable} {elbe_exe} control --pbuilder-only get_files "{prjdir}"')
             except CommandError:
                 print("elbe control get_files Failed", file=sys.stderr)
                 print("", file=sys.stderr)
                 print("dumping logfile", file=sys.stderr)
 
                 try:
-                    system(f'{elbe_exe} control dump_file "{prjdir}" log.txt')
+                    system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
                 except CommandError:
                     print("elbe control dump_file Failed", file=sys.stderr)
                     print("", file=sys.stderr)
@@ -300,7 +300,7 @@ class BuildAction(PBuilderAction):
 
             try:
                 system(
-                    f'{elbe_exe} control --pbuilder-only get_files '
+                    f'{sys.executable} {elbe_exe} control --pbuilder-only get_files '
                     f'--output "{opt.outdir}" "{prjdir}"')
             except CommandError:
                 print("elbe control get_files Failed", file=sys.stderr)
@@ -308,7 +308,7 @@ class BuildAction(PBuilderAction):
                 print("dumping logfile", file=sys.stderr)
 
                 try:
-                    system(f'{elbe_exe} control dump_file "{prjdir}" log.txt')
+                    system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
                 except CommandError:
                     print("elbe control dump_file Failed", file=sys.stderr)
                     print("", file=sys.stderr)

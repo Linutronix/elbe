@@ -195,11 +195,11 @@ class EnsureAction(InitVMAction):
         import libvirt
 
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
-            system(f'{elbe_exe} initvm start')
+            system(f'{sys.executable} {elbe_exe} initvm start')
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             stop = time.time() + 300
             while time.time() < stop:
-                if command_out(f'{elbe_exe} control list_projects')[0] == 0:
+                if command_out(f'{sys.executable} {elbe_exe} control list_projects')[0] == 0:
                     break
                 time.sleep(10)
             if time.time() > stop:
@@ -273,7 +273,7 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
             with Repodir(xmlfile, preprocess_xmlfile):
                 submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
     except RepodirError as err:
-        print(f"{elbe_exe} repodir failed", file=sys.stderr)
+        print("elbe repodir failed", file=sys.stderr)
         print(err, file=sys.stderr)
         sys.exit(20)
 
@@ -288,7 +288,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             xmlfile = ppw.preproc
 
             ret, prjdir, err = command_out_stderr(
-                f'{elbe_exe} control create_project')
+                f'{sys.executable} {elbe_exe} control create_project')
             if ret != 0:
                 print("elbe control create_project failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
@@ -297,7 +297,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
             prjdir = prjdir.strip()
 
-            cmd = f'{elbe_exe} control set_xml {prjdir} {xmlfile}'
+            cmd = f'{sys.executable} {elbe_exe} control set_xml {prjdir} {xmlfile}'
             ret, _, err = command_out_stderr(cmd)
             if ret != 0:
                 print("elbe control set_xml failed2", file=sys.stderr)
@@ -318,7 +318,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     if cdrom is not None:
         print("Uploading CDROM. This might take a while")
         try:
-            system(f'{elbe_exe} control set_cdrom "{prjdir}" "{cdrom}"')
+            system(f'{sys.executable} {elbe_exe} control set_cdrom "{prjdir}" "{cdrom}"')
         except CommandError:
             print("elbe control set_cdrom Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -335,7 +335,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         build_opts += '--skip-pbuilder '
 
     try:
-        system(f'{elbe_exe} control build "{prjdir}" {build_opts}')
+        system(f'{sys.executable} {elbe_exe} control build "{prjdir}" {build_opts}')
     except CommandError:
         print("elbe control build Failed", file=sys.stderr)
         print("Giving up", file=sys.stderr)
@@ -344,7 +344,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     print("Build started, waiting till it finishes")
 
     try:
-        system(f'{elbe_exe} control wait_busy "{prjdir}"')
+        system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
     except CommandError:
         print('elbe control wait_busy Failed', file=sys.stderr)
         print('', file=sys.stderr)
@@ -369,7 +369,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     if opt.build_sdk:
         try:
-            system(f'{elbe_exe} control build_sdk "{prjdir}" {build_opts}')
+            system(f'{sys.executable} {elbe_exe} control build_sdk "{prjdir}" {build_opts}')
         except CommandError:
             print("elbe control build_sdk Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -378,7 +378,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("SDK Build started, waiting till it finishes")
 
         try:
-            system(f'{elbe_exe} control wait_busy "{prjdir}"')
+            system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
@@ -404,14 +404,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("")
 
     try:
-        system(f'{elbe_exe} control dump_file "{prjdir}" validation.txt')
+        system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" validation.txt')
     except CommandError:
         print(
             "Project failed to generate validation.txt",
             file=sys.stderr)
         print("Getting log.txt", file=sys.stderr)
         try:
-            system(f'{elbe_exe} control dump_file "{prjdir}" log.txt')
+            system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
         except CommandError:
 
             print("Failed to dump log.txt", file=sys.stderr)
@@ -423,7 +423,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print("Listing available files:")
         print("")
         try:
-            system(f'{elbe_exe} control get_files "{prjdir}"')
+            system(f'{sys.executable} {elbe_exe} control get_files "{prjdir}"')
         except CommandError:
             print("elbe control get_files Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -440,7 +440,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         try:
             system(
-                f'{elbe_exe} control get_files --output "{opt.outdir}" '
+                f'{sys.executable} {elbe_exe} control get_files --output "{opt.outdir}" '
                 f'"{prjdir}"')
         except CommandError:
             print("elbe control get_files Failed", file=sys.stderr)
@@ -449,7 +449,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         if not opt.keep_files:
             try:
-                system(f'{elbe_exe} control del_project "{prjdir}"')
+                system(f'{sys.executable} {elbe_exe} control del_project "{prjdir}"')
             except CommandError:
                 print("remove project from initvm failed",
                       file=sys.stderr)
@@ -585,12 +585,12 @@ class CreateAction(InitVMAction):
             with PreprocessWrapper(xmlfile, opt) as ppw:
                 if cdrom:
                     system(
-                        f'{elbe_exe} init {init_opts} '
+                        f'{sys.executable} {elbe_exe} init {init_opts} '
                         f'--directory "{initvmdir}" --cdrom "{cdrom}" '
                         f'"{ppw.preproc}"')
                 else:
                     system(
-                        f'{elbe_exe} init {init_opts} '
+                        f'{sys.executable} {elbe_exe} init {init_opts} '
                         f'--directory "{initvmdir}" "{ppw.preproc}"')
 
         except CommandError:
@@ -620,7 +620,7 @@ class CreateAction(InitVMAction):
             sys.exit(20)
 
         try:
-            system(f'{elbe_exe} initvm start')
+            system(f'{sys.executable} {elbe_exe} initvm start')
         except CommandError:
             print("Starting the initvm Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
@@ -656,7 +656,7 @@ class SubmitAction(InitVMAction):
 
     def execute(self, _initvmdir, opt, args):
         try:
-            system(f'{elbe_exe} initvm ensure')
+            system(f'{sys.executable} {elbe_exe} initvm ensure')
         except CommandError:
             print("Starting the initvm Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
