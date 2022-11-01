@@ -63,14 +63,12 @@ def run_command(argv):
         if opt.target:
             try:
                 with project.targetfs:
-                    system("/usr/sbin/chroot %s %s" %
-                           (project.targetpath, cmd))
+                    system(f"/usr/sbin/chroot {project.targetpath} {cmd}")
             except CommandError as e:
                 print(repr(e))
         else:
             try:
                 with project.buildenv:
-                    system("/usr/sbin/chroot %s %s" %
-                           (project.chrootpath, cmd))
+                    system(f"/usr/sbin/chroot {project.chrootpath} {cmd}")
             except CommandError as e:
                 print(repr(e))
