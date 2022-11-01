@@ -19,32 +19,17 @@ def pbuilder_write_config(builddir, xml, noccache):
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
-    fp.write('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False))
-    fp.write(
-        'OTHERMIRROR="deb http://127.0.0.1:8080%s/repo %s main"\n' %
-        (builddir, distname))
-    fp.write('BASETGZ="%s"\n' % os.path.join(builddir, 'pbuilder', 'base.tgz'))
-
-    fp.write('DISTRIBUTION="%s"\n' % distname)
-
-    fp.write(
-        'BUILDRESULT="%s"\n' %
-        os.path.join(
-            builddir,
-            'pbuilder',
-            'result'))
-    fp.write(
-        'APTCACHE="%s"\n' %
-        os.path.join(
-            builddir,
-            'pbuilder',
-            'aptcache'))
-    fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder', 'hooks.d'))
+    fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False)}"\n')
+    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:8080{builddir}/repo {distname} main"\n')
+    fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder", "base.tgz")}"\n')
+    fp.write(f'DISTRIBUTION="{distname}"\n')
+    fp.write(f'BUILDRESULT="{os.path.join(builddir, "pbuilder", "result")}"\n')
+    fp.write(f'APTCACHE="{os.path.join(builddir, "pbuilder", "aptcache")}"\n')
+    fp.write(f'HOOKDIR="{os.path.join(builddir, "pbuilder", "hooks.d")}"\n')
     fp.write('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
 
     if xml.text("project/arch", key="arch") != 'amd64':
-        fp.write('ARCHITECTURE="%s"\n' %
-                 xml.text("project/buildimage/arch", key="arch"))
+        fp.write(f'ARCHITECTURE="{xml.text("project/buildimage/arch", key="arch")}"\n')
         fp.write('DEBOOTSTRAP="qemu-debootstrap"\n')
         fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" '
                  '"--arch=$ARCHITECTURE")\n')
@@ -61,11 +46,10 @@ def pbuilder_write_config(builddir, xml, noccache):
              '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
 
     if not noccache:
-        fp.write('export CCACHE_DIR="%s/ccache"\n' % builddir)
+        fp.write(f'export CCACHE_DIR="{builddir}/ccache"\n')
         fp.write('export PATH="/usr/lib/ccache:${PATH}"\n')
         fp.write('EXTRAPACKAGES=ccache\n')
-        fp.write('export CCACHE_CONFIGPATH="%s/ccache/ccache.conf"\n' %
-                 builddir)
+        fp.write(f'export CCACHE_CONFIGPATH="{builddir}/ccache/ccache.conf"\n')
         fp.write('BINDMOUNTS="${CCACHE_DIR}"')
     fp.close()
 
@@ -76,18 +60,15 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
-    fp.write('MIRRORSITE="%s"\n' % xml.get_primary_mirror(False, hostsysroot=True))
-    fp.write('OTHERMIRROR="deb http://127.0.0.1:8080%s/repo %s main"\n' %
-             (builddir, distname))
-    fp.write('BASETGZ="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'base.tgz'))
+    fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False, hostsysroot=True)}"\n')
+    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:8080{builddir}/repo {distname} main"\n')
+    fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder_cross", "base.tgz")}"\n')
 
-    fp.write('DISTRIBUTION="%s"\n' % distname)
+    fp.write(f'DISTRIBUTION="{distname}"\n')
 
-    fp.write('BUILDRESULT="%s"\n' %
-             os.path.join(builddir, 'pbuilder_cross', 'result'))
-    fp.write('APTCACHE="%s"\n' %
-             os.path.join(builddir, 'pbuilder_cross','aptcache'))
-    fp.write('HOOKDIR="%s"\n' % os.path.join(builddir, 'pbuilder_cross', 'hooks.d'))
+    fp.write(f'BUILDRESULT="{os.path.join(builddir, "pbuilder_cross", "result")}"\n')
+    fp.write(f'APTCACHE="{os.path.join(builddir, "pbuilder_cross", "aptcache")}"\n')
+    fp.write(f'HOOKDIR="{os.path.join(builddir, "pbuilder_cross", "hooks.d")}"\n')
     fp.write('PBUILDERSATISFYDEPENDSCMD='
              '/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n')
 
@@ -98,11 +79,10 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
     if not noccache:
-        fp.write('export CCACHE_DIR="%s/ccache"\n' % builddir)
+        fp.write(f'export CCACHE_DIR="{builddir}/ccache"\n')
         fp.write('export PATH="/usr/lib/ccache:${PATH}"\n')
         fp.write('EXTRAPACKAGES=ccache\n')
-        fp.write('export CCACHE_CONFIGPATH="%s/ccache/ccache.conf"\n' %
-                 builddir)
+        fp.write(f'export CCACHE_CONFIGPATH="{builddir}/ccache/ccache.conf"\n')
         fp.write('BINDMOUNTS="${CCACHE_DIR}"')
     fp.close()
 
@@ -154,7 +134,7 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
     with open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w") as f:
 
-        local_http = "deb http://127.0.0.1:8080%s/repo %s main\n" % (builddir, xml.prj.text("suite"))
+        local_http = f"deb http://127.0.0.1:8080{builddir}/repo {xml.prj.text('suite')} main\n"
         mirrors = xml.create_apt_sources_list(hostsysroot=cross)
         mirrors = local_http + mirrors
 
@@ -164,10 +144,10 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
         # cat reads from stdin (-) and redirect (>) to
         # /etc/apt/sources.list
-        f.write("cat -> /etc/apt/sources.list <<EOF\n%s\nEOF\n" % mirrors)
+        f.write(f"cat -> /etc/apt/sources.list <<EOF\n{mirrors}\nEOF\n")
 
         for key in keys:
-            f.write("cat << EOF | apt-key add -\n%s\nEOF\n" % key)
+            f.write(f"cat << EOF | apt-key add -\n{key}\nEOF\n")
 
         f.write("apt-get update\n")
 
