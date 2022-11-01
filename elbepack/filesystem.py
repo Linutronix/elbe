@@ -358,7 +358,7 @@ class Filesystem:
         flist = glob(self.fname(path))
         for i in flist:
             if not i.startswith(self.path):
-                raise IOError("Broken glob '%s'" % path)
+                raise IOError(f"Broken glob '{path}'")
 
         return flist
 
@@ -418,8 +418,7 @@ class Filesystem:
         elif self.isfile(newdir):
             raise OSError(
                 "a file with the same name as the desired "
-                "dir, '%s', already exists. in RFS %s" %
-                (newdir, self.path))
+                f"dir, '{newdir}', already exists. in RFS {self.path}")
         else:
             self.mkdir(newdir)
             self.chmod(newdir, mode)
@@ -497,7 +496,7 @@ class TmpdirFilesystem (Filesystem):
     def __del__(self):
         # dont delete files in debug mode
         if self.debug:
-            print('leaving TmpdirFilesystem in "%s"' % self.path)
+            print(f'leaving TmpdirFilesystem in "{self.path}"')
         else:
             self.delete()
 
@@ -519,13 +518,12 @@ class ImgMountFilesystem(Filesystem):
         self.dev = dev
 
     def __enter__(self):
-        cmd = 'mount "%s" "%s"' % (self.dev, self.path)
-        do(cmd)
+        do(f'mount "{self.dev}" "{self.path}"')
 
         return self
 
     def __exit__(self, typ, value, traceback):
-        do('umount "%s"' % self.path)
+        do(f'umount "{self.path}"')
 
 
 hostfs = Filesystem('/')
