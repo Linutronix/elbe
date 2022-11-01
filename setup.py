@@ -73,4 +73,10 @@ setup(name='elbe',
                     'schema': ["dbsfed.xsd", "xml.xsd"]},
       scripts=['elbe'],
       cmdclass={"install": my_install},
+      install_requires=["lxml",
+                        "Mako",
+                        "passlib",
+                        "pycdlib",
+                        "python-debian",
+                        "suds-community"]
       )
