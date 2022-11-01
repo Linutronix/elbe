@@ -13,7 +13,7 @@ class TestPylint(ElbeTestCase):
 
     pylint_opts = ["--reports=n",
                    "--score=n",
-                   "--rcfile=%s" % os.path.join(elbe_dir, ".pylintrc"),
+                   f"--rcfile={os.path.join(elbe_dir, '.pylintrc')}",
                    "--disable=W0511,R0801"]
 
     failure_set = {os.path.join(pack_dir, path)
@@ -47,18 +47,19 @@ class TestPylint(ElbeTestCase):
 
     @staticmethod
     def params():
-        files = system_out("find %s -iname '*.py'" % pack_dir).splitlines()
+        files = system_out(f"find {pack_dir} -iname '*.py'").splitlines()
         files.append(elbe_exe)
         return files
 
     def test_lint(self):
 
         try:
-            system("pylint3 %s %s" % (' '.join(self.pylint_opts), self.param))
+            system(f"pylint3 {' '.join(self.pylint_opts)} {self.param}")
         except ElbeTestException as e:
             if self.param in TestPylint.failure_set:
                 self.stdout = e.out
-                self.skipTest("Pylint test for %s is expected to fail" % (self.param))
+                self.skipTest(
+                    f"Pylint test for {self.param} is expected to fail")
             else:
                 raise
         else:
