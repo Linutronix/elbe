@@ -74,7 +74,7 @@ def run_command(argv):
                 print(i)
             sys.exit(20)
 
-    print("checking %s" % args[0])
+    print(f"checking {args[0]}")
 
     xml = ElbeXML(args[0])
 
@@ -104,11 +104,11 @@ def run_command(argv):
         if not v.has_pkg(xp.name):
             if not xp.is_auto_installed:
                 print(
-                    "%s does not exist in cache but is specified in pkg-list" %
-                    xp.name)
+                    f"{xp.name} does not exist in cache but is specified in "
+                    "pkg-list")
                 errors += 1
             else:
-                print("%s is no more required" % xp.name)
+                print(f"{xp.name} is no more required")
                 required_updates += 1
 
             continue
@@ -116,7 +116,7 @@ def run_command(argv):
         if v.marked_install(xp.name):
             cver = v.get_candidate_ver(xp.name)
             if xp.installed_version != cver:
-                print("%s: %s != %s" % (xp.name, xp.installed_version, cver))
+                print(f"{xp.name}: {xp.installed_version} != {cver}")
                 required_updates += 1
 
                 if opt.changelogs:
@@ -127,16 +127,16 @@ def run_command(argv):
     sys.stdout.flush()
     sys.stderr.flush()
     if errors > 0:
-        print("%d Errors occured, xml files needs fixing" % errors)
+        print(f"{errors} Errors occured, xml files needs fixing")
         if opt.script:
-            system("%s ERRORS %s" % (opt.script, args[0]), allow_fail=True)
+            system(f"{opt.script} ERRORS {args[0]}", allow_fail=True)
     elif required_updates > 0:
-        print("%d updates required" % required_updates)
+        print(f"{required_updates} updates required")
 
         if opt.changelogs:
             build_changelog_xml(v, opt, update_packages)
 
         if opt.script:
-            system("%s UPDATE %s" % (opt.script, args[0]), allow_fail=True)
+            system(f"{opt.script} UPDATE {args[0]}", allow_fail=True)
     else:
         print("No Updates available")
