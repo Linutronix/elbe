@@ -56,7 +56,7 @@ class license_dep5_to_spdx (dict):
                 return self.perpackage_mapping[pkgname][l]
         if l in self:
             return self[l]
-        errors.append('no mapping for "%s" for pkg "%s"' % (l, pkgname))
+        errors.append(f'no mapping for "{l}" for pkg "{pkgname}"')
         return None
 
     def map_license_string(self, pkgname, l_string, errors):
@@ -68,9 +68,9 @@ class license_dep5_to_spdx (dict):
                 mapped_lic = self.map_one_license(
                     pkgname, with_split[0], errors)
                 if mapped_lic is None:
-                    mapped_lic = u"UNKNOWN_MAPPING(%s)" % with_split[0]
+                    mapped_lic = f"UNKNOWN_MAPPING({with_split[0]})"
                 if len(with_split) == 2:
-                    ands.append(mapped_lic + u" WITH " + with_split[1])
+                    ands.append(f"{mapped_lic} WITH {with_split[1]}")
                 else:
                     ands.append(mapped_lic)
             ors.append(' AND '.join(ands))
@@ -97,10 +97,9 @@ def scan_nomos(license_text):
     with NamedTemporaryFile() as f:
         f.write(license_text.encode('utf-8'))
         nomos_out = system_out(
-            '/usr/share/fossology/nomos/agent/nomos "%s"' %
-            f.name)
+            f'/usr/share/fossology/nomos/agent/nomos "{f.name}"')
 
-    expected_start = 'File %s contains license(s) ' % os.path.basename(f.name)
+    expected_start = f'File {os.path.basename(f.name)} contains license(s) '
     if not nomos_out.startswith(expected_start):
         raise Exception("nomos output error")
 
@@ -187,8 +186,7 @@ def run_command(argv):
             hr += 1
             if not mapping.have_override(pkg_name):
                 errors.append(
-                    'no override for heuristics based package "%s"' %
-                    pkg_name)
+                    f'no override for heuristics based package "{pkg_name}"')
 
         if mapping.have_override(pkg_name):
             pkg.append('have_override')
@@ -210,14 +208,12 @@ def run_command(argv):
                 ll.et.text = l
 
             if not mapped_lics:
-                errors.append(
-                    'empty mapped licenses in package "%s"' %
-                    pkg_name)
+                errors.append(f'empty mapped licenses in package "{pkg_name}"')
         else:
             if not mapping.have_override(pkg_name):
                 errors.append(
-                    'no debian_licenses and no override in package "%s"' %
-                    pkg_name)
+                    'no debian_licenses and no override in package '
+                    f'"{pkg_name}"')
             else:
                 sp = pkg.ensure_child('spdx_licenses')
                 sp.clear()
@@ -247,37 +243,35 @@ def run_command(argv):
 
     if opt.tagvalue is not None:
         with io.open(opt.tagvalue, "wt", encoding='utf-8') as fp:
-            fp.write(u'SPDXVersion: SPDX-1.2\n')
-            fp.write(u'DataLicense: CC0-1.0\n')
-            fp.write(u'\n')
-            fp.write(u'## Creation Information\n')
-            fp.write(u'Creator: Tool: elbe-%s\n' % elbe_version)
-            fp.write(u'Created: %s\n' % datetime.now().isoformat())
-            fp.write(u'\n')
-            fp.write(u'\n')
-            fp.write(u'## Package Information\n')
-            fp.write(u'\n')
+            fp.write('SPDXVersion: SPDX-1.2\n')
+            fp.write('DataLicense: CC0-1.0\n')
+            fp.write('\n')
+            fp.write('## Creation Information\n')
+            fp.write(f'Creator: Tool: elbe-{elbe_version}\n')
+            fp.write(f'Created: {datetime.now().isoformat()}\n')
+            fp.write('\n')
+            fp.write('\n')
+            fp.write('## Package Information\n')
+            fp.write('\n')
 
             for pkg in tree.root:
-                fp.write(u'## Package %s\n' % pkg.et.attrib['name'])
-                fp.write(u'PackageName: %s\n' % pkg.et.attrib['name'])
-                fp.write(u'PackageDownloadLocation: NOASSERTION\n')
+                fp.write(f"## Package {pkg.et.attrib['name']}\n")
+                fp.write(f"PackageName: {pkg.et.attrib['name']}\n")
+                fp.write('PackageDownloadLocation: NOASSERTION\n')
                 if pkg.has('have_override'):
                     fp.write(
-                        u'PackageLicenseConcluded: %s\n' %
-                        license_string(pkg))
-                    fp.write(u'PackageLicenseDeclared: NOASSERTION\n')
+                        f'PackageLicenseConcluded: {license_string(pkg)}\n')
+                    fp.write('PackageLicenseDeclared: NOASSERTION\n')
 
                 else:
-                    fp.write(u'PackageLicenseConcluded: NOASSERTION\n')
+                    fp.write('PackageLicenseConcluded: NOASSERTION\n')
                     fp.write(
-                        u'PackageLicenseDeclared: %s\n' %
-                        license_string(pkg))
-                fp.write(u'PackageLicenseInfoFromFiles: NOASSERTION\n')
-                fp.write(u'\n')
+                        f'PackageLicenseDeclared: {license_string(pkg)}\n')
+                fp.write('PackageLicenseInfoFromFiles: NOASSERTION\n')
+                fp.write('\n')
 
     if opt.output is not None:
         tree.write(opt.output)
 
     print("statistics:")
-    print("num:%d mr:%d hr:%d err_pkg:%d" % (num_pkg, mr, hr, err_pkg))
+    print(f"num:{num_pkg} mr:{mr} hr:{hr} err_pkg:{err_pkg}")
