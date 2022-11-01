@@ -86,14 +86,12 @@ def run_command(argv):
 
     for p in fix_pkgs:
         if p not in gen_pkgs:
-            print("+<pkg>%s</pkg>" % p)
+            print(f"+<pkg>{p}</pkg>")
 
     for p in gen_pkgs:
         if p not in fix_pkgs.keys():
-            print("-<pkg>%s</pkg>" % p)
+            print(f"-<pkg>{p}</pkg>")
 
     for p in fix_pkgs:
         if p in gen_pkgs.keys() and fix_pkgs[p] != gen_pkgs[p]:
-            print(
-                "%s: Version mismatch %s != %s" %
-                (p, fix_pkgs[p], gen_pkgs[p]))
+            print(f"{p}: Version mismatch {fix_pkgs[p]} != {gen_pkgs[p]}")
