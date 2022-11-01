@@ -29,7 +29,8 @@ class TestPreproc(ElbeTestCase):
         except ElbeTestException as e:
             if self.param in TestPreproc.failure_set:
                 self.stdout = e.out
-                self.skipTest("Preproc test for %s is expected to fail" % (self.param))
+                self.skipTest(
+                    f"Preproc test for {self.param} is expected to fail")
             else:
                 raise
         else:
