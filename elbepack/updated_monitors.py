@@ -54,8 +54,7 @@ class USBMonitor (UpdateMonitor):
                     upd_file = os.path.join(dirpath, f)
                     if is_update_file(upd_file):
                         self.status.log(
-                            "Found update file '%s' on USB-Device." %
-                            upd_file)
+                            f"Found update file '{upd_file}' on USB-Device.")
                         handle_update_file(
                             upd_file, self.status, remove=False)
                     if self.status.stop:
