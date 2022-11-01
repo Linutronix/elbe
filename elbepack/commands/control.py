@@ -130,15 +130,17 @@ def run_command(argv):
             retries=int(
                 opt.retries))
     except URLError as e:
-        print("Failed to connect to Soap server %s:%s\n" %
-              (opt.host, opt.port), file=sys.stderr)
+        print(
+            f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
+            file=sys.stderr)
         print("", file=sys.stderr)
         print("Check, wether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(10)
     except socket.error as e:
-        print("Failed to connect to Soap server %s:%s\n" %
-              (opt.host, opt.port), file=sys.stderr)
+        print(
+            f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
+            file=sys.stderr)
         print("", file=sys.stderr)
         print(
             "Check, wether the Soap Server is running inside the initvm",
@@ -146,8 +148,9 @@ def run_command(argv):
         print("try 'elbe initvm attach'", file=sys.stderr)
         sys.exit(10)
     except BadStatusLine as e:
-        print("Failed to connect to Soap server %s:%s\n" %
-              (opt.host, opt.port), file=sys.stderr)
+        print(
+            f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
+            file=sys.stderr)
         print("", file=sys.stderr)
         print("Check, wether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
@@ -156,12 +159,15 @@ def run_command(argv):
     try:
         v_server = control.service.get_version()
         if v_server != elbe_version:
-            print("elbe v%s is used in initvm, this is not compatible with "
-                  "elbe v%s that is used on this machine. Please install same "
-                  "versions of elbe in initvm and on your machine." % (
-                      v_server, elbe_version), file=sys.stderr)
-            print("To install elbe v%s into the initvm use "
-                  "'elbe control --ignore-version-diff install_elbe_version'" % elbe_version)
+            print(
+                f"elbe v{v_server} is used in initvm, this is not compatible "
+                f"with elbe v{elbe_version} that is used on this machine. "
+                "Please install same versions of elbe in initvm and on your "
+                "machine.",
+                file=sys.stderr)
+            print(
+                f"To install elbe v{elbe_version} into the initvm use "
+                "'elbe control --ignore-version-diff install_elbe_version'")
 
             if not opt.ignore_version:
                 sys.exit(20)
