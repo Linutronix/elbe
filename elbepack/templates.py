@@ -89,6 +89,6 @@ def get_initvm_preseed(xml):
 def preseed_to_text(pres):
     retval = ""
     for k, v in pres.items():
-        retval += "%s\t%s\t%s\t%s\n" % (k[0], k[1], v[0], v[1])
+        retval += f"{k[0]}\t{k[1]}\t{v[0]}\t{v[1]}\n"
 
     return retval
