@@ -107,7 +107,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if os.path.exists(update):
         rmtree(update)
 
-    system('mkdir -p %s' % update)
+    system(f"mkdir -p {update}")
 
     if xml_filename:
         repodir = os.path.join(update, "repo")
@@ -126,8 +126,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
         project.xml.xml.write(os.path.join(update, "new.xml"))
-        system("cp %s %s" % (xml_filename,
-                             os.path.join(update, "base.xml")))
+        system(f"cp {xml_filename} {os.path.join(update, 'base.xml')}")
     else:
         system("cp source.xml update/new.xml")
 
@@ -149,7 +148,6 @@ def gen_update_pkg(project, xml_filename, upd_filename,
 
     if project.postbuild_file:
         logging.info("Postbuild script")
-        cmd = ' "%s %s %s"' % (upd_filename,
-                               project.xml.text("project/version"),
-                               project.xml.text("project/name"))
+        cmd = (f' "{upd_filename} {project.xml.text("project/version")} '
+               f'{project.xml.text("project/name")}"')
         do(project.postbuild_file + cmd, allow_fail=True)
