@@ -141,13 +141,11 @@ class VirtApt:
         self.acquire = apt_pkg.Acquire(self)
 
     def add_key(self, key):
-        cmd = 'echo "%s" > %s' % (key, self.basefs.fname("tmp/key.pub"))
-        clean = 'rm -f %s' % self.basefs.fname("tmp/key.pub")
-        system(cmd)
-        system('fakeroot apt-key --keyring "%s" add "%s"' %
-               (self.basefs.fname('/etc/apt/trusted.gpg'),
-                self.basefs.fname("tmp/key.pub")))
-        system(clean)
+        system(f'echo "{key}" > {self.basefs.fname("tmp/key.pub")}')
+        system(f'fakeroot apt-key '
+               f'--keyring "{self.basefs.fname("/etc/apt/trusted.gpg")}" '
+               f'add "{self.basefs.fname("tmp/key.pub")}"')
+        system(f'rm -f {self.basefs.fname("tmp/key.pub")}')
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
@@ -191,13 +189,11 @@ class VirtApt:
             sys.exit(20)
 
         if os.path.exists("/etc/apt/trusted.gpg"):
-            system('cp /etc/apt/trusted.gpg "%s"' % ring_path)
+            system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
 
         trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
         for key in trustkeys:
-            system('cp "/etc/apt/trusted.gpg.d/%s" "%s"' % (
-                   key,
-                   ring_path + '.d'))
+            system(f'cp "/etc/apt/trusted.gpg.d/{key}" "{ring_path}.d"')
 
     def mark_install(self, pkgname):
         self.depcache.mark_install(self.cache[pkgname])
@@ -241,15 +237,14 @@ class VirtApt:
             if d.complete:
                 ret.append(d.destfile)
             else:
-                print('incomplete download "%s"' % d.desc_uri)
-
+                print(f'incomplete download "{d.desc_uri}"')
         return ret
 
     def get_downloaded_pkg(self, pkgname):
         d = self.downloads[pkgname]
 
         if not d.complete:
-            print('incomplete download "%s"' % d.desc_uri)
+            print(f'incomplete download "{d.desc_uri}"')
             raise KeyError
 
         return d.destfile
@@ -279,7 +274,7 @@ class VirtApt:
                             pkg = self.cache[x[2].parent_pkg.name]
                             c = d.get_candidate_ver(pkg)
             if not c:
-                print("couldnt get candidate: %s" % pkg)
+                print(f"couldnt get candidate: {pkg}")
             else:
                 for p in getdeps(c):
                     if [y for y in deps if y[0] == p]:
