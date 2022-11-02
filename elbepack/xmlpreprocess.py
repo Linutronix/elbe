@@ -40,19 +40,19 @@ class XMLPreprocessError(Exception):
 def preprocess_pgp_key(xml):
 
     for key in xml.iterfind('.//mirror/url-list/url/key'):
-        print("[WARN] <key>%s</key> is deprecated. "
-              "You should use raw-key instead." % key.text)
+        print(f"[WARN] <key>{key.text}</key> is deprecated. "
+              "You should use raw-key instead.")
         try:
             keyurl = key.text.strip().replace('LOCALMACHINE', 'localhost')
             myKey = urlopen(keyurl).read().decode('ascii')
             key.tag = "raw-key"
-            key.text = "\n%s\n" % myKey
+            key.text = f"\n{myKey}\n"
         except HTTPError:
-            raise XMLPreprocessError("Invalid PGP Key URL in <key> tag: %s" %
-                                     keyurl)
+            raise XMLPreprocessError(
+                f"Invalid PGP Key URL in <key> tag: {keyurl}")
         except URLError:
-            raise XMLPreprocessError("Problem with PGP Key URL in <key> tag: %s" %
-                                     keyurl)
+            raise XMLPreprocessError(
+                f"Problem with PGP Key URL in <key> tag: {keyurl}")
 
 def preprocess_bootstrap(xml):
     "Replaces a maybe existing debootstrapvariant element with debootstrap"
@@ -91,20 +91,20 @@ def preprocess_iso_option(xml):
         if valid is True:
             continue
 
-        tag = '<%s>%s</%s>' % (opt.tag, opt.text, opt.tag)
+        tag = f'<{opt.tag}>{opt.text}</{opt.tag}>'
 
         if valid is False:
-            violation = "Invalid ISO option %s" % tag
+            violation = f"Invalid ISO option {tag}"
         elif isinstance(valid, int):
-            violation = ("Option %s will be truncated by %d characters" %
-                         (tag, valid))
+            violation = (
+                f"Option {tag} will be truncated by {valid} characters")
         elif isinstance(valid, str):
-            violation = ("Character '%c' (%d) in ISO option %s "
-                         "violated ISO-9660" %
-                         (valid, ord(valid[0]), tag))
+            violation = (
+                f"Character '{valid}' ({ord(valid[0])}) in ISO option {tag} "
+                "violated ISO-9660")
         if strict:
             raise XMLPreprocessError(violation)
-        print("[WARN] %s" % violation)
+        print(f"[WARN] {violation}")
 
 
 def preprocess_initvm_ports(xml):
@@ -139,8 +139,7 @@ def preprocess_proxy_add(xml, opt_proxy=None):
 
         # If there's already a proxy and we're trying to override it
         if current_proxy is not None:
-            print('[WARN] Trying to override proxy "%s"!' %
-                  current_proxy.text)
+            print(f'[WARN] Trying to override proxy "{current_proxy.text}"!')
             continue
 
         # Add proxy to mirror
@@ -265,7 +264,7 @@ def preprocess_passwd(xml):
             xml.find(".//action/login").text = passwd.text
 
         passwd.tag = "passwd_hashed"
-        passwd.text = '%s' % sha512_crypt.hash(passwd.text)
+        passwd.text = f'{sha512_crypt.hash(passwd.text)}'
 
     # migrate user passwords
     for adduser in xml.iterfind(".//target/finetuning/adduser[@passwd]"):
@@ -388,15 +387,13 @@ class PreprocessWrapper:
         self.options = ""
 
         if opt.variant:
-            self.options += ' --variants "%s"' % opt.variant
+            self.options += f' --variants "{opt.variant}"'
 
     def __enter__(self):
         self.outxml = NamedTemporaryFile(prefix='elbe', suffix='xml')
 
-        cmd = '%s preprocess %s -o %s %s' % (elbe_exe,
-                                             self.options,
-                                             self.outxml.name,
-                                             self.xmlfile)
+        cmd = (f'{elbe_exe} preprocess {self.options} '
+               f'-o {self.outxml.name} {self.xmlfile}')
         ret, _, err = command_out_stderr(cmd)
         if ret != 0:
             print("elbe preprocess failed.", file=sys.stderr)
