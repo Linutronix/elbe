@@ -101,7 +101,7 @@ class RepoBase:
                 # negative numbers represent the volumes counted from last
                 # (-1: last, -2: second last, ...)
                 volume_no = self.volume_count + 1 + volume
-            volname = os.path.join(self.vol_path, "vol%02d" % volume_no)
+            volname = os.path.join(self.vol_path, f"vol{volume_no:02}")
             return Filesystem(volname)
 
         return Filesystem(self.vol_path)
@@ -164,18 +164,16 @@ class RepoBase:
         export_key(self.keyid, self.fs.fname("/repo.pub"))
 
         if need_update:
-            cmd = 'reprepro --export=force --basedir "%s" update' % self.fs.path
+            cmd = f'reprepro --export=force --basedir "{self.fs.path}" update'
             do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
         else:
             for att in self.attrs:
-                cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
-                                                             att.codename)
-                do(cmd, env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
+                do(f'reprepro --basedir "{self.fs.path}" export {att.codename}',
+                   env_add={'GNUPGHOME': "/var/cache/elbe/gnupg"})
 
     def finalize(self):
         for att in self.attrs:
-            cmd = 'reprepro --basedir "%s" export %s' % (self.fs.path,
-                                                         att.codename)
+            cmd = f'reprepro --basedir "{self.fs.path}" export {att.codename}'
             do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, components=None, prio=None):
@@ -184,10 +182,9 @@ class RepoBase:
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        cmd        = 'reprepro %s includedeb %s %s'
         global_opt = ["--keepunreferencedfiles",
                       "--export=never",
-                      '--basedir "%s"' % self.fs.path]
+                      f'--basedir "{self.fs.path}"']
 
         if prio is not None:
             global_opt.append(f'--priority {prio}')
@@ -196,11 +193,11 @@ class RepoBase:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append('--component "%s"' % '|'.join(components))
+            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
-        do(cmd % (global_opt, codename, path))
+        do(f"reprepro {global_opt} includedeb {codename} {path}")
 
     def includedeb(self, path, components=None, pkgname=None, force=False, prio=None):
         # pkgname needs only to be specified if force is enabled
@@ -224,12 +221,11 @@ class RepoBase:
 
     def _include(self, path, codename, components=None):
 
-        cmd        = 'reprepro %s include %s %s'
         global_opt = ["--ignore=wrongdistribution",
                       "--ignore=surprisingbinary",
                       "--keepunreferencedfiles",
                       "--export=never",
-                      '--basedir "%s"' % self.fs.path,
+                      f'--basedir "{self.fs.path}"',
                       "--priority normal",
                       "--section misc"]
 
@@ -237,46 +233,44 @@ class RepoBase:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append('--component "%s"' % '|'.join(components))
+            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
-        do(cmd % (global_opt, codename, path))
+        do(f"reprepro {global_opt} include {codename} {path}")
 
     def _removedeb(self, pkgname, codename, components=None):
 
-        cmd        = 'reprepro %s remove %s %s'
-        global_opt = ['--basedir "%s"' % self.fs.path]
+        global_opt = [f'--basedir "{self.fs.path}"']
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append('--component "%s"' % '|'.join(components))
+            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
-        do(cmd % (global_opt, codename, pkgname),
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        do(f"reprepro {global_opt} remove {codename} {pkgname}",
+           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
     def removedeb(self, pkgname, components=None):
         self._removedeb(pkgname, self.repo_attr.codename, components)
 
     def _removesrc(self, srcname, codename, components=None):
 
-        cmd        = 'reprepro %s removesrc %s %s'
-        global_opt = ["--basedir %s" % self.fs.path]
+        global_opt = [f"--basedir {self.fs.path}"]
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append('--component "%s"' % '|'.join(components))
+            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
-        do(cmd % (global_opt, codename, srcname),
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        do(f"reprepro {global_opt} removesrc {codename} {srcname}",
+           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
     def removesrc(self, path, components=None):
         # pylint: disable=undefined-variable
@@ -309,10 +303,9 @@ class RepoBase:
         if self.maxsize and (self.fs.disk_usage("") > self.maxsize):
             self.new_repo_volume()
 
-        cmd        = 'reprepro %s includedsc %s %s'
         global_opt = ["--keepunreferencedfiles",
                       "--export=never",
-                      '--basedir "%s"' % self.fs.path,
+                      f'--basedir "{self.fs.path}"',
                       "--priority normal",
                       "--section misc"]
 
@@ -320,11 +313,11 @@ class RepoBase:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append('--component "%s"' % '|'.join(components))
+            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
-        do(cmd % (global_opt, codename, path))
+        do(f"reprepro {global_opt} includedsc {codename} {path}")
 
     def includedsc(self, path, components=None, force=False):
         try:
@@ -356,15 +349,14 @@ class RepoBase:
         files = []
         if self.volume_count == 0:
             new_path = '"' + self.fs.path + '"'
-            do("genisoimage %s -o %s -J -joliet-long -R %s" %
-               (options, fname, new_path))
+            do(f"genisoimage {options} -o {fname} -J -joliet-long -R {new_path}")
             files.append(fname)
         else:
             for i in self.volume_indexes:
                 volfs = self.get_volume_fs(i)
-                newname = fname + ("%02d" % i)
-                do("genisoimage %s -o %s -J -joliet-long -R %s" %
-                   (options, newname, volfs.path))
+                newname = fname + (f"{i:02}")
+                do(f"genisoimage {options} -o {newname} -J -joliet-long "
+                   f"-R {volfs.path}")
                 files.append(newname)
 
         return files
