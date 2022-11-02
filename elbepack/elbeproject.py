@@ -53,23 +53,23 @@ class IncompatibleArchitectureException(Exception):
     def __init__(self, oldarch, newarch):
         Exception.__init__(
             self,
-            "Cannot change architecture from %s to %s in existing project" %
-            (oldarch, newarch))
+            f"Cannot change architecture from {oldarch} to {newarch} in "
+            "existing project")
 
 
 class AptCacheUpdateError(Exception):
     def __init__(self, e):
-        Exception.__init__(self, "Error Updating rpcaptcache: " + str(e))
+        Exception.__init__(self, f"Error Updating rpcaptcache: {e}")
 
 
 class AptCacheCommitError(Exception):
     def __init__(self, msg=''):
-        Exception.__init__(self, "Error Committing rpcaptcache %s" % msg)
+        Exception.__init__(self, f"Error Committing rpcaptcache {msg}")
 
 
 class UnsupportedSDKException(Exception):
     def __init__(self, triplet):
-        Exception.__init__(self, "SDK for %s currently unsupported" % triplet)
+        Exception.__init__(self, f"SDK for {triplet} currently unsupported")
 
 
 def test_gen_sdk_scripts():
@@ -96,22 +96,18 @@ def gen_sdk_scripts(triplet,
     # generate the setup script
     sdkvalues = {'sdk_arch': 'x86_64',
                  'sdk_gcc_ver': '',
-                 'sdk_path': '/opt/elbe-sdk-%s-%s-%s' % (triplet,
-                                                         prj_name,
-                                                         prj_version),
+                 'sdk_path': f'/opt/elbe-sdk-{triplet}-{prj_name}-{prj_version}',
                  'sdk_ext_path': '~/elbe-sdk',
                  'real_multimach_target_sys': triplet,
                  'target_elfcode': elfcode,
-                 'sdk_title': 'ELBE %s' % prj_name,
+                 'sdk_title': f'ELBE {prj_name}',
                  'sdk_version': prj_version}
 
-    sdkname = 'setup-elbe-sdk-%s-%s-%s.sh' % (triplet, prj_name, prj_version)
+    sdkname = f'setup-elbe-sdk-{triplet}-{prj_name}-{prj_version}.sh'
     write_pack_template(os.path.join(builddir, sdkname),
                         'toolchain-shar-extract.sh.mako',
                         sdkvalues)
-    envname = 'environment-setup-elbe-%s-%s-%s' % (triplet,
-                                                   prj_name,
-                                                   prj_version)
+    envname = f'environment-setup-elbe-{triplet}-{prj_name}-{prj_version}'
     write_pack_template(os.path.join(sdkpath, envname),
                         'environment-setup-elbe.mako',
                         sdkvalues)
@@ -214,17 +210,17 @@ class ElbeProject:
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
         self.sysrootenv = None
-        do('rm -rf %s' % self.sysrootpath)
+        do(f'rm -rf {self.sysrootpath}')
 
         # same for host_sysroot instance recreate it in any case
         self.host_sysrootenv = None
 
     def build_chroottarball(self):
-        do("tar cJf %s/chroot.tar.xz "
+        do(f"tar cJf {self.builddir}/chroot.tar.xz "
            "--exclude=./tmp/*  --exclude=./dev/* "
            "--exclude=./run/*  --exclude=./sys/* "
            "--exclude=./proc/* --exclude=./var/cache/* "
-           "-C %s ." % (self.builddir, self.chrootpath))
+           f"-C {self.chrootpath} .")
 
     def get_sysroot_paths(self):
         triplet = self.xml.defs["triplet"]
@@ -250,8 +246,7 @@ class ElbeProject:
 
     def build_sysroot(self):
 
-        do('rm -rf %s; mkdir "%s"' % (self.sysrootpath,
-                                      self.sysrootpath))
+        do(f'rm -rf {self.sysrootpath}; mkdir "{self.sysrootpath}"')
 
         self.sysrootenv = BuildEnv(self.xml,
                                    self.sysrootpath,
@@ -304,21 +299,22 @@ class ElbeProject:
 
         paths = self.get_sysroot_paths()
 
-        do("rm %s" % sysrootfilelist, allow_fail=True)
+        do(f"rm {sysrootfilelist}", allow_fail=True)
         os.chdir(self.sysrootpath)
         for p in paths:
-            do('find -path "%s" >> %s' % (p, sysrootfilelist))
+            do(f'find -path "{p}" >> {sysrootfilelist}')
         # include /lib if it is a symlink (buster and later)
         if os.path.islink(self.sysrootpath + '/lib'):
             with open(sysrootfilelist, 'a') as filelist_fd:
                 filelist_fd.write('./lib')
 
-        do("tar cfJ %s/sysroot.tar.xz -C %s -T %s" %
-           (self.builddir, self.sysrootpath, sysrootfilelist))
+        do(
+            f"tar cfJ {self.builddir}/sysroot.tar.xz "
+            f"-C {self.sysrootpath} -T {sysrootfilelist}")
 
 
     def build_host_sysroot(self, pkgs, hostsysrootpath):
-        do('rm -rf %s; mkdir "%s"' % (hostsysrootpath, hostsysrootpath))
+        do(f'rm -rf {hostsysrootpath}; mkdir "{hostsysrootpath}"')
 
         self.host_sysrootenv = BuildEnv(self.xml,
                                         hostsysrootpath,
@@ -395,9 +391,8 @@ class ElbeProject:
         # build target sysroot including libs and headers for the target
         self.build_sysroot()
         sdktargetpath = os.path.join(self.sdkpath, "sysroots", "target")
-        do("mkdir -p %s" % sdktargetpath)
-        do("tar xJf %s/sysroot.tar.xz -C %s" %
-           (self.builddir, sdktargetpath))
+        do(f"mkdir -p {sdktargetpath}")
+        do(f"tar xJf {self.builddir}/sysroot.tar.xz -C {sdktargetpath}")
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
 
@@ -411,11 +406,11 @@ class ElbeProject:
                             self.sdkpath)
 
         # create sdk tar and append it to setup script
-        do("cd %s; tar cJf ../sdk.txz ." % self.sdkpath)
-        do("cd %s; rm -rf sdk" % self.builddir)
-        do("cd %s; cat sdk.txz >> %s" % (self.builddir, n))
-        do("cd %s; chmod +x %s" % (self.builddir, n))
-        do("cd %s; rm sdk.txz" % self.builddir)
+        do(f"cd {self.sdkpath}; tar cJf ../sdk.txz .")
+        do(f"cd {self.builddir}; rm -rf sdk")
+        do(f"cd {self.builddir}; cat sdk.txz >> {n}")
+        do(f"cd {self.builddir}; chmod +x {n}")
+        do(f"cd {self.builddir}; rm sdk.txz")
 
     def pbuild(self, p):
         self.pdebuild_init()
@@ -424,14 +419,13 @@ class ElbeProject:
         src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
         logging.info("Retrieve pbuild sources: %s",  src_uri)
         if p.tag == 'git':
-            do("git clone %s %s" % (src_uri, src_path))
+            do(f"git clone {src_uri} {src_path}")
             try:
-                do("cd %s; git reset --hard %s" %
-                   (src_path, p.et.attrib['revision']))
+                do(f"cd {src_path}; git reset --hard {p.et.attrib['revision']}")
             except IndexError:
                 pass
         elif p.tag == 'svn':
-            do("svn co --non-interactive %s %s" % (src_uri, src_path))
+            do(f"svn co --non-interactive {src_uri} {src_path}")
         elif p.tag == 'src-pkg':
             pdb_path = os.path.join(self.builddir, "pdebuilder")
             os.mkdir(pdb_path)
@@ -439,9 +433,9 @@ class ElbeProject:
             apt_args = '--yes -q --download-only'
             if self.xml.prj.has('noauth'):
                 apt_args += ' --allow-unauthenticated'
-            do('cd "%s";apt-get source %s "%s"' % (pdb_path, apt_args, src_uri))
+            do(f'cd "{pdb_path}";apt-get source {apt_args} "{src_uri}"')
 
-            do('dpkg-source -x %s/*.dsc "%s"' % (pdb_path, src_path))
+            do(f'dpkg-source -x {pdb_path}/*.dsc "{src_path}"')
         else:
             logging.info("Unknown pbuild source: %s", p.tag)
 
@@ -590,7 +584,7 @@ class ElbeProject:
         # However, if its not a full_buildenv, we specify clean here,
         # so it gets rebuilt properly.
         if not self.has_full_buildenv():
-            do('mkdir -p "%s"' % self.chrootpath)
+            do(f'mkdir -p "{self.chrootpath}"')
             self.buildenv = BuildEnv(self.xml, self.chrootpath,
                                      build_sources=build_sources, clean=True)
             skip_pkglist = False
@@ -664,13 +658,13 @@ class ElbeProject:
         if self.get_rpcaptcache().is_installed('grub-pc'):
             grub_version = 202
             grub_fw_type.append("bios")
-        if self.get_rpcaptcache().is_installed('grub-efi-%s-bin' % grub_arch):
+        if self.get_rpcaptcache().is_installed(f'grub-efi-{grub_arch}-bin'):
             grub_version = 202
             grub_tgt = "x86_64" if self.arch == "amd64" else self.arch
             grub_fw_type.extend(["efi", grub_tgt + "-efi"])
         if (self.get_rpcaptcache().is_installed('shim-signed') and
                 self.get_rpcaptcache().is_installed(
-                    'grub-efi-%s-signed' % grub_arch)):
+                    f'grub-efi-{grub_arch}-signed')):
             grub_version = 202
             grub_fw_type.append("shimfix")
         if self.get_rpcaptcache().is_installed('grub-legacy'):
@@ -689,9 +683,8 @@ class ElbeProject:
 
         if self.postbuild_file:
             logging.info("Postbuild script")
-            cmd = ' "%s %s %s"' % (self.builddir,
-                                   self.xml.text("project/version"),
-                                   self.xml.text("project/name"))
+            cmd = (f' "{self.builddir} {self.xml.text("project/version")} '
+                   f'{self.xml.text("project/name")}"')
             do(self.postbuild_file + cmd, allow_fail=True)
 
         do_prj_finetuning(self.xml,
@@ -702,26 +695,26 @@ class ElbeProject:
         self.targetfs.pack_images(self.builddir)
 
         if os.path.exists(self.validationpath):
-            system('cat "%s"' % self.validationpath)
+            system(f'cat "{self.validationpath}"')
 
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
-        do('rm -rf "%s"' % os.path.join(self.builddir,
-                                        "pdebuilder"))
+        do(f'rm -rf "{os.path.join(self.builddir, "pdebuilder")}"')
 
         # Remove pbuilder/result directory
-        do('rm -rf "%s" "%s"' % (os.path.join(self.builddir,
-                                         "pbuilder", "result"),
-                                 os.path.join(self.builddir,
-                                         "pbuilder_cross","result")))
+        do(
+            f'rm -rf "{os.path.join(self.builddir, "pbuilder", "result")}" '
+            f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
 
         # Recreate the directories removed
         if os.path.exists(os.path.join(self.builddir, "pbuilder_cross")):
-            do('mkdir -p "%s"' % os.path.join(self.builddir,
-                                              "pbuilder_cross","result"))
+            do(
+                'mkdir -p '
+                f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
         else:
-            do('mkdir -p "%s"' % os.path.join(self.builddir,
-                                              "pbuilder", "result"))
+            do(
+                'mkdir -p '
+                f'"{os.path.join(self.builddir, "pbuilder", "result")}"')
 
     def pdebuild(self, cpuset, profile, cross):
         cross_pbuilderrc = os.path.join(self.builddir, "cross_pbuilderrc")
@@ -740,11 +733,13 @@ class ElbeProject:
         self.pdebuild_init()
 
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
-        do('mkdir -p "%s"' % os.path.join(pbdir))
+        do(f'mkdir -p "{os.path.join(pbdir)}"')
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
-        do('tar xfz "%s" -C "%s"' %
-           (os.path.join(self.builddir, "current_pdebuild.tar.gz"), pbdir))
+        do(
+            'tar xfz '
+            f'"{os.path.join(self.builddir, "current_pdebuild.tar.gz")}" '
+            f'-C "{pbdir}"')
 
         self.pdebuild_build(cpuset, profile, cross)
         self.repo.finalize()
@@ -755,7 +750,7 @@ class ElbeProject:
         # work with multithreading
         #
         if cpuset != -1:
-            cpuset_cmd = 'taskset %d ' % cpuset
+            cpuset_cmd = f'taskset {cpuset} '
         else:
             # cpuset == -1 means empty cpuset_cmd
             cpuset_cmd = ''
@@ -773,41 +768,39 @@ class ElbeProject:
         src_pkg_name = open(os.path.join(pdebuilder_current, "debian", "changelog"), "r").readline().split()[0]
 
         if "3.0 (quilt)" in formatfile and not self.orig_files:
-            do("cd %s; origtargz --download-only --tar-only" % pdebuilder_current)
-            self.orig_files = glob.glob("%s/../%s*.orig.*" % (pdebuilder_current, src_pkg_name))
+            do(f"cd {pdebuilder_current}; origtargz --download-only --tar-only")
+            self.orig_files = glob.glob(
+                f"{pdebuilder_current}/../{src_pkg_name}*.orig.*")
         else:
             try:
                 for orig_fname in self.orig_files:
                     ofname = os.path.join(self.builddir, orig_fname)
-                    do('mv "%s" "%s"' % (ofname,
-                                         os.path.join(self.builddir,
-                                                      "pdebuilder")))
+                    do(
+                        f'mv "{ofname}" '
+                        f'"{os.path.join(self.builddir, "pdebuilder")}"')
             finally:
                 self.orig_fname = None
                 self.orig_files = []
 
         try:
             if cross:
-                do('cd "%s"; dpkg-source -b .; %s '
-                   'pbuilder build --host-arch %s --configfile "%s" '
-                   '--basetgz "%s" --buildresult "%s" '
-                   '../*.dsc' % (
-                       os.path.join(self.builddir, "pdebuilder", "current"),
-                       cpuset_cmd, self.arch,
-                       os.path.join(self.builddir, "cross_pbuilderrc"),
-                       os.path.join(self.builddir, "pbuilder_cross", "base.tgz"),
-                       os.path.join(self.builddir, "pbuilder_cross", "result")),
+                do('cd '
+                   f'"{os.path.join(self.builddir, "pdebuilder", "current")}";'
+                   f'dpkg-source -b .; {cpuset_cmd} '
+                   f'pbuilder build --host-arch {self.arch} '
+                   f'--configfile "{os.path.join(self.builddir, "cross_pbuilderrc")}" '
+                   f'--basetgz "{os.path.join(self.builddir, "pbuilder_cross", "base.tgz")}" '
+                   f'--buildresult "{os.path.join(self.builddir, "pbuilder_cross", "result")}" '
+                   '../*.dsc',
                    env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
                             'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
                 pbuilderdir = "pbuilder_cross"
             else:
-                do('cd "%s"; %s pdebuild --debbuildopts "-j%s -sa" '
-                   '--configfile "%s" '
-                   '--use-pdebuild-internal --buildresult "%s"' % (
-                       os.path.join(self.builddir, "pdebuilder", "current"),
-                       cpuset_cmd, cfg['pbuilder_jobs'],
-                       os.path.join(self.builddir, "pbuilderrc"),
-                       os.path.join(self.builddir, "pbuilder", "result")),
+                do(f'cd "{os.path.join(self.builddir, "pdebuilder", "current")}"; '
+                   f'{cpuset_cmd} pdebuild --debbuildopts "-j{cfg["pbuilder_jobs"]} -sa" '
+                   f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
+                   '--use-pdebuild-internal '
+                   f'--buildresult "{os.path.join(self.builddir, "pbuilder", "result")}"',
                    env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
                             'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
                 pbuilderdir = "pbuilder"
@@ -831,48 +824,44 @@ class ElbeProject:
             self.orig_files = []
 
     def update_pbuilder(self):
-        do('pbuilder --update --configfile "%s" --aptconfdir "%s"' %
-           (os.path.join(self.builddir, "pbuilderrc"),
-            os.path.join(self.builddir, "aptconfdir")))
+        do('pbuilder --update '
+           f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
+           f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}"')
 
     def create_pbuilder(self, cross, noccache, ccachesize):
         # Remove old pbuilder directory, if it exists
-        do('rm -rf "%s" "%s"' % (os.path.join(self.builddir, "pbuilder"),
-                                 os.path.join(self.builddir, "pbuilder_cross")))
+        do(f'rm -rf "{os.path.join(self.builddir, "pbuilder")}" '
+           f'"{os.path.join(self.builddir, "pbuilder_cross")}"')
 
         # make hooks.d and pbuilder directory
         if cross:
-            do('mkdir -p "%s"' %
-               os.path.join(self.builddir, "pbuilder_cross", "hooks.d"))
-            do('mkdir -p "%s"' %
-               os.path.join(self.builddir, "pbuilder_cross", "aptcache"))
+            do(f'mkdir -p "{os.path.join(self.builddir, "pbuilder_cross", "hooks.d")}"')
+            do(f'mkdir -p "{os.path.join(self.builddir, "pbuilder_cross", "aptcache")}"')
         else:
-            do('mkdir -p "%s"' %
-               os.path.join(self.builddir, "pbuilder", "hooks.d"))
-            do('mkdir -p "%s"' %
-               os.path.join(self.builddir, "pbuilder", "aptcache"))
-        do('mkdir -p "%s"' %
-           os.path.join(self.builddir, "aptconfdir", "apt.conf.d"))
+            do(f'mkdir -p "{os.path.join(self.builddir, "pbuilder", "hooks.d")}"')
+            do(f'mkdir -p "{os.path.join(self.builddir, "pbuilder", "aptcache")}"')
+
+        do(f'mkdir -p "{os.path.join(self.builddir, "aptconfdir", "apt.conf.d")}"')
 
         if not noccache:
             ccache_path = os.path.join(self.builddir, "ccache")
-            do('mkdir -p "%s"' % ccache_path)
-            do('chmod a+w "%s"' % ccache_path)
+            do(f'mkdir -p "{ccache_path}"')
+            do(f'chmod a+w "{ccache_path}"')
             ccache_fp = open(os.path.join(ccache_path, "ccache.conf"), "w")
-            ccache_fp.write("max_size = %s" % ccachesize)
+            ccache_fp.write(f"max_size = {ccachesize}")
             ccache_fp.close()
 
         # write config files
         if cross:
             pbuilder_write_cross_config(self.builddir, self.xml, noccache)
             pbuilder_write_repo_hook(self.builddir, self.xml, cross)
-            do('chmod -R 755 "%s"' %
-               os.path.join(self.builddir, "pbuilder_cross", "hooks.d"))
+            do('chmod -R 755 '
+               f'"{os.path.join(self.builddir, "pbuilder_cross", "hooks.d")}"')
         else:
             pbuilder_write_config(self.builddir, self.xml, noccache)
             pbuilder_write_repo_hook(self.builddir, self.xml, cross)
-            do('chmod -R 755 "%s"' %
-               os.path.join(self.builddir, "pbuilder", "hooks.d"))
+            do(f'chmod -R 755 '
+               f'"{os.path.join(self.builddir, "pbuilder", "hooks.d")}"')
         pbuilder_write_apt_conf(self.builddir, self.xml)
 
         # Run pbuilder --create
@@ -880,19 +869,16 @@ class ElbeProject:
         if self.xml.prj.has('noauth'):
             no_check_gpg = "--debootstrapopts --no-check-gpg"
         if cross:
-            do('pbuilder --create --buildplace "%s" '
-               '--configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git,gnupg" %s;' %
-               (os.path.join(self.builddir, "pbuilder_cross"),
-                os.path.join(self.builddir, "cross_pbuilderrc"),
-                os.path.join(self.builddir, "aptconfdir"),
-                no_check_gpg))
+            do('pbuilder --create '
+               f'--buildplace "{os.path.join(self.builddir, "pbuilder_cross")}" '
+               f'--configfile "{os.path.join(self.builddir, "cross_pbuilderrc")}" '
+               f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
+               f'--debootstrapopts --include="git,gnupg" {no_check_gpg};')
         else:
-            do('pbuilder --create --configfile "%s" --aptconfdir "%s" '
-               '--debootstrapopts --include="git,gnupg" %s' %
-               (os.path.join(self.builddir, "pbuilderrc"),
-                os.path.join(self.builddir, "aptconfdir"),
-                no_check_gpg))
+            do('pbuilder --create '
+               f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
+               f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
+               f'--debootstrapopts --include="git,gnupg" {no_check_gpg}')
 
     def sync_xml_to_disk(self):
         try:
@@ -962,7 +948,7 @@ class ElbeProject:
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
         self.sysrootenv = None
-        do('rm -rf %s' % self.sysrootpath)
+        do(f'rm -rf {self.sysrootpath}')
 
         self.xml = newxml
 
@@ -1011,13 +997,13 @@ class ElbeProject:
 
         # to workaround debian bug no. 872543
         if self.xml.prj.has('noauth'):
-            inrelease = glob.glob("%s/var/lib/apt/lists/*InRelease" % self.chrootpath)
-            release_gpg = glob.glob("%s/var/lib/apt/lists/*.gpg" % self.chrootpath)
+            inrelease = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*InRelease" )
+            release_gpg = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*.gpg")
             if inrelease:
-                system("rm %s;" % inrelease[0])
+                system(f"rm {inrelease[0]};")
                 logging.info("Removed InRelease file!")
             if release_gpg:
-                system("rm %s;" % release_gpg[0])
+                system(f"rm {release_gpg[0]};")
                 logging.info("Removed Release.gpg file!")
 
         with target:
@@ -1091,10 +1077,8 @@ class ElbeProject:
 
     def gen_licenses(self, rfs, env, pkg_list):
 
-        lic_txt_fname = os.path.join(self.builddir,
-                                     "licence-%s.txt" % rfs)
-        lic_xml_fname = os.path.join(self.builddir,
-                                     "licence-%s.xml" % rfs)
+        lic_txt_fname = os.path.join(self.builddir, f"licence-{rfs}.txt")
+        lic_xml_fname = os.path.join(self.builddir, f"licence-{rfs}.xml")
         pkg_list.sort()
 
         with io.open(lic_txt_fname, 'w+',
