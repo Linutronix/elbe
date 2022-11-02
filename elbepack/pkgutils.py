@@ -23,21 +23,21 @@ def get_sources_list(prj):
 
     slist = ""
     if prj.has("mirror/primary_host"):
-        mirror = "%s://%s/%s" % (prj.text("mirror/primary_proto"),
-                                 prj.text("mirror/primary_host").replace(
-            "LOCALMACHINE", "10.0.2.2"),
-            prj.text("mirror/primary_path"))
-        slist += "deb %s %s main\n" % (mirror, suite)
-        slist += "deb-src %s %s main\n" % (mirror, suite)
+        protocl = f"{prj.text('mirror/primary_proto')}"
+        host = f"{prj.text('mirror/primary_host').replace('LOCALMACHINE', '10.0.2.2')}"
+        path = f"{prj.text('mirror/primary_path')}"
+        mirror = f"{protocl}://{host}/{path}"
+        slist += f"deb {mirror} {suite} main\n"
+        slist += f"deb-src {mirror} {suite} main\n"
 
     if prj.node("mirror/url-list"):
         for n in prj.node("mirror/url-list"):
             if n.has("binary"):
                 tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2")
-                slist += "deb %s\n" % tmp.strip()
+                slist += f"deb {tmp.strip()}\n"
             if n.has("source"):
                 tmp = n.text("source").replace("LOCALMACHINE", "10.0.2.2")
-                slist += "deb-src %s\n" % tmp.strip()
+                slist += f"deb-src {tmp.strip()}\n"
 
     return slist
 
@@ -69,8 +69,8 @@ def get_dsc_size(fname):
 
 class ChangelogNeedsDependency(Exception):
     def __init__(self, pkgname):
-        Exception.__init__(self,
-                           'Changelog extraction depends on "%s"' % (pkgname))
+        Exception.__init__(
+            self, f'Changelog extraction depends on "{pkgname}"')
         self.pkgname = pkgname
 
 
@@ -84,25 +84,25 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     pkgname = m.group('name')
     pkgarch = m.group('arch')
 
-    print('pkg: %s, arch: %s' % (pkgname, pkgarch))
+    print(f"pkg: {pkgname}, arch: {pkgarch}")
 
     fs = TmpdirFilesystem()
 
     if extra_pkg:
         print('with extra ' + extra_pkg)
-        system('dpkg -x "%s" "%s"' % (extra_pkg, fs.fname('/')))
+        system(f'dpkg -x "{extra_pkg}" "{fs.fname("/")}"')
 
-    system('dpkg -x "%s" "%s"' % (fname, fs.fname('/')))
+    system(f'dpkg -x "{fname}" "{fs.fname("/")}"')
 
-    dch_dir = '/usr/share/doc/%s' % pkgname
+    dch_dir = f"/usr/share/doc/{pkgname}"
 
     if fs.islink(dch_dir) and not extra_pkg:
         l = fs.readlink(dch_dir)
         print(dch_dir, l)
         raise ChangelogNeedsDependency(l)
 
-    dch_bin = '/usr/share/doc/%s/changelog.Debian.%s.gz' % (pkgname, pkgarch)
-    dch_src = '/usr/share/doc/%s/changelog.Debian.gz' % pkgname
+    dch_bin = f"/usr/share/doc/{pkgname}/changelog.Debian.{pkgarch}.gz"
+    dch_src = f"/usr/share/doc/{pkgname}/changelog.Debian.gz"
 
     ret = ""
 
