@@ -99,28 +99,23 @@ class BuildEnv:
     def cdrom_umount(self):
         if self.xml.prj.has("mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
-            do('umount "%s"' % cdrompath)
-            do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg" %
-               self.path)
-            do("rm -f %s/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg" %
-               self.path)
+            do(f'umount "{cdrompath}"')
+            do(f"rm -f {self.path}/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg")
+            do(f"rm -f {self.path}/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg")
 
     def cdrom_mount(self):
         if self.xml.has("project/mirror/cdrom"):
             cdrompath = self.rfs.fname("cdrom")
-            do('mkdir -p "%s"' % cdrompath)
-            do('mount -o loop "%s" "%s"' %
-               (self.xml.text("project/mirror/cdrom"), cdrompath))
+            do(f'mkdir -p "{cdrompath}"')
+            do(f'mount -o loop "{self.xml.text("project/mirror/cdrom")}" "cdrompath"')
 
     def __enter__(self):
         if os.path.exists(self.path + '/../repo/pool'):
-            do("mv %s/../repo %s" % (self.path, self.path))
-            do('echo "deb copy:///repo %s main" > '
-               '%s/etc/apt/sources.list.d/local.list' %
-               (self.xml.text("project/suite"), self.path))
-            do('echo "deb-src copy:///repo %s main" >> '
-               '%s/etc/apt/sources.list.d/local.list' %
-               (self.xml.text("project/suite"), self.path))
+            do(f"mv {self.path}/../repo {self.path}")
+            do(f'echo "deb copy:///repo {self.xml.text("project/suite")} main" > '
+               f'{self.path}/etc/apt/sources.list.d/local.list')
+            do(f'echo "deb-src copy:///repo {self.xml.text("project/suite")} main" >> '
+               f'{self.path}/etc/apt/sources.list.d/local.list')
 
         self.cdrom_mount()
         self.rfs.__enter__()
@@ -146,9 +141,9 @@ class BuildEnv:
         self.rfs.__exit__(typ, value, traceback)
         self.cdrom_umount()
         if os.path.exists(self.path + '/repo'):
-            do("mv %s/repo %s/../" % (self.path, self.path))
-            do("rm %s/etc/apt/sources.list.d/local.list" % self.path)
-            do("rm %s/etc/apt/trusted.gpg.d/elbe-localrepo.gpg" % self.path)
+            do(f"mv {self.path}/repo {self.path}/../")
+            do(f"rm {self.path}/etc/apt/sources.list.d/local.list")
+            do(f"rm {self.path}/etc/apt/trusted.gpg.d/elbe-localrepo.gpg")
 
     def debootstrap(self, arch="default"):
 
@@ -189,38 +184,36 @@ class BuildEnv:
 
         # Should we use a special bootstrap variant?
         if self.xml.has("target/debootstrap/variant"):
-            strapcmd += " --variant=%s" % self.xml.text("target/debootstrap/variant")
+            strapcmd += f" --variant={self.xml.text('target/debootstrap/variant')}"
 
         # Should we include additional packages into bootstrap?
         includepkgs = "gnupg"  # These are the packages which are included in any case
         if self.xml.has("target/debootstrap/include"):
-            includepkgs += ", %s" % self.xml.text("target/debootstrap/include")
-        strapcmd += " --include=\"%s\"" % includepkgs
+            includepkgs += f", {self.xml.text('target/debootstrap/include')}"
+        strapcmd += f" --include=\"{includepkgs}\""
 
         # Should we exclude some packages from bootstrap?
         if self.xml.has("target/debootstrap/exclude"):
-            strapcmd += " --exclude=\"%s\"" % self.xml.text("target/debootstrap/exclude")
+            strapcmd += f" --exclude=\"{self.xml.text('target/debootstrap/exclude')}\""
 
         keyring = ''
 
         if not self.xml.is_cross(host_arch):
             if self.xml.has("project/noauth"):
-                cmd = '%s --no-check-gpg --arch=%s "%s" "%s" "%s"' % (
-                    strapcmd, arch, suite, self.rfs.path, primary_mirror)
+                cmd = (f'{strapcmd} --no-check-gpg --arch={arch} '
+                       f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
             else:
                 if self.xml.has("project/mirror/cdrom"):
-                    keyring = ' --keyring="%s"' % (
-                        self.rfs.fname('/elbe.keyring'))
+                    keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
 
-                cmd = '%s --arch=%s %s "%s" "%s" "%s"' % (
-                    strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
+                cmd = (f'{strapcmd} --arch={arch} '
+                       f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
 
             try:
                 self.cdrom_mount()
                 if keyring:
-                    do('apt-key --keyring "%s" add "%s/targetrepo/repo.pub"' % (
-                        self.rfs.fname('/elbe.keyring'),
-                        self.rfs.fname("cdrom")))
+                    do(f'apt-key --keyring "{self.rfs.fname("/elbe.keyring")}" '
+                       f'add "{self.rfs.fname("cdrom")}/targetrepo/repo.pub"')
                 do(cmd)
             except CommandError:
                 cleanup = True
@@ -233,22 +226,20 @@ class BuildEnv:
             return
 
         if self.xml.has("project/noauth"):
-            cmd = '%s --no-check-gpg --foreign --arch=%s "%s" "%s" "%s"' % (
-                strapcmd, arch, suite, self.rfs.path, primary_mirror)
+            cmd = (f'{strapcmd} --no-check-gpg --foreign --arch={arch} '
+                   f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
         else:
             if self.xml.has("project/mirror/cdrom"):
-                keyring = ' --keyring="%s"' % (
-                    self.rfs.fname('/elbe.keyring'))
+                keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
 
-            cmd = '%s --foreign --arch=%s %s "%s" "%s" "%s"' % (
-                strapcmd, arch, keyring, suite, self.rfs.path, primary_mirror)
+            cmd = (f'{strapcmd} --foreign --arch={arch} '
+                   f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
 
         try:
             self.cdrom_mount()
             if keyring:
-                do('apt-key --keyring "%s" add "%s/targetrepo/repo.pub"' % (
-                    self.rfs.fname('/elbe.keyring'),
-                    self.rfs.fname("cdrom")))
+                do(f'apt-key --keyring "{self.rfs.fname("/elbe.keyring")}" '
+                   f'add "{self.rfs.fname("cdrom")}/targetrepo/repo.pub"')
             do(cmd)
 
             ui = "/usr/share/elbe/qemu-elbe/" + self.xml.defs["userinterpr"]
@@ -256,7 +247,7 @@ class BuildEnv:
             if not os.path.exists(ui):
                 ui = "/usr/bin/" + self.xml.defs["userinterpr"]
 
-            do('cp %s %s' % (ui, self.rfs.fname("usr/bin")))
+            do(f'cp {ui} {self.rfs.fname("usr/bin")}')
 
             if self.xml.has("project/noauth"):
                 chroot(self.rfs.path,
@@ -284,12 +275,10 @@ class BuildEnv:
         self.rfs.touch_file("/state/status")
 
     def add_key(self, key):
-        cmd = 'echo "%s" > %s' % (key, self.rfs.fname("tmp/key.pub"))
-        clean = 'rm -f %s' % self.rfs.fname("tmp/key.pub")
-        do(cmd)
+        do(f'echo "{key}" > {self.rfs.fname("tmp/key.pub")}')
         with self.rfs:
             chroot(self.rfs.path, 'apt-key add /tmp/key.pub')
-        do(clean)
+        do(f'rm -f {self.rfs.fname("tmp/key.pub")}')
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
@@ -319,34 +308,33 @@ class BuildEnv:
         preseed_txt = preseed_to_text(preseed)
         self.rfs.write_file("var/cache/elbe/preseed.txt", 0o644, preseed_txt)
         with self.rfs:
-            cmd = ('debconf-set-selections < %s' %
-                   self.rfs.fname("var/cache/elbe/preseed.txt"))
+            cmd = (f'debconf-set-selections < {self.rfs.fname("var/cache/elbe/preseed.txt")}')
             chroot(self.rfs.path, cmd)
 
 
     def seed_etc(self):
         passwd = self.xml.text("target/passwd_hashed")
-        stdin = "root:%s" % (passwd)
+        stdin = f"root:{passwd}"
         chroot(self.rfs.path, "chpasswd --encrypted", stdin=stdin)
 
         hostname = self.xml.text("target/hostname")
         fqdn = hostname
         if self.xml.has("target/domain"):
-            fqdn = ("%s.%s" % (hostname, self.xml.text("target/domain")))
+            fqdn = (f"{hostname}.{self.xml.text('target/domain')}")
 
         chroot(self.rfs.path,
                """/bin/sh -c 'echo "127.0.0.1 localhost" >> /etc/hosts'""")
 
         chroot(self.rfs.path,
-               """/bin/sh -c 'echo "127.0.1.1 %s %s elbe-daemon" >> """
-               """/etc/hosts'""" % (fqdn,hostname))
+               f"""/bin/sh -c 'echo "127.0.1.1 {fqdn} {hostname} elbe-daemon" >> """
+               """/etc/hosts'""")
 
         chroot(self.rfs.path,
-               """/bin/sh -c 'echo "%s" > /etc/hostname'""" % hostname)
+               f"""/bin/sh -c 'echo "{hostname}" > /etc/hostname'""")
 
         chroot(self.rfs.path,
-               """/bin/sh -c 'echo "%s" > """
-               """/etc/mailname'""" % (fqdn))
+               f"""/bin/sh -c 'echo "{fqdn}" > """
+               """/etc/mailname'""")
 
         if self.xml.has("target/console"):
             serial_con, serial_baud = self.xml.text(
@@ -354,8 +342,8 @@ class BuildEnv:
             if serial_baud:
                 chroot(self.rfs.path,
                        """/bin/sh -c '[ -f /etc/inittab ] && """
-                       """echo "T0:23:respawn:/sbin/getty -L %s %s vt100" >> """
-                       """/etc/inittab'""" % (serial_con, serial_baud),
+                       f"""echo "T0:23:respawn:/sbin/getty -L {serial_con} {serial_baud} vt100" >> """
+                       """/etc/inittab'""",
                        allow_fail=True)
 
                 chroot(self.rfs.path,
@@ -363,7 +351,7 @@ class BuildEnv:
                        """'[ -f /lib/systemd/system/serial-getty@.service ] && """
                        """ln -s /lib/systemd/system/serial-getty@.service """
                        """/etc/systemd/system/getty.target.wants/"""
-                       """serial-getty@%s.service'""" % serial_con,
+                       f"""serial-getty@{serial_con}.service'""",
                        allow_fail=True)
             else:
                 logging.error("parsing console tag failed, needs to be of "
