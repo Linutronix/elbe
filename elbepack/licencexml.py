@@ -78,7 +78,7 @@ class copyright_xml:
         except (NotMachineReadableError, MachineReadableFormatError) as E:
             logging.warning("Error in copyright of package '%s': %s", pkg_name, E)
         except Warning as W:
-            logging.warning("Warning in copyrigh of package '%s' : %s", pkg_name, W)
+            logging.warning("Warning in copyright of package '%s' : %s", pkg_name, W)
         else:
 
             xmlpkg.append('machinereadable')
