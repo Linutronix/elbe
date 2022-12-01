@@ -200,9 +200,15 @@ class ElbeFilesystem(Filesystem):
             copyright_file = os.path.join('/usr/share/doc', pkg, 'copyright')
             copyright_fname = self.fname(copyright_file)
             if os.path.isfile(copyright_fname):
-                with io.open(copyright_fname, "r",
-                             encoding='utf-8', errors='replace') as lic:
-                    lic_text = lic.read()
+                try:
+                    with io.open(copyright_fname, "r",
+                                encoding='utf-8', errors='replace') as lic:
+                        lic_text = lic.read()
+                except IOError as e:
+                    logging.exception("Error while processing license file %s",
+                                    copyright_fname)
+                    lic_text = u"Error while processing license file %s: '%s'" % (
+                        copyright_file, e.strerror)
             else:
                 logging.warning("License file does not exist, skipping %s",
                                   copyright_fname)
