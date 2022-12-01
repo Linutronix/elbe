@@ -199,15 +199,14 @@ class ElbeFilesystem(Filesystem):
         for pkg in pkglist:
             copyright_file = os.path.join('/usr/share/doc', pkg, 'copyright')
             copyright_fname = self.fname(copyright_file)
-            try:
+            if os.path.isfile(copyright_fname):
                 with io.open(copyright_fname, "r",
                              encoding='utf-8', errors='replace') as lic:
                     lic_text = lic.read()
-            except IOError as e:
-                logging.exception("Error while processing license file %s",
+            else:
+                logging.warning("License file does not exist, skipping %s",
                                   copyright_fname)
-                lic_text = u"Error while processing license file %s: '%s'" % (
-                    copyright_file, e.strerror)
+                continue
             # in Python2 'pkg' is a binary string whereas in Python3 it is a
             # unicode string. So make sure that pkg ends up as a unicode string
             # in both Python2 and Python3.
