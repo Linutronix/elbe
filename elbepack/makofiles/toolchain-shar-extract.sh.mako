@@ -282,7 +282,7 @@ fi
 
 # fix dynamic loader paths in all ELF SDK binaries
 native_sysroot=$target_sdk_dir/sysroots/host
-dl_path=$($SUDO_EXEC find -H $native_sysroot/lib -name "ld-linux*")
+dl_path=$($SUDO_EXEC find -H $native_sysroot/lib -name "ld-linux-x86-64*")
 if [ "$dl_path" = "" ] ; then
         echo "SDK could not be set up. Relocate script unable to find ld-linux.so. Abort!"
         exit 1
