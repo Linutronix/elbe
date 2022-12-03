@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Linutronix GmbH <info@linutronix.de>
 Build-Depends: debhelper (>= 10),
   dh-python,
+  bash-completion,
   python3,
   python3-setuptools,
   python3-lxml,
