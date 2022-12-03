@@ -16,7 +16,8 @@ Build-Depends: debhelper (>= 10),
   source-highlight,
   git,
   xml-core,
-  pandoc
+  pandoc,
+  bash-completion
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
 Homepage: http://elbe-rfs.org

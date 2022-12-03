@@ -1,0 +1,203 @@
+#/usr/bin/env bash
+#
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# Copyright (c) 2022 Kaspar Giger <kg@kgmw.ch>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# returns the available elbe commands. If elbe is installed together with grep and
+# sed the commands are extracted by asking the program. Otherwise a hardcoded (and
+# potentially outdated!) list is returned.
+_elbe_commands()
+{
+    if [ -x "$(command -v ${COMP_WORDS[0]})" ] && [ -x "$(command -v grep)" ] && [ -x "$(command -v sed)" ]; then
+        # elbe tool is installed, get a fresh list of available commands by running the
+        # command and grepping the output
+        echo $(${COMP_WORDS[0]} | grep " \* " | sed 's/^\s*\*\s*//;')
+    else
+        # Fallback solution (elbe, grep, or sed not available): currently available
+        # list (as of Nov 2022)
+        echo 'add check_updates chg_archive control debianize diff get_archive
+              init initvm parselicence pbuilder pin_versions pkgdiff preprocess
+              prjrepo remove_sign repodir setsel show sign validate xsdtoasciidoc'
+    fi
+}
+
+# returns the command line options for a given program, by running the program (including
+# the provided command line arguments!) and parsing the output. E.g. typically this would
+# be called like "foo --help".
+_get_cmd_options()
+{
+    echo $($1 2>&1 | grep -E '^[[:space:]]+\-' \
+                   | sed 's/, --/\n--/;s/^\s*//;' \
+                   | sed -E 's/^(\-+[^ =]*)(=?).*/\1\2/;')
+}
+
+# returns the list of subcommands for an elbe command together with its command line options.
+# This is used e.g. for the command "control" which has some subcommands. Additionally there
+# exist command line options for "control". Both are returned.
+# In case elbe, grep, or sed is not installed then the input parameter is simply returned
+# (fallback solution).
+_elbe_subcmd_with_opt()
+{
+    if [ -x "$(command -v ${COMP_WORDS[0]})" ] && [ -x "$(command -v grep)" ] && [ -x "$(command -v sed)" ]; then
+        # elbe tool is installed, get a fresh list of available commands by running the
+        # command and grepping the output
+        commands=$(${COMP_WORDS[0]} ${COMP_WORDS[1]} 2>&1 | grep -E '^[[:space:]]' | sed 's/^\s*//;')
+        options=$(_get_cmd_options "${COMP_WORDS[0]} ${COMP_WORDS[1]} --help")
+        echo "${commands} ${options}"
+    else
+        # Fallback solution (elbe, grep, or sed not available): list the defaults passed
+        # as function argument
+        echo $1
+    fi
+}
+
+# returns the command line options for a given elbe command. In case the list of commands cannot
+# be obtained by running the elbe program, the input parameter is simply returned (fallback
+# solution).
+_elbe_cmd_with_options()
+{
+    if [ -x "$(command -v ${COMP_WORDS[0]})" ] && [ -x "$(command -v grep)" ] && [ -x "$(command -v sed)" ]; then
+        # elbe tool is installed, get a fresh list of available commands by running the
+        # command and grepping the output
+        # explanation of the the grep and sed commands:
+        #  - grep... extracts lines starting with spaces followed by a dash (-)
+        #  - 1st sed... splits short and long options on separate lines (e.g. -h, --help)
+        #  - 2nd sed... extracts the name of the option (incl. optional =)
+        echo $(_get_cmd_options "${COMP_WORDS[0]} ${COMP_WORDS[1]}")
+    else
+        # Fallback solution (elbe, grep, or sed not available): list the defaults passed
+        # as function argument
+        echo $1
+    fi
+}
+
+# bash tab completion for program "elbe"
+_cmd_args_completion_elbe()
+{
+    local cur
+    _get_comp_words_by_ref -n = cur
+
+    if [[ "${cur}" == *= ]]; then
+        # if the last word typed ends with "=" then it's possible that the user
+        # might want to add a path after the "=", therefore offer him some file
+        # options. However, the current solution is very basic but rather suboptimal
+        # as the file doesn't nicely complete. No idea how to fix this though.
+        # Nevertheless, it's better than not offering any option at all
+        COMPREPLY=($(compgen -A file))
+        return 0
+    fi
+
+    # below, the basic approach is to run the elbe program and obtain the list of
+    # command line options and commands by. In some setups this might not be possible.
+    # In this case a fallback solution is implemented by hard-coding the avilable
+    # options/commands as currently present (as of Dec 2022). In order to keep the
+    # fallback solution updated, keep an eye on updating the list every now and then.
+
+    local cmd_opt=""
+    local file_arg=false
+    local disable_space=false
+    if [ "${#COMP_WORDS[@]}" -eq 2 ]; then
+        cmd_opt=$(_elbe_commands)
+    elif [ "${#COMP_WORDS[@]}" -ge 3 ]; then
+        local subcommand=${COMP_WORDS[1]}
+        case ${subcommand} in
+            pkgdiff|remove_sign|setsel|sign|validate)
+                file_arg=true
+                cmd_opt=" "
+                ;;
+            debianize)
+                cmd_opt=" "
+                ;;
+            control)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_subcmd_with_opt 'rm_log list_projects list_users add_user create_project reset_project \
+                                                 del_project set_xml build build_sysroot build_sdk build_cdroms get_file \
+                                                 build_chroot_tarball dump_file get_files wait_busy set_cdrom set_orig \
+                                                 shutdown_initvm set_pdebuild build_pbuilder update_pbuilder \
+                                                 install_elbe_version')
+                ;;
+            check_updates)
+                file_arg=true
+                disable_space=true
+                disable_space=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help -s --script= --skip-validation -c --changelog=')
+                ;;
+            chg_archive)
+                file_arg=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help --keep-attributes')
+                ;;
+            init)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help --skip-validation --directory= --cdrom= --buildtype= \
+                                                  --debug --devel --nesting --skip-build-bin --skip-build-sources')
+                ;;
+            initvm)
+                cmd_opt=$(_elbe_subcmd_with_opt 'attach create ensure start stop submit sync')
+                ;;
+            parselicence)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help -s --script= --skip-validation -c --changelog=')
+                ;;
+            pbuilder)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_subcmd_with_opt 'build create --cpuset= --cross --help --origfile= -p \
+                                                 --project= --skip-download --variants= --xmlfile= --ccache-size= \
+                                                 -h --no-ccache --output= --profile= --proxy= -v --writeproject=')
+                ;;
+            pin_versions)
+                file_arg=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help --skip-validation')
+                ;;
+            preprocess)
+                file_arg=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help -o --output= -v --variants= -p --proxy=')
+                ;;
+            prjrepo)
+                disable_space=true
+                cmd_opt=$(_elbe_subcmd_with_opt 'list_packages download upload_pkg -h --help --host= \
+                                                 --port= --pass= --user= --retries= --debug --ignore-version-diff')
+                ;;
+            repodir)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help -o --output=')
+                ;;
+            show)
+                file_arg=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help --verbose --skip-validation')
+                ;;
+            xsdtoasciidoc)
+                file_arg=true
+                disable_space=true
+                cmd_opt=$(_elbe_cmd_with_options '-h --help --output=')
+                ;;
+            *)
+                ;;
+        esac
+    fi
+
+    if [ "${disable_space}" = true ]; then
+        # we need the nospace option below to avoid the space after the "--abc=" options
+        compopt -o nospace
+    fi
+
+    local compgen_arg=""
+    if [ "${file_arg}" = true ]; then
+        compgen_arg="${compgen_arg} -A file"
+    fi
+
+    if [ "${cmd_opt}" ]; then
+        COMPREPLY=($(compgen ${compgen_arg} -W "${cmd_opt}" -- ${cur}))
+    else
+        compopt -o default
+        COMPREPLY=()
+    fi
+}
+
+complete -F _cmd_args_completion_elbe elbe
