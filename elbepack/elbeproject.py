@@ -873,12 +873,12 @@ class ElbeProject:
                f'--buildplace "{os.path.join(self.builddir, "pbuilder_cross")}" '
                f'--configfile "{os.path.join(self.builddir, "cross_pbuilderrc")}" '
                f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
-               f'--debootstrapopts --include="git,gnupg" {no_check_gpg};')
+               f'--debootstrapopts --include="git,gpg" {no_check_gpg};')
         else:
             do('pbuilder --create '
                f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
                f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
-               f'--debootstrapopts --include="git,gnupg" {no_check_gpg}')
+               f'--debootstrapopts --include="git,gpg" {no_check_gpg}')
 
     def sync_xml_to_disk(self):
         try:
