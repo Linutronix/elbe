@@ -1,3 +1,31 @@
+elbe (14.7) unstable; urgency=medium
+
+  * Team upload
+  * schema: losetup: Add attributes for documentation
+  * schema: copy_from_partition: Add attributes
+  * schema: copy_to_partition, set_partition_type: Add attributes
+  * schema: addgroup: Add attributes for missing documentation
+  * schema: img_convert: Add documentation for attributes
+  * schema: set_packer: Add documentation for attributes
+  * schema: file: Add documentation for attributes
+  * schema: rm: Add missing documentation for attributes
+  * schema: dbsfed.xsd: unit-tests: Fix typo
+  * schema: adduser: Add missing documentation for attributes
+  * schema: extract_partition: Add documentation for attributes
+  * schema: mknod: Add documentation for attributes
+  * schema: partition-command: Add documentation for attributes
+  * schema: cpmv: Add documentation for attributes
+  * schema: git_src, svn_src: Add missing attributes
+  * schema: test-suite: Add missing attributes
+  * Makefile: Remove old, pointless Makefile
+  * docs: Remove elbe show output of examples
+  * Skip appending a pkg's copyright if it does not exist
+  * Only find x86_64 version of ld-config
+  * Add basic support for bash completion for elbe
+  * Hints to the interpretation of path within binaryblob added
+
+ -- Bastian Germann <bage@linutronix.de>  Wed, 07 Dec 2022 14:45:44 +0100
+
 elbe (14.6.1) unstable; urgency=medium
 
   * Team upload
