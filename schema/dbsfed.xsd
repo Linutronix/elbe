@@ -1434,7 +1434,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="binaryblob">
     <annotation>
       <documentation>
-        a binary that is dd'ed to the specified offset
+        a binary that is dd'ed to the specified offset. If path starts with a /, the binary blob will be interpreted as relative to target root.
+        Otherwise, the path will be interpreted as being relative to the corresponding elbe project.
       </documentation>
     </annotation>
     <simpleContent>
