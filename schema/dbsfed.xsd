@@ -1556,10 +1556,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
-      <element name="tune2fs" type="rfs:string" minOccurs="0" maxOccurs="1">
+      <element name="fs-finetuning" type="rfs:fs-finetuning" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            options passed to the tune2fs command
+            apply the given commands to the filesystem
           </documentation>
         </annotation>
       </element>
@@ -1687,6 +1687,47 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </sequence>
     <attribute ref="xml:base"/>
   </complexType>
+
+  <complexType name="fs-finetuning">
+    <annotation>
+      <documentation>
+         container for filesystem finetuning commands; these commands are executed directly after
+         the filesystem was created.
+      </documentation>
+    </annotation>
+    <sequence>
+      <group ref="rfs:fs-action" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute ref="xml:base"/>
+  </complexType>
+
+  <group name="fs-action">
+    <annotation>
+      <documentation>
+        definition of filesystem finetuning commands
+      </documentation>
+    </annotation>
+    <choice>
+      <element name="device-command" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command in /bin/sh. The command is being executed before the
+            filesystem is mounted. The placeholder {device} is pointing to the device containing the
+            filesystem.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="path-command" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command in /bin/sh. The command is being executed after the
+            filesystem is mounted. The placeholder {path} is pointing to the path where the
+            filesystem is mounted to.
+          </documentation>
+        </annotation>
+      </element>
+    </choice>
+  </group>
 
   <complexType name="package">
     <annotation>

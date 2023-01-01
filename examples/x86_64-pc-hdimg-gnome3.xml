@@ -47,7 +47,9 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<mountpoint>/</mountpoint>
 				<fs>
 					<type>ext4</type>
-					<tune2fs>-i 0</tune2fs>
+					<fs-finetuning>
+						<device-command>tune2fs -i 0 {device}</device-command>
+					</fs-finetuning>
 				</fs>
 			</bylabel>
 			<bylabel>
@@ -55,7 +57,9 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<mountpoint>/home</mountpoint>
 				<fs>
 					<type>ext4</type>
-					<tune2fs>-i 0</tune2fs>
+					<fs-finetuning>
+						<device-command>tune2fs -i 0 {device}</device-command>
+					</fs-finetuning>
 				</fs>
 			</bylabel>
 			<bydev>

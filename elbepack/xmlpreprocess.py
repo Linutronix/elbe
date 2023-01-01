@@ -19,7 +19,7 @@ from urllib.request import urlopen
 from passlib.hash import sha512_crypt
 
 from lxml import etree
-from lxml.etree import XMLParser, Element
+from lxml.etree import XMLParser, Element, SubElement
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
@@ -78,6 +78,23 @@ def preprocess_bootstrap(xml):
         bootstrap.append(bootstrap_include)
 
     old_node.getparent().replace(old_node, bootstrap)
+
+def preprocess_tune2fs(xml):
+    "Replaces all maybe existing tune2fs elements with fs-finetuning command"
+
+    old_nodes = xml.findall(".//tune2fs")
+    for old_node in old_nodes:
+        print("[WARN] <tune2fs> is deprecated. Use <fs-finetuning> instead.")
+
+        fs_node = old_node.getparent()
+        finetuning_node = fs_node.find("fs-finetuning")
+        if finetuning_node is None:
+            finetuning_node = SubElement(fs_node, "fs-finetuning")
+
+        command = SubElement(finetuning_node, "device-command")
+        command.text = f"tune2fs {old_node.text} {{device}}"
+
+        fs_node.remove(old_node)
 
 def preprocess_iso_option(xml):
 
@@ -361,6 +378,9 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None):
 
         # Replace old debootstrapvariant with debootstrap
         preprocess_bootstrap(xml)
+
+        # Replace old tune2fs with fs-finetuning command
+        preprocess_tune2fs(xml)
 
         preprocess_iso_option(xml)
 

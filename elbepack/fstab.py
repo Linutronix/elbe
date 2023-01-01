@@ -129,7 +129,14 @@ class fstabentry(hdpart):
             self.fstype = entry.text("fs/type")
             self.mkfsopt = entry.text("fs/mkfs", default="")
             self.passno = entry.text("fs/passno", default="0")
-            self.tune = entry.text("fs/tune2fs", default=None)
+
+            self.fs_device_commands = []
+            self.fs_path_commands = []
+            for command in entry.node("fs/fs-finetuning") or []:
+                if command.tag == "device-command":
+                    self.fs_device_commands.append(command.text("."))
+                elif command.tag == "path-command":
+                    self.fs_path_commands.append(command.text("."))
 
         self.id = str(fsid)
 
@@ -153,7 +160,3 @@ class fstabentry(hdpart):
         if self.fstype == "vfat":
             return "-n " + self.label
         return ""
-
-    def tuning(self, loopdev):
-        if self.tune:
-            do(f'tune2fs {self.tune} {loopdev}')

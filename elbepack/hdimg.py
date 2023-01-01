@@ -10,6 +10,8 @@
 import logging
 import os
 
+from pathlib import Path
+
 import parted
 import _ped
 
@@ -359,22 +361,36 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     try:
         do(
-            f'mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} '
-            f'{loopdev}')
-        do(f'mount {loopdev} {os.path.join(target, "imagemnt")}')
+            f"mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} "
+            f"{loopdev}")
+
+        _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
+
+        mount_path = Path(target, "imagemnt")
+        do(f"mount {loopdev} {mount_path}")
+
+        _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
 
         try:
             do(
                 f'cp -a "{os.path.join(target, "filesystems", entry.id)}/." '
-                f'"{os.path.join(target, "imagemnt")}/"',
-               allow_fail=True)
+                f'"{mount_path}/"',
+                allow_fail=True)
         finally:
-            do(f'umount {loopdev}')
-        entry.tuning(loopdev)
+            do(f"umount {loopdev}")
     finally:
-        do(f'losetup -d {loopdev}')
+        do(f"losetup -d {loopdev}")
 
     return ppart
+
+def _execute_fs_commands(commands, replacements):
+    for command in commands:
+        try:
+            do(command.format(**replacements))
+        except KeyError as E:
+            logging.error('Filesystem finetuning command failed: invalid key "%s"', E)
+        except Exception as E:
+            logging.error('Filesystem finetuning command failed: %s', E)
 
 def create_binary(disk, part, ppart, target):
 
