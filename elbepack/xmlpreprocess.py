@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 import os
 import re
 import sys
@@ -264,13 +265,19 @@ def preprocess_passwd(xml):
             xml.find(".//action/login").text = passwd.text
 
         passwd.tag = "passwd_hashed"
-        passwd.text = f'{sha512_crypt.hash(passwd.text)}'
+        passwd.text = f'{sha512_crypt.hash(passwd.text, rounds=5000)}'
+        logging.warning("Please replace <passwd> with <passwd_hashed>. "
+                        "The generated sha512crypt hash only applies 5000 rounds for "
+                        "backwards compatibility reasons. This is considered insecure nowadays.")
 
     # migrate user passwords
     for adduser in xml.iterfind(".//target/finetuning/adduser[@passwd]"):
         passwd = adduser.attrib['passwd']
-        adduser.attrib['passwd_hashed'] = sha512_crypt.hash(passwd)
+        adduser.attrib['passwd_hashed'] = sha512_crypt.hash(passwd, rounds=5000)
         del adduser.attrib['passwd']
+        logging.warning("Please replace adduser's passwd attribute with passwd_hashed. "
+                        "The generated sha512crypt hash only applies 5000 rounds for "
+                        "backwards compatibility reasons. This is considered insecure nowadays.")
 
 def xmlpreprocess(fname, output, variants=None, proxy=None):
 
