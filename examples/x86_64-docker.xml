@@ -27,20 +27,21 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			</options>
 			<url-list>
 				<url>
-					<binary>http://security.debian.org buster/updates main</binary>
-					<source>http://security.debian.org buster/updates main</source>
+					<binary>http://security.debian.org bullseye-security main</binary>
+					<source>http://security.debian.org bullseye-security main</source>
 					<options>
 						<option>check-date=no</option>
 					</options>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bullseye</suite>
 	</project>
 	<target>
 		<hostname>debianmin</hostname>
 		<domain>docker</domain>
-		<passwd>docker</passwd>
+		<!-- passwd: docker -->
+		<passwd_hashed>$y$j9T$vxYbnNmUgGYkHejPoa.SZ.$i3FJSJM92B2qu44v2DYmuf7OAWRRAUTxN.0j00grS15</passwd_hashed>
 		<debootstrap>
 			<variant>minbase</variant>
 		</debootstrap>
