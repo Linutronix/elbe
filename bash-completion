@@ -14,7 +14,7 @@ _elbe_commands()
     else
         # Fallback solution (elbe, grep, or sed not available): currently available
         # list (as of Nov 2022)
-        echo 'add check_updates chg_archive control debianize diff get_archive
+        echo 'add check_updates chg_archive control diff get_archive
               init initvm parselicence pbuilder pin_versions pkgdiff preprocess
               prjrepo remove_sign repodir setsel show sign validate xsdtoasciidoc'
     fi
@@ -102,9 +102,6 @@ _cmd_args_completion_elbe()
         case ${subcommand} in
             pkgdiff|remove_sign|setsel|sign|validate)
                 file_arg=true
-                cmd_opt=" "
-                ;;
-            debianize)
                 cmd_opt=" "
                 ;;
             control)
