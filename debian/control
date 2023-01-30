@@ -69,20 +69,6 @@ Description: common files
  Common files for ELBE (embedded Linux build environment). These
  python-modules are shared by several elbe subcommands.
 
-Package: python3-elbe-debianize
-Architecture: all
-Conflicts: elbe-debianize
-Depends: ${misc:Depends},
-  python3,
-  devscripts,
-  libdistro-info-perl,
-  libparse-debcontrol-perl,
-  python3-elbe-common (= ${binary:Version}),
-  python3-urwid,
-  python3-pkg-resources
-Description: Wizard for Debian folder generation
- Assists users in generating a debianization for a given source code project.
-
 Package: elbe
 Architecture: all
 Depends: ${misc:Depends},
@@ -94,7 +80,6 @@ Depends: ${misc:Depends},
   make,
   lsb-release
 Recommends: elbe-doc (= ${binary:Version}),
- python3-elbe-debianize,
  haveged,
  whois
 Description: Embedded Linux Build Environment

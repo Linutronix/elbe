@@ -7,7 +7,6 @@ debian/python3-elbe-bin/
 debian/python3-elbe-common/
 debian/python3-elbe-control/
 debian/elbe-daemon/
-debian/elbe-debianize/
 debian/elbe-doc/
 debian/elbe-schema/
 debian/elbe-soap/
