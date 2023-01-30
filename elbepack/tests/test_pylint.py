@@ -21,17 +21,6 @@ class TestPylint(ElbeTestCase):
                    in [
                        "daemons/soap/esoap.py",
 
-                       # These are not needed to be fixed since
-                       # debianize is going to be rewritten
-                       "debianize/base/tui.py",
-                       "debianize/panels/base.py",
-                       "debianize/panels/kernel.py",
-                       "debianize/widgets/button.py",
-                       "debianize/widgets/edit.py",
-                       "debianize/widgets/form.py",
-                       "debianize/widgets/grid.py",
-                       "debianize/widgets/radio.py",
-
                        # FIXME: This one is an actual bug to be fixed
                        # 274:30: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
                        # 276:26: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
