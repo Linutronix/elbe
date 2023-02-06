@@ -69,7 +69,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<!-- Complete Busybox installation -->
 			<raw_cmd>/bin/busybox --install -s</raw_cmd>
 			<ln path="/sbin/init">/init</ln>
-			<!-- minimum dvice nodes (fallback) -->
+			<!-- minimum device nodes (fallback) -->
 			<mknod opts="c 5 0">/dev/tty</mknod>
 			<mknod opts="c 5 1">/dev/console</mknod>
 			<mknod opts="c 1 3">/dev/null</mknod>
