@@ -196,14 +196,15 @@ class EnsureAction(InitVMAction):
             system(f'{sys.executable} {elbe_exe} initvm start')
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             stop = time.time() + 300
-            while time.time() < stop:
-                if command_out(f'{sys.executable} {elbe_exe} control list_projects')[0] == 0:
+            while True:
+                cmd = command_out_stderr(f'{sys.executable} {elbe_exe} control list_projects')
+                if cmd[0] == 0:
                     break
+                if time.time() > stop:
+                    print(f"Waited for 5 minutes and the daemon is still not active: {cmd[2]}",
+                          file=sys.stderr)
+                    sys.exit(20)
                 time.sleep(10)
-            if time.time() > stop:
-                print("Waited for 5 minutes and the daemon is still not active."
-                      " Exit.")
-                sys.exit(20)
         else:
             print("Elbe initvm in bad state.")
             sys.exit(20)
