@@ -221,7 +221,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
     for p in instpkgs:
         report.info("|%s|%s|%s", p.name, p.installed_version, p.origin)
 
-    index = cache.get_fileindex()
+    index = cache.get_fileindex(removeprefix='/usr')
     mt_index = targetfs.mtime_snap()
 
     if xml.has("archive") and not xml.text("archive") is None:
@@ -247,8 +247,9 @@ def elbe_report(xml, buildenv, cache, targetfs):
     tgt_pkg_list = set()
 
     for fpath, _ in targetfs.walk_files():
-        if fpath in index:
-            pkg = index[fpath]
+        unprefixed = fpath[len('/usr'):] if fpath.startswith('/usr') else fpath
+        if unprefixed in index:
+            pkg = index[unprefixed]
             tgt_pkg_list.add(pkg)
         else:
             pkg = "postinst generated"
@@ -277,8 +278,9 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     for fpath in list(mt_index.keys()):
         if fpath not in mt_index_post_fine:
-            if fpath in index:
-                pkg = index[fpath]
+            unprefixed = fpath[len('/usr'):] if fpath.startswith('/usr') else fpath
+            if unprefixed in index:
+                pkg = index[unprefixed]
             else:
                 pkg = "postinst generated"
             report.info("|+%s+|%s", fpath, pkg)
