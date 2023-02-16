@@ -262,13 +262,21 @@ class RPCAPTCache(InChRootObject):
                 p.section == section and p.is_installed)]
         return pl
 
-    def get_fileindex(self):
+    def get_fileindex(self, removeprefix=None):
+        """
+        Returns a map filepath => packagename indexed by the filepath.
+        Use removeprefix to remove any prefix from the actual filepath.
+        """
         index = {}
 
         for p in self.cache:
             if p.is_installed:
                 for f in p.installed_files:
-                    index[f] = p.name
+                    if removeprefix and f.startswith(removeprefix):
+                        unprefixed = f[len(removeprefix):]
+                    else:
+                        unprefixed = f
+                    index[unprefixed] = p.name
 
         return index
 
