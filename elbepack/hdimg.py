@@ -145,6 +145,8 @@ class grubinstaller_base:
     @staticmethod
     def losetup(f):
         loopdev = get_command_out(f'losetup --find --show "{f}"')
+        # old, removed loop devices' kernel structures might be reused, so update the mapping
+        do(f'kpartx -u "{f}"')
         return loopdev.decode().rstrip('\n')
 
 
