@@ -119,7 +119,6 @@ Package: python3-elbe-buildenv
 Architecture: all
 Depends: ${misc:Depends},
   python3,
-  apt-rdepends,
   binfmt-support,
   btrfs-progs,
   debootstrap,
