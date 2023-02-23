@@ -1,3 +1,28 @@
+elbe (14.8) unstable; urgency=medium
+
+  * Team upload
+  * Global: use f-strings
+  * Replace gnupg dependencies with gpg
+  * preprocess: Only use 5000 sha512crypt round with warning
+  * examples: x86_64-docker.xml: Update to bullseye
+  * initvmaction: Allow "submit" without libvirt
+  * directories: Remove unused examples_dir
+  * Call elbe with prepended python executable
+  * Move examples installation to debianization
+  * Prevent double file access
+  * initvmaction: Alternative iso extract implementation
+  * setup.py: Add client dependencies as requirements
+  * Fix bash completion support
+  * initvmaction: Let 'ensure' show the control error
+  * Update device mapping on losetup
+  * rpcaptcache: Introduce removeprefix for get_fileindex
+  * dump: only compare /usr-unprefixed file names
+  * Replace qemu -enable-kvm option
+  * debian: Drop unused dependency apt-rdepends
+  * init libvirt.xml.mako: Drop interpreter-args support
+
+ -- Bastian Germann <bage@linutronix.de>  Thu, 23 Feb 2023 20:56:12 +0100
+
 elbe (14.7) unstable; urgency=medium
 
   * Team upload
