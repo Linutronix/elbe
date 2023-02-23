@@ -88,11 +88,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     </channel>
   </devices>
   <qemu:commandline>
-% if defs["interpreter-args"] is not None:
-% for arg in defs["interpreter-args"]:
-    <qemu:arg value='${arg}' />
-% endfor
-% endif
     <qemu:arg value='-netdev' />
     <qemu:arg value='user,id=user.0${forward}' />
     <qemu:arg value='-device' />
