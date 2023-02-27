@@ -676,7 +676,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <restriction base="string">
       <enumeration value="sid" />
       <enumeration value="bullseye" />
-      <enumeration value="buster" />
     </restriction>
   </simpleType>
 
