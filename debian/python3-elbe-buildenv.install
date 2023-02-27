@@ -20,7 +20,6 @@
 ./usr/lib/python3.*/*-packages/elbepack/finetuning.py
 ./usr/lib/python3.*/*-packages/elbepack/junit.py
 ./usr/lib/python3.*/*-packages/elbepack/cdroms.py
-./usr/lib/python3.*/*-packages/elbepack/debianreleases.py
 ./usr/lib/python3.*/*-packages/elbepack/debpkg.py
 ./usr/lib/python3.*/*-packages/elbepack/rpcaptcache.py
 ./usr/lib/python3.*/*-packages/elbepack/updatepkg.py
