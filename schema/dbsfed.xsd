@@ -519,7 +519,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
-      <element name="suite" type="rfs:suite-proj">
+      <element name="suite" type="rfs:string">
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the
@@ -677,36 +677,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <enumeration value="sid" />
       <enumeration value="bullseye" />
       <enumeration value="buster" />
-    </restriction>
-  </simpleType>
-
-  <simpleType name="suite-proj">
-    <restriction base="string">
-      <enumeration value="sid" />
-      <enumeration value="bookworm" />
-      <enumeration value="bullseye" />
-      <enumeration value="buster" />
-      <enumeration value="stretch" />
-      <enumeration value="jessie" />
-
-      <enumeration value="jammy" />
-      <enumeration value="groovy" />
-      <enumeration value="focal" />
-      <enumeration value="cosmic" />
-      <enumeration value="bionic" />
-      <enumeration value="artful" />
-      <enumeration value="zesty" />
-      <enumeration value="yakkety" />
-      <enumeration value="xenial" />
-      <enumeration value="wily" />
-      <enumeration value="vivid" />
-      <enumeration value="utopic" />
-      <enumeration value="trusty" />
-      <enumeration value="saucy" />
-      <enumeration value="raring" />
-      <enumeration value="quantal" />
-      <enumeration value="precise" />
-      <enumeration value="lucid" />
     </restriction>
   </simpleType>
 
