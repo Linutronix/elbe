@@ -7,6 +7,9 @@ ELBE is the 'E.mbedded L.inux B.uild E.nvironment'.
 It can be used to build embedded Linux Rootfilesystems based on Debian packages.
 
 ELBE runs on Debian Linux Host Systems.
+Currently, the oldest supported release is Debian 10 buster.
+You can build any Debian-based system with at least apt version 1.4,
+which is fulfilled with Debian 9 stretch.
 
 
 Software Dependencies
