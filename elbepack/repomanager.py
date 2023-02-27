@@ -12,7 +12,6 @@ import shutil
 
 from debian.deb822 import Deb822
 
-from elbepack.debianreleases import codename2suite
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
@@ -120,7 +119,6 @@ class RepoBase:
         for att in self.attrs:
             fp.write("Origin: " + self.origin + "\n")
             fp.write("Label: " + self.origin + "\n")
-            fp.write("Suite: " + codename2suite[att.codename] + "\n")
             fp.write("Codename: " + att.codename + "\n")
             fp.write("Architectures: " + " ".join(att.arch) + "\n")
             fp.write("Components: " + " ".join(att.components.difference(
