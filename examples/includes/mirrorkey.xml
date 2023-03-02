@@ -3,11 +3,7 @@
 SPDX-License-Identifier: 0BSD
 SPDX-FileCopyrightText: Linutronix GmbH
 -->
-<url-list>
-  <url>
-    <binary>http://debian.linutronix.de/elbe buster main</binary>
-    <source>http://debian.linutronix.de/elbe buster main</source>
-    <raw-key>
+   <raw-key>
       -----BEGIN PGP PUBLIC KEY BLOCK-----
 
       mQENBFCvUfkBCADRyoA/epDT9Fj2sN6Qob3Toep5SSA40eNkF/M0B0Zy9UgBU+pS
@@ -17,14 +13,14 @@ SPDX-FileCopyrightText: Linutronix GmbH
       p3gSIs5w4GIgNTQx5IgIZnV6SYzYx89PD/UG/Dl1amo9K874/aVbcMFMUM9UrNX8
       x37+3r7QZ3md2ucarBW4iJsUdxJ6Wj+A8eB5ABEBAAG0QkVMQkUgRGV2ZWwgKExp
       bnV0cm9uaXggRWxiZSBkZXZlbG9wZXJzKSA8ZWxiZS1kZXZlbEBsaW51dHJvbml4
-      LmRlPokBVQQTAQIAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQQQ4KU1
-      Vgn3xqVaF/Y2qjX/IruPhAUCWi67RAUJEuVqywAKCRA2qjX/IruPhBBzCACuFf+B
-      nl5COTKJ8Vfqncuo8IB0CTFbjpGgEykhaNfYXB1CsmtexyXZnSHGvlfFxUCmPO2B
-      btnxuHW4oILDiZjuYxyq+hCI7EZuI3C2R9GYls5j/rfr7f/OeYgY6aK5BArw6cC/
-      xIS4elaw8rdmIP1v+ip2dQq/M0Olp5i0w0xTVvER3jQjOU0EOeHaYNKbhteB/Zi5
-      tgQpWA/dbQilqEQ72bhIs9NYHBhH5Gb7KVBqfzoGI+DxwAIZ4JvfJZKlR9U1PCXV
-      PWq59kOgFNKgA+FJ192OD1d036N0UOsEpNzw8aYBVcsK1p1LNm/LRgmJjLYUaCmp
-      0lxkaS3KlRglXgKLiQE+BBMBAgAoBQJQr1H5AhsDBQkDwmcABgsJCAcDAgYVCAIJ
+      LmRlPokBVQQTAQoAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQQQ4KU1
+      Vgn3xqVaF/Y2qjX/IruPhAUCYqiVtwUJHyGsPgAKCRA2qjX/IruPhKUtB/9I9m64
+      wCVtIzqWFuAwcVpELP/SObX8zFAXqLviFHaHTJ1m0u7QZQPbbHdPax7f+tYzALN1
+      8JO4fRKrvMs6MGDU6ChD1yhLIf984lypMcCLspU6W6kXUG9a5vebhOGHth7Wg2j3
+      WhR190jhCT2R73Cw2iPQGmpQp0jqTkanygacGp9teiuXUnHm332u9jxAdDD1zdKa
+      C6TmxdUe4nCT3DppzK/vzrzKzeQoPWe1ZKNxmohxUgAZ5eXNEx1pyMCA67qUpfTA
+      m/7oGzIysLIR+2Hi+kvmfUw/WPPGDt38LnJutDp1CiGOFcf1QG+QDnTiOgYubO42
+      /TMMANhcfi2ai/AbiQE+BBMBAgAoBQJQr1H5AhsDBQkDwmcABgsJCAcDAgYVCAIJ
       CgsEFgIDAQIeAQIXgAAKCRA2qjX/IruPhPrxB/907ubc3SqcAEmoTwkzOKQfkIiD
       I/WaG2sByZxvXmCVFXJGZr2VQL+/W/Y2uvTs4ZzLAbGEJQMrpxC3dham6TuabzI+
       VAZxnzet2EGGCg1PmAoiBUf2DnFxzAle+p1TRrC8reEXWFOQNAgTPsqdfRcJ7BPN
@@ -51,22 +47,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       MJZNPMKt/l1YvPXouq1rmSKEEpbFrE6pmzRe6fYsmEZzLfirJ5Fx8HpoWXtLOmJQ
       lyvOI43nXpwRf7t9H1QEXETvef+89lIwDmQls0w91tLu/zJ+IzLPbDgpXReU/rk0
       9FMyVafx0H6ufR6ZXIzKFcNdOwRm/X1nlUcqO5M6Hp/FDRTuP3+lQ6Z7UNQjUydQ
-      lffHf8U7HFvRg+zmuQENBFCvUfkBCADZ14XRMIDHvYni/uMfgYQzgwefQVIvWcmr
-      JpnDL4xwWyGXd+jMKo3ot3R3jkehxqL20vRrb55P7Wdy52v6Bj6LHb1DW4JAisa0
-      3Z8xPY6el6HcP9bCZ4bD03CdrZUuUiw1MsRZmuSY2ZO2l9DE3UJvQRPtXXIo5WMx
-      pH+4mfjZys94CwbOEtBElsoU8Ku/mmxmX40WIWBD22aPorC5+3DtKtyFEsqf4jC/
-      FeRNm3x8Z1OPI8IWW3Zw2lPDAjDFSk1GxlgW20zScxJZsIu2fUwcPJ9ouGaRMlH1
-      BQHdJguTiWhAqCF9tDko6hotBl/0mJnwZdwZiI/6NwS32WRi36WDABEBAAGJATwE
-      GAECACYCGwwWIQQQ4KU1Vgn3xqVaF/Y2qjX/IruPhAUCWE1Z7gUJCX87dQAKCRA2
-      qjX/IruPhCreB/9WNcWHijC0onbzpamKKEiIvGIo81zVp3TIG9h60C47pesF5gyQ
-      uSf/UwkorIe0bBBbD62QjeMr3AeAzI7GaYbsgsgSRB1kOGaMXgQzExqJKcJ8utIQ
-      VD/i6z7JLTgsQ5EbMN3vDkfWNE+GPNZGtYw2gC8IblRfD6ulIBmWuxCIOWarsATQ
-      0STVEkmIbAiB84WlNAkv8MgE/1D1d+l2I9RysZgB7AdY2AuUCfQccxShyyp0dMiJ
-      XvooTX/RS6IgSdtOnDD+lcJbXSO05ec/npCAQw16eiK1OweZKWkULTIdhCo7gbqL
-      a6EqDGtKLEkEM5G1qtDILnp3cIEZm3CFO8ll
-      =02FH
+      lffHf8U7HFvRg+zm
+      =3i/P
       -----END PGP PUBLIC KEY BLOCK-----
-
-    </raw-key>
-  </url>
-</url-list>
+   </raw-key>
