@@ -52,10 +52,10 @@ The latest packages for elbe reside in the following repository
 http://debian.linutronix.de/elbe
 --------------------------------------------------------
 
-Add a repository key to the list of trusted keys (as root):
+Install the repository key to a known place (as root):
 
 --------------------------------------------------------
-# wget -O /usr/share/keyrings/elbe-archive-keyring.gpg http://debian.linutronix.de/elbe/elbe-repo.pub.gpg
+# apt install elbe-archive-keyring || wget -O /usr/share/keyrings/elbe-archive-keyring.gpg http://debian.linutronix.de/elbe/elbe-repo.pub.gpg
 --------------------------------------------------------
 
 Add the following content to
@@ -68,8 +68,8 @@ the file `/etc/apt/sources.list`
 Then run (as root):
 
 --------------------------------------------------------
-$ apt update
-$ apt install elbe
+# apt update
+# apt install elbe
 --------------------------------------------------------
 
 
@@ -88,8 +88,8 @@ that user needs to be added to libvirt groups:
 For Debian 9 (Stretch) or newer, run (as root):
 
 --------------------------------------------------------
-$ adduser <youruser> libvirt
-$ adduser <youruser> libvirt-qemu
+# adduser <youruser> libvirt
+# adduser <youruser> libvirt-qemu
 --------------------------------------------------------
 
 Now create an `initvm` subdirectory and builds the initvm inside this directory.
