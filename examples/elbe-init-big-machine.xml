@@ -48,6 +48,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+
+			<!-- THIS CONF IS POTENTIALLY DANGEROUS! It enables logging in on the initvm's ssh as root with password.
+			     See https://bugs.debian.org/837733 for this counter-intuitive setting -->
+			<conf owner="openssh-server" key="openssh-server/permit-root-login" type="boolean" value="false"/>
 		</preseed>
 		<size>80G</size>
 		<mem>2GiB</mem>
