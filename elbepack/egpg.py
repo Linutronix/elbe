@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 import os
 
 from gpg import core
@@ -12,7 +13,7 @@ from gpg.constants import sigsum, sig, PROTOCOL_OpenPGP
 from gpg.errors import GPGMEError, KeyNotFound, InvalidSigners
 
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import system
+from elbepack.shellhelper import get_command_out, system
 
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">
@@ -272,3 +273,16 @@ def generate_elbe_internal_key():
 def export_key(fingerprint, outfile):
     system(f"/usr/bin/gpg -a -o {outfile} --export {fingerprint}",
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
+
+def unarmor_openpgp_keyring(armored):
+    """
+    Unarmors one ascii-armored (string) OpenPGP keyring.
+    Returns a binary string (empty for invalid keys).
+    """
+    try:
+        conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor', stdin=armored)
+    except CommandError as e:
+        logging.error(e)
+        return b""
+
+    return conv_cmd
