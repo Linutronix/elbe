@@ -20,10 +20,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe buster main
+						http://debian.linutronix.de/elbe bullseye main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe buster main
+						http://debian.linutronix.de/elbe bullseye main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe/elbe-repo.pub
@@ -31,10 +31,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe-common buster main
+						http://debian.linutronix.de/elbe-common bullseye main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe-common buster main
+						http://debian.linutronix.de/elbe-common bullseye main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe-common/elbe-repo.pub
