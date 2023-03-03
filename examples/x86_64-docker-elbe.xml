@@ -24,11 +24,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<url>
 					<binary>http://debian.linutronix.de/elbe buster main</binary>
 					<source>http://debian.linutronix.de/elbe buster main</source>
-					<key>http://debian.linutronix.de/elbe/elbe-repo.pub</key>
-				</url>
-				<url>
-					<binary>http://debian.linutronix.de/elbe-common buster main</binary>
-					<source>http://debian.linutronix.de/elbe-common buster main</source>
 					<xi:include href="includes/mirrorkey.xml" />
 				</url>
 			</url-list>
