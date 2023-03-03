@@ -186,10 +186,8 @@ class BuildEnv:
             strapcmd += f" --variant={self.xml.text('target/debootstrap/variant')}"
 
         # Should we include additional packages into bootstrap?
-        includepkgs = "gpg"  # These are the packages which are included in any case
         if self.xml.has("target/debootstrap/include"):
-            includepkgs += f", {self.xml.text('target/debootstrap/include')}"
-        strapcmd += f" --include=\"{includepkgs}\""
+            strapcmd += f" --include=\"{self.xml.text('target/debootstrap/include')}\""
 
         # Should we exclude some packages from bootstrap?
         if self.xml.has("target/debootstrap/exclude"):
