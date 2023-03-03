@@ -17,6 +17,7 @@ import apt  # pylint: disable=unused-import
 import apt_pkg
 
 
+from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.shellhelper import system
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.rfs import create_apt_prefs
@@ -140,12 +141,13 @@ class VirtApt:
         self.downloads = {}
         self.acquire = apt_pkg.Acquire(self)
 
-    def add_key(self, key):
-        system(f'echo "{key}" > {self.basefs.fname("tmp/key.pub")}')
-        system(f'fakeroot apt-key '
-               f'--keyring "{self.basefs.fname("/etc/apt/trusted.gpg")}" '
-               f'add "{self.basefs.fname("tmp/key.pub")}"')
-        system(f'rm -f {self.basefs.fname("tmp/key.pub")}')
+    def add_key(self, key, keyname):
+        """
+        Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
+        with file name 'keyname'.
+        """
+        with open(self.basefs.fname(f"/etc/apt/trusted.gpg.d/{keyname}"), "wb") as outfile:
+            outfile.write(key)
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
@@ -155,10 +157,10 @@ class VirtApt:
             # https://github.com/Linutronix/elbe/issues/220
             #
             # I could make a none global 'noauth' flag for mirrors
-            for url in self.xml.node('project/mirror/url-list'):
+            for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
                     key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
-                    self.add_key(key)
+                    self.add_key(unarmor_openpgp_keyring(key), f"elbe-virtapt-raw-key{i}.gpg")
 
     def start(self):
         pass

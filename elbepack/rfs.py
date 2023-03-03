@@ -13,6 +13,7 @@ import logging
 from urllib.parse import urlsplit
 
 from elbepack.efilesystem import BuildImgFs
+from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.templates import (write_pack_template, get_preseed,
                                 preseed_to_text)
 from elbepack.shellhelper import CommandError, do, chroot, get_command_out
@@ -109,6 +110,12 @@ class BuildEnv:
             do(f'mkdir -p "{cdrompath}"')
             do(f'mount -o loop "{self.xml.text("project/mirror/cdrom")}" "cdrompath"')
 
+    def convert_asc_to_gpg(self, infile_asc, outfile_gpg):
+        with open(self.rfs.fname(infile_asc)) as pubkey:
+            binpubkey = unarmor_openpgp_keyring(pubkey.read())
+            with open(self.rfs.fname(outfile_gpg), 'wb') as outfile:
+                outfile.write(binpubkey)
+
     def __enter__(self):
         if os.path.exists(self.path + '/../repo/pool'):
             do(f"mv {self.path}/../repo {self.path}")
@@ -121,20 +128,12 @@ class BuildEnv:
         self.rfs.__enter__()
 
         if self.xml.has("project/mirror/cdrom"):
-            chroot(self.rfs.path,
-                   'apt-key '
-                   '--keyring /etc/apt/trusted.gpg.d/elbe-cdrepo.gpg '
-                   'add /cdrom/repo.pub')
-            chroot(self.rfs.path,
-                   'apt-key '
-                   '--keyring /etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg '
-                   'add /cdrom/targetrepo/repo.pub')
+            self.convert_asc_to_gpg('/cdrom/repo.pub', '/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg')
+            self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg')
 
         if os.path.exists(os.path.join(self.rfs.path, 'repo/pool')):
-            chroot(self.rfs.path,
-                   'apt-key '
-                   '--keyring /etc/apt/trusted.gpg.d/elbe-localrepo.gpg '
-                   'add /repo/repo.pub')
+            self.convert_asc_to_gpg('/repo/repo.pub', '/etc/apt/trusted.gpg.d/elbe-localrepo.gpg')
+
         return self
 
     def __exit__(self, typ, value, traceback):
@@ -212,8 +211,7 @@ class BuildEnv:
             try:
                 self.cdrom_mount()
                 if keyring:
-                    do(f'apt-key --keyring "{self.rfs.fname("/elbe.keyring")}" '
-                       f'add "{self.rfs.fname("cdrom")}/targetrepo/repo.pub"')
+                    self.convert_asc_to_gpg("/cdrom/targetrepo/repo.pub", "/elbe.keyring")
                 do(cmd)
             except CommandError:
                 cleanup = True
@@ -238,8 +236,7 @@ class BuildEnv:
         try:
             self.cdrom_mount()
             if keyring:
-                do(f'apt-key --keyring "{self.rfs.fname("/elbe.keyring")}" '
-                   f'add "{self.rfs.fname("cdrom")}/targetrepo/repo.pub"')
+                self.convert_asc_to_gpg("/cdrom/targetrepo/repo.pub", "/elbe.keyring")
             do(cmd)
 
             ui = "/usr/share/elbe/qemu-elbe/" + self.xml.defs["userinterpr"]
@@ -274,11 +271,13 @@ class BuildEnv:
         self.rfs.mkdir_p("/state/lists/partial")
         self.rfs.touch_file("/state/status")
 
-    def add_key(self, key):
-        do(f'echo "{key}" > {self.rfs.fname("tmp/key.pub")}')
-        with self.rfs:
-            chroot(self.rfs.path, 'apt-key add /tmp/key.pub')
-        do(f'rm -f {self.rfs.fname("tmp/key.pub")}')
+    def add_key(self, key, keyname):
+        """
+        Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
+        with file name 'keyname'.
+        """
+        with open(self.rfs.fname(f"/etc/apt/trusted.gpg.d/{keyname}"), "wb") as outfile:
+            outfile.write(key)
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
@@ -288,10 +287,10 @@ class BuildEnv:
             # https://github.com/Linutronix/elbe/issues/220
             #
             # I could make a none global 'noauth' flag for mirrors
-            for url in self.xml.node('project/mirror/url-list'):
+            for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
                     key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
-                    self.add_key(key)
+                    self.add_key(unarmor_openpgp_keyring(key), f"elbe-xml-raw-key{i}.gpg")
 
     def initialize_dirs(self, build_sources=False):
         mirror = self.xml.create_apt_sources_list(build_sources=build_sources,
