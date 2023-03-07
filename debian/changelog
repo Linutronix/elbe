@@ -1,3 +1,19 @@
+elbe (14.8.1) unstable; urgency=medium
+
+  * Team upload
+  * elbeproject: pbuild: download sources from target mirrors
+  * examples: Renew and centralize outdated public key
+  * examples: x86_64-docker-elbe: Drop elbe-common
+  * docs: quickstart: Introduce elbe-archive-keyring
+  * docs: elbeoverview: Drop installation instructions
+  * initvm: Replace <key> with <raw-key>
+  * egpg: Implement unarmor_openpgp_keyring
+  * Eliminate most apt-key calls
+  * rfs: Drop gpg from debootstrap include
+  * elbeproject: Install full gnupg for pbuilder again
+
+ -- Bastian Germann <bage@linutronix.de>  Tue, 07 Mar 2023 13:35:39 +0100
+
 elbe (14.8) unstable; urgency=medium
 
   * Team upload
