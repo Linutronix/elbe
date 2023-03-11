@@ -144,6 +144,16 @@ class BuildEnv:
             do(f"rm {self.path}/etc/apt/sources.list.d/local.list")
             do(f"rm {self.path}/etc/apt/trusted.gpg.d/elbe-localrepo.gpg")
 
+    def import_debootstrap_key(self, key):
+        path = ''
+
+        if key:
+            self.rfs.mkdir_p('etc/apt/trusted.gpg.d')
+            k = "\n".join(line.strip(" \t") for line in key.splitlines()[1:-1])
+            path = self.add_key(unarmor_openpgp_keyring(k), "elbe-xml-primary-key.gpg")
+
+        return path
+
     def debootstrap(self, arch="default"):
 
         # pylint: disable=too-many-statements
@@ -154,6 +164,10 @@ class BuildEnv:
 
         primary_mirror = self.xml.get_primary_mirror(
             self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
+        primary_key = self.xml.get_primary_key(
+            self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
+
+        debootstrap_key_path = self.import_debootstrap_key(primary_key)
 
         if self.xml.prj.has("mirror/primary_proxy"):
             os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
@@ -202,13 +216,15 @@ class BuildEnv:
             else:
                 if self.xml.has("project/mirror/cdrom"):
                     keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
+                elif debootstrap_key_path:
+                    keyring = f' --keyring="{debootstrap_key_path}"'
 
                 cmd = (f'{strapcmd} --arch={arch} '
                        f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
 
             try:
                 self.cdrom_mount()
-                if keyring:
+                if keyring and self.xml.has("project/mirror/cdrom"):
                     self.convert_asc_to_gpg("/cdrom/targetrepo/repo.pub", "/elbe.keyring")
                 do(cmd)
             except CommandError:
@@ -227,13 +243,15 @@ class BuildEnv:
         else:
             if self.xml.has("project/mirror/cdrom"):
                 keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
+            elif debootstrap_key_path:
+                keyring = f' --keyring="{debootstrap_key_path}"'
 
             cmd = (f'{strapcmd} --foreign --arch={arch} '
                    f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
 
         try:
             self.cdrom_mount()
-            if keyring:
+            if keyring and self.xml.has("project/mirror/cdrom"):
                 self.convert_asc_to_gpg("/cdrom/targetrepo/repo.pub", "/elbe.keyring")
             do(cmd)
 
