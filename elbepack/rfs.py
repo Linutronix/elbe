@@ -274,8 +274,11 @@ class BuildEnv:
         Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
         with file name 'keyname'.
         """
-        with open(self.rfs.fname(f"/etc/apt/trusted.gpg.d/{keyname}"), "wb") as outfile:
+        keyfile = self.rfs.fname(f"/etc/apt/trusted.gpg.d/{keyname}")
+        with open(keyfile, "wb") as outfile:
             outfile.write(key)
+
+        return keyfile
 
     def import_keys(self):
         if self.xml.has('project/mirror/url-list'):
