@@ -283,6 +283,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="primary_key" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+	    Raw public key used to sign the primary mirror
+          </documentation>
+        </annotation>
+      </element>
       <element name="primary_proxy" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
