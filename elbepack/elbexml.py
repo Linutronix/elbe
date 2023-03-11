@@ -142,6 +142,21 @@ class ElbeXML:
 
         return replace_localmachine(mirror, initvm)
 
+    def get_primary_key(self, cdrompath, hostsysroot=False):
+        key = ''
+
+        if self.prj.has("mirror/cdrom") and cdrompath:
+            pass
+        elif self.prj.has("mirror/primary_host"):
+            m = self.prj.node("mirror")
+
+            if hostsysroot and self.prj.has("mirror/host") and self.prj.has("mirror/host_key"):
+                key = m.text("host_key")
+            elif self.prj.has("mirror/primary_key"):
+                key = m.text("primary_key")
+
+        return key
+
     # XXX: maybe add cdrom path param ?
     def create_apt_sources_list(self, build_sources=False, initvm=True, hostsysroot=False):
 
