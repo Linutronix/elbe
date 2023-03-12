@@ -27,6 +27,7 @@ from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
 from elbepack.log import validation
 from elbepack.pbuilder import (
+    pbuilder_get_debootstrap_key_path,
     pbuilder_write_apt_conf,
     pbuilder_write_config,
     pbuilder_write_cross_config,
@@ -851,19 +852,23 @@ class ElbeProject:
 
         # Run pbuilder --create
         no_check_gpg = []
+        keyring = []
+        debootstrap_key_path = pbuilder_get_debootstrap_key_path(self.chrootpath, self.xml)
         if self.xml.prj.has('noauth'):
             no_check_gpg = ['--debootstrapopts', '--no-check-gpg']
+        elif debootstrap_key_path:
+            keyring = ['--debootstrapopts', '--keyring=' + debootstrap_key_path]
         if cross:
             do(['pbuilder', '--create',
                 '--buildplace', os.path.join(self.builddir, 'pbuilder_cross'),
                 '--configfile', os.path.join(self.builddir, 'cross_pbuilderrc'),
                 '--aptconfdir', os.path.join(self.builddir, 'aptconfdir'),
-                '--debootstrapopts', '--include=git,gnupg', *no_check_gpg])
+                '--debootstrapopts', '--include=git,gnupg', *no_check_gpg, *keyring])
         else:
             do(['pbuilder', '--create',
                 '--configfile', os.path.join(self.builddir, 'pbuilderrc'),
                 '--aptconfdir', os.path.join(self.builddir, 'aptconfdir'),
-                '--debootstrapopts', '--include=git,gnupg', *no_check_gpg])
+                '--debootstrapopts', '--include=git,gnupg', *no_check_gpg, *keyring])
 
     def sync_xml_to_disk(self):
         try:

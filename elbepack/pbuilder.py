@@ -157,6 +157,29 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
         f.write('apt-get update\n')
 
 
+def get_debootstrap_key(xml):
+    if xml.prj.has('mirror/primary_host') and xml.prj.has('mirror/primary_key'):
+        m = xml.prj.node('mirror')
+
+        if m.has('options'):
+            options = '[%s]' % ' '.join([opt.et.text.strip(' \t\n')
+                                         for opt
+                                         in m.all('options/option')])
+        else:
+            options = ''
+
+        if 'trusted=yes' not in options:
+            return strip_leading_whitespace_from_lines(m.text('primary_key'))
+
+
+def pbuilder_get_debootstrap_key_path(chrootpath, xml):
+    # If we have a primary key for use with debootstrap, BuildEnv.debootstrap
+    # will have added the key. We use the same key for the pbuilder
+    # debootstrap options.
+    if get_debootstrap_key(xml):
+        return os.path.join(chrootpath, 'etc', 'apt', 'trusted.gpg.d', 'elbe-xml-primary-key.gpg')
+
+
 def get_apt_keys(builddir, xml):
 
     if xml.prj is None:
@@ -166,6 +189,10 @@ def get_apt_keys(builddir, xml):
         return (['# No mirrors configured'], [])
 
     keys = [('elbe-localrepo', pathlib.Path(builddir, 'repo', 'repo.pub').read_text())]
+
+    debootstrap_key = get_debootstrap_key(xml)
+    if debootstrap_key:
+        keys.append(('elbe-xml-primary-key', debootstrap_key))
 
     if xml.prj.has('mirror/primary_host') and xml.prj.has('mirror/url-list'):
 
