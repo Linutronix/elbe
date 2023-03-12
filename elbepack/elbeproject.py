@@ -38,7 +38,8 @@ from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
 
 from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
                                pbuilder_write_cross_config,
-                               pbuilder_write_apt_conf)
+                               pbuilder_write_apt_conf,
+                               pbuilder_get_debootstrap_key_path)
 
 from elbepack.repomanager import ProjectRepo
 from elbepack.config import cfg
@@ -865,19 +866,24 @@ class ElbeProject:
 
         # Run pbuilder --create
         no_check_gpg = ""
+        keyring = ""
+        debootstrap_key_path = pbuilder_get_debootstrap_key_path(self.chrootpath, self.xml)
         if self.xml.prj.has('noauth'):
             no_check_gpg = "--debootstrapopts --no-check-gpg"
+        elif debootstrap_key_path:
+            keyring = f'--debootstrapopts --keyring="{debootstrap_key_path}"'
+
         if cross:
             do('pbuilder --create '
                f'--buildplace "{os.path.join(self.builddir, "pbuilder_cross")}" '
                f'--configfile "{os.path.join(self.builddir, "cross_pbuilderrc")}" '
                f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
-               f'--debootstrapopts --include="git,gnupg" {no_check_gpg};')
+               f'--debootstrapopts --include="git,gnupg" {no_check_gpg} {keyring};')
         else:
             do('pbuilder --create '
                f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
                f'--aptconfdir "{os.path.join(self.builddir, "aptconfdir")}" '
-               f'--debootstrapopts --include="git,gnupg" {no_check_gpg}')
+               f'--debootstrapopts --include="git,gnupg" {no_check_gpg} {keyring}')
 
     def sync_xml_to_disk(self):
         try:
