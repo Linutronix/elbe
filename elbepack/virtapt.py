@@ -150,6 +150,11 @@ class VirtApt:
             outfile.write(key)
 
     def import_keys(self):
+        if self.xml.has('project/mirror/primary_host') and self.xml.has('project/mirror/primary_key'):
+            m = self.xml.node('project/mirror')
+            key = "\n".join(line.strip(" \t") for line in m.text('primary_key').splitlines()[1:-1])
+            self.add_key(unarmor_openpgp_keyring(key), "elbe-virtapt-primary-key.gpg")
+
         if self.xml.has('project/mirror/url-list'):
             # Should we use self.xml.prj.has("noauth")???
             #
