@@ -6,6 +6,7 @@
 import sys
 import os
 import re
+import tempfile
 
 from shutil import copyfile
 from urllib.request import urlopen
@@ -14,7 +15,7 @@ from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
 
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.egpg import OverallStatus, check_signature
+from elbepack.egpg import OverallStatus, check_signature, unarmor_openpgp_keyring
 from elbepack.shellhelper import CommandError, system
 from elbepack.hashes import HashValidator, HashValidationFailed
 
@@ -74,7 +75,7 @@ class SHA256SUMSFile(HashValidator):
                                                m.group(1))
 
 
-def setup_apt_keyring(gpg_home, keyring_fname):
+def setup_apt_keyring(gpg_home, keyring_fname, primary_key):
     ring_path = os.path.join(gpg_home, keyring_fname)
     if not os.path.isdir("/etc/apt/trusted.gpg.d"):
         print("/etc/apt/trusted.gpg.d doesn't exist")
@@ -100,6 +101,15 @@ def setup_apt_keyring(gpg_home, keyring_fname):
         except CommandError:
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
+    if primary_key:
+        with tempfile.NamedTemporaryFile(buffering = 0) as fp:
+            print(f"Import primary key: ")
+            print(primary_key)
+            fp.write(unarmor_openpgp_keyring(primary_key))
+            try:
+                system(f'gpg {gpg_options} --import "{fp.name}"')
+            except:
+                print(f'adding primary key to keyring "{ring_path}" failed')
 
 def download(url, local_fname):
     try:
@@ -144,11 +154,11 @@ def verify_release(tmp, base_url):
         sig.close()
 
 
-def download_kinitrd(tmp, suite, mirror, skip_signature=False):
+def download_kinitrd(tmp, suite, mirror, primary_key, skip_signature=False):
     base_url = f"{mirror.replace('LOCALMACHINE', 'localhost')}/dists/{suite}/"
     installer_path = "main/installer-amd64/current/images/"
 
-    setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
+    setup_apt_keyring(tmp.fname('/'), 'pubring.gpg', primary_key)
 
     # download release file
     download(base_url + "Release", tmp.fname('Release'))
@@ -200,6 +210,16 @@ def get_primary_mirror(prj):
 
     return mirror
 
+def get_primary_key(prj):
+    primary_key = ''
+
+    if prj.has("mirror/primary_key"):
+        m = prj.node("mirror")
+
+        key = m.text("primary_key")
+        primary_key = "\n".join(line.strip(" \t") for line in key.splitlines()[1:-1])
+
+    return primary_key
 
 def copy_kinitrd(prj, target_dir):
 
@@ -217,7 +237,8 @@ def copy_kinitrd(prj, target_dir):
                      os.path.join(target_dir, "initrd.gz"))
         else:
             mirror = get_primary_mirror(prj)
-            download_kinitrd(tmp, suite, mirror, prj.has("noauth"))
+            primary_key = get_primary_key(prj)
+            download_kinitrd(tmp, suite, mirror, primary_key, prj.has("noauth"))
 
             copyfile(tmp.fname("initrd.gz"),
                      os.path.join(target_dir, "initrd.gz"))
