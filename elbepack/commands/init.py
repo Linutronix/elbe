@@ -211,8 +211,10 @@ def run_command(argv):
         shutil.copyfile(args[0],
                         os.path.join(out_path, "source.xml"))
 
-
         keys = []
+        if xml.has('initvm/mirror/primary_key'):
+            key = xml.node('initvm/mirror/primary_key')
+            keys.append(key.et.text)
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
             keys.append(key.et.text)
 
