@@ -120,6 +120,8 @@ def create_initvm(name, xmlfile, directory, *,
                     os.path.join(out_path, 'source.xml'))
 
     keys = []
+    if xml.has('initvm/mirror/primary_key'):
+        keys.append(xml.text('initvm/mirror/primary_key'))
     for key in xml.all('.//initvm/mirror/url-list/url/raw-key'):
         keys.append(key.et.text)
 
