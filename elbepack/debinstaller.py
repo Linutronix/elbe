@@ -18,6 +18,8 @@ from elbepack.egpg import OverallStatus, check_signature
 from elbepack.shellhelper import CommandError, system
 from elbepack.hashes import HashValidator, HashValidationFailed
 
+GPG_KEYS_LOCATION = "/usr/share/keyrings/"
+
 
 class InvalidSignature(Exception):
     pass
@@ -76,8 +78,8 @@ class SHA256SUMSFile(HashValidator):
 
 def setup_apt_keyring(gpg_home, keyring_fname):
     ring_path = os.path.join(gpg_home, keyring_fname)
-    if not os.path.isdir("/etc/apt/trusted.gpg.d"):
-        print("/etc/apt/trusted.gpg.d doesn't exist")
+    if not os.path.isdir(GPG_KEYS_LOCATION):
+        print(f"{GPG_KEYS_LOCATION} doesn't exist")
         print("apt-get install debian-archive-keyring may "
               "fix this problem")
         sys.exit(20)
@@ -90,13 +92,13 @@ def setup_apt_keyring(gpg_home, keyring_fname):
                   '--batch ' \
                   f'--homedir "{gpg_home}"'
 
-    trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
+    trustkeys = os.listdir(GPG_KEYS_LOCATION)
     for key in trustkeys:
         print(f"Import {key}: ")
         try:
             system(
                 f'gpg {gpg_options} '
-                f'--import "{os.path.join("/etc/apt/trusted.gpg.d", key)}"')
+                f'--import "{os.path.join(GPG_KEYS_LOCATION, key)}"')
         except CommandError:
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
