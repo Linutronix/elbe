@@ -11,7 +11,7 @@ ELBE runs on Debian Linux Host Systems.
 
 Software Dependencies
 ---------------------
-If using ELBE from git repository directly, you'll need following packages installed:
+If using ELBE from git repository directly, you'll need the following packages installed:
 
     apt install python3 python3-debian python3-mako python3-lxml python3-apt \
         python3-gpg python3-suds python3-libvirt qemu-utils qemu-kvm p7zip-full \
@@ -26,7 +26,7 @@ Crash Course
 2. run "./elbe initvm create ./examples/armhf-ti-beaglebone-black.xml
 
    * This command creates an initvm directory in the current working directory,
-   * installs and starts a virtual buildenvironemnt
+   * installs and starts a virtual build environment
    * within this build environment the beaglebone-black image will be built
    * after the build finished the build results will be copied into
         elbe-build-<TIMESTAMP>
@@ -53,7 +53,7 @@ Contributions
 * Please note that we currently target Python 3.6+ before sending any source code.
 * Note that a moderator approval is needed when you send the patches to the mailing list without
   being subscribed. This approval is available from a confirmation link that you receive once a
-  patch or an e-mail is sent to the the mailing list given below.
+  patch or an e-mail is sent to the mailing list given below.
 
 
 Send patches to <elbe-devel@linutronix.de>.
@@ -74,7 +74,7 @@ ELBE is provided under the terms of the GPLv3+ license as provided in the
 COPYING file.
 
 Instead of adding GPLv3+ boilerplates to the individual files, elbe uses SPDX
-license identifiers, which are machine parseable and considered legaly
+license identifiers, which are machine parseable and considered legally
 equivalent.
 
 File headers
