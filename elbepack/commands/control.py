@@ -61,7 +61,7 @@ def run_command(argv):
         action="store_true",
         dest="skip_pbuilder",
         default=False,
-        help="skip pbuilder section of XML (dont build packages)")
+        help="skip pbuilder section of XML (don't build packages)")
 
     oparser.add_option("--output",
                        dest="output", default=None,
@@ -134,7 +134,7 @@ def run_command(argv):
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
             file=sys.stderr)
         print("", file=sys.stderr)
-        print("Check, wether the initvm is actually running.", file=sys.stderr)
+        print("Check, whether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(10)
     except socket.error as e:
@@ -143,7 +143,7 @@ def run_command(argv):
             file=sys.stderr)
         print("", file=sys.stderr)
         print(
-            "Check, wether the Soap Server is running inside the initvm",
+            "Check, whether the Soap Server is running inside the initvm",
             file=sys.stderr)
         print("try 'elbe initvm attach'", file=sys.stderr)
         sys.exit(10)
@@ -152,7 +152,7 @@ def run_command(argv):
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
             file=sys.stderr)
         print("", file=sys.stderr)
-        print("Check, wether the initvm is actually running.", file=sys.stderr)
+        print("Check, whether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(10)
 
