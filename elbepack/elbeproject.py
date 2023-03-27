@@ -734,6 +734,13 @@ class ElbeProject:
         pbdir = os.path.join(self.builddir, "pdebuilder", "current")
         do(f'mkdir -p "{os.path.join(pbdir)}"')
 
+        # create .gitconfig and declare pdebuilder/current directory as safe
+        git_file_name = os.path.join(self.builddir, "pdebuilder", ".gitconfig")
+        git_safe_dir = os.path.join(self.builddir, "pdebuilder", "current")
+        with open(git_file_name, "w", encoding="ascii") as git_file:
+            git_file.write("[safe]\n")
+            git_file.write(f"\tdirectory = {git_safe_dir}\n")
+
         # Untar current_pdebuild.tar.gz into pdebuilder/current
         do(
             'tar xfz '
