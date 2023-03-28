@@ -82,14 +82,12 @@ This virtual-machine is referred to as `initvm`. You will want your
 initvm to be the same architecture as your workstation. This allows
 using hardware accelerated virtualization implemented by kvm.
 
-In order to be able to work with virtual machines as a regular user,
-that user needs to be added to libvirt groups:
-
-For Debian 9 (Stretch) or newer, run (as root):
+To work with virtual machines as a regular user, the user needs to
+be added to kvm and libvirt groups:
 
 --------------------------------------------------------
+# adduser <youruser> kvm
 # adduser <youruser> libvirt
-# adduser <youruser> libvirt-qemu
 --------------------------------------------------------
 
 Now create an `initvm` subdirectory and builds the initvm inside this directory.
