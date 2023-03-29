@@ -22,7 +22,7 @@ DESCRIPTION
 
 This command allows one to build and manage an initvm.
 
-Initvms are managed via libvirt, and its necessary, that a user is a member of the
+Initvms are managed via libvirt, and it's necessary that a user is a member of the
 libvirt group.
 
 
@@ -98,7 +98,7 @@ to build a project in an existing initvm.
 +
 Note that only a single initvm can be running on your host.
 +
-When a iso Image with the binaries has been built earlier, it can also
+When an iso Image with the binaries has been built earlier, it can also
 be used to recreate the original image. The source.xml from the iso will
 be used, and all the binary packages available also.
 
@@ -108,7 +108,7 @@ be used, and all the binary packages available also.
 This command triggers a complete rebuild of the Elbe XML File.
 It will however use an existing initvm.
 +
-When a iso Image with the binaries has been built earlier, it can also
+When an iso Image with the binaries has been built earlier, it can also
 be used to recreate the original image. The source.xml from the iso will
 be used, and all the binary packages available also.
 
