@@ -123,6 +123,13 @@ Start initvm in the Background.
 Shutdown running initvm.
 
 
+'sync'::
+
+Upload elbe Version from the current working into initvm using rsync.
+Before using this command, you'll have to add your client SSH key to
+'/root/.ssh/authorized_keys' in initvm manually.
+
+
 'ensure'::
 
 Make sure an initvm is running in the Background.
