@@ -35,7 +35,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<domain>tec.linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>
-		<debootstrap variant"sysv">
+		<debootstrap variant="sysv">
 			<variant>minbase</variant>
 		</debootstrap>
 		<package>
