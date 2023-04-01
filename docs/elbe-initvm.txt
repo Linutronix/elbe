@@ -86,6 +86,8 @@ COMMANDS
 'attach'::
 
 Attach to the initvm console, which is accessed via virsh.
++
+User 'root', password 'root'.
 
 
 'create' [ <xmlfile> | <isoimage> ]::
