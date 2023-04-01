@@ -35,6 +35,7 @@ from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import (ElbeXML, ValidationMode)
 from elbepack.dosunix import dos2unix
 
+os.environ['SQLALCHEMY_SILENCE_UBER_WARNING'] = "1"
 Base = declarative_base()
 
 
