@@ -71,6 +71,12 @@ def run_command(argv):
         default=False,
         help="Also make 'initvm submit' build an SDK.")
 
+    oparser.add_option(
+        "--keys_dir",
+        dest="keys_dir",
+        default=None,
+        help="directory, where to find the debian archive keys")
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)

@@ -591,6 +591,9 @@ class CreateAction(InitVMAction):
             if not opt.build_sources:
                 init_opts += ' --skip-build-source'
 
+            if opt.keys_dir:
+                init_opts += f' --keys_dir "{opt.keys_dir}"'
+
             with PreprocessWrapper(xmlfile, opt) as ppw:
                 if cdrom:
                     system(

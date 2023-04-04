@@ -86,6 +86,12 @@ def run_command(argv):
         default=True,
         help="Skip building Source CDROM")
 
+    oparser.add_option(
+        "--keys_dir",
+        dest="keys_dir",
+        default=None,
+        help="directory, where to find the debian archive keys")
+
     (opt, args) = oparser.parse_args(argv)
 
     if not args:
@@ -172,7 +178,7 @@ def run_command(argv):
             os.putenv("no_proxy", "localhost,127.0.0.1")
 
         try:
-            copy_kinitrd(xml.node("/initvm"), out_path)
+            copy_kinitrd(xml.node("/initvm"), out_path, opt.keys_dir)
         except NoKinitrdException as e:
             msg = str(e)
             logging.error("Failure to download kernel/initrd debian Package:")

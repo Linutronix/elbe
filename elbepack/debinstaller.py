@@ -74,7 +74,7 @@ class SHA256SUMSFile(HashValidator):
                                                m.group(1))
 
 
-def setup_apt_keyring(gpg_home, keyring_fname):
+def setup_apt_keyring(gpg_home, keyring_fname, keys_dir):
     ring_path = os.path.join(gpg_home, keyring_fname)
     if not os.path.isdir("/etc/apt/trusted.gpg.d"):
         print("/etc/apt/trusted.gpg.d doesn't exist")
@@ -90,13 +90,16 @@ def setup_apt_keyring(gpg_home, keyring_fname):
                   '--batch ' \
                   f'--homedir "{gpg_home}"'
 
-    trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
+    trustkeys = [os.path.join("/etc/apt/trusted.gpg.d", f)
+                 for f in os.listdir("/etc/apt/trusted.gpg.d")]
+    if keys_dir:
+        trustkeys = trustkeys + [os.path.join(keys_dir, f)
+                                 for f in os.listdir(keys_dir)]
+
     for key in trustkeys:
         print(f"Import {key}: ")
         try:
-            system(
-                f'gpg {gpg_options} '
-                f'--import "{os.path.join("/etc/apt/trusted.gpg.d", key)}"')
+            system(f'gpg {gpg_options} --import "{key}"')
         except CommandError:
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
@@ -144,11 +147,11 @@ def verify_release(tmp, base_url):
         sig.close()
 
 
-def download_kinitrd(tmp, suite, mirror, skip_signature=False):
+def download_kinitrd(tmp, suite, mirror, keys_dir, skip_signature=False):
     base_url = f"{mirror.replace('LOCALMACHINE', 'localhost')}/dists/{suite}/"
     installer_path = "main/installer-amd64/current/images/"
 
-    setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
+    setup_apt_keyring(tmp.fname('/'), 'pubring.gpg', keys_dir)
 
     # download release file
     download(base_url + "Release", tmp.fname('Release'))
@@ -201,7 +204,7 @@ def get_primary_mirror(prj):
     return mirror
 
 
-def copy_kinitrd(prj, target_dir):
+def copy_kinitrd(prj, target_dir, keys_dir):
 
     suite = prj.text("suite")
 
@@ -217,7 +220,7 @@ def copy_kinitrd(prj, target_dir):
                      os.path.join(target_dir, "initrd.gz"))
         else:
             mirror = get_primary_mirror(prj)
-            download_kinitrd(tmp, suite, mirror, prj.has("noauth"))
+            download_kinitrd(tmp, suite, mirror, keys_dir, prj.has("noauth"))
 
             copyfile(tmp.fname("initrd.gz"),
                      os.path.join(target_dir, "initrd.gz"))
