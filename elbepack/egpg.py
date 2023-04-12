@@ -13,7 +13,7 @@ from gpg.constants import sigsum, sig, PROTOCOL_OpenPGP
 from gpg.errors import GPGMEError, KeyNotFound, InvalidSigners
 
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import get_command_out, system
+from elbepack.shellhelper import CommandError, get_command_out, system
 
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">
