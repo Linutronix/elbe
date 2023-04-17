@@ -287,7 +287,7 @@ class BuildEnv:
             # I could make a none global 'noauth' flag for mirrors
             for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
-                    key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
+                    key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines())
                     self.add_key(unarmor_openpgp_keyring(key), f"elbe-xml-raw-key{i}.gpg")
 
     def initialize_dirs(self, build_sources=False):
