@@ -1,40 +1,53 @@
-## This file was copied from http://git.yoctoproject.org/git/poky
-##                           16e22f3e37788afb83044f5089d24187d70094bd
+## This file was copied from
+## https://git.yoctoproject.org/poky/tree/meta/classes/toolchain-scripts.bbclass
+## ?id=16e22f3e37788afb83044f5089d24187d70094bd
 ##
-## origin location of the file is: 'meta/classes/toolchain-scripts.bbclass'
+## SPDX-License-Identifier: MIT
+## SPDX-FileCopyrightText: Richard Purdie <richard.purdie@linuxfoundation.org>
+## SPDX-FileCopyrightText: Lianhao Lu <lianhao.lu@intel.com>
+## SPDX-FileCopyrightText: Jessica Zhang <jessica.zhang@intel.com>
+## SPDX-FileCopyrightText: Richard Purdie <rpurdie@linux.intel.com>
+## SPDX-FileCopyrightText: Joshua Lock <joshua.g.lock@intel.com>
+## SPDX-FileCopyrightText: Mark Hatle <mark.hatle@windriver.com>
+## SPDX-FileCopyrightText: Otavio Salvador <otavio@ossystems.com.br>
+## SPDX-FileCopyrightText: Randy Witt <randy.e.witt@linux.intel.com>
+## SPDX-FileCopyrightText: Dongxiao Xu <dongxiao.xu@intel.com>
+## SPDX-FileCopyrightText: Joshua Lock <josh@linux.intel.com>
+## SPDX-FileCopyrightText: Khem Raj <raj.khem@gmail.com>
+## SPDX-FileCopyrightText: Robert Yang <liezhi.yang@windriver.com>
+## SPDX-FileCopyrightText: Ross Burton <ross.burton@intel.com>
+## SPDX-FileCopyrightText: Stephano Cetola <stephano.cetola@linux.intel.com>
+## SPDX-FileCopyrightText: Zongchun Yu <b40527@freescale.com>
+## SPDX-FileCopyrightText: Andre McCurdy <armccurdy@gmail.com>
+## SPDX-FileCopyrightText: Christopher Larson <chris_larson@mentor.com>
+## SPDX-FileCopyrightText: Denys Dmytriyenko <denys@ti.com>
+## SPDX-FileCopyrightText: Fang Jia <fang.jia@windriver.com>
+## SPDX-FileCopyrightText: Jacob Kroon <jacob.kroon@gmail.com>
+## SPDX-FileCopyrightText: Jun Zhang <jun.zhang@windriver.com>
+## SPDX-FileCopyrightText: Kevin Tian <kevin.tian@intel.com>
+## SPDX-FileCopyrightText: Koen Kooi <koen@dominion.thruhere.net>
+## SPDX-FileCopyrightText: Laszlo Papp <lpapp@kde.org>
+## SPDX-FileCopyrightText: Laurentiu Palcu <laurentiu.palcu@intel.com>
+## SPDX-FileCopyrightText: Martin Ertsaas <mertsas@cisco.com>
+## SPDX-FileCopyrightText: Nitin A Kamble <nitin.a.kamble@intel.com>
 ##
-## known authors of the origin file are:
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is
+## furnished to do so, subject to the following conditions:
 ##
-## Richard Purdie <richard.purdie@linuxfoundation.org>
-## Lianhao Lu <lianhao.lu@intel.com>
-## Jessica Zhang <jessica.zhang@intel.com>
-## Richard Purdie <rpurdie@linux.intel.com>
-## Joshua Lock <joshua.g.lock@intel.com>
-## Mark Hatle <mark.hatle@windriver.com>
-## Otavio Salvador <otavio@ossystems.com.br>
-## Randy Witt <randy.e.witt@linux.intel.com>
-## Dongxiao Xu <dongxiao.xu@intel.com>
-## Joshua Lock <josh@linux.intel.com>
-## Khem Raj <raj.khem@gmail.com>
-## Robert Yang <liezhi.yang@windriver.com>
-## Ross Burton <ross.burton@intel.com>
-## Stephano Cetola <stephano.cetola@linux.intel.com>
-## Zongchun Yu <b40527@freescale.com>
-## Andre McCurdy <armccurdy@gmail.com>
-## Christopher Larson <chris_larson@mentor.com>
-## Denys Dmytriyenko <denys@ti.com>
-## Fang Jia <fang.jia@windriver.com>
-## Jacob Kroon <jacob.kroon@gmail.com>
-## Jun Zhang <jun.zhang@windriver.com>
-## Kevin Tian <kevin.tian@intel.com>
-## Koen Kooi <koen@dominion.thruhere.net>
-## Laszlo Papp <lpapp@kde.org>
-## Laurentiu Palcu <laurentiu.palcu@intel.com>
-## Martin Ertsaas <mertsas@cisco.com>
-## Nitin A Kamble <nitin.a.kamble@intel.com>
+## The above copyright notice and this permission notice shall be included in
+## all copies or substantial portions of the Software.
 ##
-## The 'meta' folder of the origin repo contains a
-## COPYING.GPLv2 and COPYING.MIT file.
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+## AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+## THE SOFTWARE.
 
 # Check for LD_LIBRARY_PATH being set, which can break SDK and generally is a bad practice
 # http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html#AEN80

@@ -1,27 +1,40 @@
 #!/bin/sh
 ##
-## This file was copied from http://git.yoctoproject.org/git/poky
-##                           16e22f3e37788afb83044f5089d24187d70094bd
+## This file was copied from
+## https://git.yoctoproject.org/poky/tree/meta/files/toolchain-shar-extract.sh
+## ?id=16e22f3e37788afb83044f5089d24187d70094bd
 ##
-## origin location of the file is: 'meta/files/toolchain-shar-extract.sh'
+## SPDX-License-Identifier: MIT
+## SPDX-FileCopyrightText: Anibal Limon <anibal.limon@linux.intel.com>
+## SPDX-FileCopyrightText: Brendan Le Foll <brendan.le.foll@intel.com>
+## SPDX-FileCopyrightText: Ed Bartosh <ed.bartosh@linux.intel.com>
+## SPDX-FileCopyrightText: George Nita <george.nita@enea.com>
+## SPDX-FileCopyrightText: Maxin B. John <maxin.john@intel.com>
+## SPDX-FileCopyrightText: Paul Eggleton <paul.eggleton@linux.intel.com>
+## SPDX-FileCopyrightText: Qi Chen <Qi.Chen@windriver.com>
+## SPDX-FileCopyrightText: Randy Witt <randy.e.witt@linux.intel.com>
+## SPDX-FileCopyrightText: Richard Purdie <richard.purdie@linuxfoundation.org>
+## SPDX-FileCopyrightText: Robert Yang <liezhi.yang@windriver.com>
+## SPDX-FileCopyrightText: Todor Minchev <todor.minchev@linux.intel.com>
+## SPDX-FileCopyrightText: Wenlin Kang <wenlin.kang@windriver.com>
 ##
-## known authors of the origin file are:
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is
+## furnished to do so, subject to the following conditions:
 ##
-## Anibal Limon <anibal.limon@linux.intel.com>
-## Brendan Le Foll <brendan.le.foll@intel.com>
-## Ed Bartosh <ed.bartosh@linux.intel.com>
-## George Nita <george.nita@enea.com>
-## Maxin B. John <maxin.john@intel.com>
-## Paul Eggleton <paul.eggleton@linux.intel.com>
-## Qi.Chen@windriver.com <Qi.Chen@windriver.com>
-## Randy Witt <randy.e.witt@linux.intel.com>
-## Richard Purdie <richard.purdie@linuxfoundation.org>
-## Robert Yang <liezhi.yang@windriver.com>
-## Todor Minchev <todor.minchev@linux.intel.com>
-## Wenlin Kang <wenlin.kang@windriver.com>
+## The above copyright notice and this permission notice shall be included in
+## all copies or substantial portions of the Software.
 ##
-## The 'meta' folder of the origin repo contains a
-## COPYING.GPLv2 and COPYING.MIT file.
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+## AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+## THE SOFTWARE.
 
 [ -z "$ENVCLEANED" ] && exec /usr/bin/env -i ENVCLEANED=1 HOME="$HOME" \
 	LC_ALL=en_US.UTF-8 \
