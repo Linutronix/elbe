@@ -251,6 +251,7 @@ FILECMD=$(which "file")
 if [ x\$FILECMD = "x"  ]; then
         echo "file command not found."
         echo "use 'sudo apt install file' on Debian"
+        echo "use 'sudo dnf install file' on Red Hat Enterprise Linux"
         exit 1
 fi
 
@@ -326,6 +327,7 @@ PATCHELF=\`which patchelf 2>/dev/null\`
 if [ x\$PATCHELF = "x"  ]; then
         echo "SDK could not be relocated. No patchelf found."
         echo "use 'sudo apt install patchelf' on Debian"
+        echo "use 'sudo dnf install patchelf' on Red Hat Enterprise Linux"
         exit 1
 fi
 
