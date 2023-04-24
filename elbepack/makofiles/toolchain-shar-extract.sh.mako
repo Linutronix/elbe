@@ -375,7 +375,7 @@ for exe in $target_elf_files; do
 done
 
 for exe in $ascii_so_files; do
-	sed -i "s%/usr/%$native_sysroot/usr/%g" \$exe
+	sed -i -e "s%\([ (]\)/\(usr\|lib\|lib64\)/%\1$native_sysroot/\2/%g" \$exe
 done
 EOF
 
