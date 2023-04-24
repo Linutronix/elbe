@@ -310,6 +310,10 @@ ascii_so_files=$($SUDO_EXEC find $native_sysroot -type f -name "*.so" \
 	-exec sh -c "file {} | grep -P ': ASCII text' > /dev/null" \; \
         -printf "'%h/%f' ")
 
+abs_symbolic_links=$($SUDO_EXEC find $native_sysroot -type l \
+    -exec sh -c "file \"{}\" | grep -P 'symbolic link to [\`]?/' > /dev/null" \; \
+    -printf "'%h/%f' ")
+
 if [ "x$native_executable_files" = "x" ]; then
    echo "SDK relocate failed, could not get executalbe files"
    exit 1
@@ -330,6 +334,12 @@ if [ x\$PATCHELF = "x"  ]; then
         echo "use 'sudo dnf install patchelf' on Red Hat Enterprise Linux"
         exit 1
 fi
+
+for link in $abs_symbolic_links; do
+        target=$native_sysroot\`readlink \$link\`
+        rm -f \$link
+        ln -s \$target \$link
+done
 
 for exe in $native_executable_files; do
         if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
