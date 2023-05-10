@@ -11,6 +11,11 @@ FROM registry.hub.docker.com/library/debian:bullseye
 USER root
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN groupmod -g 1000 nogroup
+RUN groupadd -g 1001 libvirt-qemu
+RUN usermod -u 1000 -g nogroup nobody
+RUN useradd -u 1001 -g libvirt-qemu libvirt-qemu
+
 # use a sources.list including backports and security
 RUN echo "deb http://ftp.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
     echo "deb http://security.debian.org/ bullseye-security main"   >> /etc/apt/sources.list
