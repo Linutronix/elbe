@@ -4,10 +4,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+DOCKERFILE ?= Dockerfile
+TAG ?= latest
+ifneq ($(TAG),latest)
+DOCKERFILE = Dockerfile-$(TAG)
+endif
+
 IMAGENAME ?= elbe-devel-image
-CONTAINERNAME ?= elbe-devel
+CONTAINERNAME ?= elbe-devel-$(TAG)
 KVMGID ?= $(shell ls -n /dev/kvm | awk '{ print $$4 }')
 UID ?= $(shell id -u)
+
+PROJECTDIR ?= $(shell pwd)/../../
 
 # docker commands
 build:
@@ -16,13 +24,14 @@ build:
 	test -n "$(KVMGID)" || ( echo "detecting groupid of /dev/kvm failed" && false )
 	sed -e "s#@KVMGID@#$(KVMGID)#g" \
 	    -e "s#@USERID@#$(UID)#g" \
-	    Dockerfile.in > Dockerfile
+	    $(DOCKERFILE).in > $(DOCKERFILE)
 	docker build --build-arg http_proxy=$(http_proxy) \
 	             --build-arg https_proxy=$(https_proxy) \
 	             --build-arg no_proxy=$(no_proxy) \
 	             --no-cache \
-	             -t $(IMAGENAME) .
-	rm Dockerfile
+	             --file $(DOCKERFILE) \
+	             -t $(IMAGENAME):$(TAG) $(PROJECTDIR)
+	rm $(DOCKERFILE)
 
 start:
 	docker ps | grep $(CONTAINERNAME)$$ || \
@@ -39,7 +48,7 @@ start:
 		--group-add kvm \
 		--device /dev/kvm \
 		--device /dev/fuse \
-		$(IMAGENAME)
+		$(IMAGENAME):$(TAG)
 
 stop:
 	-docker stop $(CONTAINERNAME)
@@ -48,7 +57,7 @@ stoprm: stop
 	-docker rm $(CONTAINERNAME)
 
 clean: stoprm
-	-docker rmi $(IMAGENAME)
+	-docker rmi $(IMAGENAME):$(TAG)
 
 connect: start
 	docker exec -tiu $(UID) $(CONTAINERNAME) /bin/bash
