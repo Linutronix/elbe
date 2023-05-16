@@ -79,6 +79,10 @@ VOLUME [ "/var/cache/elbe" ]
 RUN echo "%elbe  ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/elbegrp
 RUN chmod 0440 /etc/sudoers.d/elbegrp
 
+
+# On RHEL family, the following option is necessary since CentOS Stream 8
+# https://bugzilla.redhat.com/show_bug.cgi?id=1774373
+RUN echo 'remember_owner = 0' >> /etc/libvirt/qemu.conf
 # run qemu as root
 RUN echo 'user = "root"' >> /etc/libvirt/qemu.conf
 RUN echo 'group = "root"' >> /etc/libvirt/qemu.conf
