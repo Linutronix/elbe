@@ -4,6 +4,7 @@
 ## SPDX-License-Identifier: GPL-3.0-or-later
 <%
 import string
+import textwrap
 ELEM = "{http://www.w3.org/2001/XMLSchema}element"
 CPLX = "{http://www.w3.org/2001/XMLSchema}complexType"
 DOC  = "{http://www.w3.org/2001/XMLSchema}annotation/{http://www.w3.org/2001/XMLSchema}documentation"
@@ -21,10 +22,7 @@ def docindent(node, indent=0):
   except:
     return "FIXME - I have no documentation"
   else:
-    lines = s.splitlines()
-    lines = [l.strip() for l in lines]
-    lines = map(lambda x: indent*" "+x, lines)
-    return str('').join(lines).strip()
+    return textwrap.indent(textwrap.dedent(s), indent*" ").strip("\n")
 
 def genlink(typ):
   if typ.startswith("rfs:"):
