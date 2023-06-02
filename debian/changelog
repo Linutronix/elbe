@@ -1,3 +1,45 @@
+elbe (14.9) unstable; urgency=medium
+
+  * Team upload
+  * debian: Remove python3-elbe-debianize
+  * tests: test_pylint: Remove debianize exceptions
+  * elbepack: commands: Remove debianize
+  * elbepack: debianize: Remove the module and templates
+  * docs: elbe-debianize: Explain alternatives
+  * README.adoc: add the missing libvirt-clients package
+  * README.adoc: add the missing libvirt-daemon-system package
+  * README.adoc: break the long apt command
+  * README.adoc: add the missing debian-archive-keyring package
+  * README.adoc: fix typos
+  * elbepack/commands/control.py: fix typos
+  * pbuilder: declare pdebuilder/current directory as safe for git
+  * quickstart: add a user to kvm group instead of libvirt-qemu
+  * examples: x86_64-pc-hdimg-grub-hybrid-buster: fix XML syntax error
+  * docs/elbe-initvm.txt: fix typos
+  * docs/elbe-initvm.txt: describe sync command
+  * egpg: Add missing import
+  * rfs: Prevent cutting OpenPGP armor end line
+  * debian: elbe.service: Refer to elbe-initvm(1)
+  * docs/elbe-initvm.txt: add credentials needed for the attach command
+  * db: Ignore 2.0 warning
+  * debian: Update debhelper compat to level 12
+  * docs: elbe-debianize: Remove remarks about debian/arch
+  * repomanager: Prevent writing optional Suite
+  * debianreleases: Drop unused file
+  * schema: Allow free-form text for suite-proj
+  * README: Add info on supported releases
+  * schema: Drop initvm support for buster
+  * init: Drop initvm-ssh-root-open-danger
+  * examples: Use the same deb suite in primary and secondary mirrors
+  * Fix badly rendered ELBE sphinx docs
+  * sdk: add help message for RHEL based system
+  * sdk: relocate absolute links
+  * sdk: fix paths in ascii file
+  * Introduce generic filesystem tuning
+  * CONTRIBUTE: Add documentation
+
+ -- Bastian Germann <bage@linutronix.de>  Fri, 02 Jun 2023 17:46:13 +0200
+
 elbe (14.8.1) unstable; urgency=medium
 
   * Team upload
