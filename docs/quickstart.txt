@@ -96,28 +96,28 @@ be added to kvm and libvirt groups:
 Now create an `initvm` subdirectory and builds the initvm inside this directory.
 
 -------------------------------------------------------------------------------
-$ elbe initvm create
-Import debian-archive-buster-automatic.gpg:
-gpg: key DC30D7C23CBBABEE: 4 Beglaubigungen wegen fehlender Schlüssel nicht geprüft
-gpg: Schlüssel DC30D7C23CBBABEE: Öffentlicher Schlüssel "Debian Archive Automatic Signing Key (10/buster) <ftpmaster@debian.org>" importiert
-gpg: Anzahl insgesamt bearbeiteter Schlüssel: 1
-gpg:                              importiert: 1
-...
-
-Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%
-           ... 100%
-Configuring apt  ... 14%... 21%... 35%... 40%... 50%... 64%... 71%... 85%... 92%... 100%
-Select and install software
-                             ... 10%... 20%... 30%... 40%... 50%... 61%... 71%... 81%... 78%... 80%... 90%
-                          ... 100%
-Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
-The system is going down NOW!.. 12%... 20%... 33%... 41%... 50%... 62%... 70%... 83%... 91%
-Sent SIGKILL to all processes
-Requesting system reboot
-[  656.391904] reboot: Restarting system
-mkdir -p .stamps
-touch .stamps/stamp-install-initial-image
-*****
+ $ elbe initvm create
+ Import debian-archive-buster-automatic.gpg:
+ gpg: key DC30D7C23CBBABEE: 4 Beglaubigungen wegen fehlender Schlüssel nicht geprüft
+ gpg: Schlüssel DC30D7C23CBBABEE: Öffentlicher Schlüssel "Debian Archive Automatic Signing Key (10/buster) <ftpmaster@debian.org>" importiert
+ gpg: Anzahl insgesamt bearbeiteter Schlüssel: 1
+ gpg:                              importiert: 1
+ ...
+ 
+ Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%
+            ... 100%
+ Configuring apt  ... 14%... 21%... 35%... 40%... 50%... 64%... 71%... 85%... 92%... 100%
+ Select and install software
+                              ... 10%... 20%... 30%... 40%... 50%... 61%... 71%... 81%... 78%... 80%... 90%
+                           ... 100%
+ Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
+ The system is going down NOW!.. 12%... 20%... 33%... 41%... 50%... 62%... 70%... 83%... 91%
+ Sent SIGKILL to all processes
+ Requesting system reboot
+ [  656.391904] reboot: Restarting system
+ mkdir -p .stamps
+ touch .stamps/stamp-install-initial-image
+ *****
 -------------------------------------------------------------------------------
 
 Submitting an XML file
@@ -127,75 +127,74 @@ Submitting an XML file triggers an image build inside the initvm.
 Once the initvm has been created and is running, you can submit XML files using
 
 -------------------------------------------------------------------------------
-$ elbe initvm submit examples/x86_64-pc-rescue-busybox-dyn-cpio.xml
-Build started, waiting till it finishes
-[INFO] Build started
-[INFO] ELBE Report for Project x86_64-rescue-image
-Report timestamp: 20191001-135512
-[CMD] reprepro --basedir "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/repo" export stretch
-[CMD] mkdir -p "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot"
-[INFO] Debootstrap log
-[CMD] dpkg --print-architecture
-[CMD] debootstrap  --include="gnupg" --arch=amd64 "stretch" "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot" "http://ftp.de.debian.org//debian"
-I: Retrieving InRelease
-I: Retrieving Release
-I: Retrieving Release.gpg
-I: Checking Release signature
-I: Valid Release signature (key id 067E3C456BAE240ACEE88F6FEF0F382A1A7B6500)
-I: Retrieving Packages
-I: Validating Packages
-I: Resolving dependencies of required packages...
-I: Resolving dependencies of base packages...
-I: Checking component main on http://ftp.de.debian.org//debian...
-I: Retrieving libacl1 2.2.52-3+b1
-I: Validating libacl1 2.2.52-3+b1
-
-...
- 79.05% done, estimate finish Mon Aug  1 09:53:26 2022
- 81.77% done, estimate finish Mon Aug  1 09:53:26 2022
- 84.49% done, estimate finish Mon Aug  1 09:53:26 2022
- 87.22% done, estimate finish Mon Aug  1 09:53:26 2022
- 89.95% done, estimate finish Mon Aug  1 09:53:26 2022
- 92.67% done, estimate finish Mon Aug  1 09:53:27 2022
- 95.39% done, estimate finish Mon Aug  1 09:53:27 2022
- 98.12% done, estimate finish Mon Aug  1 09:53:27 2022
-Total translation table size: 0
-Total rockridge attributes bytes: 73534
-Total directory bytes: 355120
-Path table size(bytes): 2354
-Max brk space used bd000
-183454 extents written (358 MB)
-[INFO] Build finished successfully
-
-Build finished !
-
-ELBE Package validation
-=======================
-
-Package List validation
------------------------
-
-No Errors found
-Binary CD
-Source CD
-
-Getting generated Files
-
-Saving generated Files to elbe-build-20220801-095330
-source.xml 	(Current source.xml of the project)
-rescue.cpio 	(Image)
-licence-chroot.txt 	(License file)
-licence-chroot.xml 	(xml License file)
-licence-target.txt 	(License file)
-licence-target.xml 	(xml License file)
-validation.txt 	(Package list validation result)
-elbe-report.txt 	(Report)
-log.txt 	(Log file)
-bin-cdrom.iso 	(Repository IsoImage)
-src-cdrom-target.iso 	(Repository IsoImage)
-src-cdrom-main.iso 	(Repository IsoImage)
-src-cdrom-added.iso 	(Repository IsoImage)
-
+ $ elbe initvm submit examples/x86_64-pc-rescue-busybox-dyn-cpio.xml
+ Build started, waiting till it finishes
+ [INFO] Build started
+ [INFO] ELBE Report for Project x86_64-rescue-image
+ Report timestamp: 20191001-135512
+ [CMD] reprepro --basedir "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/repo" export stretch
+ [CMD] mkdir -p "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot"
+ [INFO] Debootstrap log
+ [CMD] dpkg --print-architecture
+ [CMD] debootstrap  --include="gnupg" --arch=amd64 "stretch" "/var/cache/elbe/63e09968-c9e7-45d8-8dd2-82c1a8f54f8d/chroot" "http://ftp.de.debian.org//debian"
+ I: Retrieving InRelease
+ I: Retrieving Release
+ I: Retrieving Release.gpg
+ I: Checking Release signature
+ I: Valid Release signature (key id 067E3C456BAE240ACEE88F6FEF0F382A1A7B6500)
+ I: Retrieving Packages
+ I: Validating Packages
+ I: Resolving dependencies of required packages...
+ I: Resolving dependencies of base packages...
+ I: Checking component main on http://ftp.de.debian.org//debian...
+ I: Retrieving libacl1 2.2.52-3+b1
+ I: Validating libacl1 2.2.52-3+b1
+ 
+ ...
+  79.05% done, estimate finish Mon Aug  1 09:53:26 2022
+  81.77% done, estimate finish Mon Aug  1 09:53:26 2022
+  84.49% done, estimate finish Mon Aug  1 09:53:26 2022
+  87.22% done, estimate finish Mon Aug  1 09:53:26 2022
+  89.95% done, estimate finish Mon Aug  1 09:53:26 2022
+  92.67% done, estimate finish Mon Aug  1 09:53:27 2022
+  95.39% done, estimate finish Mon Aug  1 09:53:27 2022
+  98.12% done, estimate finish Mon Aug  1 09:53:27 2022
+ Total translation table size: 0
+ Total rockridge attributes bytes: 73534
+ Total directory bytes: 355120
+ Path table size(bytes): 2354
+ Max brk space used bd000
+ 183454 extents written (358 MB)
+ [INFO] Build finished successfully
+ 
+ Build finished !
+ 
+ ELBE Package validation
+ =======================
+ 
+ Package List validation
+ -----------------------
+ 
+ No Errors found
+ Binary CD
+ Source CD
+ 
+ Getting generated Files
+ 
+ Saving generated Files to elbe-build-20220801-095330
+ source.xml	(Current source.xml of the project)
+ rescue.cpio	(Image)
+ licence-chroot.txt	(License file)
+ licence-chroot.xml	(xml License file)
+ licence-target.txt	(License file)
+ licence-target.xml	(xml License file)
+ validation.txt		(Package list validation result)
+ elbe-report.txt	(Report)
+ log.txt	(Log file)
+ bin-cdrom.iso	(Repository IsoImage)
+ src-cdrom-target.iso	(Repository IsoImage)
+ src-cdrom-main.iso	(Repository IsoImage)
+ src-cdrom-added.iso	(Repository IsoImage)
 -------------------------------------------------------------------------------
 
 The result of the build is stored in elbe-build-<TIMESTAMP> below your current
