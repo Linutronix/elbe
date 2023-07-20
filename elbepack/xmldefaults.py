@@ -152,6 +152,18 @@ i386_defaults = {
     "elfcode": "Intel 80386",
 }
 
+riscv64_defaults = {
+    "arch": "riscv64",
+    "interpreter": "qemu-system-riscv64",
+    "userinterpr": "qemu-riscv64-static",
+    "console": "ttyS0,115200n1",
+    "machine": "sifive_u",
+    "nicmodel": "virtio",
+    "triplet": "riscv64-linux-gnu",
+    "sdkgccpkg": "g++-riscv64-linux-gnu",
+    "elfcode": "RISC-V 64 bit",
+}
+
 archindep_defaults = {
     "name": "elbe-buildenv",
     "size": "20G",
@@ -174,6 +186,7 @@ defaults = {"armel": armel_defaults,
             "ppc64el": ppc64el_defaults,
             "amd64": amd64_defaults,
             "i386": i386_defaults,
+            "riscv64": riscv64_defaults,
             "nodefaults": {}}
 
 def get_random_mac():
