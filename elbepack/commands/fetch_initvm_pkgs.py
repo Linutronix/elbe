@@ -112,30 +112,32 @@ def run_command(argv):
                 pkg_id = f"{pkg.name}-{pkg.installed_version}"
                 retry = 1
                 while retry < 3:
-                      try:
-                          p = cache[pkg.name]
-                          pkgver = p.installed
-                          deb = fetch_binary(pkgver,
-                                       opt.archive,
-                                       ElbeAcquireProgress(cb=None))
-                          repo.includedeb(deb, 'main', prio=pkgver.priority)
-                          break
-                      except ValueError:
-                          logging.exception('No package "%s"', pkg_id)
-                          retry = 3
-                      except FetchError:
-                          logging.exception('Package "%s-%s" could not be downloaded',
-                                      pkg.name, pkgver.version)
-                          retry += 1
-                      except TypeError:
-                          logging.exception('Package "%s" missing name or version', pkg_id)
-                          retry = 3
-                      except CommandError:
-                          logging.exception('Package "%s-%s" could not be added to repo.',
+                    try:
+                        p = cache[pkg.name]
+                        pkgver = p.installed
+                        deb = fetch_binary(pkgver,
+                                           opt.archive,
+                                           ElbeAcquireProgress(cb=None))
+                        repo.includedeb(deb, 'main', prio=pkgver.priority)
+                        break
+                    except ValueError:
+                        logging.exception('No package "%s"', pkg_id)
+                        retry = 3
+                    except FetchError:
+                        logging.exception('Package "%s-%s" could not be downloaded',
                                           pkg.name, pkgver.version)
-                          retry += 1
-                if retry >= 3:
-                    logging.error('Failed to get binary Package "%s"', pkg_id)
+                        retry += 1
+                    except TypeError:
+                        logging.exception('Package "%s" missing name or version',
+                                          pkg_id)
+                        retry = 3
+                    except CommandError:
+                        logging.exception('Package "%s-%s" could not be added to repo.',
+                                          pkg.name, pkgver.version)
+                        retry += 1
+                    if retry >= 3:
+                        logging.error('Failed to get binary Package "%s"',
+                                      pkg_id)
 
         repo.finalize()
 
@@ -156,29 +158,32 @@ def run_command(argv):
                 pkg_id = f"{pkg.name}-{pkg.installed_version}"
                 retry = 1
                 while retry < 3:
-                      try:
-                          p = cache[pkg.name]
-                          pkgver = p.installed
-                          dsc = pkgver.fetch_source(opt.srcarchive,
-                                              ElbeAcquireProgress(cb=None),
-                                              unpack=False)
-                          repo.include_init_dsc(dsc, 'initvm')
-                          break
-                      except ValueError:
-                          logging.exception('No package "%s"', pkg_id)
-                          retry = 3
-                      except FetchError:
-                          logging.exception('Package "%s-%s" could not be downloaded', pkg.name, pkgver.version)
-                          retry += 1
-                      except TypeError:
-                          logging.exception('Package "%s" missing name or version', pkg_id)
-                          retry = 3
-                      except CommandError:
-                          logging.exception('Package "%s-%s" could not be added to repo.',
+                    try:
+                        p = cache[pkg.name]
+                        pkgver = p.installed
+                        dsc = pkgver.fetch_source(opt.srcarchive,
+                                                  ElbeAcquireProgress(cb=None),
+                                                  unpack=False)
+                        repo.include_init_dsc(dsc, 'initvm')
+                        break
+                    except ValueError:
+                        logging.exception('No package "%s"', pkg_id)
+                        retry = 3
+                    except FetchError:
+                        logging.exception('Package "%s-%s" could not be downloaded',
                                           pkg.name, pkgver.version)
-                    retry += 1
-                if retry >= 3:
-                    logging.error('Failed to get source Package "%s"', pkg_id)
+                        retry += 1
+                    except TypeError:
+                        logging.exception('Package "%s" missing name or version',
+                                          pkg_id)
+                        retry = 3
+                    except CommandError:
+                        logging.exception('Package "%s-%s" could not be added to repo.',
+                                          pkg.name, pkgver.version)
+                        retry += 1
+                    if retry >= 3:
+                        logging.error('Failed to get source Package "%s"',
+                                      pkg_id)
 
         repo.finalize()
 
