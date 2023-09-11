@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: 2023 Linutronix GmbH
+
+Origin: elbe
+Label: elbe
+Codename: @DIST@
+Architectures: source @ARCH@
+Components: main
+Description: E.L.B.E. packages repository (unsafe)
+# SignWith: 8044921302364FBDC541F38971F7AE8C018CE6CB
