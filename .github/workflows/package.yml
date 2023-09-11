@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2025 Linutronix GmbH
+
+name: "Package build"
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  stable:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build E.L.B.E. Debian stable packages
+      uses: jtdor/build-deb-action@v1
+      with:
+        docker-image: debian:stable
+        artifacts-dir: stable
+
+    - name: Retrieve results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: stable
+        path: |
+          stable/
+        if-no-files-found: warn
+
+  unstable:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build E.L.B.E. Debian stable packages
+      uses: jtdor/build-deb-action@v1
+      with:
+        docker-image: debian:unstable
+        artifacts-dir: unstable
+
+    - name: Retrieve results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: unstable
+        path: |
+          unstable/
+        if-no-files-found: warn
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install tools
+      run: sudo apt-get install -y config-package-dev devscripts git-buildpackage reprepro
+
+    - name: Create build environment
+      run: ARCH="$(dpkg-architecture -q DEB_BUILD_ARCH)" DIST="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" git-pbuilder create
+
+    - name: Build E.L.B.E. packages
+      run: gbp buildpackage -nc --git-debian-branch="$(git branch --show-current)" --git-pbuilder --git-dist="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" --git-arch="$(dpkg-architecture -q DEB_BUILD_ARCH)"
+
+    - name: Build Repo
+      run: ./.github/scripts/setup_repo.sh
+
+    - name: Retrieve results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: repo
+        path: |
+          repo/
+        if-no-files-found: warn
+
+    - name: Prepare to use Repo
+      run: sudo ./.github/scripts/update_sources_list.sh
+
+    - name: Install E.L.B.E.
+      run: sudo apt-get install -y elbe
+
+    - name: Show E.L.B.E. version
+      run: elbe --version
+
+    - name: Install all E.L.B.E. packages
+      run: sudo ./.github/scripts/install_all.sh
