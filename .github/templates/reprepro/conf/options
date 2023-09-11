@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: 0BSD
+# SPDX-FileCopyrightText: 2023 Linutronix GmbH
+
+verbose
+ask-passphrase
