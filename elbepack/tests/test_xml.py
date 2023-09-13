@@ -14,6 +14,9 @@ from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
 class TestSimpleXML(ElbeTestCase):
+    global elbe_dir      #pylint: disable=global-statement
+
+    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
 
     params = [os.path.join(elbe_dir, "tests", fname)
               for fname

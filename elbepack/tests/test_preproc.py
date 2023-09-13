@@ -10,6 +10,9 @@ from elbepack.directories import elbe_exe, elbe_dir
 
 
 class TestPreproc(ElbeTestCase):
+    global elbe_dir      #pylint: disable=global-statement
+
+    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
 
     failure_set = {os.path.join(elbe_dir, path)
                    for path

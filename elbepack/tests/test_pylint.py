@@ -10,6 +10,9 @@ from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
 
 class TestPylint(ElbeTestCase):
+    global elbe_dir      #pylint: disable=global-statement
+
+    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
 
     pylint_opts = ["--reports=n",
                    "--score=n",
