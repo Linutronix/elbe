@@ -48,7 +48,7 @@ class TestPylint(ElbeTestCase):
     def test_lint(self):
 
         try:
-            system(f"pylint3 {' '.join(self.pylint_opts)} {self.param}")
+            system(f"pylint {' '.join(self.pylint_opts)} {self.param}")
         except ElbeTestException as e:
             if self.param in TestPylint.failure_set:
                 self.stdout = e.out
