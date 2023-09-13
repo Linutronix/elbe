@@ -21,6 +21,7 @@ Build-Depends: debhelper-compat (= 12),
   python3-beaker,
   python3-cherrypy3,
   python3-debian,
+  python3-junitxml,
   python3-passlib,
   python3-spyne,
   python3-sqlalchemy

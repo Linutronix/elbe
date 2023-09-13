@@ -5,13 +5,14 @@
 # elbepack/commands/test.py - Elbe unit test wrapper
 
 import enum
+import io
 import optparse
 import os
 import re
 import unittest
 import warnings
 
-import junit_xml as junit
+import junitxml as junit
 
 from elbepack.shellhelper import command_out
 
@@ -133,79 +134,23 @@ class ElbeTestResult(unittest.TestResult):
 
     def __init__(self):
         super().__init__()
-        self.cases = []
-        self.current_case = None
+        self.buffer = io.StringIO()
+        self.result = junit.JUnitXmlResult(self.buffer)
+        self.success = False
 
-    def startTest(self, test):
-        self.current_case = junit.TestCase(name=str(test))
-        self.cases.append(self.current_case)
-        super().startTest(test)
+    def run_testsuite(self, suite):
+        self.result.startTestRun()
+        unittest.TestSuite(suite).run(self.result)
+        self.result.stopTestRun()
+        self.success = self.result.wasSuccessful()
 
-    def addError(self, test, err):
-        """Called when an error has occurred. 'err' is a tuple of values as
-           returned by sys.exc_info().
-        """
-
-        message = str(err[1])
-        output = self._exc_info_to_string(err, test)
-
-        if err is not None:
-            if issubclass(err[0], ElbeTestException):
-                self.current_case.stdout = err[1].out
-
-        self.current_case.add_error_info(message, output)
-        super().addError(test, err)
-
-    def addFailure(self, test, err):
-        """Called when an error has occurred. 'err' is a tuple of values as
-           returned by sys.exc_info()."""
-
-        message = str(err[1])
-        output = self._exc_info_to_string(err, test)
-
-        if err is not None:
-            if issubclass(err[0], ElbeTestException):
-                self.current_case.stdout = err[1].out
-
-        self.current_case.add_failure_info(message, output)
-        super().addFailure(test, err)
-
-    def addSubTest(self, test, subtest, err):
-        """Called at the end of a subtest.
-           'err' is None if the subtest ended successfully, otherwise it's a
-           tuple of values as returned by sys.exc_info().
-        """
-
-        self.current_case = junit.TestCase(name=str(subtest))
-        self.cases.append(self.current_case)
-
-        if err is not None:
-            message = str(err[1])
-            output = self._exc_info_to_string(err, test)
-
-            if issubclass(err[0], ElbeTestException):
-                self.current_case.stdout = err[1].out
-
-            if issubclass(err[0], test.failureException):
-                self.current_case.add_failure_info(message, output)
-            else:
-                self.current_case.add_error_info(message, output)
-
-        super().addSubTest(test, subtest, err)
-
-    def addSkip(self, test, reason):
-        """Called when a test is skipped."""
-        self.current_case.add_skipped_info(message=reason)
-        if test.stdout is not None:
-            self.current_case.stdout = test.stdout
-        super().addSkip(test, reason)
+    def wasSuccessful(self):
+        return self.success
 
     def get_xml(self):
-        ts = junit.TestSuite(name="test", test_cases=self.cases)
-
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            results = junit.TestSuite.to_xml_string([ts], encoding="utf-8")
+            results = self.buffer.getvalue()
 
         return results
 
@@ -271,9 +216,7 @@ def run_command(argv):
 
     result = ElbeTestResult()
 
-    for test in suite:
-        print(test)
-        test.run(result)
+    result.run_testsuite(suite)
 
     if opt.output is None:
         print(result.get_xml())
@@ -282,4 +225,5 @@ def run_command(argv):
             f.write(result.get_xml())
 
     if not result.wasSuccessful():
+        print("Testsuite failed.")
         os.sys.exit(77)
