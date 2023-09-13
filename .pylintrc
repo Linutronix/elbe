@@ -11,9 +11,6 @@
 # pygtk.require().
 #init-hook=
 
-# Profiled execution.
-profile=no
-
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
 ignore=CVS
@@ -39,7 +36,7 @@ extension-pkg-whitelist=apt_pkg,gpg.constants,lxml,_ped
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
-disable=bad-whitespace,missing-docstring,bad-continuation,invalid-name,line-too-long,too-few-public-methods
+disable=missing-docstring,invalid-name,line-too-long,too-few-public-methods
 
 
 [REPORTS]
@@ -47,14 +44,6 @@ disable=bad-whitespace,missing-docstring,bad-continuation,invalid-name,line-too-
 # Set the output format. Available formats are text, parseable, colorized, msvs
 # (visual studio) and html
 output-format=text
-
-# Include message's id in output
-include-ids=no
-
-# Put messages in a separate file for each module / package specified on the
-# command line instead of printing them on stdout. Reports (if any) will be
-# written in a file name "pylint_global.[txt|html]".
-files-output=no
 
 # Tells whether to display a full report or only the messages
 reports=yes
@@ -65,10 +54,6 @@ reports=yes
 # number of statements analyzed. This is used by the global evaluation report
 # (RP0004).
 evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
-
-# Add a comment according to your evaluation note. This is used by the global
-# evaluation report (RP0004).
-comment=no
 
 
 [VARIABLES]
@@ -107,10 +92,6 @@ ignore-mixin-members=yes
 # (useful for classes with attributes dynamically set).
 ignored-classes=SQLObject
 
-# When zope mode is activated, add a predefined set of Zope acquired attributes
-# to generated-members.
-zope=no
-
 # List of members which are set dynamically and missed by pylint inference
 # system, and so shouldn't trigger E0201 when accessed. Python regular
 # expressions are accepted.
@@ -118,9 +99,6 @@ generated-members=REQUEST,acl_users,aq_parent,sigsum.*,sig\.mode\.NORMAL
 
 
 [BASIC]
-
-# List of builtins function names that should not be used, separated by a comma
-bad-functions=map,filter,apply,input
 
 # Regular expression which should only match correct module names
 module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
@@ -194,9 +172,6 @@ max-locals=15
 
 # Maximum number of return / yield for function / method body
 max-returns=6
-
-# Maximum number of branch for function / method body
-max-branchs=12
 
 # Maximum number of statements in function / method body
 max-statements=50
