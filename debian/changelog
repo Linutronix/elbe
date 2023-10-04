@@ -1,3 +1,9 @@
+elbe (14.9.2) unstable; urgency=medium
+
+  * elbepack: Indentation fix
+
+ -- Volker Haspel <volker.haspel@linutronix.de>  Wed, 04 Oct 2023 14:50:30 +0200
+
 elbe (14.9.1) unstable; urgency=medium
 
   * elbepack: commands: fetch_initvm_pkgs.py: retries for package-fetching added
