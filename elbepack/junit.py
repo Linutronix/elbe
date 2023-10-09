@@ -5,7 +5,7 @@
 
 
 import junit_xml as junit
-
+from junit_xml import to_xml_report_file
 
 class TestException(Exception):
     pass
@@ -22,7 +22,7 @@ class TestSuite:
     @staticmethod
     def to_file(output, tss):
         with open(output, 'w') as f:
-            junit.TestSuite.to_file(f, tss, prettyprint=True)
+            to_xml_report_file(f, tss, prettyprint=True)
 
     @classmethod
     def register(cls, tag, register=True):
