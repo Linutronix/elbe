@@ -53,7 +53,7 @@ else
 ASCIIDOC_EXTRA += -a git-asciidoc-no-roff -a data-uri -a max-width=55em -a data-uri 
 endif
 
-ASCIIDOC_DATA_URI = -a data-uri -a iconsdir=/usr/share/asciidoc/images/icons
+ASCIIDOC_DATA_URI = -a data-uri -a iconsdir=/usr/share/asciidoc/icons
 
 all: html man
 html: $(DOC_HTML)
