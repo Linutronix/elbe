@@ -690,7 +690,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         <attribute name="pin" type="string" use="required">
           <annotation>
             <documentation>
-              TODO: format???
+              TODO: format?
             </documentation>
           </annotation>
         </attribute>
