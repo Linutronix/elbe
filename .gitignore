@@ -31,7 +31,6 @@ docs/*.xml
 docs/elbe*.rst
 docs/article-*.rst
 docs/manpage-base-url.xsl
-docs/elbe-examples.txt
 docs/elbe-schema-reference.txt
 debian/.control.swp
 debian/elbe.debhelper.log
