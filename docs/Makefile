@@ -84,10 +84,12 @@ clean:
 	$(RM) article*.rst elbe*.rst *.xml *.xml+ *.html *.html+ *.1 *.5 *.7
 	$(RM) *.texi *.texi+ *.texi++ git.info gitman.info
 	$(RM) *.pdf
+	$(RM) *.png
 	$(RM) howto-index.txt howto/*.html doc.dep
 	$(RM) technical/api-*.html technical/api-index.txt
 	$(RM) $(cmds_txt) *.made
 	$(RM) manpage-base-url.xsl
+	$(RM) elbe-schema-reference.txt
 
 $(MAN_HTML): %.html : %.txt
 	$(RM) $@+ $@ && \
