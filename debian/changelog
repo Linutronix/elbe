@@ -1,3 +1,33 @@
+elbe (14.9.3) UNRELEASED; urgency=medium
+
+  [ Benedikt Spranger ]
+  * riscv64 support
+  * project-finetuning: Replace deprecated function
+
+  [ Bastian Germann ]
+  * Replace copyright information with SPDX-FileCopyrightText
+  * makofiles: Use the poky scripts under MIT
+  * docs: Add license info respecting the Debian logo
+  * python3-elbe-buildenv: Let postinst ignore sqlalchemy warning
+
+  [ Yegor Yefremov ]
+  * docs: quickstart: fix literal block formatting
+
+  [ Bastian Germann ]
+  * docs: Remove unused testspec.csv
+
+  [ Anna-Maria Behnsen ]
+  * docs: Fix warning for sphinx-build (invalid config option)
+  * gitignore: Remove file which is not generated anymore
+  * docs/Makefile: Fix asciidoc path to icons for callouts
+  * docs/Makefile: Add missing created files to target clean
+  * schema: Fix documentation to do not break asciidoc
+
+  [ Bastian Germann ]
+  * preprocess: introduce compression level
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Thu, 26 Oct 2023 15:28:11 +0200
+
 elbe (14.9.2) unstable; urgency=medium
 
   * elbepack: Indentation fix
