@@ -6,16 +6,16 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	<initvm>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>deb.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
 					<binary>
-						http://security.debian.org/debian-security bullseye-security main
+						http://deb.debian.org/debian-security bullseye-security main
 					</binary>
 					<source>
-						http://security.debian.org/debian-security bullseye-security main
+						http://deb.debian.org/debian-security bullseye-security main
 					</source>
 				</url>
 				<url>

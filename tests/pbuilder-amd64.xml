@@ -17,8 +17,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://security.debian.org/ buster/updates main</binary>
-					<source>http://security.debian.org/ buster/updates main</source>
+					<binary>http://deb.debian.org/ buster/updates main</binary>
+					<source>http://deb.debian.org/ buster/updates main</source>
 				</url>
 			</url-list>
 		</mirror>
