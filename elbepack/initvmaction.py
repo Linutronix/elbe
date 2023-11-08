@@ -19,12 +19,14 @@ from elbepack.config import cfg
 from elbepack.repodir import RepodirError, Repodir
 from elbepack.xmlpreprocess import PreprocessWrapper
 
+
 def is_soap_local():
     return cfg["soaphost"] in ("localhost", "127.0.0.1")
 
+
 def cmd_exists(x):
     return any(os.access(os.path.join(path, x), os.X_OK)
-            for path in os.environ["PATH"].split(os.pathsep))
+               for path in os.environ["PATH"].split(os.pathsep))
 
 # Create download directory with timestamp,
 # if necessary
@@ -41,6 +43,7 @@ def ensure_outdir(opt):
 class InitVMError(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
+
 
 class InitVMAction:
     actiondict = {}
@@ -68,7 +71,6 @@ class InitVMAction:
         self.initvm = None
         self.conn = None
         self.node = node
-
 
         # initvm might be running on a different host.  Thus there's
         # no need to talk with libvirt
@@ -100,7 +102,6 @@ class InitVMAction:
                     if self.conn:
                         break
 
-
                 if not self.conn:
                     print("", file=sys.stderr)
                     print("Accessing libvirt provider system not possible.", file=sys.stderr)
@@ -112,7 +113,8 @@ class InitVMAction:
             elif verr.args[0].startswith('authentication unavailable'):
                 print("", file=sys.stderr)
                 print("Accessing libvirt provider system not allowed.", file=sys.stderr)
-                print("Users which want to use elbe need to be members of the 'libvirt' group.", file=sys.stderr)
+                print("Users which want to use elbe"
+                      "need to be members of the 'libvirt' group.", file=sys.stderr)
                 print("'gpasswd -a <user> libvirt' and logging in again,", file=sys.stderr)
                 print("should fix the problem.", file=sys.stderr)
                 sys.exit(119)
@@ -138,7 +140,6 @@ class InitVMAction:
 
         if not self.initvm and initvmNeeded:
             sys.exit(121)
-
 
     def execute(self, _initvmdir, _opt, _args):
         raise NotImplementedError('execute() not implemented')
@@ -224,7 +225,6 @@ class EnsureAction(InitVMAction):
             sys.exit(124)
 
 
-
 @InitVMAction.register('stop')
 class StopAction(InitVMAction):
 
@@ -275,7 +275,6 @@ class AttachAction(InitVMAction):
 
         print('Attaching to initvm console.')
         system(f'virsh --connect qemu:///system console {cfg["initvm_domain"]}')
-
 
 
 def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
@@ -368,7 +367,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
               file=sys.stderr)
         print(
             f'{elbe_exe} control get_files --output "{opt.outdir}" "{prjdir}"',
-              file=sys.stderr)
+            file=sys.stderr)
         print("", file=sys.stderr)
         print('The project can then be removed using:',
               file=sys.stderr)
@@ -404,7 +403,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             print(
                 f'{elbe_exe} control get_files --output "{opt.outdir}" '
                 f'"{prjdir}"',
-                  file=sys.stderr)
+                file=sys.stderr)
             print("", file=sys.stderr)
             print('The project can then be removed using:',
                   file=sys.stderr)
@@ -468,6 +467,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
                 print("remove project from initvm failed",
                       file=sys.stderr)
                 sys.exit(139)
+
 
 def extract_cdrom(cdrom):
     """ Extract cdrom iso image
@@ -542,7 +542,7 @@ class CreateAction(InitVMAction):
                   "ELBE_INITVM_DOMAIN environment variable to an unused domain name.\n")
             print("Note:")
             print("\t1) You can reimport your old initvm via "
-                    "`virsh --connect qemu:///system define <file>`")
+                  "`virsh --connect qemu:///system define <file>`")
             print("\t   where <file> is the corresponding libvirt.xml")
             print("\t2) virsh --connect qemu:///system undefine does not delete the image "
                   "of your old initvm.")
@@ -551,9 +551,9 @@ class CreateAction(InitVMAction):
         # Upgrade from older versions which used tmux
         try:
             system("tmux has-session -t ElbeInitVMSession 2>/dev/null")
-            print ("ElbeInitVMSession exists in tmux. "
-                   "It may belong to an old elbe version. "
-                   "Please stop it to prevent interfering with this version.", file=sys.stderr)
+            print("ElbeInitVMSession exists in tmux. "
+                  "It may belong to an old elbe version. "
+                  "Please stop it to prevent interfering with this version.", file=sys.stderr)
             sys.exit(143)
         except CommandError:
             pass
@@ -630,7 +630,8 @@ class CreateAction(InitVMAction):
             self.conn.defineXML(xml)
         except CommandError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
-            print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}` to delete existing initvm",
+            print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`"
+                  "to delete existing initvm",
                   file=sys.stderr)
             sys.exit(146)
 
@@ -705,6 +706,7 @@ class SubmitAction(InitVMAction):
                 sys.exit(151)
 
             submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
+
 
 @InitVMAction.register('sync')
 class SyncAction(InitVMAction):

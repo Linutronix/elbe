@@ -97,8 +97,7 @@ def run_command(argv):
         buildenv_pkgs.extend([p.et.text for p in xml.node(
             "project/buildimage/pkg-list")])
 
-
-    with elbe_logging({"files":opt.output}):
+    with elbe_logging({"files": opt.output}):
         logging.info("ELBE Report for Project %s", opt.name)
         return set_pkgs(xml_pkgs + buildenv_pkgs)
 

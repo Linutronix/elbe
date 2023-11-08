@@ -5,6 +5,7 @@
 import os
 from elbepack.shellhelper import CommandError, do
 
+
 class Packer:
 
     def pack_file(self, _builddir, _fname):

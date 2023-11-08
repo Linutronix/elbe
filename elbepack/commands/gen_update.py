@@ -68,7 +68,7 @@ def run_command(argv):
     else:
         buildtype = None
 
-    with elbe_logging({"streams":sys.stdout}):
+    with elbe_logging({"streams": sys.stdout}):
         try:
             project = ElbeProject(opt.target, name=opt.name,
                                   override_buildtype=buildtype,
@@ -93,7 +93,7 @@ def run_command(argv):
     if len(args) >= 1:
         update_xml = args[0]
 
-    with elbe_logging({"projects":project.builddir}):
+    with elbe_logging({"projects": project.builddir}):
         try:
             gen_update_pkg(project, update_xml, opt.output, buildtype,
                            opt.skip_validation, opt.debug,

@@ -10,6 +10,7 @@ import pyudev
 
 from elbepack.updated import is_update_file, handle_update_file
 
+
 class UpdateMonitor:
     def __init__(self, status):
         self.status = status
@@ -82,6 +83,7 @@ class USBMonitor (UpdateMonitor):
                 except BaseException:
                     pass
             return None
+
 
 class FileMonitor (UpdateMonitor):
 

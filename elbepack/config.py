@@ -45,4 +45,5 @@ class Config(dict):
         if 'ELBE_MIRROR_SED' in os.environ:
             self['mirrorsed'] = os.environ['ELBE_MIRROR_SED']
 
+
 cfg = Config()

@@ -113,8 +113,8 @@ def verify_release(tmp, base_url):
     # the Release.gpg signature.
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
-                      None,
-                      tmp.fname('/'))
+                        None,
+                        tmp.fname('/'))
 
     # validate signature.
     # open downloaded plaintext file, and

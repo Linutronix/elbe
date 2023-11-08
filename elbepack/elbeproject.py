@@ -108,6 +108,7 @@ def gen_sdk_scripts(triplet,
 
     return sdkname
 
+
 class ElbeProject:
 
     # pylint: disable=too-many-instance-attributes
@@ -315,7 +316,6 @@ class ElbeProject:
             f"tar cfJ {self.builddir}/sysroot.tar.xz "
             f"-C {self.sysrootpath} -T {sysrootfilelist}")
 
-
     def build_host_sysroot(self, pkgs, hostsysrootpath):
         do(f'rm -rf {hostsysrootpath}; mkdir "{hostsysrootpath}"')
 
@@ -492,7 +492,7 @@ class ElbeProject:
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
                 tgt_lst = cache.get_corresponding_source_packages(pkg_lst=tgt_pkg_lst)
-                components = {"target":(self.buildenv.rfs, cache, tgt_lst)}
+                components = {"target": (self.buildenv.rfs, cache, tgt_lst)}
 
                 # Main component
                 main_lst = []
@@ -529,8 +529,8 @@ class ElbeProject:
                     # Using kwargs here allows us to avoid making
                     # special case for when self.xml is None
                     kwargs = {
-                        "cdrom_size":cdrom_size,
-                        "xml":self.xml
+                        "cdrom_size": cdrom_size,
+                        "xml": self.xml
                         }
 
                     if self.xml is not None:
@@ -772,9 +772,11 @@ class ElbeProject:
         formatfile = ""
 
         if os.path.exists(os.path.join(pdebuilder_current, "debian", "source", "format")):
-            formatfile = open(os.path.join(pdebuilder_current, "debian", "source", "format"), "r").read()
+            formatfile = open(os.path.join(pdebuilder_current,
+                              "debian", "source", "format"), "r").read()
 
-        src_pkg_name = open(os.path.join(pdebuilder_current, "debian", "changelog"), "r").readline().split()[0]
+        src_pkg_name = open(os.path.join(pdebuilder_current,
+                            "debian", "changelog"), "r").readline().split()[0]
 
         if "3.0 (quilt)" in formatfile and not self.orig_files:
             do(f"cd {pdebuilder_current}; origtargz --download-only --tar-only")
@@ -1006,7 +1008,7 @@ class ElbeProject:
 
         # to workaround debian bug no. 872543
         if self.xml.prj.has('noauth'):
-            inrelease = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*InRelease" )
+            inrelease = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*InRelease")
             release_gpg = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*.gpg")
             if inrelease:
                 system(f"rm {inrelease[0]};")
@@ -1045,7 +1047,6 @@ class ElbeProject:
                     logging.warning("source.xml is available. "
                                     "But it does not contain an initvm node")
                     self.copy_initvmnode()
-
 
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
             if not buildenv:

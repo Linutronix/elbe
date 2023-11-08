@@ -26,6 +26,7 @@ class CommandError(Exception):
     def __str__(self):
         return f"Error: {self.returncode} returned from Command {self.cmd}"
 
+
 def system(cmd, allow_fail=False, env_add=None):
     """system() - Execute cmd in a shell.
 
@@ -239,7 +240,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={"context":"[CMD] "})
+    logging.info(cmd, extra={"context": "[CMD] "})
 
     r, w = os.pipe()
 
@@ -253,7 +254,6 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
 
     if p.returncode and not allow_fail:
         raise CommandError(cmd, p.returncode)
-
 
 
 def chroot(directory, cmd, env_add=None, **kwargs):
@@ -273,12 +273,13 @@ def chroot(directory, cmd, env_add=None, **kwargs):
     elbepack.shellhelper.CommandError: ...
     """
 
-    new_env = {"LANG":"C",
-               "LANGUAGE":"C",
-               "LC_ALL":"C"}
+    new_env = {"LANG": "C",
+               "LANGUAGE": "C",
+               "LC_ALL": "C"}
     if env_add:
         new_env.update(env_add)
     do(f"chroot {directory} {cmd}", env_add=new_env, **kwargs)
+
 
 def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     """get_command_out() - Like do() but returns stdout.
@@ -317,7 +318,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={"context":"[CMD] "})
+    logging.info(cmd, extra={"context": "[CMD] "})
 
     r, w = os.pipe()
 

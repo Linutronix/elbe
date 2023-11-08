@@ -9,6 +9,7 @@ from lxml.etree import XMLParser, parse
 
 # ElementTree helpers
 
+
 class eiter:
     def __init__(self, it):
         self.it = it
@@ -25,6 +26,7 @@ class eiter:
                 break
 
         return elem(n)
+
 
 class ebase:
     def __init__(self, et):

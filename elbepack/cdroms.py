@@ -21,6 +21,7 @@ from elbepack.isooptions import get_iso_options
 
 CDROM_SIZE = 640 * 1000 * 1000
 
+
 # pylint: disable=too-many-arguments
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
@@ -35,6 +36,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
         logging.error("No sources for package '%s': %s", pkg_id, str(e))
     except FetchError as e:
         logging.error("Source for package '%s' could not be downloaded: %s", pkg_id, str(e))
+
 
 def mk_source_cdrom(components, codename,
                     init_codename, target,
@@ -81,7 +83,7 @@ def mk_source_cdrom(components, codename,
 
     initvm_repo = Filesystem('/var/cache/elbe/sources')
 
-    for _ , dsc_real in initvm_repo.walk_files():
+    for _, dsc_real in initvm_repo.walk_files():
         if not dsc_real.endswith('.dsc'):
             continue
 
@@ -116,6 +118,7 @@ def mk_source_cdrom(components, codename,
 
     return [(repo.buildiso(os.path.join(target, f"src-cdrom-{component}.iso"),
             options=options)) for component, repo in repos.items()]
+
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # pylint: disable=too-many-arguments

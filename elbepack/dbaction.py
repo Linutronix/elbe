@@ -9,6 +9,7 @@ from getpass import getpass
 from shutil import copyfileobj
 from elbepack.db import ElbeDB, ElbeDBError
 
+
 class DbAction:
 
     actiondict = {}

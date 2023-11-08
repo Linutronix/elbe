@@ -8,6 +8,7 @@ from optparse import OptionParser
 
 from elbepack.elbexml import ElbeXML, ValidationError
 
+
 def run_command(argv):
 
     oparser = OptionParser(

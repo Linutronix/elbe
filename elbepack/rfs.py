@@ -17,7 +17,7 @@ from elbepack.shellhelper import CommandError, do, chroot, get_command_out
 
 def create_apt_prefs(xml, rfs):
 
-    filename =  "etc/apt/preferences"
+    filename = "etc/apt/preferences"
 
     if rfs.lexists(filename):
         rfs.remove(filename)
@@ -57,8 +57,10 @@ class DebootstrapException (Exception):
     def __init__(self):
         Exception.__init__(self, "Debootstrap Failed")
 
+
 class BuildEnv:
-    def __init__(self, xml, path, build_sources=False, clean=False, arch="default", hostsysroot=False):
+    def __init__(self, xml, path, build_sources=False,
+                 clean=False, arch="default", hostsysroot=False):
 
         # pylint: disable=too-many-arguments
 
@@ -125,7 +127,8 @@ class BuildEnv:
 
         if self.xml.has("project/mirror/cdrom"):
             self.convert_asc_to_gpg('/cdrom/repo.pub', '/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg')
-            self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg')
+            self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub',
+                                    '/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg')
 
         if os.path.exists(os.path.join(self.rfs.path, 'repo/pool')):
             self.convert_asc_to_gpg('/repo/repo.pub', '/etc/apt/trusted.gpg.d/elbe-localrepo.gpg')
@@ -175,7 +178,7 @@ class BuildEnv:
 
         host_arch = get_command_out("dpkg --print-architecture").strip().decode()
 
-        strapcmd  = "debootstrap"
+        strapcmd = "debootstrap"
 
         # Should we use a special bootstrap variant?
         if self.xml.has("target/debootstrap/variant"):
@@ -304,7 +307,6 @@ class BuildEnv:
             cmd = (f'debconf-set-selections < {self.rfs.fname("var/cache/elbe/preseed.txt")}')
             chroot(self.rfs.path, cmd)
 
-
     def seed_etc(self):
         passwd = self.xml.text("target/passwd_hashed")
         stdin = f"root:{passwd}"
@@ -335,7 +337,8 @@ class BuildEnv:
             if serial_baud:
                 chroot(self.rfs.path,
                        """/bin/sh -c '[ -f /etc/inittab ] && """
-                       f"""echo "T0:23:respawn:/sbin/getty -L {serial_con} {serial_baud} vt100" >> """
+                       f"""echo "T0:23:respawn:/sbin/getty -L
+                       {serial_con} {serial_baud} vt100" >> """
                        """/etc/inittab'""",
                        allow_fail=True)
 

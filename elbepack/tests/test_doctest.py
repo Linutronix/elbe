@@ -9,6 +9,7 @@ import elbepack.filesystem as filesystem
 
 from elbepack.commands.test import ElbeTestCase
 
+
 class ElbeDocTest(ElbeTestCase):
 
     # This is an example of a callable parametrization
@@ -21,7 +22,7 @@ class ElbeDocTest(ElbeTestCase):
         self.kwargs = {}
 
         if self.param is filesystem:
-            self.kwargs["extraglobs"] = {"this":filesystem.TmpdirFilesystem()}
+            self.kwargs["extraglobs"] = {"this": filesystem.TmpdirFilesystem()}
 
     def tearDown(self):
 

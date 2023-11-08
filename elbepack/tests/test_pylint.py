@@ -8,6 +8,7 @@ from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
 from elbepack.shellhelper import system_out
 from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
+
 class TestPylint(ElbeTestCase):
 
     pylint_opts = ["--reports=n",
@@ -21,8 +22,10 @@ class TestPylint(ElbeTestCase):
                        "daemons/soap/esoap.py",
 
                        # FIXME: This one is an actual bug to be fixed
-                       # 274:30: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
-                       # 276:26: W0631: Using possibly undefined loop variable 'entry' (undefined-loop-variable)
+                       # 274:30: W0631: Using possibly undefined loop variable
+                       # 'entry' (undefined-loop-variable)
+                       # 276:26: W0631: Using possibly undefined loop variable
+                       # 'entry' (undefined-loop-variable)
                        "hdimg.py",
 
                        "initvmaction.py",

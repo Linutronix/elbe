@@ -21,9 +21,9 @@ from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
 class AsyncWorkerJob:
 
-    build_done   = "build_done"
+    build_done = "build_done"
     build_failed = "build_failed"
-    has_changes  = "has_changes"
+    has_changes = "has_changes"
 
     def __init__(self, project):
         self.project = project
@@ -128,6 +128,7 @@ class BuildCDROMsJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
 
+
 class BuildChrootTarJob(AsyncWorkerJob):
     def __init__(self, project):
         AsyncWorkerJob.__init__(self, project)
@@ -187,7 +188,7 @@ class BuildJob(AsyncWorkerJob):
             elif isinstance(e, AptCacheCommitError):
                 err = "Failed to commit the AptCache changes."
             elif isinstance(e, AptCacheUpdateError):
-                err ="Failed to build the Apt Cache."
+                err = "Failed to build the Apt Cache."
 
             logging.exception("%s\n"
                               "Probable cause might be:\n"
@@ -206,12 +207,13 @@ class BuildJob(AsyncWorkerJob):
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
 
+
 class PdebuildJob(AsyncWorkerJob):
     def __init__(self, project, cpuset=-1, profile="", cross=False):
         AsyncWorkerJob.__init__(self, project)
-        self.cpuset=cpuset
-        self.profile=profile
-        self.cross=cross
+        self.cpuset = cpuset
+        self.profile = profile
+        self.cross = cross
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -237,6 +239,7 @@ class PdebuildJob(AsyncWorkerJob):
         finally:
             db.update_project_files(self.project)
             db.reset_busy(self.project.builddir, success)
+
 
 class CreatePbuilderJob(AsyncWorkerJob):
     def __init__(self, project, ccachesize, cross=False, noccache=False):
@@ -327,6 +330,7 @@ class APTUpdateJob(AsyncWorkerJob):
         finally:
             db.reset_busy(self.project.builddir, success)
 
+
 class APTUpdUpgrJob(AsyncWorkerJob):
     def __init__(self, project):
         AsyncWorkerJob.__init__(self, project)
@@ -355,6 +359,7 @@ class APTUpdUpgrJob(AsyncWorkerJob):
                 success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
+
 
 class APTCommitJob(AsyncWorkerJob):
     def __init__(self, project):
@@ -578,7 +583,7 @@ class AsyncWorker(Thread):
             job = self.queue.get()
             if job is not None:
                 with savecwd():
-                    with elbe_logging({"projects":job.project.builddir}):
+                    with elbe_logging({"projects": job.project.builddir}):
                         job.execute(self.db)
             else:
                 loop = False

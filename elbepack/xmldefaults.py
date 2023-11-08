@@ -185,6 +185,7 @@ defaults = {"armel": armel_defaults,
             "riscv64": riscv64_defaults,
             "nodefaults": {}}
 
+
 def get_random_mac():
     binaddr = [random.randint(0, 255) for _ in range(6)]
     binaddr[0] &= 0xfe
@@ -192,6 +193,7 @@ def get_random_mac():
     s = [f"{x:02x}" for x in binaddr]
 
     return ':'.join(s)
+
 
 class ElbeDefaults:
 

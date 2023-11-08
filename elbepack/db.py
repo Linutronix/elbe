@@ -92,6 +92,7 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
     return filename
 
+
 class ElbeDB:
 
     # pylint: disable=too-many-public-methods
@@ -171,7 +172,7 @@ class ElbeDB:
             dos2unix(builddir + "/postbuild.sh")
 
             return _update_project_file(s, builddir,
-                "postbuild.sh", "application/sh", "postbuild script")
+                                        "postbuild.sh", "application/sh", "postbuild script")
 
     def set_savesh(self, builddir, savesh_file):
         if not os.path.exists(builddir):
@@ -631,8 +632,8 @@ class ElbeDB:
             s.add(v)
 
             _update_project_file(s, builddir, versionxmlname,
-                                      "application/xml",
-                                      f"source.xml for version {version}")
+                                 "application/xml",
+                                 f"source.xml for version {version}")
 
     def set_version_description(self, builddir, version, description):
         with session_scope(self.session) as s:
@@ -757,7 +758,7 @@ class ElbeDB:
                     f"project {builddir} is not registered in the database")
 
             _update_project_file(s, builddir, name, mime_type,
-                                      description)
+                                 description)
 
     def update_project_files(self, ep):
         with session_scope(self.session) as s:
@@ -786,8 +787,8 @@ class ElbeDB:
 
             # Add other generated files
             _update_project_file(s, p.builddir, "source.xml",
-                                      "application/xml",
-                                      "Current source.xml of the project")
+                                 "application/xml",
+                                 "Current source.xml of the project")
 
             for name in ["chroot", "target", "sysroot-target", "sysroot-host"]:
 
@@ -800,20 +801,20 @@ class ElbeDB:
                                      "xml License file")
 
             _update_project_file(s, p.builddir, "validation.txt",
-                                      "text/plain; charset=utf-8",
-                                      "Package list validation result")
+                                 "text/plain; charset=utf-8",
+                                 "Package list validation result")
 
             _update_project_file(s, p.builddir, "elbe-report.txt",
-                                      "text/plain; charset=utf-8",
-                                      "Report")
+                                 "text/plain; charset=utf-8",
+                                 "Report")
 
             _update_project_file(s, p.builddir, "log.txt",
-                                      "text/plain; charset=utf-8",
-                                      "Log file")
+                                 "text/plain; charset=utf-8",
+                                 "Log file")
 
             _update_project_file(s, p.builddir, "sysroot.tar.xz",
-                                      "application/x-xz-compressed-tar",
-                                      "sysroot for cross-toolchains")
+                                 "application/x-xz-compressed-tar",
+                                 "sysroot for cross-toolchains")
 
             sdk = glob.glob(os.path.join(p.builddir, "setup-elbe-sdk-*.sh"))
             try:
@@ -822,21 +823,21 @@ class ElbeDB:
                 sdkname = sdk[0].split('/')[-1]
 
                 _update_project_file(s, p.builddir, sdkname,
-                                        "application/x-shellscript",
-                                        "SDK Installer")
+                                     "application/x-shellscript",
+                                     "SDK Installer")
             except IndexError:
                 pass
 
             _update_project_file(s, p.builddir, "chroot.tar.xz",
-                                      "application/x-xz-compressed-tar",
-                                      "chroot for 'native' development")
+                                 "application/x-xz-compressed-tar",
+                                 "chroot for 'native' development")
 
             # Add Repository iso images
             for img in ep.repo_images:
                 name = os.path.basename(img)
                 _update_project_file(s, p.builddir, name,
-                                          "application/octet-stream",
-                                          "Repository IsoImage")
+                                     "application/octet-stream",
+                                     "Repository IsoImage")
 
             # Scan pbuilder/build directory if that exists
             if os.path.exists(os.path.join(p.builddir, "pbuilder", "result")):
@@ -851,9 +852,8 @@ class ElbeDB:
                 for f in os.listdir(pbresult_path):
                     pfile = os.path.join(pfile_path, f)
                     _update_project_file(s, p.builddir, pfile,
-                                              "application/octet-stream",
-                                              "Pbuilder artifact")
-
+                                         "application/octet-stream",
+                                         "Pbuilder artifact")
 
     def add_user(self, name, fullname, password, email, admin):
 
@@ -1003,6 +1003,7 @@ class User(Base):
     admin = Column(Boolean)
     projects = relationship("Project", backref="owner")
 
+
 class UserData:
     def __init__(self, user):
         self.id = int(user.id)
@@ -1025,6 +1026,7 @@ class Project (Base):
     versions = relationship("ProjectVersion", backref="project")
     files = relationship("ProjectFile", backref="project")
 
+
 class ProjectData:
     def __init__(self, project):
         self.builddir = str(project.builddir)
@@ -1046,6 +1048,7 @@ class ProjectVersion (Base):
     version = Column(String, primary_key=True)
     description = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
 
 class ProjectVersionData:
     def __init__(self, pv):
@@ -1074,6 +1077,7 @@ class ProjectFile (Base):
                       primary_key=True)
     mime_type = Column(String, nullable=False)
     description = Column(String)
+
 
 class ProjectFileData:
     def __init__(self, pf):

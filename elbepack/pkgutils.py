@@ -64,6 +64,7 @@ def get_dsc_size(fname):
 
     return sz
 
+
 class ChangelogNeedsDependency(Exception):
     def __init__(self, pkgname):
         Exception.__init__(

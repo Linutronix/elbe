@@ -9,6 +9,7 @@ import os
 
 arch2triple = {"armhf": "arm-linux-gnueabihf", "armel": "arm-linux-gnueabi"}
 
+
 class Toolchain:
     libc_path = "${triple}/libc"
     gcc_libpath = "${triple}/lib"

@@ -27,7 +27,7 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(39)
 
-    with elbe_logging({"streams":sys.stdout}):
+    with elbe_logging({"streams": sys.stdout}):
         try:
             project = ElbeProject(args[0], override_buildtype=opt.buildtype,
                                   skip_validate=opt.skip_validation)

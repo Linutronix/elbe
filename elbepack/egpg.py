@@ -25,6 +25,7 @@ elbe_internal_key_param = """
 </GnupgKeyParms>
 """
 
+
 # pylint: disable=too-many-instance-attributes
 class OverallStatus:
 
@@ -156,7 +157,7 @@ def unsign_file(fname):
     overall_status = OverallStatus()
 
     try:
-        infile  = core.Data(file=fname)
+        infile = core.Data(file=fname)
         outfile = core.Data(file=outfilename)
     except (GPGMEError, ValueError) as E:
         print(f"Error: Opening file {fname} or {outfilename} - {E}")
@@ -176,6 +177,7 @@ def unsign_file(fname):
 
     return None
 
+
 def unlock_key(fingerprint):
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
@@ -186,6 +188,7 @@ def unlock_key(fingerprint):
     system("/usr/lib/gnupg/gpg-preset-passphrase "
            f"--preset -P requiredToAvoidUserInput {keygrip}",
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
+
 
 def sign(infile, outfile, fingerprint):
 
@@ -229,9 +232,11 @@ def sign(infile, outfile, fingerprint):
             with open(outfile, 'w') as fd:
                 fd.write(signature)
 
+
 def sign_file(fname, fingerprint):
     outfilename = fname + '.gpg'
     sign(fname, outfilename, fingerprint)
+
 
 def get_fingerprints():
     ctx = core.Context()
@@ -250,7 +255,11 @@ def get_fingerprints():
 # default-cache-ttl and max-cache-ttl values.  Thus we're setting the
 # least maximum value of the type unsigned long to ensure that the
 # passphrase is 'never' removed from gpg-agent.
+
+
 EOT = 4294967295
+
+
 def generate_elbe_internal_key():
     hostfs.mkdir_p("/var/cache/elbe/gnupg")
     hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
@@ -270,6 +279,7 @@ def generate_elbe_internal_key():
 def export_key(fingerprint, outfile):
     system(f"/usr/bin/gpg -a -o {outfile} --export {fingerprint}",
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
+
 
 def unarmor_openpgp_keyring(armored):
     """

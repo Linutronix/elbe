@@ -55,6 +55,7 @@ class MyMan(BaseManager):
         super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
         async_logging(r, w, soap, log)
 
+
 class InChRootObject:
     def __init__(self, rfs):
         self.rfs = rfs
@@ -152,7 +153,7 @@ class RPCAPTCache(InChRootObject):
 
                 if name_no_suffix in version_dict:
 
-                    version   = version_dict[name_no_suffix]
+                    version = version_dict[name_no_suffix]
                     candidate = pkg.versions.get(version)
 
                     if candidate:
@@ -203,7 +204,6 @@ class RPCAPTCache(InChRootObject):
                     dbgsym_lst.append(self.cache[dbg_pkg])
 
         mark_install(dbgsym_lst, "-dbgsym")
-
 
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
@@ -393,7 +393,7 @@ class RPCAPTCache(InChRootObject):
             src = os.path.basename(_file.path)
             dst = os.path.join(dest_dir, src)
 
-            if 'dsc' ==  _file.type:
+            if 'dsc' == _file.type:
                 dsc = dst
 
             if not (allow_untrusted or _file.hashes.usable):

@@ -68,6 +68,7 @@ class mountpoint_dict (dict):
 
         return [self[x] for x in mplist]
 
+
 class hdpart:
     def __init__(self):
         # These attributes are filled later

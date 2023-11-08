@@ -56,7 +56,8 @@ def gen_binpkg_archive(ep, repodir):
 
             if not path.isfile(abs_path):
                 # Package file does not exist, download it and adjust path name
-                logging.warning('Package file "%s" not found in var/cache/apt/archives, downloading it',
+                logging.warning('Package file "%s" not found'
+                                'in var/cache/apt/archives, downloading it',
                                 filename)
                 abs_path = ep.buildenv.rfs.fname(rel_path)
                 pkg_id = f"{pkg.name}-{pkg.installed_version}"

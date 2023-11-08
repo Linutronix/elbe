@@ -292,6 +292,7 @@ class grubinstaller97(grubinstaller_base):
             do(f"kpartx -d {poopdev}", allow_fail=True)
             do(f"losetup -d {poopdev}", allow_fail=True)
 
+
 class simple_fstype:
     def __init__(self, typ):
         self.type = typ
@@ -327,8 +328,7 @@ def create_partition(
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 
-    if disk.type == "gpt" and \
-        part.has("name"):
+    if disk.type == "gpt" and part.has("name"):
         ppart.set_name(part.text("name"))
 
     cons = parted.Constraint(exactGeom=g)
@@ -378,6 +378,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     return ppart
 
+
 def _execute_fs_commands(commands, replacements):
     for command in commands:
         try:
@@ -386,6 +387,7 @@ def _execute_fs_commands(commands, replacements):
             logging.error('Filesystem finetuning command failed: invalid key "%s"', E)
         except Exception as E:
             logging.error('Filesystem finetuning command failed: %s', E)
+
 
 def create_binary(disk, part, ppart, target):
 
@@ -405,6 +407,7 @@ def create_binary(disk, part, ppart, target):
         do(f'dd if="{tmp}" of="{loopdev}"')
     finally:
         do(f'losetup -d "{loopdev}"')
+
 
 def create_logical_partitions(disk,
                               extended,
@@ -586,8 +589,8 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
         do(f'mkdir -p "{rfs.fname("")}{l.mountpoint}"')
         if rfs.listdir(l.mountpoint):
             do(
-                f'mv "{rfs.fname(l.mountpoint)}"/* '
-                f'"{os.path.join(fspath, l.id)}"',
+               f'mv "{rfs.fname(l.mountpoint)}"/* '
+               f'"{os.path.join(fspath, l.id)}"',
                allow_fail=True)
 
     try:
@@ -618,8 +621,8 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
         for i in fslist:
             if len(os.listdir(os.path.join(fspath, i.id))) > 0:
                 do(
-                    f'mv "{os.path.join(fspath, i.id)}"/* '
-                    f'"{rfs.fname(i.mountpoint)}"',
+                   f'mv "{os.path.join(fspath, i.id)}"/* '
+                   f'"{rfs.fname(i.mountpoint)}"',
                    allow_fail=True)
 
     # Files are now moved back. ubinize needs files in place, so we run it now.

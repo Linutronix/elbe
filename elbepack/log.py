@@ -65,6 +65,7 @@ class QHandler(logging.Handler):
         except (IndexError, KeyError):
             pass
 
+
 def read_loggingQ(proj):
     return QHandler.pop(proj)
 
@@ -72,8 +73,10 @@ def read_loggingQ(proj):
 def read_maxlevel(proj):
     return QHandler.max_level(proj)
 
+
 def reset_level(proj):
     QHandler.reset_level(proj)
+
 
 class ThreadFilter(logging.Filter):
 
@@ -218,6 +221,7 @@ def close_logging():
             h.close()
     local.handlers = []
 
+
 class AsyncLogging:
 
     def __init__(self, atmost, stream, block):
@@ -243,7 +247,7 @@ class AsyncLogging:
 
         while True:
 
-            buf  = os.read(self.fd, self.atmost).decode("utf-8", errors="replace")
+            buf = os.read(self.fd, self.atmost).decode("utf-8", errors="replace")
 
             # Pipe broke
             if not buf:
@@ -251,7 +255,7 @@ class AsyncLogging:
 
             buf = rest + buf
             cnt = 0
-            j   = 0
+            j = 0
 
             # Line buffering
             for i in range(len(buf)):
@@ -265,7 +269,7 @@ class AsyncLogging:
                 logbuf = "\n".join(self.lines[-cnt:])
 
                 # filter out ansi sequences.
-                logbuf = re.sub('\u001b\[.*?[@-~]', '', logbuf)
+                logbuf = re.sub('\u001b[.*?[@-~]', '', logbuf)
                 logbuf = re.sub('\u0008', '', logbuf)
 
                 self.stream.info(logbuf)

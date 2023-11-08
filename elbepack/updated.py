@@ -32,6 +32,7 @@ from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 from elbepack.shellhelper import CommandError, system
 
+
 class UpdateStatus:
 
     # pylint: disable=too-many-instance-attributes
@@ -142,6 +143,7 @@ class UpdateService (ServiceBase):
         self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
         self.app.status.log("connection established")
 
+
 class rw_access_file:
     def __init__(self, filename, status):
         self.filename = filename
@@ -157,6 +159,7 @@ class rw_access_file:
         if os.path.isfile(self.filename):
             self.f.close()
         self.rw.__exit__(typ, value, traceback)
+
 
 class rw_access:
     def __init__(self, directory, status):

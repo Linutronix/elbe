@@ -22,6 +22,7 @@ def validate_sha256(fname, expected_hash):
                 f'file "{fname}" failed to verify ! got: "{m.hexdigest()}" '
                 f'expected: "{expected_hash}"')
 
+
 class HashValidator:
     def __init__(self, base_url):
         self.hashes = {}

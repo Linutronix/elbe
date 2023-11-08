@@ -27,7 +27,7 @@ def copy_filelist(src, file_lst, dst):
 
     # pylint: disable=too-many-branches
 
-    files  = set()
+    files = set()
     copied = set()
 
     # Make sure to copy parent directories
@@ -125,7 +125,7 @@ def extract_target(src, xml, dst, cache):
                 f"var/lib/dpkg/info/{line}:{arch}.conffiles")
 
         file_list = sorted(set(file_list),
-                           key = lambda k: k[4:] if k.startswith('/usr') else k)
+                           key=lambda k: k[4:] if k.startswith('/usr') else k)
         copy_filelist(src, file_list, dst)
     else:
         # first copy most diretories
@@ -196,16 +196,16 @@ class ElbeFilesystem(Filesystem):
             if os.path.isfile(copyright_fname):
                 try:
                     with io.open(copyright_fname, "r",
-                                encoding='utf-8', errors='replace') as lic:
+                                 encoding='utf-8', errors='replace') as lic:
                         lic_text = lic.read()
                 except IOError as e:
                     logging.exception("Error while processing license file %s",
-                                    copyright_fname)
+                                      copyright_fname)
                     lic_text = u"Error while processing license file %s: '%s'" % (
                         copyright_file, e.strerror)
             else:
                 logging.warning("License file does not exist, skipping %s",
-                                  copyright_fname)
+                                copyright_fname)
                 continue
             # in Python2 'pkg' is a binary string whereas in Python3 it is a
             # unicode string. So make sure that pkg ends up as a unicode string
@@ -225,6 +225,7 @@ class ElbeFilesystem(Filesystem):
 
         if xml_fname is not None:
             licence_xml.write(xml_fname)
+
 
 class Excursion:
 

@@ -58,7 +58,7 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(74)
 
-    with elbe_logging({"files":opt.log}):
+    with elbe_logging({"files": opt.log}):
 
         if not opt.rfs_only:
             try:

@@ -19,6 +19,7 @@ from elbepack.shellhelper import do
 report = logging.getLogger("report")
 validation = logging.getLogger("validation")
 
+
 def get_initvm_pkglist():
     cache = Cache()
     cache.open()
@@ -77,7 +78,6 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-branches
-
 
     validation.info("ELBE Package validation")
     validation.info("=======================")
@@ -163,7 +163,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
         if not md5 and not sha256:
             validation.error("Package '%s' has no hash setup in package list.",
                              name)
-            error += 1
+            errors += 1
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
@@ -234,8 +234,6 @@ def elbe_report(xml, buildenv, cache, targetfs):
     else:
         mt_index_post_fine = mt_index_postarch
 
-
-
     report.info("")
     report.info("File List")
     report.info("---------")
@@ -266,7 +264,6 @@ def elbe_report(xml, buildenv, cache, targetfs):
         # else leave pkg as is
 
         report.info("|+%s+|%s", fpath, pkg)
-
 
     report.info("")
     report.info("Deleted Files")
@@ -318,7 +315,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     for fpath in list(mt_index_postarch.keys()):
         if (fpath not in mt_index or
-            mt_index_postarch[fpath] != mt_index[fpath]):
+           mt_index_postarch[fpath] != mt_index[fpath]):
             if fpath not in mt_index_post_fine:
                 validation.warning("Archive file %s deleted in finetuning",
                                    fpath)

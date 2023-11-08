@@ -7,7 +7,7 @@ import os
 import re
 import sys
 
-from urllib.parse import urljoin,urlparse
+from urllib.parse import urljoin, urlparse
 
 from base64 import encodebytes, standard_b64decode
 from subprocess import CalledProcessError
@@ -21,12 +21,14 @@ from elbepack.filesystem import TmpdirFilesystem
 class ArchivedirError(Exception):
     pass
 
+
 def enbase(fname, compress=True):
     with open(fname, "rb") as infile:
         s = infile.read()
         if compress:
             s = bz2.compress(s)
         return encodebytes(s)
+
 
 def collect(tararchive, path, keep):
     if keep:
@@ -35,6 +37,7 @@ def collect(tararchive, path, keep):
         cmd = 'tar rf ' + tararchive + ' --owner=root --group=root -C '
     cmd += path + ' .'
     system(cmd)
+
 
 def chg_archive(xml, path, keep):
     if os.path.isdir(path):
@@ -69,6 +72,7 @@ def prepare_path(url):
     path = url.geturl().replace(f"{url.scheme}://", "", 1)
     return re.sub(r'/$', "", path)
 
+
 def get_and_append_local(url, tararchive, keep):
     if urlparse(url).netloc:
         msg = f"Reject suspicious file:// URI \"{url}\". "
@@ -77,15 +81,18 @@ def get_and_append_local(url, tararchive, keep):
         raise ArchivedirError(msg)
     collect(tararchive, prepare_path(url), keep)
 
+
 def get_and_append_unknown(url, _archive):
     msg = f"unhandled scheme \"{urlparse(url).scheme}://\""
     raise NotImplementedError(msg)
+
 
 def get_and_append_method(url):
     return {
         '': get_and_append_local,
         'file': get_and_append_local,
     }.get(urlparse(url).scheme, get_and_append_unknown)
+
 
 def _combinearchivedir(xml, xpath, use_volume):
     elbexml = etree(None)
@@ -112,7 +119,6 @@ def _combinearchivedir(xml, xpath, use_volume):
             else:
                 arch = parent.ensure_child("archive")
                 fname_suffix = ''
-
 
             get_and_append = get_and_append_method(archiveurl)
 

@@ -62,6 +62,7 @@ def lookup_uri(v, d, target_pkg):
 
     return target_pkg, uri, hashval
 
+
 class VirtApt:
     def __init__(self, xml):
 
@@ -156,7 +157,8 @@ class VirtApt:
             # I could make a none global 'noauth' flag for mirrors
             for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
-                    key = "\n".join(line.strip(" \t") for line in url.text('raw-key').splitlines()[1:-1])
+                    key = "\n".join(line.strip(" \t")
+                                    for line in url.text('raw-key').splitlines()[1:-1])
                     self.add_key(unarmor_openpgp_keyring(key), f"elbe-virtapt-raw-key{i}.gpg")
 
     def start(self):

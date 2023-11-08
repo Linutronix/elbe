@@ -8,6 +8,7 @@ from urllib.request import urlopen
 
 from elbepack.filesystem import Filesystem
 
+
 def pbuilder_write_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
@@ -33,7 +34,8 @@ def pbuilder_write_config(builddir, xml, noccache):
     if xml.prj.has('noauth'):
         fp.write(
             'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
-        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]} == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
+        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]}
+                 == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
     # aptitude segfaults with armhf changeroots, great! :)
@@ -48,6 +50,7 @@ def pbuilder_write_config(builddir, xml, noccache):
         fp.write(f'export CCACHE_CONFIGPATH="{builddir}/ccache/ccache.conf"\n')
         fp.write('BINDMOUNTS="${CCACHE_DIR}"')
     fp.close()
+
 
 def pbuilder_write_cross_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
@@ -71,7 +74,8 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
     if xml.prj.has('noauth'):
         fp.write(
             'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
-        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]} == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
+        fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]} ==
+                 "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
     if not noccache:
@@ -108,6 +112,7 @@ def pbuilder_write_apt_conf(builddir, xml):
     # Make aptitude install untrusted packages without asking
     fp.write('Aptitude::CmdLine::Ignore-Trust-Violations "true";\n')
     fp.close()
+
 
 def mirror_script_add_key_url(key_url):
     key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
@@ -147,6 +152,7 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
         f.write("apt-get update\n")
 
+
 def get_apt_keys(builddir, xml):
 
     if xml.prj is None:
@@ -155,7 +161,7 @@ def get_apt_keys(builddir, xml):
     if not xml.prj.has("mirror") and not xml.prj.has("mirror/cdrom"):
         return (["# No mirrors configured"], [])
 
-    keys    = [Filesystem(builddir).read_file("repo/repo.pub")]
+    keys = [Filesystem(builddir).read_file("repo/repo.pub")]
 
     if xml.prj.has("mirror/primary_host") and xml.prj.has("mirror/url-list"):
 

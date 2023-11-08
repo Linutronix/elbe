@@ -25,6 +25,7 @@ from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version, elbe_initvm_packagelist
 
+
 def set_suds_debug(debug):
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -38,6 +39,7 @@ def set_suds_debug(debug):
         logging.basicConfig(level=logging.CRITICAL)
         logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
         logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+
 
 class ElbeSoapClient:
     def __init__(self, host, port, user, passwd, retries=10, debug=False):
@@ -111,6 +113,7 @@ class ElbeSoapClient:
 
             fp.write(binascii.a2b_base64(ret))
             part = part + 1
+
 
 class ClientAction:
     actiondict = {}
@@ -213,6 +216,7 @@ class ListUsersAction(ClientAction):
 
 ClientAction.register(ListUsersAction)
 
+
 class AddUserAction(ClientAction):
     tag = 'add_user'
 
@@ -226,10 +230,10 @@ class AddUserAction(ClientAction):
                 file=sys.stderr)
             sys.exit(173)
 
-        name     = args[0]
+        name = args[0]
         fullname = args[1]
         password = args[2]
-        email    = args[3]
+        email = args[3]
 
         try:
             client.service.add_user(name, fullname, password, email, False)
@@ -243,7 +247,9 @@ class AddUserAction(ClientAction):
             # when we get here, the user we wanted to create already exists.
             # that is fine, and we dont need to do anything now.
 
+
 ClientAction.register(AddUserAction)
+
 
 class CreateProjectAction(ClientAction):
 
@@ -562,7 +568,7 @@ class GetFilesAction(ClientAction):
 
         for f in files[0]:
             if (opt.pbuilder_only and not f.name.startswith('pbuilder_cross')
-                and not f.name.startswith('pbuilder')):
+                    and not f.name.startswith('pbuilder')):
                 continue
 
             if opt.matches and not fnmatch.fnmatch(f.name, opt.matches):
@@ -638,6 +644,7 @@ class WaitProjectBusyAction(ClientAction):
                 file=sys.stderr)
             sys.exit(191)
 
+
 ClientAction.register(WaitProjectBusyAction)
 
 
@@ -663,6 +670,7 @@ class SetCdromAction(ClientAction):
         self.upload_file(client.service.append_cdrom, builddir, filename)
         client.service.finish_cdrom(builddir)
 
+
 ClientAction.register(SetCdromAction)
 
 
@@ -687,6 +695,7 @@ class SetOrigAction(ClientAction):
         client.service.start_upload_orig(builddir, os.path.basename(filename))
         self.upload_file(client.service.append_upload_orig, builddir, filename)
         client.service.finish_upload_orig(builddir)
+
 
 ClientAction.register(SetOrigAction)
 
@@ -781,6 +790,7 @@ class UpdatePbuilderAction(ClientAction):
 
 ClientAction.register(UpdatePbuilderAction)
 
+
 class InstallElbeVersion(ClientAction):
 
     tag = 'install_elbe_version'
@@ -813,6 +823,7 @@ class InstallElbeVersion(ClientAction):
 
 ClientAction.register(InstallElbeVersion)
 
+
 class RepoAction(ClientAction):
     repoactiondict = {}
 
@@ -832,6 +843,7 @@ class RepoAction(ClientAction):
 
     def execute(self, _client, _opt, _args):
         raise NotImplementedError('execute() not implemented')
+
 
 class ListPackagesAction(RepoAction):
 

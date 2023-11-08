@@ -50,11 +50,13 @@ class InvalidState(ProjectManagerError):
     def __init__(self, message):
         ProjectManagerError.__init__(self, message)
 
+
 class OpenProjectFile:
     def __init__(self, pfd, mode='r'):
         self.path = path.join(pfd.builddir, pfd.name)
         self.mime_type = pfd.mime_type
         self.fobj = open(self.path, mode)
+
 
 class ProjectManager:
 

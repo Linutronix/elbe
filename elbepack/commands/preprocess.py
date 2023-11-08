@@ -21,6 +21,7 @@ def add_pass_through_options(oparser):
                        default=9,
                        help="gzip compression level 1-9 (0: no compression)")
 
+
 def run_command(argv):
     oparser = OptionParser(usage="usage: %prog preprocess [options] <xmlfile>")
     oparser.add_option("-o", "--output", dest="output",

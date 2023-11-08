@@ -6,6 +6,7 @@ import unittest
 
 from elbepack.version import elbe_version
 
+
 # Since this is just an example on how to make tests, we skip them
 class TestElbepackVersion(unittest.TestCase):
 

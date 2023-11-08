@@ -13,6 +13,7 @@ import gzip
 
 from elbepack.shellhelper import do
 
+
 def size_to_int(size):
     if size[-1] in digits:
         return int(size)
@@ -46,6 +47,7 @@ def size_to_int(size):
         s = size[:-2]
 
     return int(s) * unit
+
 
 class Filesystem:
 

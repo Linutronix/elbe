@@ -11,7 +11,6 @@ from elbepack.directories import xsdtoasciidoc_mako_fname
 from elbepack.templates import write_template
 
 
-
 def run_command(argv):
     oparser = OptionParser(
         usage="usage: %prog xsdtoasciidoc [options] <xsdfile>")

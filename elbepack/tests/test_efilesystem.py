@@ -7,6 +7,7 @@ import unittest
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.efilesystem import copy_filelist
 
+
 class TestCopyFilelist(unittest.TestCase):
 
     def setUp(self):

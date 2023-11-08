@@ -25,6 +25,7 @@ from elbepack.shellhelper import chroot, do, get_command_out
 class FinetuningException(Exception):
     pass
 
+
 class FinetuningAction:
 
     actiondict = {}
@@ -381,8 +382,8 @@ class CmdAction(ImageFinetuningAction):
                            for line
                            in self.node.et.text.strip("\n").splitlines())
 
-        mnt   = os.path.join(builddir, 'imagemnt')
-        dev   = f"{loop_dev}p{self.node.et.attrib['part']}"
+        mnt = os.path.join(builddir, 'imagemnt')
+        dev = f"{loop_dev}p{self.node.et.attrib['part']}"
 
         if self.node.bool_attr('nomount'):
             do("/bin/sh", stdin=script,
@@ -509,14 +510,14 @@ class ArtifactAction(FinetuningAction):
             target.images.append('target' + self.node.et.text)
         else:
             logging.error("The specified artifact: '%s' doesn't exist",
-                           self.node.et.text)
+                          self.node.et.text)
 
     def execute_prj(self, _buildenv, target, _builddir):
         if os.path.isfile("../" + self.node.et.text):
             target.images.append(self.node.et.text)
         else:
             logging.error("The specified artifact: '%s' doesn't exist",
-                           self.node.et.text)
+                          self.node.et.text)
 
 
 @FinetuningAction.register('rm_artifact')
@@ -687,6 +688,7 @@ class CopyToPartition(ImageFinetuningAction):
         with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.fname(self.node.et.text)
             do(f'cp -av "{os.path.join(builddir, aname)}" "{fname}"')
+
 
 @FinetuningAction.register('set_partition_type')
 class SetPartitionTypeAction(ImageFinetuningAction):

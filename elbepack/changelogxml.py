@@ -4,6 +4,7 @@
 
 from elbepack.treeutils import etree
 
+
 class changelogs_xml:
     def __init__(self):
         self.outxml = etree(None)

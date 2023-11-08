@@ -11,7 +11,7 @@ import time
 
 from optparse import OptionGroup
 from itertools import islice
-from urllib.error import HTTPError,URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 from passlib.hash import sha512_crypt
 
@@ -53,6 +53,7 @@ def preprocess_pgp_key(xml):
             raise XMLPreprocessError(
                 f"Problem with PGP Key URL in <key> tag: {keyurl}")
 
+
 def preprocess_bootstrap(xml):
     "Replaces a maybe existing debootstrapvariant element with debootstrap"
 
@@ -76,6 +77,7 @@ def preprocess_bootstrap(xml):
 
     old_node.getparent().replace(old_node, bootstrap)
 
+
 def preprocess_tune2fs(xml):
     "Replaces all maybe existing tune2fs elements with fs-finetuning command"
 
@@ -92,6 +94,7 @@ def preprocess_tune2fs(xml):
         command.text = f"tune2fs {old_node.text} {{device}}"
 
         fs_node.remove(old_node)
+
 
 def preprocess_iso_option(xml):
 
@@ -137,6 +140,7 @@ def preprocess_initvm_ports(xml):
                 host.text == cfg['soapport'] and benv.text == '7588'):
             forward.getparent().remove(forward)
 
+
 def preprocess_proxy_add(xml, opt_proxy=None):
     """Add proxy to mirrors from CLI arguments or environment variable"""
 
@@ -159,10 +163,11 @@ def preprocess_proxy_add(xml, opt_proxy=None):
             continue
 
         # Add proxy to mirror
-        proxy_e      = Element(proxy_tag)
+        proxy_e = Element(proxy_tag)
         proxy_e.text = set_proxy
 
         mirror.append(proxy_e)
+
 
 def preprocess_mirror_replacement(xml):
     """Do search and replace on mirror urls
@@ -193,6 +198,7 @@ def preprocess_mirror_replacement(xml):
     for u in xml.iterfind('//initvm/preseed/conf[@key="pbuilder/mirrorsite"]'):
         for r in replacements:
             u.attrib['value'] = u.attrib['value'].replace(r[0], r[1])
+
 
 def preprocess_mirrors(xml):
     """Insert a trusted=yes mirror option for all mirrors if <noauth> is
@@ -256,14 +262,14 @@ def preprocess_mirrors(xml):
             node.text = m.group(2)
 
             # No <options>? Create it
-            parent  = node.getparent()
+            parent = node.getparent()
             options = parent.find("options")
             if options is None:
                 options = etree.Element("options")
                 parent.append(options)
 
             # Adding subelement <option>
-            option      = etree.Element("option")
+            option = etree.Element("option")
             option.text = opt
             options.append(option)
 
@@ -293,6 +299,7 @@ def preprocess_passwd(xml):
         logging.warning("Please replace adduser's passwd attribute with passwd_hashed. "
                         "The generated sha512crypt hash only applies 5000 rounds for "
                         "backwards compatibility reasons. This is considered insecure nowadays.")
+
 
 def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`

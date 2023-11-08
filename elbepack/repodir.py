@@ -14,6 +14,7 @@ from lxml.etree import XMLParser, parse, Element, XMLSyntaxError
 class RepodirError(Exception):
     pass
 
+
 def preprocess_repodir(xml, xmldir):
     """Replaces each <repodir>, which points to a directory containing a Debian
        repository, with a valid <url> element.
@@ -26,10 +27,12 @@ def preprocess_repodir(xml, xmldir):
     for repodir in xml.iterfind('.//mirror/url-list/repodir'):
         repo = repodir.text.split(maxsplit=1)
         if len(repo) != 2:
-            raise RepodirError("A <repodir> must consist of a file path, a suite name, and components")
+            raise RepodirError("A <repodir> must consist of a file path,"
+                               "a suite name, and components")
 
         hostdir = os.path.join(xmldir, repo[0])
-        httpd = HTTPServer(('localhost', 0), functools.partial(SimpleHTTPRequestHandler, directory=hostdir))
+        httpd = HTTPServer(('localhost', 0),
+                           functools.partial(SimpleHTTPRequestHandler, directory=hostdir))
 
         url_element = Element("url")
         # Keep the variant attribute for later processing

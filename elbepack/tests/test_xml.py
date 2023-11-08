@@ -10,6 +10,7 @@ import tempfile
 from elbepack.directories import elbe_dir, elbe_exe
 from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
 
+
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
 class TestSimpleXML(ElbeTestCase):
@@ -23,7 +24,7 @@ class TestSimpleXML(ElbeTestCase):
 
         with tempfile.TemporaryDirectory(prefix="elbe-test-simple-xml-") as build_dir:
 
-            prj  = os.path.join(build_dir, "uuid.prj")
+            prj = os.path.join(build_dir, "uuid.prj")
             uuid = None
 
             try:
@@ -50,6 +51,7 @@ class TestSimpleXML(ElbeTestCase):
                 system(
                     f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)
 
+
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
 class TestPbuilder(ElbeTestCase):
@@ -63,7 +65,7 @@ class TestPbuilder(ElbeTestCase):
 
         with tempfile.TemporaryDirectory(prefix="elbe-test-pbuilder-xml-") as build_dir:
 
-            prj  = os.path.join(build_dir, "uuid.prj")
+            prj = os.path.join(build_dir, "uuid.prj")
             uuid = None
 
             try:

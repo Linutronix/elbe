@@ -23,6 +23,7 @@ logging.getLogger('spyne').setLevel(logging.INFO)
 warnings.simplefilter('ignore', category=PendingDeprecationWarning)
 warnings.simplefilter('ignore', category=ResourceWarning)
 
+
 class EsoapApp(Application):
     def __init__(self, *args, **kargs):
         Application.__init__(self, *args, **kargs)

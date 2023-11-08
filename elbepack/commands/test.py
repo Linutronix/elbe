@@ -15,11 +15,13 @@ import junit_xml as junit
 
 from elbepack.shellhelper import command_out
 
+
 class ElbeTestLevel(enum.IntEnum):
-    BASE   = enum.auto()
+    BASE = enum.auto()
     EXTEND = enum.auto()
     INITVM = enum.auto()
-    FULL   = enum.auto()
+    FULL = enum.auto()
+
 
 class ElbeTestException(Exception):
 
@@ -35,10 +37,12 @@ class ElbeTestException(Exception):
     def __str__(self):
         return f"ElbeTestException: \"{self.cmd}\" returns {self.ret}"
 
+
 def system(cmd, allow_fail=False):
     ret, out = command_out(cmd)
     if ret != 0 and not allow_fail:
         raise ElbeTestException(cmd, ret, out)
+
 
 class ElbeTestCase(unittest.TestCase):
 
@@ -59,10 +63,11 @@ class ElbeTestCase(unittest.TestCase):
     def parameterize(self, param):
         return self.__class__(methodName=self.methodName, param=param)
 
+
 class ElbeTestSuite:
 
     # This must be a list not a set!!!
-    tests  = []
+    tests = []
 
     def __init__(self, tests):
 
@@ -92,7 +97,7 @@ class ElbeTestSuite:
         node_id, N = parallel.split(',')
 
         node_id = int(node_id)
-        N       = int(N)
+        N = int(N)
 
         elected = []
 
@@ -122,6 +127,7 @@ class ElbeTestSuite:
     def ls(self):
         for test in self:
             print(test)
+
 
 class ElbeTestResult(unittest.TestResult):
 
@@ -209,7 +215,7 @@ def run_command(argv):
     # pylint: disable=too-many-locals
 
     this_dir = os.path.dirname(os.path.realpath(__file__))
-    top_dir  = os.path.join(this_dir, "..", "..")
+    top_dir = os.path.join(this_dir, "..", "..")
 
     oparser = optparse.OptionParser(usage="usage: %prog [options]")
 
@@ -222,8 +228,8 @@ def run_command(argv):
                        help="Set test level threshold")
 
     oparser.add_option("-i", "--invert", dest="invert_re",
-                      action="store_true", default=False,
-                      help="Invert the matching of --filter")
+                       action="store_true", default=False,
+                       help="Invert the matching of --filter")
 
     oparser.add_option("-d", "--dry-run", dest="dry_run",
                        action="store_true", default=False,
@@ -249,9 +255,9 @@ def run_command(argv):
     ElbeTestCase.level = ElbeTestLevel[opt.level]
 
     # Find all tests
-    loader            = unittest.defaultTestLoader
+    loader = unittest.defaultTestLoader
     loader.suiteClass = ElbeTestSuite
-    suite             = loader.discover(top_dir)
+    suite = loader.discover(top_dir)
 
     # then filter them
     suite.filter_test(opt.parallel, opt.filter, opt.invert_re)

@@ -6,8 +6,10 @@
 import junit_xml as junit
 from junit_xml import to_xml_report_file
 
+
 class TestException(Exception):
     pass
+
 
 class TestSuite:
 
@@ -44,10 +46,11 @@ class TestSuite:
             try:
                 test_cases.append(self.do_test(test, self.target))
             except TestException:
-                pass # TODO - Handle me!
+                pass  # TODO - Handle me!
         ts = junit.TestSuite(name=self.node.et.attrib["name"],
                              test_cases=test_cases)
         return ts
+
 
 @TestSuite.register("BaseTest", register=False)
 class BaseTest:

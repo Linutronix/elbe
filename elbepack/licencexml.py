@@ -9,7 +9,8 @@ import re
 import warnings
 import logging
 
-from debian.copyright import Copyright, LicenseParagraph, NotMachineReadableError, MachineReadableFormatError
+from debian.copyright import Copyright, LicenseParagraph, \
+                             NotMachineReadableError, MachineReadableFormatError
 from elbepack.treeutils import etree
 
 warnings.simplefilter('error')
@@ -40,6 +41,7 @@ def get_heuristics_license_list(c):
         licenses.append(cc.license.synopsis)
 
     return set(licenses)
+
 
 class copyright_xml:
     def __init__(self):

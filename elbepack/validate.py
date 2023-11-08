@@ -31,6 +31,7 @@ def error_log_to_strings(error_log):
                       "behaviour, please specify <install-recommends /> !\n")
     return errors
 
+
 def validate_xml(fname):
     if os.path.getsize(fname) > (1 << 30):
         return [f"{fname} is greater than 1 GiB. "
@@ -65,7 +66,7 @@ def validate_xml_content(xml):
     # we are probably fine
     bootstrap_include = xml.findtext("/target/debootstrap/include", "")
     if ("apt-transport-https" not in bootstrap_include
-        and "ca-certificates" not in bootstrap_include):
+       and "ca-certificates" not in bootstrap_include):
 
         # Check if primary mirror is using https
         primary_proto = xml.findtext("/project/mirror/primary_proto", "")
@@ -82,9 +83,9 @@ def validate_xml_content(xml):
 
         if is_primary_proto_https or has_https_urls:
             errors.append("\nThe XML contains an HTTPS mirror. "
-                         "Use debootstrap/include "
-                         "to make apt-transport-https (stretch and older) "
-                         "or ca-certificates (buster and newer) available "
-                         "in debootstrap.\n")
+                          "Use debootstrap/include "
+                          "to make apt-transport-https (stretch and older) "
+                          "or ca-certificates (buster and newer) available "
+                          "in debootstrap.\n")
 
     return errors

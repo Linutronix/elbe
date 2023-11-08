@@ -20,6 +20,7 @@ from elbepack.filesystem import TmpdirFilesystem
 
 DEVNULL = open(os.devnull, "w")
 
+
 def run_command(argv):
 
     oparser = optparse.OptionParser(usage="usage: %prog check-build <cmd> <build-dir>")
@@ -42,9 +43,9 @@ def run_command(argv):
         os.sys.exit(64)
 
     total_cnt = 0
-    fail_cnt  = 0
+    fail_cnt = 0
 
-    with elbe_logging({"streams":None}):
+    with elbe_logging({"streams": None}):
 
         for test in tests:
 
@@ -62,8 +63,10 @@ def run_command(argv):
 
     os.sys.exit(fail_cnt)
 
+
 class CheckException(Exception):
     pass
+
 
 class CheckBase:
 
@@ -78,7 +81,7 @@ class CheckBase:
         except CheckException as E:
             logging.exception(E)
             self.ret = 1
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             logging.error(traceback.format_exc())
             self.ret = 1
         return self.ret
@@ -98,6 +101,7 @@ class CheckBase:
 
     def fail(self, reason):
         raise CheckException(reason)
+
 
 @CheckBase.register("cdrom")
 class CheckCdroms(CheckBase):
@@ -134,7 +138,7 @@ class CheckCdroms(CheckBase):
         # pylint: disable=too-many-locals
         # pylint: disable=too-many-branches
 
-        iso_it  = glob.iglob("src-cdrom*")
+        iso_it = glob.iglob("src-cdrom*")
         src_cnt = 0
 
         # For every src-cdrom*, extract it to a temporary directory
@@ -148,7 +152,7 @@ class CheckCdroms(CheckBase):
 
                     infos = self.dpkg_get_infos(realpath,
                                                 ["Source", "Version"])
-                    src_name    = None
+                    src_name = None
                     src_version = None
 
                     for info in infos.split('\n'):
@@ -176,7 +180,7 @@ class CheckCdroms(CheckBase):
 
                                 sources[src_name].remove(version)
                                 src_cnt += 1
-                                match   = True
+                                match = True
 
                                 break
 
@@ -239,12 +243,12 @@ class CheckCdroms(CheckBase):
         xml = etree("source.xml")
 
         # Initial statistics fo the build
-        bin_cnt   = 0
-        src_cnt   = 0
+        bin_cnt = 0
+        src_cnt = 0
         bin_total = 0
 
         binaries = {}
-        sources  = {}
+        sources = {}
 
         # Create a dictionnary of the form {"bin-name": [versions ..]}
         # from the source.xml.  We do this by iterating over all <pkg>
@@ -273,13 +277,13 @@ class CheckCdroms(CheckBase):
                         continue
 
                     # Extract informations from .deb
-                    infos    = self.dpkg_get_infos(realpath, ["Package",
-                                                              "Source",
-                                                              "Version",
-                                                              "Built-Using"])
-                    src_name    = None
+                    infos = self.dpkg_get_infos(realpath, ["Package",
+                                                           "Source",
+                                                           "Version",
+                                                           "Built-Using"])
+                    src_name = None
                     src_version = None
-                    bin_name    = None
+                    bin_name = None
                     bin_version = None
 
                     for line in infos.split('\n'):
@@ -331,10 +335,9 @@ class CheckCdroms(CheckBase):
                                     src_cnt += 1
                                     sources[name] = {version}
 
-
                     # No source was found
                     if src_name is None:
-                        src_name    = bin_name
+                        src_name = bin_name
                         src_version = bin_version
 
                     # No source version was found
@@ -384,6 +387,7 @@ class CheckCdroms(CheckBase):
         self.do_src(sources, src_cnt)
         return self.ret
 
+
 @CheckBase.register("img")
 class CheckImage(CheckBase):
 
@@ -406,12 +410,12 @@ class CheckImage(CheckBase):
         # pylint: disable=attribute-defined-outside-init
         self.xml = etree("source.xml")
 
-        fail_cnt  = 0
+        fail_cnt = 0
         total_cnt = 0
 
         # For all image
         for tag in self.xml.all(".//check-image-list/check"):
-            fail_cnt  += self.do_img(tag)
+            fail_cnt += self.do_img(tag)
             total_cnt += 1
 
         logging.info("Succesfully validate %d images out of %d",
@@ -422,7 +426,7 @@ class CheckImage(CheckBase):
     def do_img(self, tag):
 
         img_name = tag.text("./img")
-        qemu     = tag.text("./interpreter")
+        qemu = tag.text("./interpreter")
 
         with self.open_img(img_name) as img:
 
@@ -443,7 +447,6 @@ class CheckImage(CheckBase):
 
         # No valid action!
         return 1
-
 
     def do_login(self, _element, img_name, qemu, opts):
 
@@ -478,9 +481,9 @@ class CheckImage(CheckBase):
 
     def do_comm(self, img_name, qemu, opts, comm):
 
-        child      = pexpect.spawn(qemu + " " + opts)
+        child = pexpect.spawn(qemu + " " + opts)
         transcript = []
-        ret        = 0
+        ret = 0
 
         try:
             for action, text in comm:
@@ -534,6 +537,7 @@ class CheckImage(CheckBase):
                      img_name, ''.join(transcript))
 
         return ret or child.exitstatus
+
 
 @CheckBase.register("sdk")
 class CheckSDK(CheckBase):
@@ -614,6 +618,7 @@ exit 1
     def run(self):
         for sdk in glob.glob("setup-elbe-sdk*"):
             self.do_sdk(sdk)
+
 
 @CheckBase.register("rebuild")
 class CheckRebuild(CheckBase):

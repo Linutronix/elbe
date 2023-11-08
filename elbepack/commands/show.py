@@ -10,7 +10,6 @@ from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
 
 
-
 def run_command(argv):
 
     # pylint: disable=too-many-branches

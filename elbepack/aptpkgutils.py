@@ -27,6 +27,7 @@ statestring = {
     NOTINSTALLED: "NOT INSTALLED"
 }
 
+
 def apt_pkg_md5(pkg):
     # pylint: disable=protected-access
     hashes = pkg._records.hashes
@@ -37,6 +38,7 @@ def apt_pkg_md5(pkg):
             return h.split(':')[1]
     return ""
 
+
 def apt_pkg_sha256(pkg):
     # pylint: disable=protected-access
     hashes = pkg._records.hashes
@@ -46,6 +48,7 @@ def apt_pkg_sha256(pkg):
         if h.startswith("SHA256"):
             return h.split(':')[1]
     return ""
+
 
 def getdeps(pkg):
     for dd in pkg.dependencies:
@@ -95,6 +98,7 @@ def pkgorigin(pkg):
 
     return origin
 
+
 def _file_is_same(path, size, sha256):
     # type: (str, int, str) -> bool
     """Return ``True`` if the file is the same."""
@@ -102,6 +106,7 @@ def _file_is_same(path, size, sha256):
         with open(path) as fobj:
             return apt_pkg.sha256sum(fobj) == sha256
     return False
+
 
 def fetch_binary(version, destdir='', progress=None):
     # type: (str, AcquireProgress) -> str
@@ -148,6 +153,7 @@ def fetch_binary(version, destdir='', progress=None):
             f"{acqfile.error_text}")
 
     return os.path.abspath(destfile)
+
 
 class PackageBase:
 

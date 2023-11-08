@@ -67,7 +67,7 @@ def run_command(argv):
 
     pkgs = os.listdir(tmpdir)
 
-    with elbe_logging({"streams":sys.stdout}):
+    with elbe_logging({"streams": sys.stdout}):
 
         repo = ToolchainRepo(defaults["arch"],
                              opt.codename,

@@ -18,6 +18,7 @@ from spyne.server.wsgi import WsgiApplication
 
 from suds.client import Client
 
+
 class MonitorService (ServiceBase):
     @rpc(String)
     def msg(self, m):

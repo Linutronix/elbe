@@ -208,7 +208,6 @@ def run_command(argv):
         shutil.copyfile(args[0],
                         os.path.join(out_path, "source.xml"))
 
-
         keys = []
         for key in xml.all(".//initvm/mirror/url-list/url/raw-key"):
             keys.append(key.et.text)
@@ -255,7 +254,7 @@ def run_command(argv):
                   ("vmlinuz", ""),
                   ("preseed.cfg", "")]
 
-        elbe_in  = Filesystem(out_path)
+        elbe_in = Filesystem(out_path)
 
         if opt.devel:
             to_cpy.append(("elbe-devel.tar.bz2", ""))

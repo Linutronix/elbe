@@ -12,6 +12,7 @@ from elbepack.pkgutils import get_dsc_size
 from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
 from elbepack.shellhelper import CommandError, do
 
+
 class RepoAttributes:
     def __init__(self, codename, arch, components,
                  mirror='http://ftp.de.debian.org/debian'):
@@ -40,6 +41,7 @@ class RepoAttributes:
         ret_comp = self.components.union(other.components)
 
         return [RepoAttributes(self.codename, ret_arch, ret_comp, self.mirror)]
+
 
 class RepoBase:
 
@@ -286,7 +288,6 @@ class RepoBase:
                     for pp in p['Binary'].split():
                         self._removedeb(pp, codename, components)
 
-
     def _includedsc(self, path, codename, components=None):
         if self.maxsize:
             new_size = self.fs.disk_usage("") + get_dsc_size(path)
@@ -357,6 +358,7 @@ class RepoBase:
     @property
     def volume_indexes(self):
         return range(self.volume_count + 1)
+
 
 class UpdateRepo(RepoBase):
     def __init__(self, xml, path):

@@ -61,7 +61,7 @@ def run_command(argv):
         oparser.print_help()
         sys.exit(68)
 
-    with elbe_logging({"files":opt.output}):
+    with elbe_logging({"files": opt.output}):
         try:
             project = ElbeProject(opt.target,
                                   override_buildtype=opt.buildtype,

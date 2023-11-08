@@ -18,6 +18,7 @@ from elbepack.xmldefaults import ElbeDefaults
 
 from elbepack.version import elbe_version, is_devel
 
+
 class ValidationError(Exception):
     def __init__(self, validation):
         Exception.__init__(self)
@@ -39,10 +40,12 @@ class ValidationError(Exception):
 class NoInitvmNode(Exception):
     pass
 
+
 class ValidationMode:
     NO_CHECK = 1
     CHECK_BINARIES = 2
     CHECK_ALL = 0
+
 
 def replace_localmachine(mirror, initvm=True):
     if initvm:
@@ -51,6 +54,7 @@ def replace_localmachine(mirror, initvm=True):
         localmachine = "localhost"
 
     return mirror.replace("LOCALMACHINE", localmachine)
+
 
 class ElbeXML:
 
@@ -150,8 +154,8 @@ class ElbeXML:
             return "# no mirrors configured"
 
         goptions = []
-        mirrors  = []
-        suite    = self.prj.text("suite")
+        mirrors = []
+        suite = self.prj.text("suite")
 
         if self.prj.has("mirror/primary_host"):
 
