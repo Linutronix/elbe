@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 -->
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>i386-buster-grub</name>
+		<name>i386-bookworm-grub</name>
 		<version>1.0</version>
 		<description>for testing 32bit with grub2</description>
 		<buildtype>i386</buildtype>
@@ -13,10 +13,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
-		<hostname>i386-buster</hostname>
+		<hostname>i386-bookworm</hostname>
 		<domain>elbe-rfs.org</domain>
 		<passwd>foo</passwd>
 		<console>ttyS0,115200</console>

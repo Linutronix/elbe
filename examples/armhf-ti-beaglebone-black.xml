@@ -8,7 +8,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<name>beaglebone-black</name>
 		<version>1.0</version>
 		<description>
-			debian buster rootfs for beaglebone black
+			debian bookworm rootfs for beaglebone black
 		</description>
 		<!-- buildtype is used to configure qemu-user and debian arch -->
 		<buildtype>armhf</buildtype>
@@ -19,14 +19,14 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://deb.debian.org/debian buster-updates main</binary>
-					<source>http://deb.debian.org/debian buster-updates main</source>
+					<binary>http://deb.debian.org/debian-security bookworm-security main</binary>
+					<source>http://deb.debian.org/debian-security bookworm-security main</source>
 				</url>
 			</url-list>
 		</mirror>
 
 		<!-- debian testing? stable? unstable?? -->
-		<suite>buster</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
 		<!-- content for /etc/hostname -->

@@ -27,15 +27,15 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			</options>
 			<url-list>
 				<url>
-					<binary>http://deb.debian.org/debian-security bullseye-security main</binary>
-					<source>http://deb.debian.org/debian-security bullseye-security main</source>
+					<binary>http://deb.debian.org/debian-security bookworm-security main</binary>
+					<source>http://deb.debian.org/debian-security bookworm-security main</source>
 					<options>
 						<option>check-date=no</option>
 					</options>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>bullseye</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
 		<hostname>debianmin</hostname>

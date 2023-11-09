@@ -16,7 +16,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
 		<hostname>rescue</hostname>

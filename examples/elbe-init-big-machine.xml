@@ -12,18 +12,18 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<url-list>
 				<url>
 					<binary>
-						http://deb.debian.org/debian-security bullseye-security main
+						http://deb.debian.org/debian-security bookworm-security main
 					</binary>
 					<source>
-						http://deb.debian.org/debian-security bullseye-security main
+						http://deb.debian.org/debian-security bookworm-security main
 					</source>
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe bullseye main
+						http://debian.linutronix.de/elbe bookworm main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe bullseye main
+						http://debian.linutronix.de/elbe bookworm main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe/elbe-repo.pub
@@ -31,10 +31,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe-common bullseye main
+						http://debian.linutronix.de/elbe-common bookworm main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe-common bullseye main
+						http://debian.linutronix.de/elbe-common bookworm main
 					</source>
 					<key>
 						http://debian.linutronix.de/elbe-common/elbe-repo.pub
@@ -42,7 +42,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</url>
 			</url-list>
 		</mirror>
-		<suite>bullseye</suite>
+		<suite>bookworm</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
 		</pkg-list>

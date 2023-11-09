@@ -7,7 +7,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<name>debian docker systemd base image</name>
 		<version>1.0</version>
 		<description>
-			Debian buster base including systemd.
+			Debian bookworm base including systemd.
 			Several systemd related files are removed, so that it does
 			not try to mount /.
 		</description>
@@ -18,12 +18,12 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://deb.debian.org/debian buster-updates main</binary>
-					<source>http://deb.debian.org/debian buster-updates main</source>
+					<binary>http://deb.debian.org/debian-security bookworm-security main</binary>
+					<source>http://deb.debian.org/debian-security bookworm-security main</source>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
 		<hostname>debdocker</hostname>

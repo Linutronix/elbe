@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 -->
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<name>amd64-grub-uefi-buster</name>
+		<name>amd64-grub-uefi-bookworm</name>
 		<version>1.0</version>
 		<description>
 			verify successful UEFI boot by checking
@@ -21,12 +21,12 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://deb.debian.org/debian buster-updates main</binary>
-					<source>http://deb.debian.org/debian buster-updates main</source>
+					<binary>http://deb.debian.org/debian-security bookworm-security main</binary>
+					<source>http://deb.debian.org/debian-security bookworm-security main</source>
 				</url>
 			</url-list>
 		</mirror>
-		<suite>buster</suite>
+		<suite>bookworm</suite>
 	</project>
 	<target>
 		<hostname>lxvm</hostname>
