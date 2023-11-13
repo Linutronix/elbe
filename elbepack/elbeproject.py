@@ -277,7 +277,7 @@ class ElbeProject:
             try:
                 cache.mark_install_devpkgs(set(ignore_pkgs),
                                            set(ignore_dev_pkgs))
-            except SystemError as e:
+            except SystemError:
                 logging.exception("Mark install devpkgs failed")
             try:
                 cache.commit()

@@ -71,7 +71,7 @@ def run_command(argv):
             debug=opt.debug,
             retries=int(
                 opt.retries))
-    except URLError as e:
+    except URLError:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
             file=sys.stderr)
@@ -79,7 +79,7 @@ def run_command(argv):
         print("Check, wether the initvm is actually running.", file=sys.stderr)
         print("try `elbe initvm start`", file=sys.stderr)
         sys.exit(10)
-    except socket.error as e:
+    except socket.error:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
             file=sys.stderr)
@@ -89,7 +89,7 @@ def run_command(argv):
             file=sys.stderr)
         print("try 'elbe initvm attach'", file=sys.stderr)
         sys.exit(11)
-    except BadStatusLine as e:
+    except BadStatusLine:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
             file=sys.stderr)

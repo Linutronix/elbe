@@ -86,7 +86,7 @@ def soap_faults(func):
         def wrapped(self):
             try:
                 return func(self)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -98,7 +98,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 2:
@@ -106,7 +106,7 @@ def soap_faults(func):
         def wrapped(self, arg1):
             try:
                 return func(self, arg1)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -118,7 +118,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 3:
@@ -126,7 +126,7 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2):
             try:
                 return func(self, arg1, arg2)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -138,7 +138,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 4:
@@ -146,7 +146,7 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3):
             try:
                 return func(self, arg1, arg2, arg3)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -158,7 +158,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 5:
@@ -166,7 +166,7 @@ def soap_faults(func):
         def wrapped(self, arg1, arg2, arg3, arg4):
             try:
                 return func(self, arg1, arg2, arg3, arg4)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -178,7 +178,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 6:
@@ -187,7 +187,7 @@ def soap_faults(func):
             # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -199,7 +199,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
     if func.__code__.co_argcount == 7:
@@ -208,7 +208,7 @@ def soap_faults(func):
             # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5, arg6)
-            except InvalidState as e:
+            except InvalidState:
                 raise SoapElbeInvalidState()
             except ProjectManagerError as e:
                 raise SoapElbeProjectError(str(e))
@@ -220,7 +220,7 @@ def soap_faults(func):
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
                 raise SoapElbeNotAuthorized()
-            except Exception as e:
+            except Exception:
                 raise SoapElbeProjectError(format_exc())
         return wrapped
 
