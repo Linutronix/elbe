@@ -115,8 +115,8 @@ class UpdateService (ServiceBase):
 
         lists = os.listdir("/etc/apt/sources.list.d")
 
-        for l in lists:
-            snapshots += l[:len(l) - 5] + ","
+        for lic in lists:
+            snapshots += lic[:len(lic) - 5] + ","
 
         return snapshots
 

@@ -95,9 +95,9 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     dch_dir = f"/usr/share/doc/{pkgname}"
 
     if fs.islink(dch_dir) and not extra_pkg:
-        l = fs.readlink(dch_dir)
-        print(dch_dir, l)
-        raise ChangelogNeedsDependency(l)
+        lic = fs.readlink(dch_dir)
+        print(dch_dir, lic)
+        raise ChangelogNeedsDependency(lic)
 
     dch_bin = f"/usr/share/doc/{pkgname}/changelog.Debian.{pkgarch}.gz"
     dch_src = f"/usr/share/doc/{pkgname}/changelog.Debian.gz"

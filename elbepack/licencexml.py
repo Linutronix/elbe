@@ -21,10 +21,10 @@ remove_re = re.compile('[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 def do_heuristics(fp):
     c = Copyright()
     num_licenses = 0
-    for l in fp.readlines():
-        if l.startswith("License:"):
+    for lic in fp.readlines():
+        if lic.startswith("License:"):
             num_licenses += 1
-            _, v = l.split(":", 1)
+            _, v = lic.split(":", 1)
             data = {"License": v.strip()}
             lic_para = LicenseParagraph(data)
             c.add_license_paragraph(lic_para)

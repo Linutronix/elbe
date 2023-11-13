@@ -36,15 +36,15 @@ class ReleaseFile(HashValidator):
         current_header = ''
 
         with open(fname, 'r') as fp:
-            for l in fp.readlines():
-                m = header_re.match(l)
+            for lic in fp.readlines():
+                m = header_re.match(lic)
                 if m:
                     # line contains an rfc822 Header,
                     # remember it.
                     current_header = m.group(1)
                     continue
 
-                m = hash_re.match(l)
+                m = hash_re.match(lic)
                 if m:
                     # line contains a hash entry.
                     # check filename, whether we are interested in it
@@ -62,8 +62,8 @@ class SHA256SUMSFile(HashValidator):
         hash_re = re.compile(r'([0-9a-f]+)\s+(\S+)')
 
         with open(fname, 'r') as fp:
-            for l in fp.readlines():
-                m = hash_re.match(l)
+            for lic in fp.readlines():
+                m = hash_re.match(lic)
                 if m:
                     # line contains a hash entry.
                     # check filename, whether we are interested in it

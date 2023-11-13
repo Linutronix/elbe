@@ -584,13 +584,13 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
 
     # now move all mountpoints into own directories
     # begin from deepest mountpoints
-    for l in reversed(fslist):
-        do(f'mkdir -p "{os.path.join(fspath, l.id)}"')
-        do(f'mkdir -p "{rfs.fname("")}{l.mountpoint}"')
-        if rfs.listdir(l.mountpoint):
+    for lic in reversed(fslist):
+        do(f'mkdir -p "{os.path.join(fspath, lic.id)}"')
+        do(f'mkdir -p "{rfs.fname("")}{lic.mountpoint}"')
+        if rfs.listdir(lic.mountpoint):
             do(
-               f'mv "{rfs.fname(l.mountpoint)}"/* '
-               f'"{os.path.join(fspath, l.id)}"',
+               f'mv "{rfs.fname(lic.mountpoint)}"/* '
+               f'"{os.path.join(fspath, lic.id)}"',
                allow_fail=True)
 
     try:

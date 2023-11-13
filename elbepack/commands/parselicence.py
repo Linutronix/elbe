@@ -48,13 +48,13 @@ class license_dep5_to_spdx (dict):
     def get_override(self, pkgname):
         return self.perpackage_override[pkgname]
 
-    def map_one_license(self, pkgname, l, errors):
+    def map_one_license(self, pkgname, lic, errors):
         if pkgname in self.perpackage_mapping:
-            if l in self.perpackage_mapping[pkgname]:
-                return self.perpackage_mapping[pkgname][l]
-        if l in self:
-            return self[l]
-        errors.append(f'no mapping for "{l}" for pkg "{pkgname}"')
+            if lic in self.perpackage_mapping[pkgname]:
+                return self.perpackage_mapping[pkgname][lic]
+        if lic in self:
+            return self[lic]
+        errors.append(f'no mapping for "{lic}" for pkg "{pkgname}"')
         return None
 
     def map_license_string(self, pkgname, l_string, errors):
@@ -82,9 +82,9 @@ class license_dep5_to_spdx (dict):
                 return self.perpackage_override[pkgname]
 
         retval = []
-        for l in licenses:
-            if l is not None:
-                retval.append(self.map_license_string(pkgname, l, errors))
+        for lic in licenses:
+            if lic is not None:
+                retval.append(self.map_license_string(pkgname, lic, errors))
             else:
                 retval.append('Empty license')
 
@@ -194,16 +194,16 @@ def run_command(argv):
             sp.clear()
             sp.et.text = '\n'
             lics = []
-            for l in pkg.node('debian_licenses'):
-                if l.et.text in lics:
+            for lic in pkg.node('debian_licenses'):
+                if lic.et.text in lics:
                     continue
-                lics.append(l.et.text)
+                lics.append(lic.et.text)
 
             mapped_lics = mapping.map_lic(pkg_name, lics, errors)
 
-            for l in mapped_lics:
+            for lic in mapped_lics:
                 ll = sp.append('license')
-                ll.et.text = l
+                ll.et.text = lic
 
             if not mapped_lics:
                 errors.append(f'empty mapped licenses in package "{pkg_name}"')
@@ -216,18 +216,18 @@ def run_command(argv):
                 sp = pkg.ensure_child('spdx_licenses')
                 sp.clear()
                 sp.et.text = '\n'
-                for l in mapping.get_override(pkg_name):
+                for lic in mapping.get_override(pkg_name):
                     ll = sp.append('license')
-                    ll.et.text = l
+                    ll.et.text = lic
 
         if opt.use_nomos:
             nomos_l = scan_nomos(pkg.text('text'))
             if nomos_l[0] != 'No_license_found':
                 nomos_node = pkg.append('nomos_licenses')
                 nomos_node.et.text = '\n'
-                for l in nomos_l:
+                for lic in nomos_l:
                     ll = nomos_node.append('license')
-                    ll.et.text = l
+                    ll.et.text = lic
 
         if errors:
             for e in errors:

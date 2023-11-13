@@ -14,13 +14,13 @@ def parse_selections(fname):
 
     sels = []
 
-    for l in fp.readlines():
-        if not l:
+    for lic in fp.readlines():
+        if not lic:
             continue
-        if l[0] == '#':
+        if lic[0] == '#':
             continue
 
-        sp = l.split()
+        sp = lic.split()
 
         print(f"{sp[0]} {sp[1]}")
 

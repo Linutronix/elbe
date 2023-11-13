@@ -80,9 +80,9 @@ class RepoBase:
         # generate a new key and generate repository config
         if self.fs.isdir("/"):
             repo_conf = self.fs.read_file("conf/distributions")
-            for l in repo_conf.splitlines():
-                if l.startswith("SignWith"):
-                    self.keyid = l.split()[1]
+            for lic in repo_conf.splitlines():
+                if lic.startswith("SignWith"):
+                    self.keyid = lic.split()[1]
                     unlock_key(self.keyid)
         else:
             self.keyid = generate_elbe_internal_key()
