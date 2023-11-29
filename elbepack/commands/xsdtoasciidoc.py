@@ -25,13 +25,13 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(90)
 
     xml = etree(args[0])
 
     if not opt.out:
         print("--output is mandatory")
-        sys.exit(20)
+        sys.exit(91)
 
     d = {"opt": opt,
          "xml": xml}

@@ -133,7 +133,7 @@ def run_command(argv):
         print("", file=sys.stderr)
         print("Check, whether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
-        sys.exit(10)
+        sys.exit(13)
     except socket.error as e:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
@@ -143,7 +143,7 @@ def run_command(argv):
             "Check, whether the Soap Server is running inside the initvm",
             file=sys.stderr)
         print("try 'elbe initvm attach'", file=sys.stderr)
-        sys.exit(10)
+        sys.exit(14)
     except BadStatusLine as e:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
@@ -151,7 +151,7 @@ def run_command(argv):
         print("", file=sys.stderr)
         print("Check, whether the initvm is actually running.", file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
-        sys.exit(10)
+        sys.exit(15)
 
     try:
         v_server = control.service.get_version()
@@ -167,20 +167,20 @@ def run_command(argv):
                 "'elbe control --ignore-version-diff install_elbe_version'")
 
             if not opt.ignore_version:
-                sys.exit(20)
+                sys.exit(16)
     except AttributeError:
         print("the elbe installation inside the initvm doesn't provide a \
 get_version interface. Please create a new initvm or upgrade \
 elbe inside the existing initvm.", file=sys.stderr)
         if not opt.ignore_version:
-            sys.exit(20)
+            sys.exit(24)
 
     try:
         action = ClientAction(args[0])
     except KeyError:
         print("elbe control - unknown subcommand", file=sys.stderr)
         ClientAction.print_actions()
-        sys.exit(20)
+        sys.exit(25)
 
     try:
         action.execute(control, opt, args[1:])
@@ -191,4 +191,4 @@ elbe inside the existing initvm.", file=sys.stderr)
             print(e.fault.faultstring, file=sys.stderr)
         else:
             print(e, file=sys.stderr)
-        sys.exit(5)
+        sys.exit(6)

@@ -30,7 +30,7 @@ def run_command(argv):
     if not args:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(72)
 
     with elbe_logging({"streams":sys.stdout}):
         try:
@@ -40,7 +40,7 @@ def run_command(argv):
                                   url_validation=ValidationMode.NO_CHECK)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(73)
 
         os.environ["LANG"] = "C"
         os.environ["LANGUAGE"] = "C"

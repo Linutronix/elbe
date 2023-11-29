@@ -100,11 +100,11 @@ class ElbeSoapClient:
                 if not retry:
                     fp.close()
                     print("file transfer failed", file=sys.stderr)
-                    sys.exit(20)
+                    sys.exit(170)
 
             if ret == "FileNotFound":
                 print(ret, file=sys.stderr)
-                sys.exit(20)
+                sys.exit(171)
             if ret == "EndOfFile":
                 fp.close()
                 return
@@ -166,7 +166,7 @@ class RemoveLogAction(ClientAction):
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print("usage: elbe control rm_log <project_dir>", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(172)
 
         builddir = args[0]
         client.service.rm_log(builddir)
@@ -224,7 +224,7 @@ class AddUserAction(ClientAction):
             print(
                 "usage: elbe control add_user <name> <fullname> <password> <email>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(173)
 
         name     = args[0]
         fullname = args[1]
@@ -273,7 +273,7 @@ class ResetProjectAction(ClientAction):
             print(
                 "usage: elbe control reset_project <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(174)
 
         builddir = args[0]
         client.service.reset_project(builddir)
@@ -294,7 +294,7 @@ class DeleteProjectAction(ClientAction):
             print(
                 "usage: elbe control del_project <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(175)
 
         builddir = args[0]
         client.service.del_project(builddir)
@@ -315,7 +315,7 @@ class SetXmlAction(ClientAction):
             print(
                 "usage: elbe control set_xml <project_dir> <xml>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(176)
 
         builddir = args[0]
         filename = args[1]
@@ -327,12 +327,12 @@ class SetXmlAction(ClientAction):
                 url_validation=ValidationMode.NO_CHECK)
         except IOError:
             print(f"{filename} is not a valid elbe xml file")
-            sys.exit(20)
+            sys.exit(177)
 
         if not x.has('target'):
             print("<target> is missing, this file can't be built in an initvm",
                   file=sys.stderr)
-            sys.exit(20)
+            sys.exit(178)
 
         size = 1024 * 1024
         part = 0
@@ -376,7 +376,7 @@ class BuildAction(ClientAction):
     def execute(self, client, opt, args):
         if len(args) != 1:
             print("usage: elbe control build <project_dir>", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(179)
 
         builddir = args[0]
         client.service.build(builddir, opt.build_bin, opt.build_sources,
@@ -398,7 +398,7 @@ class BuildSysrootAction(ClientAction):
             print(
                 "usage: elbe control build-sysroot <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(180)
 
         builddir = args[0]
         client.service.build_sysroot(builddir)
@@ -419,7 +419,7 @@ class BuildSDKAction(ClientAction):
             print(
                 "usage: elbe control build-sdk <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(181)
 
         builddir = args[0]
         client.service.build_sdk(builddir)
@@ -440,13 +440,13 @@ class BuildCDROMsAction(ClientAction):
             print(
                 "usage: elbe control build-cdroms [--build-bin|--build-sources] <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(182)
 
         if (not opt.build_bin) and (not opt.build_sources):
             print(
                 "usage: elbe control build-cdroms [--build-bin|--build-sources] <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(183)
 
         builddir = args[0]
         client.service.build_cdroms(builddir, opt.build_bin, opt.build_sources)
@@ -467,7 +467,7 @@ class GetFileAction(ClientAction):
             print(
                 "usage: elbe control get_file <project_dir> <file>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(184)
 
         builddir = args[0]
         filename = args[1]
@@ -498,7 +498,7 @@ class BuildChrootAction(ClientAction):
             print(
                 "usage: elbe control build_chroot_tarball <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(185)
 
         builddir = args[0]
 
@@ -520,7 +520,7 @@ class DumpFileAction(ClientAction):
             print(
                 "usage: elbe control dump_file <project_dir> <file>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(186)
 
         builddir = args[0]
         filename = args[1]
@@ -530,7 +530,7 @@ class DumpFileAction(ClientAction):
             ret = client.service.get_file(builddir, filename, part)
             if ret == "FileNotFound":
                 print(ret, file=sys.stderr)
-                sys.exit(20)
+                sys.exit(187)
             if ret == "EndOfFile":
                 return
 
@@ -553,7 +553,7 @@ class GetFilesAction(ClientAction):
             print(
                 "usage: elbe control get_files <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(188)
 
         builddir = args[0]
         files = client.service.get_files(builddir)
@@ -582,7 +582,7 @@ class GetFilesAction(ClientAction):
                 client.download_file(builddir, f.name, dst_fname)
 
         if nfiles == 0:
-            sys.exit(10)
+            sys.exit(189)
 
 
 ClientAction.register(GetFilesAction)
@@ -600,7 +600,7 @@ class WaitProjectBusyAction(ClientAction):
             print(
                 "usage: elbe control wait_busy <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(190)
 
         builddir = args[0]
 
@@ -636,7 +636,7 @@ class WaitProjectBusyAction(ClientAction):
                 "Project build was not successful, current status: "
                 f"{prj.status}",
                 file=sys.stderr)
-            sys.exit(10)
+            sys.exit(191)
 
 ClientAction.register(WaitProjectBusyAction)
 
@@ -654,7 +654,7 @@ class SetCdromAction(ClientAction):
             print(
                 "usage: elbe control set_cdrom <project_dir> <cdrom file>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(192)
 
         builddir = args[0]
         filename = args[1]
@@ -679,7 +679,7 @@ class SetOrigAction(ClientAction):
             print(
                 "usage: elbe control set_orig <project_dir> <orig file>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(193)
 
         builddir = args[0]
         filename = args[1]
@@ -701,7 +701,7 @@ class ShutdownInitvmAction(ClientAction):
     def execute(self, client, _opt, args):
         if args:
             print("usage: elbe control shutdown_initvm", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(194)
 
         # if shutdown kills the daemon before it can answer the request
         try:
@@ -725,7 +725,7 @@ class SetPdebuilderAction(ClientAction):
         if len(args) != 2 and len(args) != 3:
             print("usage: elbe control set_pdebuild "
                   "<project_dir> <pdebuild file>", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(195)
 
         builddir = args[0]
         filename = args[1]
@@ -751,7 +751,7 @@ class BuildPbuilderAction(ClientAction):
             print(
                 "usage: elbe control build_pbuilder <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(196)
 
         builddir = args[0]
         client.service.build_pbuilder(builddir, opt.cross, opt.noccache,
@@ -773,7 +773,7 @@ class UpdatePbuilderAction(ClientAction):
             print(
                 "usage: elbe control update_pbuilder <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(197)
 
         builddir = args[0]
         client.service.update_pbuilder(builddir)
@@ -793,7 +793,7 @@ class InstallElbeVersion(ClientAction):
             print(
                 "usage: elbe control install_elbe_version [version]",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(198)
 
         if args:
             version = args[0]
@@ -845,7 +845,7 @@ class ListPackagesAction(RepoAction):
             print(
                 "usage: elbe prjrepo list_packages <project_dir>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(199)
 
         builddir = args[0]
         print(client.service.list_packages(builddir))
@@ -865,7 +865,7 @@ class DownloadAction(RepoAction):
         if len(args) != 1:
             print("usage: elbe prjrepo download <project_dir>",
                   file=sys.stderr)
-            sys.exit(20)
+            sys.exit(200)
 
         builddir = args[0]
         filename = "repo.tar.gz"
@@ -928,7 +928,7 @@ class UploadPackageAction(RepoAction):
             print(
                 "usage: elbe prjrepo upload_pkg <project_dir> <deb/dsc/changes file>",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(201)
 
         builddir = args[0]
         filename = args[1]
@@ -943,7 +943,7 @@ class UploadPackageAction(RepoAction):
         # Check filetype
         if filetype not in ['.dsc', '.deb', '.changes']:
             print("Error: Only .dsc, .deb or .changes files allowed to upload.")
-            sys.exit(20)
+            sys.exit(202)
 
         files = [filename]  # list of all files which will be uploaded
 
@@ -964,7 +964,7 @@ class UploadPackageAction(RepoAction):
                 abort = True
         # Abort if one or more source files are missing
         if abort:
-            sys.exit(20)
+            sys.exit(203)
 
         print("Start uploading file(s)...")
         for f in files:

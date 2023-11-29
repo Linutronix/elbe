@@ -19,25 +19,25 @@ def run_command(argv):
 
     if not args:
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(58)
 
     if not os.path.exists(args[0]):
         print(f"{args[0]} - file not found")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(59)
 
     validation = validate_xml(args[0])
     if validation:
         print("validation failed")
         for i in validation:
             print(i)
-        sys.exit(20)
+        sys.exit(60)
 
     if opt.validate_urls:
         try:
             ElbeXML(args[0], url_validation=ValidationMode.CHECK_ALL)
         except ValidationError as e:
             print(e)
-            sys.exit(20)
+            sys.exit(61)
 
     sys.exit(0)

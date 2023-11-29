@@ -72,11 +72,11 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(26)
 
     if not opt.target:
         print("No target specified")
-        sys.exit(20)
+        sys.exit(27)
 
     if opt.skip_cdrom:
         print("WARNING: Skip CDROMS is now the default, "
@@ -88,7 +88,7 @@ def run_command(argv):
                                   opt.buildtype, opt.skip_validation)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(28)
 
         try:
             project.build(
@@ -99,11 +99,11 @@ def run_command(argv):
                 opt.skip_pbuild)
         except CommandError as ce:
             logging.error("Command in project build failed: %s", ce.cmd)
-            sys.exit(20)
+            sys.exit(29)
 
         try:
             db = ElbeDB()
             db.save_project(project)
         except OperationalError:
             logging.exception("Failed to save project in database")
-            sys.exit(20)
+            sys.exit(30)

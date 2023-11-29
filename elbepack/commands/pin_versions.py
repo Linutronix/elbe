@@ -23,7 +23,7 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(94)
 
     if not opt.skip_validation:
         validation = validate_xml(args[0])
@@ -31,17 +31,17 @@ def run_command(argv):
             print("xml validation failed. Bailing out")
             for i in validation:
                 print(i)
-            sys.exit(20)
+            sys.exit(95)
 
     try:
         xml = etree(args[0])
     except BaseException:
         print("Error reading xml file!")
-        sys.exit(20)
+        sys.exit(96)
 
     if not xml.has("fullpkgs"):
         print("xml file does not have fullpkgs node")
-        sys.exit(20)
+        sys.exit(97)
 
     plist = xml.ensure_child("/target/pkg-list")
     plist.clear()
@@ -61,4 +61,4 @@ def run_command(argv):
         xml.write(args[0])
     except BaseException:
         print("Unable to write new xml file")
-        sys.exit(20)
+        sys.exit(98)

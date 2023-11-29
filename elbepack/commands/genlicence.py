@@ -29,7 +29,7 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(70)
 
     with elbe_logging({"streams": sys.stdout}):
         try:
@@ -39,7 +39,7 @@ def run_command(argv):
                                   url_validation=ValidationMode.NO_CHECK)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(71)
 
         if opt.output:
             f = io.open(opt.output, "w+", encoding='utf-8')

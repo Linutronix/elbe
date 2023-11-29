@@ -88,18 +88,18 @@ def run_command(argv):
     if not args:
         print("no filename specified")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(78)
     elif len(args) > 1:
         print("too many filenames specified")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(79)
 
     with elbe_logging({"files": None}):
         if opt.devel:
             if not os.path.isdir(os.path.join(elbe_dir, "elbepack")):
                 logging.error("Devel Mode only valid, "
                               "when running from elbe checkout")
-                sys.exit(20)
+                sys.exit(80)
 
         if not opt.skip_validation:
             validation = validate_xml(args[0])
@@ -107,14 +107,14 @@ def run_command(argv):
                 logging.error("xml validation failed. Bailing out")
                 for i in validation:
                     logging.error(i)
-                sys.exit(20)
+                sys.exit(81)
 
         xml = etree(args[0])
 
         if not xml.has("initvm"):
             logging.error("fatal error: "
                           "xml missing mandatory section 'initvm'")
-            sys.exit(20)
+            sys.exit(82)
 
         if opt.buildtype:
             buildtype = opt.buildtype
@@ -140,7 +140,7 @@ def run_command(argv):
             logging.error("unable to create project directory: %s (%s)",
                           opt.directory,
                           e.strerror)
-            sys.exit(30)
+            sys.exit(83)
 
         out_path = os.path.join(opt.directory, ".elbe-in")
         try:
@@ -149,7 +149,7 @@ def run_command(argv):
             logging.error("unable to create subdirectory: %s (%s)",
                           out_path,
                           e.strerror)
-            sys.exit(30)
+            sys.exit(84)
 
         initvm_http_proxy = http_proxy.replace('http://localhost:',
                                                'http://10.0.2.2:')
@@ -181,7 +181,7 @@ def run_command(argv):
                 logging.error("If you use debmirror please read "
                               "https://github.com/Linutronix/elbe/issues/188 "
                               "on how to work around the issue")
-            sys.exit(20)
+            sys.exit(85)
 
         templates = os.listdir(init_template_dir)
 

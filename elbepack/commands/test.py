@@ -244,7 +244,7 @@ def run_command(argv):
         print(
             f"Invalid level value '{opt.level}'. Valid values are: "
             f"{', '.join(key for key in ElbeTestLevel.__members__)}")
-        os.sys.exit(20)
+        os.sys.exit(76)
 
     ElbeTestCase.level = ElbeTestLevel[opt.level]
 
@@ -276,4 +276,4 @@ def run_command(argv):
             f.write(result.get_xml())
 
     if not result.wasSuccessful():
-        os.sys.exit(20)
+        os.sys.exit(77)

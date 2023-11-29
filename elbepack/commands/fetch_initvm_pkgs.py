@@ -72,14 +72,14 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(46)
 
     try:
         xml = ElbeXML(args[0], skip_validate=opt.skip_validation)
     except ValidationError as e:
         print(str(e))
         print("xml validation failed. Bailing out")
-        sys.exit(20)
+        sys.exit(47)
 
     with elbe_logging({"streams":sys.stdout}):
 

@@ -185,7 +185,7 @@ class VirtApt:
             print("/etc/apt/trusted.gpg.d doesn't exist")
             print("apt-get install debian-archive-keyring may "
                   "fix this problem")
-            sys.exit(20)
+            sys.exit(204)
 
         if os.path.exists("/etc/apt/trusted.gpg"):
             system(f'cp /etc/apt/trusted.gpg "{ring_path}"')

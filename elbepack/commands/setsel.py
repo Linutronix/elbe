@@ -39,7 +39,7 @@ def run_command(argv):
     if len(args) != 2:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(23)
 
     xml = etree(args[0])
 

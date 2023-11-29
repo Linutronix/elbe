@@ -41,17 +41,17 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(65)
 
     if not opt.target:
         print("No directory specified!")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(66)
 
     if not opt.output:
         print("No Log output")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(67)
 
     if opt.skip_grub:
         opt.grub_version = 0
@@ -59,7 +59,7 @@ def run_command(argv):
     if opt.grub_version not in [0, 97, 202]:
         print("invalid grub version")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(68)
 
     with elbe_logging({"files":opt.output}):
         try:
@@ -69,6 +69,6 @@ def run_command(argv):
                                   skip_validate=opt.skip_validation)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(69)
 
         project.targetfs.part_target(opt.target, opt.grub_version)

@@ -56,7 +56,7 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments", file=sys.stderr)
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(74)
 
     with elbe_logging({"files":opt.log}):
 
@@ -67,7 +67,7 @@ def run_command(argv):
                                       skip_validate=opt.skip_validation)
             except ValidationError:
                 logging.exception("XML validation failed.  Bailing out")
-                sys.exit(20)
+                sys.exit(75)
 
             builddir = project.builddir
             rfs = project.buildenv.rfs

@@ -715,13 +715,13 @@ class ElbeProject:
             logging.error("Please make sure that you create the pbuilder "
                           "environment with the --cross option if you want to "
                           "use the build command with --cross.")
-            sys.exit(20)
+            sys.exit(116)
 
         if os.path.exists(cross_pbuilderrc) and not cross:
             logging.error("Please make sure that if you created the pbuilder "
                           "environment without the --cross option, you use the "
                           "build command without --cross too.")
-            sys.exit(20)
+            sys.exit(117)
 
         self.pdebuild_init()
 

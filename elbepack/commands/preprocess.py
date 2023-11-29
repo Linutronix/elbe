@@ -32,11 +32,11 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments", file=sys.stderr)
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(112)
 
     if not os.path.isfile(args[0]):
         print(f"{args[0]} doesn't exist", file=sys.stderr)
-        sys.exit(20)
+        sys.exit(113)
 
     variants = []
     if opt.variant:
@@ -46,4 +46,4 @@ def run_command(argv):
         xmlpreprocess(args[0], opt.output, variants, opt.proxy, opt.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
-        sys.exit(20)
+        sys.exit(114)

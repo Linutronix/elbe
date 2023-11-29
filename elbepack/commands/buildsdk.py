@@ -25,7 +25,7 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(39)
 
     with elbe_logging({"streams":sys.stdout}):
         try:
@@ -33,6 +33,6 @@ def run_command(argv):
                                   skip_validate=opt.skip_validation)
         except ValidationError:
             logging.exception("xml validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(40)
 
         project.build_sdk()

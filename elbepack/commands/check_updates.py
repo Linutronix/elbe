@@ -61,7 +61,7 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(51)
 
     if not opt.skip_validation:
         validation = validate_xml(args[0])
@@ -69,7 +69,7 @@ def run_command(argv):
             print("xml validation failed. Bailing out")
             for i in validation:
                 print(i)
-            sys.exit(20)
+            sys.exit(52)
 
     print(f"checking {args[0]}")
 

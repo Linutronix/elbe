@@ -26,24 +26,24 @@ def run_command(argv):
     if len(args) != 2:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(101)
 
     if os.path.exists(args[1]):
         print("archive already exists, bailing out")
-        sys.exit(20)
+        sys.exit(102)
 
     try:
         xml = etree(args[0])
     except BaseException:
         print("Error reading xml file!")
-        sys.exit(20)
+        sys.exit(103)
 
     if xml.has("archive") and not xml.text("archive") is None:
         try:
             unbase(xml.text("archive"), args[1])
         except BaseException:
             print("Error writing archive")
-            sys.exit(20)
+            sys.exit(104)
     else:
         print("no archive in this xml file.")
-        sys.exit(20)
+        sys.exit(105)

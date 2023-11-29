@@ -19,12 +19,12 @@ def run_command(argv):
     if len(args) != 1:
         print("Wrong number of arguments", file=sys.stderr)
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(55)
 
     xml_input = args[0]
     if not os.path.isfile(xml_input):
         print(f"{xml_input} does not exist", file=sys.stderr)
-        sys.exit(20)
+        sys.exit(56)
 
     if os.path.exists(opt.output):
         # This will be overridden. Try to delete first to make sure it is a regular file.
@@ -37,4 +37,4 @@ def run_command(argv):
         print()
     except RepodirError as e:
         print(e, file=sys.stderr)
-        sys.exit(20)
+        sys.exit(57)

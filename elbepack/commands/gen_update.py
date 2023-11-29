@@ -53,15 +53,15 @@ def run_command(argv):
     if len(args) != 1:
         if not opt.cfg_dir and not opt.cmd_dir:
             oparser.print_help()
-            sys.exit(20)
+            sys.exit(31)
 
     if len(args) == 1 and not opt.target:
         print("No target specified")
-        sys.exit(20)
+        sys.exit(32)
 
     if not opt.output:
         print("No output file specified")
-        sys.exit(20)
+        sys.exit(33)
 
     if opt.buildtype:
         buildtype = opt.buildtype
@@ -75,18 +75,18 @@ def run_command(argv):
                                   skip_validate=opt.skip_validation)
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(34)
 
     if opt.presh_file:
         if not os.path.isfile(opt.presh_file):
             logging.error('pre.sh file does not exist')
-            sys.exit(20)
+            sys.exit(35)
         project.presh_file = opt.presh_file
 
     if opt.postsh_file:
         if not os.path.isfile(opt.postsh_file):
             logging.error('post.sh file does not exist')
-            sys.exit(20)
+            sys.exit(36)
         project.postsh_file = opt.postsh_file
 
     update_xml = None
@@ -101,7 +101,7 @@ def run_command(argv):
 
         except ValidationError:
             logging.exception("XML validation failed.  Bailing out")
-            sys.exit(20)
+            sys.exit(37)
         except MissingData:
             logging.exception("Missing Data")
-            sys.exit(20)
+            sys.exit(38)

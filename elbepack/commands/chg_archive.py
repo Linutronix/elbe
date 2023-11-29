@@ -27,22 +27,22 @@ def run_command(argv):
     if len(args) != 2:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(42)
 
     try:
         xml = etree(args[0])
     except BaseException:
         print("Error reading xml file!")
-        sys.exit(20)
+        sys.exit(43)
 
     try:
         xml = chg_archive(xml, args[1], opt.keep_attributes)
     except BaseException:
         print("Error reading archive")
-        sys.exit(20)
+        sys.exit(44)
 
     try:
         xml.write(args[0])
     except BaseException:
         print("Unable to write new xml file")
-        sys.exit(20)
+        sys.exit(45)

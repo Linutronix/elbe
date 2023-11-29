@@ -79,7 +79,7 @@ def setup_apt_keyring(gpg_home, keyring_fname):
         print("/etc/apt/trusted.gpg.d doesn't exist")
         print("apt-get install debian-archive-keyring may "
               "fix this problem")
-        sys.exit(20)
+        sys.exit(115)
 
     if os.path.exists("/etc/apt/trusted.gpg"):
         system(f'cp /etc/apt/trusted.gpg "{ring_path}"')

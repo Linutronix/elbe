@@ -72,11 +72,11 @@ def run_command(argv):
     except KeyError:
         print("elbe pbuilder - unknown subcommand", file=sys.stderr)
         PBuilderAction.print_actions()
-        sys.exit(20)
+        sys.exit(92)
 
     try:
         action.execute(opt, args[1:])
     except PBuilderError as e:
         print("PBuilder Exception", file=sys.stderr)
         print(e, file=sys.stderr)
-        sys.exit(5)
+        sys.exit(93)

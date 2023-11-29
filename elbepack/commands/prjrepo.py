@@ -88,7 +88,7 @@ def run_command(argv):
             "Check, wether the Soap Server is running inside the initvm",
             file=sys.stderr)
         print("try 'elbe initvm attach'", file=sys.stderr)
-        sys.exit(10)
+        sys.exit(11)
     except BadStatusLine as e:
         print(
             f"Failed to connect to Soap server {opt.host}:{opt.port}\n",
@@ -98,7 +98,7 @@ def run_command(argv):
         print(
             "try 'elbe initvm --directory /path/to/initvm start'",
             file=sys.stderr)
-        sys.exit(10)
+        sys.exit(12)
 
     # Check Elbe version
     try:
@@ -118,7 +118,7 @@ def run_command(argv):
 get_version interface. Please create a new initvm or upgrade \
 elbe inside the existing initvm.", file=sys.stderr)
         if not opt.ignore_version:
-            sys.exit(20)
+            sys.exit(21)
 
     # Check whether subcommand exists
     try:
@@ -126,7 +126,7 @@ elbe inside the existing initvm.", file=sys.stderr)
     except KeyError:
         print("elbe prjrepo - unknown subcommand", file=sys.stderr)
         RepoAction.print_actions()
-        sys.exit(20)
+        sys.exit(22)
 
     # Execute command
     try:

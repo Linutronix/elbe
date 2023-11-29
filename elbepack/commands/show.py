@@ -30,12 +30,12 @@ def run_command(argv):
     if not args:
         print("No Filename specified")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(107)
 
     if len(args) > 1:
         print("too many filenames specified")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(108)
 
     try:
         if not opt.skip_validation:
@@ -44,16 +44,16 @@ def run_command(argv):
                 print("xml validation failed. Bailing out")
                 for i in validation:
                     print(i)
-                sys.exit(20)
+                sys.exit(109)
 
         xml = etree(args[0])
     except BaseException:
         print("Unable to open xml File. Bailing out")
-        sys.exit(20)
+        sys.exit(110)
 
     if not xml.has("./project"):
         print("no project description available")
-        sys.exit(20)
+        sys.exit(111)
 
     print(f"== {args[0]} ==")
     print(f"Debian suite: {xml.text('./project/suite')}")

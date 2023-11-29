@@ -28,7 +28,7 @@ def run_command(argv):
 
     if len(args) < 2:
         oparser.print_help()
-        os.sys.exit(20)
+        os.sys.exit(63)
 
     if args[0] == "all":
         tests = [CheckBase.tests[tag] for tag in CheckBase.tests]
@@ -39,7 +39,7 @@ def run_command(argv):
         print("Valid tests are:\n\tall")
         for tag in CheckBase.tests:
             print(f"\t{tag}")
-        os.sys.exit(20)
+        os.sys.exit(64)
 
     total_cnt = 0
     fail_cnt  = 0

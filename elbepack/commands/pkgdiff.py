@@ -31,7 +31,7 @@ def run_command(argv):
     if len(args) != 2:
         print("Wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(41)
 
     gen_rfs = args[0]
     fix_rfs = args[1]

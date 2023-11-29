@@ -154,7 +154,7 @@ def run_command(argv):
     if len(args) != 1:
         print("wrong number of arguments")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(53)
 
     tree = etree(args[0])
 
@@ -166,7 +166,7 @@ def run_command(argv):
     if not opt.mapping:
         print("A mapping file is required")
         oparser.print_help()
-        sys.exit(20)
+        sys.exit(54)
 
     mapping = license_dep5_to_spdx(opt.mapping)
 

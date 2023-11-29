@@ -82,7 +82,7 @@ class CreateAction(PBuilderAction):
                               file=sys.stderr)
                         print(err, file=sys.stderr)
                         print("Giving up", file=sys.stderr)
-                        sys.exit(20)
+                        sys.exit(152)
 
                     prjdir = prjdir.strip()
                     ret, _, err = command_out_stderr(
@@ -92,13 +92,13 @@ class CreateAction(PBuilderAction):
                         print("elbe control set_xml failed.", file=sys.stderr)
                         print(err, file=sys.stderr)
                         print("Giving up", file=sys.stderr)
-                        sys.exit(20)
+                        sys.exit(153)
             except CommandError:
                 # this is the failure from PreprocessWrapper
                 # it already printed the error message from
                 # elbe preprocess
                 print("Giving up", file=sys.stderr)
-                sys.exit(20)
+                sys.exit(154)
 
             if opt.writeproject:
                 wpf = open(opt.writeproject, "w")
@@ -109,7 +109,7 @@ class CreateAction(PBuilderAction):
             prjdir = opt.project
         else:
             print("you need to specify --project option", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(155)
 
         print("Creating pbuilder")
 
@@ -118,14 +118,14 @@ class CreateAction(PBuilderAction):
         except CommandError:
             print("elbe control build_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(156)
 
         try:
             system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print("elbe control wait_busy Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(157)
 
         print("")
         print("Building Pbuilder finished !")
@@ -146,7 +146,7 @@ class UpdateAction(PBuilderAction):
 
         if not opt.project:
             print("you need to specify --project option", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(158)
 
         prjdir = opt.project
 
@@ -157,7 +157,7 @@ class UpdateAction(PBuilderAction):
         except CommandError:
             print("elbe control update_pbuilder Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(159)
 
         print("")
         print("Updating Pbuilder finished !")
@@ -191,7 +191,7 @@ class BuildAction(PBuilderAction):
                 print("elbe control create_project failed.", file=sys.stderr)
                 print(err, file=sys.stderr)
                 print("Giving up", file=sys.stderr)
-                sys.exit(20)
+                sys.exit(160)
 
             prjdir = prjdir.strip()
 
@@ -200,14 +200,14 @@ class BuildAction(PBuilderAction):
             except CommandError:
                 print("elbe control build_pbuilder Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
-                sys.exit(20)
+                sys.exit(161)
 
             try:
                 system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
             except CommandError:
                 print("elbe control wait_busy Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
-                sys.exit(20)
+                sys.exit(162)
 
             print("")
             print("Building Pbuilder finished !")
@@ -219,7 +219,7 @@ class BuildAction(PBuilderAction):
             print(
                 "you need to specify --project or --xmlfile option",
                 file=sys.stderr)
-            sys.exit(20)
+            sys.exit(163)
 
         print("")
         print("Packing Source into tmp archive")
@@ -229,7 +229,7 @@ class BuildAction(PBuilderAction):
         except CommandError:
             print("tar Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(164)
 
         for of in opt.origfile:
             print("")
@@ -241,7 +241,7 @@ class BuildAction(PBuilderAction):
             except CommandError:
                 print("elbe control set_orig Failed", file=sys.stderr)
                 print("Giving up", file=sys.stderr)
-                sys.exit(20)
+                sys.exit(165)
 
         print("")
         print("Pushing source into pbuilder")
@@ -255,13 +255,13 @@ class BuildAction(PBuilderAction):
         except CommandError:
             print("elbe control set_pdebuild Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(166)
         try:
             system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
         except CommandError:
             print("elbe control wait_busy Failed", file=sys.stderr)
             print("Giving up", file=sys.stderr)
-            sys.exit(20)
+            sys.exit(167)
         print("")
         print("Pdebuild finished !")
         print("")
@@ -285,7 +285,7 @@ class BuildAction(PBuilderAction):
                     print("", file=sys.stderr)
                     print("Giving up", file=sys.stderr)
 
-                sys.exit(20)
+                sys.exit(168)
 
             print("")
             print(f"Get Files with: 'elbe control get_file {prjdir} <filename>'")
@@ -312,7 +312,7 @@ class BuildAction(PBuilderAction):
                     print("", file=sys.stderr)
                     print("Giving up", file=sys.stderr)
 
-                sys.exit(20)
+                sys.exit(169)
 
 
 PBuilderAction.register(BuildAction)

@@ -76,7 +76,7 @@ def run_command(argv):
     if not args:
         print("elbe initvm - no subcommand given", file=sys.stderr)
         InitVMAction.print_actions()
-        sys.exit(20)
+        sys.exit(48)
 
     directory = opt.directory or os.getcwd() + '/initvm'
 
@@ -88,11 +88,11 @@ def run_command(argv):
     except KeyError:
         print("elbe initvm - unknown subcommand", file=sys.stderr)
         InitVMAction.print_actions()
-        sys.exit(20)
+        sys.exit(49)
 
     try:
         action.execute(directory, opt, args[1:])
     except InitVMError as e:
         print("InitVM Exception", file=sys.stderr)
         print(e, file=sys.stderr)
-        sys.exit(5)
+        sys.exit(50)
