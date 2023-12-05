@@ -6,7 +6,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	<initvm>
 		<buildtype>amd64</buildtype>
 		<mirror>
-			<primary_host>ftp.de.debian.org</primary_host>
+			<primary_host>deb.debian.org</primary_host>
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 			<url-list>
@@ -20,10 +20,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</url>
 				<url>
 					<binary>
-						http://ftp.de.debian.org/debian bullseye-backports main
+						http://deb.debian.org/debian bullseye-backports main
 					</binary>
 					<source>
-						http://ftp.de.debian.org/debian bullseye-backports main
+						http://deb.debian.org/debian bullseye-backports main
 					</source>
 				</url>
 				<url>
@@ -147,7 +147,7 @@ lffHf8U7HFvRg+zm
 			<pkg pin="bullseye-backports">reprepro</pkg>
 		</pkg-list>
 		<preseed>
-			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://deb.debian.org/debian"/>
 		</preseed>
 		<size>80G</size>
 		<swap-size>10GiB</swap-size>
