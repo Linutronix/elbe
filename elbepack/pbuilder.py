@@ -174,7 +174,10 @@ def get_apt_keys(builddir, xml):
             else:
                 options = ""
 
-            if url.has("raw-key") and not "trusted=yes" in options:
+            if "trusted=yes" in options:
+                continue
+
+            if url.has("raw-key"):
 
                 key = "\n".join(line.strip(" \t")
                                 for line
