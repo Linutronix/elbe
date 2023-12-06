@@ -81,7 +81,7 @@ class CheckBase:
         except CheckException as E:
             logging.exception(E)
             self.ret = 1
-        except:
+        except Exception:
             logging.error(traceback.format_exc())
             self.ret = 1
         return self.ret

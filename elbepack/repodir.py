@@ -51,7 +51,7 @@ def preprocess_repodir(xml, xmldir):
                 keyfile = os.path.join(hostdir, repodir.attrib['signed-by'])
                 auth_el = Element("raw-key")
                 auth_el.text = "\n" + open(keyfile, encoding='ascii').read()
-            except:
+            except Exception:
                 raise RepodirError(
                     f"{keyfile} is not a valid ascii-armored OpenPGP keyring")
         else:

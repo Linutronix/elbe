@@ -46,8 +46,8 @@ class TestSimpleXML(ElbeTestCase):
                     with self.subTest(f'check build {cmd}'):
                         system(f'{sys.executable} {elbe_exe} check-build {cmd} "{build_dir}"')
 
-            except:
-                raise
+            except Exception as e:
+                raise e
             else:
                 # This is a tear down of the project, it's okay if it fails
                 system(
@@ -80,8 +80,8 @@ class TestPbuilder(ElbeTestCase):
                     uuid = f.read()
                     system(f'cd "{build_dir}/libgpio"; \
                              {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
-            except:
-                raise
+            except Exception as e:
+                raise e
             else:
                 # This is a tearDown of the project, it's okay if it fails
                 system(
