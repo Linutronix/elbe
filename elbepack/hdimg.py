@@ -264,8 +264,8 @@ class grubinstaller97(grubinstaller_base):
             # FIXME - Pylint says: Using possibly undefined loop
             # variable 'entry' (undefined-loop-variable).  entry is
             # defined in the previous for-loop.
-            do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')
-            do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')
+            do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')  # noqa: E501
+            do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')  # noqa: E501
 
             chroot(imagemnt, "update-grub")
 
