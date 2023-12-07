@@ -4,6 +4,14 @@
 ELBE
 ====
 
+This project is maintained by:
+
+[link=https://www.linutronix.de]
+image::https://raw.githubusercontent.com/Linutronix/.github/master/images/lx_logo_padded.png[Linutronix]
+
+
+Overview
+--------
 http://elbe-rfs.org
 
 ELBE is the 'E.mbedded L.inux B.uild E.nvironment'.
