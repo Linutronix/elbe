@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
 import sys
-
 from optparse import OptionParser
 
 from elbepack.elbexml import ElbeXML, ValidationError

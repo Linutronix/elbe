@@ -3,20 +3,19 @@
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
+import datetime
+import os
 import sys
 import time
-import os
-import datetime
 
 import elbepack
-from elbepack.treeutils import etree
-from elbepack.directories import elbe_exe
-from elbepack.shellhelper import CommandError, system, command_out_stderr, \
-                                 command_out
-from elbepack.filesystem import TmpdirFilesystem
-from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.config import cfg
-from elbepack.repodir import RepodirError, Repodir
+from elbepack.directories import elbe_exe
+from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
+from elbepack.filesystem import TmpdirFilesystem
+from elbepack.repodir import Repodir, RepodirError
+from elbepack.shellhelper import CommandError, command_out, command_out_stderr, system
+from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import PreprocessWrapper
 
 

@@ -4,26 +4,25 @@
 # SPDX-FileCopyrightText: 2016 Claudius Heine <ch@denx.de>
 
 import binascii
-import logging
-import socket
-import time
-import sys
-import os
 import fnmatch
-
+import logging
+import os
+import socket
+import sys
+import time
 from datetime import datetime
 from http.client import BadStatusLine
 from urllib.error import URLError
 
-import deb822   # package for dealing with Debian related data
-
-from suds.client import Client
-from suds import WebFault
+import deb822
 
 from elbepack.config import cfg
-from elbepack.filesystem import Filesystem
 from elbepack.elbexml import ElbeXML, ValidationMode
-from elbepack.version import elbe_version, elbe_initvm_packagelist
+from elbepack.filesystem import Filesystem
+from elbepack.version import elbe_initvm_packagelist, elbe_version
+
+from suds import WebFault
+from suds.client import Client
 
 
 def set_suds_debug(debug):

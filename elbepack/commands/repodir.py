@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2022 Linutronix GmbH
 
-import sys
 import os
+import sys
 from optparse import OptionParser
 from threading import Event
 
-from elbepack.repodir import RepodirError, Repodir
+from elbepack.repodir import Repodir, RepodirError
 
 
 def run_command(argv):

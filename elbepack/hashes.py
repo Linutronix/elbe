@@ -3,7 +3,8 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import hashlib
-from elbepack.shellhelper import system, CommandError
+
+from elbepack.shellhelper import CommandError, system
 
 
 class HashValidationFailed(Exception):

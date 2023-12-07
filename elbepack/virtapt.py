@@ -6,18 +6,16 @@
 import os
 import sys
 
-
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
-
 import apt
+
 import apt_pkg
 
-
 from elbepack.egpg import unarmor_openpgp_keyring
-from elbepack.shellhelper import system
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.rfs import create_apt_prefs
+from elbepack.shellhelper import system
 
 
 def getdeps(pkg):

@@ -4,13 +4,17 @@
 
 
 import io
-import re
-
-import warnings
 import logging
+import re
+import warnings
 
-from debian.copyright import Copyright, LicenseParagraph, \
-                             NotMachineReadableError, MachineReadableFormatError
+from debian.copyright import (
+    Copyright,
+    LicenseParagraph,
+    MachineReadableFormatError,
+    NotMachineReadableError,
+)
+
 from elbepack.treeutils import etree
 
 warnings.simplefilter('error')

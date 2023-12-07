@@ -4,11 +4,10 @@
 import functools
 import os
 import sys
-
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 from threading import Thread
 
-from lxml.etree import XMLParser, parse, Element, XMLSyntaxError
+from lxml.etree import Element, XMLParser, XMLSyntaxError, parse
 
 
 class RepodirError(Exception):

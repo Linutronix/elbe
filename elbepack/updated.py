@@ -8,29 +8,33 @@ import os
 import subprocess
 import sys
 import threading
-
 from multiprocessing import Process
-from zipfile import (ZipFile, BadZipfile)
-from shutil import copyfile, rmtree, copy
-
+from shutil import copy, copyfile, rmtree
 from syslog import syslog
-from packaging import version
-
-from suds.client import Client
-from spyne import Application
-from spyne.service import ServiceBase
-from spyne.decorator import rpc
-from spyne.model.primitive import String
+from zipfile import BadZipfile, ZipFile
 
 import apt
+
 import apt_pkg
 
-from elbepack.aptprogress import (ElbeInstallProgress,
-                                  ElbeAcquireProgress, ElbeOpProgress)
+from elbepack.aptprogress import (
+    ElbeAcquireProgress,
+    ElbeInstallProgress,
+    ElbeOpProgress,
+)
 from elbepack.config import cfg
 from elbepack.egpg import unsign_file
-from elbepack.treeutils import etree
 from elbepack.shellhelper import CommandError, system
+from elbepack.treeutils import etree
+
+from packaging import version
+
+from spyne import Application
+from spyne.decorator import rpc
+from spyne.model.primitive import String
+from spyne.service import ServiceBase
+
+from suds.client import Client
 
 
 class UpdateStatus:

@@ -2,16 +2,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
-from traceback import format_exc
 from functools import wraps
+from traceback import format_exc
+
+from elbepack.db import ElbeDBError, InvalidLogin
+from elbepack.elbexml import ValidationError
+from elbepack.projectmanager import InvalidState, ProjectManagerError
 
 from spyne.model.fault import Fault
-
-# Import the Errors we try to catch wirh the
-# soap_faults decorator
-from elbepack.projectmanager import ProjectManagerError, InvalidState
-from elbepack.elbexml import ValidationError
-from elbepack.db import ElbeDBError, InvalidLogin
 
 
 class SoapElbeDBError(Fault):

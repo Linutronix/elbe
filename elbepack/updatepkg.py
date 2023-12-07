@@ -2,16 +2,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2015, 2017 Linutronix GmbH
 
-import os
 import logging
+import os
+from shutil import copyfile, copytree, rmtree
 
-from shutil import rmtree, copyfile, copytree
-
-from elbepack.elbexml import ElbeXML
 from elbepack.dump import dump_fullpkgs
-from elbepack.ziparchives import create_zip_archive
+from elbepack.elbexml import ElbeXML
 from elbepack.repomanager import UpdateRepo
-from elbepack.shellhelper import system, do
+from elbepack.shellhelper import do, system
+from elbepack.ziparchives import create_zip_archive
 
 
 class MissingData(Exception):

@@ -5,12 +5,13 @@
 import logging
 import os
 
-from gpg import core
-from gpg.constants import sigsum, sig, PROTOCOL_OpenPGP
-from gpg.errors import GPGMEError, KeyNotFound, InvalidSigners
-
 from elbepack.filesystem import hostfs
 from elbepack.shellhelper import CommandError, get_command_out, system
+
+from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
+from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
+
 
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">

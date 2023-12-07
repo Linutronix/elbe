@@ -2,25 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 
-import os
-import time
-import shutil
-import subprocess
 import io
-import stat
 import logging
+import os
+import shutil
+import stat
+import subprocess
+import time
 
 from elbepack.filesystem import Filesystem
-from elbepack.version import elbe_version
-from elbepack.hdimg import do_hdimg
 from elbepack.fstab import fstabentry
+from elbepack.hdimg import do_hdimg
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import (system,
-                                  CommandError,
-                                  do,
-                                  chroot,
-                                  get_command_out)
+from elbepack.shellhelper import CommandError, chroot, do, get_command_out, system
+from elbepack.version import elbe_version
 
 
 def copy_filelist(src, file_lst, dst):

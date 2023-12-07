@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2014, 2017 Linutronix GmbH
 
+import filecmp
 import os
 import sys
-import filecmp
-
 from optparse import OptionParser
 
 

@@ -4,11 +4,11 @@
 
 import os
 import sys
-import unittest
 import tempfile
+import unittest
 
-from elbepack.directories import elbe_dir, elbe_exe
 from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
+from elbepack.directories import elbe_dir, elbe_exe
 
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,

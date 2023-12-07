@@ -3,10 +3,10 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import sys
-
-from optparse import OptionParser
 from getpass import getpass
+from optparse import OptionParser
 from shutil import copyfileobj
+
 from elbepack.db import ElbeDB, ElbeDBError
 
 

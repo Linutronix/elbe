@@ -6,10 +6,10 @@
 import collections
 import logging
 import os
-import threading
 import re
-
+import threading
 from contextlib import contextmanager
+
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)

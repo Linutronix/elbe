@@ -5,9 +5,11 @@
 import errno
 import logging
 from os import path, remove
-from shutil import rmtree, copytree, move
+from shutil import copytree, move, rmtree
+
 from apt.package import FetchError
-from elbepack.repomanager import RepoBase, RepoAttributes
+
+from elbepack.repomanager import RepoAttributes, RepoBase
 
 
 class ArchiveRepo(RepoBase):

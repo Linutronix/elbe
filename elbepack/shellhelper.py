@@ -3,12 +3,10 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 # SPDX-FileCopyrightText: 2014 Ferdinand Schwenk <ferdinand.schwenk@emtrion.de>
 
-import os
 import logging
-
-from subprocess import Popen, PIPE, STDOUT, call
-
-from io import TextIOWrapper, BytesIO
+import os
+from io import BytesIO, TextIOWrapper
+from subprocess import PIPE, Popen, STDOUT, call
 
 from elbepack.log import async_logging
 

@@ -6,7 +6,7 @@
 import os
 import time
 
-from elbepack.shellhelper import do, get_command_out, CommandError
+from elbepack.shellhelper import CommandError, do, get_command_out
 
 
 def get_mtdnum(xml, label):

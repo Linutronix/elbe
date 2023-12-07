@@ -4,9 +4,8 @@
 
 import doctest
 
-import elbepack.shellhelper as shellhelper
 import elbepack.filesystem as filesystem
-
+import elbepack.shellhelper as shellhelper
 from elbepack.commands.test import ElbeTestCase
 
 

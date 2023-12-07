@@ -2,24 +2,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2015, 2017, 2018 Linutronix GmbH
 
-import os
-import sys
-import shutil
 import logging
-
+import os
+import shutil
+import sys
 from optparse import OptionParser
 
+from elbepack.config import cfg
+from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
+from elbepack.directories import elbe_dir, init_template_dir
+from elbepack.filesystem import Filesystem
+from elbepack.log import elbe_logging
+from elbepack.shellhelper import do, system, system_out
+from elbepack.templates import get_initvm_preseed, write_template
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.debinstaller import copy_kinitrd, NoKinitrdException
-from elbepack.xmldefaults import ElbeDefaults
 from elbepack.version import elbe_version
-from elbepack.templates import write_template, get_initvm_preseed
-from elbepack.directories import init_template_dir, elbe_dir
-from elbepack.config import cfg
-from elbepack.shellhelper import system, do, system_out
-from elbepack.log import elbe_logging
-from elbepack.filesystem import Filesystem
+from elbepack.xmldefaults import ElbeDefaults
 
 
 def run_command(argv):

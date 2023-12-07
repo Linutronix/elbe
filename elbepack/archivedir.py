@@ -6,16 +6,14 @@ import bz2
 import os
 import re
 import sys
-
-from urllib.parse import urljoin, urlparse
-
 from base64 import encodebytes, standard_b64decode
 from subprocess import CalledProcessError
 from tempfile import NamedTemporaryFile
+from urllib.parse import urljoin, urlparse
 
-from elbepack.treeutils import etree
-from elbepack.shellhelper import system
 from elbepack.filesystem import TmpdirFilesystem
+from elbepack.shellhelper import system
+from elbepack.treeutils import etree
 
 
 class ArchivedirError(Exception):

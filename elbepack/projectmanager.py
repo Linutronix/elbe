@@ -4,22 +4,29 @@
 
 import errno
 import os
-
 from os import path
+from shutil import rmtree
 from threading import Lock
 from uuid import uuid4
-from shutil import rmtree
 
+from elbepack.asyncworker import (
+    APTCommitJob,
+    APTUpdUpgrJob,
+    APTUpdateJob,
+    AsyncWorker,
+    BuildCDROMsJob,
+    BuildChrootTarJob,
+    BuildJob,
+    BuildSDKJob,
+    BuildSysrootJob,
+    CheckoutVersionJob,
+    CreatePbuilderJob,
+    GenUpdateJob,
+    PdebuildJob,
+    SaveVersionJob,
+    UpdatePbuilderJob,
+)
 from elbepack.db import ElbeDB, get_versioned_filename
-
-from elbepack.asyncworker import (AsyncWorker, BuildJob, APTUpdateJob,
-                                  APTCommitJob, GenUpdateJob,
-                                  SaveVersionJob, CheckoutVersionJob,
-                                  APTUpdUpgrJob, BuildSysrootJob,
-                                  PdebuildJob, CreatePbuilderJob,
-                                  UpdatePbuilderJob, BuildChrootTarJob,
-                                  BuildSDKJob, BuildCDROMsJob)
-
 from elbepack.elbexml import ValidationMode
 from elbepack.log import read_loggingQ
 

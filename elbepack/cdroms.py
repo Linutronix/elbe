@@ -2,22 +2,19 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
-import os
 import logging
-
+import os
 from shutil import copyfile
 
 from apt.package import FetchError
 
-from elbepack.archivedir import archive_tmpfile
-from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.repomanager import CdromSrcRepo
-from elbepack.repomanager import CdromBinRepo
-from elbepack.repomanager import CdromInitRepo
 from elbepack.aptpkgutils import XMLPackage
+from elbepack.archivedir import archive_tmpfile
 from elbepack.filesystem import Filesystem, hostfs
-from elbepack.shellhelper import CommandError, do
 from elbepack.isooptions import get_iso_options
+from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
+from elbepack.rpcaptcache import get_rpcaptcache
+from elbepack.shellhelper import CommandError, do
 
 CDROM_SIZE = 640 * 1000 * 1000
 

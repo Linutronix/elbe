@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
-import sys
 import os
-
+import sys
 from optparse import OptionParser
+
 from elbepack.initvmaction import InitVMAction, InitVMError
 from elbepack.xmlpreprocess import PreprocessWrapper
 

@@ -4,9 +4,9 @@
 
 import os
 
-from elbepack.commands.test import ElbeTestCase, system, ElbeTestException
+from elbepack.commands.test import ElbeTestCase, ElbeTestException, system
+from elbepack.directories import elbe_dir, elbe_exe, pack_dir
 from elbepack.shellhelper import system_out
-from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 
 
 class TestPylint(ElbeTestCase):

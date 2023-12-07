@@ -4,15 +4,15 @@
 
 import logging
 import os
-
 from pathlib import Path
 
-import parted
 import _ped
 
-from elbepack.fstab import fstabentry, mountpoint_dict, hdpart
 from elbepack.filesystem import Filesystem, size_to_int
-from elbepack.shellhelper import do, CommandError, chroot, get_command_out
+from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
+from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+
+import parted
 
 
 def mkfs_mtd(mtd, fslabel, target):

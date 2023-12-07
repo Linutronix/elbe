@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2012-2017 Linutronix GmbH
 
-import sys
 import logging
-
+import sys
 from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject

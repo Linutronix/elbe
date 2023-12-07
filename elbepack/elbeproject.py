@@ -3,41 +3,38 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 
-import os
 import datetime
+import glob
 import io
 import logging
+import os
 import sys
-import glob
-
-from elbepack.shellhelper import CommandError, system, do, chroot
-
-from elbepack.elbexml import (ElbeXML, NoInitvmNode,
-                              ValidationError, ValidationMode)
-
-from elbepack.rfs import BuildEnv
-from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.efilesystem import TargetFs
-from elbepack.efilesystem import extract_target
-from elbepack.filesystem import size_to_int
 
 from elbepack.aptpkgutils import XMLPackage
-
-from elbepack.dump import elbe_report
-from elbepack.dump import dump_debootstrappkgs, dump_initvmpkgs, dump_fullpkgs
-from elbepack.dump import check_full_pkgs
-
-from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom
-
-from elbepack.pbuilder import (pbuilder_write_config, pbuilder_write_repo_hook,
-                               pbuilder_write_cross_config,
-                               pbuilder_write_apt_conf)
-
-from elbepack.repomanager import ProjectRepo
+from elbepack.cdroms import mk_binary_cdrom, mk_source_cdrom
 from elbepack.config import cfg
-from elbepack.templates import write_pack_template
+from elbepack.dump import (
+    check_full_pkgs,
+    dump_debootstrappkgs,
+    dump_fullpkgs,
+    dump_initvmpkgs,
+    elbe_report,
+)
+from elbepack.efilesystem import TargetFs, extract_target
+from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError, ValidationMode
+from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
-
+from elbepack.pbuilder import (
+    pbuilder_write_apt_conf,
+    pbuilder_write_config,
+    pbuilder_write_cross_config,
+    pbuilder_write_repo_hook,
+)
+from elbepack.repomanager import ProjectRepo
+from elbepack.rfs import BuildEnv
+from elbepack.rpcaptcache import get_rpcaptcache
+from elbepack.shellhelper import CommandError, chroot, do, system
+from elbepack.templates import write_pack_template
 
 validation = logging.getLogger('validation')
 

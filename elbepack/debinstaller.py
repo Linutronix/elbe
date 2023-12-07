@@ -2,20 +2,19 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
-import sys
 import os
 import re
-
+import sys
 from shutil import copyfile
 from urllib.request import urlopen
 
+from elbepack.egpg import OverallStatus, check_signature
+from elbepack.filesystem import TmpdirFilesystem
+from elbepack.hashes import HashValidationFailed, HashValidator
+from elbepack.shellhelper import CommandError, system
+
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
-
-from elbepack.filesystem import TmpdirFilesystem
-from elbepack.egpg import OverallStatus, check_signature
-from elbepack.shellhelper import CommandError, system
-from elbepack.hashes import HashValidator, HashValidationFailed
 
 
 class InvalidSignature(Exception):

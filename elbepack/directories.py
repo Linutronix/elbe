@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2015, 2017 Linutronix GmbH
 
 import os
-
 from pkgutil import iter_modules
 
 import elbepack

@@ -10,13 +10,14 @@ import shutil
 import tempfile
 import traceback
 
+from elbepack.directories import elbe_exe
+from elbepack.filesystem import TmpdirFilesystem
+from elbepack.log import elbe_logging
+from elbepack.shellhelper import CommandError, command_out, do, get_command_out
+from elbepack.treeutils import etree
+
 import pexpect
 
-from elbepack.directories import elbe_exe
-from elbepack.log import elbe_logging
-from elbepack.treeutils import etree
-from elbepack.shellhelper import get_command_out, command_out, do, CommandError
-from elbepack.filesystem import TmpdirFilesystem
 
 DEVNULL = open(os.devnull, 'w')
 

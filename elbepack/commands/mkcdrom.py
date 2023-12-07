@@ -3,18 +3,17 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Matthias Buehler <Matthias.Buehler@de.trumpf.com>
 
-from optparse import OptionParser
-import sys
-import os
 import logging
+import os
+import sys
+from optparse import OptionParser
 
+from elbepack.cdroms import CDROM_SIZE, mk_binary_cdrom, mk_source_cdrom
+from elbepack.efilesystem import ChRootFilesystem
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
-from elbepack.efilesystem import ChRootFilesystem
 from elbepack.log import elbe_logging
 from elbepack.rpcaptcache import get_rpcaptcache
-
-from elbepack.cdroms import mk_source_cdrom, mk_binary_cdrom, CDROM_SIZE
 
 
 def run_command(argv):

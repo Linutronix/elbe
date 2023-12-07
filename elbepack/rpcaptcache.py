@@ -6,19 +6,28 @@ import logging
 import os
 import sys
 import time
-
-from multiprocessing.util import Finalize
 from multiprocessing.managers import BaseManager
+from multiprocessing.util import Finalize
 
-from apt_pkg import config, version_compare, TagFile, SourceRecords, Acquire, AcquireFile
 from apt import Cache
 from apt.package import FetchError
 
-from elbepack.aptprogress import (ElbeAcquireProgress, ElbeInstallProgress,
-                                  ElbeOpProgress)
-from elbepack.aptpkgutils import getalldeps, APTPackage, fetch_binary
-from elbepack.log import async_logging
+from apt_pkg import (
+    Acquire,
+    AcquireFile,
+    SourceRecords,
+    TagFile,
+    config,
+    version_compare,
+)
 
+from elbepack.aptpkgutils import APTPackage, fetch_binary, getalldeps
+from elbepack.aptprogress import (
+    ElbeAcquireProgress,
+    ElbeInstallProgress,
+    ElbeOpProgress,
+)
+from elbepack.log import async_logging
 
 log = logging.getLogger('log')
 soap = logging.getLogger('soap')

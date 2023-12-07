@@ -13,9 +13,8 @@ import sys
 # this file
 #
 import elbepack.commands
-
+from elbepack.directories import get_cmdlist, init_directories
 from elbepack.version import elbe_version
-from elbepack.directories import init_directories, get_cmdlist
 
 
 def usage():

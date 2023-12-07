@@ -4,7 +4,7 @@
 
 import copy
 
-from lxml.etree import ElementTree, SubElement, Element
+from lxml.etree import Element, ElementTree, SubElement
 from lxml.etree import XMLParser, parse
 
 # ElementTree helpers

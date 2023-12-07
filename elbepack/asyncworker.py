@@ -2,21 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
-from threading import Thread
-from queue import Queue
-from os import path, getcwd, chdir
-from contextlib import contextmanager
-from urllib.parse import quote
 import logging
+from contextlib import contextmanager
+from os import chdir, getcwd, path
+from queue import Queue
+from threading import Thread
+from urllib.parse import quote
 
 from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
-from elbepack.updatepkg import gen_update_pkg
-from elbepack.pkgarchive import gen_binpkg_archive, checkout_binpkg_archive
-from elbepack.rfs import DebootstrapException
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
-from elbepack.shellhelper import do
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
+from elbepack.pkgarchive import checkout_binpkg_archive, gen_binpkg_archive
+from elbepack.rfs import DebootstrapException
+from elbepack.shellhelper import do
+from elbepack.updatepkg import gen_update_pkg
 
 
 class AsyncWorkerJob:

@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import errno
+import gzip
 import os
 import shutil
-import errno
-
 from glob import glob
-from tempfile import mkdtemp
 from string import digits
-import gzip
+from tempfile import mkdtemp
 
 from elbepack.shellhelper import do
 

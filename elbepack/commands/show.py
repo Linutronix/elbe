@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2013-2015, 2017 Linutronix GmbH
 
 import sys
-
 from optparse import OptionParser
 
 from elbepack.treeutils import etree

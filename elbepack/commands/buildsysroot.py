@@ -3,8 +3,8 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import logging
-from optparse import OptionParser
 import sys
+from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError

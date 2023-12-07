@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
-import sys
 import os
+import sys
 
 from elbepack.directories import elbe_exe
-from elbepack.shellhelper import CommandError, system, command_out_stderr
 from elbepack.filesystem import TmpdirFilesystem
+from elbepack.shellhelper import CommandError, command_out_stderr, system
 from elbepack.xmlpreprocess import PreprocessWrapper
 
 

@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-import string
-
 import glob
 import os
+import string
+
 
 arch2triple = {'armhf': 'arm-linux-gnueabihf', 'armel': 'arm-linux-gnueabi'}
 

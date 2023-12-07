@@ -2,21 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
-import sys
 import logging
+import sys
 from optparse import OptionParser
 
-from apt.package import FetchError
 from apt import Cache
+from apt.package import FetchError
 
-from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
-from elbepack.dump import get_initvm_pkglist
+from elbepack.aptpkgutils import fetch_binary
 from elbepack.aptprogress import ElbeAcquireProgress
+from elbepack.dump import get_initvm_pkglist
+from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.filesystem import hostfs
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import do, CommandError
-from elbepack.aptpkgutils import fetch_binary
+from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
+from elbepack.shellhelper import CommandError, do
 
 
 def run_command(argv):

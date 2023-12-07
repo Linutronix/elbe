@@ -4,7 +4,6 @@
 
 import os
 import sys
-
 from base64 import standard_b64decode
 from optparse import OptionParser
 

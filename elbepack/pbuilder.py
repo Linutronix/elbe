@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 import os
-
 from urllib.request import urlopen
 
 from elbepack.filesystem import Filesystem

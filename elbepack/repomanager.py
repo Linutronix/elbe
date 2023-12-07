@@ -7,9 +7,9 @@ import shutil
 
 from debian.deb822 import Deb822
 
+from elbepack.egpg import export_key, generate_elbe_internal_key, unlock_key
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
-from elbepack.egpg import generate_elbe_internal_key, export_key, unlock_key
 from elbepack.shellhelper import CommandError, do
 
 

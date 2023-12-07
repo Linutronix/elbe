@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 
-import sys
 import os
+import sys
 from optparse import OptionParser
+
+from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.validate import validate_xml
-from elbepack.elbexml import ElbeXML, ValidationMode, ValidationError
 
 
 def run_command(argv):

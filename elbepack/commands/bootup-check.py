@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
 import apt
+
 import apt_pkg
 
 from elbepack.treeutils import etree

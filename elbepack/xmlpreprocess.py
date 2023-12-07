@@ -8,22 +8,23 @@ import re
 import sys
 import tempfile
 import time
-
-from optparse import OptionGroup
 from itertools import islice
+from optparse import OptionGroup
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
-from passlib.hash import sha512_crypt
-
-from lxml import etree
-from lxml.etree import XMLParser, Element, SubElement
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
 from elbepack.directories import elbe_exe
-from elbepack.shellhelper import command_out_stderr, CommandError
 from elbepack.isooptions import iso_option_valid
+from elbepack.shellhelper import CommandError, command_out_stderr
 from elbepack.validate import error_log_to_strings
+
+from lxml import etree
+from lxml.etree import Element, SubElement, XMLParser
+
+from passlib.hash import sha512_crypt
+
 
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess

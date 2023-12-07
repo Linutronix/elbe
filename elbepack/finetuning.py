@@ -2,24 +2,24 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
-import os
-import errno
 import base64
+import errno
 import logging
-
+import os
 from shutil import rmtree
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP
+
 from apt.package import FetchError
 
+from elbepack.egpg import unlock_key
+from elbepack.filesystem import ImgMountFilesystem
+from elbepack.junit import TestException, TestSuite
+from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import CommandError
-from elbepack.filesystem import ImgMountFilesystem
-from elbepack.packers import default_packer, packers
-from elbepack.egpg import unlock_key
-from elbepack.junit import TestSuite, TestException
-from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+
+from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP
 
 
 class FinetuningException(Exception):

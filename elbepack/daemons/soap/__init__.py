@@ -2,21 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
-import sys
 import logging
+import sys
 import warnings
 
 from beaker.middleware import SessionMiddleware
+
 from cherrypy.process.plugins import SimplePlugin
+
+from elbepack.projectmanager import ProjectManager
 
 from spyne import Application
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
-from elbepack.projectmanager import ProjectManager
-
 from .esoap import ESoap
-
 
 logging.getLogger('spyne').setLevel(logging.INFO)
 

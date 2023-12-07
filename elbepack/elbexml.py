@@ -6,17 +6,19 @@
 import os
 import re
 import socket
-
 from urllib.error import URLError
-from urllib.request import (urlopen, install_opener, build_opener,
-                            HTTPPasswordMgrWithDefaultRealm,
-                            HTTPBasicAuthHandler)
+from urllib.request import (
+    HTTPBasicAuthHandler,
+    HTTPPasswordMgrWithDefaultRealm,
+    build_opener,
+    install_opener,
+    urlopen,
+)
 
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.xmldefaults import ElbeDefaults
-
 from elbepack.version import elbe_version, is_devel
+from elbepack.xmldefaults import ElbeDefaults
 
 
 class ValidationError(Exception):

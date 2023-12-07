@@ -3,18 +3,18 @@
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Matthias Buehler <Matthias.Buehler@de.trumpf.com>
 
-from optparse import OptionParser
-import sys
 import logging
+import sys
+from optparse import OptionParser
 
-from sqlalchemy.exc import OperationalError
-
-from elbepack.shellhelper import CommandError
+from elbepack.cdroms import CDROM_SIZE
+from elbepack.db import ElbeDB
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
-from elbepack.db import ElbeDB
-from elbepack.cdroms import CDROM_SIZE
 from elbepack.log import elbe_logging
+from elbepack.shellhelper import CommandError
+
+from sqlalchemy.exc import OperationalError
 
 
 def run_command(argv):

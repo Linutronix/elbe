@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 import os
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 
 def create_zip_archive(zipfilename, path, inarchpath):

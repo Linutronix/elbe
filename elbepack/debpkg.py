@@ -4,7 +4,6 @@
 
 import os
 import string
-
 from tempfile import mkdtemp
 
 control_template_string = """Package: ${name}

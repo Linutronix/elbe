@@ -2,17 +2,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
-from optparse import OptionParser
-from datetime import datetime
-import sys
-import os
 import io
-
+import os
+import sys
+from datetime import datetime
+from optparse import OptionParser
 from tempfile import NamedTemporaryFile
 
+from elbepack.shellhelper import system_out
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
-from elbepack.shellhelper import system_out
 
 
 class license_dep5_to_spdx (dict):

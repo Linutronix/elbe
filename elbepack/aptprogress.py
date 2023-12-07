@@ -4,7 +4,8 @@
 
 import os
 
-from apt.progress.base import InstallProgress, AcquireProgress, OpProgress
+from apt.progress.base import AcquireProgress, InstallProgress, OpProgress
+
 from apt_pkg import size_to_str
 
 

@@ -6,6 +6,7 @@ import os
 import re
 
 from apt_pkg import TagFile
+
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.shellhelper import system
 

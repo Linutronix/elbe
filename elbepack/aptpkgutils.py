@@ -3,8 +3,8 @@
 # SPDX-FileCopyrightText: 2005-2009 Canonical
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-import os
 import logging
+import os
 
 import apt
 from apt.package import FetchError

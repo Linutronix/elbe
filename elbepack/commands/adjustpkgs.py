@@ -9,8 +9,8 @@ from optparse import OptionParser
 import apt
 import apt.progress
 
-from elbepack.treeutils import etree
 from elbepack.log import elbe_logging
+from elbepack.treeutils import etree
 
 
 def set_pkgs(pkglist):

@@ -3,32 +3,37 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 
-import os
 import errno
-import re
 import glob
-
-from datetime import datetime
-from shutil import (rmtree, copyfile, copyfileobj)
+import os
+import re
 from contextlib import contextmanager
-from urllib.parse import quote
+from datetime import datetime
+from shutil import copyfile, copyfileobj, rmtree
 from threading import Thread
+from urllib.parse import quote
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import (Column, ForeignKey)
-from sqlalchemy import (Integer, String, Boolean, Sequence, DateTime)
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.exc import OperationalError
+from elbepack.dosunix import dos2unix
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ElbeXML, ValidationMode
 
 from passlib.hash import pbkdf2_sha512
 
-from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import (ElbeXML, ValidationMode)
-from elbepack.dosunix import dos2unix
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Sequence,
+    String,
+    create_engine,
+)
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+
 
 os.environ['SQLALCHEMY_SILENCE_UBER_WARNING'] = '1'
 Base = declarative_base()

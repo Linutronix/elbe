@@ -2,17 +2,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import os
+import sys
 from optparse import OptionParser
 from tempfile import mkdtemp
 
-import os
-import sys
-
-from elbepack.xmldefaults import ElbeDefaults
-from elbepack.repomanager import ToolchainRepo
 from elbepack.debpkg import build_binary_deb
-from elbepack.toolchain import get_toolchain
 from elbepack.log import elbe_logging
+from elbepack.repomanager import ToolchainRepo
+from elbepack.toolchain import get_toolchain
+from elbepack.xmldefaults import ElbeDefaults
 
 
 def run_command(argv):

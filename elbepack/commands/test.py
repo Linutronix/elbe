@@ -12,9 +12,9 @@ import re
 import unittest
 import warnings
 
-import junitxml as junit
-
 from elbepack.shellhelper import command_out
+
+import junitxml as junit
 
 
 class ElbeTestLevel(enum.IntEnum):

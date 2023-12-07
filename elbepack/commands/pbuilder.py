@@ -3,8 +3,8 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 import sys
-
 from optparse import OptionParser
+
 from elbepack.pbuilderaction import PBuilderAction, PBuilderError
 from elbepack.xmlpreprocess import PreprocessWrapper
 

@@ -5,10 +5,12 @@
 
 import os
 import threading
-import pyinotify
-import pyudev
 
-from elbepack.updated import is_update_file, handle_update_file
+from elbepack.updated import handle_update_file, is_update_file
+
+import pyinotify
+
+import pyudev
 
 
 class UpdateMonitor:

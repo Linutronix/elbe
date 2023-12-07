@@ -4,10 +4,10 @@
 
 import os
 import sys
-
 from optparse import OptionParser
 
 import apt
+
 import apt_pkg
 
 from elbepack.elbexml import ElbeXML, ValidationMode

@@ -3,16 +3,15 @@
 # SPDX-FileCopyrightText: 2013-2018 Linutronix GmbH
 
 import sys
-
 from optparse import OptionParser
 
 from elbepack import virtapt
-from elbepack.validate import validate_xml
-from elbepack.shellhelper import system
-from elbepack.elbexml import ElbeXML
-from elbepack.pkgutils import extract_pkg_changelog, ChangelogNeedsDependency
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.changelogxml import changelogs_xml
+from elbepack.elbexml import ElbeXML
+from elbepack.pkgutils import ChangelogNeedsDependency, extract_pkg_changelog
+from elbepack.shellhelper import system
+from elbepack.validate import validate_xml
 
 
 def build_changelog_xml(v, opt, update_packages):

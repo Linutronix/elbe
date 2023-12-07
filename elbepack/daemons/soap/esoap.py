@@ -4,25 +4,24 @@
 # SPDX-FileCopyrightText: 2016 Claudius Heine <ch@denx.de>
 
 import binascii
+import fnmatch
 import os
 import tarfile
-import fnmatch
-
 from tempfile import NamedTemporaryFile
 
-from spyne.service import ServiceBase
-from spyne.decorator import rpc
-from spyne.model.primitive import String, Boolean, Integer
-from spyne.model.complex import Array
-
-from elbepack.shellhelper import system, command_out
-from elbepack.version import elbe_version, is_devel
 from elbepack.elbexml import ValidationMode
 from elbepack.filesystem import hostfs
+from elbepack.shellhelper import command_out, system
+from elbepack.version import elbe_version, is_devel
 
-from .faults import soap_faults
-from .datatypes import SoapProject, SoapFile, SoapCmdReply
+from spyne.decorator import rpc
+from spyne.model.complex import Array
+from spyne.model.primitive import Boolean, Integer, String
+from spyne.service import ServiceBase
+
 from .authentication import authenticated_admin, authenticated_uid
+from .datatypes import SoapCmdReply, SoapFile, SoapProject
+from .faults import soap_faults
 
 
 class ESoap (ServiceBase):

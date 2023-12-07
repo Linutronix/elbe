@@ -3,16 +3,14 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 # SPDX-FileCopyrightText: 2014 Ferdinand Schwenk <ferdinand.schwenk@emtrion.de>
 
-import os
 import logging
-
+import os
 from urllib.parse import urlsplit
 
 from elbepack.efilesystem import BuildImgFs
 from elbepack.egpg import unarmor_openpgp_keyring
-from elbepack.templates import (write_pack_template, get_preseed,
-                                preseed_to_text)
-from elbepack.shellhelper import CommandError, do, chroot, get_command_out
+from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 
 
 def create_apt_prefs(xml, rfs):

@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2019 Linutronix GmbH
 
 import os
+
 from elbepack.shellhelper import CommandError, do
 
 
