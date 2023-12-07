@@ -12,7 +12,7 @@ import sys
 # get_cmd_list() and the magic stuff with __import__() at the end of
 # this file
 #
-import elbepack.commands
+import elbepack.commands  # noqa: F401
 from elbepack.directories import get_cmdlist, init_directories
 from elbepack.version import elbe_version
 
