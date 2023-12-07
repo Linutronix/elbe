@@ -6,7 +6,7 @@ import os
 import sys
 
 from elbepack.commands.test import ElbeTestCase, ElbeTestException, system
-from elbepack.directories import elbe_dir, elbe_exe
+from elbepack.directories import elbe_exe
 
 
 class TestPreproc(ElbeTestCase):

@@ -5,7 +5,7 @@
 import os
 
 from elbepack.commands.test import ElbeTestCase, ElbeTestException, system
-from elbepack.directories import elbe_dir, elbe_exe, pack_dir
+from elbepack.directories import elbe_exe, pack_dir
 from elbepack.shellhelper import system_out
 
 

@@ -14,7 +14,7 @@ from elbepack.directories import elbe_exe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
-from elbepack.shellhelper import CommandError, command_out, command_out_stderr, system
+from elbepack.shellhelper import CommandError, command_out_stderr, system
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import PreprocessWrapper
 

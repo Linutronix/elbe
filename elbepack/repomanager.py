@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import os
-import shutil
 
 from debian.deb822 import Deb822
 

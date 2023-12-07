@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import logging
-import sys
 import warnings
 
 from beaker.middleware import SessionMiddleware
