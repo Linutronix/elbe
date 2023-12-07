@@ -96,7 +96,6 @@ def pkgorigin(pkg):
 
 
 def _file_is_same(path, size, sha256):
-    # type: (str, int, str) -> bool
     """Return ``True`` if the file is the same."""
     if os.path.exists(path) and os.path.getsize(path) == size:
         with open(path) as fobj:
@@ -105,7 +104,6 @@ def _file_is_same(path, size, sha256):
 
 
 def fetch_binary(version, destdir='', progress=None):
-    # type: (str, AcquireProgress) -> str
     """Fetch the binary version of the package.
 
     The parameter *destdir* specifies the directory where the package will
