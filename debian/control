@@ -24,7 +24,16 @@ Build-Depends: debhelper-compat (= 12),
   python3-junitxml,
   python3-passlib,
   python3-spyne,
-  python3-sqlalchemy
+  python3-sqlalchemy,
+  flake8,
+  python3-flake8-import-order,
+  python3-flake8-noqa,
+  python3-flake8-quotes,
+  python3-lxml,
+  python3-apt,
+  python3-gpg,
+  python3-libvirt,
+  python3-passlib
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
 Homepage: http://elbe-rfs.org

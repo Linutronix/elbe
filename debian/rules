@@ -6,7 +6,7 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 endif
 
 override_dh_auto_test:
-	echo 'skip tests'
+	SQLALCHEMY_SILENCE_UBER_WARNING=1 ./elbe test
 
 override_dh_auto_configure:
 	cd docs && $(MAKE) $(MAKE_OPTS)
