@@ -598,6 +598,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
+    <attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="check-img-action">
