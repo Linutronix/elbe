@@ -27,46 +27,46 @@ def run_command(argv):
     # files/directories or just globaly.
 
     oparser = OptionParser(
-        usage="usage: %prog fetch_initvm_pkgs [options] <xmlfile>")
+        usage='usage: %prog fetch_initvm_pkgs [options] <xmlfile>')
 
-    oparser.add_option("-b", "--binrepo", dest="binrepo",
-                       default="/var/cache/elbe/initvm-bin-repo",
-                       help="directory where the bin repo should reside")
+    oparser.add_option('-b', '--binrepo', dest='binrepo',
+                       default='/var/cache/elbe/initvm-bin-repo',
+                       help='directory where the bin repo should reside')
 
-    oparser.add_option("-s", "--srcrepo", dest="srcrepo",
-                       default="/var/cache/elbe/initvm-src-repo",
-                       help="directory where the src repo should reside")
+    oparser.add_option('-s', '--srcrepo', dest='srcrepo',
+                       default='/var/cache/elbe/initvm-src-repo',
+                       help='directory where the src repo should reside')
 
-    oparser.add_option("--skip-validation", action="store_true",
-                       dest="skip_validation", default=False,
-                       help="Skip xml schema validation")
+    oparser.add_option('--skip-validation', action='store_true',
+                       dest='skip_validation', default=False,
+                       help='Skip xml schema validation')
 
-    oparser.add_option("--cdrom-mount-path", dest="cdrom_path",
-                       help="path where cdrom is mounted")
+    oparser.add_option('--cdrom-mount-path', dest='cdrom_path',
+                       help='path where cdrom is mounted')
 
-    oparser.add_option("--cdrom-device", dest="cdrom_device",
-                       help="cdrom device, in case it has to be mounted")
+    oparser.add_option('--cdrom-device', dest='cdrom_device',
+                       help='cdrom device, in case it has to be mounted')
 
-    oparser.add_option("--apt-archive", dest="archive",
-                       default="/var/cache/elbe/binaries/main",
-                       help="path where binary packages are downloaded to.")
+    oparser.add_option('--apt-archive', dest='archive',
+                       default='/var/cache/elbe/binaries/main',
+                       help='path where binary packages are downloaded to.')
 
-    oparser.add_option("--src-archive", dest="srcarchive",
-                       default="/var/cache/elbe/sources",
-                       help="path where src packages are downloaded to.")
+    oparser.add_option('--src-archive', dest='srcarchive',
+                       default='/var/cache/elbe/sources',
+                       help='path where src packages are downloaded to.')
 
-    oparser.add_option("--skip-build-sources", action="store_false",
-                       dest="build_sources", default=True,
-                       help="Skip downloading Source Packages")
+    oparser.add_option('--skip-build-sources', action='store_false',
+                       dest='build_sources', default=True,
+                       help='Skip downloading Source Packages')
 
-    oparser.add_option("--skip-build-bin", action="store_false",
-                       dest="build_bin", default=True,
-                       help="Skip downloading binary packages")
+    oparser.add_option('--skip-build-bin', action='store_false',
+                       dest='build_bin', default=True,
+                       help='Skip downloading binary packages')
 
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print("wrong number of arguments")
+        print('wrong number of arguments')
         oparser.print_help()
         sys.exit(46)
 
@@ -74,10 +74,10 @@ def run_command(argv):
         xml = ElbeXML(args[0], skip_validate=opt.skip_validation)
     except ValidationError as e:
         print(str(e))
-        print("xml validation failed. Bailing out")
+        print('xml validation failed. Bailing out')
         sys.exit(47)
 
-    with elbe_logging({"streams": sys.stdout}):
+    with elbe_logging({'streams': sys.stdout}):
 
         if opt.cdrom_path:
             if opt.cdrom_device:
@@ -86,7 +86,7 @@ def run_command(argv):
             # a cdrom build is identified by the cdrom option
             # the xml file that is copied into the initvm
             # by the initrd does not have the cdrom tags setup.
-            mirror = f"file://{opt.cdrom_path}"
+            mirror = f'file://{opt.cdrom_path}'
         else:
             mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
 
@@ -103,7 +103,7 @@ def run_command(argv):
             cache = Cache()
             cache.open()
             for pkg in pkglist:
-                pkg_id = f"{pkg.name}-{pkg.installed_version}"
+                pkg_id = f'{pkg.name}-{pkg.installed_version}'
                 retry = 1
                 while retry < 3:
                     try:
@@ -149,7 +149,7 @@ def run_command(argv):
 
         if opt.build_sources:
             for pkg in pkglist:
-                pkg_id = f"{pkg.name}-{pkg.installed_version}"
+                pkg_id = f'{pkg.name}-{pkg.installed_version}'
                 retry = 1
                 while retry < 3:
                     try:

@@ -12,8 +12,8 @@ from io import TextIOWrapper, BytesIO
 
 from elbepack.log import async_logging
 
-log = logging.getLogger("log")
-soap = logging.getLogger("soap")
+log = logging.getLogger('log')
+soap = logging.getLogger('soap')
 
 
 class CommandError(Exception):
@@ -24,7 +24,7 @@ class CommandError(Exception):
         self.cmd = cmd
 
     def __str__(self):
-        return f"Error: {self.returncode} returned from Command {self.cmd}"
+        return f'Error: {self.returncode} returned from Command {self.cmd}'
 
 
 def system(cmd, allow_fail=False, env_add=None):
@@ -240,7 +240,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={"context": "[CMD] "})
+    logging.info(cmd, extra={'context': '[CMD] '})
 
     r, w = os.pipe()
 
@@ -273,12 +273,12 @@ def chroot(directory, cmd, env_add=None, **kwargs):
     elbepack.shellhelper.CommandError: ...
     """
 
-    new_env = {"LANG": "C",
-               "LANGUAGE": "C",
-               "LC_ALL": "C"}
+    new_env = {'LANG': 'C',
+               'LANGUAGE': 'C',
+               'LC_ALL': 'C'}
     if env_add:
         new_env.update(env_add)
-    do(f"chroot {directory} {cmd}", env_add=new_env, **kwargs)
+    do(f'chroot {directory} {cmd}', env_add=new_env, **kwargs)
 
 
 def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
@@ -318,7 +318,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={"context": "[CMD] "})
+    logging.info(cmd, extra={'context': '[CMD] '})
 
     r, w = os.pipe()
 

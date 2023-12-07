@@ -33,10 +33,10 @@ class ElbeTestException(Exception):
         self.out = out
 
     def __repr__(self):
-        return f"ElbeTestException: \"{self.cmd}\" returns {self.ret}"
+        return f'ElbeTestException: \"{self.cmd}\" returns {self.ret}'
 
     def __str__(self):
-        return f"ElbeTestException: \"{self.cmd}\" returns {self.ret}"
+        return f'ElbeTestException: \"{self.cmd}\" returns {self.ret}'
 
 
 def system(cmd, allow_fail=False):
@@ -58,7 +58,7 @@ class ElbeTestCase(unittest.TestCase):
     def __str__(self):
         name = super(ElbeTestCase, self).__str__()
         if self.param:
-            return f"{name} : param={self.param}"
+            return f'{name} : param={self.param}'
         return name
 
     def parameterize(self, param):
@@ -77,7 +77,7 @@ class ElbeTestSuite:
             if isinstance(test, ElbeTestSuite):
                 continue
 
-            if not hasattr(test, "params"):
+            if not hasattr(test, 'params'):
                 self.tests.append(test)
                 continue
 
@@ -149,7 +149,7 @@ class ElbeTestResult(unittest.TestResult):
 
     def get_xml(self):
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+            warnings.simplefilter('ignore')
             results = self.buffer.getvalue()
 
         return results
@@ -158,33 +158,33 @@ class ElbeTestResult(unittest.TestResult):
 def run_command(argv):
 
     this_dir = os.path.dirname(os.path.realpath(__file__))
-    top_dir = os.path.join(this_dir, "..", "..")
+    top_dir = os.path.join(this_dir, '..', '..')
 
-    oparser = optparse.OptionParser(usage="usage: %prog [options]")
+    oparser = optparse.OptionParser(usage='usage: %prog [options]')
 
-    oparser.add_option("-f", "--filter", dest="filter",
-                       metavar="REGEX", type="string", default=".*",
-                       help="Run specific test according to a filter rule")
+    oparser.add_option('-f', '--filter', dest='filter',
+                       metavar='REGEX', type='string', default='.*',
+                       help='Run specific test according to a filter rule')
 
-    oparser.add_option("-l", "--level", dest="level",
-                       type="string", default="BASE",
-                       help="Set test level threshold")
+    oparser.add_option('-l', '--level', dest='level',
+                       type='string', default='BASE',
+                       help='Set test level threshold')
 
-    oparser.add_option("-i", "--invert", dest="invert_re",
-                       action="store_true", default=False,
-                       help="Invert the matching of --filter")
+    oparser.add_option('-i', '--invert', dest='invert_re',
+                       action='store_true', default=False,
+                       help='Invert the matching of --filter')
 
-    oparser.add_option("-d", "--dry-run", dest="dry_run",
-                       action="store_true", default=False,
-                       help="List tests that would have been executed and exit")
+    oparser.add_option('-d', '--dry-run', dest='dry_run',
+                       action='store_true', default=False,
+                       help='List tests that would have been executed and exit')
 
-    oparser.add_option("-p", "--parallel", dest="parallel",
-                       type="string", default="0,1",
-                       help="Run every thest where test_ID % N == node_ID")
+    oparser.add_option('-p', '--parallel', dest='parallel',
+                       type='string', default='0,1',
+                       help='Run every thest where test_ID % N == node_ID')
 
-    oparser.add_option("-o", "--output", dest="output",
-                       type="string", default=None,
-                       help="Write XML output to file")
+    oparser.add_option('-o', '--output', dest='output',
+                       type='string', default=None,
+                       help='Write XML output to file')
 
     (opt, _) = oparser.parse_args(argv)
 
@@ -208,8 +208,8 @@ def run_command(argv):
     # Dry run? Just exit gently
     if opt.dry_run:
         suite.ls()
-        print("======================================================================\n"
-              "This was a dry run. No tests were executed")
+        print('======================================================================\n'
+              'This was a dry run. No tests were executed')
         os.sys.exit(0)
 
     result = ElbeTestResult()
@@ -219,9 +219,9 @@ def run_command(argv):
     if opt.output is None:
         print(result.get_xml())
     else:
-        with open(opt.output, "w") as f:
+        with open(opt.output, 'w') as f:
             f.write(result.get_xml())
 
     if not result.wasSuccessful():
-        print("Testsuite failed.")
+        print('Testsuite failed.')
         os.sys.exit(77)

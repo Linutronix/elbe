@@ -33,24 +33,24 @@ class ebase:
         self.et = et
 
     def text(self, path, **kwargs):
-        el = self.et.find("./" + path)
+        el = self.et.find('./' + path)
         if el is None:
-            if "default" in kwargs:
-                default = kwargs["default"]
-                if hasattr(default, "__getitem__") and "key" in kwargs:
-                    return default[kwargs["key"]]
+            if 'default' in kwargs:
+                default = kwargs['default']
+                if hasattr(default, '__getitem__') and 'key' in kwargs:
+                    return default[kwargs['key']]
                 return default
 
-            raise Exception(f"Cant find path {path}")
+            raise Exception(f'Cant find path {path}')
 
-        return el.text or ""
+        return el.text or ''
 
     @property
     def tag(self):
         return self.et.tag
 
     def node(self, path):
-        retval = self.et.find("./" + path)
+        retval = self.et.find('./' + path)
         if retval is not None:
             return elem(retval)
         return None
@@ -79,7 +79,7 @@ class elem(ebase):
         ebase.__init__(self, el)
 
     def ensure_child(self, tag):
-        retval = self.et.find("./" + tag)
+        retval = self.et.find('./' + tag)
         if retval is not None:
             return elem(retval)
 
@@ -126,7 +126,7 @@ class etree(ebase):
         return self.et.tostring()
 
     def ensure_child(self, tag):
-        retval = self.et.find("./" + tag)
+        retval = self.et.find('./' + tag)
         if retval is not None:
             return elem(retval)
         return elem(SubElement(self.et.getroot(), tag))

@@ -25,7 +25,7 @@ CDROM_SIZE = 640 * 1000 * 1000
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
         return
-    pkg_id = f"{pkg}-{version}"
+    pkg_id = f'{pkg}-{version}'
     try:
         dsc = cache.download_source(pkg,
                                     version,
@@ -57,10 +57,10 @@ def mk_source_cdrom(components, codename,
 
     for component in components.keys():
         rfs, cache, pkg_lst = components[component]
-        logging.info("Adding %s component", component)
-        rfs.mkdir_p("/var/cache/elbe/sources")
+        logging.info('Adding %s component', component)
+        rfs.mkdir_p('/var/cache/elbe/sources')
         repo = CdromSrcRepo(codename, init_codename,
-                            os.path.join(target, f"srcrepo-{component}"),
+                            os.path.join(target, f'srcrepo-{component}'),
                             cdrom_size, mirror)
         repos[component] = repo
         for pkg, version in pkg_lst:
@@ -82,7 +82,7 @@ def mk_source_cdrom(components, codename,
         if not dsc_real.endswith('.dsc'):
             continue
 
-        repos["main"].include_init_dsc(dsc_real, "initvm")
+        repos['main'].include_init_dsc(dsc_real, 'initvm')
 
     for repo in repos.values():
         repo.finalize()
@@ -98,20 +98,20 @@ def mk_source_cdrom(components, codename,
                 if volume_attr == 'all':
                     volume_list = repo.volume_indexes
                 else:
-                    volume_list = [int(v) for v in volume_attr.split(",")]
+                    volume_list = [int(v) for v in volume_attr.split(',')]
                 for volume_number in volume_list:
-                    with archive_tmpfile(arch_vol.text(".")) as fp:
+                    with archive_tmpfile(arch_vol.text('.')) as fp:
                         if volume_number in repo.volume_indexes:
                             do(
                                 f'tar xvfj "{fp.name}" -h -C '
                                 f'"{repo.get_volume_fs(volume_number).path}"')
                         else:
                             logging.warning("The src-cdrom archive's volume value "
-                                            "is not contained in the actual volumes")
+                                            'is not contained in the actual volumes')
     else:
-        options = ""
+        options = ''
 
-    return [(repo.buildiso(os.path.join(target, f"src-cdrom-{component}.iso"),
+    return [(repo.buildiso(os.path.join(target, f'src-cdrom-{component}.iso'),
             options=options)) for component, repo in repos.items()]
 
 
@@ -121,11 +121,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     rfs.mkdir_p('/var/cache/elbe/binaries/main')
 
     if xml is not None:
-        mirror = xml.get_primary_mirror(rfs.fname("cdrom"))
+        mirror = xml.get_primary_mirror(rfs.fname('cdrom'))
     else:
         mirror = 'http://ftp.de.debian.org/debian'
 
-    repo_path = os.path.join(target, "binrepo")
+    repo_path = os.path.join(target, 'binrepo')
     target_repo_path = os.path.join(repo_path, 'targetrepo')
 
     # initvm repo has been built upon initvm creation
@@ -137,10 +137,10 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
         # When /var/cache/elbe/initvm-bin-repo has not been created
         # (because the initvm install was an old version or somthing,
         #  log an error, and continue with an empty directory.
-        logging.exception("/var/cache/elbe/initvm-bin-repo does not exist\n"
-                          "The generated CDROM will not contain initvm pkgs\n"
-                          "This happened because the initvm was probably\n"
-                          "generated with --skip-build-bin")
+        logging.exception('/var/cache/elbe/initvm-bin-repo does not exist\n'
+                          'The generated CDROM will not contain initvm pkgs\n'
+                          'This happened because the initvm was probably\n'
+                          'generated with --skip-build-bin')
 
         do(f'mkdir -p "{repo_path}"')
 
@@ -151,9 +151,9 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
 
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)
-        for p in xml.node("debootstrappkgs"):
+        for p in xml.node('debootstrappkgs'):
             pkg = XMLPackage(p, arch)
-            pkg_id = f"{pkg.name}-{pkg.installed_version}"
+            pkg_id = f'{pkg.name}-{pkg.installed_version}'
             try:
                 deb = cache.download_binary(pkg.name,
                                             '/var/cache/elbe/binaries/main',
@@ -169,7 +169,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     cache = get_rpcaptcache(rfs, arch)
     pkglist = cache.get_installed_pkgs()
     for pkg in pkglist:
-        pkg_id = f"{pkg.name}-{pkg.installed_version}"
+        pkg_id = f'{pkg.name}-{pkg.installed_version}'
         try:
             deb = cache.download_binary(pkg.name,
                                         '/var/cache/elbe/binaries/added',
@@ -189,13 +189,13 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # Mark the binary repo with the necessary Files
     # to make the installer accept this as a CDRom
     repo_fs = Filesystem(repo_path)
-    repo_fs.mkdir_p(".disk")
-    repo_fs.write_file(".disk/base_installable", 0o644, "main\n")
-    repo_fs.write_file(".disk/base_components", 0o644, "main\n")
-    repo_fs.write_file(".disk/cd_type", 0o644, "not_complete\n")
-    repo_fs.write_file(".disk/info", 0o644, "elbe inst cdrom - full cd\n")
-    repo_fs.symlink(".", "debian", allow_exists=True)
-    repo_fs.write_file("md5sum.txt", 0o644, "")
+    repo_fs.mkdir_p('.disk')
+    repo_fs.write_file('.disk/base_installable', 0o644, 'main\n')
+    repo_fs.write_file('.disk/base_components', 0o644, 'main\n')
+    repo_fs.write_file('.disk/cd_type', 0o644, 'not_complete\n')
+    repo_fs.write_file('.disk/info', 0o644, 'elbe inst cdrom - full cd\n')
+    repo_fs.symlink('.', 'debian', allow_exists=True)
+    repo_fs.write_file('md5sum.txt', 0o644, '')
 
     # write source xml onto cdrom
     xml.xml.write(repo_fs.fname('source.xml'))
@@ -207,6 +207,6 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
              repo_fs.fname('vmlinuz'))
 
     target_repo_fs = Filesystem(target_repo_path)
-    target_repo_fs.write_file(".aptignr", 0o644, "")
+    target_repo_fs.write_file('.aptignr', 0o644, '')
 
-    return repo.buildiso(os.path.join(target, "bin-cdrom.iso"))
+    return repo.buildiso(os.path.join(target, 'bin-cdrom.iso'))

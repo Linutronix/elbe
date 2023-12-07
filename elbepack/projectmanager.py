@@ -32,18 +32,18 @@ class ProjectManagerError(Exception):
 class AlreadyOpen(ProjectManagerError):
     def __init__(self, builddir, username):
         ProjectManagerError.__init__(
-            self, f"project in {builddir} is already opened by {username}")
+            self, f'project in {builddir} is already opened by {username}')
 
 
 class PermissionDenied(ProjectManagerError):
     def __init__(self, builddir):
         ProjectManagerError.__init__(
-            self, f"permission denied for project in {builddir}")
+            self, f'permission denied for project in {builddir}')
 
 
 class NoOpenProject(ProjectManagerError):
     def __init__(self):
-        ProjectManagerError.__init__(self, "must open a project first")
+        ProjectManagerError.__init__(self, 'must open a project first')
 
 
 class InvalidState(ProjectManagerError):
@@ -242,7 +242,7 @@ class ProjectManager:
             ep = self._get_current_project(userid, allow_busy=False)
 
             self.db.set_project_version(ep.builddir, new_version)
-            ep.xml.node("/project/version").set_text(new_version)
+            ep.xml.node('/project/version').set_text(new_version)
 
     def list_current_project_versions(self, userid):
         with self.lock:
@@ -271,11 +271,11 @@ class ProjectManager:
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
 
-            name = ep.xml.text("project/name")
+            name = ep.xml.text('project/name')
             self.db.del_version(ep.builddir, version)
 
             # Delete corresponding package archive, if existing
-            pkgarchive = get_versioned_filename(name, version, ".pkgarchive")
+            pkgarchive = get_versioned_filename(name, version, '.pkgarchive')
             pkgarchive_path = path.join(ep.builddir, pkgarchive)
             try:
                 rmtree(pkgarchive_path)
@@ -308,8 +308,8 @@ class ProjectManager:
     def build_current_pdebuild(self, userid, cpuset, profile, cross):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
-                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
+            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    f'create --project {ep.builddir}" first')
 
@@ -318,8 +318,8 @@ class ProjectManager:
     def set_orig_fname(self, userid, fname):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
-                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
+            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    f'create --project {ep.builddir}" first')
 
@@ -329,8 +329,8 @@ class ProjectManager:
     def get_orig_fname(self, userid):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
-            if (not path.isdir(path.join(ep.builddir, "pbuilder")) and
-                    not path.isdir(path.join(ep.builddir, "pbuilder_cross"))):
+            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    f'create --project {ep.builddir}" first')
 
@@ -361,8 +361,8 @@ class ProjectManager:
             c = self._get_current_project_apt_cache(userid)
             if c.get_changes():
                 raise InvalidState(
-                    "project %s has uncommited package changes, "
-                    "please commit them first")
+                    'project %s has uncommited package changes, '
+                    'please commit them first')
 
             ep = self._get_current_project(userid)
             self.worker.enqueue(GenUpdateJob(ep, base_version))
@@ -407,7 +407,7 @@ class ProjectManager:
             ep = self._get_current_project(userid)
 
             debootstrap_pkgs = []
-            for p in ep.xml.xml.node("debootstrappkgs"):
+            for p in ep.xml.xml.node('debootstrappkgs'):
                 debootstrap_pkgs.append(p.et.text)
 
             return debootstrap_pkgs
@@ -476,8 +476,8 @@ class ProjectManager:
     def read_current_project_log(self, userid):
         with self.lock:
             ep = self._get_current_project(userid)
-            logpath = path.join(ep.builddir, "log.txt")
-            f = open(logpath, "r")
+            logpath = path.join(ep.builddir, 'log.txt')
+            f = open(logpath, 'r')
         try:
             data = f.read()
         finally:
@@ -527,7 +527,7 @@ class ProjectManager:
 
         if not allow_busy:
             if self.db.is_busy(ep.builddir):
-                raise InvalidState(f"project {ep.builddir} is busy")
+                raise InvalidState(f'project {ep.builddir} is busy')
 
         return ep
 
@@ -538,9 +538,9 @@ class ProjectManager:
             builddir = self.userid2project[userid].builddir
             if self.db.is_busy(builddir):
                 raise InvalidState(
-                    f"project in directory {builddir} of user "
-                    f"{self.db.get_username(userid)} is "
-                    "currently busy and cannot be closed")
+                    f'project in directory {builddir} of user '
+                    f'{self.db.get_username(userid)} is '
+                    'currently busy and cannot be closed')
 
             del self.builddir2userid[builddir]
             del self.userid2project[userid]
@@ -562,7 +562,7 @@ class ProjectManager:
 
         if not ep.has_full_buildenv():
             raise InvalidState(
-                f"project in directory {ep.builddir} does not have a "
-                "functional build environment")
+                f'project in directory {ep.builddir} does not have a '
+                'functional build environment')
 
         return ep.get_rpcaptcache()

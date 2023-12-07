@@ -12,22 +12,22 @@ from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
 
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
-                 "Test level not set to INITVM")
+                 'Test level not set to INITVM')
 class TestSimpleXML(ElbeTestCase):
     global elbe_dir
 
-    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
+    elbe_dir = os.path.join(os.path.dirname(__file__), '../..')
 
-    params = [os.path.join(elbe_dir, "tests", fname)
+    params = [os.path.join(elbe_dir, 'tests', fname)
               for fname
-              in os.listdir(os.path.join(elbe_dir, "tests"))
-              if fname.startswith("simple") and fname.endswith(".xml")]
+              in os.listdir(os.path.join(elbe_dir, 'tests'))
+              if fname.startswith('simple') and fname.endswith('.xml')]
 
     def test_simple_build(self):
 
-        with tempfile.TemporaryDirectory(prefix="elbe-test-simple-xml-") as build_dir:
+        with tempfile.TemporaryDirectory(prefix='elbe-test-simple-xml-') as build_dir:
 
-            prj = os.path.join(build_dir, "uuid.prj")
+            prj = os.path.join(build_dir, 'uuid.prj')
             uuid = None
 
             try:
@@ -37,12 +37,12 @@ class TestSimpleXML(ElbeTestCase):
                     f'--build-sdk --writeproject "{prj}"')
 
                 # Ensure project build is done
-                with open(prj, "r") as f:
+                with open(prj, 'r') as f:
                     uuid = f.read()
-                    system(f"{sys.executable} {elbe_exe} control list_projects | "
-                           f"grep {uuid} | grep build_done || false")
+                    system(f'{sys.executable} {elbe_exe} control list_projects | '
+                           f'grep {uuid} | grep build_done || false')
 
-                for cmd in ("cdrom", "img", "sdk", "rebuild"):
+                for cmd in ('cdrom', 'img', 'sdk', 'rebuild'):
                     with self.subTest(f'check build {cmd}'):
                         system(f'{sys.executable} {elbe_exe} check-build {cmd} "{build_dir}"')
 
@@ -55,19 +55,19 @@ class TestSimpleXML(ElbeTestCase):
 
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
-                 "Test level not set to INITVM")
+                 'Test level not set to INITVM')
 class TestPbuilder(ElbeTestCase):
 
-    params = [os.path.join(elbe_dir, "tests", fname)
+    params = [os.path.join(elbe_dir, 'tests', fname)
               for fname
-              in os.listdir(os.path.join(elbe_dir, "tests"))
-              if fname.startswith("pbuilder") and fname.endswith(".xml")]
+              in os.listdir(os.path.join(elbe_dir, 'tests'))
+              if fname.startswith('pbuilder') and fname.endswith('.xml')]
 
     def test_pbuilder_build(self):
 
-        with tempfile.TemporaryDirectory(prefix="elbe-test-pbuilder-xml-") as build_dir:
+        with tempfile.TemporaryDirectory(prefix='elbe-test-pbuilder-xml-') as build_dir:
 
-            prj = os.path.join(build_dir, "uuid.prj")
+            prj = os.path.join(build_dir, 'uuid.prj')
             uuid = None
 
             try:
@@ -76,7 +76,7 @@ class TestPbuilder(ElbeTestCase):
                 system(f'cd "{build_dir}"; \
                          git clone https://github.com/Linutronix/libgpio.git')
 
-                with open(prj, "r") as f:
+                with open(prj, 'r') as f:
                     uuid = f.read()
                     system(f'cd "{build_dir}/libgpio"; \
                              {sys.executable} {elbe_exe} pbuilder build --project {uuid}')

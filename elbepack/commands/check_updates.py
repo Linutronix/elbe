@@ -38,42 +38,42 @@ def build_changelog_xml(v, opt, update_packages):
 def run_command(argv):
 
     oparser = OptionParser(
-        usage="usage: %prog check_updates [options] <source-xmlfile>")
+        usage='usage: %prog check_updates [options] <source-xmlfile>')
     oparser.add_option(
-        "-s",
-        "--script",
-        dest="script",
-        help="filename of script to run when an update is required")
-    oparser.add_option("--skip-validation", action="store_true",
-                       dest="skip_validation", default=False,
-                       help="Skip xml schema validation")
+        '-s',
+        '--script',
+        dest='script',
+        help='filename of script to run when an update is required')
+    oparser.add_option('--skip-validation', action='store_true',
+                       dest='skip_validation', default=False,
+                       help='Skip xml schema validation')
     oparser.add_option(
-        "-c",
-        "--changelogs",
-        dest="changelogs",
-        help="filename of changelog xml file")
+        '-c',
+        '--changelogs',
+        dest='changelogs',
+        help='filename of changelog xml file')
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print("Wrong number of arguments")
+        print('Wrong number of arguments')
         oparser.print_help()
         sys.exit(51)
 
     if not opt.skip_validation:
         validation = validate_xml(args[0])
         if validation:
-            print("xml validation failed. Bailing out")
+            print('xml validation failed. Bailing out')
             for i in validation:
                 print(i)
             sys.exit(52)
 
-    print(f"checking {args[0]}")
+    print(f'checking {args[0]}')
 
     xml = ElbeXML(args[0])
 
-    fullp = xml.node("fullpkgs")
+    fullp = xml.node('fullpkgs')
 
-    arch = xml.text("project/buildimage/arch", key="arch")
+    arch = xml.text('project/buildimage/arch', key='arch')
 
     v = virtapt.VirtApt(xml)
 
@@ -81,7 +81,7 @@ def run_command(argv):
         pname = p.et.text
         pauto = p.et.get('auto')
 
-        if pauto != "true":
+        if pauto != 'true':
             v.mark_install(pname)
 
     errors = 0
@@ -97,11 +97,11 @@ def run_command(argv):
         if not v.has_pkg(xp.name):
             if not xp.is_auto_installed:
                 print(
-                    f"{xp.name} does not exist in cache but is specified in "
-                    "pkg-list")
+                    f'{xp.name} does not exist in cache but is specified in '
+                    'pkg-list')
                 errors += 1
             else:
-                print(f"{xp.name} is no more required")
+                print(f'{xp.name} is no more required')
                 required_updates += 1
 
             continue
@@ -109,7 +109,7 @@ def run_command(argv):
         if v.marked_install(xp.name):
             cver = v.get_candidate_ver(xp.name)
             if xp.installed_version != cver:
-                print(f"{xp.name}: {xp.installed_version} != {cver}")
+                print(f'{xp.name}: {xp.installed_version} != {cver}')
                 required_updates += 1
 
                 if opt.changelogs:
@@ -120,16 +120,16 @@ def run_command(argv):
     sys.stdout.flush()
     sys.stderr.flush()
     if errors > 0:
-        print(f"{errors} Errors occured, xml files needs fixing")
+        print(f'{errors} Errors occured, xml files needs fixing')
         if opt.script:
-            system(f"{opt.script} ERRORS {args[0]}", allow_fail=True)
+            system(f'{opt.script} ERRORS {args[0]}', allow_fail=True)
     elif required_updates > 0:
-        print(f"{required_updates} updates required")
+        print(f'{required_updates} updates required')
 
         if opt.changelogs:
             build_changelog_xml(v, opt, update_packages)
 
         if opt.script:
-            system(f"{opt.script} UPDATE {args[0]}", allow_fail=True)
+            system(f'{opt.script} UPDATE {args[0]}', allow_fail=True)
     else:
-        print("No Updates available")
+        print('No Updates available')

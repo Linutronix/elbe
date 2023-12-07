@@ -42,7 +42,7 @@ class USBMonitor (UpdateMonitor):
             mnt = self.get_mountpoint_for_device(device.device_node)
             if not mnt:
                 self.status.log(
-                    "Detected USB drive but it was not mounted.")
+                    'Detected USB drive but it was not mounted.')
                 return
 
             for (dirpath, dirnames, filenames) in os.walk(mnt):
@@ -63,7 +63,7 @@ class USBMonitor (UpdateMonitor):
                     break
 
     def start(self):
-        self.status.log("monitoring USB")
+        self.status.log('monitoring USB')
         self.observer.start()
 
     def stop(self):
@@ -74,7 +74,7 @@ class USBMonitor (UpdateMonitor):
 
     @staticmethod
     def get_mountpoint_for_device(dev):
-        with open("/proc/mounts") as f:
+        with open('/proc/mounts') as f:
             for line in f:
                 fields = line.split()
                 try:
@@ -97,12 +97,12 @@ class FileMonitor (UpdateMonitor):
 
     class ObserverThread (threading.Thread):
         def __init__(self, status, monitor):
-            threading.Thread.__init__(self, name="ObserverThread")
+            threading.Thread.__init__(self, name='ObserverThread')
             self.status = status
             self.monitor = monitor
 
         def run(self):
-            self.status.log("monitoring updated dir")
+            self.status.log('monitoring updated dir')
 
             while 1:
                 if self.monitor.notifier.check_events(timeout=1000):

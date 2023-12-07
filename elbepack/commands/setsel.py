@@ -10,7 +10,7 @@ from elbepack.treeutils import etree
 
 
 def parse_selections(fname):
-    fp = open(fname, "r")
+    fp = open(fname, 'r')
 
     sels = []
 
@@ -22,7 +22,7 @@ def parse_selections(fname):
 
         sp = lic.split()
 
-        print(f"{sp[0]} {sp[1]}")
+        print(f'{sp[0]} {sp[1]}')
 
         if sp[1] == 'install':
             sels.append(sp[0])
@@ -33,17 +33,17 @@ def parse_selections(fname):
 
 def run_command(argv):
 
-    oparser = OptionParser(usage="usage: %prog setsel <xmlfile> <pkglist.txt>")
+    oparser = OptionParser(usage='usage: %prog setsel <xmlfile> <pkglist.txt>')
     (_, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print("Wrong number of arguments")
+        print('Wrong number of arguments')
         oparser.print_help()
         sys.exit(23)
 
     xml = etree(args[0])
 
-    pkg_list = xml.node("/pkg-list")
+    pkg_list = xml.node('/pkg-list')
 
     pkg_list.clear()
 

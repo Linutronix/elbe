@@ -19,12 +19,12 @@ INSTALLED = 4
 NOTINSTALLED = 5
 
 statestring = {
-    MARKED_INSTALL: "MARKED_INSTALL",
-    MARKED_UPGRADE: "MARKED_UPGRADE",
-    MARKED_DELETE: "MARKED_DELETE",
-    UPGRADABLE: "UPGRADABLE",
-    INSTALLED: "INSTALLED",
-    NOTINSTALLED: "NOT INSTALLED"
+    MARKED_INSTALL: 'MARKED_INSTALL',
+    MARKED_UPGRADE: 'MARKED_UPGRADE',
+    MARKED_DELETE: 'MARKED_DELETE',
+    UPGRADABLE: 'UPGRADABLE',
+    INSTALLED: 'INSTALLED',
+    NOTINSTALLED: 'NOT INSTALLED'
 }
 
 
@@ -32,18 +32,18 @@ def apt_pkg_md5(pkg):
     hashes = pkg._records.hashes
     for i in range(len(hashes)):
         h = str(hashes[i])
-        if h.startswith("MD5"):
+        if h.startswith('MD5'):
             return h.split(':')[1]
-    return ""
+    return ''
 
 
 def apt_pkg_sha256(pkg):
     hashes = pkg._records.hashes
     for i in range(len(hashes)):
         h = str(hashes[i])
-        if h.startswith("SHA256"):
+        if h.startswith('SHA256'):
             return h.split(':')[1]
-    return ""
+    return ''
 
 
 def getdeps(pkg):
@@ -88,7 +88,7 @@ def pkgstate(pkg):
 def pkgorigin(pkg):
     if pkg.installed:
         o = pkg.installed.origins[0]
-        origin = f"{o.site} {o.archive} {o.component}"
+        origin = f'{o.site} {o.archive} {o.component}'
     else:
         origin = None
 
@@ -132,7 +132,7 @@ def fetch_binary(version, destdir='', progress=None):
     acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
     acqfile = apt_pkg.AcquireFile(acq,
                                   version.uri,
-                                  "SHA256:" + version._records.sha256_hash,
+                                  'SHA256:' + version._records.sha256_hash,
                                   version.size,
                                   base,
                                   destfile=destfile)
@@ -140,8 +140,8 @@ def fetch_binary(version, destdir='', progress=None):
 
     if acqfile.status != acqfile.STAT_DONE:
         raise FetchError(
-            f"The item {acqfile.destfile} could not be fetched: "
-            f"{acqfile.error_text}")
+            f'The item {acqfile.destfile} could not be fetched: '
+            f'{acqfile.error_text}')
 
     return os.path.abspath(destfile)
 
@@ -170,8 +170,8 @@ class PackageBase:
         self.architecture = architecture
 
     def __repr__(self):
-        return (f"<APTPackage {self.name}-{self.installed_version} state: "
-                f"{statestring[self.state]}>")
+        return (f'<APTPackage {self.name}-{self.installed_version} state: '
+                f'{statestring[self.state]}>')
 
     def __eq__(self, other):
         vereq = (self.installed_version == other.installed_version)

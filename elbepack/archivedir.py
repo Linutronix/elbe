@@ -23,7 +23,7 @@ class ArchivedirError(Exception):
 
 
 def enbase(fname, compress=True):
-    with open(fname, "rb") as infile:
+    with open(fname, 'rb') as infile:
         s = infile.read()
         if compress:
             s = bz2.compress(s)
@@ -51,7 +51,7 @@ def chg_archive(xml, path, keep):
         archive = path
         compress = False
 
-    arch = xml.ensure_child("archive")
+    arch = xml.ensure_child('archive')
     arch.set_text(enbase(archive, compress))
 
     if os.path.isdir(path):
@@ -69,21 +69,21 @@ def archive_tmpfile(arch_elem):
 
 def prepare_path(url):
     url = urlparse(url)
-    path = url.geturl().replace(f"{url.scheme}://", "", 1)
-    return re.sub(r'/$', "", path)
+    path = url.geturl().replace(f'{url.scheme}://', '', 1)
+    return re.sub(r'/$', '', path)
 
 
 def get_and_append_local(url, tararchive, keep):
     if urlparse(url).netloc:
-        msg = f"Reject suspicious file:// URI \"{url}\". "
-        msg += "Please use an absolute URI (file:///a/b/c) or a "
-        msg += "relative URI (a/b/c) instead."
+        msg = f'Reject suspicious file:// URI \"{url}\". '
+        msg += 'Please use an absolute URI (file:///a/b/c) or a '
+        msg += 'relative URI (a/b/c) instead.'
         raise ArchivedirError(msg)
     collect(tararchive, prepare_path(url), keep)
 
 
 def get_and_append_unknown(url, _archive):
-    msg = f"unhandled scheme \"{urlparse(url).scheme}://\""
+    msg = f'unhandled scheme \"{urlparse(url).scheme}://\"'
     raise NotImplementedError(msg)
 
 
@@ -103,7 +103,7 @@ def _combinearchivedir(xml, xpath, use_volume):
 
         try:
             archiveurl = urljoin(archivedir.et.base, archivedir.et.text)
-            keep = archivedir.bool_attr("keep-attributes")
+            keep = archivedir.bool_attr('keep-attributes')
             parent = archivedir.get_parent()
 
             if use_volume:
@@ -113,31 +113,31 @@ def _combinearchivedir(xml, xpath, use_volume):
                 arch = parent.node(f"archive[@volume='{volume_attr}']")
 
                 if arch is None:
-                    arch = parent.append("archive")
-                    arch.et.set("volume", volume_attr)
+                    arch = parent.append('archive')
+                    arch.et.set('volume', volume_attr)
 
             else:
-                arch = parent.ensure_child("archive")
+                arch = parent.ensure_child('archive')
                 fname_suffix = ''
 
             get_and_append = get_and_append_method(archiveurl)
 
-            archname = tmp.fname(f"archive{fname_suffix}.tar.bz2")
+            archname = tmp.fname(f'archive{fname_suffix}.tar.bz2')
             get_and_append(archiveurl, archname, keep)
             arch.set_text(enbase(archname, True))
 
             parent.remove_child(archivedir)
         except (CalledProcessError, OSError):
-            msg = "Failure while processing \"" + archivedir.text + "\":\n"
+            msg = 'Failure while processing \"' + archivedir.text + '\":\n'
             msg += str(sys.exc_info()[1])
             raise ArchivedirError(msg)
 
 
 def combinearchivedir(xml):
-    if xml.find("//archivedir") is None:
+    if xml.find('//archivedir') is None:
         return xml
 
-    _combinearchivedir(xml, "archivedir", False)
-    _combinearchivedir(xml, "src-cdrom/archivedir", True)
+    _combinearchivedir(xml, 'archivedir', False)
+    _combinearchivedir(xml, 'src-cdrom/archivedir', True)
 
     return xml

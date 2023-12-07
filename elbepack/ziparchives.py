@@ -7,7 +7,7 @@ import os
 
 
 def create_zip_archive(zipfilename, path, inarchpath):
-    with ZipFile(zipfilename, "w", ZIP_DEFLATED) as zf:
+    with ZipFile(zipfilename, 'w', ZIP_DEFLATED) as zf:
         for root, _, files in os.walk(path):
             archpath = os.path.join(inarchpath, os.path.relpath(root, path))
             zf.write(root, archpath)

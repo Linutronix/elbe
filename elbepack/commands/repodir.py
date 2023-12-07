@@ -10,20 +10,20 @@ from elbepack.repodir import RepodirError, Repodir
 
 
 def run_command(argv):
-    oparser = OptionParser(usage="usage: %prog repodir [options] <xmlfile>")
-    oparser.add_option("-o", "--output", dest="output",
-                       default="repodir.xml",
-                       help="preprocessed output file", metavar="<xmlfile>")
+    oparser = OptionParser(usage='usage: %prog repodir [options] <xmlfile>')
+    oparser.add_option('-o', '--output', dest='output',
+                       default='repodir.xml',
+                       help='preprocessed output file', metavar='<xmlfile>')
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print("Wrong number of arguments", file=sys.stderr)
+        print('Wrong number of arguments', file=sys.stderr)
         oparser.print_help()
         sys.exit(55)
 
     xml_input = args[0]
     if not os.path.isfile(xml_input):
-        print(f"{xml_input} does not exist", file=sys.stderr)
+        print(f'{xml_input} does not exist', file=sys.stderr)
         sys.exit(56)
 
     if os.path.exists(opt.output):

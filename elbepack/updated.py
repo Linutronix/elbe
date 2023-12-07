@@ -43,7 +43,7 @@ class UpdateStatus:
         self.step = 0
         self.nosign = False
         self.verbose = False
-        self.repo_dir = ""
+        self.repo_dir = ''
         self.status_file = '/var/cache/elbe/update_state.txt'
         with rw_access_file(self.status_file, self) as f:
             f.write('ready')
@@ -57,11 +57,11 @@ class UpdateStatus:
 
     def set_progress(self, step, percent=''):
         self.step = step
-        self.write_status(f"in_progress\t{step}\t{percent}")
+        self.write_status(f'in_progress\t{step}\t{percent}')
 
     def set_finished(self, result):
         self.step = 0
-        self.write_status(f"finished\t{result}")
+        self.write_status(f'finished\t{result}')
 
     def log(self, msg):
         if not msg.endswith('\n'):
@@ -73,12 +73,12 @@ class UpdateStatus:
             self.set_progress(3, msg_a[0])
 
         if self.step:
-            msg = "(" + str(self.step) + "/3) " + msg
+            msg = '(' + str(self.step) + '/3) ' + msg
         if self.monitor:
             try:
                 self.monitor.service.msg(msg)
             except BaseException:
-                print("logging to monitor failed, removing monitor connection")
+                print('logging to monitor failed, removing monitor connection')
                 self.monitor = None
                 print(msg)
         try:
@@ -105,39 +105,39 @@ class UpdateService (ServiceBase):
     def list_snapshots(self):
         # use comma separated string because array of strings triggers a bug in
         # python suds :(
-        snapshots = ""
+        snapshots = ''
 
-        if os.path.isfile("/etc/elbe_base.xml"):
-            snapshots += "base_version,"
+        if os.path.isfile('/etc/elbe_base.xml'):
+            snapshots += 'base_version,'
 
-        lists = os.listdir("/etc/apt/sources.list.d")
+        lists = os.listdir('/etc/apt/sources.list.d')
 
         for lic in lists:
-            snapshots += lic[:len(lic) - 5] + ","
+            snapshots += lic[:len(lic) - 5] + ','
 
         return snapshots
 
     @rpc(String, _returns=String)
     def apply_snapshot(self, ver):
-        if ver == "base_version":
-            fname = "/etc/elbe_base.xml"
+        if ver == 'base_version':
+            fname = '/etc/elbe_base.xml'
         else:
-            fname = self.app.status.repo_dir + "/" + ver + "/new.xml"
+            fname = self.app.status.repo_dir + '/' + ver + '/new.xml'
 
         try:
             apply_update(fname, self.app.status)
         except Exception as err:
-            print(f"{err}")
+            print(f'{err}')
             self.app.status.set_finished('error')
-            return f"apply snapshot {ver} failed"
+            return f'apply snapshot {ver} failed'
 
         self.app.status.set_finished('OK')
-        return f"snapshot {ver} applied"
+        return f'snapshot {ver} applied'
 
     @rpc(String)
     def register_monitor(self, wsdl_url):
         self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
-        self.app.status.log("connection established")
+        self.app.status.log('connection established')
 
 
 class rw_access_file:
@@ -166,21 +166,21 @@ class rw_access:
 
     def __enter__(self):
         if self.mount_orig == 'ro':
-            self.status.log(f"remount {self.mount} read/writeable")
+            self.status.log(f'remount {self.mount} read/writeable')
             try:
-                system(f"mount -o remount,rw {self.mount}")
+                system(f'mount -o remount,rw {self.mount}')
             except CommandError as e:
                 self.status.log(repr(e))
 
     def __exit__(self, _typ, _value, _traceback):
         if self.mount_orig == 'ro':
-            self.status.log(f"remount {self.mount} readonly")
+            self.status.log(f'remount {self.mount} readonly')
             try:
-                system("sync")
+                system('sync')
             except CommandError as e:
                 self.status.log(repr(e))
             try:
-                system(f"mount -o remount,ro {self.mount}")
+                system(f'mount -o remount,ro {self.mount}')
             except CommandError as e:
                 self.status.log(repr(e))
 
@@ -211,10 +211,10 @@ class rw_access:
 
 
 def fname_replace(s):
-    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    allowed += "0123456789"
-    allowed += "_-."
-    res = ""
+    allowed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    allowed += '0123456789'
+    allowed += '_-.'
+    res = ''
     for c in s:
         if c in allowed:
             res += c
@@ -229,13 +229,13 @@ def update_sourceslist(xml, update_dir, status):
         status.log('invalid repository, not added to sources.list')
         return
 
-    deb = "deb [trusted=yes] file://" + \
-        update_dir + " " + xml.text("/project/suite")
-    deb += " main\n"
-    fname = "/etc/apt/sources.list.d/"
-    fname += fname_replace(xml.text("/project/name")) + "_"
-    fname += fname_replace(xml.text("/project/version"))
-    fname += ".list"
+    deb = 'deb [trusted=yes] file://' + \
+        update_dir + ' ' + xml.text('/project/suite')
+    deb += ' main\n'
+    fname = '/etc/apt/sources.list.d/'
+    fname += fname_replace(xml.text('/project/name')) + '_'
+    fname += fname_replace(xml.text('/project/version'))
+    fname += '.list'
 
     with rw_access_file(fname, status) as f:
         f.write(deb)
@@ -248,8 +248,8 @@ def mark_install(depcache, pkg, ver, auto, status):
             depcache.mark_install(pkg, False, not auto)
             return
 
-    status.log("ERROR: " + pkg.name + ver +
-               " is not available in the cache")
+    status.log('ERROR: ' + pkg.name + ver +
+               ' is not available in the cache')
 
 
 def _apply_update(fname, status):
@@ -257,19 +257,19 @@ def _apply_update(fname, status):
     try:
         xml = etree(fname)
     except BaseException:
-        raise Exception(f"reading {fname} failed ")
+        raise Exception(f'reading {fname} failed ')
 
-    fpl = xml.node("fullpkgs")
+    fpl = xml.node('fullpkgs')
 
     sources = apt_pkg.SourceList()
     sources.read_main_list()
 
-    status.log("initialize apt")
+    status.log('initialize apt')
     apt_pkg.init()
     cache = apt_pkg.Cache(progress=ElbeOpProgress(cb=status.log))
 
     status.set_progress(1)
-    status.log("updating package cache")
+    status.log('updating package cache')
     cache.update(ElbeAcquireProgress(cb=status.log), sources)
     # quote from python-apt api doc: "A call to this method does not affect the
     # current Cache object, instead a new one should be created in order to use
@@ -284,7 +284,7 @@ def _apply_update(fname, status):
     #  if it is not mentioned in the fullpkg list purge the package out of the
     #  system.
     status.set_progress(2)
-    status.log("calculating packages to install/remove")
+    status.log('calculating packages to install/remove')
     count = len(hl_cache)
     step = count / 10
     i = 0
@@ -293,8 +293,8 @@ def _apply_update(fname, status):
         i = i + 1
         if not i % step:
             percent = percent + 10
-            status.log(str(percent) + "% - " + str(i) + "/" + str(count))
-            status.set_progress(2, str(percent) + "%")
+            status.log(str(percent) + '% - ' + str(i) + '/' + str(count))
+            status.set_progress(2, str(percent) + '%')
 
         pkg = cache[p.name]
         marked = False
@@ -310,7 +310,7 @@ def _apply_update(fname, status):
             depcache.mark_delete(pkg, True)
 
     status.set_progress(3)
-    status.log("applying snapshot")
+    status.log('applying snapshot')
     depcache.commit(ElbeAcquireProgress(cb=status.log),
                     ElbeInstallProgress(cb=status.log))
     del depcache
@@ -318,8 +318,8 @@ def _apply_update(fname, status):
     del cache
     del sources
 
-    version_file = open("/etc/updated_version", "w")
-    version_file.write(xml.text("/project/version"))
+    version_file = open('/etc/updated_version', 'w')
+    version_file.write(xml.text('/project/version'))
     version_file.close()
 
 
@@ -356,28 +356,28 @@ def post_sh(current_version, target_version, status):
 
 def get_target_version(fname):
     xml = etree(fname)
-    return xml.text("/project/version")
+    return xml.text('/project/version')
 
 
 def get_current_version():
-    with open("/etc/updated_version", "r") as version_file:
+    with open('/etc/updated_version', 'r') as version_file:
         return version_file.read()
 
 
 def get_base_version():
-    xml = etree("/etc/elbe_base.xml")
-    return xml.text("/project/version")
+    xml = etree('/etc/elbe_base.xml')
+    return xml.text('/project/version')
 
 
 def is_downgrade(target_version, current_version, base_version):
     current = current_version
-    if current == "":
+    if current == '':
         current = base_version
     return version.parse(target_version) < version.parse(current)
 
 
 def is_downgrade_allowed():
-    return os.path.isfile("/var/cache/elbe/.downgrade_allowed")
+    return os.path.isfile('/var/cache/elbe/.downgrade_allowed')
 
 
 def reject_downgrade(status, new_xml_file):
@@ -388,7 +388,7 @@ def reject_downgrade(status, new_xml_file):
         c_ver = get_current_version()
     except IOError as e:
         status.log('get current version failed: ' + str(e))
-        c_ver = ""
+        c_ver = ''
 
     if is_downgrade(t_ver, c_ver, b_ver) and not is_downgrade_allowed():
         status.log('Update is a downgrade and downgrades are not allowed')
@@ -404,7 +404,7 @@ def apply_update(fname, status):
     # process termination an we can remount the filesystem readonly
     # without errors.
     p = Process(target=_apply_update, args=(fname, status))
-    with rw_access("/", status):
+    with rw_access('/', status):
         try:
             t_ver = get_target_version(fname)
         except BaseException:
@@ -415,54 +415,54 @@ def apply_update(fname, status):
             c_ver = get_current_version()
         except IOError as e:
             status.log('get current version failed: ' + str(e))
-            c_ver = ""
+            c_ver = ''
 
         pre_sh(c_ver, t_ver, status)
         p.start()
         p.join()
-        status.log("cleanup /var/cache/apt/archives")
+        status.log('cleanup /var/cache/apt/archives')
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
         try:
-            system("apt-get clean")
+            system('apt-get clean')
         except CommandError as e:
             status.log(repr(e))
         if p.exitcode != 0:
             raise Exception(
-                "Applying update failed. See logfile for more information")
+                'Applying update failed. See logfile for more information')
         post_sh(c_ver, t_ver, status)
 
 
 def action_select(upd_file, status):
 
-    status.log("updating: " + upd_file)
+    status.log('updating: ' + upd_file)
 
     try:
         upd_file_z = ZipFile(upd_file)
     except BadZipfile:
-        status.log(f"update aborted (bad zip file: {upd_file})")
+        status.log(f'update aborted (bad zip file: {upd_file})')
         return
 
-    if "new.xml" not in upd_file_z.namelist():
-        status.log("update invalid (new.xml missing)")
+    if 'new.xml' not in upd_file_z.namelist():
+        status.log('update invalid (new.xml missing)')
         return
 
-    with rw_access("/tmp", status):
-        upd_file_z.extract("new.xml", "/tmp/")
+    with rw_access('/tmp', status):
+        upd_file_z.extract('new.xml', '/tmp/')
 
     # prevent downgrades (if available)
     try:
-        if reject_downgrade(status, "/tmp/new.xml"):
+        if reject_downgrade(status, '/tmp/new.xml'):
             return
     except Exception as e:
         status.log('Error while reading XML files occurred: ' + str(e))
         return
 
-    xml = etree("/tmp/new.xml")
-    prefix = status.repo_dir + "/" + fname_replace(xml.text("/project/name"))
-    prefix += "_" + fname_replace(xml.text("/project/version")) + "/"
+    xml = etree('/tmp/new.xml')
+    prefix = status.repo_dir + '/' + fname_replace(xml.text('/project/name'))
+    prefix += '_' + fname_replace(xml.text('/project/version')) + '/'
 
-    status.log("preparing update: " + prefix)
+    status.log('preparing update: ' + prefix)
 
     with rw_access(prefix, status):
         for i in upd_file_z.namelist():
@@ -472,10 +472,10 @@ def action_select(upd_file, status):
                 upd_file_z.extract(zi, prefix)
                 os.chmod(prefix + '/' + i, zi.external_attr >> 16)
             except OSError:
-                status.log(f"extraction failed: {sys.exc_info()[1]}")
+                status.log(f'extraction failed: {sys.exc_info()[1]}')
                 return
 
-    with rw_access("/var/cache/elbe", status):
+    with rw_access('/var/cache/elbe', status):
         if os.path.isfile(prefix + '/' + 'pre.sh'):
             try:
                 copy(prefix + '/' + 'pre.sh', '/var/cache/elbe/' + 'pre.sh')
@@ -488,25 +488,25 @@ def action_select(upd_file, status):
             except (OSError, IOError) as e:
                 status.log('postsh-copy failed: ' + str(e))
 
-    if os.path.isdir(prefix + "conf"):
-        status.log("copying config files:")
-        for path, _, filenames in os.walk(prefix + "conf"):
-            dst = path[len(prefix + "conf"):]
+    if os.path.isdir(prefix + 'conf'):
+        status.log('copying config files:')
+        for path, _, filenames in os.walk(prefix + 'conf'):
+            dst = path[len(prefix + 'conf'):]
             with rw_access(dst, status):
                 for f in filenames:
                     src = os.path.join(path, f)
-                    status.log("cp " + src + " " + dst)
+                    status.log('cp ' + src + ' ' + dst)
                     try:
                         mkdir_p(dst)
                         copyfile(src, dst + '/' + f)
                     except (OSError, IOError) as e:
                         status.log('failed: ' + str(e))
-        with rw_access(prefix + "conf", status):
-            rmtree(prefix + "conf")
+        with rw_access(prefix + 'conf', status):
+            rmtree(prefix + 'conf')
 
-    if os.path.isdir(prefix + "cmd"):
-        status.log("executing scripts:")
-        for path, _, filenames in os.walk(prefix + "cmd"):
+    if os.path.isdir(prefix + 'cmd'):
+        status.log('executing scripts:')
+        for path, _, filenames in os.walk(prefix + 'cmd'):
             for f in filenames:
                 cmd = os.path.join(path, f)
                 if os.path.isfile(cmd):
@@ -515,33 +515,33 @@ def action_select(upd_file, status):
                         execute(cmd, status)
                     except OSError as e:
                         status.log('exec: ' + cmd + ' - ' + str(e))
-        with rw_access(prefix + "cmd", status):
-            rmtree(prefix + "cmd")
+        with rw_access(prefix + 'cmd', status):
+            rmtree(prefix + 'cmd')
 
-    if os.path.isdir(prefix + "repo"):
+    if os.path.isdir(prefix + 'repo'):
         try:
-            update_sourceslist(xml, prefix + "repo", status)
+            update_sourceslist(xml, prefix + 'repo', status)
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')
-            status.log("update apt sources list failed: " + prefix)
+            status.log('update apt sources list failed: ' + prefix)
             return
 
         try:
-            apply_update("/tmp/new.xml", status)
+            apply_update('/tmp/new.xml', status)
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')
-            status.log("apply update failed: " + prefix)
+            status.log('apply update failed: ' + prefix)
             return
 
         status.set_finished('OK')
-        status.log("update done: " + prefix)
+        status.log('update done: ' + prefix)
 
 
 def is_update_file(upd_file):
     _, extension = os.path.splitext(upd_file)
-    if extension == ".gpg":
+    if extension == '.gpg':
         return True
 
     try:
@@ -549,7 +549,7 @@ def is_update_file(upd_file):
     except BadZipfile:
         return False
 
-    if "new.xml" not in upd_file_z.namelist():
+    if 'new.xml' not in upd_file_z.namelist():
         return False
 
     return True
@@ -560,10 +560,10 @@ update_lock = threading.Lock()
 
 def handle_update_file(upd_file, status, remove=False):
     with update_lock:
-        status.log("checking file: " + str(upd_file))
+        status.log('checking file: ' + str(upd_file))
         _, extension = os.path.splitext(upd_file)
 
-        if extension == ".gpg":
+        if extension == '.gpg':
             fname = unsign_file(upd_file)
             if remove:
                 os.remove(upd_file)
@@ -572,14 +572,14 @@ def handle_update_file(upd_file, status, remove=False):
                 if remove:
                     os.remove(fname)
             else:
-                status.log("checking signature failed: " + str(upd_file))
+                status.log('checking signature failed: ' + str(upd_file))
 
         elif status.nosign:
             action_select(upd_file, status)
             if remove:
                 os.remove(upd_file)
         else:
-            status.log("ignore file: " + str(upd_file))
+            status.log('ignore file: ' + str(upd_file))
 
 
 def shutdown(_signum, _fname, status):

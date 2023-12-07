@@ -20,9 +20,9 @@ class DbAction:
 
     @classmethod
     def print_actions(cls):
-        print("available actions are:")
+        print('available actions are:')
         for a in cls.actiondict:
-            print(f"   {a}")
+            print(f'   {a}')
 
     def __new__(cls, node):
         action = cls.actiondict[node]
@@ -42,13 +42,13 @@ class InitAction(DbAction):
         DbAction.__init__(self, node)
 
     def execute(self, args):
-        oparser = OptionParser(usage="usage: %prog db init [options]")
-        oparser.add_option("--name", dest="name", default="root")
-        oparser.add_option("--fullname", dest="fullname", default="Admin")
-        oparser.add_option("--password", dest="password", default="foo")
-        oparser.add_option("--email", dest="email", default="root@localhost")
-        oparser.add_option("--noadmin", dest="admin", default=True,
-                           action="store_false")
+        oparser = OptionParser(usage='usage: %prog db init [options]')
+        oparser.add_option('--name', dest='name', default='root')
+        oparser.add_option('--fullname', dest='fullname', default='Admin')
+        oparser.add_option('--password', dest='password', default='foo')
+        oparser.add_option('--email', dest='email', default='root@localhost')
+        oparser.add_option('--noadmin', dest='admin', default=True,
+                           action='store_false')
 
         (opt, _) = oparser.parse_args(args)
 
@@ -67,17 +67,17 @@ class AddUserAction(DbAction):
 
     def execute(self, args):
         oparser = OptionParser(
-            usage="usage: %prog db add_user [options] <username>")
-        oparser.add_option("--fullname", dest="fullname")
-        oparser.add_option("--password", dest="password")
-        oparser.add_option("--email", dest="email")
-        oparser.add_option("--admin", dest="admin", default=False,
-                           action="store_true")
+            usage='usage: %prog db add_user [options] <username>')
+        oparser.add_option('--fullname', dest='fullname')
+        oparser.add_option('--password', dest='password')
+        oparser.add_option('--email', dest='email')
+        oparser.add_option('--admin', dest='admin', default=False,
+                           action='store_true')
 
         (opt, arg) = oparser.parse_args(args)
 
         if len(arg) != 1:
-            print("wrong number of arguments")
+            print('wrong number of arguments')
             oparser.print_help()
             return
 
@@ -101,22 +101,22 @@ class DelUserAction(DbAction):
 
     def execute(self, args):
         oparser = OptionParser(
-            usage="usage: %prog db del_user [options] <userid>")
-        oparser.add_option("--delete-projects", dest="delete_projects",
-                           default=False, action="store_true")
-        oparser.add_option("--quiet", dest="quiet",
-                           default=False, action="store_true")
+            usage='usage: %prog db del_user [options] <userid>')
+        oparser.add_option('--delete-projects', dest='delete_projects',
+                           default=False, action='store_true')
+        oparser.add_option('--quiet', dest='quiet',
+                           default=False, action='store_true')
 
         (opt, arg) = oparser.parse_args(args)
 
         if len(arg) != 1:
-            print("usage: elbe db del_user <userid>")
+            print('usage: elbe db del_user <userid>')
             return
 
         try:
             userid = int(arg[0])
         except ValueError as E:
-            print(f"userid must be an integer - {E}")
+            print(f'userid must be an integer - {E}')
             return
 
         db = ElbeDB()
@@ -126,18 +126,18 @@ class DelUserAction(DbAction):
         if projects:
             if not opt.quiet:
                 if opt.delete_projects:
-                    print("removing projects owned by the deleted user:")
+                    print('removing projects owned by the deleted user:')
                 else:
-                    print("keeping projects owned by the deleted user:")
+                    print('keeping projects owned by the deleted user:')
 
         for p in projects:
             if not opt.quiet:
-                print(f"{p.builddir}: {p.name} [{p.version}] {p.edit}")
+                print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
             if opt.delete_projects:
                 try:
                     db.del_project(p.builddir)
                 except ElbeDBError as e:
-                    print(f"  ==> {e} ")
+                    print(f'  ==> {e} ')
 
 
 DbAction.register(DelUserAction)
@@ -155,7 +155,7 @@ class ListProjectsAction(DbAction):
         projects = db.list_projects()
 
         for p in projects:
-            print(f"{p.builddir}: {p.name} [{p.version}] {p.edit}")
+            print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
 
 
 DbAction.register(ListProjectsAction)
@@ -173,7 +173,7 @@ class ListUsersAction(DbAction):
         users = db.list_users()
 
         for u in users:
-            print(f"{u.name}: {u.fullname} <{u.email}>")
+            print(f'{u.name}: {u.fullname} <{u.email}>')
 
 
 DbAction.register(ListUsersAction)
@@ -188,9 +188,9 @@ class CreateProjectAction(DbAction):
 
     def execute(self, args):
         oparser = OptionParser(
-            usage="usage: %prog db create_project [options] <project_dir>")
-        oparser.add_option("--user", dest="user",
-                           help="user name of the designated project owner")
+            usage='usage: %prog db create_project [options] <project_dir>')
+        oparser.add_option('--user', dest='user',
+                           help='user name of the designated project owner')
         (opt, arg) = oparser.parse_args(args)
 
         if len(arg) != 1:
@@ -214,7 +214,7 @@ class DeleteProjectAction(DbAction):
 
     def execute(self, args):
         if len(args) != 1:
-            print("usage: elbe db del_project <project_dir>")
+            print('usage: elbe db del_project <project_dir>')
             return
 
         db = ElbeDB()
@@ -233,7 +233,7 @@ class SetXmlAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print("usage: elbe db set_xml <project_dir> <xml>")
+            print('usage: elbe db set_xml <project_dir> <xml>')
             return
 
         db = ElbeDB()
@@ -252,22 +252,22 @@ class BuildAction(DbAction):
 
     def execute(self, args):
         if len(args) != 1:
-            print("usage: elbe db build <project_dir>")
+            print('usage: elbe db build <project_dir>')
             return
 
         db = ElbeDB()
-        db.set_busy(args[0], ["empty_project", "needs_build", "has_changes",
-                              "build_done", "build_failed"])
+        db.set_busy(args[0], ['empty_project', 'needs_build', 'has_changes',
+                              'build_done', 'build_failed'])
         try:
             ep = db.load_project(args[0])
             ep.build()
             db.update_project_files(ep)
         except Exception as e:
             db.update_project_files(ep)
-            db.reset_busy(args[0], "build_failed")
+            db.reset_busy(args[0], 'build_failed')
             print(str(e))
             return
-        db.reset_busy(args[0], "build_done")
+        db.reset_busy(args[0], 'build_done')
 
 
 DbAction.register(BuildAction)
@@ -282,14 +282,14 @@ class GetFilesAction(DbAction):
 
     def execute(self, args):
         if len(args) != 1:
-            print("usage: elbe db get_files <project_dir>")
+            print('usage: elbe db get_files <project_dir>')
             return
 
         db = ElbeDB()
         files = db.get_project_files(args[0])
         for f in files:
             if f.description:
-                print(f"{f.name:40}  {f.description}")
+                print(f'{f.name:40}  {f.description}')
             else:
                 print(f.name)
 
@@ -306,14 +306,14 @@ class ResetProjectAction(DbAction):
 
     def execute(self, args):
         oparser = OptionParser(
-            usage="usage: %prog db reset_project [options] <project_dir>")
-        oparser.add_option("--clean", dest="clean", default=False,
-                           action="store_true")
+            usage='usage: %prog db reset_project [options] <project_dir>')
+        oparser.add_option('--clean', dest='clean', default=False,
+                           action='store_true')
 
         (opt, arg) = oparser.parse_args(args)
 
         if len(arg) != 1:
-            print("wrong number of arguments")
+            print('wrong number of arguments')
             oparser.print_help()
             return
 
@@ -333,7 +333,7 @@ class SetProjectVersionAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print("usage: elbe db set_project_version <project_dir> <version>")
+            print('usage: elbe db set_project_version <project_dir> <version>')
             return
 
         db = ElbeDB()
@@ -352,7 +352,7 @@ class ListVersionsAction(DbAction):
 
     def execute(self, args):
         if len(args) != 1:
-            print("usage: elbe db list_versions <project_dir>")
+            print('usage: elbe db list_versions <project_dir>')
             return
 
         db = ElbeDB()
@@ -360,7 +360,7 @@ class ListVersionsAction(DbAction):
 
         for v in versions:
             if v.description:
-                print(f"{v.version}: {v.description}")
+                print(f'{v.version}: {v.description}')
             else:
                 print(v.version)
 
@@ -377,13 +377,13 @@ class SaveVersionAction(DbAction):
 
     def execute(self, args):
         oparser = OptionParser(
-            usage="usage: %prog db save_version <project_dir>")
-        oparser.add_option("--description", dest="description")
+            usage='usage: %prog db save_version <project_dir>')
+        oparser.add_option('--description', dest='description')
 
         (opt, arg) = oparser.parse_args(args)
 
         if len(arg) != 1:
-            print("wrong number of arguments")
+            print('wrong number of arguments')
             oparser.print_help()
             return
 
@@ -403,7 +403,7 @@ class DelVersionAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print("usage: elbe db del_version <project_dir> <version>")
+            print('usage: elbe db del_version <project_dir> <version>')
             return
 
         db = ElbeDB()
@@ -422,7 +422,7 @@ class PrintVersionXMLAction(DbAction):
 
     def execute(self, args):
         if len(args) != 2:
-            print("usage: elbe db print_version_xml <project_dir> <version>")
+            print('usage: elbe db print_version_xml <project_dir> <version>')
             return
 
         db = ElbeDB()

@@ -18,4 +18,4 @@ class changelogs_xml:
         xmlpkg.et.text = changelog_text
 
     def write(self, fname):
-        self.outxml.write(fname, encoding="utf-8")
+        self.outxml.write(fname, encoding='utf-8')

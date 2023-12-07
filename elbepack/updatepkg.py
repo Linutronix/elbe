@@ -37,14 +37,14 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         xml = ElbeXML(xml_filename, buildtype=override_buildtype,
                       skip_validate=skip_validate)
 
-        if not xml.has("fullpkgs"):
-            raise MissingData("Xml does not have fullpkgs list")
+        if not xml.has('fullpkgs'):
+            raise MissingData('Xml does not have fullpkgs list')
 
-        if not project.xml.has("fullpkgs"):
-            raise MissingData("Source Xml does not have fullpkgs list")
+        if not project.xml.has('fullpkgs'):
+            raise MissingData('Source Xml does not have fullpkgs list')
 
         if not project.buildenv.rfs:
-            raise MissingData("Target does not have a build environment")
+            raise MissingData('Target does not have a build environment')
 
         cache = project.get_rpcaptcache()
 
@@ -54,7 +54,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         for p in instpkgs:
             instindex[p.name] = p
 
-        xmlpkgs = xml.node("/fullpkgs")
+        xmlpkgs = xml.node('/fullpkgs')
         xmlindex = {}
 
         fnamelist = []
@@ -66,7 +66,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
             xmlindex[name] = p
 
             if name not in instindex:
-                logging.info("Package removed: %s", name)
+                logging.info('Package removed: %s', name)
                 continue
 
             ipkg = instindex[name]
@@ -75,42 +75,42 @@ def gen_update_pkg(project, xml_filename, upd_filename,
             pfname = ipkg.installed_deb
 
             if comp == 0:
-                logging.info("Package ok: %s-%s", name, ipkg.installed_version)
+                logging.info('Package ok: %s-%s', name, ipkg.installed_version)
                 if debug:
                     fnamelist.append(pfname)
                 continue
 
             if comp > 0:
-                logging.info("Package upgrade: %s", pfname)
+                logging.info('Package upgrade: %s', pfname)
                 fnamelist.append(pfname)
             else:
-                logging.info("Package downgrade: %s-%s",
+                logging.info('Package downgrade: %s-%s',
                              name, ipkg.installed_version)
 
         for p in instpkgs:
             if p.name in xmlindex:
                 continue
 
-            logging.info("Package %s newly installed", p.name)
+            logging.info('Package %s newly installed', p.name)
             pfname = p.installed_deb
             fnamelist.append(pfname)
 
-    update = os.path.join(project.builddir, "update")
+    update = os.path.join(project.builddir, 'update')
 
     if os.path.exists(update):
         rmtree(update)
 
-    system(f"mkdir -p {update}")
+    system(f'mkdir -p {update}')
 
     if xml_filename:
-        repodir = os.path.join(update, "repo")
+        repodir = os.path.join(update, 'repo')
 
         repo = UpdateRepo(xml, repodir)
 
         for fname in fnamelist:
             path = os.path.join(
                 project.chrootpath,
-                "var/cache/apt/archives",
+                'var/cache/apt/archives',
                 fname)
             repo.includedeb(path)
 
@@ -118,10 +118,10 @@ def gen_update_pkg(project, xml_filename, upd_filename,
 
         dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
-        project.xml.xml.write(os.path.join(update, "new.xml"))
+        project.xml.xml.write(os.path.join(update, 'new.xml'))
         system(f"cp {xml_filename} {os.path.join(update, 'base.xml')}")
     else:
-        system("cp source.xml update/new.xml")
+        system('cp source.xml update/new.xml')
 
     if project.presh_file:
         copyfile(project.presh_file, update + '/pre.sh')
@@ -137,10 +137,10 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if cfg_dir:
         inlucdedir(update, 'conf', cfg_dir)
 
-    create_zip_archive(upd_filename, update, ".")
+    create_zip_archive(upd_filename, update, '.')
 
     if project.postbuild_file:
-        logging.info("Postbuild script")
+        logging.info('Postbuild script')
         cmd = (f' "{upd_filename} {project.xml.text("project/version")} '
                f'{project.xml.text("project/name")}"')
         do(project.postbuild_file + cmd, allow_fail=True)

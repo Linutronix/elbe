@@ -25,13 +25,13 @@ class ValidationError(Exception):
         self.validation = validation
 
     def __repr__(self):
-        rep = "Elbe XML Validation Error\n"
+        rep = 'Elbe XML Validation Error\n'
         for v in self.validation:
             rep += (v + '\n')
         return rep
 
     def __str__(self):
-        retval = ""
+        retval = ''
         for v in self.validation:
             retval += (v + '\n')
         return retval
@@ -49,11 +49,11 @@ class ValidationMode:
 
 def replace_localmachine(mirror, initvm=True):
     if initvm:
-        localmachine = "10.0.2.2"
+        localmachine = '10.0.2.2'
     else:
-        localmachine = "localhost"
+        localmachine = 'localhost'
 
-    return mirror.replace("LOCALMACHINE", localmachine)
+    return mirror.replace('LOCALMACHINE', localmachine)
 
 
 class ElbeXML:
@@ -70,19 +70,19 @@ class ElbeXML:
                 raise ValidationError(validation)
 
         self.xml = etree(fname)
-        self.prj = self.xml.node("/project")
-        self.tgt = self.xml.node("/target")
+        self.prj = self.xml.node('/project')
+        self.tgt = self.xml.node('/target')
 
         if buildtype:
             pass
-        elif self.xml.has("project/buildtype"):
-            buildtype = self.xml.text("/project/buildtype")
+        elif self.xml.has('project/buildtype'):
+            buildtype = self.xml.text('/project/buildtype')
         else:
-            buildtype = "nodefaults"
+            buildtype = 'nodefaults'
         self.defs = ElbeDefaults(buildtype)
 
         if not skip_validate and url_validation != ValidationMode.NO_CHECK:
-            self.validate_apt_sources(url_validation, self.defs["arch"])
+            self.validate_apt_sources(url_validation, self.defs['arch'])
 
     def text(self, txt, key=None):
         if key:
@@ -100,43 +100,43 @@ class ElbeXML:
 
     def is_cross(self, host_arch):
 
-        target = self.text("project/buildimage/arch", key="arch")
+        target = self.text('project/buildimage/arch', key='arch')
 
         if host_arch == target:
             return False
 
-        if (host_arch == "amd64") and (target == "i386"):
+        if (host_arch == 'amd64') and (target == 'i386'):
             return False
 
-        if (host_arch == "armhf") and (target == "armel"):
+        if (host_arch == 'armhf') and (target == 'armel'):
             return False
 
         return True
 
     def get_initvm_primary_mirror(self, cdrompath):
-        if self.xml.has("initvm/mirror/primary_host"):
-            m = self.node("initvm/mirror")
+        if self.xml.has('initvm/mirror/primary_host'):
+            m = self.node('initvm/mirror')
 
-            mirror = m.text("primary_proto") + "://"
-            mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace("//", "/")
+            mirror = m.text('primary_proto') + '://'
+            mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace('//', '/')
 
-        elif self.xml.has("initvm/mirror/cdrom") and cdrompath:
-            mirror = f"file://{cdrompath}"
+        elif self.xml.has('initvm/mirror/cdrom') and cdrompath:
+            mirror = f'file://{cdrompath}'
 
-        return mirror.replace("LOCALMACHINE", "10.0.2.2")
+        return mirror.replace('LOCALMACHINE', '10.0.2.2')
 
     def get_primary_mirror(self, cdrompath, initvm=True, hostsysroot=False):
-        if self.prj.has("mirror/primary_host"):
-            m = self.prj.node("mirror")
+        if self.prj.has('mirror/primary_host'):
+            m = self.prj.node('mirror')
 
-            if hostsysroot and self.prj.has("mirror/host"):
-                mirror = m.text("host")
+            if hostsysroot and self.prj.has('mirror/host'):
+                mirror = m.text('host')
             else:
-                mirror = m.text("primary_proto") + "://"
-                mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace("//", "/")
+                mirror = m.text('primary_proto') + '://'
+                mirror += f"{m.text('primary_host')}/{m.text('primary_path')}".replace('//', '/')
 
-        elif self.prj.has("mirror/cdrom") and cdrompath:
-            mirror = f"file://{cdrompath}"
+        elif self.prj.has('mirror/cdrom') and cdrompath:
+            mirror = f'file://{cdrompath}'
 
         return replace_localmachine(mirror, initvm)
 
@@ -144,30 +144,30 @@ class ElbeXML:
     def create_apt_sources_list(self, build_sources=False, initvm=True, hostsysroot=False):
 
         if self.prj is None:
-            return "# No Project"
+            return '# No Project'
 
-        if not self.prj.has("mirror") and not self.prj.has("mirror/cdrom"):
-            return "# no mirrors configured"
+        if not self.prj.has('mirror') and not self.prj.has('mirror/cdrom'):
+            return '# no mirrors configured'
 
         goptions = []
         mirrors = []
-        suite = self.prj.text("suite")
+        suite = self.prj.text('suite')
 
-        if self.prj.has("mirror/primary_host"):
+        if self.prj.has('mirror/primary_host'):
 
             pmirror = self.get_primary_mirror(None, hostsysroot=hostsysroot)
 
-            if self.prj.has("mirror/options"):
+            if self.prj.has('mirror/options'):
                 poptions = [opt.et.text.strip(' \t\n')
                             for opt
-                            in self.prj.all("mirror/options/option")]
+                            in self.prj.all('mirror/options/option')]
             else:
                 poptions = []
 
             if hostsysroot:
-                arch = self.text("project/buildimage/sdkarch", key="sdkarch")
+                arch = self.text('project/buildimage/sdkarch', key='sdkarch')
             else:
-                arch = self.text("project/buildimage/arch", key="arch")
+                arch = self.text('project/buildimage/arch', key='arch')
 
             poptions = goptions + poptions
 
@@ -175,44 +175,44 @@ class ElbeXML:
                 mirrors.append(
                     f"deb-src [{' '.join(poptions)}] {pmirror} {suite} main")
 
-            poptions.append(f"arch={arch}")
+            poptions.append(f'arch={arch}')
 
             mirrors.append(f"deb [{' '.join(poptions)}] {pmirror} {suite} main")
 
-            if self.prj.has("mirror/url-list"):
+            if self.prj.has('mirror/url-list'):
 
-                for url in self.prj.node("mirror/url-list"):
+                for url in self.prj.node('mirror/url-list'):
 
-                    if url.has("options"):
+                    if url.has('options'):
                         options = [opt.et.text.strip(' \t\n')
                                    for opt
-                                   in url.all("options/option")]
+                                   in url.all('options/option')]
                     else:
                         options = []
 
                     options = goptions + options
 
-                    if url.has("binary"):
-                        bin_url = url.text("binary").strip()
+                    if url.has('binary'):
+                        bin_url = url.text('binary').strip()
                         mirrors.append(f"deb [{' '.join(options)}] {bin_url}")
 
-                    if url.has("source"):
-                        src_url = url.text("source").strip()
+                    if url.has('source'):
+                        src_url = url.text('source').strip()
                         mirrors.append(
                             f"deb-src [{' '.join(options)}] {src_url}")
 
-        if self.prj.has("mirror/cdrom"):
-            mirrors.append(f"deb copy:///cdrom/targetrepo {suite} main added")
+        if self.prj.has('mirror/cdrom'):
+            mirrors.append(f'deb copy:///cdrom/targetrepo {suite} main added')
 
         return replace_localmachine('\n'.join(mirrors), initvm)
 
     @staticmethod
     def validate_repo(r):
         try:
-            fp = urlopen(r["url"] + "InRelease", None, 30)
+            fp = urlopen(r['url'] + 'InRelease', None, 30)
         except URLError:
             try:
-                fp = urlopen(r["url"] + "Release", None, 30)
+                fp = urlopen(r['url'] + 'Release', None, 30)
             except URLError:
                 return False
             except socket.timeout:
@@ -221,15 +221,15 @@ class ElbeXML:
             return False
 
         ret = False
-        if "srcstr" in r:
+        if 'srcstr' in r:
             for line in fp:
-                needle = r["srcstr"].encode(encoding='utf-8')
+                needle = r['srcstr'].encode(encoding='utf-8')
                 if line.find(needle) != -1:
                     ret = True
                     break
-        elif "binstr" in r:
+        elif 'binstr' in r:
             for line in fp:
-                needle = r["binstr"].encode(encoding='utf-8')
+                needle = r['binstr'].encode(encoding='utf-8')
                 if line.find(needle) != -1:
                     ret = True
                     break
@@ -248,24 +248,24 @@ class ElbeXML:
         repos = []
         for line in sources_lines:
             line = re.sub(r'\[.*\] ', '', line)
-            if line.startswith("deb copy:"):
+            if line.startswith('deb copy:'):
                 # This is a cdrom, we dont verify it
                 pass
-            elif line.startswith("deb-src copy:"):
+            elif line.startswith('deb-src copy:'):
                 # This is a cdrom, we dont verify it
                 pass
-            elif line.startswith("deb ") or line.startswith("deb-src "):
+            elif line.startswith('deb ') or line.startswith('deb-src '):
                 # first check the validation mode, and
                 # only add the repo, when it matches
                 # the valudation mode
                 if url_validation == ValidationMode.NO_CHECK:
                     continue
 
-                if line.startswith("deb-src ") and \
+                if line.startswith('deb-src ') and \
                    url_validation != ValidationMode.CHECK_ALL:
                     continue
 
-                lsplit = line.split(" ")
+                lsplit = line.split(' ')
                 url = lsplit[1]
                 suite = lsplit[2]
                 r = {}
@@ -277,9 +277,9 @@ class ElbeXML:
                 # deb http://mirror foo/ --> URI-Prefix: http://mirror/foo
                 #
                 if suite.endswith('/'):
-                    r["url"] = f"{url}/{suite}"
+                    r['url'] = f'{url}/{suite}'
                 else:
-                    r["url"] = f"{url}/dists/{suite}/"
+                    r['url'] = f'{url}/dists/{suite}/'
 
                 #
                 # Try to get sections.
@@ -288,32 +288,32 @@ class ElbeXML:
                 #
                 try:
                     section = lsplit[3]
-                    if line.startswith("deb "):
-                        r["binstr"] = (f"{section}/binary-{arch}/Packages")
+                    if line.startswith('deb '):
+                        r['binstr'] = (f'{section}/binary-{arch}/Packages')
                     else:
-                        r["srcstr"] = (f"{section}/source/Sources")
+                        r['srcstr'] = (f'{section}/source/Sources')
                 except IndexError:
-                    if line.startswith("deb "):
-                        r["binstr"] = "Packages"
+                    if line.startswith('deb '):
+                        r['binstr'] = 'Packages'
                     else:
-                        r["srcstr"] = "Sources"
+                        r['srcstr'] = 'Sources'
 
                 repos.append(r)
 
         if not self.prj:
             return
 
-        if self.prj.has("mirror/primary_proxy"):
-            os.environ["no_proxy"] = "10.0.2.2,localhost,127.0.0.1"
+        if self.prj.has('mirror/primary_proxy'):
+            os.environ['no_proxy'] = '10.0.2.2,localhost,127.0.0.1'
             proxy = self.prj.text(
-                "mirror/primary_proxy").strip().replace("LOCALMACHINE",
-                                                        "10.0.2.2")
-            os.environ["http_proxy"] = proxy
-            os.environ["https_proxy"] = proxy
+                'mirror/primary_proxy').strip().replace('LOCALMACHINE',
+                                                        '10.0.2.2')
+            os.environ['http_proxy'] = proxy
+            os.environ['https_proxy'] = proxy
         else:
-            os.environ["http_proxy"] = ""
-            os.environ["https_proxy"] = ""
-            os.environ["no_proxy"] = ""
+            os.environ['http_proxy'] = ''
+            os.environ['https_proxy'] = ''
+            os.environ['no_proxy'] = ''
 
         passman = HTTPPasswordMgrWithDefaultRealm()
         authhandler = HTTPBasicAuthHandler(passman)
@@ -321,34 +321,34 @@ class ElbeXML:
         install_opener(opener)
 
         for r in repos:
-            if '@' in r["url"]:
-                t = r["url"].split('@')
+            if '@' in r['url']:
+                t = r['url'].split('@')
                 if '://' in t[0]:
                     scheme, auth = t[0].split('://')
                     scheme = scheme + '://'
                 else:
                     scheme = ''
                     auth = t[0]
-                r["url"] = scheme + t[1]
+                r['url'] = scheme + t[1]
                 usr, passwd = auth.split(':')
-                passman.add_password(None, r["url"], usr, passwd)
+                passman.add_password(None, r['url'], usr, passwd)
             if not self.validate_repo(r):
-                if "srcstr" in r:
+                if 'srcstr' in r:
                     raise ValidationError(
                         [f"Repository {r['url']}, {r['srcstr']} can not be validated"])
-                if "binstr" in r:
+                if 'binstr' in r:
                     raise ValidationError(
                         [f"Repository {r['url']}, {r['binstr']} can not be validated"])
                 raise ValidationError(
                     [f"Repository {r['url']} can not be validated"])
 
     def get_target_packages(self):
-        if not self.xml.has("/target/pkg-list"):
+        if not self.xml.has('/target/pkg-list'):
             return []
-        return [p.et.text for p in self.xml.node("/target/pkg-list")]
+        return [p.et.text for p in self.xml.node('/target/pkg-list')]
 
     def add_target_package(self, pkg):
-        plist = self.xml.ensure_child("/target/pkg-list")
+        plist = self.xml.ensure_child('/target/pkg-list')
 
         # only add package once
         for p in plist:
@@ -360,7 +360,7 @@ class ElbeXML:
         pak.et.tail = '\n'
 
     def set_target_packages(self, pkglist):
-        plist = self.xml.ensure_child("/target/pkg-list")
+        plist = self.xml.ensure_child('/target/pkg-list')
         plist.clear()
         for p in pkglist:
             pak = plist.append('pkg')
@@ -369,8 +369,8 @@ class ElbeXML:
 
     def get_buildenv_packages(self):
         retval = []
-        if self.prj.has("buildimage/pkg-list"):
-            retval = [p.et.text for p in self.prj.node("buildimage/pkg-list")]
+        if self.prj.has('buildimage/pkg-list'):
+            retval = [p.et.text for p in self.prj.node('buildimage/pkg-list')]
 
         return retval
 
@@ -446,14 +446,14 @@ class ElbeXML:
         self.xml.set_child_position(tree, 0)
 
     def get_initvm_codename(self):
-        if self.has("initvm/suite"):
-            return self.text("initvm/suite")
+        if self.has('initvm/suite'):
+            return self.text('initvm/suite')
         return None
 
     def set_cdrom_mirror(self, abspath):
-        mirror = self.node("project/mirror")
+        mirror = self.node('project/mirror')
         mirror.clear()
-        cdrom = mirror.ensure_child("cdrom")
+        cdrom = mirror.ensure_child('cdrom')
         cdrom.set_text(abspath)
 
     def dump_elbe_version(self):
@@ -468,4 +468,4 @@ class ElbeXML:
     def get_elbe_version(self):
         if self.has('elbe_version'):
             return self.text('elbe_version')
-        return "no version"
+        return 'no version'

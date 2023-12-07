@@ -67,8 +67,8 @@ class ESoap (ServiceBase):
         # prerm/postinst scripts.
         # elbe daemon does it itself, because cherrypy
         # notices that.
-        hostfs.write_file("usr/sbin/policy-rc.d",
-                          0o755, "#!/bin/sh\nexit 101\n")
+        hostfs.write_file('usr/sbin/policy-rc.d',
+                          0o755, '#!/bin/sh\nexit 101\n')
         try:
             env = {'LANG': 'C',
                    'LANGUAGE': 'C',
@@ -76,7 +76,7 @@ class ESoap (ServiceBase):
                    'DEBIAN_FRONTEND': 'noninteractive',
                    'DEBCONF_NONINTERACTIVE_SEEN': 'true'}
 
-            cmd = ("apt-get update; "
+            cmd = ('apt-get update; '
                    f"apt-get install -y --allow-downgrades {' '.join(pkgs)}")
 
             ret, out = command_out(cmd, env_add=env)
@@ -122,9 +122,9 @@ class ESoap (ServiceBase):
         if part == 0:
             if self.app.pm.db.is_busy(builddir):
                 return -1
-            self.app.pm.db.set_busy(builddir, ["empty_project", "needs_build",
-                                               "has_changes", "build_done",
-                                               "build_failed"])
+            self.app.pm.db.set_busy(builddir, ['empty_project', 'needs_build',
+                                               'has_changes', 'build_done',
+                                               'build_failed'])
             # truncate file
             with open(fn, 'w') as fp:
                 fp.write('')
@@ -132,8 +132,8 @@ class ESoap (ServiceBase):
         if part == -1:
             with open(fn, 'a') as fp:
                 fp.flush()
-            self.app.pm.db.reset_busy(builddir, "has_changes")
-            if fname == "source.xml":
+            self.app.pm.db.reset_busy(builddir, 'has_changes')
+            if fname == 'source.xml':
                 # ensure that the project cache is reloaded
                 self.app.pm.close_current_project(uid)
                 self.app.pm.open_project(
@@ -154,21 +154,21 @@ class ESoap (ServiceBase):
 
         size = 1024 * 1024 * 5
         pos = size * part
-        file_name = builddir + "/" + filename
+        file_name = builddir + '/' + filename
         file_stat = os.stat(file_name)
 
         if pos >= file_stat.st_size:
-            return "EndOfFile"
+            return 'EndOfFile'
 
         with open(file_name, 'rb') as fp:
             if not fp:
-                return "FileNotFound"
+                return 'FileNotFound'
             try:
                 fp.seek(pos)
                 data = fp.read(size)
                 return binascii.b2a_base64(data)
             except BaseException:
-                return "EndOfFile"
+                return 'EndOfFile'
 
     @rpc(String)
     @authenticated_uid
@@ -228,10 +228,10 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(
             uid, builddir, url_validation=ValidationMode.NO_CHECK)
 
-        cdrom_fname = os.path.join(builddir, "uploaded_cdrom.iso")
+        cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
         # Now write empty File
-        fp = open(cdrom_fname, "w")
+        fp = open(cdrom_fname, 'w')
         fp.close()
 
     @rpc(String, String)
@@ -241,10 +241,10 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(
             uid, builddir, url_validation=ValidationMode.NO_CHECK)
 
-        cdrom_fname = os.path.join(builddir, "uploaded_cdrom.iso")
+        cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
         # Now append data to cdrom_file
-        fp = open(cdrom_fname, "ab")
+        fp = open(cdrom_fname, 'ab')
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
@@ -262,10 +262,10 @@ class ESoap (ServiceBase):
     def start_pdebuild(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
 
-        pdebuild_fname = os.path.join(builddir, "current_pdebuild.tar.gz")
+        pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
         # Now write empty File
-        fp = open(pdebuild_fname, "w")
+        fp = open(pdebuild_fname, 'w')
         fp.close()
 
     @rpc(String, String)
@@ -274,10 +274,10 @@ class ESoap (ServiceBase):
     def append_pdebuild(self, uid, builddir, data):
         self.app.pm.open_project(uid, builddir)
 
-        pdebuild_fname = os.path.join(builddir, "current_pdebuild.tar.gz")
+        pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
         # Now write empty File
-        fp = open(pdebuild_fname, "ab")
+        fp = open(pdebuild_fname, 'ab')
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
@@ -297,7 +297,7 @@ class ESoap (ServiceBase):
         orig_fname = os.path.join(builddir, fname)
 
         # Now write empty File
-        fp = open(orig_fname, "w")
+        fp = open(orig_fname, 'w')
         fp.close()
 
         self.app.pm.set_orig_fname(uid, fname)
@@ -311,7 +311,7 @@ class ESoap (ServiceBase):
         orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(uid))
 
         # Now append to File
-        fp = open(orig_fname, "ab")
+        fp = open(orig_fname, 'ab')
         fp.write(binascii.a2b_base64(data))
         fp.close()
 
@@ -369,7 +369,7 @@ class ESoap (ServiceBase):
     @authenticated_admin
     @soap_faults
     def shutdown_initvm(self):
-        system("systemctl --no-block poweroff")
+        system('systemctl --no-block poweroff')
 
     @rpc(String)
     @authenticated_uid
@@ -385,7 +385,7 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(uid, builddir)
         s = ''
         for _, _, filenames in os.walk(
-                os.path.join(builddir, "repo/pool/main")):
+                os.path.join(builddir, 'repo/pool/main')):
             for filename in fnmatch.filter(filenames, '*.deb'):
                 s += filename + '\n'
         return s
@@ -395,12 +395,12 @@ class ESoap (ServiceBase):
     @soap_faults
     def tar_prjrepo(self, uid, builddir, filename):
         self.app.pm.open_project(uid, builddir)
-        with tarfile.open(os.path.join(builddir, filename), "w:gz") as tar:
+        with tarfile.open(os.path.join(builddir, filename), 'w:gz') as tar:
             tar.add(
                 os.path.join(
-                    builddir, "repo"), arcname=os.path.basename(
+                    builddir, 'repo'), arcname=os.path.basename(
                     os.path.join(
-                        builddir, "repo")))
+                        builddir, 'repo')))
 
     @rpc(String, String)
     @authenticated_uid

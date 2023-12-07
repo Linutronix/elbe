@@ -16,8 +16,8 @@ from elbepack.version import elbe_version
 from elbepack.aptpkgutils import APTPackage
 from elbepack.shellhelper import do
 
-report = logging.getLogger("report")
-validation = logging.getLogger("validation")
+report = logging.getLogger('report')
+validation = logging.getLogger('validation')
 
 
 def get_initvm_pkglist():
@@ -36,12 +36,12 @@ def dump_fullpkgs(xml, rfs, cache):
         xml.append_full_pkg(p)
 
     sources_list = xml.xml.ensure_child('sources_list')
-    slist = rfs.read_file("etc/apt/sources.list")
+    slist = rfs.read_file('etc/apt/sources.list')
     sources_list.set_text(slist)
 
     try:
         preferences = xml.xml.ensure_child('apt_prefs')
-        prefs = rfs.read_file("etc/apt/preferences")
+        prefs = rfs.read_file('etc/apt/preferences')
         preferences.set_text(prefs)
     except IOError:
         pass
@@ -63,12 +63,12 @@ def dump_initvmpkgs(xml):
         xml.append_initvm_pkg(p)
 
     sources_list = xml.xml.ensure_child('initvm_sources_list')
-    slist = hostfs.read_file("etc/apt/sources.list")
+    slist = hostfs.read_file('etc/apt/sources.list')
     sources_list.set_text(slist)
 
     try:
         preferences = xml.xml.ensure_child('initvm_apt_prefs')
-        prefs = hostfs.read_file("etc/apt/preferences")
+        prefs = hostfs.read_file('etc/apt/preferences')
         preferences.set_text(prefs)
     except IOError:
         pass
@@ -76,19 +76,19 @@ def dump_initvmpkgs(xml):
 
 def check_full_pkgs(pkgs, fullpkgs, cache):
 
-    validation.info("ELBE Package validation")
-    validation.info("=======================")
-    validation.info("")
-    validation.info("Package List validation")
-    validation.info("-----------------------")
-    validation.info("")
+    validation.info('ELBE Package validation')
+    validation.info('=======================')
+    validation.info('')
+    validation.info('Package List validation')
+    validation.info('-----------------------')
+    validation.info('')
 
     errors = 0
 
     if pkgs:
         for p in pkgs:
             name = p.et.text
-            nomulti_name = name.split(":")[0]
+            nomulti_name = name.split(':')[0]
             if not cache.has_pkg(nomulti_name):
                 validation.error("Package '%s' does not exist", nomulti_name)
                 errors += 1
@@ -108,14 +108,14 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
                 continue
 
     if errors == 0:
-        validation.info("No Errors found")
+        validation.info('No Errors found')
 
     if not fullpkgs:
         return
 
-    validation.info("Full Packagelist validation")
-    validation.info("---------------------------")
-    validation.info("")
+    validation.info('Full Packagelist validation')
+    validation.info('---------------------------')
+    validation.info('')
     errors = 0
 
     pindex = {}
@@ -164,72 +164,72 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
-            validation.error("Additional package %s installed, that was not requested",
+            validation.error('Additional package %s installed, that was not requested',
                              cp.name)
             errors += 1
 
     if errors == 0:
-        validation.info("No Errors found")
+        validation.info('No Errors found')
 
 
 def elbe_report(xml, buildenv, cache, targetfs):
 
     rfs = buildenv.rfs
 
-    report.info("ELBE Report for Project %s\n\n"
-                "Report timestamp: %s\n"
-                "elbe: %s",
-                xml.text("project/name"),
-                datetime.now().strftime("%Y%m%d-%H%M%S"),
+    report.info('ELBE Report for Project %s\n\n'
+                'Report timestamp: %s\n'
+                'elbe: %s',
+                xml.text('project/name'),
+                datetime.now().strftime('%Y%m%d-%H%M%S'),
                 str(elbe_version))
 
     slist = rfs.read_file('etc/apt/sources.list')
-    report.info("")
-    report.info("Apt Sources dump")
-    report.info("----------------")
-    report.info("")
-    report.info("%s", slist)
-    report.info("")
+    report.info('')
+    report.info('Apt Sources dump')
+    report.info('----------------')
+    report.info('')
+    report.info('%s', slist)
+    report.info('')
 
     try:
-        prefs = rfs.read_file("etc/apt/preferences")
+        prefs = rfs.read_file('etc/apt/preferences')
     except IOError:
-        prefs = ""
+        prefs = ''
 
-    report.info("")
-    report.info("Apt Preferences dump")
-    report.info("--------------------")
-    report.info("")
-    report.info("%s", prefs)
-    report.info("")
-    report.info("Installed Packages List")
-    report.info("-----------------------")
-    report.info("")
+    report.info('')
+    report.info('Apt Preferences dump')
+    report.info('--------------------')
+    report.info('')
+    report.info('%s', prefs)
+    report.info('')
+    report.info('Installed Packages List')
+    report.info('-----------------------')
+    report.info('')
 
     instpkgs = cache.get_installed_pkgs()
     for p in instpkgs:
-        report.info("|%s|%s|%s", p.name, p.installed_version, p.origin)
+        report.info('|%s|%s|%s', p.name, p.installed_version, p.origin)
 
     index = cache.get_fileindex(removeprefix='/usr')
     mt_index = targetfs.mtime_snap()
 
-    if xml.has("archive") and not xml.text("archive") is None:
-        with archive_tmpfile(xml.text("archive")) as fp:
+    if xml.has('archive') and not xml.text('archive') is None:
+        with archive_tmpfile(xml.text('archive')) as fp:
             do(f'tar xvfj "{fp.name}" -h -C "{targetfs.path}"')
         mt_index_postarch = targetfs.mtime_snap()
     else:
         mt_index_postarch = mt_index
 
-    if xml.has("target/finetuning"):
+    if xml.has('target/finetuning'):
         do_finetuning(xml, buildenv, targetfs)
         mt_index_post_fine = targetfs.mtime_snap()
     else:
         mt_index_post_fine = mt_index_postarch
 
-    report.info("")
-    report.info("File List")
-    report.info("---------")
-    report.info("")
+    report.info('')
+    report.info('File List')
+    report.info('---------')
+    report.info('')
 
     tgt_pkg_list = set()
 
@@ -239,28 +239,28 @@ def elbe_report(xml, buildenv, cache, targetfs):
             pkg = index[unprefixed]
             tgt_pkg_list.add(pkg)
         else:
-            pkg = "postinst generated"
+            pkg = 'postinst generated'
 
         if fpath in mt_index_post_fine:
             if fpath in mt_index_postarch:
                 if mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
-                    pkg = "modified finetuning"
+                    pkg = 'modified finetuning'
                 elif fpath in mt_index:
                     if mt_index_postarch[fpath] != mt_index[fpath]:
-                        pkg = "from archive"
+                        pkg = 'from archive'
                     # else leave pkg as is
                 else:
-                    pkg = "added in archive"
+                    pkg = 'added in archive'
             else:
-                pkg = "added in finetuning"
+                pkg = 'added in finetuning'
         # else leave pkg as is
 
-        report.info("|+%s+|%s", fpath, pkg)
+        report.info('|+%s+|%s', fpath, pkg)
 
-    report.info("")
-    report.info("Deleted Files")
-    report.info("-------------")
-    report.info("")
+    report.info('')
+    report.info('Deleted Files')
+    report.info('-------------')
+    report.info('')
 
     for fpath in list(mt_index.keys()):
         if fpath not in mt_index_post_fine:
@@ -268,50 +268,50 @@ def elbe_report(xml, buildenv, cache, targetfs):
             if unprefixed in index:
                 pkg = index[unprefixed]
             else:
-                pkg = "postinst generated"
-            report.info("|+%s+|%s", fpath, pkg)
+                pkg = 'postinst generated'
+            report.info('|+%s+|%s', fpath, pkg)
 
-    report.info("")
-    report.info("Target Package List")
-    report.info("-------------------")
-    report.info("")
+    report.info('')
+    report.info('Target Package List')
+    report.info('-------------------')
+    report.info('')
 
     instpkgs = cache.get_installed_pkgs()
     pkgindex = {}
     for p in instpkgs:
         pkgindex[p.name] = p
 
-    if xml.has("target/pkgversionlist"):
+    if xml.has('target/pkgversionlist'):
         targetfs.remove('etc/elbe_pkglist')
         f = targetfs.open('etc/elbe_pkglist', 'w')
     for pkg in tgt_pkg_list:
         p = pkgindex[pkg]
-        report.info("|%s|%s|%s|%s",
+        report.info('|%s|%s|%s|%s',
                     p.name,
                     p.installed_version,
                     p.is_auto_installed,
                     p.installed_md5)
-        if xml.has("target/pkgversionlist"):
-            f.write(f"{p.name} {p.installed_version} {p.installed_md5}\n")
+        if xml.has('target/pkgversionlist'):
+            f.write(f'{p.name} {p.installed_version} {p.installed_md5}\n')
 
-    if xml.has("target/pkgversionlist"):
+    if xml.has('target/pkgversionlist'):
         f.close()
 
-    if not xml.has("archive") or xml.text("archive") is None:
+    if not xml.has('archive') or xml.text('archive') is None:
         return list(tgt_pkg_list)
 
-    validation.info("")
-    validation.info("Archive validation")
-    validation.info("------------------")
-    validation.info("")
+    validation.info('')
+    validation.info('Archive validation')
+    validation.info('------------------')
+    validation.info('')
 
     for fpath in list(mt_index_postarch.keys()):
         if (fpath not in mt_index or
            mt_index_postarch[fpath] != mt_index[fpath]):
             if fpath not in mt_index_post_fine:
-                validation.warning("Archive file %s deleted in finetuning",
+                validation.warning('Archive file %s deleted in finetuning',
                                    fpath)
             elif mt_index_post_fine[fpath] != mt_index_postarch[fpath]:
-                validation.warning("Archive file %s modified in finetuning",
+                validation.warning('Archive file %s modified in finetuning',
                                    fpath)
     return list(tgt_pkg_list)

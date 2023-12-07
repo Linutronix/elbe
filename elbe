@@ -19,11 +19,11 @@ from elbepack.directories import init_directories, get_cmdlist
 
 
 def usage():
-    print("elbe v%s" % elbe_version)
+    print('elbe v%s' % elbe_version)
     print("need a subcommand: e.g. \'elbe initvm\'. \n\
     Available subcommands are: \n")
     for i in get_cmdlist():
-        print("        * %s" % i)
+        print('        * %s' % i)
 
 # First initialise the directories module
 # so that it knows, where the current elbe
@@ -36,18 +36,18 @@ if len(sys.argv) < 2:
     usage()
     sys.exit(20)
 
-if sys.argv[1] == "--version":
-    print("elbe v%s" % (elbe_version))
+if sys.argv[1] == '--version':
+    print('elbe v%s' % (elbe_version))
     sys.exit(0)
 
 cmd_list = get_cmdlist()
 
-if not sys.argv[1] in cmd_list:
-    print("Unknown subcommand !\n")
+if sys.argv[1] not in cmd_list:
+    print('Unknown subcommand !\n')
     usage()
     sys.exit(20)
 
-modname = "elbepack.commands." + sys.argv[1]
+modname = 'elbepack.commands.' + sys.argv[1]
 
 mod = __import__(modname)
 cmdmod = sys.modules[modname]

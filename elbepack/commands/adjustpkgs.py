@@ -29,10 +29,10 @@ def set_pkgs(pkglist):
             if p.essential or \
                p.is_auto_installed or \
                p.name in pkglist or \
-               p.installed.priority == "important" or \
-               p.installed.priority == "required":
+               p.installed.priority == 'important' or \
+               p.installed.priority == 'required':
                 continue
-            logging.info("MARK REMOVE %s", p.name)
+            logging.info('MARK REMOVE %s', p.name)
             p.mark_delete(auto_fix=False, purge=True)
 
         for name in pkglist:
@@ -45,7 +45,7 @@ def set_pkgs(pkglist):
             cp = cache[name]
 
             cp.mark_install()
-            logging.info("MARK INSTALL %s", cp.name)
+            logging.info('MARK INSTALL %s', cp.name)
 
         cache.commit(apt.progress.base.AcquireProgress(),
                      apt.progress.base.InstallProgress())
@@ -58,7 +58,7 @@ def set_pkgs(pkglist):
                 continue
             if p.is_auto_removable:
                 p.mark_delete(purge=True)
-                logging.info("MARKED AS AUTOREMOVE %s", p.name)
+                logging.info('MARKED AS AUTOREMOVE %s', p.name)
 
     cache.commit(apt.progress.base.AcquireProgress(),
                  apt.progress.base.InstallProgress())
@@ -67,16 +67,16 @@ def set_pkgs(pkglist):
 
 
 def run_command(argv):
-    oparser = OptionParser(usage="usage: %prog adjustpkgs [options] <xmlfile>")
+    oparser = OptionParser(usage='usage: %prog adjustpkgs [options] <xmlfile>')
 
-    oparser.add_option("-o", "--output", dest="output",
-                       help="name of logfile")
-    oparser.add_option("-n", "--name", dest="name",
-                       help="name of the project (included in the report)")
+    oparser.add_option('-o', '--output', dest='output',
+                       help='name of logfile')
+    oparser.add_option('-n', '--name', dest='name',
+                       help='name of the project (included in the report)')
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print("Wrong number of arguments")
+        print('Wrong number of arguments')
         oparser.print_help()
         sys.exit(62)
 
@@ -84,7 +84,7 @@ def run_command(argv):
         return 0
 
     xml = etree(args[0])
-    xml_pkglist = xml.node("/target/pkg-list")
+    xml_pkglist = xml.node('/target/pkg-list')
     xml_pkgs = [p.et.text for p in xml_pkglist]
 
     # TODO: install buildimage packages after target image generation
@@ -92,15 +92,15 @@ def run_command(argv):
     #         we need to introduce additional arguments for this
     #       in default copy mode chroot to the target and remove elbe-daemon
     #         and its dependencies (if it is not in  target/pkg-list.
-    buildenv_pkgs = ["python3-elbe-buildenv"]
-    if xml.has("./project/buildimage/pkg-list"):
+    buildenv_pkgs = ['python3-elbe-buildenv']
+    if xml.has('./project/buildimage/pkg-list'):
         buildenv_pkgs.extend([p.et.text for p in xml.node(
-            "project/buildimage/pkg-list")])
+            'project/buildimage/pkg-list')])
 
-    with elbe_logging({"files": opt.output}):
-        logging.info("ELBE Report for Project %s", opt.name)
+    with elbe_logging({'files': opt.output}):
+        logging.info('ELBE Report for Project %s', opt.name)
         return set_pkgs(xml_pkgs + buildenv_pkgs)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run_command(sys.argv[1:])

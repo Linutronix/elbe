@@ -22,12 +22,12 @@ class ElbeDocTest(ElbeTestCase):
         self.kwargs = {}
 
         if self.param is filesystem:
-            self.kwargs["extraglobs"] = {"this": filesystem.TmpdirFilesystem()}
+            self.kwargs['extraglobs'] = {'this': filesystem.TmpdirFilesystem()}
 
     def tearDown(self):
 
         if self.param is filesystem:
-            self.kwargs["extraglobs"]["this"].delete()
+            self.kwargs['extraglobs']['this'].delete()
 
     def test_doctest(self):
         fail, _ = doctest.testmod(self.param, **self.kwargs)

@@ -36,7 +36,7 @@ class TestSuite:
 
     def do_test(self, node, target):
         if node.tag not in self.test_dict:
-            raise TestException(f"Invalid Test {node.tag}")
+            raise TestException(f'Invalid Test {node.tag}')
         test = self.test_dict[node.tag]
         return test(node, target)()
 
@@ -47,12 +47,12 @@ class TestSuite:
                 test_cases.append(self.do_test(test, self.target))
             except TestException:
                 pass  # TODO - Handle me!
-        ts = junit.TestSuite(name=self.node.et.attrib["name"],
+        ts = junit.TestSuite(name=self.node.et.attrib['name'],
                              test_cases=test_cases)
         return ts
 
 
-@TestSuite.register("BaseTest", register=False)
+@TestSuite.register('BaseTest', register=False)
 class BaseTest:
 
     tag = None
@@ -63,15 +63,15 @@ class BaseTest:
         self.target = target
 
     def __call__(self):
-        raise TestException(f"Unimplemented Test {self.tag}")
+        raise TestException(f'Unimplemented Test {self.tag}')
 
 
-@TestSuite.register("file-exists")
+@TestSuite.register('file-exists')
 class TestFileExists(BaseTest):
 
     def __call__(self):
         path = self.node.et.text
         test = junit.TestCase(name=path, classname=self.tag)
         if not self.target.exists(path):
-            test.add_failure_info(message="FAILED")
+            test.add_failure_info(message='FAILED')
         return test

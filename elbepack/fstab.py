@@ -10,32 +10,32 @@ from elbepack.shellhelper import do, get_command_out, CommandError
 
 
 def get_mtdnum(xml, label):
-    tgt = xml.node("target")
-    if not tgt.has("images"):
-        raise Exception("No images tag in target")
+    tgt = xml.node('target')
+    if not tgt.has('images'):
+        raise Exception('No images tag in target')
 
-    for i in tgt.node("images"):
-        if i.tag != "mtd":
+    for i in tgt.node('images'):
+        if i.tag != 'mtd':
             continue
 
-        if not i.has("ubivg"):
+        if not i.has('ubivg'):
             continue
 
-        for v in i.node("ubivg"):
-            if v.tag != "ubi":
+        for v in i.node('ubivg'):
+            if v.tag != 'ubi':
                 continue
 
-            if v.text("label") == label:
-                return i.text("nr")
+            if v.text('label') == label:
+                return i.text('nr')
 
-    raise Exception("No ubi volume with label " + label + " found")
+    raise Exception('No ubi volume with label ' + label + ' found')
 
 
 def get_devicelabel(xml, node):
-    if node.text("fs/type") == "ubifs":
+    if node.text('fs/type') == 'ubifs':
         return f"ubi{get_mtdnum(xml, node.text('label'))}:{node.text('label')}"
 
-    return "LABEL=" + node.text("label")
+    return 'LABEL=' + node.text('label')
 
 
 class mountpoint_dict (dict):
@@ -85,7 +85,7 @@ class hdpart:
         self.size = ppart.getLength() * sector_size
         self.filename = disk.device.path
         self.partnum = ppart.number
-        self.number = f"{disk.type}{ppart.number}"
+        self.number = f'{disk.type}{ppart.number}'
 
     def losetup(self):
 
@@ -112,34 +112,34 @@ class fstabentry(hdpart):
     def __init__(self, xml, entry, fsid=0):
         super().__init__()
 
-        if entry.has("source"):
-            self.source = entry.text("source")
+        if entry.has('source'):
+            self.source = entry.text('source')
         else:
             self.source = get_devicelabel(xml, entry)
 
-        if entry.has("label"):
-            self.label = entry.text("label")
+        if entry.has('label'):
+            self.label = entry.text('label')
 
-        self.mountpoint = entry.text("mountpoint")
-        self.options = entry.text("options", default="defaults")
-        if entry.has("fs"):
-            self.fstype = entry.text("fs/type")
-            self.mkfsopt = entry.text("fs/mkfs", default="")
-            self.passno = entry.text("fs/passno", default="0")
+        self.mountpoint = entry.text('mountpoint')
+        self.options = entry.text('options', default='defaults')
+        if entry.has('fs'):
+            self.fstype = entry.text('fs/type')
+            self.mkfsopt = entry.text('fs/mkfs', default='')
+            self.passno = entry.text('fs/passno', default='0')
 
             self.fs_device_commands = []
             self.fs_path_commands = []
-            for command in entry.node("fs/fs-finetuning") or []:
-                if command.tag == "device-command":
-                    self.fs_device_commands.append(command.text("."))
-                elif command.tag == "path-command":
-                    self.fs_path_commands.append(command.text("."))
+            for command in entry.node('fs/fs-finetuning') or []:
+                if command.tag == 'device-command':
+                    self.fs_device_commands.append(command.text('.'))
+                elif command.tag == 'path-command':
+                    self.fs_path_commands.append(command.text('.'))
 
         self.id = str(fsid)
 
     def get_str(self):
-        return (f"{self.source} {self.mountpoint} {self.fstype} {self.options} "
-                f"0 {self.passno}\n")
+        return (f'{self.source} {self.mountpoint} {self.fstype} {self.options} '
+                f'0 {self.passno}\n')
 
     def mountdepth(self):
         h = self.mountpoint
@@ -152,8 +152,8 @@ class fstabentry(hdpart):
             depth += 1
 
     def get_label_opt(self):
-        if self.fstype in ("ext4", "ext3", "ext2", "btrfs"):
-            return "-L " + self.label
-        if self.fstype == "vfat":
-            return "-n " + self.label
-        return ""
+        if self.fstype in ('ext4', 'ext3', 'ext2', 'btrfs'):
+            return '-L ' + self.label
+        if self.fstype == 'vfat':
+            return '-n ' + self.label
+        return ''

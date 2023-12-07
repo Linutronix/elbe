@@ -8,15 +8,15 @@ import os
 class Config(dict):
     def __init__(self):
         dict.__init__(self)
-        self['soaphost'] = "localhost"
-        self['soapport'] = "7587"
+        self['soaphost'] = 'localhost'
+        self['soapport'] = '7587'
         self['soaptimeout'] = 90
-        self['sshport'] = "5022"
-        self['elbeuser'] = "root"
-        self['elbepass'] = "foo"
-        self['pbuilder_jobs'] = "auto"
-        self['initvm_domain'] = "initvm"
-        self['mirrorsed'] = ""
+        self['sshport'] = '5022'
+        self['elbeuser'] = 'root'
+        self['elbepass'] = 'foo'
+        self['pbuilder_jobs'] = 'auto'
+        self['initvm_domain'] = 'initvm'
+        self['mirrorsed'] = ''
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']

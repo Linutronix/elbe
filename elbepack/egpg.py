@@ -80,17 +80,17 @@ def check_signature(ctx, signature):
     status = OverallStatus()
 
     if signature.summary & sigsum.KEY_MISSING:
-        print(f"Signature with unknown key: {signature.fpr}")
+        print(f'Signature with unknown key: {signature.fpr}')
         status.key_missing = 1
         return status
 
     # there should be a key
     key = ctx.get_key(signature.fpr, 0)
-    print(f"{key.uids[0].name} <{key.uids[0].email}> ({signature.fpr}):")
+    print(f'{key.uids[0].name} <{key.uids[0].email}> ({signature.fpr}):')
 
     if signature.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
-        print("VALID (Trusted)")
+        print('VALID (Trusted)')
         status.valid = 1
         return status
 
@@ -98,38 +98,38 @@ def check_signature(ctx, signature):
     if signature.summary == 0:
         # Signature is valid, but the key is not ultimately trusted,
         # see: http://www.gossamer-threads.com/lists/gnupg/users/52350
-        print("VALID (Untrusted).")
+        print('VALID (Untrusted).')
         status.valid = 1
 
     if signature.summary & sigsum.SIG_EXPIRED == sigsum.SIG_EXPIRED:
-        print("SIGNATURE EXPIRED!")
+        print('SIGNATURE EXPIRED!')
         status.sig_expired = 1
         status.valid_threshold = 1
 
     if signature.summary & sigsum.KEY_EXPIRED == sigsum.KEY_EXPIRED:
-        print("KEY EXPIRED!")
+        print('KEY EXPIRED!')
         status.key_expired = 1
         status.valid_threshold = 1
 
     if signature.summary & sigsum.KEY_REVOKED == sigsum.KEY_REVOKED:
-        print("KEY REVOKED!")
+        print('KEY REVOKED!')
         status.key_revoked = 1
         status.valid_threshold = 1
 
     if signature.summary & sigsum.RED == sigsum.RED:
-        print("INVALID SIGNATURE!")
+        print('INVALID SIGNATURE!')
         status.invalid = 1
 
     if signature.summary & sigsum.CRL_MISSING == sigsum.CRL_MISSING:
-        print("CRL MISSING!")
+        print('CRL MISSING!')
         status.gpg_error = 1
 
     if signature.summary & sigsum.CRL_TOO_OLD == sigsum.CRL_TOO_OLD:
-        print("CRL TOO OLD!")
+        print('CRL TOO OLD!')
         status.gpg_error = 1
 
     if signature.summary & sigsum.BAD_POLICY == sigsum.BAD_POLICY:
-        print("UNMET POLICY REQUIREMENT!")
+        print('UNMET POLICY REQUIREMENT!')
         status.gpg_error = 1
 
     if signature.summary & sigsum.SYS_ERROR == sigsum.SYS_ERROR:
@@ -142,7 +142,7 @@ def check_signature(ctx, signature):
 def unsign_file(fname):
     # check for .gpg extension and create an output filename without it
     if len(fname) <= 4 or fname[len(fname) - 4:] != '.gpg':
-        print("The input file needs a .gpg extension")
+        print('The input file needs a .gpg extension')
         return None
 
     outfilename = fname[:len(fname) - 4]
@@ -159,7 +159,7 @@ def unsign_file(fname):
         infile = core.Data(file=fname)
         outfile = core.Data(file=outfilename)
     except (GPGMEError, ValueError) as E:
-        print(f"Error: Opening file {fname} or {outfilename} - {E}")
+        print(f'Error: Opening file {fname} or {outfilename} - {E}')
     else:
         # obtain signature and write unsigned file
         ctx.op_verify(infile, None, outfile)
@@ -184,9 +184,9 @@ def unlock_key(fingerprint):
                         '/var/cache/elbe/gnupg')
     key = ctx.get_key(fingerprint, secret=True)
     keygrip = key.subkeys[0].keygrip
-    system("/usr/lib/gnupg/gpg-preset-passphrase "
-           f"--preset -P requiredToAvoidUserInput {keygrip}",
-           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
+    system('/usr/lib/gnupg/gpg-preset-passphrase '
+           f'--preset -P requiredToAvoidUserInput {keygrip}',
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
 
 def sign(infile, outfile, fingerprint):
@@ -206,7 +206,7 @@ def sign(infile, outfile, fingerprint):
     try:
         key = ctx.get_key(fingerprint, 0)
     except (KeyNotFound, GPGMEError, AssertionError) as E:
-        print(f"Error: No key with fingerprint {fingerprint} - {E}")
+        print(f'Error: No key with fingerprint {fingerprint} - {E}')
         return
     else:
         unlock_key(key.fpr)
@@ -216,15 +216,15 @@ def sign(infile, outfile, fingerprint):
     try:
         indata = core.Data(file=infile)
     except (GPGMEError, ValueError) as E:
-        print(f"Error: Opening file {infile} - {E}")
+        print(f'Error: Opening file {infile} - {E}')
     else:
         outdata = core.Data()
         try:
             ctx.op_sign(indata, outdata, sig.mode.NORMAL)
         except InvalidSigners as E:
-            print("Error: Invalid signer - %s", E)
+            print('Error: Invalid signer - %s', E)
         except GPGMEError as E:
-            print("Error: While signing - %s", E)
+            print('Error: While signing - %s', E)
         else:
             outdata.seek(0, os.SEEK_SET)
             signature = outdata.read()
@@ -260,11 +260,11 @@ EOT = 4294967295
 
 
 def generate_elbe_internal_key():
-    hostfs.mkdir_p("/var/cache/elbe/gnupg")
-    hostfs.write_file("/var/cache/elbe/gnupg/gpg-agent.conf", 0o600,
-                      "allow-preset-passphrase\n"
-                      f"default-cache-ttl {EOT}\n"
-                      f"max-cache-ttl {EOT}\n")
+    hostfs.mkdir_p('/var/cache/elbe/gnupg')
+    hostfs.write_file('/var/cache/elbe/gnupg/gpg-agent.conf', 0o600,
+                      'allow-preset-passphrase\n'
+                      f'default-cache-ttl {EOT}\n'
+                      f'max-cache-ttl {EOT}\n')
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
@@ -276,8 +276,8 @@ def generate_elbe_internal_key():
 
 
 def export_key(fingerprint, outfile):
-    system(f"/usr/bin/gpg -a -o {outfile} --export {fingerprint}",
-           env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
+    system(f'/usr/bin/gpg -a -o {outfile} --export {fingerprint}',
+           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
 
 def unarmor_openpgp_keyring(armored):
@@ -289,6 +289,6 @@ def unarmor_openpgp_keyring(armored):
         conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor', stdin=armored)
     except CommandError as e:
         logging.error(e)
-        return b""
+        return b''
 
     return conv_cmd

@@ -12,31 +12,31 @@ from elbepack.directories import pack_dir, elbe_exe, elbe_dir
 class TestPylint(ElbeTestCase):
     global elbe_dir
 
-    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
+    elbe_dir = os.path.join(os.path.dirname(__file__), '../..')
 
-    pylint_opts = ["--reports=n",
-                   "--score=n",
+    pylint_opts = ['--reports=n',
+                   '--score=n',
                    f"--rcfile={os.path.join(elbe_dir, '.pylintrc')}",
-                   "--disable=W0511,R0801"]
+                   '--disable=W0511,R0801']
 
     failure_set = {os.path.join(pack_dir, path)
                    for path
                    in [
-                       "daemons/soap/esoap.py",
+                       'daemons/soap/esoap.py',
 
                        # FIXME: This one is an actual bug to be fixed
                        # 274:30: W0631: Using possibly undefined loop variable
                        # 'entry' (undefined-loop-variable)
                        # 276:26: W0631: Using possibly undefined loop variable
                        # 'entry' (undefined-loop-variable)
-                       "hdimg.py",
+                       'hdimg.py',
 
-                       "initvmaction.py",
-                       "log.py",
-                       "pbuilderaction.py",
-                       "repomanager.py",
-                       "rfs.py",
-                       "rpcaptcache.py",
+                       'initvmaction.py',
+                       'log.py',
+                       'pbuilderaction.py',
+                       'repomanager.py',
+                       'rfs.py',
+                       'rpcaptcache.py',
                    ]}
 
     @staticmethod
@@ -53,9 +53,9 @@ class TestPylint(ElbeTestCase):
             if self.param in TestPylint.failure_set:
                 self.stdout = e.out
                 self.skipTest(
-                    f"Pylint test for {self.param} is expected to fail")
+                    f'Pylint test for {self.param} is expected to fail')
             else:
                 raise
         else:
             if self.param in TestPylint.failure_set:
-                raise Exception(f"Pylint test for {self.param} is expected to fail, but did not !")
+                raise Exception(f'Pylint test for {self.param} is expected to fail, but did not !')

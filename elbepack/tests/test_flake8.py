@@ -12,10 +12,10 @@ from elbepack.directories import pack_dir, elbe_exe
 class TestPylint(ElbeTestCase):
     global elbe_dir      # pylint: disable=global-statement
 
-    elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
+    elbe_dir = os.path.join(os.path.dirname(__file__), '../..')
 
-    flake8_opts = ["--max-line-length=100",
-                   "--show-source"]
+    flake8_opts = ['--max-line-length=100',
+                   '--show-source']
 
     @staticmethod
     def params():

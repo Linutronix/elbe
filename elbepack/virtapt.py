@@ -21,7 +21,7 @@ from elbepack.rfs import create_apt_prefs
 
 
 def getdeps(pkg):
-    for dd in pkg.depends_list.get("Depends", []):
+    for dd in pkg.depends_list.get('Depends', []):
         for d in dd:
             yield d.target_pkg.name
 
@@ -46,7 +46,7 @@ def lookup_uri(v, d, target_pkg):
             for x in pkg.provides_list:
                 if target_pkg == x[0]:
                     return lookup_uri(v, d, x[2].parent_pkg.name)
-        return "", "", ""
+        return '', '', ''
 
     x = v.source.find_index(c.file_list[0][0])
 
@@ -55,7 +55,7 @@ def lookup_uri(v, d, target_pkg):
     uri = x.archive_uri(r.filename)
 
     if not x.is_trusted:
-        return target_pkg, uri, ""
+        return target_pkg, uri, ''
 
     hashval = str(r.hashes.find('SHA256')).split(':')[1]
 
@@ -67,8 +67,8 @@ class VirtApt:
 
         self.xml = xml
 
-        arch = xml.text("project/buildimage/arch", key="arch")
-        suite = xml.text("project/suite")
+        arch = xml.text('project/buildimage/arch', key='arch')
+        suite = xml.text('project/suite')
 
         self.basefs = TmpdirFilesystem()
         self.initialize_dirs()
@@ -77,37 +77,37 @@ class VirtApt:
 
         mirror = self.xml.create_apt_sources_list(build_sources=True,
                                                   initvm=False)
-        self.basefs.write_file("etc/apt/sources.list", 0o644, mirror)
+        self.basefs.write_file('etc/apt/sources.list', 0o644, mirror)
 
         self.setup_gpg()
         self.import_keys()
 
-        apt_pkg.config.set("APT::Architecture", arch)
-        apt_pkg.config.set("APT::Architectures", arch)
-        apt_pkg.config.set("Acquire::http::Proxy::127.0.0.1", "DIRECT")
-        apt_pkg.config.set("APT::Install-Recommends", "0")
-        apt_pkg.config.set("Dir::Etc", self.basefs.fname('/'))
-        apt_pkg.config.set("Dir::Etc::Trusted",
+        apt_pkg.config.set('APT::Architecture', arch)
+        apt_pkg.config.set('APT::Architectures', arch)
+        apt_pkg.config.set('Acquire::http::Proxy::127.0.0.1', 'DIRECT')
+        apt_pkg.config.set('APT::Install-Recommends', '0')
+        apt_pkg.config.set('Dir::Etc', self.basefs.fname('/'))
+        apt_pkg.config.set('Dir::Etc::Trusted',
                            self.basefs.fname('/etc/apt/trusted.gpg'))
-        apt_pkg.config.set("Dir::Etc::TrustedParts",
+        apt_pkg.config.set('Dir::Etc::TrustedParts',
                            self.basefs.fname('/etc/apt/trusted.gpg.d'))
-        apt_pkg.config.set("APT::Cache-Limit", "0")
-        apt_pkg.config.set("APT::Cache-Start", "32505856")
-        apt_pkg.config.set("APT::Cache-Grow", "2097152")
-        apt_pkg.config.set("Dir::State", self.basefs.fname("state"))
-        apt_pkg.config.set("Dir::State::status",
-                           self.basefs.fname("state/status"))
-        apt_pkg.config.set("Dir::Cache", self.basefs.fname("cache"))
-        apt_pkg.config.set("Dir::Cache::archives",
-                           self.basefs.fname("cache/archives"))
-        apt_pkg.config.set("Dir::Etc", self.basefs.fname("etc/apt"))
-        apt_pkg.config.set("Dir::Log", self.basefs.fname("log"))
+        apt_pkg.config.set('APT::Cache-Limit', '0')
+        apt_pkg.config.set('APT::Cache-Start', '32505856')
+        apt_pkg.config.set('APT::Cache-Grow', '2097152')
+        apt_pkg.config.set('Dir::State', self.basefs.fname('state'))
+        apt_pkg.config.set('Dir::State::status',
+                           self.basefs.fname('state/status'))
+        apt_pkg.config.set('Dir::Cache', self.basefs.fname('cache'))
+        apt_pkg.config.set('Dir::Cache::archives',
+                           self.basefs.fname('cache/archives'))
+        apt_pkg.config.set('Dir::Etc', self.basefs.fname('etc/apt'))
+        apt_pkg.config.set('Dir::Log', self.basefs.fname('log'))
         if self.xml.has('project/noauth'):
-            apt_pkg.config.set("APT::Get::AllowUnauthenticated", "1")
-            apt_pkg.config.set("Acquire::AllowInsecureRepositories", "1")
+            apt_pkg.config.set('APT::Get::AllowUnauthenticated', '1')
+            apt_pkg.config.set('Acquire::AllowInsecureRepositories', '1')
         else:
-            apt_pkg.config.set("APT::Get::AllowUnauthenticated", "0")
-            apt_pkg.config.set("Acquire::AllowInsecureRepositories", "0")
+            apt_pkg.config.set('APT::Get::AllowUnauthenticated', '0')
+            apt_pkg.config.set('Acquire::AllowInsecureRepositories', '0')
 
         apt_pkg.init_system()
 
@@ -119,7 +119,7 @@ class VirtApt:
         except BaseException as e:
             print(e)
 
-        apt_pkg.config.set("APT::Default-Release", suite)
+        apt_pkg.config.set('APT::Default-Release', suite)
 
         self.cache = apt_pkg.Cache()
         try:
@@ -129,7 +129,7 @@ class VirtApt:
 
         try:
             self.depcache = apt_pkg.DepCache(self.cache)
-            prefs_name = self.basefs.fname("/etc/apt/preferences")
+            prefs_name = self.basefs.fname('/etc/apt/preferences')
             self.depcache.read_pinfile(prefs_name)
         except BaseException as e:
             print(e)
@@ -142,7 +142,7 @@ class VirtApt:
         Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
         with file name 'keyname'.
         """
-        with open(self.basefs.fname(f"/etc/apt/trusted.gpg.d/{keyname}"), "wb") as outfile:
+        with open(self.basefs.fname(f'/etc/apt/trusted.gpg.d/{keyname}'), 'wb') as outfile:
             outfile.write(key)
 
     def import_keys(self):
@@ -155,9 +155,9 @@ class VirtApt:
             # I could make a none global 'noauth' flag for mirrors
             for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
-                    key = "\n".join(line.strip(" \t")
+                    key = '\n'.join(line.strip(' \t')
                                     for line in url.text('raw-key').splitlines()[1:-1])
-                    self.add_key(unarmor_openpgp_keyring(key), f"elbe-virtapt-raw-key{i}.gpg")
+                    self.add_key(unarmor_openpgp_keyring(key), f'elbe-virtapt-raw-key{i}.gpg')
 
     def start(self):
         pass
@@ -170,27 +170,27 @@ class VirtApt:
         return True
 
     def initialize_dirs(self):
-        self.basefs.mkdir_p("cache/archives/partial")
-        self.basefs.mkdir_p("etc/apt/preferences.d")
-        self.basefs.mkdir_p("etc/apt/trusted.gpg.d")
-        self.basefs.mkdir_p("db")
-        self.basefs.mkdir_p("log")
-        self.basefs.mkdir_p("state/lists/partial")
-        self.basefs.mkdir_p("tmp")
-        self.basefs.touch_file("state/status")
+        self.basefs.mkdir_p('cache/archives/partial')
+        self.basefs.mkdir_p('etc/apt/preferences.d')
+        self.basefs.mkdir_p('etc/apt/trusted.gpg.d')
+        self.basefs.mkdir_p('db')
+        self.basefs.mkdir_p('log')
+        self.basefs.mkdir_p('state/lists/partial')
+        self.basefs.mkdir_p('tmp')
+        self.basefs.touch_file('state/status')
 
     def setup_gpg(self):
-        ring_path = self.basefs.fname("etc/apt/trusted.gpg")
-        if not os.path.isdir("/etc/apt/trusted.gpg.d"):
+        ring_path = self.basefs.fname('etc/apt/trusted.gpg')
+        if not os.path.isdir('/etc/apt/trusted.gpg.d'):
             print("/etc/apt/trusted.gpg.d doesn't exist")
-            print("apt-get install debian-archive-keyring may "
-                  "fix this problem")
+            print('apt-get install debian-archive-keyring may '
+                  'fix this problem')
             sys.exit(204)
 
-        if os.path.exists("/etc/apt/trusted.gpg"):
+        if os.path.exists('/etc/apt/trusted.gpg'):
             system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
 
-        trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
+        trustkeys = os.listdir('/etc/apt/trusted.gpg.d')
         for key in trustkeys:
             system(f'cp "/etc/apt/trusted.gpg.d/{key}" "{ring_path}.d"')
 
@@ -271,7 +271,7 @@ class VirtApt:
                             pkg = self.cache[x[2].parent_pkg.name]
                             c = d.get_candidate_ver(pkg)
             if not c:
-                print(f"couldnt get candidate: {pkg}")
+                print(f'couldnt get candidate: {pkg}')
             else:
                 for p in getdeps(c):
                     if [y for y in deps if y[0] == p]:

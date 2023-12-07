@@ -10,10 +10,10 @@ from elbepack.elbexml import ElbeXML, ValidationMode, ValidationError
 
 
 def run_command(argv):
-    oparser = OptionParser(usage="usage: %prog validate <xmlfile>")
-    oparser.add_option("--validate-urls", dest="validate_urls",
-                       help="try to access specified repositories",
-                       default=False, action="store_true")
+    oparser = OptionParser(usage='usage: %prog validate <xmlfile>')
+    oparser.add_option('--validate-urls', dest='validate_urls',
+                       help='try to access specified repositories',
+                       default=False, action='store_true')
 
     (opt, args) = oparser.parse_args(argv)
 
@@ -22,13 +22,13 @@ def run_command(argv):
         sys.exit(58)
 
     if not os.path.exists(args[0]):
-        print(f"{args[0]} - file not found")
+        print(f'{args[0]} - file not found')
         oparser.print_help()
         sys.exit(59)
 
     validation = validate_xml(args[0])
     if validation:
-        print("validation failed")
+        print('validation failed')
         for i in validation:
             print(i)
         sys.exit(60)

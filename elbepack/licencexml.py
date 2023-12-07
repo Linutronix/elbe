@@ -22,10 +22,10 @@ def do_heuristics(fp):
     c = Copyright()
     num_licenses = 0
     for lic in fp.readlines():
-        if lic.startswith("License:"):
+        if lic.startswith('License:'):
             num_licenses += 1
-            _, v = lic.split(":", 1)
-            data = {"License": v.strip()}
+            _, v = lic.split(':', 1)
+            data = {'License': v.strip()}
             lic_para = LicenseParagraph(data)
             c.add_license_paragraph(lic_para)
 
@@ -123,4 +123,4 @@ class copyright_xml:
         return
 
     def write(self, fname):
-        self.outxml.write(fname, encoding="iso-8859-1")
+        self.outxml.write(fname, encoding='iso-8859-1')

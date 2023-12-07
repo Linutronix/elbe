@@ -39,34 +39,34 @@ from elbepack.templates import write_pack_template
 from elbepack.finetuning import do_prj_finetuning
 
 
-validation = logging.getLogger("validation")
+validation = logging.getLogger('validation')
 
 
 class IncompatibleArchitectureException(Exception):
     def __init__(self, oldarch, newarch):
         Exception.__init__(
             self,
-            f"Cannot change architecture from {oldarch} to {newarch} in "
-            "existing project")
+            f'Cannot change architecture from {oldarch} to {newarch} in '
+            'existing project')
 
 
 class AptCacheUpdateError(Exception):
     def __init__(self, e):
-        Exception.__init__(self, f"Error Updating rpcaptcache: {e}")
+        Exception.__init__(self, f'Error Updating rpcaptcache: {e}')
 
 
 class AptCacheCommitError(Exception):
     def __init__(self, msg=''):
-        Exception.__init__(self, f"Error Committing rpcaptcache {msg}")
+        Exception.__init__(self, f'Error Committing rpcaptcache {msg}')
 
 
 class UnsupportedSDKException(Exception):
     def __init__(self, triplet):
-        Exception.__init__(self, f"SDK for {triplet} currently unsupported")
+        Exception.__init__(self, f'SDK for {triplet} currently unsupported')
 
 
 def test_gen_sdk_scripts():
-    system("mkdir -p /tmp/test/sdk")
+    system('mkdir -p /tmp/test/sdk')
     gen_sdk_scripts('armhf-linux-gnueabihf',
                     'ARM',
                     'testproject',
@@ -82,8 +82,8 @@ def gen_sdk_scripts(triplet,
                     builddir,
                     sdkpath):
 
-    prj_name = prj_name.replace(" ", "_")
-    prj_version = prj_version.replace(" ", "_")
+    prj_name = prj_name.replace(' ', '_')
+    prj_version = prj_version.replace(' ', '_')
 
     # generate the setup script
     sdkvalues = {'sdk_arch': 'x86_64',
@@ -125,11 +125,11 @@ class ElbeProject:
             savesh_file=None):
 
         self.builddir = os.path.abspath(str(builddir))
-        self.chrootpath = os.path.join(self.builddir, "chroot")
-        self.targetpath = os.path.join(self.builddir, "target")
-        self.sysrootpath = os.path.join(self.builddir, "sysroot")
-        self.sdkpath = os.path.join(self.builddir, "sdk")
-        self.validationpath = os.path.join(self.builddir, "validation.txt")
+        self.chrootpath = os.path.join(self.builddir, 'chroot')
+        self.targetpath = os.path.join(self.builddir, 'target')
+        self.sysrootpath = os.path.join(self.builddir, 'sysroot')
+        self.sdkpath = os.path.join(self.builddir, 'sdk')
+        self.validationpath = os.path.join(self.builddir, 'validation.txt')
 
         self.name = name
         self.override_buildtype = override_buildtype
@@ -162,21 +162,21 @@ class ElbeProject:
                 skip_validate=skip_validate,
                 url_validation=url_validation)
         else:
-            sourcexmlpath = os.path.join(self.builddir, "source.xml")
+            sourcexmlpath = os.path.join(self.builddir, 'source.xml')
             self.xml = ElbeXML(
                 sourcexmlpath,
                 buildtype=override_buildtype,
                 skip_validate=skip_validate,
                 url_validation=url_validation)
 
-        self.arch = self.xml.text("project/arch", key="arch")
-        self.codename = self.xml.text("project/suite")
+        self.arch = self.xml.text('project/arch', key='arch')
+        self.codename = self.xml.text('project/suite')
 
         if not self.name:
-            self.name = self.xml.text("project/name")
+            self.name = self.xml.text('project/name')
 
         self.repo = ProjectRepo(self.arch, self.codename,
-                                os.path.join(self.builddir, "repo"))
+                                os.path.join(self.builddir, 'repo'))
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
@@ -204,14 +204,14 @@ class ElbeProject:
         self.host_sysrootenv = None
 
     def build_chroottarball(self):
-        do(f"tar cJf {self.builddir}/chroot.tar.xz "
-           "--exclude=./tmp/*  --exclude=./dev/* "
-           "--exclude=./run/*  --exclude=./sys/* "
-           "--exclude=./proc/* --exclude=./var/cache/* "
-           f"-C {self.chrootpath} .")
+        do(f'tar cJf {self.builddir}/chroot.tar.xz '
+           '--exclude=./tmp/*  --exclude=./dev/* '
+           '--exclude=./run/*  --exclude=./sys/* '
+           '--exclude=./proc/* --exclude=./var/cache/* '
+           f'-C {self.chrootpath} .')
 
     def get_sysroot_paths(self):
-        triplet = self.xml.defs["triplet"]
+        triplet = self.xml.defs['triplet']
 
         paths = [
             './usr/include',
@@ -243,22 +243,22 @@ class ElbeProject:
                                    clean=True)
         # Import keyring
         self.sysrootenv.import_keys()
-        logging.info("Keys imported")
+        logging.info('Keys imported')
 
-        self.xml.add_target_package("libc-bin")
-        self.xml.add_target_package("libc6-dbg")
-        self.xml.add_target_package("gdbserver")
+        self.xml.add_target_package('libc-bin')
+        self.xml.add_target_package('libc6-dbg')
+        self.xml.add_target_package('gdbserver')
 
         self.install_packages(self.sysrootenv, buildenv=False)
 
         # ignore packages from debootstrap
         tpkgs = self.xml.get_target_packages()
-        bspkgs = self.xml.node("debootstrappkgs")
+        bspkgs = self.xml.node('debootstrappkgs')
         ignore_pkgs = [p.et.text for p in bspkgs if p.et.text not in tpkgs]
         ignore_dev_pkgs = []
         if self.xml.has('target/pkg-blacklist/sysroot'):
             ignore_dev_pkgs = [p.et.text for p in self.xml.node(
-                "target/pkg-blacklist/sysroot")]
+                'target/pkg-blacklist/sysroot')]
 
         with self.sysrootenv:
             try:
@@ -271,29 +271,29 @@ class ElbeProject:
                 cache.mark_install_devpkgs(set(ignore_pkgs),
                                            set(ignore_dev_pkgs))
             except SystemError:
-                logging.exception("Mark install devpkgs failed")
+                logging.exception('Mark install devpkgs failed')
             try:
                 cache.commit()
             except SystemError as e:
-                logging.exception("Commiting changes failed")
+                logging.exception('Commiting changes failed')
                 raise AptCacheCommitError(str(e))
 
-            self.gen_licenses("sysroot-target", self.sysrootenv,
+            self.gen_licenses('sysroot-target', self.sysrootenv,
                               [p.name for p in cache.get_installed_pkgs()])
 
         try:
             self.sysrootenv.rfs.dump_elbeversion(self.xml)
         except IOError:
-            logging.exception("Dump elbeversion into sysroot failed")
+            logging.exception('Dump elbeversion into sysroot failed')
 
-        sysrootfilelist = os.path.join(self.builddir, "sysroot-filelist")
+        sysrootfilelist = os.path.join(self.builddir, 'sysroot-filelist')
 
         with self.sysrootenv.rfs:
-            chroot(self.sysrootpath, "/usr/bin/symlinks -cr /usr/lib")
+            chroot(self.sysrootpath, '/usr/bin/symlinks -cr /usr/lib')
 
         paths = self.get_sysroot_paths()
 
-        do(f"rm {sysrootfilelist}", allow_fail=True)
+        do(f'rm {sysrootfilelist}', allow_fail=True)
         os.chdir(self.sysrootpath)
         for p in paths:
             do(f'find -path "{p}" >> {sysrootfilelist}')
@@ -306,8 +306,8 @@ class ElbeProject:
                 filelist_fd.write('./sbin\n')
 
         do(
-            f"tar cfJ {self.builddir}/sysroot.tar.xz "
-            f"-C {self.sysrootpath} -T {sysrootfilelist}")
+            f'tar cfJ {self.builddir}/sysroot.tar.xz '
+            f'-C {self.sysrootpath} -T {sysrootfilelist}')
 
     def build_host_sysroot(self, pkgs, hostsysrootpath):
         do(f'rm -rf {hostsysrootpath}; mkdir "{hostsysrootpath}"')
@@ -315,11 +315,11 @@ class ElbeProject:
         self.host_sysrootenv = BuildEnv(self.xml,
                                         hostsysrootpath,
                                         clean=True,
-                                        arch="amd64",
+                                        arch='amd64',
                                         hostsysroot=True)
         # Import keyring
         self.host_sysrootenv.import_keys()
-        logging.info("Keys imported")
+        logging.info('Keys imported')
 
         with self.host_sysrootenv:
 
@@ -334,19 +334,19 @@ class ElbeProject:
                 try:
                     cache.mark_install(p, None)
                 except KeyError:
-                    logging.exception("No Package %s", p)
+                    logging.exception('No Package %s', p)
                 except SystemError:
-                    logging.exception("Unable to correct problems in "
-                                      "package %s",
+                    logging.exception('Unable to correct problems in '
+                                      'package %s',
                                       p)
 
             try:
                 cache.commit()
             except SystemError as e:
-                logging.exception("Commiting changes failed")
+                logging.exception('Commiting changes failed')
                 raise AptCacheCommitError(str(e))
 
-            self.gen_licenses("sysroot-host", self.host_sysrootenv,
+            self.gen_licenses('sysroot-host', self.host_sysrootenv,
                               [p.name for p in cache.get_installed_pkgs()])
 
         # This is just a sysroot, some directories
@@ -368,8 +368,8 @@ class ElbeProject:
         self.host_sysrootenv.rfs.rmtree('/var')
 
     def build_sdk(self):
-        triplet = self.xml.defs["triplet"]
-        elfcode = self.xml.defs["elfcode"]
+        triplet = self.xml.defs['triplet']
+        elfcode = self.xml.defs['elfcode']
 
         host_pkglist = []
         if self.xml.tgt.has('hostsdk-pkg-list'):
@@ -378,7 +378,7 @@ class ElbeProject:
                     host_pkglist.append(p.et.text.strip())
         else:
             try:
-                host_pkglist.append(self.xml.defs["sdkgccpkg"])
+                host_pkglist.append(self.xml.defs['sdkgccpkg'])
             except KeyError:
                 raise UnsupportedSDKException(triplet)
 
@@ -386,9 +386,9 @@ class ElbeProject:
 
         # build target sysroot including libs and headers for the target
         self.build_sysroot()
-        sdktargetpath = os.path.join(self.sdkpath, "sysroots", "target")
-        do(f"mkdir -p {sdktargetpath}")
-        do(f"tar xJf {self.builddir}/sysroot.tar.xz -C {sdktargetpath}")
+        sdktargetpath = os.path.join(self.sdkpath, 'sysroots', 'target')
+        do(f'mkdir -p {sdktargetpath}')
+        do(f'tar xJf {self.builddir}/sysroot.tar.xz -C {sdktargetpath}')
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
 
@@ -397,32 +397,32 @@ class ElbeProject:
         n = gen_sdk_scripts(triplet,
                             elfcode,
                             self.name,
-                            self.xml.text("project/version"),
+                            self.xml.text('project/version'),
                             self.builddir,
                             self.sdkpath)
 
         # create sdk tar and append it to setup script
-        do(f"cd {self.sdkpath}; tar cJf ../sdk.txz .")
-        do(f"cd {self.builddir}; rm -rf sdk")
-        do(f"cd {self.builddir}; cat sdk.txz >> {n}")
-        do(f"cd {self.builddir}; chmod +x {n}")
-        do(f"cd {self.builddir}; rm sdk.txz")
+        do(f'cd {self.sdkpath}; tar cJf ../sdk.txz .')
+        do(f'cd {self.builddir}; rm -rf sdk')
+        do(f'cd {self.builddir}; cat sdk.txz >> {n}')
+        do(f'cd {self.builddir}; chmod +x {n}')
+        do(f'cd {self.builddir}; rm sdk.txz')
 
     def pbuild(self, p):
         self.pdebuild_init()
-        os.mkdir(os.path.join(self.builddir, "pdebuilder"))
-        src_path = os.path.join(self.builddir, "pdebuilder", "current")
+        os.mkdir(os.path.join(self.builddir, 'pdebuilder'))
+        src_path = os.path.join(self.builddir, 'pdebuilder', 'current')
 
-        src_uri = p.text('.').replace("LOCALMACHINE", "10.0.2.2").strip()
-        logging.info("Retrieve pbuild sources: %s",  src_uri)
+        src_uri = p.text('.').replace('LOCALMACHINE', '10.0.2.2').strip()
+        logging.info('Retrieve pbuild sources: %s',  src_uri)
         if p.tag == 'git':
-            do(f"git clone {src_uri} {src_path}")
+            do(f'git clone {src_uri} {src_path}')
             try:
                 do(f"cd {src_path}; git reset --hard {p.et.attrib['revision']}")
             except IndexError:
                 pass
         elif p.tag == 'svn':
-            do(f"svn co --non-interactive {src_uri} {src_path}")
+            do(f'svn co --non-interactive {src_uri} {src_path}')
         elif p.tag == 'src-pkg':
             apt_args = '--yes -q --download-only'
             if self.xml.prj.has('noauth'):
@@ -432,10 +432,10 @@ class ElbeProject:
 
             do(f'dpkg-source -x {self.chrootpath}/*.dsc "{src_path}"; rm {self.chrootpath}/*.dsc')
         else:
-            logging.info("Unknown pbuild source: %s", p.tag)
+            logging.info('Unknown pbuild source: %s', p.tag)
 
         # pdebuild_build(-1) means use all cpus
-        self.pdebuild_build(cpuset=-1, profile="", cross=False)
+        self.pdebuild_build(cpuset=-1, profile='', cross=False)
 
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None,
@@ -444,9 +444,9 @@ class ElbeProject:
         self.repo_images = []
 
         env = None
-        sysrootstr = ""
+        sysrootstr = ''
         if os.path.exists(self.sysrootpath):
-            sysrootstr = "(including sysroot packages)"
+            sysrootstr = '(including sysroot packages)'
             env = BuildEnv(self.xml, self.sysrootpath,
                            build_sources=build_sources, clean=False)
         else:
@@ -465,7 +465,7 @@ class ElbeProject:
             init_codename = self.xml.get_initvm_codename()
 
             if build_bin:
-                validation.info("Binary CD %s", sysrootstr)
+                validation.info('Binary CD %s', sysrootstr)
 
                 self.repo_images += mk_binary_cdrom(env.rfs,
                                                     self.arch,
@@ -474,34 +474,34 @@ class ElbeProject:
                                                     self.xml,
                                                     self.builddir)
             if build_sources:
-                if not cdrom_size and self.xml.has("src-cdrom/size"):
-                    cdrom_size = size_to_int(self.xml.text("src-cdrom/size"))
+                if not cdrom_size and self.xml.has('src-cdrom/size'):
+                    cdrom_size = size_to_int(self.xml.text('src-cdrom/size'))
 
-                validation.info("Source CD %s", sysrootstr)
+                validation.info('Source CD %s', sysrootstr)
 
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
                 tgt_lst = cache.get_corresponding_source_packages(pkg_lst=tgt_pkg_lst)
-                components = {"target": (self.buildenv.rfs, cache, tgt_lst)}
+                components = {'target': (self.buildenv.rfs, cache, tgt_lst)}
 
                 # Main component
                 main_lst = []
                 if self.xml is not None:
                     tmp_lst = []
-                    for pkg_node in self.xml.node("debootstrappkgs"):
+                    for pkg_node in self.xml.node('debootstrappkgs'):
                         pkg = XMLPackage(pkg_node, self.arch)
                         tmp_lst.append(pkg.name)
                     main_lst = cache.get_corresponding_source_packages(pkg_lst=tmp_lst)
-                components["main"] = (env.rfs, cache, main_lst)
+                components['main'] = (env.rfs, cache, main_lst)
 
                 # Added component
-                other_components = [(env, "added")]
+                other_components = [(env, 'added')]
 
                 # Let's build a list of (build_env, name) for the
                 # other RFS if they exist
-                host_sysroot_path = os.path.join(self.sdkpath, "sysroots", "host")
-                for path, name in [(self.chrootpath, "chroot"),
-                                   (host_sysroot_path, "sysroot-host")]:
+                host_sysroot_path = os.path.join(self.sdkpath, 'sysroots', 'host')
+                for path, name in [(self.chrootpath, 'chroot'),
+                                   (host_sysroot_path, 'sysroot-host')]:
                     if os.path.exists(path) and env.path != path:
                         tmp_env = BuildEnv(self.xml, path)
                         with tmp_env:
@@ -519,12 +519,12 @@ class ElbeProject:
                     # Using kwargs here allows us to avoid making
                     # special case for when self.xml is None
                     kwargs = {
-                        "cdrom_size": cdrom_size,
-                        "xml": self.xml
+                        'cdrom_size': cdrom_size,
+                        'xml': self.xml
                         }
 
                     if self.xml is not None:
-                        kwargs["mirror"] = self.xml.get_primary_mirror(env.rfs.fname("cdrom"))
+                        kwargs['mirror'] = self.xml.get_primary_mirror(env.rfs.fname('cdrom'))
 
                     for iso in mk_source_cdrom(components,
                                                self.codename,
@@ -562,12 +562,12 @@ class ElbeProject:
 
         # Import keyring
         self.buildenv.import_keys()
-        logging.info("Keys imported")
+        logging.info('Keys imported')
 
         if self.xml.has('target/pbuilder') and not skip_pbuild:
-            if not os.path.exists(os.path.join(self.builddir, "pbuilder")):
+            if not os.path.exists(os.path.join(self.builddir, 'pbuilder')):
                 self.create_pbuilder(cross=False, noccache=False,
-                                     ccachesize="10G")
+                                     ccachesize='10G')
             for p in self.xml.node('target/pbuilder'):
                 self.pbuild(p)
                 # the package might be needed by a following pbuild, so update
@@ -587,7 +587,7 @@ class ElbeProject:
         try:
             self.buildenv.rfs.dump_elbeversion(self.xml)
         except IOError:
-            logging.exception("Dump elbeversion failed")
+            logging.exception('Dump elbeversion failed')
 
         # Extract target FS. We always create a new instance here with
         # clean=true, because we want a pristine directory.
@@ -599,9 +599,9 @@ class ElbeProject:
 
         # Package validation and package list
         if not skip_pkglist:
-            pkgs = self.xml.xml.node("/target/pkg-list")
-            if self.xml.has("fullpkgs"):
-                check_full_pkgs(pkgs, self.xml.xml.node("/fullpkgs"),
+            pkgs = self.xml.xml.node('/target/pkg-list')
+            if self.xml.has('fullpkgs'):
+                check_full_pkgs(pkgs, self.xml.xml.node('/fullpkgs'),
                                 self.get_rpcaptcache())
             else:
                 check_full_pkgs(pkgs, None, self.get_rpcaptcache())
@@ -615,7 +615,7 @@ class ElbeProject:
         try:
             self.targetfs.dump_elbeversion(self.xml)
         except MemoryError:
-            logging.exception("Dump elbeversion failed")
+            logging.exception('Dump elbeversion failed')
 
         # install packages for buildenv
         if not skip_pkglist:
@@ -623,45 +623,45 @@ class ElbeProject:
 
         # Write source.xml
         try:
-            sourcexmlpath = os.path.join(self.builddir, "source.xml")
+            sourcexmlpath = os.path.join(self.builddir, 'source.xml')
             self.xml.xml.write(sourcexmlpath)
         except MemoryError:
-            logging.exception("Write source.xml failed (archive to huge?)")
+            logging.exception('Write source.xml failed (archive to huge?)')
 
         # Elbe report
         cache = self.get_rpcaptcache()
         tgt_pkgs = elbe_report(self.xml, self.buildenv, cache, self.targetfs)
 
         # chroot' licenses
-        self.gen_licenses("chroot", self.buildenv,
+        self.gen_licenses('chroot', self.buildenv,
                           [p.name for p in cache.get_installed_pkgs()])
 
-        self.gen_licenses("target", self.buildenv, tgt_pkgs)
+        self.gen_licenses('target', self.buildenv, tgt_pkgs)
 
         # Use some handwaving to determine grub version
-        grub_arch = "ia32" if self.arch == "i386" else self.arch
+        grub_arch = 'ia32' if self.arch == 'i386' else self.arch
         grub_fw_type = []
         grub_version = 0
         if self.get_rpcaptcache().is_installed('grub-pc'):
             grub_version = 202
-            grub_fw_type.append("bios")
+            grub_fw_type.append('bios')
         if self.get_rpcaptcache().is_installed(f'grub-efi-{grub_arch}-bin'):
             grub_version = 202
-            grub_tgt = "x86_64" if self.arch == "amd64" else self.arch
-            grub_fw_type.extend(["efi", grub_tgt + "-efi"])
+            grub_tgt = 'x86_64' if self.arch == 'amd64' else self.arch
+            grub_fw_type.extend(['efi', grub_tgt + '-efi'])
         if (self.get_rpcaptcache().is_installed('shim-signed') and
                 self.get_rpcaptcache().is_installed(
                     f'grub-efi-{grub_arch}-signed')):
             grub_version = 202
-            grub_fw_type.append("shimfix")
+            grub_fw_type.append('shimfix')
         if self.get_rpcaptcache().is_installed('grub-legacy'):
-            logging.warning("package grub-legacy is installed, "
-                            "this is obsolete.")
+            logging.warning('package grub-legacy is installed, '
+                            'this is obsolete.')
             grub_version = 97
-            grub_fw_type.append("bios")
+            grub_fw_type.append('bios')
         elif not grub_fw_type:
-            logging.warning("neither package grub-pc nor grub-efi-%s-bin "
-                            "are installed, skipping grub",
+            logging.warning('neither package grub-pc nor grub-efi-%s-bin '
+                            'are installed, skipping grub',
                             grub_arch)
 
         self.targetfs.part_target(self.builddir, grub_version, grub_fw_type)
@@ -669,7 +669,7 @@ class ElbeProject:
         self.build_cdroms(build_bin, build_sources, cdrom_size, tgt_pkg_lst=tgt_pkgs)
 
         if self.postbuild_file:
-            logging.info("Postbuild script")
+            logging.info('Postbuild script')
             cmd = (f' "{self.builddir} {self.xml.text("project/version")} '
                    f'{self.xml.text("project/name")}"')
             do(self.postbuild_file + cmd, allow_fail=True)
@@ -694,7 +694,7 @@ class ElbeProject:
             f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
 
         # Recreate the directories removed
-        if os.path.exists(os.path.join(self.builddir, "pbuilder_cross")):
+        if os.path.exists(os.path.join(self.builddir, 'pbuilder_cross')):
             do(
                 'mkdir -p '
                 f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
@@ -704,30 +704,30 @@ class ElbeProject:
                 f'"{os.path.join(self.builddir, "pbuilder", "result")}"')
 
     def pdebuild(self, cpuset, profile, cross):
-        cross_pbuilderrc = os.path.join(self.builddir, "cross_pbuilderrc")
+        cross_pbuilderrc = os.path.join(self.builddir, 'cross_pbuilderrc')
         if cross and not os.path.exists(cross_pbuilderrc):
-            logging.error("Please make sure that you create the pbuilder "
-                          "environment with the --cross option if you want to "
-                          "use the build command with --cross.")
+            logging.error('Please make sure that you create the pbuilder '
+                          'environment with the --cross option if you want to '
+                          'use the build command with --cross.')
             sys.exit(116)
 
         if os.path.exists(cross_pbuilderrc) and not cross:
-            logging.error("Please make sure that if you created the pbuilder "
-                          "environment without the --cross option, you use the "
-                          "build command without --cross too.")
+            logging.error('Please make sure that if you created the pbuilder '
+                          'environment without the --cross option, you use the '
+                          'build command without --cross too.')
             sys.exit(117)
 
         self.pdebuild_init()
 
-        pbdir = os.path.join(self.builddir, "pdebuilder", "current")
+        pbdir = os.path.join(self.builddir, 'pdebuilder', 'current')
         do(f'mkdir -p "{os.path.join(pbdir)}"')
 
         # create .gitconfig and declare pdebuilder/current directory as safe
-        git_file_name = os.path.join(self.builddir, "pdebuilder", ".gitconfig")
-        git_safe_dir = os.path.join(self.builddir, "pdebuilder", "current")
-        with open(git_file_name, "w", encoding="ascii") as git_file:
-            git_file.write("[safe]\n")
-            git_file.write(f"\tdirectory = {git_safe_dir}\n")
+        git_file_name = os.path.join(self.builddir, 'pdebuilder', '.gitconfig')
+        git_safe_dir = os.path.join(self.builddir, 'pdebuilder', 'current')
+        with open(git_file_name, 'w', encoding='ascii') as git_file:
+            git_file.write('[safe]\n')
+            git_file.write(f'\tdirectory = {git_safe_dir}\n')
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
         do(
@@ -749,24 +749,24 @@ class ElbeProject:
             # cpuset == -1 means empty cpuset_cmd
             cpuset_cmd = ''
 
-        profile_list = profile.split(",")
-        deb_build_opts = [i for i in profile_list if i in ("nodoc", "nocheck")]
+        profile_list = profile.split(',')
+        deb_build_opts = [i for i in profile_list if i in ('nodoc', 'nocheck')]
 
-        pdebuilder_current = os.path.join(self.builddir, "pdebuilder", "current")
+        pdebuilder_current = os.path.join(self.builddir, 'pdebuilder', 'current')
 
-        formatfile = ""
+        formatfile = ''
 
-        if os.path.exists(os.path.join(pdebuilder_current, "debian", "source", "format")):
+        if os.path.exists(os.path.join(pdebuilder_current, 'debian', 'source', 'format')):
             formatfile = open(os.path.join(pdebuilder_current,
-                              "debian", "source", "format"), "r").read()
+                              'debian', 'source', 'format'), 'r').read()
 
         src_pkg_name = open(os.path.join(pdebuilder_current,
-                            "debian", "changelog"), "r").readline().split()[0]
+                            'debian', 'changelog'), 'r').readline().split()[0]
 
-        if "3.0 (quilt)" in formatfile and not self.orig_files:
-            do(f"cd {pdebuilder_current}; origtargz --download-only --tar-only")
+        if '3.0 (quilt)' in formatfile and not self.orig_files:
+            do(f'cd {pdebuilder_current}; origtargz --download-only --tar-only')
             self.orig_files = glob.glob(
-                f"{pdebuilder_current}/../{src_pkg_name}*.orig.*")
+                f'{pdebuilder_current}/../{src_pkg_name}*.orig.*')
         else:
             try:
                 for orig_fname in self.orig_files:
@@ -788,33 +788,33 @@ class ElbeProject:
                    f'--basetgz "{os.path.join(self.builddir, "pbuilder_cross", "base.tgz")}" '
                    f'--buildresult "{os.path.join(self.builddir, "pbuilder_cross", "result")}" '
                    '../*.dsc',
-                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
-                            'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
-                pbuilderdir = "pbuilder_cross"
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(',', ' '),
+                            'DEB_BUILD_OPTIONS': ' '.join(deb_build_opts)})
+                pbuilderdir = 'pbuilder_cross'
             else:
                 do(f'cd "{os.path.join(self.builddir, "pdebuilder", "current")}"; '
                    f'{cpuset_cmd} pdebuild --debbuildopts "-j{cfg["pbuilder_jobs"]} -sa" '
                    f'--configfile "{os.path.join(self.builddir, "pbuilderrc")}" '
                    '--use-pdebuild-internal '
                    f'--buildresult "{os.path.join(self.builddir, "pbuilder", "result")}"',
-                   env_add={'DEB_BUILD_PROFILES': profile.replace(",", " "),
-                            'DEB_BUILD_OPTIONS': " ".join(deb_build_opts)})
-                pbuilderdir = "pbuilder"
+                   env_add={'DEB_BUILD_PROFILES': profile.replace(',', ' '),
+                            'DEB_BUILD_OPTIONS': ' '.join(deb_build_opts)})
+                pbuilderdir = 'pbuilder'
 
             self.repo.remove(os.path.join(self.builddir,
-                                          "pdebuilder",
-                                          "current",
-                                          "debian",
-                                          "control"))
+                                          'pdebuilder',
+                                          'current',
+                                          'debian',
+                                          'control'))
 
             self.repo.include(os.path.join(self.builddir,
                                            pbuilderdir,
-                                           "result",
-                                           "*.changes"))
+                                           'result',
+                                           '*.changes'))
         except CommandError:
-            logging.exception("Package fails to build.\n"
-                              "Please make sure, that the submitted package "
-                              "builds in pbuilder")
+            logging.exception('Package fails to build.\n'
+                              'Please make sure, that the submitted package '
+                              'builds in pbuilder')
         finally:
             self.orig_fname = None
             self.orig_files = []
@@ -840,11 +840,11 @@ class ElbeProject:
         do(f'mkdir -p "{os.path.join(self.builddir, "aptconfdir", "apt.conf.d")}"')
 
         if not noccache:
-            ccache_path = os.path.join(self.builddir, "ccache")
+            ccache_path = os.path.join(self.builddir, 'ccache')
             do(f'mkdir -p "{ccache_path}"')
             do(f'chmod a+w "{ccache_path}"')
-            ccache_fp = open(os.path.join(ccache_path, "ccache.conf"), "w")
-            ccache_fp.write(f"max_size = {ccachesize}")
+            ccache_fp = open(os.path.join(ccache_path, 'ccache.conf'), 'w')
+            ccache_fp.write(f'max_size = {ccachesize}')
             ccache_fp.close()
 
         # write config files
@@ -861,9 +861,9 @@ class ElbeProject:
         pbuilder_write_apt_conf(self.builddir, self.xml)
 
         # Run pbuilder --create
-        no_check_gpg = ""
+        no_check_gpg = ''
         if self.xml.prj.has('noauth'):
-            no_check_gpg = "--debootstrapopts --no-check-gpg"
+            no_check_gpg = '--debootstrapopts --no-check-gpg'
         if cross:
             do('pbuilder --create '
                f'--buildplace "{os.path.join(self.builddir, "pbuilder_cross")}" '
@@ -878,10 +878,10 @@ class ElbeProject:
 
     def sync_xml_to_disk(self):
         try:
-            sourcexmlpath = os.path.join(self.builddir, "source.xml")
+            sourcexmlpath = os.path.join(self.builddir, 'source.xml')
             self.xml.xml.write(sourcexmlpath)
         except MemoryError:
-            logging.exception("write source.xml failed (archive to huge?)")
+            logging.exception('write source.xml failed (archive to huge?)')
 
     def get_rpcaptcache(self, env=None, norecommend=None):
         if not env:
@@ -890,7 +890,7 @@ class ElbeProject:
         if norecommend is None:
             norecommend = not self.xml.prj.has('install-recommends')
 
-        if env.arch == "default":
+        if env.arch == 'default':
             arch = self.arch
         else:
             arch = env.arch
@@ -910,12 +910,12 @@ class ElbeProject:
     def has_full_buildenv(self):
         if os.path.exists(self.chrootpath):
             elbeversionpath = os.path.join(self.chrootpath,
-                                           "etc", "elbe_version")
+                                           'etc', 'elbe_version')
             if os.path.isfile(elbeversionpath):
                 return True
 
-            logging.warning("%s exists, but it does not have "
-                            "an etc/elbe_version file.", self.chrootpath)
+            logging.warning('%s exists, but it does not have '
+                            'an etc/elbe_version file.', self.chrootpath)
             # Apparently we do not have a functional build environment
             return False
 
@@ -924,15 +924,15 @@ class ElbeProject:
     def set_xml(self, xmlpath):
         # Use supplied XML file, if given, otherwise change to source.xml
         if not xmlpath:
-            xmlpath = os.path.join(self.builddir, "source.xml")
+            xmlpath = os.path.join(self.builddir, 'source.xml')
 
         newxml = ElbeXML(xmlpath, buildtype=self.override_buildtype,
                          skip_validate=self.skip_validate,
                          url_validation=self.url_validation)
 
         # New XML file has to have the same architecture
-        oldarch = self.xml.text("project/arch", key="arch")
-        newarch = newxml.text("project/arch", key="arch")
+        oldarch = self.xml.text('project/arch', key='arch')
+        newarch = newxml.text('project/arch', key='arch')
         if newarch != oldarch:
             raise IncompatibleArchitectureException(oldarch, newarch)
 
@@ -965,39 +965,39 @@ class ElbeProject:
 
     def write_log_header(self):
 
-        logging.info("ELBE Report for Project %s\n"
-                     "Report timestamp: %s", self.name,
-                     datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        logging.info('ELBE Report for Project %s\n'
+                     'Report timestamp: %s', self.name,
+                     datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
 
     def copy_initvmnode(self):
-        source_path = "/var/cache/elbe/source.xml"
+        source_path = '/var/cache/elbe/source.xml'
         try:
             initxml = ElbeXML(source_path,
                               skip_validate=self.skip_validate,
                               url_validation=ValidationMode.NO_CHECK)
             self.xml.get_initvmnode_from(initxml)
         except ValidationError:
-            logging.exception("%s validation failed.  "
-                              "Will not copy initvm node", source_path)
+            logging.exception('%s validation failed.  '
+                              'Will not copy initvm node', source_path)
         except IOError:
-            logging.exception("%s not available.  "
-                              "Can not copy initvm node", source_path)
+            logging.exception('%s not available.  '
+                              'Can not copy initvm node', source_path)
         except NoInitvmNode:
-            logging.exception("%s is available.  But it does not "
-                              "contain an initvm node", source_path)
+            logging.exception('%s is available.  But it does not '
+                              'contain an initvm node', source_path)
 
     def install_packages(self, target, buildenv=False):
 
         # to workaround debian bug no. 872543
         if self.xml.prj.has('noauth'):
-            inrelease = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*InRelease")
-            release_gpg = glob.glob(f"{self.chrootpath}/var/lib/apt/lists/*.gpg")
+            inrelease = glob.glob(f'{self.chrootpath}/var/lib/apt/lists/*InRelease')
+            release_gpg = glob.glob(f'{self.chrootpath}/var/lib/apt/lists/*.gpg')
             if inrelease:
-                system(f"rm {inrelease[0]};")
-                logging.info("Removed InRelease file!")
+                system(f'rm {inrelease[0]};')
+                logging.info('Removed InRelease file!')
             if release_gpg:
-                system(f"rm {release_gpg[0]};")
-                logging.info("Removed Release.gpg file!")
+                system(f'rm {release_gpg[0]};')
+                logging.info('Removed Release.gpg file!')
 
         with target:
             # First update the apt cache
@@ -1016,7 +1016,7 @@ class ElbeProject:
 
                 self.copy_initvmnode()
             else:
-                sourcepath = os.path.join(self.builddir, "source.xml")
+                sourcepath = os.path.join(self.builddir, 'source.xml')
                 source = ElbeXML(sourcepath,
                                  buildtype=self.override_buildtype,
                                  skip_validate=self.skip_validate,
@@ -1026,8 +1026,8 @@ class ElbeProject:
                 try:
                     self.xml.get_initvmnode_from(source)
                 except NoInitvmNode:
-                    logging.warning("source.xml is available. "
-                                    "But it does not contain an initvm node")
+                    logging.warning('source.xml is available. '
+                                    'But it does not contain an initvm node')
                     self.copy_initvmnode()
 
             # Seed /etc, we need /etc/hosts for hostname -f to work correctly
@@ -1037,7 +1037,7 @@ class ElbeProject:
             # remove all non-essential packages to ensure that on a incremental
             # build packages can be removed
             debootstrap_pkgs = []
-            for p in self.xml.node("debootstrappkgs"):
+            for p in self.xml.node('debootstrappkgs'):
                 debootstrap_pkgs.append(p.et.text)
 
             pkgs = target.xml.get_target_packages() + debootstrap_pkgs
@@ -1050,10 +1050,10 @@ class ElbeProject:
                 try:
                     self.get_rpcaptcache(env=target).mark_install(p, None)
                 except KeyError:
-                    logging.exception("No Package %s", p)
+                    logging.exception('No Package %s', p)
                 except SystemError:
-                    logging.exception("Unable to correct problems "
-                                      "in package %s",
+                    logging.exception('Unable to correct problems '
+                                      'in package %s',
                                       p)
 
             # temporary disabled because of
@@ -1064,13 +1064,13 @@ class ElbeProject:
             try:
                 self.get_rpcaptcache(env=target).commit()
             except SystemError as e:
-                logging.exception("Commiting changes failed")
+                logging.exception('Commiting changes failed')
                 raise AptCacheCommitError(str(e))
 
     def gen_licenses(self, rfs, env, pkg_list):
 
-        lic_txt_fname = os.path.join(self.builddir, f"licence-{rfs}.txt")
-        lic_xml_fname = os.path.join(self.builddir, f"licence-{rfs}.xml")
+        lic_txt_fname = os.path.join(self.builddir, f'licence-{rfs}.txt')
+        lic_xml_fname = os.path.join(self.builddir, f'licence-{rfs}.xml')
         pkg_list.sort()
 
         with io.open(lic_txt_fname, 'w+',

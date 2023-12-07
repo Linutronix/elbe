@@ -27,7 +27,7 @@ warnings.simplefilter('ignore', category=ResourceWarning)
 class EsoapApp(Application):
     def __init__(self, *args, **kargs):
         Application.__init__(self, *args, **kargs)
-        self.pm = ProjectManager("/var/cache/elbe")
+        self.pm = ProjectManager('/var/cache/elbe')
 
 
 class MySession (SessionMiddleware, SimplePlugin):

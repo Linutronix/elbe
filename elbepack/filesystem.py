@@ -18,31 +18,31 @@ def size_to_int(size):
     if size[-1] in digits:
         return int(size)
 
-    if size.endswith("M"):
+    if size.endswith('M'):
         unit = 1000 * 1000
         s = size[:-1]
-    elif size.endswith("MiB"):
+    elif size.endswith('MiB'):
         unit = 1024 * 1024
         s = size[:-3]
-    elif size.endswith("MB"):
+    elif size.endswith('MB'):
         unit = 1000 * 1000
         s = size[:-2]
-    if size.endswith("G"):
+    if size.endswith('G'):
         unit = 1000 * 1000 * 1000
         s = size[:-1]
-    elif size.endswith("GiB"):
+    elif size.endswith('GiB'):
         unit = 1024 * 1024 * 1024
         s = size[:-3]
-    elif size.endswith("GB"):
+    elif size.endswith('GB'):
         unit = 1000 * 1000 * 1000
         s = size[:-2]
-    if size.endswith("k"):
+    if size.endswith('k'):
         unit = 1000
         s = size[:-1]
-    elif size.endswith("kiB"):
+    elif size.endswith('kiB'):
         unit = 1024
         s = size[:-3]
-    elif size.endswith("kB"):
+    elif size.endswith('kB'):
         unit = 1000
         s = size[:-2]
 
@@ -73,7 +73,7 @@ class Filesystem:
             path = path[1:]
         return os.path.join(self.path, path)
 
-    def open(self, path, mode="r"):
+    def open(self, path, mode='r'):
         """
         >>> this.open("open") # doctest: +ELLIPSIS
         Traceback (most recent call last):
@@ -87,7 +87,7 @@ class Filesystem:
         """
         return open(self.fname(path), mode)
 
-    def open_gz(self, path, mode="r"):
+    def open_gz(self, path, mode='r'):
         """
         >>> this.open_gz("open_gz") # doctest: +ELLIPSIS
         Traceback (most recent call last):
@@ -369,18 +369,18 @@ class Filesystem:
 
     def write_file(self, path, mode, cont):
         path = self.realpath(path)
-        self._write_file(path, open(path, "w"), cont, mode)
+        self._write_file(path, open(path, 'w'), cont, mode)
 
     def append_file(self, path, cont, mode=None):
         path = self.realpath(path)
-        self._write_file(path, open(path, "a"), cont, mode)
+        self._write_file(path, open(path, 'a'), cont, mode)
 
     def read_file(self, path, gz=False):
         path = self.realpath(path)
         if gz:
-            fp = gzip.open(path, "r")
+            fp = gzip.open(path, 'r')
         else:
-            fp = open(path, "r")
+            fp = open(path, 'r')
 
         with fp:
             retval = fp.read()
@@ -415,7 +415,7 @@ class Filesystem:
             pass
         elif self.isfile(newdir):
             raise OSError(
-                "a file with the same name as the desired "
+                'a file with the same name as the desired '
                 f"dir, '{newdir}', already exists. in RFS {self.path}")
         else:
             self.mkdir(newdir)
@@ -425,7 +425,7 @@ class Filesystem:
         if self.exists(fname):
             self.utime(fname)
         else:
-            fp = self.open(fname, "w")
+            fp = self.open(fname, 'w')
             fp.close()
 
     def walk_files(self, directory='', exclude_dirs=None):
@@ -433,14 +433,14 @@ class Filesystem:
             exclude_dirs = []
 
         dirname = self.fname(directory)
-        if dirname == "/":
+        if dirname == '/':
             striplen = 0
         else:
             striplen = len(dirname)
         for dirpath, dirnames, filenames in os.walk(dirname):
             subpath = dirpath[striplen:]
             if not subpath:
-                subpath = "/"
+                subpath = '/'
 
             deldirs = []
             for d in dirnames:
@@ -454,7 +454,7 @@ class Filesystem:
             for f in filenames:
                 fpath = os.path.join(subpath, f)
                 realpath = os.path.join(dirpath, f)
-                yield "/" + fpath, realpath
+                yield '/' + fpath, realpath
 
     def mtime_snap(self, dirname='', exclude_dirs=None):
         if not exclude_dirs:

@@ -12,7 +12,7 @@ class HashValidationFailed(Exception):
 
 def validate_sha256(fname, expected_hash):
     m = hashlib.sha256()
-    with open(fname, "rb") as f:
+    with open(fname, 'rb') as f:
         buf = f.read(65536)
         while buf:
             m.update(buf)
@@ -45,6 +45,6 @@ class HashValidator:
         try:
             system(f'wget -O "{local_fname}" "{url}"')
         except CommandError:
-            raise HashValidationFailed(f"Failed to download {url}")
+            raise HashValidationFailed(f'Failed to download {url}')
 
         self.validate_file(upstream_fname, local_fname)

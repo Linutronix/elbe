@@ -66,9 +66,9 @@ class license_dep5_to_spdx (dict):
                 mapped_lic = self.map_one_license(
                     pkgname, with_split[0], errors)
                 if mapped_lic is None:
-                    mapped_lic = f"UNKNOWN_MAPPING({with_split[0]})"
+                    mapped_lic = f'UNKNOWN_MAPPING({with_split[0]})'
                 if len(with_split) == 2:
-                    ands.append(f"{mapped_lic} WITH {with_split[1]}")
+                    ands.append(f'{mapped_lic} WITH {with_split[1]}')
                 else:
                     ands.append(mapped_lic)
             ors.append(' AND '.join(ands))
@@ -99,7 +99,7 @@ def scan_nomos(license_text):
 
     expected_start = f'File {os.path.basename(f.name)} contains license(s) '
     if not nomos_out.startswith(expected_start):
-        raise Exception("nomos output error")
+        raise Exception('nomos output error')
 
     licenses = nomos_out[len(expected_start):].strip()
 
@@ -123,32 +123,32 @@ def license_string(pkg):
 def run_command(argv):
 
     oparser = OptionParser(
-        usage="usage: %prog parselicence [options] <licencefile>")
-    oparser.add_option("--output", dest="output",
-                       help="outputfilename")
-    oparser.add_option("--mapping", dest="mapping",
-                       help="mapping filename")
+        usage='usage: %prog parselicence [options] <licencefile>')
+    oparser.add_option('--output', dest='output',
+                       help='outputfilename')
+    oparser.add_option('--mapping', dest='mapping',
+                       help='mapping filename')
     oparser.add_option(
-        "--use-nomos",
-        action="store_true",
-        dest="use_nomos",
+        '--use-nomos',
+        action='store_true',
+        dest='use_nomos',
         default=False,
-        help="Use the external nomos tool on the copyright text, "
-             "and record the ouput in out xml")
+        help='Use the external nomos tool on the copyright text, '
+             'and record the ouput in out xml')
     oparser.add_option(
-        "--errors-only",
-        action="store_true",
-        dest="only_errors",
+        '--errors-only',
+        action='store_true',
+        dest='only_errors',
         default=False,
-        help="Only Output Packages with errors, "
-             "needing a fix in the mapping file")
-    oparser.add_option("--tvout", dest="tagvalue",
-                       help="tag value output filename")
+        help='Only Output Packages with errors, '
+             'needing a fix in the mapping file')
+    oparser.add_option('--tvout', dest='tagvalue',
+                       help='tag value output filename')
 
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
-        print("wrong number of arguments")
+        print('wrong number of arguments')
         oparser.print_help()
         sys.exit(53)
 
@@ -160,7 +160,7 @@ def run_command(argv):
     err_pkg = 0
 
     if not opt.mapping:
-        print("A mapping file is required")
+        print('A mapping file is required')
         oparser.print_help()
         sys.exit(54)
 
@@ -236,7 +236,7 @@ def run_command(argv):
             tree.root.remove_child(pkg)
 
     if opt.tagvalue is not None:
-        with io.open(opt.tagvalue, "wt", encoding='utf-8') as fp:
+        with io.open(opt.tagvalue, 'wt', encoding='utf-8') as fp:
             fp.write('SPDXVersion: SPDX-1.2\n')
             fp.write('DataLicense: CC0-1.0\n')
             fp.write('\n')
@@ -267,5 +267,5 @@ def run_command(argv):
     if opt.output is not None:
         tree.write(opt.output)
 
-    print("statistics:")
-    print(f"num:{num_pkg} mr:{mr} hr:{hr} err_pkg:{err_pkg}")
+    print('statistics:')
+    print(f'num:{num_pkg} mr:{mr} hr:{hr} err_pkg:{err_pkg}')

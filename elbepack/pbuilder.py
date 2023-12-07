@@ -11,8 +11,8 @@ from elbepack.filesystem import Filesystem
 
 def pbuilder_write_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
-    pbuilderrc_fname = os.path.join(builddir, "pbuilderrc")
-    fp = open(pbuilderrc_fname, "w")
+    pbuilderrc_fname = os.path.join(builddir, 'pbuilderrc')
+    fp = open(pbuilderrc_fname, 'w')
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
@@ -25,7 +25,7 @@ def pbuilder_write_config(builddir, xml, noccache):
     fp.write(f'HOOKDIR="{os.path.join(builddir, "pbuilder", "hooks.d")}"\n')
     fp.write('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
 
-    if xml.text("project/arch", key="arch") != 'amd64':
+    if xml.text('project/arch', key='arch') != 'amd64':
         fp.write(f'ARCHITECTURE="{xml.text("project/buildimage/arch", key="arch")}"\n')
         fp.write('DEBOOTSTRAP="qemu-debootstrap"\n')
         fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" '
@@ -54,8 +54,8 @@ def pbuilder_write_config(builddir, xml, noccache):
 
 def pbuilder_write_cross_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
-    pbuilderrc_fname = os.path.join(builddir, "cross_pbuilderrc")
-    fp = open(pbuilderrc_fname, "w")
+    pbuilderrc_fname = os.path.join(builddir, 'cross_pbuilderrc')
+    fp = open(pbuilderrc_fname, 'w')
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
@@ -96,8 +96,8 @@ def pbuilder_write_apt_conf(builddir, xml):
 
     # noauth is set
     # create pbuilder/aptconfdir/apt.conf.d/16allowuntrusted
-    aptconf_dir = os.path.join(builddir, "aptconfdir", "apt.conf.d")
-    fp = open(os.path.join(aptconf_dir, "16allowuntrusted"), "w")
+    aptconf_dir = os.path.join(builddir, 'aptconfdir', 'apt.conf.d')
+    fp = open(os.path.join(aptconf_dir, '16allowuntrusted'), 'w')
 
     # Make apt-get use --force-yes which is not specified by
     # pbuilder-satisfy-depends
@@ -115,7 +115,7 @@ def pbuilder_write_apt_conf(builddir, xml):
 
 
 def mirror_script_add_key_url(key_url):
-    key_url = key_url.replace("LOCALMACHINE", "10.0.2.2")
+    key_url = key_url.replace('LOCALMACHINE', '10.0.2.2')
     key_conn = urlopen(key_url, None, 10)
     key_text = key_conn.read()
     key_conn.close()
@@ -126,14 +126,14 @@ def mirror_script_add_key_url(key_url):
 def pbuilder_write_repo_hook(builddir, xml, cross):
 
     if cross:
-        pbuilder_hook_dir = os.path.join(builddir, "pbuilder_cross", "hooks.d")
+        pbuilder_hook_dir = os.path.join(builddir, 'pbuilder_cross', 'hooks.d')
     else:
-        pbuilder_hook_dir = os.path.join(builddir, "pbuilder", "hooks.d")
+        pbuilder_hook_dir = os.path.join(builddir, 'pbuilder', 'hooks.d')
 
-    with open(os.path.join(pbuilder_hook_dir, "H10elbe_apt_update"), "w") as f:
-        f.write("#!/bin/sh\napt update\n")
+    with open(os.path.join(pbuilder_hook_dir, 'H10elbe_apt_update'), 'w') as f:
+        f.write('#!/bin/sh\napt update\n')
 
-    with open(os.path.join(pbuilder_hook_dir, "G10elbe_apt_sources"), "w") as f:
+    with open(os.path.join(pbuilder_hook_dir, 'G10elbe_apt_sources'), 'w') as f:
 
         local_http = f"deb http://127.0.0.1:8080{builddir}/repo {xml.prj.text('suite')} main\n"
         mirrors = xml.create_apt_sources_list(hostsysroot=cross)
@@ -141,45 +141,45 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
         keys = get_apt_keys(builddir, xml)
 
-        f.write("#!/bin/sh\n")
+        f.write('#!/bin/sh\n')
 
         # cat reads from stdin (-) and redirect (>) to
         # /etc/apt/sources.list
-        f.write(f"cat -> /etc/apt/sources.list <<EOF\n{mirrors}\nEOF\n")
+        f.write(f'cat -> /etc/apt/sources.list <<EOF\n{mirrors}\nEOF\n')
 
         for key in keys:
-            f.write(f"cat << EOF | apt-key add -\n{key}\nEOF\n")
+            f.write(f'cat << EOF | apt-key add -\n{key}\nEOF\n')
 
-        f.write("apt-get update\n")
+        f.write('apt-get update\n')
 
 
 def get_apt_keys(builddir, xml):
 
     if xml.prj is None:
-        return (["# No Project"], [])
+        return (['# No Project'], [])
 
-    if not xml.prj.has("mirror") and not xml.prj.has("mirror/cdrom"):
-        return (["# No mirrors configured"], [])
+    if not xml.prj.has('mirror') and not xml.prj.has('mirror/cdrom'):
+        return (['# No mirrors configured'], [])
 
-    keys = [Filesystem(builddir).read_file("repo/repo.pub")]
+    keys = [Filesystem(builddir).read_file('repo/repo.pub')]
 
-    if xml.prj.has("mirror/primary_host") and xml.prj.has("mirror/url-list"):
+    if xml.prj.has('mirror/primary_host') and xml.prj.has('mirror/url-list'):
 
-        for url in xml.prj.node("mirror/url-list"):
+        for url in xml.prj.node('mirror/url-list'):
 
-            if url.has("options"):
-                options = "[%s]" % ' '.join([opt.et.text.strip(' \t\n')
+            if url.has('options'):
+                options = '[%s]' % ' '.join([opt.et.text.strip(' \t\n')
                                              for opt
-                                             in url.all("options/option")])
+                                             in url.all('options/option')])
             else:
-                options = ""
+                options = ''
 
-            if "trusted=yes" in options:
+            if 'trusted=yes' in options:
                 continue
 
-            if url.has("raw-key"):
+            if url.has('raw-key'):
 
-                key = "\n".join(line.strip(" \t")
+                key = '\n'.join(line.strip(' \t')
                                 for line
                                 in url.text('raw-key').splitlines()[1:-1])
 

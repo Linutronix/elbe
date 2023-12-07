@@ -13,8 +13,8 @@ from elbepack.repomanager import RepoBase, RepoAttributes
 class ArchiveRepo(RepoBase):
     def __init__(self, xml, pathname, origin, description, components):
 
-        arch = xml.text("project/arch", key="arch")
-        codename = xml.text("project/suite")
+        arch = xml.text('project/arch', key='arch')
+        codename = xml.text('project/suite')
 
         repo_attrs = RepoAttributes(codename, arch, components)
 
@@ -40,8 +40,8 @@ def gen_binpkg_archive(ep, repodir):
 
     try:
         # Repository containing all packages currently installed
-        repo = ArchiveRepo(ep.xml, repopath, "Elbe",
-                           "Elbe package archive", ["main"])
+        repo = ArchiveRepo(ep.xml, repopath, 'Elbe',
+                           'Elbe package archive', ['main'])
 
         c = ep.get_rpcaptcache()
         pkglist = c.get_installed_pkgs()
@@ -58,7 +58,7 @@ def gen_binpkg_archive(ep, repodir):
                                 'in var/cache/apt/archives, downloading it',
                                 filename)
                 abs_path = ep.buildenv.rfs.fname(rel_path)
-                pkg_id = f"{pkg.name}-{pkg.installed_version}"
+                pkg_id = f'{pkg.name}-{pkg.installed_version}'
                 try:
                     abs_path = c.download_binary(pkg.name,
                                                  '/var/cache/elbe/pkgarchive',
@@ -75,7 +75,7 @@ def gen_binpkg_archive(ep, repodir):
 
             # Add package to repository
             # XXX Use correct component
-            repo.includedeb(abs_path, "main")
+            repo.includedeb(abs_path, 'main')
 
         repo.finalize()
 
@@ -97,12 +97,12 @@ def checkout_binpkg_archive(ep, repodir):
         try:
             # Copy the package archive into the buildenv,
             # so the RPCAptCache can access it
-            logging.info("Copying package archive into build environment")
+            logging.info('Copying package archive into build environment')
             copytree(repopath, pkgarchive)
 
             # Move original etc/apt/sources.list and etc/apt/sources.list.d out
             # of the way
-            logging.info("Moving original APT configuration out of the way")
+            logging.info('Moving original APT configuration out of the way')
             if path.isfile(sources_list):
                 move(sources_list, sources_list_backup)
             if path.isdir(sources_list_d):
@@ -110,24 +110,24 @@ def checkout_binpkg_archive(ep, repodir):
 
             # Now create our own, with the package archive being the only
             # source
-            logging.info("Creating new /etc/apt/sources.list")
-            deb = "deb file:///var/cache/elbe/pkgarchive "
-            deb += ep.xml.text("/project/suite")
-            deb += " main"
+            logging.info('Creating new /etc/apt/sources.list')
+            deb = 'deb file:///var/cache/elbe/pkgarchive '
+            deb += ep.xml.text('/project/suite')
+            deb += ' main'
             with open(sources_list, 'w') as f:
                 f.write(deb)
 
             # We need to update the APT cache to apply the changed package
             # source
-            logging.info("Updating APT cache to use package archive")
+            logging.info('Updating APT cache to use package archive')
             ep.drop_rpcaptcache()
             c = ep.get_rpcaptcache()
             c.update()
 
             # Iterate over all packages, and mark them for installation or
             # deletion, using the same logic as in commands/updated.py
-            logging.info("Calculating packages to install/remove")
-            fpl = ep.xml.node("fullpkgs")
+            logging.info('Calculating packages to install/remove')
+            fpl = ep.xml.node('fullpkgs')
             pkgs = c.get_pkglist('all')
 
             for p in pkgs:
@@ -146,13 +146,13 @@ def checkout_binpkg_archive(ep, repodir):
                     c.mark_delete(p.name)
 
             # Now commit the changes
-            logging.info("Commiting package changes")
+            logging.info('Commiting package changes')
             c.commit()
         finally:
             # If we changed the package sources, move back the backup
             if path.isdir(sources_list_d_backup) or \
                     path.isfile(sources_list_backup):
-                logging.info("Moving back original APT configuration")
+                logging.info('Moving back original APT configuration')
                 update_needed = True
             else:
                 update_needed = False
@@ -167,11 +167,11 @@ def checkout_binpkg_archive(ep, repodir):
 
             # Remove the package archive from the buildenv
             if path.isdir(pkgarchive):
-                logging.info("Removing package archive from build environment")
+                logging.info('Removing package archive from build environment')
                 rmtree(pkgarchive)
 
             # Update APT cache, if we modified the package sources
             if update_needed:
-                logging.info("Updating APT cache to use original package sources")
+                logging.info('Updating APT cache to use original package sources')
                 ep.drop_rpcaptcache()
                 ep.get_rpcaptcache().update()

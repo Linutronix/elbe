@@ -30,7 +30,7 @@ def template(fname, d, linebreak=False):
 
 
 def write_template(outname, fname, d, linebreak=False):
-    outfile = open(outname, "w")
+    outfile = open(outname, 'w')
     outfile.write(template(fname, d, linebreak))
     outfile.close()
 
@@ -45,18 +45,18 @@ def get_preseed(xml):
     def_xml = etree(default_preseed_fname)
 
     preseed = {}
-    for c in def_xml.node("/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
+    for c in def_xml.node('/preseed'):
+        k = (c.et.attrib['owner'], c.et.attrib['key'])
+        v = (c.et.attrib['type'], c.et.attrib['value'])
 
         preseed[k] = v
 
-    if not xml.has("./project/preseed"):
+    if not xml.has('./project/preseed'):
         return preseed
 
-    for c in xml.node("/project/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
+    for c in xml.node('/project/preseed'):
+        k = (c.et.attrib['owner'], c.et.attrib['key'])
+        v = (c.et.attrib['type'], c.et.attrib['value'])
 
         preseed[k] = v
 
@@ -67,18 +67,18 @@ def get_initvm_preseed(xml):
     def_xml = etree(default_preseed_fname)
 
     preseed = {}
-    for c in def_xml.node("/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
+    for c in def_xml.node('/preseed'):
+        k = (c.et.attrib['owner'], c.et.attrib['key'])
+        v = (c.et.attrib['type'], c.et.attrib['value'])
 
         preseed[k] = v
 
-    if not xml.has("./initvm/preseed"):
+    if not xml.has('./initvm/preseed'):
         return preseed
 
-    for c in xml.node("/initvm/preseed"):
-        k = (c.et.attrib["owner"], c.et.attrib["key"])
-        v = (c.et.attrib["type"], c.et.attrib["value"])
+    for c in xml.node('/initvm/preseed'):
+        k = (c.et.attrib['owner'], c.et.attrib['key'])
+        v = (c.et.attrib['type'], c.et.attrib['value'])
 
         preseed[k] = v
 
@@ -86,8 +86,8 @@ def get_initvm_preseed(xml):
 
 
 def preseed_to_text(pres):
-    retval = ""
+    retval = ''
     for k, v in pres.items():
-        retval += f"{k[0]}\t{k[1]}\t{v[0]}\t{v[1]}\n"
+        retval += f'{k[0]}\t{k[1]}\t{v[0]}\t{v[1]}\n'
 
     return retval

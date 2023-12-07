@@ -13,37 +13,37 @@ from elbepack.treeutils import etree
 def run_command(argv):
 
     oparser = OptionParser(
-        usage="usage: %prog chg_archive [options] <xmlfile> "
-              "[<archive>|<directory>]")
+        usage='usage: %prog chg_archive [options] <xmlfile> '
+              '[<archive>|<directory>]')
     oparser.add_option(
-        "--keep-attributes",
-        action="store_true",
-        help="keep file owners and groups, if not specified all files will "
-             "belong to root:root",
-        dest="keep_attributes",
+        '--keep-attributes',
+        action='store_true',
+        help='keep file owners and groups, if not specified all files will '
+             'belong to root:root',
+        dest='keep_attributes',
         default=False)
 
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print("Wrong number of arguments")
+        print('Wrong number of arguments')
         oparser.print_help()
         sys.exit(42)
 
     try:
         xml = etree(args[0])
     except BaseException:
-        print("Error reading xml file!")
+        print('Error reading xml file!')
         sys.exit(43)
 
     try:
         xml = chg_archive(xml, args[1], opt.keep_attributes)
     except BaseException:
-        print("Error reading archive")
+        print('Error reading archive')
         sys.exit(44)
 
     try:
         xml.write(args[0])
     except BaseException:
-        print("Unable to write new xml file")
+        print('Unable to write new xml file')
         sys.exit(45)

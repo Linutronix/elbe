@@ -32,7 +32,7 @@ def gen_controlfile(name, version, arch, description, deps):
 
 
 def write_file(fname, mode, cont):
-    f = open(fname, "w")
+    f = open(fname, 'w')
     f.write(cont)
     f.close()
     os.chmod(fname, mode)
@@ -48,15 +48,15 @@ def build_binary_deb(
         target_dir):
 
     tmpdir = mkdtemp()
-    pkgfname = f"{name}_{version}_{arch}"
+    pkgfname = f'{name}_{version}_{arch}'
     pkgdir = os.path.join(tmpdir, pkgfname)
 
     os.system(f'mkdir -p "{os.path.join(pkgdir, "DEBIAN")}"')
     write_file(
         os.path.join(
             pkgdir,
-            "DEBIAN",
-            "control"),
+            'DEBIAN',
+            'control'),
         0o644,
         gen_controlfile(
             name,
@@ -75,4 +75,4 @@ def build_binary_deb(
         f'cp -v "{os.path.join(tmpdir, pkgfname + ".deb")}" "{target_dir}"')
     os.system(f'rm -r "{tmpdir}"')
 
-    return pkgfname + ".deb"
+    return pkgfname + '.deb'

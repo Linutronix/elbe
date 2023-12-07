@@ -68,20 +68,20 @@ class SHA256SUMSFile(HashValidator):
                     # line contains a hash entry.
                     # check filename, whether we are interested in it
                     if m.group(2) in fname_list:
-                        self.insert_fname_hash("SHA256",
+                        self.insert_fname_hash('SHA256',
                                                m.group(2),
                                                m.group(1))
 
 
 def setup_apt_keyring(gpg_home, keyring_fname):
     ring_path = os.path.join(gpg_home, keyring_fname)
-    if not os.path.isdir("/etc/apt/trusted.gpg.d"):
+    if not os.path.isdir('/etc/apt/trusted.gpg.d'):
         print("/etc/apt/trusted.gpg.d doesn't exist")
-        print("apt-get install debian-archive-keyring may "
-              "fix this problem")
+        print('apt-get install debian-archive-keyring may '
+              'fix this problem')
         sys.exit(115)
 
-    if os.path.exists("/etc/apt/trusted.gpg"):
+    if os.path.exists('/etc/apt/trusted.gpg'):
         system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
 
     gpg_options = f'--keyring "{ring_path}" --no-auto-check-trustdb ' \
@@ -89,9 +89,9 @@ def setup_apt_keyring(gpg_home, keyring_fname):
                   '--batch ' \
                   f'--homedir "{gpg_home}"'
 
-    trustkeys = os.listdir("/etc/apt/trusted.gpg.d")
+    trustkeys = os.listdir('/etc/apt/trusted.gpg.d')
     for key in trustkeys:
-        print(f"Import {key}: ")
+        print(f'Import {key}: ')
         try:
             system(
                 f'gpg {gpg_options} '
@@ -122,7 +122,7 @@ def verify_release(tmp, base_url):
     # directly.
     sig = urlopen(base_url + 'Release.gpg', None, 10)
     try:
-        with tmp.open("Release", "r") as signed:
+        with tmp.open('Release', 'r') as signed:
 
             overall_status = OverallStatus()
 
@@ -145,12 +145,12 @@ def verify_release(tmp, base_url):
 
 def download_kinitrd(tmp, suite, mirror, skip_signature=False):
     base_url = f"{mirror.replace('LOCALMACHINE', 'localhost')}/dists/{suite}/"
-    installer_path = "main/installer-amd64/current/images/"
+    installer_path = 'main/installer-amd64/current/images/'
 
     setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
 
     # download release file
-    download(base_url + "Release", tmp.fname('Release'))
+    download(base_url + 'Release', tmp.fname('Release'))
     if not skip_signature:
         verify_release(tmp, base_url)
 
@@ -186,50 +186,50 @@ def download_kinitrd(tmp, suite, mirror, skip_signature=False):
 
 
 def get_primary_mirror(prj):
-    if prj.has("mirror/primary_host"):
-        m = prj.node("mirror")
+    if prj.has('mirror/primary_host'):
+        m = prj.node('mirror')
 
-        mirror = m.text("primary_proto") + "://"
+        mirror = m.text('primary_proto') + '://'
         mirror += (
             f"{m.text('primary_host')}/{m.text('primary_path')}"
-            .replace("//", "/"))
+            .replace('//', '/'))
     else:
-        raise NoKinitrdException("Broken xml file: "
-                                 "no cdrom and no primary host")
+        raise NoKinitrdException('Broken xml file: '
+                                 'no cdrom and no primary host')
 
     return mirror
 
 
 def copy_kinitrd(prj, target_dir):
 
-    suite = prj.text("suite")
+    suite = prj.text('suite')
 
     try:
         tmp = TmpdirFilesystem()
-        if prj.has("mirror/cdrom"):
+        if prj.has('mirror/cdrom'):
             system(
                 f'7z x -o{tmp.fname("/")} "{prj.text("mirror/cdrom")}" '
                 'initrd-cdrom.gz vmlinuz')
 
             # initrd.gz needs to be cdrom version !
-            copyfile(tmp.fname("initrd-cdrom.gz"),
-                     os.path.join(target_dir, "initrd.gz"))
+            copyfile(tmp.fname('initrd-cdrom.gz'),
+                     os.path.join(target_dir, 'initrd.gz'))
         else:
             mirror = get_primary_mirror(prj)
-            download_kinitrd(tmp, suite, mirror, prj.has("noauth"))
+            download_kinitrd(tmp, suite, mirror, prj.has('noauth'))
 
-            copyfile(tmp.fname("initrd.gz"),
-                     os.path.join(target_dir, "initrd.gz"))
+            copyfile(tmp.fname('initrd.gz'),
+                     os.path.join(target_dir, 'initrd.gz'))
 
-        copyfile(tmp.fname("initrd-cdrom.gz"),
-                 os.path.join(target_dir, "initrd-cdrom.gz"))
+        copyfile(tmp.fname('initrd-cdrom.gz'),
+                 os.path.join(target_dir, 'initrd-cdrom.gz'))
 
-        copyfile(tmp.fname("vmlinuz"),
-                 os.path.join(target_dir, "vmlinuz"))
+        copyfile(tmp.fname('vmlinuz'),
+                 os.path.join(target_dir, 'vmlinuz'))
 
     except IOError as e:
-        raise NoKinitrdException(f"IoError {e}")
+        raise NoKinitrdException(f'IoError {e}')
     except InvalidSignature as e:
-        raise NoKinitrdException(f"InvalidSignature {e}")
+        raise NoKinitrdException(f'InvalidSignature {e}')
     except HashValidationFailed as e:
-        raise NoKinitrdException(f"HashValidationFailed {e}")
+        raise NoKinitrdException(f'HashValidationFailed {e}')

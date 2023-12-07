@@ -16,15 +16,15 @@ from elbepack.log import elbe_logging
 
 
 def run_command(argv):
-    oparser = OptionParser(usage="usage: %prog toolchainextract [options]")
-    oparser.add_option("-p", "--path", dest="path",
-                       help="path to toolchain")
-    oparser.add_option("-o", "--output", dest="output",
-                       help="output repository path")
-    oparser.add_option("-c", "--codename", dest="codename",
-                       help="distro codename for repository")
-    oparser.add_option("-b", "--buildtype", dest="buildtype",
-                       help="Override the buildtype")
+    oparser = OptionParser(usage='usage: %prog toolchainextract [options]')
+    oparser.add_option('-p', '--path', dest='path',
+                       help='path to toolchain')
+    oparser.add_option('-o', '--output', dest='output',
+                       help='output repository path')
+    oparser.add_option('-c', '--codename', dest='codename',
+                       help='distro codename for repository')
+    oparser.add_option('-b', '--buildtype', dest='buildtype',
+                       help='Override the buildtype')
     (opt, _) = oparser.parse_args(argv)
 
     if not opt.path:
@@ -43,33 +43,33 @@ def run_command(argv):
     defaults = ElbeDefaults(opt.buildtype)
 
     toolchain = get_toolchain(
-        defaults["toolchaintype"],
+        defaults['toolchaintype'],
         opt.path,
-        defaults["arch"])
+        defaults['arch'])
 
     tmpdir = mkdtemp()
 
     for lib in toolchain.pkg_libs:
         files = toolchain.get_files_for_pkg(lib)
 
-        pkglibpath = os.path.join("usr/lib", defaults["triplet"])
+        pkglibpath = os.path.join('usr/lib', defaults['triplet'])
         fmap = [(f, pkglibpath) for f in files]
 
         build_binary_deb(
             lib,
-            defaults["arch"],
-            defaults["toolchainver"],
+            defaults['arch'],
+            defaults['toolchainver'],
             lib +
-            " extracted from toolchain",
+            ' extracted from toolchain',
             fmap,
             toolchain.pkg_deps[lib],
             tmpdir)
 
     pkgs = os.listdir(tmpdir)
 
-    with elbe_logging({"streams": sys.stdout}):
+    with elbe_logging({'streams': sys.stdout}):
 
-        repo = ToolchainRepo(defaults["arch"],
+        repo = ToolchainRepo(defaults['arch'],
                              opt.codename,
                              opt.output)
 

@@ -20,8 +20,8 @@ from elbepack.aptpkgutils import getalldeps, APTPackage, fetch_binary
 from elbepack.log import async_logging
 
 
-log = logging.getLogger("log")
-soap = logging.getLogger("soap")
+log = logging.getLogger('log')
+soap = logging.getLogger('soap')
 
 
 class MyMan(BaseManager):
@@ -42,8 +42,8 @@ class MyMan(BaseManager):
         os.dup2(w, os.sys.stderr.fileno())
         # Buffering of 1 because in Python3 buffering of 0 is illegal
         # for non binary mode ..
-        os.sys.stdout = os.fdopen(os.sys.stdout.fileno(), "w", 1)
-        os.sys.stderr = os.fdopen(os.sys.stderr.fileno(), "w", 1)
+        os.sys.stdout = os.fdopen(os.sys.stdout.fileno(), 'w', 1)
+        os.sys.stderr = os.fdopen(os.sys.stderr.fileno(), 'w', 1)
         os.sys.__stdout__ = os.sys.stdout
         os.sys.__stderr__ = os.sys.stderr
 
@@ -61,7 +61,7 @@ class InChRootObject:
         self.finalizer = Finalize(self, self.rfs.leave_chroot, exitpriority=10)
 
 
-@MyMan.register("RPCAPTCache")
+@MyMan.register('RPCAPTCache')
 class RPCAPTCache(InChRootObject):
 
     def __init__(self, rfs, arch,
@@ -70,16 +70,16 @@ class RPCAPTCache(InChRootObject):
         InChRootObject.__init__(self, rfs)
 
         self.notifier = notifier
-        config.set("APT::Architecture", arch)
+        config.set('APT::Architecture', arch)
         if norecommend:
-            config.set("APT::Install-Recommends", "0")
+            config.set('APT::Install-Recommends', '0')
         else:
-            config.set("APT::Install-Recommends", "1")
+            config.set('APT::Install-Recommends', '1')
 
         if noauth:
-            config.set("APT::Get::AllowUnauthenticated", "1")
+            config.set('APT::Get::AllowUnauthenticated', '1')
         else:
-            config.set("APT::Get::AllowUnauthenticated", "0")
+            config.set('APT::Get::AllowUnauthenticated', '0')
 
         self.cache = Cache(progress=ElbeOpProgress())
         self.cache.open(progress=ElbeOpProgress())
@@ -89,13 +89,13 @@ class RPCAPTCache(InChRootObject):
         with open(f'{filename}_{ts.tm_hour:02}{ts.tm_min:02}{ts.tm_sec:02}', 'w') as dbg:
             for p in self.cache:
                 dbg.write(
-                    f"{p.name} {p.candidate.version} {p.marked_keep} "
-                    f"{p.marked_delete} {p.marked_upgrade} "
-                    f" {p.marked_downgrade} {p.marked_install} "
-                    f" {p.marked_reinstall} {p.is_auto_installed} "
-                    f" {p.is_installed} {p.is_auto_removable} "
-                    f"{p.is_now_broken} {p.is_inst_broken} "
-                    f"{p.is_upgradable}\n")
+                    f'{p.name} {p.candidate.version} {p.marked_keep} '
+                    f'{p.marked_delete} {p.marked_upgrade} '
+                    f' {p.marked_downgrade} {p.marked_install} '
+                    f' {p.marked_reinstall} {p.is_auto_installed} '
+                    f' {p.is_installed} {p.is_auto_removable} '
+                    f'{p.is_now_broken} {p.is_inst_broken} '
+                    f'{p.is_upgradable}\n')
 
     def get_sections(self):
         ret = list({p.section for p in self.cache})
@@ -164,7 +164,7 @@ class RPCAPTCache(InChRootObject):
 
         for pkg in self.cache:
 
-            if not pkg.name.endswith("-dev"):
+            if not pkg.name.endswith('-dev'):
                 continue
 
             src_name = pkg.candidate.source_name
@@ -179,7 +179,7 @@ class RPCAPTCache(InChRootObject):
 
             dev_lst.append(pkg)
 
-        mark_install(dev_lst, "-dev")
+        mark_install(dev_lst, '-dev')
 
         # ensure that the symlinks package will be installed (it's
         # needed for fixing links inside the sysroot
@@ -194,12 +194,12 @@ class RPCAPTCache(InChRootObject):
 
             if pkg.is_installed or pkg.marked_install:
 
-                dbg_pkg = f"{pkg.name}-dbgsym"
+                dbg_pkg = f'{pkg.name}-dbgsym'
 
                 if dbg_pkg in self.cache:
                     dbgsym_lst.append(self.cache[dbg_pkg])
 
-        mark_install(dbgsym_lst, "-dbgsym")
+        mark_install(dbgsym_lst, '-dbgsym')
 
     def cleanup(self, exclude_pkgs):
         for p in self.cache:
@@ -232,9 +232,9 @@ class RPCAPTCache(InChRootObject):
         self.cache.open(progress=ElbeOpProgress())
 
     def commit(self):
-        os.environ["DEBIAN_FRONTEND"] = "noninteractive"
-        os.environ["DEBONF_NONINTERACTIVE_SEEN"] = "true"
-        print("Commiting changes ...")
+        os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+        os.environ['DEBONF_NONINTERACTIVE_SEEN'] = 'true'
+        print('Commiting changes ...')
         self.cache.commit(ElbeAcquireProgress(),
                           ElbeInstallProgress(fileno=sys.stdout.fileno()))
         self.cache.open(progress=ElbeOpProgress())
@@ -331,10 +331,10 @@ class RPCAPTCache(InChRootObject):
 
                 src_set.add((tmp.source_name, tmp.source_version))
 
-                if "Built-Using" not in section:
+                if 'Built-Using' not in section:
                     continue
 
-                built_using_lst = section["Built-Using"].split(', ')
+                built_using_lst = section['Built-Using'].split(', ')
                 for built_using in built_using_lst:
                     name, version = built_using.split(' ', 1)
                     version = version.strip('(= )')
@@ -359,7 +359,7 @@ class RPCAPTCache(InChRootObject):
 
     def download_source(self, src_name, src_version, dest_dir):
 
-        allow_untrusted = config.find_b("APT::Get::AllowUnauthenticated",
+        allow_untrusted = config.find_b('APT::Get::AllowUnauthenticated',
                                         False)
 
         rec = SourceRecords()
@@ -371,7 +371,7 @@ class RPCAPTCache(InChRootObject):
             # End of the list?
             if not next_p:
                 raise ValueError(
-                    f"No source found for {src_name}_{src_version}")
+                    f'No source found for {src_name}_{src_version}')
             if src_version == rec.version:
                 break
 
@@ -380,7 +380,7 @@ class RPCAPTCache(InChRootObject):
         if not (allow_untrusted or rec.index.is_trusted):
             raise FetchError(
                 f"Can't fetch source {src_name}_{src_version}; "
-                f"Source {rec.index.describe} is not trusted")
+                f'Source {rec.index.describe} is not trusted')
 
         # Copy from src to dst all files of the source package
         dsc = None
@@ -405,7 +405,7 @@ class RPCAPTCache(InChRootObject):
         acq.run()
 
         if dsc is None:
-            raise ValueError(f"No source found for {src_name}_{src_version}")
+            raise ValueError(f'No source found for {src_name}_{src_version}')
 
         for item in acq.items:
             if item.STAT_DONE != item.status:

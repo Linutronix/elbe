@@ -16,35 +16,35 @@ class NoPackageException(Exception):
 
 def get_sources_list(prj):
 
-    suite = prj.text("suite")
+    suite = prj.text('suite')
 
-    slist = ""
-    if prj.has("mirror/primary_host"):
+    slist = ''
+    if prj.has('mirror/primary_host'):
         protocl = f"{prj.text('mirror/primary_proto')}"
         host = f"{prj.text('mirror/primary_host').replace('LOCALMACHINE', '10.0.2.2')}"
         path = f"{prj.text('mirror/primary_path')}"
-        mirror = f"{protocl}://{host}/{path}"
-        slist += f"deb {mirror} {suite} main\n"
-        slist += f"deb-src {mirror} {suite} main\n"
+        mirror = f'{protocl}://{host}/{path}'
+        slist += f'deb {mirror} {suite} main\n'
+        slist += f'deb-src {mirror} {suite} main\n'
 
-    if prj.node("mirror/url-list"):
-        for n in prj.node("mirror/url-list"):
-            if n.has("binary"):
-                tmp = n.text("binary").replace("LOCALMACHINE", "10.0.2.2")
-                slist += f"deb {tmp.strip()}\n"
-            if n.has("source"):
-                tmp = n.text("source").replace("LOCALMACHINE", "10.0.2.2")
-                slist += f"deb-src {tmp.strip()}\n"
+    if prj.node('mirror/url-list'):
+        for n in prj.node('mirror/url-list'):
+            if n.has('binary'):
+                tmp = n.text('binary').replace('LOCALMACHINE', '10.0.2.2')
+                slist += f'deb {tmp.strip()}\n'
+            if n.has('source'):
+                tmp = n.text('source').replace('LOCALMACHINE', '10.0.2.2')
+                slist += f'deb-src {tmp.strip()}\n'
 
     return slist
 
 
 def get_key_list(prj):
     retval = []
-    if prj.node("mirror/url-list"):
-        for n in prj.node("mirror/url-list"):
-            if n.has("key"):
-                tmp = n.text("key").replace("LOCALMACHINE", "10.0.2.2")
+    if prj.node('mirror/url-list'):
+        for n in prj.node('mirror/url-list'):
+            if n.has('key'):
+                tmp = n.text('key').replace('LOCALMACHINE', '10.0.2.2')
                 retval.append(tmp.strip())
 
     return retval
@@ -82,7 +82,7 @@ def extract_pkg_changelog(fname, extra_pkg=None):
     pkgname = m.group('name')
     pkgarch = m.group('arch')
 
-    print(f"pkg: {pkgname}, arch: {pkgarch}")
+    print(f'pkg: {pkgname}, arch: {pkgarch}')
 
     fs = TmpdirFilesystem()
 
@@ -92,17 +92,17 @@ def extract_pkg_changelog(fname, extra_pkg=None):
 
     system(f'dpkg -x "{fname}" "{fs.fname("/")}"')
 
-    dch_dir = f"/usr/share/doc/{pkgname}"
+    dch_dir = f'/usr/share/doc/{pkgname}'
 
     if fs.islink(dch_dir) and not extra_pkg:
         lic = fs.readlink(dch_dir)
         print(dch_dir, lic)
         raise ChangelogNeedsDependency(lic)
 
-    dch_bin = f"/usr/share/doc/{pkgname}/changelog.Debian.{pkgarch}.gz"
-    dch_src = f"/usr/share/doc/{pkgname}/changelog.Debian.gz"
+    dch_bin = f'/usr/share/doc/{pkgname}/changelog.Debian.{pkgarch}.gz'
+    dch_src = f'/usr/share/doc/{pkgname}/changelog.Debian.gz'
 
-    ret = ""
+    ret = ''
 
     if fs.exists(dch_bin):
         ret += fs.read_file(dch_bin, gz=True).decode(encoding='utf-8',

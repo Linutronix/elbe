@@ -19,17 +19,17 @@ def run_command(argv):
     daemons = get_daemonlist()
 
     if not daemons:
-        print("no elbe daemons installed")
+        print('no elbe daemons installed')
 
-    oparser = OptionParser(usage="usage: %prog")
-    oparser.add_option("--host", dest="host", default='0.0.0.0',
-                       help="interface to host daemon")
-    oparser.add_option("--port", dest="port", default=7587,
-                       help="port to host daemon")
+    oparser = OptionParser(usage='usage: %prog')
+    oparser.add_option('--host', dest='host', default='0.0.0.0',
+                       help='interface to host daemon')
+    oparser.add_option('--port', dest='port', default=7587,
+                       help='port to host daemon')
 
     for d in daemons:
-        oparser.add_option("--" + str(d), dest=str(d), default=False,
-                           action="store_true", help="enable " + str(d))
+        oparser.add_option('--' + str(d), dest=str(d), default=False,
+                           action='store_true', help='enable ' + str(d))
 
     (opt, _) = oparser.parse_args(argv)
 
@@ -40,19 +40,19 @@ def run_command(argv):
             if str(o) == str(d):
                 if getattr(opt, o):
                     active = True
-                    print(f"enable {d}")
-                    module = "elbepack.daemons." + str(d)
+                    print(f'enable {d}')
+                    module = 'elbepack.daemons.' + str(d)
                     _ = __import__(module)
                     cmdmod = sys.modules[module]
                     cherrypy.tree.graft(
                         cmdmod.get_app(
                             cherrypy.engine),
-                        "/" + str(d))
+                        '/' + str(d))
     if not active:
-        print("no daemon activated, use")
+        print('no daemon activated, use')
         for d in daemons:
-            print(f"   --{d}")
-        print("to activate at least one daemon")
+            print(f'   --{d}')
+        print('to activate at least one daemon')
         return
 
     cherrypy.server.unsubscribe()

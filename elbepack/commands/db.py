@@ -8,14 +8,14 @@ from elbepack.dbaction import DbAction
 def run_command(argv):
 
     if not argv:
-        print("elbe db - no action given")
+        print('elbe db - no action given')
         DbAction.print_actions()
         return
 
     try:
         DbAction(argv[0]).execute(argv[1:])
     except KeyError:
-        print("elbe db - unknown action given")
+        print('elbe db - unknown action given')
         DbAction.print_actions()
         return
 

@@ -92,7 +92,7 @@ def authenticated_uid(func):
             return func(self, uid, arg1, arg2, arg3, arg4, arg5)
         return wrapped
 
-    raise Exception(f"arg count {func.__code__.co_argcount} not implemented")
+    raise Exception(f'arg count {func.__code__.co_argcount} not implemented')
 
 
 def authenticated_admin(func):
@@ -166,4 +166,4 @@ def authenticated_admin(func):
             return func(self, arg1, arg2, arg3, arg4, arg5)
         return wrapped
 
-    raise Exception(f"arg count {func.__code__.co_argcount} not implemented")
+    raise Exception(f'arg count {func.__code__.co_argcount} not implemented')

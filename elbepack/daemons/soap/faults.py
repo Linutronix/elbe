@@ -16,14 +16,14 @@ from elbepack.db import ElbeDBError, InvalidLogin
 
 class SoapElbeDBError(Fault):
     def __init__(self, dberr):
-        Fault.__init__(self, faultcode="ElbeDBError", faultstring=str(dberr))
+        Fault.__init__(self, faultcode='ElbeDBError', faultstring=str(dberr))
 
 
 class SoapElbeProjectError(Fault):
     def __init__(self, err):
         Fault.__init__(
             self,
-            faultcode="ElbeProjectError",
+            faultcode='ElbeProjectError',
             faultstring=str(err))
 
 
@@ -31,39 +31,39 @@ class SoapElbeAuthenticationFailed(Fault):
     def __init__(self):
         Fault.__init__(
             self,
-            faultcode="ElbeAuthenticationFailed",
-            faultstring="Authentication Failed")
+            faultcode='ElbeAuthenticationFailed',
+            faultstring='Authentication Failed')
 
 
 class SoapElbeNotLoggedIn(Fault):
     def __init__(self):
         Fault.__init__(
             self,
-            faultcode="ElbeNotLoggedIn",
-            faultstring="Not authenticated ! "
-                        "Cant let you perform this command.")
+            faultcode='ElbeNotLoggedIn',
+            faultstring='Not authenticated ! '
+                        'Cant let you perform this command.')
 
 
 class SoapElbeNotAuthorized(Fault):
     def __init__(self):
         Fault.__init__(
             self,
-            faultcode="ElbeNotAuthorized",
-            faultstring="Not Authorized ! Cant let you perform this command.")
+            faultcode='ElbeNotAuthorized',
+            faultstring='Not Authorized ! Cant let you perform this command.')
 
 
 class SoapElbeValidationError(Fault):
     def __init__(self, exc):
         Fault.__init__(
             self,
-            faultcode="ElbeValidationError",
+            faultcode='ElbeValidationError',
             faultstring=exc.__repr__())
 
 
 class SoapElbeInvalidState(Fault):
     def __init__(self):
-        Fault.__init__(self, faultcode="ElbeInvalidState",
-                       faultstring="Project is Busy ! Operation Invalid")
+        Fault.__init__(self, faultcode='ElbeInvalidState',
+                       faultstring='Project is Busy ! Operation Invalid')
 
 
 def soap_faults(func):
@@ -89,7 +89,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -109,7 +109,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -129,7 +129,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -149,7 +149,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -169,7 +169,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -189,7 +189,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -209,7 +209,7 @@ def soap_faults(func):
             except ElbeDBError as e:
                 raise SoapElbeDBError(str(e))
             except OSError as e:
-                raise SoapElbeProjectError("OSError: " + str(e))
+                raise SoapElbeProjectError('OSError: ' + str(e))
             except ValidationError as e:
                 raise SoapElbeValidationError(e)
             except InvalidLogin:
@@ -218,4 +218,4 @@ def soap_faults(func):
                 raise SoapElbeProjectError(format_exc())
         return wrapped
 
-    raise Exception(f"arg count {func.__code__.co_argcount} not implemented")
+    raise Exception(f'arg count {func.__code__.co_argcount} not implemented')

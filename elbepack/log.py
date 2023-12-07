@@ -14,8 +14,8 @@ from contextlib import contextmanager
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 local = threading.local()
-context_fmt = logging.Formatter("%(context)s%(message)s")
-msgonly_fmt = logging.Formatter("%(message)s")
+context_fmt = logging.Formatter('%(context)s%(message)s')
+msgonly_fmt = logging.Formatter('%(message)s')
 
 logging_methods = []
 
@@ -93,7 +93,7 @@ class ThreadFilter(logging.Filter):
             thread = record.thread
         retval = record.name in self.allowed and thread == self.thread
         if retval and not hasattr(record, 'context'):
-            record.context = f"[{record.levelname}]"
+            record.context = f'[{record.levelname}]'
         return retval
 
 
@@ -117,7 +117,7 @@ def logging_method(name):
     return decorator
 
 
-@logging_method("streams")
+@logging_method('streams')
 @with_list
 def add_stream_handlers(streams):
 
@@ -133,14 +133,14 @@ def add_stream_handlers(streams):
         yield [out]
 
 
-@logging_method("projects")
+@logging_method('projects')
 @with_list
 def add_project_handlers(projects):
 
     for proj in projects:
-        validation = logging.FileHandler(os.path.join(proj, "validation.txt"))
-        report = logging.FileHandler(os.path.join(proj, "elbe-report.txt"))
-        log = logging.FileHandler(os.path.join(proj, "log.txt"))
+        validation = logging.FileHandler(os.path.join(proj, 'validation.txt'))
+        report = logging.FileHandler(os.path.join(proj, 'elbe-report.txt'))
+        log = logging.FileHandler(os.path.join(proj, 'log.txt'))
         echo = QHandler(proj)
         soap = QHandler(proj)
 
@@ -159,7 +159,7 @@ def add_project_handlers(projects):
         yield [validation, report, log, echo, soap]
 
 
-@logging_method("files")
+@logging_method('files')
 @with_list
 def add_file_handlers(files):
 
@@ -179,7 +179,7 @@ def add_file_handlers(files):
         yield [out]
 
 
-@logging_method("projectsQ")
+@logging_method('projectsQ')
 @with_list
 def add_projectQ_handlers(projects):
 
@@ -214,7 +214,7 @@ def open_logging(targets):
 
 
 def close_logging():
-    if hasattr(local, "handlers"):
+    if hasattr(local, 'handlers'):
         for h in local.handlers:
             root.removeHandler(h)
             h.close()
@@ -228,8 +228,8 @@ class AsyncLogging:
         self.atmost = atmost
         self.fd = None
         calling_thread = threading.current_thread().ident
-        extra = {"_thread": calling_thread}
-        extra["context"] = ""
+        extra = {'_thread': calling_thread}
+        extra['context'] = ''
         self.stream = logging.LoggerAdapter(stream, extra)
         self.block = logging.LoggerAdapter(block, extra)
 
@@ -242,11 +242,11 @@ class AsyncLogging:
             os.close(r)
 
     def run(self):
-        rest = ""
+        rest = ''
 
         while True:
 
-            buf = os.read(self.fd, self.atmost).decode("utf-8", errors="replace")
+            buf = os.read(self.fd, self.atmost).decode('utf-8', errors='replace')
 
             # Pipe broke
             if not buf:
@@ -265,7 +265,7 @@ class AsyncLogging:
 
             # Log the line now for echo back
             if cnt:
-                logbuf = "\n".join(self.lines[-cnt:])
+                logbuf = '\n'.join(self.lines[-cnt:])
 
                 # filter out ansi sequences.
                 logbuf = re.sub('\u001b[.*?[@-~]', '', logbuf)
@@ -278,7 +278,7 @@ class AsyncLogging:
 
         if self.lines:
             self.lines[-1] += rest
-            self.block.info("\n".join(self.lines))
+            self.block.info('\n'.join(self.lines))
 
 
 def async_logging(r, w, stream, block, atmost=4096):

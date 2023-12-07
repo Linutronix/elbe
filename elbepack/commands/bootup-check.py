@@ -19,7 +19,7 @@ def is_installed(ip, cache):
     try:
         p = cache[ip.et.text]
     except KeyError:
-        print(f"{ip.et.text} is not in local apt")
+        print(f'{ip.et.text} is not in local apt')
         return False
     if p.current_state == apt_pkg.CURSTATE_INSTALLED:
         return True
@@ -28,7 +28,7 @@ def is_installed(ip, cache):
 
 def bootup_check(xml):
 
-    fpl = xml.node("fullpkgs")
+    fpl = xml.node('fullpkgs')
 
     apt_pkg.init()
     cache = apt_pkg.Cache()
@@ -37,30 +37,30 @@ def bootup_check(xml):
     for p in hl_cache:
         if p.is_installed:
             if not is_in_fpl(p, fpl):
-                print(f"{p.name} installed by user")
+                print(f'{p.name} installed by user')
 
     for ip in fpl:
         if not is_installed(ip, cache):
-            print(f"{ip.et.text} removed by user")
+            print(f'{ip.et.text} removed by user')
 
 
 def bootup_info():
-    with open("/etc/elbe_version", 'r') as ev:
+    with open('/etc/elbe_version', 'r') as ev:
         print(ev.read())
 
 
 def run_command(_argv):
     try:
-        xml = etree("/etc/elbe_base.xml")
+        xml = etree('/etc/elbe_base.xml')
     except IOError:
-        print("/etc/elbe_base.xml removed by user")
+        print('/etc/elbe_base.xml removed by user')
         return -1
 
     bootup_check(xml)
     try:
         bootup_info()
     except IOError:
-        print("/etc/elbe_version removed by user")
+        print('/etc/elbe_version removed by user')
         return -1
 
     return 0

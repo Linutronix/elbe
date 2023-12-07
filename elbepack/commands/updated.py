@@ -32,33 +32,33 @@ def run_command(argv):
 
     status = UpdateStatus()
 
-    oparser = OptionParser(usage="usage: %prog updated [options] <filename>")
+    oparser = OptionParser(usage='usage: %prog updated [options] <filename>')
 
-    oparser.add_option("--directory", dest="update_dir",
-                       help="monitor dir (default is /var/cache/elbe/updates)",
-                       metavar="FILE")
+    oparser.add_option('--directory', dest='update_dir',
+                       help='monitor dir (default is /var/cache/elbe/updates)',
+                       metavar='FILE')
 
-    oparser.add_option("--repocache", dest="repo_dir",
-                       help="monitor dir (default is /var/cache/elbe/repos)",
-                       metavar="FILE")
+    oparser.add_option('--repocache', dest='repo_dir',
+                       help='monitor dir (default is /var/cache/elbe/repos)',
+                       metavar='FILE')
 
-    oparser.add_option("--host", dest="host", default="",
-                       help="listen host")
+    oparser.add_option('--host', dest='host', default='',
+                       help='listen host')
 
-    oparser.add_option("--port", dest="port", default=8088,
-                       help="listen port")
+    oparser.add_option('--port', dest='port', default=8088,
+                       help='listen port')
 
-    oparser.add_option("--nosign", action="store_true", dest="nosign",
+    oparser.add_option('--nosign', action='store_true', dest='nosign',
                        default=False,
-                       help="accept none signed files")
+                       help='accept none signed files')
 
-    oparser.add_option("--verbose", action="store_true", dest="verbose",
+    oparser.add_option('--verbose', action='store_true', dest='verbose',
                        default=False,
-                       help="force output to stdout instead of syslog")
+                       help='force output to stdout instead of syslog')
 
-    oparser.add_option("--usb", action="store_true", dest="use_usb",
+    oparser.add_option('--usb', action='store_true', dest='use_usb',
                        default=False,
-                       help="monitor USB devices")
+                       help='monitor USB devices')
 
     (opt, _) = oparser.parse_args(argv)
 
@@ -66,12 +66,12 @@ def run_command(argv):
     status.verbose = opt.verbose
 
     if not opt.update_dir:
-        update_dir = "/var/cache/elbe/updates"
+        update_dir = '/var/cache/elbe/updates'
     else:
         update_dir = opt.update_dir
 
     if not opt.repo_dir:
-        status.repo_dir = "/var/cache/elbe/repos"
+        status.repo_dir = '/var/cache/elbe/repos'
     else:
         status.repo_dir = opt.repo_dir
 
@@ -88,8 +88,8 @@ def run_command(argv):
             status.monitors.append(um)
         else:
             status.log(
-                "USB Monitor has been requested. "
-                "This requires pyudev module which could not be imported.")
+                'USB Monitor has been requested. '
+                'This requires pyudev module which could not be imported.')
             sys.exit(1)
 
     signal.signal(signal.SIGTERM, shutdown)
@@ -110,7 +110,7 @@ def run_command(argv):
     try:
         status.soapserver.serve_forever()
     except BaseException:
-        shutdown(1, "now", status)
+        shutdown(1, 'now', status)
 
     for mon in status.monitors:
         mon.join()

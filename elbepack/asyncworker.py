@@ -21,9 +21,9 @@ from elbepack.log import elbe_logging, read_maxlevel, reset_level
 
 class AsyncWorkerJob:
 
-    build_done = "build_done"
-    build_failed = "build_failed"
-    has_changes = "has_changes"
+    build_done = 'build_done'
+    build_failed = 'build_failed'
+    has_changes = 'has_changes'
 
     def __init__(self, project):
         self.project = project
@@ -42,24 +42,24 @@ class BuildSysrootJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for building sysroot")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for building sysroot')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Build sysroot started")
+            logging.info('Build sysroot started')
             self.project.build_sysroot()
             db.update_project_files(self.project)
         except Exception:
-            logging.exception("Build sysroot failed")
+            logging.exception('Build sysroot failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Build finished with Error")
+                logging.info('Build finished with Error')
             else:
-                logging.info("Build finished successfully")
+                logging.info('Build finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -72,23 +72,23 @@ class BuildSDKJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for building SDK")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for building SDK')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Build SDK started")
+            logging.info('Build SDK started')
             self.project.build_sdk()
         except Exception:
-            logging.exception("Build SDK Failed")
+            logging.exception('Build SDK Failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Build finished with Error")
+                logging.info('Build finished with Error')
             else:
-                logging.info("Build finished successfully")
+                logging.info('Build finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -103,23 +103,23 @@ class BuildCDROMsJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for building CDROMs")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for building CDROMs')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Build CDROMs started")
+            logging.info('Build CDROMs started')
             self.project.build_cdroms(self.build_bin, self.build_src)
         except Exception:
-            logging.exception("Build CDROMs failed")
+            logging.exception('Build CDROMs failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Build finished with Error")
+                logging.info('Build finished with Error')
             else:
-                logging.info("Build finished successfully")
+                logging.info('Build finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -132,23 +132,23 @@ class BuildChrootTarJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for building croot tar")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for building croot tar')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Build chroot tarball started")
+            logging.info('Build chroot tarball started')
             self.project.build_chroottarball()
         except Exception:
-            logging.exception("Build chrroot tarball failed")
+            logging.exception('Build chrroot tarball failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Build finished with Error")
+                logging.info('Build finished with Error')
             else:
-                logging.info("Build finished successfully")
+                logging.info('Build finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -164,39 +164,39 @@ class BuildJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for build")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for build')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
 
         success = self.build_failed
         try:
-            logging.info("Build started")
+            logging.info('Build started')
             self.project.build(skip_pkglist=False,
                                build_bin=self.build_bin,
                                build_sources=self.build_src,
                                skip_pbuild=self.skip_pbuilder)
         except (DebootstrapException, AptCacheCommitError, AptCacheUpdateError) as e:
             if isinstance(e, DebootstrapException):
-                err = "Debootstrap failed to install the base rootfilesystem."
+                err = 'Debootstrap failed to install the base rootfilesystem.'
             elif isinstance(e, AptCacheCommitError):
-                err = "Failed to commit the AptCache changes."
+                err = 'Failed to commit the AptCache changes.'
             elif isinstance(e, AptCacheUpdateError):
-                err = "Failed to build the Apt Cache."
+                err = 'Failed to build the Apt Cache.'
 
-            logging.exception("%s\n"
-                              "Probable cause might be:\n"
-                              "  - Problems with internet connection\n"
-                              "  - Broken mirrors\n", err)
+            logging.exception('%s\n'
+                              'Probable cause might be:\n'
+                              '  - Problems with internet connection\n'
+                              '  - Broken mirrors\n', err)
         except Exception:
-            logging.exception("Build failed")
+            logging.exception('Build failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Build finished with Error")
+                logging.info('Build finished with Error')
             else:
-                logging.info("Build finished successfully")
+                logging.info('Build finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -204,7 +204,7 @@ class BuildJob(AsyncWorkerJob):
 
 
 class PdebuildJob(AsyncWorkerJob):
-    def __init__(self, project, cpuset=-1, profile="", cross=False):
+    def __init__(self, project, cpuset=-1, profile='', cross=False):
         AsyncWorkerJob.__init__(self, project)
         self.cpuset = cpuset
         self.profile = profile
@@ -212,23 +212,23 @@ class PdebuildJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project for pdebuild")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project for pdebuild')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Pdebuild started")
+            logging.info('Pdebuild started')
             self.project.pdebuild(self.cpuset, self.profile, self.cross)
         except Exception:
-            logging.exception("Pdebuild failed")
+            logging.exception('Pdebuild failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Pdeb finished with Error")
+                logging.info('Pdeb finished with Error')
             else:
-                logging.info("Pdeb finished successfully")
+                logging.info('Pdeb finished successfully')
                 success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -244,21 +244,21 @@ class CreatePbuilderJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project to have the pbuilder built")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project to have the pbuilder built')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Building pbuilder started")
+            logging.info('Building pbuilder started')
             self.project.create_pbuilder(self.cross, self.noccache,
                                          self.ccachesize)
         except Exception:
-            logging.exception("Pbuilder failed")
+            logging.exception('Pbuilder failed')
         else:
-            logging.info("Pbuilder finished successfully")
+            logging.info('Pbuilder finished successfully')
             success = self.build_done
         finally:
             db.update_project_files(self.project)
@@ -271,24 +271,24 @@ class UpdatePbuilderJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["empty_project", "needs_build", "has_changes",
-                     "build_done", "build_failed"])
-        logging.info("Enqueueing project to update the pbuilder")
+                    ['empty_project', 'needs_build', 'has_changes',
+                     'build_done', 'build_failed'])
+        logging.info('Enqueueing project to update the pbuilder')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_done
         try:
-            logging.info("Updating pbuilder started")
+            logging.info('Updating pbuilder started')
             self.project.update_pbuilder()
         except Exception:
             db.update_project_files(self.project)
-            logging.exception("update Pbuilder failed")
+            logging.exception('update Pbuilder failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Updating Pbuilder finished with Error")
+                logging.info('Updating Pbuilder finished with Error')
             else:
-                logging.info("Updating Pbuilder finished successfully")
+                logging.info('Updating Pbuilder finished successfully')
                 success = self.build_done
         finally:
             db.reset_busy(self.project.builddir, success)
@@ -300,23 +300,23 @@ class APTUpdateJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
-                    ["build_done", "has_changes"])
-        logging.info("Enqueueing project for APT cache update")
+                    ['build_done', 'has_changes'])
+        logging.info('Enqueueing project for APT cache update')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("APT cache update started")
+            logging.info('APT cache update started')
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
         except Exception:
-            logging.exception("APT cache update failed")
+            logging.exception('APT cache update failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("APT cache update finished with Error")
+                logging.info('APT cache update finished with Error')
             else:
-                logging.info("APT cache update finished successfully")
+                logging.info('APT cache update finished successfully')
                 success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
@@ -327,25 +327,25 @@ class APTUpdUpgrJob(AsyncWorkerJob):
         AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
-        db.set_busy(self.project.builddir, ["build_done", "has_changes"])
-        logging.info("Enqueueing project for APT update & upgrade")
+        db.set_busy(self.project.builddir, ['build_done', 'has_changes'])
+        logging.info('Enqueueing project for APT update & upgrade')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("APT update started")
+            logging.info('APT update started')
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
-            logging.info("APT update finished, upgrade started")
+            logging.info('APT update finished, upgrade started')
             self.project.get_rpcaptcache().upgrade()
         except Exception:
-            logging.exception("APT update & upgrade failed")
+            logging.exception('APT update & upgrade failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("APT upgrade finished with Error")
+                logging.info('APT upgrade finished with Error')
             else:
-                logging.info("APT upgrade finished")
+                logging.info('APT upgrade finished')
                 success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
@@ -357,9 +357,9 @@ class APTCommitJob(AsyncWorkerJob):
 
     def enqueue(self, queue, db):
         old_status = db.set_busy(self.project.builddir,
-                                 ["build_done", "has_changes"])
+                                 ['build_done', 'has_changes'])
         if self.project.get_rpcaptcache().get_changes():
-            logging.info("Enqueueing project for package changes")
+            logging.info('Enqueueing project for package changes')
             AsyncWorkerJob.enqueue(self, queue, db)
         else:
             db.reset_busy(self.project.builddir, old_status)
@@ -367,7 +367,7 @@ class APTCommitJob(AsyncWorkerJob):
     def execute(self, db):
         success = self.build_failed
         try:
-            logging.info("Applying package changes")
+            logging.info('Applying package changes')
             with self.project.buildenv:
                 # Commit changes, update full package list and write
                 # out new source.xml
@@ -377,15 +377,15 @@ class APTCommitJob(AsyncWorkerJob):
                               self.project.get_rpcaptcache())
 
             sourcexmlpath = path.join(self.project.builddir,
-                                      "source.xml")
+                                      'source.xml')
             self.project.xml.xml.write(sourcexmlpath)
         except Exception:
-            logging.exception("Applying package changes failed")
+            logging.exception('Applying package changes failed')
         else:
             if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info("Package changes applied with Error")
+                logging.info('Package changes applied with Error')
             else:
-                logging.info("Package changes applied successfully")
+                logging.info('Package changes applied successfully')
                 success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
@@ -394,40 +394,40 @@ class APTCommitJob(AsyncWorkerJob):
 class GenUpdateJob(AsyncWorkerJob):
     def __init__(self, project, base_version):
         AsyncWorkerJob.__init__(self, project)
-        self.name = project.xml.text("/project/name")
+        self.name = project.xml.text('/project/name')
         self.base_version = base_version
-        self.current_version = project.xml.text("/project/version")
+        self.current_version = project.xml.text('/project/version')
         self.old_status = None
         self.base_version_xml = None
 
     def enqueue(self, queue, db):
         self.old_status = db.set_busy(self.project.builddir,
-                                      ["build_done", "has_changes"])
+                                      ['build_done', 'has_changes'])
         self.base_version_xml = db.get_version_xml(self.project.builddir,
                                                    self.base_version)
 
-        logging.info("Enqueueing project for generating update package")
+        logging.info('Enqueueing project for generating update package')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
         upd_filename = self._gen_upd_filename()
         upd_pathname = path.join(self.project.builddir, upd_filename)
 
-        logging.info("Generating update package")
+        logging.info('Generating update package')
 
         try:
             gen_update_pkg(self.project, self.base_version_xml, upd_pathname)
-            logging.info("Update package generated successfully")
+            logging.info('Update package generated successfully')
         except Exception:
-            logging.exception("Generating update package failed")
+            logging.exception('Generating update package failed')
         finally:
             # Update generation does not change the project, so we always
             # keep the old status
             db.add_project_file(
                 self.project.builddir, upd_filename,
-                "application/octet-stream",
-                f"Update package from {self.base_version} to "
-                f"{self.current_version}")
+                'application/octet-stream',
+                f'Update package from {self.base_version} to '
+                f'{self.current_version}')
             db.reset_busy(self.project.builddir, self.old_status)
 
     def _gen_upd_filename(self):
@@ -442,13 +442,13 @@ class SaveVersionJob(AsyncWorkerJob):
     def __init__(self, project, description):
         AsyncWorkerJob.__init__(self, project)
         self.description = description
-        self.name = self.project.xml.text("project/name")
-        self.version = self.project.xml.text("project/version")
+        self.name = self.project.xml.text('project/name')
+        self.version = self.project.xml.text('project/version')
         self.old_status = None
 
     def enqueue(self, queue, db):
         self.old_status = db.set_busy(self.project.builddir,
-                                      ["build_done", "has_changes"])
+                                      ['build_done', 'has_changes'])
 
         # Create the database entry now. This has the advantage that the
         # user will see an error message immediately, if he tries to use
@@ -461,26 +461,26 @@ class SaveVersionJob(AsyncWorkerJob):
             raise
 
         if self.project.savesh_file:
-            logging.info("save version script:")
+            logging.info('save version script:')
             do((f'{self.project.savesh_file} "{self.project.builddir} '
                 f'{self.project.xml.text("project/version")} '
                 f'{self.project.xml.text("project/name")}"'
                 ), allow_fail=True)
 
-        logging.info("Enqueueing project to save package archive")
+        logging.info('Enqueueing project to save package archive')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
-        logging.info("Generating package archive")
+        logging.info('Generating package archive')
         repodir = get_versioned_filename(self.name, self.version,
-                                         ".pkgarchive")
+                                         '.pkgarchive')
         try:
             gen_binpkg_archive(self.project, repodir)
         except Exception:
-            logging.exception("Saving version failed")
+            logging.exception('Saving version failed')
             db.del_version(self.project.builddir, self.version, force=True)
         else:
-            logging.info("Version saved successfully")
+            logging.info('Version saved successfully')
         finally:
             db.reset_busy(self.project.builddir, self.old_status)
 
@@ -489,18 +489,18 @@ class CheckoutVersionJob(AsyncWorkerJob):
     def __init__(self, project, version):
         AsyncWorkerJob.__init__(self, project)
         self.version = version
-        self.name = self.project.xml.text("project/name")
+        self.name = self.project.xml.text('project/name')
 
     def enqueue(self, queue, db):
         old_status = db.set_busy(self.project.builddir,
-                                 ["build_done", "has_changes", "build_failed"])
+                                 ['build_done', 'has_changes', 'build_failed'])
 
         # If old status was build_failed, just restore the source.xml of the
         # given version and restore the status, indicating that we need a
         # complete rebuild
-        if old_status == "build_failed":
-            logging.warning("Previous project status indicated a failed build\n"
-                            "Just checking out the XML file.")
+        if old_status == 'build_failed':
+            logging.warning('Previous project status indicated a failed build\n'
+                            'Just checking out the XML file.')
 
             try:
                 db.checkout_version_xml(self.project.builddir, self.version)
@@ -519,19 +519,19 @@ class CheckoutVersionJob(AsyncWorkerJob):
             self.project.set_xml(None)
             raise
 
-        logging.info("Enqueueing project for package archive checkout")
+        logging.info('Enqueueing project for package archive checkout')
         AsyncWorkerJob.enqueue(self, queue, db)
 
     def execute(self, db):
-        logging.info("Checking out package archive")
+        logging.info('Checking out package archive')
         repodir = get_versioned_filename(self.name, self.version,
-                                         ".pkgarchive")
+                                         '.pkgarchive')
         success = self.build_failed
         try:
             checkout_binpkg_archive(self.project, repodir)
-            logging.info("Package archive checked out successfully")
+            logging.info('Package archive checked out successfully')
         except Exception:
-            logging.exception("Checking out package archive failed")
+            logging.exception('Checking out package archive failed')
         else:
             success = self.has_changes
         finally:
@@ -549,7 +549,7 @@ def savecwd():
 
 class AsyncWorker(Thread):
     def __init__(self, db):
-        Thread.__init__(self, name="AsyncWorker")
+        Thread.__init__(self, name='AsyncWorker')
         self.db = db
         self.queue = Queue()
         self.start()
@@ -568,7 +568,7 @@ class AsyncWorker(Thread):
             job = self.queue.get()
             if job is not None:
                 with savecwd():
-                    with elbe_logging({"projects": job.project.builddir}):
+                    with elbe_logging({'projects': job.project.builddir}):
                         job.execute(self.db)
             else:
                 loop = False

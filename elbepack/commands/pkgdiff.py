@@ -16,17 +16,17 @@ from elbepack.elbexml import ElbeXML, ValidationMode
 def run_command(argv):
 
     oparser = OptionParser(
-        usage="usage: %prog pkgdiff [options] <rfs1> <rfs2>")
+        usage='usage: %prog pkgdiff [options] <rfs1> <rfs2>')
     oparser.add_option(
-        "--noauto",
-        action="store_true",
-        dest="noauto",
+        '--noauto',
+        action='store_true',
+        dest='noauto',
         default=False,
-        help="Dont compare automatically installed Packages")
+        help='Dont compare automatically installed Packages')
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 2:
-        print("Wrong number of arguments")
+        print('Wrong number of arguments')
         oparser.print_help()
         sys.exit(41)
 
@@ -78,12 +78,12 @@ def run_command(argv):
 
     for p in fix_pkgs:
         if p not in gen_pkgs:
-            print(f"+<pkg>{p}</pkg>")
+            print(f'+<pkg>{p}</pkg>')
 
     for p in gen_pkgs:
         if p not in fix_pkgs.keys():
-            print(f"-<pkg>{p}</pkg>")
+            print(f'-<pkg>{p}</pkg>')
 
     for p in fix_pkgs:
         if p in gen_pkgs.keys() and fix_pkgs[p] != gen_pkgs[p]:
-            print(f"{p}: Version mismatch {fix_pkgs[p]} != {gen_pkgs[p]}")
+            print(f'{p}: Version mismatch {fix_pkgs[p]} != {gen_pkgs[p]}')

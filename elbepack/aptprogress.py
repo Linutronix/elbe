@@ -23,7 +23,7 @@ class ElbeInstallProgress (InstallProgress):
             #
             self.percent = 100
 
-        line = str(self.percent) + "% " + line
+        line = str(self.percent) + '% ' + line
         line.replace('\f', '')
         if self.cb:
             self.cb(line)
@@ -31,19 +31,19 @@ class ElbeInstallProgress (InstallProgress):
             print(line)
 
     def processing(self, pkg, stage):
-        self.write("processing: " + pkg + " - " + stage)
+        self.write('processing: ' + pkg + ' - ' + stage)
 
     def dpkg_status_change(self, pkg, status):
-        self.write(pkg + " - " + status)
+        self.write(pkg + ' - ' + status)
 
     def status_change(self, pkg, percent, status):
-        self.write(pkg + " - " + status + " " + str(percent) + "%")
+        self.write(pkg + ' - ' + status + ' ' + str(percent) + '%')
 
     def run(self, obj):
         try:
             obj.do_install(self.fileno)
         except AttributeError:
-            print("installing .deb files is not supported by elbe progress")
+            print('installing .deb files is not supported by elbe progress')
             raise SystemError
         return 0
 
@@ -58,7 +58,7 @@ class ElbeInstallProgress (InstallProgress):
         return retval
 
     def finishUpdate(self):
-        self.write("update finished")
+        self.write('update finished')
 
 
 class ElbeAcquireProgress (AcquireProgress):
@@ -78,21 +78,21 @@ class ElbeAcquireProgress (AcquireProgress):
     def ims_hit(self, item):
         line = 'Hit ' + item.description
         if item.owner.filesize:
-            line += f" [{size_to_str(item.owner.filesize)}B]"
+            line += f' [{size_to_str(item.owner.filesize)}B]'
         self.write(line)
 
     def fail(self, item):
         if item.owner.status == item.owner.STAT_DONE:
-            self.write("Ign " + item.description)
+            self.write('Ign ' + item.description)
 
     def fetch(self, item):
         if item.owner.complete:
             return
         item.owner.id = self._id
         self._id += 1
-        line = "Get:" + str(item.owner.id) + " " + item.description
+        line = 'Get:' + str(item.owner.id) + ' ' + item.description
         if item.owner.filesize:
-            line += (f" [{size_to_str(item.owner.filesize)}B]")
+            line += (f' [{size_to_str(item.owner.filesize)}B]')
 
         self.write(line)
 
