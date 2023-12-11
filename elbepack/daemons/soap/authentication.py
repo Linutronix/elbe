@@ -25,8 +25,6 @@ def authenticated_uid(func):
     # something with func.__code__.replace, but this requires deep
     # Python's internal knowledges.
 
-    # pylint: disable=function-redefined
-
     if func.__code__.co_argcount == 2:
         @wraps(func)
         def wrapped(self):
@@ -85,7 +83,6 @@ def authenticated_uid(func):
     if func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
-            # pylint: disable=too-many-arguments
             s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']
@@ -114,8 +111,6 @@ def authenticated_admin(func):
     # function's signature.  I think it would be possible to do
     # something with func.__code__.replace, but this requires deep
     # Python's internal knowledges.
-
-    # pylint: disable=function-redefined
 
     if func.__code__.co_argcount == 1:
         @wraps(func)
@@ -160,7 +155,6 @@ def authenticated_admin(func):
     if func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
-            # pylint: disable=too-many-arguments
             s = self.transport.req_env['beaker.session']
             try:
                 uid = s['userid']

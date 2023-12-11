@@ -10,7 +10,7 @@ import sys
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
 
-import apt  # pylint: disable=unused-import
+import apt
 import apt_pkg
 
 
@@ -57,7 +57,6 @@ def lookup_uri(v, d, target_pkg):
     if not x.is_trusted:
         return target_pkg, uri, ""
 
-    # pylint: disable=no-member
     hashval = str(r.hashes.find('SHA256')).split(':')[1]
 
     return target_pkg, uri, hashval
@@ -66,7 +65,6 @@ def lookup_uri(v, d, target_pkg):
 class VirtApt:
     def __init__(self, xml):
 
-        # pylint: disable=too-many-statements
         self.xml = xml
 
         arch = xml.text("project/buildimage/arch", key="arch")
@@ -217,7 +215,6 @@ class VirtApt:
 
         x = self.source.find_index(c.file_list[0][0])
         uri = x.archive_uri(r.filename)
-        # pylint: disable=no-member
         hashval = str(r.hashes.find('SHA256'))
 
         acq = apt_pkg.AcquireFile(self.acquire,
@@ -268,7 +265,6 @@ class VirtApt:
                 pkg = None
                 c = None
             if not c:
-                # pylint: disable=E1133
                 for p in self.cache.packages:
                     for x in p.provides_list:
                         if pp == x[0]:

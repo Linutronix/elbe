@@ -293,9 +293,6 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
 
 def submit_and_dl_result(xmlfile, cdrom, opt):
 
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     try:
         with PreprocessWrapper(xmlfile, opt) as ppw:
             xmlfile = ppw.preproc
@@ -529,9 +526,6 @@ class CreateAction(InitVMAction):
         InitVMAction.__init__(self, node, initvmNeeded=False)
 
     def execute(self, initvmdir, opt, args):
-
-        # pylint: disable=too-many-branches
-        # pylint: disable=too-many-statements
 
         if self.initvm is not None:
             print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")

@@ -53,7 +53,6 @@ class BuildSysrootJob(AsyncWorkerJob):
             logging.info("Build sysroot started")
             self.project.build_sysroot()
             db.update_project_files(self.project)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build sysroot failed")
         else:
@@ -83,7 +82,6 @@ class BuildSDKJob(AsyncWorkerJob):
         try:
             logging.info("Build SDK started")
             self.project.build_sdk()
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build SDK Failed")
         else:
@@ -115,7 +113,6 @@ class BuildCDROMsJob(AsyncWorkerJob):
         try:
             logging.info("Build CDROMs started")
             self.project.build_cdroms(self.build_bin, self.build_src)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build CDROMs failed")
         else:
@@ -145,7 +142,6 @@ class BuildChrootTarJob(AsyncWorkerJob):
         try:
             logging.info("Build chroot tarball started")
             self.project.build_chroottarball()
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build chrroot tarball failed")
         else:
@@ -194,7 +190,6 @@ class BuildJob(AsyncWorkerJob):
                               "Probable cause might be:\n"
                               "  - Problems with internet connection\n"
                               "  - Broken mirrors\n", err)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Build failed")
         else:
@@ -227,7 +222,6 @@ class PdebuildJob(AsyncWorkerJob):
         try:
             logging.info("Pdebuild started")
             self.project.pdebuild(self.cpuset, self.profile, self.cross)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Pdebuild failed")
         else:
@@ -261,7 +255,6 @@ class CreatePbuilderJob(AsyncWorkerJob):
             logging.info("Building pbuilder started")
             self.project.create_pbuilder(self.cross, self.noccache,
                                          self.ccachesize)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Pbuilder failed")
         else:
@@ -288,7 +281,6 @@ class UpdatePbuilderJob(AsyncWorkerJob):
         try:
             logging.info("Updating pbuilder started")
             self.project.update_pbuilder()
-        # pylint: disable=broad-except
         except Exception:
             db.update_project_files(self.project)
             logging.exception("update Pbuilder failed")
@@ -318,7 +310,6 @@ class APTUpdateJob(AsyncWorkerJob):
             logging.info("APT cache update started")
             with self.project.buildenv:
                 self.project.get_rpcaptcache().update()
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("APT cache update failed")
         else:
@@ -348,7 +339,6 @@ class APTUpdUpgrJob(AsyncWorkerJob):
                 self.project.get_rpcaptcache().update()
             logging.info("APT update finished, upgrade started")
             self.project.get_rpcaptcache().upgrade()
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("APT update & upgrade failed")
         else:
@@ -389,7 +379,6 @@ class APTCommitJob(AsyncWorkerJob):
             sourcexmlpath = path.join(self.project.builddir,
                                       "source.xml")
             self.project.xml.xml.write(sourcexmlpath)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Applying package changes failed")
         else:
@@ -429,7 +418,6 @@ class GenUpdateJob(AsyncWorkerJob):
         try:
             gen_update_pkg(self.project, self.base_version_xml, upd_pathname)
             logging.info("Update package generated successfully")
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Generating update package failed")
         finally:
@@ -468,7 +456,6 @@ class SaveVersionJob(AsyncWorkerJob):
         # the package archive, which is done in execute.
         try:
             db.save_version(self.project.builddir, self.description)
-        # pylint: disable=broad-except
         except BaseException:
             db.reset_busy(self.project.builddir, self.old_status)
             raise
@@ -489,7 +476,6 @@ class SaveVersionJob(AsyncWorkerJob):
                                          ".pkgarchive")
         try:
             gen_binpkg_archive(self.project, repodir)
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Saving version failed")
             db.del_version(self.project.builddir, self.version, force=True)
@@ -544,7 +530,6 @@ class CheckoutVersionJob(AsyncWorkerJob):
         try:
             checkout_binpkg_archive(self.project, repodir)
             logging.info("Package archive checked out successfully")
-        # pylint: disable=broad-except
         except Exception:
             logging.exception("Checking out package archive failed")
         else:

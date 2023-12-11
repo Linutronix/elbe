@@ -109,8 +109,6 @@ class hdpart:
 
 class fstabentry(hdpart):
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, xml, entry, fsid=0):
         super().__init__()
 

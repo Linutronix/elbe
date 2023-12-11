@@ -77,10 +77,6 @@ def soap_faults(func):
     # something with func.__code__.replace, but this requires deep
     # Python's internal knowledges.
 
-    # pylint: disable=too-many-return-statements
-    # pylint: disable=too-many-statements
-    # pylint: disable=function-redefined
-
     if func.__code__.co_argcount == 1:
         @wraps(func)
         def wrapped(self):
@@ -184,7 +180,6 @@ def soap_faults(func):
     if func.__code__.co_argcount == 6:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5):
-            # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5)
             except InvalidState:
@@ -205,7 +200,6 @@ def soap_faults(func):
     if func.__code__.co_argcount == 7:
         @wraps(func)
         def wrapped(self, arg1, arg2, arg3, arg4, arg5, arg6):
-            # pylint: disable=too-many-arguments
             try:
                 return func(self, arg1, arg2, arg3, arg4, arg5, arg6)
             except InvalidState:

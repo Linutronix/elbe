@@ -21,7 +21,6 @@ class ElbeInstallProgress (InstallProgress):
             # Pylint is confused by this but the attribute does exists
             # on this type!
             #
-            # pylint: disable=attribute-defined-outside-init
             self.percent = 100
 
         line = str(self.percent) + "% " + line
@@ -55,7 +54,6 @@ class ElbeInstallProgress (InstallProgress):
             # Pylint is confused by this but the attribute does exists
             # on this type!
             #
-            # pylint: disable=attribute-defined-outside-init
             self.child_pid = retval
         return retval
 

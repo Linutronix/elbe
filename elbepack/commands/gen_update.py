@@ -15,9 +15,6 @@ from elbepack.log import elbe_logging
 
 def run_command(argv):
 
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     oparser = OptionParser(usage="usage: %prog gen_update [options] [xmlfile]")
     oparser.add_option("-t", "--target", dest="target",
                        help="directoryname of target")

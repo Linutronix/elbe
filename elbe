@@ -12,7 +12,6 @@ import sys
 # get_cmd_list() and the magic stuff with __import__() at the end of
 # this file
 #
-# pylint: disable=unused-import
 import elbepack.commands
 
 from elbepack.version import elbe_version

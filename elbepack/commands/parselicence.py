@@ -122,10 +122,6 @@ def license_string(pkg):
 
 def run_command(argv):
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     oparser = OptionParser(
         usage="usage: %prog parselicence [options] <licencefile>")
     oparser.add_option("--output", dest="output",

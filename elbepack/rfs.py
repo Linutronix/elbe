@@ -62,8 +62,6 @@ class BuildEnv:
     def __init__(self, xml, path, build_sources=False,
                  clean=False, arch="default", hostsysroot=False):
 
-        # pylint: disable=too-many-arguments
-
         self.xml = xml
         self.path = path
         self.rpcaptcache = None
@@ -144,9 +142,6 @@ class BuildEnv:
             do(f"rm {self.path}/etc/apt/trusted.gpg.d/elbe-localrepo.gpg")
 
     def debootstrap(self, arch="default"):
-
-        # pylint: disable=too-many-statements
-        # pylint: disable=too-many-branches
 
         cleanup = False
         suite = self.xml.prj.text("suite")

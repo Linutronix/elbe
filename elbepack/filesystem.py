@@ -51,8 +51,6 @@ def size_to_int(size):
 
 class Filesystem:
 
-    # pylint: disable=too-many-public-methods
-
     def __init__(self, path, clean=False):
         """
         >>> os.path.isdir(this.path)
@@ -431,7 +429,6 @@ class Filesystem:
             fp.close()
 
     def walk_files(self, directory='', exclude_dirs=None):
-        # pylint: disable=too-many-locals
         if not exclude_dirs:
             exclude_dirs = []
 

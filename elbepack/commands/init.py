@@ -24,10 +24,6 @@ from elbepack.filesystem import Filesystem
 
 def run_command(argv):
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     oparser = OptionParser(usage="usage: %prog init [options] <filename>")
 
     oparser.add_option("--skip-validation", action="store_true",

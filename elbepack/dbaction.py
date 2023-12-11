@@ -262,7 +262,6 @@ class BuildAction(DbAction):
             ep = db.load_project(args[0])
             ep.build()
             db.update_project_files(ep)
-        # pylint: disable=broad-except
         except Exception as e:
             db.update_project_files(ep)
             db.reset_busy(args[0], "build_failed")

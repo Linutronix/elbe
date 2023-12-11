@@ -19,8 +19,6 @@ from elbepack.elbexml import ValidationMode
 
 def run_command(argv):
 
-    # pylint: disable=too-many-statements
-
     oparser = OptionParser(usage="usage: elbe control [options] <command>")
 
     oparser.add_option("--host", dest="host", default=cfg['soaphost'],

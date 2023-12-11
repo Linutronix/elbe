@@ -58,8 +58,6 @@ def replace_localmachine(mirror, initvm=True):
 
 class ElbeXML:
 
-    # pylint: disable=too-many-public-methods
-
     def __init__(
             self,
             fname,
@@ -145,8 +143,6 @@ class ElbeXML:
     # XXX: maybe add cdrom path param ?
     def create_apt_sources_list(self, build_sources=False, initvm=True, hostsysroot=False):
 
-        # pylint: disable=too-many-branches
-
         if self.prj is None:
             return "# No Project"
 
@@ -212,7 +208,6 @@ class ElbeXML:
 
     @staticmethod
     def validate_repo(r):
-        # pylint: disable=too-many-statements
         try:
             fp = urlopen(r["url"] + "InRelease", None, 30)
         except URLError:
@@ -246,10 +241,6 @@ class ElbeXML:
         return ret
 
     def validate_apt_sources(self, url_validation, arch):
-
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-branches
-        # pylint: disable=too-many-statements
 
         slist = self.create_apt_sources_list()
         sources_lines = slist.split('\n')

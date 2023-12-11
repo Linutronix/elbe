@@ -44,8 +44,6 @@ def set_suds_debug(debug):
 class ElbeSoapClient:
     def __init__(self, host, port, user, passwd, retries=10, debug=False):
 
-        # pylint: disable=too-many-arguments
-
         # Mess with suds logging, for debug, or squelch warnings
         set_suds_debug(debug)
 
@@ -903,7 +901,6 @@ class UploadPackageAction(RepoAction):
     def __init__(self, node):
         RepoAction.__init__(self, node)
 
-    # pylint: disable=arguments-differ
     @staticmethod
     def upload_file(client, f, builddir):
         # Uploads file f into builddir in intivm

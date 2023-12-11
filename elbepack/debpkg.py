@@ -47,8 +47,6 @@ def build_binary_deb(
         deps,
         target_dir):
 
-    # pylint: disable=too-many-arguments
-
     tmpdir = mkdtemp()
     pkgfname = f"{name}_{version}_{arch}"
     pkgdir = os.path.join(tmpdir, pkgfname)

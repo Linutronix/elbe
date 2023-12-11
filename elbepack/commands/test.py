@@ -157,8 +157,6 @@ class ElbeTestResult(unittest.TestResult):
 
 def run_command(argv):
 
-    # pylint: disable=too-many-locals
-
     this_dir = os.path.dirname(os.path.realpath(__file__))
     top_dir = os.path.join(this_dir, "..", "..")
 

@@ -25,8 +25,6 @@ from elbepack.shellhelper import (system,
 
 def copy_filelist(src, file_lst, dst):
 
-    # pylint: disable=too-many-branches
-
     files = set()
     copied = set()
 
@@ -96,9 +94,6 @@ def copy_filelist(src, file_lst, dst):
 
 
 def extract_target(src, xml, dst, cache):
-
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
 
     # create filelists describing the content of the target rfs
     if xml.tgt.has("tighten") or xml.tgt.has("diet"):
@@ -243,14 +238,12 @@ class Excursion:
     def do(cls, rfs):
         r = cls.RFS[rfs.path]
         for tmp in r:
-            # pylint: disable=protected-access
             tmp._do_excursion(rfs)
 
     @classmethod
     def end(cls, rfs):
         r = cls.RFS[rfs.path]
         for tmp in r:
-            # pylint: disable=protected-access
             if tmp.origin not in rfs.protect_from_excursion:
                 tmp._undo_excursion(rfs)
             else:

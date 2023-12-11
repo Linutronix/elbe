@@ -138,7 +138,6 @@ class etree(ebase):
 
     def setroot(self, tag):
         retval = elem(Element(tag))
-        # pylint: disable=protected-access
         self.et._setroot(retval.et)
         return retval
 

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
-# pylint: disable=too-many-lines
 
 import os
 import errno
@@ -66,8 +65,6 @@ def get_versioned_filename(name, version, suffix):
 
 def _update_project_file(s, builddir, name, mime_type, description):
 
-    # pylint: disable=too-many-arguments
-
     filename = os.path.join(builddir, name)
     try:
         f = s.query(ProjectFile).\
@@ -94,8 +91,6 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
 
 class ElbeDB:
-
-    # pylint: disable=too-many-public-methods
 
     db_path = '/var/cache/elbe'
     db_location = 'sqlite:///' + db_path + '/elbe.db'
@@ -857,8 +852,6 @@ class ElbeDB:
 
     def add_user(self, name, fullname, password, email, admin):
 
-        # pylint: disable=too-many-arguments
-
         pwhash = pbkdf2_sha512.hash(password)
 
         u = User(name=name,
@@ -874,8 +867,6 @@ class ElbeDB:
 
     def modify_user(self, userid, name, fullname, email, admin,
                     password=None):
-
-        # pylint: disable=too-many-arguments
 
         with session_scope(self.session) as s:
             try:
@@ -972,8 +963,6 @@ class ElbeDB:
 
     @classmethod
     def init_db(cls, name, fullname, password, email, admin):
-
-        # pylint: disable=too-many-arguments
 
         if not os.path.exists(cls.db_path):
             try:

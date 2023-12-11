@@ -30,6 +30,5 @@ class SoapCmdReply (ComplexModel):
     out = Unicode()
 
     def __init__(self, ret, out):
-        # pylint: disable=super-init-not-called
         self.ret = ret
         self.out = out

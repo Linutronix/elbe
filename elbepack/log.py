@@ -88,7 +88,6 @@ class ThreadFilter(logging.Filter):
     def filter(self, record):
         if hasattr(record, '_thread'):
             # Hack to fake logging for another thread
-            # pylint: disable=protected-access
             thread = record._thread
         else:
             thread = record.thread

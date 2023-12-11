@@ -26,10 +26,6 @@ def run_command(argv):
     # We might want to make the threshold higher for certain
     # files/directories or just globaly.
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
-    # pylint: disable=too-many-statements
-
     oparser = OptionParser(
         usage="usage: %prog fetch_initvm_pkgs [options] <xmlfile>")
 

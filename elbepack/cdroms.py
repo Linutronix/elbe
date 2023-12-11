@@ -22,7 +22,6 @@ from elbepack.isooptions import get_iso_options
 CDROM_SIZE = 640 * 1000 * 1000
 
 
-# pylint: disable=too-many-arguments
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
         return
@@ -42,10 +41,6 @@ def mk_source_cdrom(components, codename,
                     init_codename, target,
                     cdrom_size=CDROM_SIZE, xml=None,
                     mirror='http://ftp.de.debian.org/debian'):
-
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
 
     hostfs.mkdir_p('/var/cache/elbe/sources')
 
@@ -121,10 +116,6 @@ def mk_source_cdrom(components, codename,
 
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
-    # pylint: disable=too-many-statements
 
     rfs.mkdir_p('/var/cache/elbe/binaries/added')
     rfs.mkdir_p('/var/cache/elbe/binaries/main')

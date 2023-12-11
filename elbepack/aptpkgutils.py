@@ -29,9 +29,7 @@ statestring = {
 
 
 def apt_pkg_md5(pkg):
-    # pylint: disable=protected-access
     hashes = pkg._records.hashes
-    # pylint: disable=consider-using-enumerate
     for i in range(len(hashes)):
         h = str(hashes[i])
         if h.startswith("MD5"):
@@ -40,9 +38,7 @@ def apt_pkg_md5(pkg):
 
 
 def apt_pkg_sha256(pkg):
-    # pylint: disable=protected-access
     hashes = pkg._records.hashes
-    # pylint: disable=consider-using-enumerate
     for i in range(len(hashes)):
         h = str(hashes[i])
         if h.startswith("SHA256"):
@@ -130,15 +126,12 @@ def fetch_binary(version, destdir='', progress=None):
 
     Then fixed up to use sha256 and pass pycodestyle.
     """
-    # pylint: disable=protected-access
     base = os.path.basename(version._records.filename)
     destfile = os.path.join(destdir, base)
-    # pylint: disable=protected-access
     if _file_is_same(destfile, version.size, version._records.sha256_hash):
         logging.debug('Ignoring already existing file: %s', destfile)
         return os.path.abspath(destfile)
     acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
-    # pylint: disable=protected-access
     acqfile = apt_pkg.AcquireFile(acq,
                                   version.uri,
                                   "SHA256:" + version._records.sha256_hash,
@@ -157,16 +150,12 @@ def fetch_binary(version, destdir='', progress=None):
 
 class PackageBase:
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, name,
                  installed_version, candidate_version,
                  installed_md5, candidate_md5,
                  installed_sha256, candidate_sha256,
                  installed_prio, candidate_prio,
                  state, is_auto_installed, origin, architecture):
-
-        # pylint: disable=too-many-arguments
 
         self.name = name
         self.installed_version = installed_version

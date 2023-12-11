@@ -33,11 +33,6 @@ def gen_update_pkg(project, xml_filename, upd_filename,
                    override_buildtype=None, skip_validate=False, debug=False,
                    cmd_dir=None, cfg_dir=None):
 
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     if xml_filename:
         xml = ElbeXML(xml_filename, buildtype=override_buildtype,
                       skip_validate=skip_validate)

@@ -35,8 +35,6 @@ from elbepack.shellhelper import CommandError, system
 
 class UpdateStatus:
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self):
         self.monitor = None
         self.observer = None
@@ -105,7 +103,6 @@ class UpdateService (ServiceBase):
 
     @rpc(_returns=String)
     def list_snapshots(self):
-        # pylint: disable=no-self-use
         # use comma separated string because array of strings triggers a bug in
         # python suds :(
         snapshots = ""
@@ -129,7 +126,6 @@ class UpdateService (ServiceBase):
 
         try:
             apply_update(fname, self.app.status)
-        # pylint: disable=broad-except
         except Exception as err:
             print(f"{err}")
             self.app.status.set_finished('error')
@@ -257,8 +253,6 @@ def mark_install(depcache, pkg, ver, auto, status):
 
 
 def _apply_update(fname, status):
-
-    # pylint: disable=too-many-locals
 
     try:
         xml = etree(fname)
@@ -441,11 +435,6 @@ def apply_update(fname, status):
 
 def action_select(upd_file, status):
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-return-statements
-    # pylint: disable=too-many-branches
-    # pylint: disable=too-many-statements
-
     status.log("updating: " + upd_file)
 
     try:
@@ -465,7 +454,6 @@ def action_select(upd_file, status):
     try:
         if reject_downgrade(status, "/tmp/new.xml"):
             return
-    # pylint: disable=broad-except
     except Exception as e:
         status.log('Error while reading XML files occurred: ' + str(e))
         return
@@ -533,7 +521,6 @@ def action_select(upd_file, status):
     if os.path.isdir(prefix + "repo"):
         try:
             update_sourceslist(xml, prefix + "repo", status)
-        # pylint: disable=broad-except
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')
@@ -542,7 +529,6 @@ def action_select(upd_file, status):
 
         try:
             apply_update("/tmp/new.xml", status)
-        # pylint: disable=broad-except
         except Exception as err:
             status.log(str(err))
             status.set_finished('error')

@@ -76,9 +76,6 @@ def dump_initvmpkgs(xml):
 
 def check_full_pkgs(pkgs, fullpkgs, cache):
 
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
-
     validation.info("ELBE Package validation")
     validation.info("=======================")
     validation.info("")
@@ -176,11 +173,6 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
 
 def elbe_report(xml, buildenv, cache, targetfs):
-
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
 
     rfs = buildenv.rfs
 

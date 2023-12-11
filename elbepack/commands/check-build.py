@@ -81,7 +81,7 @@ class CheckBase:
         except CheckException as E:
             logging.exception(E)
             self.ret = 1
-        except:  # pylint: disable=bare-except
+        except:
             logging.error(traceback.format_exc())
             self.ret = 1
         return self.ret
@@ -93,10 +93,8 @@ class CheckBase:
             return test
         return _register
 
-    # pylint: disable=no-self-use
     def run(self):
         raise Exception("Check run method not implemented")
-        # pylint: disable=unreachable
         return 0
 
     def fail(self, reason):
@@ -134,9 +132,6 @@ class CheckCdroms(CheckBase):
 
     def do_src(self, sources, src_total):
         """Check for sources in src-cdrom*"""
-
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-branches
 
         iso_it = glob.iglob("src-cdrom*")
         src_cnt = 0
@@ -234,10 +229,6 @@ class CheckCdroms(CheckBase):
         # package.  Thus, the only way is to make the source table component
         # aware.
 
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-branches
-        # pylint: disable=too-many-statements
-
         # Every build has a source.xml where the list of binaries
         # installed can be found
         xml = etree("source.xml")
@@ -268,7 +259,6 @@ class CheckCdroms(CheckBase):
         # For every bin-cdrom, create a temporary directory where to
         # extract it and find all *.deb files
         #
-        # pylint: disable=too-many-nested-blocks
         for cdrom in glob.glob("bin-cdrom*"):
             with TmpdirFilesystem() as tmp:
                 self.extract_cdrom(tmp.path, cdrom)
@@ -407,7 +397,6 @@ class CheckImage(CheckBase):
 
     def run(self):
 
-        # pylint: disable=attribute-defined-outside-init
         self.xml = etree("source.xml")
 
         fail_cnt = 0

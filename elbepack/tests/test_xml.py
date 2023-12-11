@@ -14,7 +14,7 @@ from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  "Test level not set to INITVM")
 class TestSimpleXML(ElbeTestCase):
-    global elbe_dir      #pylint: disable=global-statement
+    global elbe_dir
 
     elbe_dir = os.path.join(os.path.dirname(__file__), "../..")
 
@@ -46,7 +46,6 @@ class TestSimpleXML(ElbeTestCase):
                     with self.subTest(f'check build {cmd}'):
                         system(f'{sys.executable} {elbe_exe} check-build {cmd} "{build_dir}"')
 
-            # pylint: disable=try-except-raise
             except:
                 raise
             else:
@@ -81,7 +80,6 @@ class TestPbuilder(ElbeTestCase):
                     uuid = f.read()
                     system(f'cd "{build_dir}/libgpio"; \
                              {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
-            # pylint: disable=try-except-raise
             except:
                 raise
             else:

@@ -178,9 +178,6 @@ class BuildAction(PBuilderAction):
 
     def execute(self, opt, _args):
 
-        # pylint: disable=too-many-statements
-        # pylint: disable=too-many-branches
-
         crossopt = ""
         if opt.cross:
             crossopt = "--cross"

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
-# pylint: disable=too-many-lines
 
 import os
 import datetime
@@ -82,7 +81,6 @@ def gen_sdk_scripts(triplet,
                     prj_version,
                     builddir,
                     sdkpath):
-    # pylint: disable=too-many-arguments
 
     prj_name = prj_name.replace(" ", "_")
     prj_version = prj_version.replace(" ", "_")
@@ -111,9 +109,6 @@ def gen_sdk_scripts(triplet,
 
 class ElbeProject:
 
-    # pylint: disable=too-many-instance-attributes
-    # pylint: disable=too-many-public-methods
-
     def __init__(
             self,
             builddir,
@@ -128,8 +123,6 @@ class ElbeProject:
             presh_file=None,
             postsh_file=None,
             savesh_file=None):
-
-        # pylint: disable=too-many-arguments
 
         self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, "chroot")
@@ -448,9 +441,6 @@ class ElbeProject:
                      build_sources=False, cdrom_size=None,
                      tgt_pkg_lst=None):
 
-        # pylint: disable=too-many-branches
-        # pylint: disable=too-many-locals
-
         self.repo_images = []
 
         env = None
@@ -548,11 +538,6 @@ class ElbeProject:
 
     def build(self, build_bin=False, build_sources=False, cdrom_size=None,
               skip_pkglist=False, skip_pbuild=False):
-
-        # pylint: disable=too-many-arguments
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-statements
-        # pylint: disable=too-many-branches
 
         # Write the log header
         self.write_log_header()
@@ -1002,9 +987,6 @@ class ElbeProject:
                               "contain an initvm node", source_path)
 
     def install_packages(self, target, buildenv=False):
-
-        # pylint: disable=too-many-statements
-        # pylint: disable=too-many-branches
 
         # to workaround debian bug no. 872543
         if self.xml.prj.has('noauth'):

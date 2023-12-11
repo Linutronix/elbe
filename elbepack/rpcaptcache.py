@@ -26,7 +26,6 @@ soap = logging.getLogger("soap")
 
 class MyMan(BaseManager):
 
-    # pylint: disable=arguments-differ
     @staticmethod
     def register(typeid):
         """Register to BaseManager through decorator"""
@@ -48,7 +47,6 @@ class MyMan(BaseManager):
         os.sys.__stdout__ = os.sys.stdout
         os.sys.__stderr__ = os.sys.stderr
 
-    # pylint: disable=arguments-differ
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
         r, w = os.pipe()
@@ -66,11 +64,9 @@ class InChRootObject:
 @MyMan.register("RPCAPTCache")
 class RPCAPTCache(InChRootObject):
 
-    # pylint: disable=too-many-public-methods
     def __init__(self, rfs, arch,
                  notifier=None, norecommend=False, noauth=True):
 
-        # pylint: disable=too-many-arguments
         InChRootObject.__init__(self, rfs)
 
         self.notifier = notifier
@@ -422,8 +418,6 @@ class RPCAPTCache(InChRootObject):
 def get_rpcaptcache(rfs, arch,
                     notifier=None, norecommend=False, noauth=True):
 
-    # pylint: disable=too-many-arguments
-
     mm = MyMan()
     mm.start()
 
@@ -431,5 +425,4 @@ def get_rpcaptcache(rfs, arch,
     # see the creation of MyMan.RPCAPTCache by
     # MyMan.register()
     #
-    # pylint: disable=no-member
     return mm.RPCAPTCache(rfs, arch, notifier, norecommend, noauth)

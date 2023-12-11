@@ -308,9 +308,6 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
        `xml_output_file` is either a file-like object or a path (str) to the output file.
     """
 
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
-
     # first convert variants to a set
     if not variants:
         variants = set([])
@@ -446,7 +443,6 @@ class PreprocessWrapper:
     @staticmethod
     def add_options(oparser):
         # import it here because of cyclic imports
-        # pylint: disable=cyclic-import
         from elbepack.commands.preprocess import add_pass_through_options
 
         group = OptionGroup(oparser,

@@ -27,8 +27,6 @@ from .authentication import authenticated_admin, authenticated_uid
 
 class ESoap (ServiceBase):
 
-    # pylint: disable=too-many-public-methods
-
     __name__ = 'soap'
 
     def __init__(self):
@@ -38,7 +36,6 @@ class ESoap (ServiceBase):
     @rpc(_returns=String)
     @soap_faults
     def get_version(self):
-        # pylint: disable=no-self-use
         return elbe_version
 
     @rpc(String, String, _returns=Boolean)
@@ -59,7 +56,6 @@ class ESoap (ServiceBase):
     @soap_faults
     @authenticated_admin
     def install_elbe_version(self, version, pkglist):
-        # pylint: disable=no-self-use
         if is_devel:
             return SoapCmdReply(10,
                                 'Initvm is in devel mode: installing another\n'
@@ -94,8 +90,6 @@ class ESoap (ServiceBase):
     @authenticated_admin
     def add_user(self, name, fullname, password, email, admin):
 
-        # pylint: disable=too-many-arguments
-
         self.app.pm.db.add_user(name, fullname, password, email, admin)
 
     @rpc(_returns=Array(SoapProject))
@@ -123,8 +117,6 @@ class ESoap (ServiceBase):
     @authenticated_uid
     @soap_faults
     def upload_file(self, uid, builddir, fname, blob, part):
-
-        # pylint: disable=too-many-arguments
 
         fn = os.path.join(builddir, fname)
         if part == 0:
@@ -211,8 +203,6 @@ class ESoap (ServiceBase):
     @soap_faults
     def build(self, uid, builddir, build_bin, build_src, skip_pbuilder):
 
-        # pylint: disable=too-many-arguments
-
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_current_project(uid, build_bin, build_src,
                                           skip_pbuilder)
@@ -294,7 +284,6 @@ class ESoap (ServiceBase):
     @rpc(String, Integer, String, Boolean)
     @authenticated_uid
     @soap_faults
-    # pylint: disable=too-many-arguments
     def finish_pdebuild(self, uid, builddir, cpuset, profile, cross):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_current_pdebuild(uid, cpuset, profile, cross)
@@ -380,7 +369,6 @@ class ESoap (ServiceBase):
     @authenticated_admin
     @soap_faults
     def shutdown_initvm(self):
-        # pylint: disable=no-self-use
         system("systemctl --no-block poweroff")
 
     @rpc(String)

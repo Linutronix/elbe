@@ -13,8 +13,6 @@ from elbepack.repomanager import RepoBase, RepoAttributes
 class ArchiveRepo(RepoBase):
     def __init__(self, xml, pathname, origin, description, components):
 
-        # pylint: disable=too-many-arguments
-
         arch = xml.text("project/arch", key="arch")
         codename = xml.text("project/suite")
 
@@ -87,10 +85,6 @@ def gen_binpkg_archive(ep, repodir):
 
 
 def checkout_binpkg_archive(ep, repodir):
-
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
 
     repopath = path.join(ep.builddir, repodir)
     sources_list = ep.buildenv.rfs.fname('etc/apt/sources.list')

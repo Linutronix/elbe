@@ -26,7 +26,6 @@ elbe_internal_key_param = """
 """
 
 
-# pylint: disable=too-many-instance-attributes
 class OverallStatus:
 
     def __init__(self):

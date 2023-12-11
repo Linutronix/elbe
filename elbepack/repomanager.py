@@ -45,8 +45,6 @@ class RepoAttributes:
 
 class RepoBase:
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(
             self,
             path,
@@ -55,8 +53,6 @@ class RepoBase:
             origin,
             description,
             maxsize=None):
-
-        # pylint: disable=too-many-arguments
 
         self.vol_path = path
         self.volume_count = 0
@@ -268,7 +264,6 @@ class RepoBase:
            env_add={"GNUPGHOME": "/var/cache/elbe/gnupg"})
 
     def removesrc(self, path, components=None):
-        # pylint: disable=undefined-variable
         with open(path) as fp:
             for p in Deb822.iter_paragraphs(fp):
                 if 'Source' in p:
@@ -277,7 +272,6 @@ class RepoBase:
                                     components)
 
     def _remove(self, path, codename, components=None):
-        # pylint: disable=undefined-variable
         with open(path) as fp:
             for p in Deb822.iter_paragraphs(fp):
                 if 'Source' in p:
@@ -381,8 +375,6 @@ class CdromInitRepo(RepoBase):
     def __init__(self, init_codename, path,
                  mirror='http://ftp.de.debian.org/debian'):
 
-        # pylint: disable=too-many-arguments
-
         init_attrs = RepoAttributes(
             init_codename, "amd64", [
                 "main", "main/debian-installer"], mirror)
@@ -404,8 +396,6 @@ class CdromBinRepo(RepoBase):
             path,
             mirror='http://ftp.debian.org/debian'):
 
-        # pylint: disable=too-many-arguments
-
         repo_attrs = RepoAttributes(codename, arch, ["main", "added"], mirror)
         if init_codename is not None:
             init_attrs = RepoAttributes(
@@ -425,8 +415,6 @@ class CdromBinRepo(RepoBase):
 class CdromSrcRepo(RepoBase):
     def __init__(self, codename, init_codename, path, maxsize,
                  mirror='http://ftp.debian.org/debian'):
-
-        # pylint: disable=too-many-arguments
 
         repo_attrs = RepoAttributes(codename,
                                     "source",

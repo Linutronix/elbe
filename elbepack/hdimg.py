@@ -57,8 +57,6 @@ def mkfs_mtd(mtd, fslabel, target):
 
 def build_image_mtd(mtd, target):
 
-    # pylint: disable=too-many-branches
-
     img_files = []
 
     if not mtd.has("ubivg"):
@@ -306,8 +304,6 @@ def create_partition(
         size_in_sectors,
         current_sector):
 
-    # pylint: disable=too-many-arguments
-
     sector_size = 512
     if part.text("size") == "remain" and disk.type == "gpt":
         sz = size_in_sectors - 35 - current_sector
@@ -344,8 +340,6 @@ def create_partition(
 
 
 def create_label(disk, part, ppart, fslabel, target, grub):
-
-    # pylint: disable=too-many-arguments
 
     entry = fslabel[part.text("label")]
     entry.set_geometry(ppart, disk)
@@ -416,8 +410,6 @@ def create_logical_partitions(disk,
                               target,
                               grub):
 
-    # pylint: disable=too-many-arguments
-
     current_sector = epart.geometry.start
     size_in_sectors = current_sector + epart.geometry.length
 
@@ -442,10 +434,6 @@ def create_logical_partitions(disk,
 
 
 def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
-
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
 
     sector_size = 512
     s = size_to_int(hd.text("size"))
@@ -542,10 +530,6 @@ def add_binary_blob(hd, target):
 
 
 def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
-
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    # pylint: disable=too-many-branches
 
     # list of created files
     img_files = []

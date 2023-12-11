@@ -428,8 +428,6 @@ class UpdatedAction(FinetuningAction):
 
     def execute(self, buildenv, target):
 
-        # pylint: disable=too-many-locals
-
         if self.node.et.text:
             fp = self.node.et.text
 
