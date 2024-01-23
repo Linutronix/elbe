@@ -5,6 +5,7 @@
 
 import os
 import re
+import socket
 
 from urllib.error import URLError
 from urllib.request import (urlopen, install_opener, build_opener,
@@ -209,12 +210,16 @@ class ElbeXML:
     def validate_repo(r):
         # pylint: disable=too-many-statements
         try:
-            fp = urlopen(r["url"] + "InRelease", None, 10)
+            fp = urlopen(r["url"] + "InRelease", None, 30)
         except URLError:
             try:
-                fp = urlopen(r["url"] + "Release", None, 10)
+                fp = urlopen(r["url"] + "Release", None, 30)
             except URLError:
                 return False
+            except socket.timeout:
+                return False
+        except socket.timeout:
+            return False
 
         ret = False
         if "srcstr" in r:
