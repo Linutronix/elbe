@@ -758,17 +758,17 @@ def do_finetuning(xml, buildenv, target):
     for i in xml.node('target/finetuning'):
         try:
             action = FinetuningAction(i)
+            action.execute(buildenv, target)
         except KeyError:
             logging.exception("Unimplemented finetuning action '%s'",
                               i.et.tag)
-            return
-        try:
-            action.execute(buildenv, target)
-        except CommandError:
-            logging.exception("Finetuning Error, trying to continue anyways")
-        except FinetuningException:
-            logging.exception("Finetuning Error\n"
-                              "Trying to continue anyways")
+            raise
+        except CommandError as e:
+            logging.exception('Finetuning Error: %s', e)
+            raise
+        except FinetuningException as e:
+            logging.exception('Finetuning Error: %s', e)
+            raise
 
 
 def do_prj_finetuning(xml, buildenv, target, builddir):
@@ -781,14 +781,14 @@ def do_prj_finetuning(xml, buildenv, target, builddir):
             action = FinetuningAction(i)
             action.execute_prj(buildenv, target, builddir)
         except KeyError:
-            logging.exception("Unimplemented project-finetuning action '%s'",
+            logging.exception("Unimplemented Project Finetuning action '%s'",
                               i.et.tag)
-        except CommandError:
-            logging.exception("ProjectFinetuning Error, "
-                              "trying to continue anyways")
-        except FinetuningException:
-            logging.exception("Finetuning Error\n"
-                              "Trying to continue anyways")
+        except CommandError as e:
+            logging.exception('Project Finetuning Error: %s', e)
+            raise
+        except FinetuningException as e:
+            logging.exception('Project Finetuning Error: %s', e)
+            raise
         except Exception as e:
             logging.exception(str(e))
             raise
