@@ -222,6 +222,8 @@ class ElbeProject:
         paths = [
             './usr/include',
             './usr/include/' + triplet,
+            './usr/bin/gdbserver',
+            './usr/sbin/ldconfig',
             './etc/ld.so.conf*',
             './opt/*/lib/*.so',
             './opt/*lib/*.so.*',
@@ -248,6 +250,10 @@ class ElbeProject:
         # Import keyring
         self.sysrootenv.import_keys()
         logging.info("Keys imported")
+
+        self.xml.add_target_package("libc-bin")
+        self.xml.add_target_package("libc6-dbg")
+        self.xml.add_target_package("gdbserver")
 
         self.install_packages(self.sysrootenv, buildenv=False)
 
@@ -300,7 +306,10 @@ class ElbeProject:
         # include /lib if it is a symlink (buster and later)
         if os.path.islink(self.sysrootpath + '/lib'):
             with open(sysrootfilelist, 'a') as filelist_fd:
-                filelist_fd.write('./lib')
+                filelist_fd.write('./lib\n')
+        if os.path.islink(self.sysrootpath + '/sbin'):
+            with open(sysrootfilelist, 'a') as filelist_fd:
+                filelist_fd.write('./sbin\n')
 
         do(
             f"tar cfJ {self.builddir}/sysroot.tar.xz "
