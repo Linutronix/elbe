@@ -227,14 +227,12 @@ def run_command(argv):
 
         export_keyring = import_keyring + ".gpg"
 
-        # No need to set GNUPGHOME because both input and output
-        # keyring files are specified.
-
         do(f'gpg --no-options \
                 --no-default-keyring \
                 --keyring {import_keyring} \
                 --export \
-                --output {export_keyring}')
+                --output {export_keyring}',
+            env_add={'GNUPGHOME': out_path})
 
         if opt.devel:
             out_real = os.path.realpath(out_path)
