@@ -1485,13 +1485,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
-      <element name="partition" type="rfs:partition" minOccurs="0" maxOccurs="3">
-        <annotation>
-          <documentation>
-            Partition Entries of this harddisk (max: 3)
-          </documentation>
-        </annotation>
-      </element>
     </sequence>
     <attribute ref="xml:base"/>
   </complexType>
