@@ -176,7 +176,7 @@ class RepoBase:
                 self.new_repo_volume()
 
         global_opt = ["--keepunreferencedfiles",
-                      "--export=never",
+                      "--export=silent-never",
                       f'--basedir "{self.fs.path}"']
 
         if prio is not None:
@@ -217,7 +217,7 @@ class RepoBase:
         global_opt = ["--ignore=wrongdistribution",
                       "--ignore=surprisingbinary",
                       "--keepunreferencedfiles",
-                      "--export=never",
+                      "--export=silent-never",
                       f'--basedir "{self.fs.path}"',
                       "--priority normal",
                       "--section misc"]
@@ -297,7 +297,7 @@ class RepoBase:
             self.new_repo_volume()
 
         global_opt = ["--keepunreferencedfiles",
-                      "--export=never",
+                      "--export=silent-never",
                       f'--basedir "{self.fs.path}"',
                       "--priority normal",
                       "--section misc"]
