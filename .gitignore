@@ -58,3 +58,4 @@ contrib/debathena-transform-lighttpd/debian/*.log
 contrib/debathena-transform-lighttpd/debian/debathena-transform-lighttpd/
 contrib/debathena-transform-lighttpd/debian/debhelper-build-stamp
 contrib/debathena-transform-lighttpd/debian/files
+/elbe-build-*/
