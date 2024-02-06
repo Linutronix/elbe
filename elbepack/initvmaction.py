@@ -153,6 +153,23 @@ class StartAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
+    def _attach_disk_fds(self, _initvmdir):
+        # libvirt does not necessarily have permissions to directly access the
+        # image file. libvirt 9.0 provides FDAssociate() to pass an open file
+        # descriptor to libvirt which is used to access files via the context
+        # of the client, which has permissions.
+
+        if not hasattr(self.initvm, 'FDAssociate'):
+            return
+
+        # Use raw unmanaged FDs as libvirt will take full ownership of them.
+        self.initvm.FDAssociate('initvm.img', [
+            os.open(os.path.join(_initvmdir, "initvm.img"), os.O_RDWR),
+        ])
+        self.initvm.FDAssociate('initvm-base.img', [
+            os.open(os.path.join(_initvmdir, "initvm-base.img"), os.O_RDONLY),
+        ])
+
     def execute(self, _initvmdir, _opt, _args):
         import libvirt
 
@@ -160,6 +177,8 @@ class StartAction(InitVMAction):
             print('Initvm already running.')
             sys.exit(20)
         elif self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
+            self._attach_disk_fds(_initvmdir)
+
             # Domain is shut off. Let's start it!
             self.initvm.create()
             # Wait five seconds for the initvm to boot

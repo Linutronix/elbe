@@ -23,6 +23,7 @@ memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024
 
 imagetype = prj.text('img', default=defs, key='img')
 img = os.path.join(opt.directory, 'initvm.img')
+img_base = os.path.join(opt.directory, 'initvm-base.img')
 
 emulator = shutil.which(prj.text('interpreter', default=defs, key='interpreter'))
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
@@ -70,8 +71,13 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <memballoon model='none' />
     <disk type='file' device='disk'>
     <driver name='qemu' type='${imagetype}' />
-    <source file='${img}' />
+    <source file='${img}' fdgroup='initvm.img' />
       <target dev='vda' bus='virtio' />
+      <backingStore type='file'>
+        <format type='qcow2'/>
+        <source file='${img_base}' fdgroup='initvm-base.img'/>
+        <backingStore/>
+      </backingStore>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x07'
       function='0x0' />
     </disk>
