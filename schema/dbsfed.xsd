@@ -374,7 +374,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         <annotation>
           <documentation>
             name of the debian suite that should be used to generate the initvm.
-            E.g. "buster", "bullseye", "sid", ...
+            E.g. "buster", "bullseye", "bookworm", "trixie", "sid", ...
           </documentation>
         </annotation>
       </element>
@@ -524,7 +524,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
           <documentation>
             name of the debian suite that should be used to generate the
             buildenvironment and the rootfilesystem.
-            E.g. "bullseye", "bookworm", "sid", ...
+            E.g. "bullseye", "bookworm", "trixie", "sid", ...
           </documentation>
         </annotation>
       </element>
@@ -677,6 +677,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <restriction base="string">
       <enumeration value="sid" />
       <enumeration value="bullseye" />
+      <enumeration value="bookworm" />
+      <enumeration value="trixie" />
     </restriction>
   </simpleType>
 
