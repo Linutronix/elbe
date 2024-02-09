@@ -143,8 +143,8 @@ lffHf8U7HFvRg+zm
 		<suite>bookworm</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
-			<pkg pin="bookworm-backports">debootstrap</pkg>
-			<pkg pin="bookworm-backports">reprepro</pkg>
+			<pkg>debootstrap</pkg>
+			<pkg>reprepro</pkg>
 		</pkg-list>
 		<preseed>
 			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://deb.debian.org/debian"/>
