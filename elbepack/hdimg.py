@@ -6,8 +6,6 @@ import logging
 import os
 from pathlib import Path
 
-import _ped
-
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
 from elbepack.shellhelper import CommandError, chroot, do, get_command_out
@@ -320,7 +318,7 @@ def create_partition(
         fs = simple_fstype('fat32')
         ppart = parted.Partition(disk, ptype, fs, geometry=g)
         if disk.type != 'gpt':
-            ppart.setFlag(_ped.PARTITION_LBA)
+            ppart.setFlag(parted.PARTITION_LBA)
     else:
         ppart = parted.Partition(disk, ptype, geometry=g)
 
@@ -331,10 +329,10 @@ def create_partition(
     disk.addPartition(ppart, cons)
 
     if part.has('bootable'):
-        ppart.setFlag(_ped.PARTITION_BOOT)
+        ppart.setFlag(parted.PARTITION_BOOT)
 
     if part.has('biosgrub'):
-        ppart.setFlag(_ped.PARTITION_BIOS_GRUB)
+        ppart.setFlag(parted.PARTITION_BIOS_GRUB)
 
     return ppart
 
