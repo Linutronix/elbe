@@ -18,7 +18,6 @@
 ./usr/lib/python3.*/*-packages/elbepack/ziparchives.py
 ./usr/lib/python3.*/*-packages/elbepack/repomanager.py
 ./usr/lib/python3.*/*-packages/elbepack/finetuning.py
-./usr/lib/python3.*/*-packages/elbepack/junit.py
 ./usr/lib/python3.*/*-packages/elbepack/cdroms.py
 ./usr/lib/python3.*/*-packages/elbepack/debpkg.py
 ./usr/lib/python3.*/*-packages/elbepack/rpcaptcache.py

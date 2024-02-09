@@ -2292,13 +2292,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
-      <element name="unit-tests" type="rfs:unit-tests" minOccurs="0" maxOccurs="1">
-        <annotation>
-          <documentation>
-	    Allows to generate test suites for the project.
-          </documentation>
-        </annotation>
-      </element>
     </choice>
   </group>
 
@@ -3081,61 +3074,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
       </extension>
     </simpleContent>
   </complexType>
-
-  <complexType name="unit-tests">
-    <annotation>
-      <documentation>
-	Sequence of test suites.  The required attribute 'dst' is the
-	name of the file where the Junit XML file will be dump
-	relative to the project directory.
-      </documentation>
-    </annotation>
-    <sequence>
-      <element name="test-suite" type="rfs:test-suite" minOccurs="0" maxOccurs="unbounded">
-      </element>
-    </sequence>
-  </complexType>
-
-  <complexType name="test-suite">
-    <annotation>
-      <documentation>
-        A test suite is a sequence of test cases.  The required
-        attribute name is the a human readable identifier for the
-        test suite.
-        The value of this tag consists of the test registers
-        defined in elbepack/junit.py to be performed for the
-        specific files.
-      </documentation>
-    </annotation>
-    <sequence>
-      <group ref="rfs:test-case" minOccurs="0" maxOccurs="unbounded" >
-      </group>
-    </sequence>
-    <attribute name="name" type="string" use="required">
-      <annotation>
-        <documentation>
-          This attribute describes the name of the test suite.
-        </documentation>
-      </annotation>
-    </attribute>
-  </complexType>
-
-  <group name="test-case">
-    <annotation>
-      <documentation>
-	A test-case is a choice of a test to make on the target fs.
-      </documentation>
-    </annotation>
-    <choice>
-      <element name="file-exists" type="rfs:string" minOccurs="0">
-	<annotation>
-          <documentation>
-	    Verify that a file exists.
-          </documentation>
-        </annotation>
-      </element>
-    </choice>
-  </group>
 
   <complexType name="src-cdrom">
     <annotation>

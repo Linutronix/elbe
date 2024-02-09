@@ -12,7 +12,6 @@ from apt.package import FetchError
 
 from elbepack.egpg import unlock_key
 from elbepack.filesystem import ImgMountFilesystem
-from elbepack.junit import TestException, TestSuite
 from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -706,31 +705,6 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         inp = f't\n{part_nr}\n{part_type}\nw\n'
 
         do(cmd, stdin=inp)
-
-
-@FinetuningAction.register('unit-tests')
-class TestSuites(FinetuningAction):
-
-    elbe_junit = 'elbe-junit.xml'
-
-    def execute(self, _buildenv, _target):
-        raise NotImplementedError(
-            f'<{self.tag}> can only be used in the context of a project')
-
-    def execute_prj(self, buildenv, target, builddir):
-
-        tss = []
-        output = os.path.join(builddir, self.elbe_junit)
-        target.images.append(self.elbe_junit)
-
-        for test_suite in self.node:
-            ts = TestSuite(test_suite, target)
-            try:
-                tss.append(ts())
-            except TestException as E:
-                logging.exception(str(E))
-
-        TestSuite.to_file(output, tss)
 
 
 @FinetuningAction.register('rm_apt_source')
