@@ -1,4 +1,4 @@
-elbe (14.9.3) UNRELEASED; urgency=medium
+elbe (14.9.3) bookworm; urgency=medium
 
   [ Benedikt Spranger ]
   * riscv64 support
