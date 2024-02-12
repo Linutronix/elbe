@@ -18,8 +18,6 @@ from debian.copyright import (
 
 from elbepack.treeutils import etree
 
-warnings.simplefilter('error')
-
 remove_re = re.compile('[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 
 
@@ -69,13 +67,16 @@ class copyright_xml:
                                              .decode(encoding='utf-8',
                                                      errors='replace'))
         try:
-            c = Copyright(bytesio, strict=True)
+            with warnings.catch_warnings():
+                warnings.simplefilter('error')
 
-            files = []
+                c = Copyright(bytesio, strict=True)
 
-            # Note!  Getters of cc can throw nasty exceptions!
-            for cc in c.all_files_paragraphs():
-                files.append((cc.files, cc.license.synopsis, cc.copyright))
+                files = []
+
+                # Note!  Getters of cc can throw nasty exceptions!
+                for cc in c.all_files_paragraphs():
+                    files.append((cc.files, cc.license.synopsis, cc.copyright))
 
         except (NotMachineReadableError, MachineReadableFormatError) as E:
             logging.warning("Error in copyright of package '%s': %s", pkg_name, E)
