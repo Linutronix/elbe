@@ -78,7 +78,7 @@ class copyright_xml:
                 for cc in c.all_files_paragraphs():
                     files.append((cc.files, cc.license.synopsis, cc.copyright))
 
-        except (NotMachineReadableError, MachineReadableFormatError) as E:
+        except (NotMachineReadableError, MachineReadableFormatError, ValueError) as E:
             logging.warning("Error in copyright of package '%s': %s", pkg_name, E)
         except Warning as W:
             logging.warning("Warning in copyright of package '%s' : %s", pkg_name, W)
