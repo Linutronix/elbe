@@ -10,6 +10,7 @@ import warnings
 
 from debian.copyright import (
     Copyright,
+    License,
     LicenseParagraph,
     MachineReadableFormatError,
     NotMachineReadableError,
@@ -29,8 +30,7 @@ def do_heuristics(fp):
         if lic.startswith('License:'):
             num_licenses += 1
             _, v = lic.split(':', 1)
-            data = {'License': v.strip()}
-            lic_para = LicenseParagraph(data)
+            lic_para = LicenseParagraph.create(License(v.strip()))
             c.add_license_paragraph(lic_para)
 
     if num_licenses > 0:
