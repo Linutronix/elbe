@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import logging
-import warnings
 
 from beaker.middleware import SessionMiddleware
 
@@ -18,9 +17,6 @@ from spyne.server.wsgi import WsgiApplication
 from .esoap import ESoap
 
 logging.getLogger('spyne').setLevel(logging.INFO)
-
-warnings.simplefilter('ignore', category=PendingDeprecationWarning)
-warnings.simplefilter('ignore', category=ResourceWarning)
 
 
 class EsoapApp(Application):
