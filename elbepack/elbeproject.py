@@ -201,7 +201,8 @@ class ElbeProject:
         self.host_sysrootenv = None
 
     def build_chroottarball(self):
-        do(f'tar cJf {self.builddir}/chroot.tar.xz '
+        do('XZ_OPT="-T0 -M80%" '
+           f'tar cJf {self.builddir}/chroot.tar.xz '
            '--exclude=./tmp/*  --exclude=./dev/* '
            '--exclude=./run/*  --exclude=./sys/* '
            '--exclude=./proc/* --exclude=./var/cache/* '
@@ -303,6 +304,7 @@ class ElbeProject:
                 filelist_fd.write('./sbin\n')
 
         do(
+            'XZ_OPT="-T0 -M80%" '
             f'tar cfJ {self.builddir}/sysroot.tar.xz '
             f'-C {self.sysrootpath} -T {sysrootfilelist}')
 
@@ -385,7 +387,9 @@ class ElbeProject:
         self.build_sysroot()
         sdktargetpath = os.path.join(self.sdkpath, 'sysroots', 'target')
         do(f'mkdir -p {sdktargetpath}')
-        do(f'tar xJf {self.builddir}/sysroot.tar.xz -C {sdktargetpath}')
+        do(
+            'XZ_OPT="-T0 -M80%" '
+            f'tar xJf {self.builddir}/sysroot.tar.xz -C {sdktargetpath}')
         # build host sysroot including cross compiler
         hostsysrootpath = os.path.join(self.sdkpath, 'sysroots', 'host')
 
@@ -399,7 +403,7 @@ class ElbeProject:
                             self.sdkpath)
 
         # create sdk tar and append it to setup script
-        do(f'cd {self.sdkpath}; tar cJf ../sdk.txz .')
+        do(f'cd {self.sdkpath}; XZ_OPT="-T0 -M80%" tar cJf ../sdk.txz .')
         do(f'cd {self.builddir}; rm -rf sdk')
         do(f'cd {self.builddir}; cat sdk.txz >> {n}')
         do(f'cd {self.builddir}; chmod +x {n}')
