@@ -102,7 +102,7 @@ class BuildEnv:
         if self.xml.has('project/mirror/cdrom'):
             cdrompath = self.rfs.fname('cdrom')
             do(f'mkdir -p "{cdrompath}"')
-            do(f'mount -o loop "{self.xml.text("project/mirror/cdrom")}" "cdrompath"')
+            do(f'mount -o loop "{self.xml.text("project/mirror/cdrom")}" "{cdrompath}"')
 
     def convert_asc_to_gpg(self, infile_asc, outfile_gpg):
         with open(self.rfs.fname(infile_asc)) as pubkey:
