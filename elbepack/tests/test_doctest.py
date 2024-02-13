@@ -10,24 +10,11 @@ from elbepack.commands.test import ElbeTestCase
 
 
 class ElbeDocTest(ElbeTestCase):
+    def test_shellhelper(self):
+        fail, _ = doctest.testmod(shellhelper)
+        self.assertEqual(fail, 0)
 
-    # This is an example of a callable parametrization
-    @staticmethod
-    def params():
-        return [shellhelper, filesystem]
-
-    def setUp(self):
-
-        self.kwargs = {}
-
-        if self.param is filesystem:
-            self.kwargs['extraglobs'] = {'this': filesystem.TmpdirFilesystem()}
-
-    def tearDown(self):
-
-        if self.param is filesystem:
-            self.kwargs['extraglobs']['this'].delete()
-
-    def test_doctest(self):
-        fail, _ = doctest.testmod(self.param, **self.kwargs)
+    def test_filesystem(self):
+        with filesystem.TmpdirFilesystem() as this:
+            fail, _ = doctest.testmod(filesystem, extraglobs={'this': this})
         self.assertEqual(fail, 0)
