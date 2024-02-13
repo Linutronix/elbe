@@ -130,12 +130,22 @@ class ElbeTestSuite:
             print(test)
 
 
+class ElbeJUnitXmlResult(junit.JUnitXmlResult):
+    def addSubTest(self, test, subtest, error):
+        super().addSubTest(test, subtest, error)
+
+        if error is None:
+            self.addSuccess(subtest)
+        else:
+            self.addError(subtest, error)
+
+
 class ElbeTestResult(unittest.TestResult):
 
     def __init__(self):
         super().__init__()
         self.buffer = io.StringIO()
-        self.result = junit.JUnitXmlResult(self.buffer)
+        self.result = ElbeJUnitXmlResult(self.buffer)
         self.success = False
 
     def run_testsuite(self, suite):
