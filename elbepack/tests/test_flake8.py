@@ -11,18 +11,17 @@ class TestPylint(ElbeTestCase):
     flake8_opts = ['--max-line-length=100',
                    '--show-source']
 
-    @staticmethod
-    def params():
+    def test_lint(self):
         files = system_out(f"find {pack_dir} -iname '*.py'").splitlines()
         files.append(elbe_exe)
-        return files
 
-    def test_lint(self):
-        err_out = None
-        try:
-            system(f"flake8 {' '.join(self.flake8_opts)} {self.param}")
-        except ElbeTestException as e:
-            err_out = e.out
+        for f in files:
+            with self.subTest(file=f):
+                err_out = None
+                try:
+                    system(f"flake8 {' '.join(self.flake8_opts)} {f}")
+                except ElbeTestException as e:
+                    err_out = e.out
 
-        if err_out is not None:
-            self.fail(err_out)
+                if err_out is not None:
+                    self.fail(err_out)
