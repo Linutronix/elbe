@@ -14,7 +14,7 @@ from elbepack.shellhelper import CommandError, do
 
 class RepoAttributes:
     def __init__(self, codename, arch, components,
-                 mirror='http://ftp.de.debian.org/debian'):
+                 mirror='http://deb.debian.org/debian'):
         self.codename = codename
         if isinstance(arch, str):
             self.arch = set([arch])
@@ -372,7 +372,7 @@ class UpdateRepo(RepoBase):
 
 class CdromInitRepo(RepoBase):
     def __init__(self, init_codename, path,
-                 mirror='http://ftp.de.debian.org/debian'):
+                 mirror='http://deb.debian.org/debian'):
 
         init_attrs = RepoAttributes(
             init_codename, 'amd64', [
@@ -393,7 +393,7 @@ class CdromBinRepo(RepoBase):
             codename,
             init_codename,
             path,
-            mirror='http://ftp.debian.org/debian'):
+            mirror='http://deb.debian.org/debian'):
 
         repo_attrs = RepoAttributes(codename, arch, ['main', 'added'], mirror)
         if init_codename is not None:
@@ -413,7 +413,7 @@ class CdromBinRepo(RepoBase):
 
 class CdromSrcRepo(RepoBase):
     def __init__(self, codename, init_codename, path, maxsize,
-                 mirror='http://ftp.debian.org/debian'):
+                 mirror='http://deb.debian.org/debian'):
 
         repo_attrs = RepoAttributes(codename,
                                     'source',

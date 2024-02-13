@@ -10,8 +10,8 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 
 # use a sources.list including backports and security
-RUN echo "deb http://ftp.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
-    echo "deb http://security.debian.org/ bullseye-security main"   >> /etc/apt/sources.list
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
+    echo "deb http://deb.debian.org/debian-security bullseye-security main"   >> /etc/apt/sources.list
 
 # update, upgrade and install elbe runtime-dependencies
 RUN apt-get update -y ;\

@@ -85,7 +85,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 
 			<command>cp /usr/share/doc/sbuild/examples/example.sbuildrc /home/elbe/.sbuildrc</command>
 			<command>chown elbe:elbe /home/elbe/.sbuildrc</command>
-			<command>sbuild-createchroot --include=eatmydata,ccache,gnupg stable /srv/chroot/stable-amd64-sbuild http://ftp.de.debian.org/debian</command>
+			<command>sbuild-createchroot --include=eatmydata,ccache,gnupg stable /srv/chroot/stable-amd64-sbuild http://deb.debian.org/debian</command>
 			<command>sbuild-adduser elbe</command>
 		</finetuning>
 	</target>

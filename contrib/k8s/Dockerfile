@@ -12,7 +12,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-RUN echo "deb http://ftp.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get update -y && \
     apt-get install -y --no-install-recommends \
         elbe-archive-keyring

@@ -37,7 +37,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
 def mk_source_cdrom(components, codename,
                     init_codename, target,
                     cdrom_size=CDROM_SIZE, xml=None,
-                    mirror='http://ftp.de.debian.org/debian'):
+                    mirror='http://deb.debian.org/debian'):
 
     hostfs.mkdir_p('/var/cache/elbe/sources')
 
@@ -120,7 +120,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     if xml is not None:
         mirror = xml.get_primary_mirror(rfs.fname('cdrom'))
     else:
-        mirror = 'http://ftp.de.debian.org/debian'
+        mirror = 'http://deb.debian.org/debian'
 
     repo_path = os.path.join(target, 'binrepo')
     target_repo_path = os.path.join(repo_path, 'targetrepo')

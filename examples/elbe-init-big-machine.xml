@@ -47,7 +47,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>openssh-server</pkg>
 		</pkg-list>
 		<preseed>
-			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://ftp.de.debian.org/debian"/>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://deb.debian.org/debian"/>
 
 			<!-- THIS CONF IS POTENTIALLY DANGEROUS! It enables logging in on the initvm's ssh as root with password.
 			     See https://bugs.debian.org/837733 for this counter-intuitive setting -->
