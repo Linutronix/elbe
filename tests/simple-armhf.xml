@@ -34,7 +34,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<images>
 			<msdoshd>
 				<name>sda.img</name>
-				<size>2000MiB</size>
+				<size>2048MiB</size>
 				<grub-install />
 				<partition>
 					<size>1900MiB</size>
