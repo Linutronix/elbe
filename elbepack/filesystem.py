@@ -490,20 +490,20 @@ class TmpdirFilesystem (Filesystem):
         self.debug = debug
 
     def __del__(self):
+        self.delete()
+
+    def delete(self):
         # dont delete files in debug mode
         if self.debug:
             print(f'leaving TmpdirFilesystem in "{self.path}"')
         else:
-            self.delete()
-
-    def delete(self):
-        shutil.rmtree(self.path, True)
+            shutil.rmtree(self.path, True)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exec_type, exec_value, tb):
-        shutil.rmtree(self.path)
+        self.delete()
         return False
 
 
