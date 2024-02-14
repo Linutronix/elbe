@@ -442,8 +442,8 @@ class CheckImage(CheckBase):
     def do_login(self, _element, img_name, qemu, opts):
 
         passwd = 'root'
-        if self.xml.find('.//action/login').text:
-            passwd = self.xml.find('.//action/login').text
+        if self.xml.node('.//action/login'):
+            passwd = self.xml.node('.//action/login').et.text
 
         comm = [
             ('expect', '.*[Ll]ogin:.*'),
