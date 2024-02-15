@@ -4,6 +4,7 @@
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
 import datetime
+import io
 import os
 import sys
 import time
@@ -153,7 +154,7 @@ class StartAction(InitVMAction):
     def __init__(self, node):
         InitVMAction.__init__(self, node)
 
-    def _attach_disk_fds(self, _initvmdir):
+    def _attach_disk_fds(self):
         # libvirt does not necessarily have permissions to directly access the
         # image file. libvirt 9.0 provides FDAssociate() to pass an open file
         # descriptor to libvirt which is used to access files via the context
@@ -162,13 +163,15 @@ class StartAction(InitVMAction):
         if not hasattr(self.initvm, 'FDAssociate'):
             return
 
-        # Use raw unmanaged FDs as libvirt will take full ownership of them.
-        self.initvm.FDAssociate('initvm.img', [
-            os.open(os.path.join(_initvmdir, 'initvm.img'), os.O_RDWR),
-        ])
-        self.initvm.FDAssociate('initvm-base.img', [
-            os.open(os.path.join(_initvmdir, 'initvm-base.img'), os.O_RDONLY),
-        ])
+        xml = etree(io.StringIO(self.initvm.XMLDesc()))
+        disk = xml.et.find('/devices/disk')
+
+        for source in disk.findall('.//source'):
+            flags = os.O_RDWR if source.getparent() is disk else os.O_RDONLY
+            # Use raw unmanaged FDs as libvirt will take full ownership of them.
+            self.initvm.FDAssociate(source.attrib['fdgroup'], [
+                os.open(source.attrib['file'], flags),
+            ])
 
     def execute(self, _initvmdir, _opt, _args):
         import libvirt
@@ -177,7 +180,7 @@ class StartAction(InitVMAction):
             print('Initvm already running.')
             sys.exit(122)
         elif self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
-            self._attach_disk_fds(_initvmdir)
+            self._attach_disk_fds()
 
             # Domain is shut off. Let's start it!
             self.initvm.create()
