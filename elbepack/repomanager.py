@@ -291,6 +291,7 @@ class RepoBase:
             self.new_repo_volume()
 
         global_opt = ['--keepunreferencedfiles',
+                      '--keepunusednewfiles',
                       '--export=silent-never',
                       f'--basedir "{self.fs.path}"',
                       '--priority normal',
