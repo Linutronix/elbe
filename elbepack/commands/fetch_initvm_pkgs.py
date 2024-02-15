@@ -9,7 +9,7 @@ from optparse import OptionParser
 from apt import Cache
 from apt.package import FetchError
 
-from elbepack.aptpkgutils import fetch_binary
+from elbepack.aptpkgutils import fetch_binary, fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
 from elbepack.elbexml import ElbeXML, ValidationError
@@ -148,32 +148,30 @@ def run_command(argv):
             opt.build_sources = False
 
         if opt.build_sources:
-            for pkg in pkglist:
-                pkg_id = f'{pkg.name}-{pkg.installed_version}'
+            srcpkglist = get_corresponding_source_packages(cache, [pkg.name for pkg in pkglist])
+            for name, version in srcpkglist:
+                pkg_id = f'{name}-{version}'
                 retry = 1
                 while retry < 3:
                     try:
-                        p = cache[pkg.name]
-                        pkgver = p.installed
-                        dsc = pkgver.fetch_source(opt.srcarchive,
-                                                  ElbeAcquireProgress(cb=None),
-                                                  unpack=False)
+                        dsc = fetch_source(name, version, opt.srcarchive,
+                                           ElbeAcquireProgress())
                         repo.include_init_dsc(dsc, 'initvm')
                         break
                     except ValueError:
                         logging.exception('No package "%s"', pkg_id)
                         retry = 3
                     except FetchError:
-                        logging.exception('Package "%s-%s" could not be downloaded',
-                                          pkg.name, pkgver.version)
+                        logging.exception('Package "%s" could not be downloaded',
+                                          pkg_id)
                         retry += 1
                     except TypeError:
                         logging.exception('Package "%s" missing name or version',
                                           pkg_id)
                         retry = 3
                     except CommandError:
-                        logging.exception('Package "%s-%s" could not be added to repo.',
-                                          pkg.name, pkgver.version)
+                        logging.exception('Package "%s" could not be added to repo.',
+                                          pkg_id)
                         retry += 1
                     if retry >= 3:
                         logging.error('Failed to get source Package "%s"',
