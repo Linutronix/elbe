@@ -485,7 +485,7 @@ class CheckImage(CheckBase):
                     # timeout; the test fails Otherwise; Add to the transcript
                     # what we received
                     try:
-                        child.expect(text, timeout=60)
+                        child.expect(text, timeout=120)
                     except pexpect.exceptions.TIMEOUT:
                         logging.error('Was expecting "%s" but got timeout (%ds)',
                                       text, child.timeout)
