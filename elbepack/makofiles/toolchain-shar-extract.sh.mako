@@ -354,14 +354,6 @@ for link in $abs_symbolic_links; do
         ln -s \$target \$link
 done
 
-for exe in $native_executable_files; do
-        if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
-            echo SKIP \$exe
-        else
-            \$PATCHELF --set-interpreter $dl_path \$exe
-        fi
-done
-
 for exe in $native_elf_files; do
         if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
             echo SKIP \$exe
@@ -384,6 +376,14 @@ for exe in $target_elf_files; do
             echo SKIP \$exe
         else
            \$PATCHELF --set-rpath $native_sysroot/usr/lib/${real_multimach_target_sys}/:$native_sysroot/lib/${real_multimach_target_sys}/:$native_sysroot/usr/lib:$native_sysroot/lib \$exe
+        fi
+done
+
+for exe in $native_executable_files; do
+        if [ \`readlink -f \$exe\` == \`readlink -f $dl_path\` ]; then
+            echo SKIP \$exe
+        else
+            \$PATCHELF --set-interpreter $dl_path \$exe
         fi
 done
 
