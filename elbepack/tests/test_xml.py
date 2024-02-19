@@ -10,9 +10,12 @@ import unittest
 from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
 from elbepack.directories import elbe_dir, elbe_exe
 
+import pytest
+
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  'Test level not set to INITVM')
+@pytest.mark.slow
 class TestSimpleXML(ElbeTestCase):
 
     def test_simple_build(self):
@@ -52,6 +55,7 @@ class TestSimpleXML(ElbeTestCase):
 
 @unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
                  'Test level not set to INITVM')
+@pytest.mark.slow
 class TestPbuilder(ElbeTestCase):
 
     def test_pbuilder_build(self):
