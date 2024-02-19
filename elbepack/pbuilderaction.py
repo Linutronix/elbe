@@ -115,8 +115,8 @@ class CreateAction(PBuilderAction):
         print('Creating pbuilder')
 
         try:
-            system(f"""'{sys.executable} {elbe_exe} control
-                    build_pbuilder "{prjdir}" {crossopt} {ccacheopt} {ccachesize}'""")
+            system(f'{sys.executable} {elbe_exe} control '
+                   f'build_pbuilder "{prjdir}" {crossopt} {ccacheopt} {ccachesize}')
         except CommandError:
             print('elbe control build_pbuilder Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
