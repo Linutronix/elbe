@@ -11,13 +11,15 @@ from multiprocessing.util import Finalize
 
 from apt import Cache
 
-from apt_pkg import (
-    TagFile,
-    config,
-    version_compare,
-)
+from apt_pkg import config, version_compare
 
-from elbepack.aptpkgutils import APTPackage, fetch_binary, fetch_source, getalldeps
+from elbepack.aptpkgutils import (
+    APTPackage,
+    fetch_binary,
+    fetch_source,
+    get_corresponding_source_packages,
+    getalldeps,
+)
 from elbepack.aptprogress import (
     ElbeAcquireProgress,
     ElbeInstallProgress,
@@ -318,34 +320,7 @@ class RPCAPTCache(InChRootObject):
                 self.cache.keys()) if pkgname in p.lower()]
 
     def get_corresponding_source_packages(self, pkg_lst=None):
-
-        if pkg_lst is None:
-            pkg_lst = {p.name for p in self.cache if p.is_installed}
-
-        src_set = set()
-
-        with TagFile('/var/lib/dpkg/status') as tagfile:
-            for section in tagfile:
-
-                pkg = section['Package']
-
-                if pkg not in pkg_lst:
-                    continue
-
-                tmp = self.cache[pkg].installed or self.cache[pkg].candidate
-
-                src_set.add((tmp.source_name, tmp.source_version))
-
-                if 'Built-Using' not in section:
-                    continue
-
-                built_using_lst = section['Built-Using'].split(', ')
-                for built_using in built_using_lst:
-                    name, version = built_using.split(' ', 1)
-                    version = version.strip('(= )')
-                    src_set.add((name, version))
-
-        return list(src_set)
+        return get_corresponding_source_packages(self.cache, pkg_lst)
 
     @staticmethod
     def compare_versions(self, ver1, ver2):

@@ -203,6 +203,37 @@ def fetch_source(name, version, destdir, progress=None):
     return os.path.abspath(dsc)
 
 
+def get_corresponding_source_packages(cache, pkg_lst=None):
+
+    if pkg_lst is None:
+        pkg_lst = {p.name for p in cache if p.is_installed}
+
+    src_set = set()
+
+    with apt_pkg.TagFile('/var/lib/dpkg/status') as tagfile:
+        for section in tagfile:
+
+            pkg = section['Package']
+
+            if pkg not in pkg_lst:
+                continue
+
+            tmp = cache[pkg].installed or cache[pkg].candidate
+
+            src_set.add((tmp.source_name, tmp.source_version))
+
+            if 'Built-Using' not in section:
+                continue
+
+            built_using_lst = section['Built-Using'].split(', ')
+            for built_using in built_using_lst:
+                name, version = built_using.split(' ', 1)
+                version = version.strip('(= )')
+                src_set.add((name, version))
+
+    return list(src_set)
+
+
 class PackageBase:
 
     def __init__(self, name,
