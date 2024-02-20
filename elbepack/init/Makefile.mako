@@ -71,7 +71,7 @@ $(BASE): $(INITRD)
 % endif
 		-kernel $(VMLINUZ) \
 		-initrd $(INITRD)  \
-		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text' \
+		-append 'root=/dev/$(HD_NAME) debconf_priority=critical console=$(CONSOLE) DEBIAN_FRONTEND=text TERM=dumb' \
 		-no-reboot \
 		-display none \
 		-monitor none \
