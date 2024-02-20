@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+ver="$(dpkg-parsechangelog  --show-field VERSION).c${BUILD_NUMBER:?}.g$(git rev-parse HEAD)"
+
+export DEBEMAIL=nobody@localhost
+export DEBFULLNAME=nobody
+
+debchange --newversion "$ver" --distribution stable --urgency low "CI version"
