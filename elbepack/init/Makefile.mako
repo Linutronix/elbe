@@ -44,7 +44,7 @@ if prj.has("portforwarding"):
 GEN=.elbe-gen
 IN=.elbe-in
 
-INITRD=$(GEN)/initrd-preseeded.gz
+INITRD=$(GEN)/initrd-preseeded
 VMLINUZ=$(IN)/vmlinuz
 
 INITRD_FILES=$(shell find $(IN)/initrd-tree -type f)
@@ -102,7 +102,6 @@ $(INITRD): $(INITRD_FILES)
 	mkdir -p $(GEN)
 	gzip -cd $(IN)/initrd.gz > $(GEN)/initrd-preseeded
 	cd $(IN)/initrd-tree && find . | cpio -H newc -o --append -F ../../$(GEN)/initrd-preseeded
-	gzip -9f $(GEN)/initrd-preseeded
 
 run:
 	$(INTERPRETER) -M $(MACHINE) \
