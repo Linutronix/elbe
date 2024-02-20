@@ -146,6 +146,63 @@ def fetch_binary(version, destdir='', progress=None):
     return os.path.abspath(destfile)
 
 
+def fetch_source(name, version, destdir, progress=None):
+
+    allow_untrusted = apt_pkg.config.find_b('APT::Get::AllowUnauthenticated', False)
+
+    rec = apt_pkg.SourceRecords()
+    acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
+
+    # poorman's iterator
+    while True:
+        next_p = rec.lookup(name)
+        # End of the list?
+        if not next_p:
+            raise ValueError(
+                f'No source found for {name}_{version}')
+        if version == rec.version:
+            break
+
+    # We don't allow untrusted package and the package is not
+    # marks as trusted
+    if not (allow_untrusted or rec.index.is_trusted):
+        raise FetchError(
+            f"Can't fetch source {name}_{version}; "
+            f'Source {rec.index.describe} is not trusted')
+
+    # Copy from src to dst all files of the source package
+    dsc = None
+    files = []
+    for _file in rec.files:
+        src = os.path.basename(_file.path)
+        dst = os.path.join(destdir, src)
+
+        if 'dsc' == _file.type:
+            dsc = dst
+
+        if not (allow_untrusted or _file.hashes.usable):
+            raise FetchError(
+                f"Can't fetch file {dst}. No trusted hash found.")
+
+        # acq is accumlating the AcquireFile, the files list only
+        # exists to prevent Python from GC the object .. I guess.
+        # Anyway, if we don't keep the list, We will get an empty
+        # directory
+        files.append(apt_pkg.AcquireFile(acq, rec.index.archive_uri(_file.path),
+                                         _file.hashes, _file.size, src, destfile=dst))
+    acq.run()
+
+    if dsc is None:
+        raise ValueError(f'No source found for {name}_{version}')
+
+    for item in acq.items:
+        if item.STAT_DONE != item.status:
+            raise FetchError(
+                f"Can't fetch item {item.destfile}: {item.error_text}")
+
+    return os.path.abspath(dsc)
+
+
 class PackageBase:
 
     def __init__(self, name,
