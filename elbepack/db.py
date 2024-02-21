@@ -17,10 +17,7 @@ from elbepack.dosunix import dos2unix
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationMode
 
-try:
-    from passlib.hash import pbkdf2_sha512
-except DeprecationWarning:
-    pass
+from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy import (
     Boolean,
