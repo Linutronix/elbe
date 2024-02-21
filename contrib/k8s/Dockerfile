@@ -19,7 +19,6 @@ RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/
 
 # install current elbe
 RUN echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bullseye main' > /etc/apt/sources.list.d/elbe.list && \
-    echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe-common bullseye main' > /etc/apt/sources.list.d/elbe.list && \
     apt-get update -y && \
     apt-get install -y --no-install-recommends \
         python3-elbe-buildenv \

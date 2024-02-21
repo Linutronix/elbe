@@ -29,17 +29,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
 						http://debian.linutronix.de/elbe/elbe-repo.pub
 					</key>
 				</url>
-				<url>
-					<binary>
-						http://debian.linutronix.de/elbe-common bookworm main
-					</binary>
-					<source>
-						http://debian.linutronix.de/elbe-common bookworm main
-					</source>
-					<key>
-						http://debian.linutronix.de/elbe-common/elbe-repo.pub
-					</key>
-				</url>
 			</url-list>
 		</mirror>
 		<suite>bookworm</suite>
