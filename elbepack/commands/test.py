@@ -32,11 +32,8 @@ class ElbeTestException(Exception):
         self.ret = ret
         self.out = out
 
-    def __repr__(self):
-        return f'ElbeTestException: \"{self.cmd}\" returns {self.ret}'
-
     def __str__(self):
-        return f'ElbeTestException: \"{self.cmd}\" returns {self.ret}'
+        return f'ElbeTestException: \"{self.cmd}\" returns {self.ret}\noutput:\n{self.out}'
 
 
 def system(cmd, allow_fail=False):
