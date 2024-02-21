@@ -286,3 +286,11 @@ def async_logging(r, w, stream, block, atmost=4096):
                          args=(r, w))
     t.daemon = True
     t.start()
+    return t
+
+
+@contextmanager
+def async_logging_ctx(*args, **kwargs):
+    t = async_logging(*args, **kwargs)
+    yield
+    t.join()

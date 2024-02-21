@@ -8,7 +8,7 @@ import os
 from io import BytesIO, TextIOWrapper
 from subprocess import PIPE, Popen, STDOUT, call
 
-from elbepack.log import async_logging
+from elbepack.log import async_logging_ctx
 
 log = logging.getLogger('log')
 soap = logging.getLogger('soap')
@@ -247,8 +247,8 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     else:
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
 
-    async_logging(r, w, soap, log)
-    p.communicate(input=stdin)
+    with async_logging_ctx(r, w, soap, log):
+        p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
         raise CommandError(cmd, p.returncode)
@@ -325,8 +325,8 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     else:
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
 
-    async_logging(r, w, soap, log)
-    stdout, _ = p.communicate(input=stdin)
+    with async_logging_ctx(r, w, soap, log):
+        stdout, _ = p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
         raise CommandError(cmd, p.returncode)
