@@ -6,14 +6,10 @@ import os
 import sys
 
 from elbepack.commands.test import ElbeTestCase, ElbeTestException, system
-from elbepack.directories import elbe_exe
+from elbepack.directories import elbe_dir, elbe_exe
 
 
 class TestPreproc(ElbeTestCase):
-    global elbe_dir
-
-    elbe_dir = os.path.join(os.path.dirname(__file__), '../..')
-
     failure_set = {os.path.join(elbe_dir, path)
                    for path
                    in [
