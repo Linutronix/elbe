@@ -146,7 +146,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </documentation>
       </annotation>
     </attribute>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <simpleType name="revisionNr">
@@ -224,7 +224,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="url-list">
@@ -242,7 +242,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="mirror">
@@ -313,7 +313,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="mirror-options">
@@ -331,7 +331,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="initvm">
@@ -450,7 +450,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	</annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="project">
@@ -544,7 +544,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="check-image-list">
@@ -809,7 +809,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="memory">
@@ -820,7 +820,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:memory_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -859,7 +859,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="fw_proto">
@@ -870,7 +870,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:fw_proto_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -916,7 +916,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="portforwarding" >
@@ -934,7 +934,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="target">
@@ -1086,7 +1086,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="debootstrap_variant">
@@ -1097,7 +1097,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:debootstrap_variant_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -1162,7 +1162,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:ubi_type_restriction">
-        <attribute ref="xml:base"/>
+        <attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -1233,7 +1233,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="ubivg">
@@ -1296,7 +1296,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </element>
       </sequence>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="mtd">
@@ -1345,7 +1345,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="gpthd">
@@ -1400,7 +1400,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="binaryblob">
@@ -1489,7 +1489,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="images">
@@ -1528,7 +1528,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="fs">
@@ -1567,7 +1567,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="bylabel">
@@ -1615,7 +1615,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="bydev">
@@ -1655,7 +1655,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="fstab">
@@ -1681,7 +1681,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="fs-finetuning">
@@ -1694,7 +1694,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <sequence>
       <group ref="rfs:fs-action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <group name="fs-action">
@@ -1754,7 +1754,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="tar">
@@ -1779,7 +1779,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="cpio">
@@ -1797,7 +1797,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="squashfs">
@@ -1822,7 +1822,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="partition">
@@ -1878,7 +1878,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </all>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="extended">
@@ -1903,7 +1903,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="part_size">
@@ -1914,7 +1914,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:part_size_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -1938,7 +1938,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:part_nr_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -1963,7 +1963,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:part_type_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -1988,7 +1988,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:fs_type_restriction">
-	<attribute ref="xml:base"/>
+	<attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -2028,7 +2028,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <sequence>
       <group ref="rfs:initvm-action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <group name="initvm-action">
@@ -2058,7 +2058,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <sequence>
       <group ref="rfs:action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <group name="action">
@@ -2237,7 +2237,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <sequence>
       <group ref="rfs:project-action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <group name="project-action">
@@ -2306,7 +2306,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <sequence>
       <group ref="rfs:image_action" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
     <attribute name="img" type="string" use="required">
      <annotation>
       <documentation>
@@ -2938,7 +2938,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="pkg-list">
@@ -2957,7 +2957,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="blacklist">
@@ -2975,7 +2975,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </annotation>
         </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="fullpkg-list">
@@ -2993,7 +2993,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="conf">
@@ -3051,7 +3051,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="empty">
@@ -3070,7 +3070,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="string">
-         <attribute ref="xml:base"/>
+         <attributeGroup ref="xml:specialAttrs"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -3107,7 +3107,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         </annotation>
       </element>
     </sequence>
-    <attribute ref="xml:base"/>
+    <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
   <complexType name="src-cdrom-archive">
