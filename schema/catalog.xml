@@ -10,7 +10,25 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <system systemId="http://www.w3.org/2001/03/xml.xsd"
 	  uri="xml.xsd"/>
 
+  <system systemId="http://www.w3.org/2004/10/xml.xsd"
+	  uri="xml.xsd"/>
+
+  <system systemId="http://www.w3.org/2007/08/xml.xsd"
+	  uri="xml.xsd"/>
+
+  <system systemId="http://www.w3.org/2009/01/xml.xsd"
+	  uri="xml.xsd"/>
+
   <rewriteSystem systemIdStartString="http://www.w3.org/2001/03/"
+		 rewritePrefix="./"/>
+
+  <rewriteSystem systemIdStartString="http://www.w3.org/2004/10/"
+		 rewritePrefix="./"/>
+
+  <rewriteSystem systemIdStartString="http://www.w3.org/2007/08/"
+		 rewritePrefix="./"/>
+
+  <rewriteSystem systemIdStartString="http://www.w3.org/2009/01/"
 		 rewritePrefix="./"/>
 
   <system systemId="https://www.linutronix.de/projects/Elbe/dbsfed.xsd"

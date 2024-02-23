@@ -10,7 +10,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
         attributeFormDefault="unqualified">
 
   <import namespace="http://www.w3.org/XML/1998/namespace"
-	  schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+	  schemaLocation="http://www.w3.org/2009/01/xml.xsd"/>
 
   <element name="RootFileSystem" type="rfs:RootFileSystemType">
     <annotation>
