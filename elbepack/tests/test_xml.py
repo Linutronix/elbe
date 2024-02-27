@@ -69,12 +69,13 @@ class TestPbuilder(ElbeTestCase):
             try:
                 system(f'{sys.executable} {elbe_exe} pbuilder create --xmlfile "{self.param}" \
                                                     --writeproject "{prj}"')
-                system(f'cd "{build_dir}"; \
-                         git clone https://github.com/Linutronix/libgpio.git')
-
                 with open(prj, 'r') as f:
                     uuid = f.read()
-                    system(f'cd "{build_dir}/libgpio"; \
+
+                for package in ['libgpio', 'gpiotest']:
+                    system(f'cd "{build_dir}"; \
+                             git clone https://github.com/Linutronix/{package}.git')
+                    system(f'cd "{build_dir}/{package}"; \
                              {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
             except Exception as e:
                 raise e
