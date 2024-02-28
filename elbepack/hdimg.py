@@ -137,10 +137,11 @@ class grubinstaller_base:
 
     @staticmethod
     def losetup(f):
-        loopdev = get_command_out(f'losetup --find --show "{f}"')
+        loopdev = get_command_out(f'losetup --find --show "{f}"').decode().rstrip('\n')
         # old, removed loop devices' kernel structures might be reused, so update the mapping
-        do(f'kpartx -u "{f}"')
-        return loopdev.decode().rstrip('\n')
+        # run kpartx -u on the loop device just created. Running it on the file image will create a second orphaned loop dev
+        do(f'kpartx -u "{loopdev}"')
+        return loopdev
 
 
 class grubinstaller202(grubinstaller_base):
