@@ -1,6 +1,0 @@
-#!/bin/sh
-set -e
-
-#DEBHELPER#
-/usr/sbin/invoke-rc.d lighttpd stop
-/usr/sbin/invoke-rc.d lighttpd start
