@@ -2,18 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
-import os
-
 from elbepack.commands.test import ElbeTestCase, ElbeTestException, system
 from elbepack.directories import elbe_exe, pack_dir
 from elbepack.shellhelper import system_out
 
 
 class TestPylint(ElbeTestCase):
-    global elbe_dir      # pylint: disable=global-statement
-
-    elbe_dir = os.path.join(os.path.dirname(__file__), '../..')
-
     flake8_opts = ['--max-line-length=100',
                    '--show-source']
 
