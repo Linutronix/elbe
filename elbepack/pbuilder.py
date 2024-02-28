@@ -16,7 +16,7 @@ def pbuilder_write_config(builddir, xml, noccache):
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
     fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False)}"\n')
-    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:8080{builddir}/repo {distname} main"\n')
+    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main"\n')
     fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder", "base.tgz")}"\n')
     fp.write(f'DISTRIBUTION="{distname}"\n')
     fp.write(f'BUILDRESULT="{os.path.join(builddir, "pbuilder", "result")}"\n')
@@ -59,7 +59,7 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
     fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False, hostsysroot=True)}"\n')
-    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:8080{builddir}/repo {distname} main"\n')
+    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main"\n')
     fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder_cross", "base.tgz")}"\n')
 
     fp.write(f'DISTRIBUTION="{distname}"\n')
@@ -134,7 +134,7 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
 
     with open(os.path.join(pbuilder_hook_dir, 'G10elbe_apt_sources'), 'w') as f:
 
-        local_http = f"deb http://127.0.0.1:8080{builddir}/repo {xml.prj.text('suite')} main\n"
+        local_http = f"deb http://127.0.0.1:7588/repo{builddir}/repo {xml.prj.text('suite')} main\n"
         mirrors = xml.create_apt_sources_list(hostsysroot=cross)
         mirrors = local_http + mirrors
 
