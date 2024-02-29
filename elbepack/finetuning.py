@@ -701,10 +701,7 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         part_nr = self.node.et.attrib['part']
         part_type = self.node.et.attrib['type']
 
-        cmd = f'fdisk {loop_dev}'
-        inp = f't\n{part_nr}\n{part_type}\nw\n'
-
-        do(cmd, stdin=inp)
+        do(f'sfdisk --lock --part-type {loop_dev} {part_nr} {part_type}')
 
 
 @FinetuningAction.register('rm_apt_source')
