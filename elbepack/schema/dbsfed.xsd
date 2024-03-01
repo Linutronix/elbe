@@ -560,6 +560,22 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
+  <complexType name="interpreter-firmware">
+    <annotation>
+      <documentation>
+	Describes aspects of a firmware binary needed to run an image.
+
+        A matching firmware image will be looked for in QEMU's database of
+        installed firmware binaries.
+      </documentation>
+    </annotation>
+    <attribute name="architecture" type="string" use="required" />
+    <attribute name="machine" type="string" use="required" />
+    <attribute name="interface_types" type="string" use="required" />
+    <attribute name="features" type="string" use="required" />
+    <attributeGroup ref="xml:specialAttrs"/>
+  </complexType>
+
   <complexType name="check-img">
     <all>
       <element name="img" type="rfs:string" minOccurs="1" maxOccurs="1">
@@ -588,6 +604,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
             interpreter.  You can safely assume that the environment
             variable ELBE_IMG contains the absolute path to the target
             image to emulate.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="interpreter-firmware" type="rfs:interpreter-firmware" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Firmware to start the interpreter with.
           </documentation>
         </annotation>
       </element>

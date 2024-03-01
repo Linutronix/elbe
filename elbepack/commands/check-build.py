@@ -11,6 +11,7 @@ import sys
 import tempfile
 import traceback
 
+from elbepack import qemu_firmware
 from elbepack.directories import elbe_exe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
@@ -414,10 +415,39 @@ class CheckImage(CheckBase):
 
         return fail_cnt
 
+    def _firmware_opts(self, tag):
+        searcher = qemu_firmware.FirmwareSearcher()
+        request = qemu_firmware.SearchRequest(
+                architecture=tag.attrib['architecture'],
+                machine=tag.attrib['machine'],
+                interface_types=(
+                    qemu_firmware.FeatureMatcher.from_string(tag.attrib['interface_types'])),
+                features=qemu_firmware.FeatureMatcher.from_string(tag.attrib['features']),
+        )
+
+        fw = searcher.search(request)
+        if fw is None:
+            raise RuntimeError('No acceptable firmware found')
+
+        mapping = fw.mapping
+        if not isinstance(mapping, qemu_firmware.FirmwareMappingFlash):
+            raise ValueError('Non-flash firmware is not supported')
+
+        return ' '.join([
+            '-drive', (
+                'if=none,id=pflash0,readonly=on,'
+                f'file={mapping.executable.filename},'
+                f'format={mapping.executable.format}'
+            ),
+            '-machine', 'pflash0=pflash0',
+        ])
+
     def do_img(self, tag):
 
         img_name = tag.text('./img')
         qemu = tag.text('./interpreter')
+
+        fw_opts = self._firmware_opts(tag.et.find('./interpreter-firmware'))
 
         with self.open_img(img_name) as img:
 
@@ -434,7 +464,7 @@ class CheckImage(CheckBase):
                 element = tag.et.find(os.path.join('./action', candidate))
 
                 if element is not None:
-                    return action(element, img_name, qemu, opts)
+                    return action(element, img_name, qemu, opts + ' ' + fw_opts)
 
         # No valid action!
         return 1
