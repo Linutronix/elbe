@@ -5,6 +5,8 @@
 import os
 import sys
 
+from elbepack.schema import xml_schema_file
+
 from lxml import etree
 from lxml.etree import XMLParser, parse
 
@@ -37,9 +39,9 @@ def validate_xml(fname):
         return [f'{fname} is greater than 1 GiB. '
                 'Elbe does not support files of this size.']
 
-    schema_file = 'https://www.linutronix.de/projects/Elbe/dbsfed.xsd'
     parser = XMLParser(huge_tree=True)
-    schema_tree = etree.parse(schema_file)
+    with xml_schema_file('dbsfed.xsd') as schema_file:
+        schema_tree = etree.parse(schema_file)
     schema = etree.XMLSchema(schema_tree)
 
     try:

@@ -42,3 +42,4 @@
 ./usr/lib/python3.*/*-packages/elbepack/version.py
 ./usr/lib/python3.*/*-packages/elbepack/virtapt.py
 ./usr/lib/python3.*/*-packages/elbepack/xmldefaults.py
+debian/elbepack.schema/__init__.py usr/lib/python3/dist-packages/elbepack/schema/

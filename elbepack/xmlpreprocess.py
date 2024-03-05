@@ -17,6 +17,7 @@ from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
 from elbepack.directories import elbe_exe
 from elbepack.isooptions import iso_option_valid
+from elbepack.schema import xml_schema_file
 from elbepack.shellhelper import CommandError, command_out_stderr
 from elbepack.validate import error_log_to_strings
 
@@ -315,9 +316,9 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
     else:
         variants = set(variants)
 
-    schema_file = 'https://www.linutronix.de/projects/Elbe/dbsfed.xsd'
     parser = XMLParser(huge_tree=True)
-    schema_tree = etree.parse(schema_file)
+    with xml_schema_file('dbsfed.xsd') as schema_file:
+        schema_tree = etree.parse(schema_file)
     schema = etree.XMLSchema(schema_tree)
 
     try:
