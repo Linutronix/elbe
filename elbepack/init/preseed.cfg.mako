@@ -66,13 +66,16 @@ d-i quik-installer/oldworld_warning boolean true
 d-i quik-installer/non_oldworld_warning boolean true
 
 %if prj.has("mirror/primary_host"):
+<%
+  mirror_protocol = prj.text("mirror/primary_proto", default="http")
+%>
 d-i apt-setup/use_mirror      boolean true
 d-i mirror/country            string manual
-d-i mirror/http/hostname string ${prj.text("mirror/primary_host").replace("LOCALMACHINE", "10.0.2.2")}
-d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
-d-i mirror/http/directory string ${prj.text("mirror/primary_path")}
-d-i mirror/http/proxy string ${http_proxy}
-d-i mirror/protocol string ${prj.text("mirror/primary_proto")}
+
+d-i mirror/protocol string ${mirror_protocol}
+d-i mirror/${mirror_protocol}/hostname string ${prj.text("mirror/primary_host").replace("LOCALMACHINE", "10.0.2.2")}
+d-i mirror/${mirror_protocol}/directory string ${prj.text("mirror/primary_path")}
+d-i mirror/${mirror_protocol}/proxy string ${http_proxy}
 %endif
 
 <% i=0 %>
