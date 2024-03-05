@@ -49,20 +49,10 @@ class ElbeTestCase(unittest.TestCase):
 
     level = ElbeTestLevel.BASE
 
-    def __init__(self, methodName='runTest', param=None):
+    def __init__(self, methodName='runTest'):
         self.methodName = methodName
-        self.param = param
         self.stdout = None
         super().__init__(methodName)
-
-    def __str__(self):
-        name = super(ElbeTestCase, self).__str__()
-        if self.param:
-            return f'{name} : param={self.param}'
-        return name
-
-    def parameterize(self, param):
-        return self.__class__(methodName=self.methodName, param=param)
 
 
 class ElbeTestSuite:
@@ -77,17 +67,7 @@ class ElbeTestSuite:
             if isinstance(test, ElbeTestSuite):
                 continue
 
-            if not hasattr(test, 'params'):
-                self.tests.append(test)
-                continue
-
-            if callable(test.params):
-                params = test.params()
-            else:
-                params = test.params
-
-            for param in params:
-                self.tests.append(test.parameterize(param))
+            self.tests.append(test)
 
     def __iter__(self):
         for test in self.tests:
