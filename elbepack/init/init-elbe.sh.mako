@@ -4,19 +4,6 @@
 ##
 #! /bin/sh
 <%
-elbe_exe = '/usr/bin/elbe'
-
-if opt.devel:
-    elbe_exe = '/var/cache/elbe/devel/elbe'
-
-buildrepo_opts = ''
-
-if not opt.build_bin:
-  buildrepo_opts += '--skip-build-bin'
-
-if not opt.build_sources:
-  buildrepo_opts += '--skip-build-source'
-
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 %>
 
@@ -67,12 +54,6 @@ in-target update-initramfs -u
 # we need entropy in the target
 
 in-target haveged
-
-% if prj.has("mirror/cdrom"):
-  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} --cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0 /var/cache/elbe/source.xml
-% else:
-  in-target ${elbe_exe} fetch_initvm_pkgs ${buildrepo_opts} /var/cache/elbe/source.xml
-% endif
 
 % if prj.has("finetuning"):
 %   for node in prj.all("./finetuning/"):

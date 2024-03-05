@@ -148,11 +148,17 @@ def run_command(argv):
 
         initvm_http_proxy = http_proxy.replace('http://localhost:',
                                                'http://10.0.2.2:')
-        d = {'elbe_version': elbe_version,
+        elbe_exe = '/usr/bin/elbe'
+        if opt.devel:
+            elbe_exe = '/var/cache/elbe/devel/elbe'
+        prj = xml.node('/initvm')
+
+        d = {'elbe_exe': elbe_exe,
+             'elbe_version': elbe_version,
              'defs': defs,
              'opt': opt,
              'xml': xml,
-             'prj': xml.node('/initvm'),
+             'prj': prj,
              'http_proxy': initvm_http_proxy,
              'pkgs': xml.node('/initvm/pkg-list') or [],
              'preseed': get_initvm_preseed(xml),
@@ -270,3 +276,26 @@ def run_command(argv):
             except FileExistsError:
                 pass
             shutil.copy(src, dst)
+
+        os.makedirs(elbe_in.fname('initrd-tree/usr/lib/finish-install.d'), exist_ok=True)
+
+        def create_as_exec(file, flags):
+            return os.open(file, flags, mode=0o755)
+
+        buildrepo_opts = ''
+
+        if not opt.build_bin:
+            buildrepo_opts += '--skip-build-bin '
+
+        if not opt.build_sources:
+            buildrepo_opts += '--skip-build-source '
+
+        cdrom_opts = ''
+        if prj.has('mirror/cdrom'):
+            cdrom_opts = '--cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0'
+
+        with open(elbe_in.fname('initrd-tree/usr/lib/finish-install.d/93initvm-repo'),
+                  mode='x', opener=create_as_exec) as f:
+
+            f.write(f'in-target {elbe_exe} '
+                    f'fetch_initvm_pkgs {buildrepo_opts} {cdrom_opts} /var/cache/elbe/source.xml')
