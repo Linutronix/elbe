@@ -13,7 +13,7 @@ import sys
 # this file
 #
 import elbepack.commands  # noqa: F401
-from elbepack.directories import get_cmdlist
+from elbepack.directories import get_cmdlist, init_directories
 from elbepack.version import elbe_version
 
 
@@ -24,6 +24,12 @@ def usage():
     for i in get_cmdlist():
         print('        * %s' % i)
 
+# First initialise the directories module
+# so that it knows, where the current elbe
+# executable can be found.
+
+
+init_directories(__file__)
 
 if len(sys.argv) < 2:
     usage()
