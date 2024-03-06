@@ -386,15 +386,17 @@ class CmdAction(ImageFinetuningAction):
 
         if self.node.bool_attr('nomount'):
             do('/bin/sh', stdin=script,
-               env_add={'ELBE_DEV': dev})
+               env_add={'ELBE_DEV': dev},
+               log_cmd=script)
         else:
             with ImgMountFilesystem(mnt, dev) as fs:
                 do('/bin/sh', stdin=script,
-                   env_add={'ELBE_MNT': fs.path})
+                   env_add={'ELBE_MNT': fs.path},
+                   log_cmd=script)
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, '/bin/sh', stdin=self.node.et.text)
+            chroot(target.path, '/bin/sh', stdin=self.node.et.text, log_cmd=self.node.et.text)
 
 
 @FinetuningAction.register('buildenv_command')

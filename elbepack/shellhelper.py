@@ -199,7 +199,7 @@ def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
     return out, err
 
 
-def do(cmd, allow_fail=False, stdin=None, env_add=None):
+def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
     Throws a CommandError if cmd failed with allow_Fail=False.
@@ -238,7 +238,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={'context': '[CMD] '})
+    logging.info(log_cmd or cmd, extra={'context': '[CMD] '})
 
     r, w = os.pipe()
 
