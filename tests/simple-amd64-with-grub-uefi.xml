@@ -96,7 +96,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			figure out a way to pass variants from elbe-ci to
 			elbe-check-build first.
 			-->
-			<interpreter-opts>-bios OVMF.fd -m 2G -enable-kvm -cpu host -drive format=raw,file=$ELBE_IMG</interpreter-opts>
+			<interpreter-opts>-bios OVMF.fd -m 2G -enable-kvm -cpu host -drive format=raw,file=$ELBE_IMG -nographic</interpreter-opts>
 
 			<action> <login /> </action>
 		</check>
