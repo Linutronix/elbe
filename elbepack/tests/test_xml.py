@@ -4,85 +4,66 @@
 
 import os
 import sys
-import tempfile
-import unittest
 
-from elbepack.commands.test import ElbeTestCase, ElbeTestLevel, system
+from elbepack.commands.test import system
 from elbepack.directories import elbe_dir, elbe_exe
 
 import pytest
 
 
-@unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
-                 'Test level not set to INITVM')
+def _test_cases(prefix):
+    return [
+        os.path.join(elbe_dir, 'tests', fname)
+        for fname
+        in os.listdir(os.path.join(elbe_dir, 'tests'))
+        if fname.startswith(prefix) and fname.endswith('.xml')
+    ]
+
+
+def _delete_project(uuid):
+    system(f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)
+
+
+@pytest.fixture(scope='module', params=_test_cases('simple'))
+def simple_build(request, tmp_path_factory):
+    build_dir = tmp_path_factory.mktemp('build_dir')
+    prj = build_dir / 'uuid.prj'
+
+    system(
+        f'{sys.executable} {elbe_exe} initvm submit "{request.param}" '
+        f'--output "{build_dir}" --keep-files '
+        f'--build-sdk --writeproject "{prj}"')
+
+    uuid = prj.read_text()
+
+    system(f'{sys.executable} {elbe_exe} control list_projects | '
+           f'grep {uuid} | grep build_done || false')
+
+    yield uuid
+
+    _delete_project(uuid)
+
+
 @pytest.mark.slow
-class TestSimpleXML(ElbeTestCase):
-
-    def test_simple_build(self):
-        for param in [os.path.join(elbe_dir, 'tests', fname)
-                      for fname
-                      in os.listdir(os.path.join(elbe_dir, 'tests'))
-                      if fname.startswith('simple') and fname.endswith('.xml')]:
-
-            with tempfile.TemporaryDirectory(prefix='elbe-test-simple-xml-') as build_dir:
-
-                prj = os.path.join(build_dir, 'uuid.prj')
-                uuid = None
-
-                try:
-                    system(
-                        f'{sys.executable} {elbe_exe} initvm submit "{param}" '
-                        f'--output "{build_dir}" --keep-files '
-                        f'--build-sdk --writeproject "{prj}"')
-
-                    # Ensure project build is done
-                    with open(prj, 'r') as f:
-                        uuid = f.read()
-                        system(f'{sys.executable} {elbe_exe} control list_projects | '
-                               f'grep {uuid} | grep build_done || false')
-
-                    for cmd in ('cdrom', 'img', 'sdk', 'rebuild'):
-                        with self.subTest(f'check build {cmd}'):
-                            system(f'{sys.executable} {elbe_exe} check-build {cmd} "{build_dir}"')
-
-                except Exception as e:
-                    raise e
-                else:
-                    # This is a tear down of the project, it's okay if it fails
-                    system(
-                        f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)
+@pytest.mark.parametrize('check_build', ('cdrom', 'img', 'sdk', 'rebuild'))
+def test_simple_build(simple_build, check_build):
+    system(f'{sys.executable} {elbe_exe} check-build {check_build} "{simple_build}"')
 
 
-@unittest.skipIf(ElbeTestCase.level < ElbeTestLevel.INITVM,
-                 'Test level not set to INITVM')
 @pytest.mark.slow
-class TestPbuilder(ElbeTestCase):
+@pytest.mark.parametrize('xml', _test_cases('pbuilder'))
+def test_pbuilder_build(xml, tmp_path, request):
+    build_dir = tmp_path
+    prj = build_dir / 'uuid.prj'
 
-    def test_pbuilder_build(self):
-        for param in [os.path.join(elbe_dir, 'tests', fname)
-                      for fname
-                      in os.listdir(os.path.join(elbe_dir, 'tests'))
-                      if fname.startswith('pbuilder') and fname.endswith('.xml')]:
+    system(f'{sys.executable} {elbe_exe} pbuilder create --xmlfile "{xml}" '
+           f'--writeproject "{prj}"')
 
-            with tempfile.TemporaryDirectory(prefix='elbe-test-pbuilder-xml-') as build_dir:
+    uuid = prj.read_text()
+    request.addfinalizer(lambda: _delete_project(uuid))
 
-                prj = os.path.join(build_dir, 'uuid.prj')
-                uuid = None
-
-                try:
-                    system(f'{sys.executable} {elbe_exe} pbuilder create --xmlfile "{self.param}" \
-                                                        --writeproject "{prj}"')
-                    with open(prj, 'r') as f:
-                        uuid = f.read()
-
-                    for package in ['libgpio', 'gpiotest']:
-                        system(f'cd "{build_dir}"; \
-                                 git clone https://github.com/Linutronix/{package}.git')
-                        system(f'cd "{build_dir}/{package}"; \
-                                 {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
-                except Exception as e:
-                    raise e
-                else:
-                    # This is a tearDown of the project, it's okay if it fails
-                    system(
-                        f'{sys.executable} {elbe_exe} control del_project {uuid}', allow_fail=True)
+    for package in ['libgpio', 'gpiotest']:
+        system(f'cd "{build_dir}"; \
+                 git clone https://github.com/Linutronix/{package}.git')
+        system(f'cd "{build_dir}/{package}"; \
+                 {sys.executable} {elbe_exe} pbuilder build --project {uuid}')
