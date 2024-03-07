@@ -33,7 +33,8 @@ Build-Depends: debhelper-compat (= 12),
   python3-apt,
   python3-gpg,
   python3-libvirt,
-  python3-passlib
+  python3-passlib,
+  python3-pytest
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
 Homepage: http://elbe-rfs.org
