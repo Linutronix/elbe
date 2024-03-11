@@ -134,6 +134,23 @@ run-con:
 		-nographic \
 		-smp $(SMP)
 
+
+run_qemu:
+	$(INTERPRETER) -M $(MACHINE) \
+		$(INTERPRETER-ARGS) \
+		-nographic \
+		-monitor unix:qemu-monitor-socket,server,nowait \
+		-serial unix:vm-serial-socket,server,nowait \
+		-device virtio-rng-pci \
+		-device virtio-net-pci,netdev=user.0 \
+		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
+		-no-reboot \
+		-netdev user,ipv4=on,id=user.0,hostfwd=tcp::7587-:7588${fwd} \
+		-cpu host \
+		-m $(MEMSIZE) \
+		-usb \
+		-smp $(SMP)
+
 clean:
 	rm -fr $(CLEAN)
 
