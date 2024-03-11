@@ -69,6 +69,10 @@ def run_command(argv):
         default=False,
         help="Also make 'initvm submit' build an SDK.")
 
+    oparser.add_option('--qemu', action='store_true',
+                       dest='qemu_mode', default=False,
+                       help='Use QEMU direct instead of libvirtd.')
+
     PreprocessWrapper.add_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
@@ -84,7 +88,7 @@ def run_command(argv):
     directory = os.path.abspath(directory)
 
     try:
-        action = InitVMAction(args[0])
+        action = InitVMAction(args[0], qemu_mode=opt.qemu_mode)
     except KeyError:
         print('elbe initvm - unknown subcommand', file=sys.stderr)
         InitVMAction.print_actions()

@@ -6,6 +6,8 @@
 import datetime
 import io
 import os
+import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -48,6 +50,7 @@ class InitVMError(Exception):
 
 class InitVMAction:
     actiondict = {}
+    qemu_mode = False
 
     @classmethod
     def register(cls, tag):
@@ -63,19 +66,23 @@ class InitVMAction:
         for a in cls.actiondict:
             print(f'   {a}', file=sys.stderr)
 
-    def __new__(cls, node):
+    def __new__(cls, node, qemu_mode=False):
         action = cls.actiondict[node]
         return object.__new__(action)
 
-    def __init__(self, node, initvmNeeded=True):
+    def __init__(self, node, initvmNeeded=True, qemu_mode=False):
 
         self.initvm = None
         self.conn = None
         self.node = node
 
-        # initvm might be running on a different host.  Thus there's
-        # no need to talk with libvirt
+        # The initvm might be running on a different host. Thus there's
+        # no need to talk with libvirt.
         if not is_soap_local():
+            return
+
+        # Skip checking and finding the libvirt vm for QEMU mode.
+        if qemu_mode:
             return
 
         import libvirt
@@ -149,11 +156,59 @@ class InitVMAction:
         return self.initvm.info()[0]
 
 
+def is_soap_port_reachable():
+    """
+    Test if a service is bound to the soap port.
+    """
+    port = int(cfg['soapport'])
+    try:
+        with socket.create_connection(('127.0.0.1', port)):
+            pass
+    except Exception:
+        return False
+    return True
+
+
+def test_soap_communication(sleep=10, wait=120):
+    """
+    Test communication with soap service.
+
+    In case of error, this fuction terminates the command with exit code 123.
+
+    Tests the soap service communication by requesting the list of projects.
+    If this works, the communication is ok and the service is up and seems to be healty.
+    """
+    stop = time.time() + wait
+    while True:
+        if is_soap_port_reachable():
+            ps = run_elbe(['control', 'list_projects'], capture_output=True, encoding='utf-8')
+            if ps.returncode == 0:
+                break
+        if time.time() > stop:
+            print(f'Waited for {wait/60} minutes and the daemon is still not active.',
+                  file=sys.stderr)
+            sys.exit(123)
+        print('*', end='', flush=True)
+        time.sleep(sleep)
+
+
+def check_initvm_dir(initvmdir):
+    # For QEMU mode, the user needs to provide the path to the initvm directory.
+    if initvmdir is None:
+        if os.path.isdir('./initvm'):
+            print('Using default initvm directory "./initvm".')
+            initvmdir = './initvm'
+        else:
+            print('No initvm found!')
+            sys.exit(207)
+    return initvmdir
+
+
 @InitVMAction.register('start')
 class StartAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
     def _attach_disk_fds(self):
         # libvirt does not necessarily have permissions to directly access the
@@ -174,7 +229,37 @@ class StartAction(InitVMAction):
                 os.open(source.attrib['file'], flags),
             ])
 
-    def execute(self, _initvmdir, _opt, _args):
+    def _run_qemu_vm(self, initvmdir):
+        """
+        Start the initvm in QEMU mode.
+
+        This method starts the initvm in QEMU mode if another initvm is
+        not already running.
+        """
+        initvmdir = check_initvm_dir(initvmdir)
+
+        # Test if there is already a process bound to the expected port.
+        if is_soap_port_reachable():
+            if os.path.exists(os.path.join(initvmdir, 'qemu-monitor-socket')):
+                # If the unix socket exists, assume this VM is bound to the soap port.
+                print('This initvm is already running.')
+            else:
+                # If no unix socket file is found, assume another VM is bound to the soap port.
+                print('There is already another running initvm.\nPlease stop this VM first.')
+                sys.exit(211)
+        else:
+            # Try to start the QEMU VM for the given directory.
+            try:
+                subprocess.Popen(['make', 'run_qemu'], cwd=initvmdir)
+            except Exception as e:
+                print(f'Running QEMU failed: {e}')
+                sys.exit(211)
+
+            # This will sys.exit on error.
+            test_soap_communication(sleep=1, wait=60)
+            print('initvm started successfully')
+
+    def _run_libvirt(self):
         import libvirt
 
         if self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
@@ -194,18 +279,32 @@ class StartAction(InitVMAction):
                 time.sleep(1)
             print('*')
 
+    def execute(self, initvmdir, opt, _args):
+        # handle QEMU mode
+        if opt.qemu_mode:
+            self._run_qemu_vm(initvmdir)
+        else:
+            self._run_libvirt()
+
 
 @InitVMAction.register('ensure')
 class EnsureAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
-    def execute(self, _initvmdir, _opt, _args):
+    def execute(self, _initvmdir, opt, _args):
 
         # initvm might be running on a different host, thus skipping
         # the check
         if not is_soap_local():
+            return
+
+        # use port bind test in case of if QEMU mode
+        if opt.qemu_mode:
+            if not is_soap_port_reachable():
+                print('Elbe initvm in bad state.\nNo process found on soap port.')
+                sys.exit(206)
             return
 
         import libvirt
@@ -213,16 +312,7 @@ class EnsureAction(InitVMAction):
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
             system(f'{sys.executable} {elbe_exe} initvm start')
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
-            stop = time.time() + 300
-            while True:
-                ps = run_elbe(['control', 'list_projects'], capture_output=True)
-                if ps.returncode == 0:
-                    break
-                if time.time() > stop:
-                    print(f'Waited for 5 minutes and the daemon is still not active: {ps.stderr}',
-                          file=sys.stderr)
-                    sys.exit(123)
-                time.sleep(10)
+            test_soap_communication()
         else:
             print('Elbe initvm in bad state.')
             sys.exit(124)
@@ -231,10 +321,45 @@ class EnsureAction(InitVMAction):
 @InitVMAction.register('stop')
 class StopAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
-    def execute(self, _initvmdir, _opt, _args):
+    def _stop_qemu_vm(self, initvmdir):
+        """
+        Stop the QEMU initvm.
+
+        This method tries to stop the QEMU initvm by sending a poweroff event
+        using QEMU monitor.
+        """
+        initvmdir = check_initvm_dir(initvmdir)
+
+        socket_path = os.path.join(initvmdir, 'qemu-monitor-socket')
+
+        # Test if QEMU monitor unix-socket file exists, and error exit if not.
+        if not os.path.exists(socket_path):
+            print('No unix socket found for this vm!\nunable to shutdown this vm.')
+            sys.exit(212)
+
+        try:
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                client.connect(socket_path)
+                client.sendall(b'system_powerdown\n')
+                # Give monitor time to react - closing too early stops command processing.
+                time.sleep(2)
+        except Exception:
+            # Shutting down the VM will break the connection.
+            pass
+
+        if is_soap_port_reachable():
+            print('\nstopping initvm failed!')
+        else:
+            print('\ninitvm stopped successfully')
+
+    def execute(self, initvmdir, opt, _args):
+        if opt.qemu_mode:
+            self._stop_qemu_vm(initvmdir)
+            return
+
         import libvirt
 
         if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
@@ -242,7 +367,6 @@ class StopAction(InitVMAction):
             sys.exit(125)
 
         while True:
-
             sys.stdout.write('*')
             sys.stdout.flush()
             time.sleep(1)
@@ -266,10 +390,35 @@ class StopAction(InitVMAction):
 @InitVMAction.register('attach')
 class AttachAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
-    def execute(self, _initvmdir, _opt, _args):
+    def _attach_qemu_vm(self, initvmdir):
+        """
+        Attach to QEMU initvm.
+
+        This method is using socat to connect to the unix-socket of the
+        serial console of the initvm.
+        """
+        initvmdir = check_initvm_dir(initvmdir)
+
+        # Test if socat command is available.
+        if shutil.which('socat') is None:
+            print('The command "socat" is required.\nPlease install socat: sudo apt install socat')
+            sys.exit(208)
+
+        # Connect to socket file, if it exists.
+        if os.path.exists(os.path.join(initvmdir, 'vm-serial-socket')):
+            subprocess.run(['socat', 'stdin,raw,echo=0,escape=0x11',
+                            'unix-connect:vm-serial-socket'],
+                           cwd=initvmdir, check=False)
+        else:
+            print('No unix socket found for the console of this vm!\nUnable to attach.')
+            if is_soap_port_reachable():
+                print('There seems to be another initvm running. The soap port is in use.')
+            sys.exit(212)
+
+    def _attach_libvirt_vm(self):
         import libvirt
 
         if self.initvm_state() != libvirt.VIR_DOMAIN_RUNNING:
@@ -278,6 +427,12 @@ class AttachAction(InitVMAction):
 
         print('Attaching to initvm console.')
         system(f'virsh --connect qemu:///system console {cfg["initvm_domain"]}')
+
+    def execute(self, initvmdir, opt, _args):
+        if opt.qemu_mode:
+            self._attach_qemu_vm(initvmdir)
+        else:
+            self._attach_libvirt_vm()
 
 
 def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
@@ -524,12 +679,12 @@ def extract_cdrom(cdrom):
 @InitVMAction.register('create')
 class CreateAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node, initvmNeeded=False)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, initvmNeeded=False, qemu_mode=qemu_mode)
 
     def execute(self, initvmdir, opt, args):
 
-        if self.initvm is not None:
+        if self.initvm is not None and not opt.qemu_mode:
             print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")
             print('If you want to build in your old initvm, use `elbe initvm submit <xml>`.')
             print('If you want to remove your old initvm from libvirt '
@@ -617,19 +772,21 @@ class CreateAction(InitVMAction):
             print('Giving up', file=sys.stderr)
             sys.exit(145)
 
-        # Read xml file for libvirt
-        with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
-            xml = f.read()
+        # Skip libvirt VM creation in QEMU mode.
+        if not opt.qemu_mode:
+            # Read xml file for libvirt.
+            with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
+                xml = f.read()
 
-        # Register initvm in libvirt
-        try:
-            self.conn.defineXML(xml)
-        except subprocess.CalledProcessError:
-            print('Registering initvm in libvirt failed', file=sys.stderr)
-            print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`"
-                  'to delete existing initvm',
-                  file=sys.stderr)
-            sys.exit(146)
+            # Register initvm in libvirt.
+            try:
+                self.conn.defineXML(xml)
+            except subprocess.CalledProcessError:
+                print('Registering initvm in libvirt failed', file=sys.stderr)
+                print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`"
+                      'to delete existing initvm',
+                      file=sys.stderr)
+                sys.exit(146)
 
         # Build initvm
         try:
@@ -639,18 +796,23 @@ class CreateAction(InitVMAction):
             print('Giving up', file=sys.stderr)
             sys.exit(147)
 
-        try:
-            system(f'{sys.executable} {elbe_exe} initvm start')
-        except subprocess.CalledProcessError:
+        # In case of QEMU mode, we need to forward the additional parameters.
+        additional_params = []
+        if opt.qemu_mode:
+            additional_params = ['--qemu', f'--directory={initvmdir}']
+
+        ps = run_elbe(['initvm', 'start', *additional_params], capture_output=False,
+                      encoding='utf-8')
+        if ps.returncode != 0:
             print('Starting the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(148)
 
         if len(args) == 1:
-            # if provided xml file has no initvm section xmlfile is set to a
-            # default initvm XML file. But we need the original file here
+            # If provided xml file has no initvm section xmlfile is set to a
+            # default initvm XML file. But we need the original file here.
             if args[0].endswith('.xml'):
-                # stop here if no project node was specified
+                # Stop here if no project node was specified.
                 try:
                     x = etree(args[0])
                 except ValidationError as e:
@@ -671,13 +833,18 @@ class CreateAction(InitVMAction):
 @InitVMAction.register('submit')
 class SubmitAction(InitVMAction):
 
-    def __init__(self, node):
-        InitVMAction.__init__(self, node)
+    def __init__(self, node, qemu_mode=False):
+        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
-    def execute(self, _initvmdir, opt, args):
-        try:
-            system(f'{sys.executable} {elbe_exe} initvm ensure')
-        except subprocess.CalledProcessError:
+    def execute(self, initvmdir, opt, args):
+        # In case of QEMU mode, we need to forward the additional parameters.
+        additional_params = []
+        if opt.qemu_mode:
+            additional_params = ['--qemu', f'--directory={initvmdir}']
+
+        ps = run_elbe(['initvm', 'ensure', *additional_params], capture_output=True,
+                      encoding='utf-8')
+        if ps.returncode != 0:
             print('Starting the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(150)
@@ -707,10 +874,10 @@ class SubmitAction(InitVMAction):
 @InitVMAction.register('sync')
 class SyncAction(InitVMAction):
 
-    def __init__(self, node):
-        super(SyncAction, self).__init__(node)
+    def __init__(self, node, qemu_mode=False):
+        super(SyncAction, self).__init__(node, qemu_mode=qemu_mode)
 
-    def execute(self, _initvmdir, opt, args):
+    def execute(self, _initvmdir, _opt, _args):
         top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         try:
             system('rsync --info=name1,stats1  --archive --times '

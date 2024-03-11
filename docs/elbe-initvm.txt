@@ -74,6 +74,9 @@ OPTIONS
 --build-sdk::
 	Also make 'initvm submit' build an SDK.
 
+--qemu::
+	Use QEMU directly instead of libvirt.
+
 XML OPTIONS
 -----------
 
