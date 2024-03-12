@@ -6,9 +6,9 @@ import os
 import subprocess
 import sys
 
-from elbepack.directories import elbe_exe
+from elbepack.directories import elbe_exe, run_elbe
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.shellhelper import command_out_stderr, system
+from elbepack.shellhelper import system
 from elbepack.xmlpreprocess import PreprocessWrapper
 
 
@@ -77,22 +77,22 @@ class CreateAction(PBuilderAction):
         if opt.xmlfile:
             try:
                 with PreprocessWrapper(opt.xmlfile, opt) as ppw:
-                    ret, prjdir, err = command_out_stderr(
-                        f'{sys.executable} {elbe_exe} control create_project')
-                    if ret != 0:
+                    ps = run_elbe(['control', 'create_project'],
+                                  capture_output=True, encoding='utf-8')
+                    if ps.returncode != 0:
                         print('elbe control create_project failed.',
                               file=sys.stderr)
-                        print(err, file=sys.stderr)
+                        print(ps.stderr, file=sys.stderr)
                         print('Giving up', file=sys.stderr)
                         sys.exit(152)
 
-                    prjdir = prjdir.strip()
-                    ret, _, err = command_out_stderr(
-                        f'{sys.executable} {elbe_exe} control set_xml "{prjdir}" "{ppw.preproc}"')
+                    prjdir = ps.stdout.strip()
+                    ps = run_elbe(['control', 'set_xml', prjdir, ppw.preproc],
+                                  capture_output=True, encoding='utf-8')
 
-                    if ret != 0:
+                    if ps.returncode != 0:
                         print('elbe control set_xml failed.', file=sys.stderr)
-                        print(err, file=sys.stderr)
+                        print(ps.stderr, file=sys.stderr)
                         print('Giving up', file=sys.stderr)
                         sys.exit(153)
             except subprocess.CalledProcessError:
@@ -185,15 +185,15 @@ class BuildAction(PBuilderAction):
         tmp = TmpdirFilesystem()
 
         if opt.xmlfile:
-            ret, prjdir, err = command_out_stderr(
-                f'{sys.executable} {elbe_exe} control create_project --retries 60 "{opt.xmlfile}"')
-            if ret != 0:
+            ps = run_elbe(['control', 'create_project', '--retries', '60', opt.xmlfile],
+                          capture_output=True, encoding='utf-8')
+            if ps.returncode != 0:
                 print('elbe control create_project failed.', file=sys.stderr)
-                print(err, file=sys.stderr)
+                print(ps.stderr, file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(160)
 
-            prjdir = prjdir.strip()
+            prjdir = ps.stdout.strip()
 
             try:
                 system(f'{sys.executable} {elbe_exe} control build_pbuilder "{prjdir}"')

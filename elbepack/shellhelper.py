@@ -86,48 +86,6 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
     return p.returncode, out
 
 
-def command_out_stderr(cmd, stdin=None, env_add=None):
-    """command_out_stderr() - Execute cmd in a shell.
-
-    Returns a tuple of the exitcode, stdout and stderr of cmd.
-
-    --
-
-    >>> command_out_stderr("$TRUE && cat -", stdin=b"ELBE", env_add={"TRUE":"true"})
-    (0, 'ELBE', '')
-
-    >>> command_out_stderr("1>&2 cat - && false", stdin=b"ELBE")
-    (1, '', 'ELBE')
-
-    >>> command_out_stderr("1>&2 cat - && false", stdin="ELBE")
-    (1, '', 'ELBE')
-
-    >>> command_out_stderr("true")
-    (0, '', '')
-
-    """
-    new_env = os.environ.copy()
-    if env_add:
-        new_env.update(env_add)
-
-    if isinstance(stdin, str):
-        stdin = stdin.encode()
-
-    if stdin is None:
-        p = Popen(cmd, shell=True,
-                  stdout=PIPE, stderr=PIPE, env=new_env)
-        output, stderr = p.communicate()
-    else:
-        p = Popen(cmd, shell=True,
-                  stdout=PIPE, stderr=PIPE, stdin=PIPE, env=new_env)
-        output, stderr = p.communicate(input=stdin)
-
-    output = TextIOWrapper(BytesIO(output), encoding='utf-8', errors='replace').read()
-    stderr = TextIOWrapper(BytesIO(stderr), encoding='utf-8', errors='replace').read()
-
-    return p.returncode, output, stderr
-
-
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 

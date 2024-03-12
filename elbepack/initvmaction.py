@@ -12,11 +12,11 @@ import time
 
 import elbepack
 from elbepack.config import cfg
-from elbepack.directories import elbe_exe
+from elbepack.directories import elbe_exe, run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
-from elbepack.shellhelper import command_out_stderr, system
+from elbepack.shellhelper import system
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import PreprocessWrapper
 
@@ -215,11 +215,11 @@ class EnsureAction(InitVMAction):
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             stop = time.time() + 300
             while True:
-                cmd = command_out_stderr(f'{sys.executable} {elbe_exe} control list_projects')
-                if cmd[0] == 0:
+                ps = run_elbe(['control', 'list_projects'], capture_output=True)
+                if ps.returncode == 0:
                     break
                 if time.time() > stop:
-                    print(f'Waited for 5 minutes and the daemon is still not active: {cmd[2]}',
+                    print(f'Waited for 5 minutes and the daemon is still not active: {ps.stderr}',
                           file=sys.stderr)
                     sys.exit(123)
                 time.sleep(10)
@@ -300,21 +300,20 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         with PreprocessWrapper(xmlfile, opt) as ppw:
             xmlfile = ppw.preproc
 
-            ret, prjdir, err = command_out_stderr(
-                f'{sys.executable} {elbe_exe} control create_project')
-            if ret != 0:
+            ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
+            if ps.returncode != 0:
                 print('elbe control create_project failed.', file=sys.stderr)
-                print(err, file=sys.stderr)
+                print(ps.stderr, file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(128)
 
-            prjdir = prjdir.strip()
+            prjdir = ps.stdout.strip()
 
-            cmd = f'{sys.executable} {elbe_exe} control set_xml {prjdir} {xmlfile}'
-            ret, _, err = command_out_stderr(cmd)
-            if ret != 0:
+            ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
+                          capture_output=True, encoding='utf-8')
+            if ps.returncode != 0:
                 print('elbe control set_xml failed2', file=sys.stderr)
-                print(err, file=sys.stderr)
+                print(ps.stderr, file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(129)
     except subprocess.CalledProcessError:

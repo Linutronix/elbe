@@ -16,10 +16,9 @@ from urllib.request import urlopen
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
-from elbepack.directories import elbe_exe
+from elbepack.directories import run_elbe
 from elbepack.isooptions import iso_option_valid
 from elbepack.schema import xml_schema_file
-from elbepack.shellhelper import command_out_stderr
 from elbepack.validate import error_log_to_strings
 
 from lxml import etree
@@ -421,22 +420,21 @@ class PreprocessWrapper:
     def __init__(self, xmlfile, opt):
         self.xmlfile = xmlfile
         self.outxml = None
-        self.options = ''
+        self.options = []
 
         if opt.variant:
-            self.options += f' --variants "{opt.variant}"'
+            self.options.extend(['--variants', opt.variant])
 
     def __enter__(self):
         fname = f'elbe-{time.time_ns()}.xml'
         self.outxml = os.path.join(tempfile.gettempdir(), fname)
 
-        cmd = (f'{sys.executable} {elbe_exe} preprocess {self.options} '
-               f'-o {self.outxml} {self.xmlfile}')
-        ret, _, err = command_out_stderr(cmd)
-        if ret != 0:
+        ps = run_elbe(['preprocess', *self.options, '-o', self.outxml, self.xmlfile],
+                      capture_output=True, encoding='utf-8')
+        if ps.returncode != 0:
             print('elbe preprocess failed.', file=sys.stderr)
-            print(err, file=sys.stderr)
-            raise subprocess.CalledProcessError(ret, cmd)
+            print(ps.stderr, file=sys.stderr)
+            raise subprocess.CalledProcessError(ps.returncode, ps.args)
 
         return self
 
