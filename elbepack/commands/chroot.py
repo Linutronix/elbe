@@ -57,15 +57,11 @@ def run_command(argv):
             for c in cmd2:
                 cmd += (c + ' ')
 
-        if opt.target:
-            try:
-                with project.targetfs:
-                    system(f'/usr/sbin/chroot {project.targetpath} {cmd}')
-            except subprocess.CalledProcessError as e:
-                print(repr(e))
-        else:
-            try:
-                with project.buildenv:
-                    system(f'/usr/sbin/chroot {project.chrootpath} {cmd}')
-            except subprocess.CalledProcessError as e:
-                print(repr(e))
+        chroot, path = (project.targetfs, project.targetpath) if opt.target else \
+                       (project.buildenv, project.chrootpath)
+
+        try:
+            with chroot:
+                system(f'/usr/sbin/chroot {path} {cmd}')
+        except subprocess.CalledProcessError as e:
+            print(repr(e))
