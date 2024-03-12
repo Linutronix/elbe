@@ -3,8 +3,10 @@
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
 import os
+import shutil
 import string
-from tempfile import mkdtemp
+import subprocess
+import tempfile
 
 control_template_string = """Package: ${name}
 Version: ${version}
@@ -46,32 +48,30 @@ def build_binary_deb(
         deps,
         target_dir):
 
-    tmpdir = mkdtemp()
-    pkgfname = f'{name}_{version}_{arch}'
-    pkgdir = os.path.join(tmpdir, pkgfname)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        pkgfname = f'{name}_{version}_{arch}'
+        pkgdir = os.path.join(tmpdir, pkgfname)
 
-    os.system(f'mkdir -p "{os.path.join(pkgdir, "DEBIAN")}"')
-    write_file(
-        os.path.join(
-            pkgdir,
-            'DEBIAN',
-            'control'),
-        0o644,
-        gen_controlfile(
-            name,
-            version,
-            arch,
-            description,
-            deps))
+        os.makedirs(os.path.join(pkgdir, 'DEBIAN'), exist_ok=True)
+        write_file(
+            os.path.join(
+                pkgdir,
+                'DEBIAN',
+                'control'),
+            0o644,
+            gen_controlfile(
+                name,
+                version,
+                arch,
+                description,
+                deps))
 
-    for (fname, instpath) in files:
-        full_instpath = os.path.join(pkgdir, instpath)
-        os.system(f'mkdir -p "{full_instpath}"')
-        os.system(f'cp -a "{fname}" "{full_instpath}"')
+        for (fname, instpath) in files:
+            full_instpath = os.path.join(pkgdir, instpath)
+            os.makedirs(full_instpath, exist_ok=True)
+            shutil.copyfile(fname, full_instpath)
 
-    os.system(f'dpkg-deb --build "{pkgdir}"')
-    os.system(
-        f'cp -v "{os.path.join(tmpdir, pkgfname + ".deb")}" "{target_dir}"')
-    os.system(f'rm -r "{tmpdir}"')
+        subprocess.run(['dpkg-deb', '--build', pkgdir], check=True)
+        shutil.copyfile(os.path.join(tmpdir, pkgfname + '.deb'), target_dir)
 
     return pkgfname + '.deb'

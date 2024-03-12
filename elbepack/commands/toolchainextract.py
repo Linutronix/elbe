@@ -4,8 +4,8 @@
 
 import os
 import sys
+import tempfile
 from optparse import OptionParser
-from tempfile import mkdtemp
 
 from elbepack.debpkg import build_binary_deb
 from elbepack.log import elbe_logging
@@ -46,36 +46,34 @@ def run_command(argv):
         opt.path,
         defaults['arch'])
 
-    tmpdir = mkdtemp()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for lib in toolchain.pkg_libs:
+            files = toolchain.get_files_for_pkg(lib)
 
-    for lib in toolchain.pkg_libs:
-        files = toolchain.get_files_for_pkg(lib)
+            pkglibpath = os.path.join('usr/lib', defaults['triplet'])
+            fmap = [(f, pkglibpath) for f in files]
 
-        pkglibpath = os.path.join('usr/lib', defaults['triplet'])
-        fmap = [(f, pkglibpath) for f in files]
+            build_binary_deb(
+                lib,
+                defaults['arch'],
+                defaults['toolchainver'],
+                lib +
+                ' extracted from toolchain',
+                fmap,
+                toolchain.pkg_deps[lib],
+                tmpdir)
 
-        build_binary_deb(
-            lib,
-            defaults['arch'],
-            defaults['toolchainver'],
-            lib +
-            ' extracted from toolchain',
-            fmap,
-            toolchain.pkg_deps[lib],
-            tmpdir)
+        pkgs = os.listdir(tmpdir)
 
-    pkgs = os.listdir(tmpdir)
+        with elbe_logging({'streams': sys.stdout}):
 
-    with elbe_logging({'streams': sys.stdout}):
+            repo = ToolchainRepo(defaults['arch'],
+                                 opt.codename,
+                                 opt.output)
 
-        repo = ToolchainRepo(defaults['arch'],
-                             opt.codename,
-                             opt.output)
+            for p in pkgs:
+                repo.includedeb(os.path.join(tmpdir, p))
 
-        for p in pkgs:
-            repo.includedeb(os.path.join(tmpdir, p))
-
-        repo.finalize()
-        os.system(f'rm -r "{tmpdir}"')
+            repo.finalize()
 
     return 0
