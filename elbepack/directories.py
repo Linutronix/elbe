@@ -4,6 +4,8 @@
 
 import __main__
 import os
+import subprocess
+import sys
 from pkgutil import iter_modules
 
 import elbepack
@@ -25,3 +27,7 @@ mako_template_dir = os.path.join(pack_dir, 'makofiles')
 
 default_preseed_fname = os.path.join(pack_dir, 'default-preseed.xml')
 xsdtoasciidoc_mako_fname = os.path.join(pack_dir, 'xsdtoasciidoc.mako')
+
+
+def run_elbe(args, **kwargs):
+    return subprocess.run([sys.executable, elbe_exe, *args], **kwargs)
