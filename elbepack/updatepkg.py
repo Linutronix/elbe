@@ -9,7 +9,7 @@ from shutil import copyfile, copytree, rmtree
 from elbepack.dump import dump_fullpkgs
 from elbepack.elbexml import ElbeXML
 from elbepack.repomanager import UpdateRepo
-from elbepack.shellhelper import do, system
+from elbepack.shellhelper import do
 from elbepack.ziparchives import create_zip_archive
 
 
@@ -99,7 +99,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
     if os.path.exists(update):
         rmtree(update)
 
-    system(f'mkdir -p {update}')
+    os.makedirs(update, exist_ok=True)
 
     if xml_filename:
         repodir = os.path.join(update, 'repo')
@@ -118,9 +118,9 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         dump_fullpkgs(project.xml, project.buildenv.rfs, cache)
 
         project.xml.xml.write(os.path.join(update, 'new.xml'))
-        system(f"cp {xml_filename} {os.path.join(update, 'base.xml')}")
+        copyfile(xml_filename, os.path.join(update, 'base.xml'))
     else:
-        system('cp source.xml update/new.xml')
+        copyfile('source.xml', 'update/new.xml')
 
     if project.presh_file:
         copyfile(project.presh_file, update + '/pre.sh')
