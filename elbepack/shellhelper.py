@@ -6,7 +6,6 @@
 import logging
 import os
 import subprocess
-from io import BytesIO, TextIOWrapper
 from subprocess import PIPE, Popen, STDOUT
 
 from elbepack.log import async_logging_ctx
@@ -37,53 +36,6 @@ def system(cmd, allow_fail=False, env_add=None):
         new_env.update(env_add)
 
     subprocess.run(cmd, shell=True, env=new_env, check=not allow_fail)
-
-
-def command_out(cmd, stdin=None, output=PIPE, env_add=None):
-    """command_out() - Execute cmd in a shell.
-
-    Returns a tuple with the exitcode and the output of cmd.
-
-    --
-
-    >>> command_out("true")
-    (0, '')
-
-    >>> command_out("$TRUE && true", env_add={"TRUE":"true"})
-    (0, '')
-
-    >>> command_out("cat -", stdin=b"ELBE")
-    (0, 'ELBE')
-
-    >>> command_out("2>&1 cat -", stdin=b"ELBE")
-    (0, 'ELBE')
-
-    >>> command_out("2>&1 cat -", stdin="ELBE")
-    (0, 'ELBE')
-
-    >>> command_out("false")
-    (1, '')
-
-    """
-    new_env = os.environ.copy()
-    if env_add:
-        new_env.update(env_add)
-
-    if isinstance(stdin, str):
-        stdin = stdin.encode()
-
-    if stdin is None:
-        p = Popen(cmd, shell=True,
-                  stdout=output, stderr=STDOUT, env=new_env)
-        out, _ = p.communicate()
-    else:
-        p = Popen(cmd, shell=True,
-                  stdout=output, stderr=STDOUT, stdin=PIPE, env=new_env)
-        out, _ = p.communicate(input=stdin)
-
-    out = TextIOWrapper(BytesIO(out), encoding='utf-8', errors='replace').read()
-
-    return p.returncode, out
 
 
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):

@@ -6,12 +6,13 @@
 import binascii
 import fnmatch
 import os
+import subprocess
 import tarfile
 from tempfile import NamedTemporaryFile
 
 from elbepack.elbexml import ValidationMode
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import command_out, system
+from elbepack.shellhelper import system
 from elbepack.version import elbe_version, is_devel
 
 from spyne.decorator import rpc
@@ -69,20 +70,23 @@ class ESoap (ServiceBase):
         hostfs.write_file('usr/sbin/policy-rc.d',
                           0o755, '#!/bin/sh\nexit 101\n')
         try:
-            env = {'LANG': 'C',
-                   'LANGUAGE': 'C',
-                   'LC_ALL': 'C',
-                   'DEBIAN_FRONTEND': 'noninteractive',
-                   'DEBCONF_NONINTERACTIVE_SEEN': 'true'}
+            env = os.environ()
+            env.update({
+                'LANG': 'C',
+                'LANGUAGE': 'C',
+                'LC_ALL': 'C',
+                'DEBIAN_FRONTEND': 'noninteractive',
+                'DEBCONF_NONINTERACTIVE_SEEN': 'true',
+            })
 
             cmd = ('apt-get update; '
                    f"apt-get install -y --allow-downgrades {' '.join(pkgs)}")
 
-            ret, out = command_out(cmd, env_add=env)
+            ps = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         finally:
             hostfs.remove('usr/sbin/policy-rc.d')
 
-        return SoapCmdReply(ret, out)
+        return SoapCmdReply(ps.returncode, ps.stdout)
 
     @rpc(String, String, String, String, Boolean)
     @soap_faults

@@ -16,13 +16,10 @@ from elbepack import qemu_firmware
 from elbepack.directories import elbe_exe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import command_out, do, get_command_out
+from elbepack.shellhelper import do, get_command_out
 from elbepack.treeutils import etree
 
 import pexpect
-
-
-DEVNULL = open(os.devnull, 'w')
 
 
 def run_command(argv):
@@ -131,8 +128,9 @@ class CheckCdroms(CheckBase):
 
     @staticmethod
     def cmp_version(v1, v2):
-        return command_out(
-            f'dpkg --compare-versions {v1} eq {v2}', output=DEVNULL)[0]
+        return subprocess.run([
+            'dpkg', '--compare-versions', v1, 'eq', v2,
+        ]).returncode
 
     def do_src(self, sources, src_total):
         """Check for sources in src-cdrom*"""
@@ -390,8 +388,9 @@ class CheckImage(CheckBase):
     @staticmethod
     def open_tgz(path):
         tmp = tempfile.NamedTemporaryFile(prefix='elbe')
-        command_out(
-            f'tar --to-stdout --extract --gunzip --file {path}', output=tmp)
+        subprocess.run([
+            'tar', '--to-stdout', '--extract', '--gunzip', '--file', path,
+        ], check=True, stdout=tmp)
         return tmp
 
     def open_img(self, path):

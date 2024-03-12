@@ -4,7 +4,7 @@
 
 # elbepack/commands/test.py - Elbe unit test wrapper
 
-from elbepack.shellhelper import command_out
+import subprocess
 
 
 class ElbeTestException(Exception):
@@ -20,6 +20,6 @@ class ElbeTestException(Exception):
 
 
 def system(cmd, allow_fail=False):
-    ret, out = command_out(cmd)
-    if ret != 0 and not allow_fail:
-        raise ElbeTestException(cmd, ret, out)
+    ps = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if ps.returncode != 0 and not allow_fail:
+        raise ElbeTestException(ps.args, ps.returncode, ps.stdout)
