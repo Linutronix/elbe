@@ -24,7 +24,6 @@ from elbepack.aptprogress import (
 )
 from elbepack.config import cfg
 from elbepack.egpg import unsign_file
-from elbepack.shellhelper import system
 from elbepack.treeutils import etree
 
 from packaging import version
@@ -172,7 +171,7 @@ class rw_access:
         if self.mount_orig == 'ro':
             self.status.log(f'remount {self.mount} read/writeable')
             try:
-                system(f'mount -o remount,rw {self.mount}')
+                subprocess.run(['mount', '-o', 'remount,rw', self.mount], check=True)
             except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
 
@@ -180,11 +179,11 @@ class rw_access:
         if self.mount_orig == 'ro':
             self.status.log(f'remount {self.mount} readonly')
             try:
-                system('sync')
+                subprocess.run(['sync'], check=True)
             except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
             try:
-                system(f'mount -o remount,ro {self.mount}')
+                subprocess.run(['mount', '-o', 'remount,ro', self.mount], check=True)
             except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
 
@@ -428,7 +427,7 @@ def apply_update(fname, status):
         # don't use execute() here, it results in an error that the apt-cache
         # is locked. We currently don't understand this behaviour :(
         try:
-            system('apt-get clean')
+            subprocess.run(['apt-get', 'clean'], check=True)
         except subprocess.CalledProcessError as e:
             status.log(repr(e))
         if p.exitcode != 0:

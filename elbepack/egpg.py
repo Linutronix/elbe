@@ -7,7 +7,7 @@ import os
 import subprocess
 
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import get_command_out, system
+from elbepack.shellhelper import env_add, get_command_out
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
@@ -186,9 +186,10 @@ def unlock_key(fingerprint):
                         '/var/cache/elbe/gnupg')
     key = ctx.get_key(fingerprint, secret=True)
     keygrip = key.subkeys[0].keygrip
-    system('/usr/lib/gnupg/gpg-preset-passphrase '
-           f'--preset -P requiredToAvoidUserInput {keygrip}',
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+    subprocess.run([
+        '/usr/lib/gnupg/gpg-preset-passphrase',
+        '--preset', '-P', 'requiredToAvoidUserInput', keygrip,
+    ], check=True, env=env_add({'GNUPGHOME': '/var/cache/elbe/gnupg'}))
 
 
 def sign(infile, outfile, fingerprint):
@@ -278,8 +279,10 @@ def generate_elbe_internal_key():
 
 
 def export_key(fingerprint, outfile):
-    system(f'/usr/bin/gpg -a -o {outfile} --export {fingerprint}',
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+    subprocess.run([
+        '/usr/bin/gpg', '-a', '-o', outfile,
+        '--export', fingerprint,
+    ], check=True, env=env_add({'GNUPGHOME': '/var/cache/elbe/gnupg'}))
 
 
 def unarmor_openpgp_keyring(armored):

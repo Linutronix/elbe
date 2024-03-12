@@ -18,7 +18,6 @@ from elbepack.directories import elbe_exe, run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
-from elbepack.shellhelper import system
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import PreprocessWrapper
 
@@ -310,7 +309,7 @@ class EnsureAction(InitVMAction):
         import libvirt
 
         if self.initvm_state() == libvirt.VIR_DOMAIN_SHUTOFF:
-            system(f'{sys.executable} {elbe_exe} initvm start')
+            run_elbe(['initvm', 'start'], check=True)
         elif self.initvm_state() == libvirt.VIR_DOMAIN_RUNNING:
             test_soap_communication()
         else:
@@ -426,7 +425,8 @@ class AttachAction(InitVMAction):
             sys.exit(126)
 
         print('Attaching to initvm console.')
-        system(f'virsh --connect qemu:///system console {cfg["initvm_domain"]}')
+        subprocess.run(['virsh', '--connect', 'qemu:///system', 'console', cfg['initvm_domain']],
+                       check=True)
 
     def execute(self, initvmdir, opt, _args):
         if opt.qemu_mode:
@@ -485,7 +485,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')
         try:
-            system(f'{sys.executable} {elbe_exe} control set_cdrom "{prjdir}" "{cdrom}"')
+            run_elbe(['control', 'set_cdrom', prjdir, cdrom], check=True)
         except subprocess.CalledProcessError:
             print('elbe control set_cdrom Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -493,16 +493,16 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         print('Upload finished')
 
-    build_opts = ''
+    build_opts = []
     if opt.build_bin:
-        build_opts += '--build-bin '
+        build_opts.append('--build-bin')
     if opt.build_sources:
-        build_opts += '--build-sources '
+        build_opts.append('--build-sources')
     if cdrom:
-        build_opts += '--skip-pbuilder '
+        build_opts.append('--skip-pbuilder')
 
     try:
-        system(f'{sys.executable} {elbe_exe} control build "{prjdir}" {build_opts}')
+        run_elbe(['control', 'build', prjdir, *build_opts], check=True)
     except subprocess.CalledProcessError:
         print('elbe control build Failed', file=sys.stderr)
         print('Giving up', file=sys.stderr)
@@ -511,7 +511,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     print('Build started, waiting till it finishes')
 
     try:
-        system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
+        run_elbe(['control', 'wait_busy', prjdir], check=True)
     except subprocess.CalledProcessError:
         print('elbe control wait_busy Failed', file=sys.stderr)
         print('', file=sys.stderr)
@@ -536,7 +536,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     if opt.build_sdk:
         try:
-            system(f'{sys.executable} {elbe_exe} control build_sdk "{prjdir}" {build_opts}')
+            run_elbe(['control', 'wait_busy', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control build_sdk Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -545,7 +545,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('SDK Build started, waiting till it finishes')
 
         try:
-            system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
+            run_elbe(['control', 'wait_busy', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
@@ -571,14 +571,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('')
 
     try:
-        system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" validation.txt')
+        run_elbe(['control', 'dump_file', prjdir, 'validation.txt'], check=True)
     except subprocess.CalledProcessError:
         print(
             'Project failed to generate validation.txt',
             file=sys.stderr)
         print('Getting log.txt', file=sys.stderr)
         try:
-            system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
+            run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
         except subprocess.CalledProcessError:
 
             print('Failed to dump log.txt', file=sys.stderr)
@@ -590,7 +590,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('Listing available files:')
         print('')
         try:
-            system(f'{sys.executable} {elbe_exe} control get_files "{prjdir}"')
+            run_elbe(['control', 'get_files', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control get_files Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -606,9 +606,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         ensure_outdir(opt)
 
         try:
-            system(
-                f'{sys.executable} {elbe_exe} control get_files --output "{opt.outdir}" '
-                f'"{prjdir}"')
+            run_elbe(['control', 'get_files', '--output', opt.outdir, prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control get_files Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -616,7 +614,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         if not opt.keep_files:
             try:
-                system(f'{sys.executable} {elbe_exe} control del_project "{prjdir}"')
+                run_elbe(['control', 'del_project', prjdir], check=True)
             except subprocess.CalledProcessError:
                 print('remove project from initvm failed',
                       file=sys.stderr)
@@ -639,7 +637,7 @@ def extract_cdrom(cdrom):
         iso.get_file_from_iso(extracted, iso_path=f'/{in_iso_name.upper()};1')
         iso.close()
     except ImportError:
-        system(f'7z x -o{tmp.path} "{cdrom}" {in_iso_name}')
+        subprocess.run(['7z', 'x', f'-o{tmp.path}', cdrom, in_iso_name], check=True)
 
     print('', file=sys.stderr)
 
@@ -701,12 +699,13 @@ class CreateAction(InitVMAction):
 
         # Upgrade from older versions which used tmux
         try:
-            system('tmux has-session -t ElbeInitVMSession 2>/dev/null')
+            subprocess.run(['tmux', 'has-session', '-t', 'ElbeInitVMSession'],
+                           stderr=subprocess.DEVNULL, check=True)
             print('ElbeInitVMSession exists in tmux. '
                   'It may belong to an old elbe version. '
                   'Please stop it to prevent interfering with this version.', file=sys.stderr)
             sys.exit(143)
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             pass
 
         # Init cdrom to None, if we detect it, we set it
@@ -743,29 +742,27 @@ class CreateAction(InitVMAction):
                 'init/default-init.xml')
 
         try:
-            init_opts = ''
+            init_opts = []
             if opt.devel:
-                init_opts += ' --devel'
+                init_opts.append('--devel')
 
             if opt.nesting:
-                init_opts += ' --nesting'
+                init_opts.append('--nesting')
 
             if not opt.build_bin:
-                init_opts += ' --skip-build-bin'
+                init_opts.append('--skip-build-bin')
 
             if not opt.build_sources:
-                init_opts += ' --skip-build-source'
+                init_opts.append(' --skip-build-source')
+
+            if cdrom:
+                cdrom_opts = ['--cdrom', cdrom]
+            else:
+                cdrom_opts = []
 
             with PreprocessWrapper(xmlfile, opt) as ppw:
-                if cdrom:
-                    system(
-                        f'{sys.executable} {elbe_exe} init {init_opts} '
-                        f'--directory "{initvmdir}" --cdrom "{cdrom}" '
-                        f'"{ppw.preproc}"')
-                else:
-                    system(
-                        f'{sys.executable} {elbe_exe} init {init_opts} '
-                        f'--directory "{initvmdir}" "{ppw.preproc}"')
+                run_elbe(['init', *init_opts, '--directory', initvmdir, *cdrom_opts, ppw.preproc],
+                         check=True)
 
         except subprocess.CalledProcessError:
             print("'elbe init' Failed", file=sys.stderr)
@@ -790,7 +787,7 @@ class CreateAction(InitVMAction):
 
         # Build initvm
         try:
-            system(f'cd "{initvmdir}"; make')
+            subprocess.run(['make'], cwd=initvmdir, check=True)
         except subprocess.CalledProcessError:
             print('Building the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -879,12 +876,15 @@ class SyncAction(InitVMAction):
 
     def execute(self, _initvmdir, _opt, _args):
         top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
         try:
-            system('rsync --info=name1,stats1  --archive --times '
-                   "--exclude='.git*' --exclude='*.pyc' --exclude='elbe-build*' "
-                   "--exclude='initvm' --exclude='__pycache__' --exclude='docs' "
-                   "--exclude='examples' "
-                   f"--rsh='ssh -p {cfg['sshport']}' --chown=root:root "
-                   f'{top_dir}/ root@localhost:/var/cache/elbe/devel')
+            subprocess.run([
+                'rsync', '--info=name1,stats1', '--archive', '--times',
+                *[arg for e in excludes for arg in ('--exclude', e)],
+                f'--rsh=ssh -p {cfg["sshport"]}',
+                '--chown=root:root',
+                f'{top_dir}/',
+                'root@localhost:/var/cache/elbe/devel'
+            ], check=True)
         except subprocess.CalledProcessError as E:
             print(E)

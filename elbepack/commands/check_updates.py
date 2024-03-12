@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2018 Linutronix GmbH
 
+import subprocess
 import sys
 from optparse import OptionParser
 
@@ -10,7 +11,6 @@ from elbepack.aptpkgutils import XMLPackage
 from elbepack.changelogxml import changelogs_xml
 from elbepack.elbexml import ElbeXML
 from elbepack.pkgutils import ChangelogNeedsDependency, extract_pkg_changelog
-from elbepack.shellhelper import system
 from elbepack.validate import validate_xml
 
 
@@ -121,7 +121,7 @@ def run_command(argv):
     if errors > 0:
         print(f'{errors} Errors occured, xml files needs fixing')
         if opt.script:
-            system(f'{opt.script} ERRORS {args[0]}', allow_fail=True)
+            subprocess.run([opt.script, 'ERRORS', args[0]])
     elif required_updates > 0:
         print(f'{required_updates} updates required')
 
@@ -129,6 +129,6 @@ def run_command(argv):
             build_changelog_xml(v, opt, update_packages)
 
         if opt.script:
-            system(f'{opt.script} UPDATE {args[0]}', allow_fail=True)
+            subprocess.run([opt.script, 'UPDATE', args[0]])
     else:
         print('No Updates available')

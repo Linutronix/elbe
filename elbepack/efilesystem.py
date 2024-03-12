@@ -15,7 +15,7 @@ from elbepack.fstab import fstabentry
 from elbepack.hdimg import do_hdimg
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import chroot, do, get_command_out, system
+from elbepack.shellhelper import chroot, do, get_command_out
 from elbepack.version import elbe_version
 
 
@@ -332,10 +332,14 @@ class ChRootFilesystem(ElbeFilesystem):
         if self.path == '/':
             return
         try:
-            system(f'mount -t proc none {self.path}/proc')
-            system(f'mount -t sysfs none {self.path}/sys')
-            system(f'mount -o bind /dev {self.path}/dev')
-            system(f'mount -o bind /dev/pts {self.path}/dev/pts')
+            subprocess.run(['mount', '-t', 'proc', 'none', os.path.join(self.path, 'proc')],
+                           check=True)
+            subprocess.run(['mount', '-t', 'sysfs', 'none', os.path.join(self.path, 'sys')],
+                           check=True)
+            subprocess.run(['mount', '-o', 'bind', '/dev', os.path.join(self.path, 'dev')],
+                           check=True)
+            subprocess.run(['mount', '-o', 'bind', '/dev/pts', os.path.join(self.path, 'dev/pts')],
+                           check=True)
         except BaseException:
             self.umount()
             raise
@@ -358,7 +362,7 @@ class ChRootFilesystem(ElbeFilesystem):
     def _umount(self, path):
         path = os.path.join(self.path, path)
         if os.path.ismount(path):
-            system(f'umount {path}')
+            subprocess.run(['umount', path], check=True)
 
     def umount(self):
         if self.path == '/':

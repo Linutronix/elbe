@@ -5,8 +5,6 @@
 import hashlib
 import subprocess
 
-from elbepack.shellhelper import system
-
 
 class HashValidationFailed(Exception):
     pass
@@ -45,7 +43,7 @@ class HashValidator:
     def download_and_validate_file(self, upstream_fname, local_fname):
         url = self.base_url + upstream_fname
         try:
-            system(f'wget -O "{local_fname}" "{url}"')
+            subprocess.run(['wget', '-O', local_fname, url], check=True)
         except subprocess.CalledProcessError as e:
             raise HashValidationFailed(f'Failed to download {url}') from e
 

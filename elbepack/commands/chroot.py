@@ -11,7 +11,6 @@ from optparse import OptionParser
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import system
 
 
 def run_command(argv):
@@ -49,19 +48,19 @@ def run_command(argv):
         # TODO: howto set env in chroot?
         os.environ['PS1'] = project.xml.text('project/name') + r': \w\$'
 
-        cmd = '/bin/bash'
+        chroot_args = ['/bin/bash']
 
         if len(args) > 1:
-            cmd = ''
-            cmd2 = args[1:]
-            for c in cmd2:
-                cmd += (c + ' ')
+            chroot_args = args[1:]
 
         chroot, path = (project.targetfs, project.targetpath) if opt.target else \
                        (project.buildenv, project.chrootpath)
 
         try:
             with chroot:
-                system(f'/usr/sbin/chroot {path} {cmd}')
+                subprocess.run([
+                    '/usr/sbin/chroot', path,
+                    *chroot_args,
+                ], check=True)
         except subprocess.CalledProcessError as e:
             print(repr(e))

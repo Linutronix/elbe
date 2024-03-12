@@ -12,7 +12,6 @@ from tempfile import NamedTemporaryFile
 
 from elbepack.elbexml import ValidationMode
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import system
 from elbepack.version import elbe_version, is_devel
 
 from spyne.decorator import rpc
@@ -372,7 +371,7 @@ class ESoap (ServiceBase):
     @authenticated_admin
     @soap_faults
     def shutdown_initvm(self):
-        system('systemctl --no-block poweroff')
+        subprocess.run(['systemctl', '--no-block', 'poweroff'], check=True)
 
     @rpc(String)
     @authenticated_uid

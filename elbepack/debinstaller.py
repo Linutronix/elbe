@@ -4,6 +4,7 @@
 
 import os
 import re
+import shutil
 import subprocess
 import sys
 from shutil import copyfile
@@ -12,7 +13,6 @@ from urllib.request import urlopen
 from elbepack.egpg import OverallStatus, check_signature
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.hashes import HashValidationFailed, HashValidator
-from elbepack.shellhelper import system
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
@@ -82,27 +82,31 @@ def setup_apt_keyring(gpg_home, keyring_fname):
         sys.exit(115)
 
     if os.path.exists('/etc/apt/trusted.gpg'):
-        system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
+        shutil.copyfile('/etc/apt/trusted.gpg', ring_path)
 
-    gpg_options = f'--keyring "{ring_path}" --no-auto-check-trustdb ' \
-                  '--trust-model always --no-default-keyring ' \
-                  '--batch ' \
-                  f'--homedir "{gpg_home}"'
+    gpg_options = [
+        '--keyring', ring_path,
+        '--no-auto-check-trustdb',
+        '--trust-model', 'always', '--no-default-keyring',
+        '--batch',
+        '--homedir', gpg_home,
+    ]
 
     trustkeys = os.listdir('/etc/apt/trusted.gpg.d')
     for key in trustkeys:
         print(f'Import {key}: ')
         try:
-            system(
-                f'gpg {gpg_options} '
-                f'--import "{os.path.join("/etc/apt/trusted.gpg.d", key)}"')
+            subprocess.run([
+                'gpg', *gpg_options,
+                '--import', os.path.join('/etc/apt/trusted.gpg.d', key),
+            ], check=True)
         except subprocess.CalledProcessError:
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
 
 def download(url, local_fname):
     try:
-        system(f'wget -O "{local_fname}" "{url}"')
+        subprocess.run(['wget', '-O', local_fname, url], check=True)
     except subprocess.CalledProcessError:
         raise NoKinitrdException(f'Failed to download {url}')
 
@@ -207,9 +211,11 @@ def copy_kinitrd(prj, target_dir):
     try:
         tmp = TmpdirFilesystem()
         if prj.has('mirror/cdrom'):
-            system(
-                f'7z x -o{tmp.fname("/")} "{prj.text("mirror/cdrom")}" '
-                'initrd-cdrom.gz vmlinuz')
+            subprocess.run([
+                '7z', 'x', f'-o{tmp.fname("/")}',
+                prj.text('mirror/cdrom'),
+                'initrd-cdrom.gz', 'vmlinuz',
+            ], check=True)
 
             # initrd.gz needs to be cdrom version !
             copyfile(tmp.fname('initrd-cdrom.gz'),

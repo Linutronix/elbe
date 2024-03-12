@@ -14,30 +14,6 @@ log = logging.getLogger('log')
 soap = logging.getLogger('soap')
 
 
-def system(cmd, allow_fail=False, env_add=None):
-    """system() - Execute cmd in a shell.
-
-    Throws a subprocess.CalledProcessError if cmd returns none-zero and allow_fail=False
-
-    --
-
-    >>> system("true")
-
-    >>> system("false", allow_fail=True)
-
-    >>> system("$FALSE", env_add={"FALSE":"false"}) # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    subprocess.CalledProcessError: ...
-
-    """
-    new_env = os.environ.copy()
-    if env_add:
-        new_env.update(env_add)
-
-    subprocess.run(cmd, shell=True, env=new_env, check=not allow_fail)
-
-
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
@@ -171,3 +147,9 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
         raise subprocess.CalledProcessError(p.returncode, cmd)
 
     return stdout
+
+
+def env_add(d):
+    env = os.environ.copy()
+    env.update(d)
+    return env

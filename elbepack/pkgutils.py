@@ -4,11 +4,11 @@
 
 import os
 import re
+import subprocess
 
 from apt_pkg import TagFile
 
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.shellhelper import system
 
 
 class NoPackageException(Exception):
@@ -89,9 +89,9 @@ def extract_pkg_changelog(fname, extra_pkg=None):
 
     if extra_pkg:
         print('with extra ' + extra_pkg)
-        system(f'dpkg -x "{extra_pkg}" "{fs.fname("/")}"')
+        subprocess.run(['dpkg', '-x', extra_pkg, fs.fname('/')], check=True)
 
-    system(f'dpkg -x "{fname}" "{fs.fname("/")}"')
+    subprocess.run(['dpkg', '-x', fname, fs.fname('/')], check=True)
 
     dch_dir = f'/usr/share/doc/{pkgname}'
 

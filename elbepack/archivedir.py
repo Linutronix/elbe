@@ -5,6 +5,7 @@
 import bz2
 import os
 import re
+import subprocess
 import sys
 from base64 import encodebytes, standard_b64decode
 from subprocess import CalledProcessError
@@ -12,7 +13,6 @@ from tempfile import NamedTemporaryFile
 from urllib.parse import urljoin, urlparse
 
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.shellhelper import system
 from elbepack.treeutils import etree
 
 
@@ -29,12 +29,11 @@ def enbase(fname, compress=True):
 
 
 def collect(tararchive, path, keep):
-    if keep:
-        cmd = 'tar rf ' + tararchive + ' -C '
-    else:
-        cmd = 'tar rf ' + tararchive + ' --owner=root --group=root -C '
-    cmd += path + ' .'
-    system(cmd)
+    subprocess.run([
+        'tar', 'rf', tararchive,
+        *([] if keep else ['--owner=root',  '--group=root']),
+        '-C', path, '.',
+    ])
 
 
 def chg_archive(xml, path, keep):
