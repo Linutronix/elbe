@@ -5,6 +5,7 @@
 import logging
 import os
 import shutil
+import subprocess
 import sys
 from optparse import OptionParser
 
@@ -13,7 +14,7 @@ from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
 from elbepack.directories import elbe_dir, init_template_dir
 from elbepack.filesystem import Filesystem
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import do, system, system_out
+from elbepack.shellhelper import do, system
 from elbepack.templates import get_initvm_preseed, write_template
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
@@ -214,7 +215,9 @@ def run_command(argv):
             keys.append(key.et.text)
 
         if opt.cdrom:
-            keys.append(system_out(f'7z x -so "{opt.cdrom}" repo.pub'))
+            keys.append(subprocess.run([
+                '7z', 'x', '-so', opt.cdrom, 'repo.pub',
+            ], check=True, capture_output=True, encoding='utf-8').stdout)
 
         import_keyring = os.path.join(out_path, 'elbe-keyring')
 

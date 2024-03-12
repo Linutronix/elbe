@@ -86,32 +86,6 @@ def command_out(cmd, stdin=None, output=PIPE, env_add=None):
     return p.returncode, out
 
 
-def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
-    """system_out() - Wrapper around command_out().
-
-    On failure, raises an exception if allow_fail=False, on success,
-    returns the output of cmd.
-
-    --
-
-    >>> system_out("false") # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    subprocess.CalledProcessError: ...
-
-    >>> system_out("false", allow_fail=True)
-    ''
-
-    """
-    code, out = command_out(cmd, stdin=stdin, env_add=env_add)
-
-    if code != 0:
-        if not allow_fail:
-            raise subprocess.CalledProcessError(code, cmd)
-
-    return out
-
-
 def command_out_stderr(cmd, stdin=None, env_add=None):
     """command_out_stderr() - Execute cmd in a shell.
 

@@ -4,12 +4,12 @@
 
 import io
 import os
+import subprocess
 import sys
 from datetime import datetime
 from optparse import OptionParser
 from tempfile import NamedTemporaryFile
 
-from elbepack.shellhelper import system_out
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
 
@@ -93,8 +93,9 @@ class license_dep5_to_spdx (dict):
 def scan_nomos(license_text):
     with NamedTemporaryFile() as f:
         f.write(license_text.encode('utf-8'))
-        nomos_out = system_out(
-            f'/usr/share/fossology/nomos/agent/nomos "{f.name}"')
+        nomos_out = subprocess.run([
+            '/usr/share/fossology/nomos/agent/nomos', f.name,
+        ], check=True, capture_output=True, encoding='utf-8').stdout
 
     expected_start = f'File {os.path.basename(f.name)} contains license(s) '
     if not nomos_out.startswith(expected_start):
