@@ -3,15 +3,11 @@
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
 import glob
+import subprocess
 
-from elbepack.commands.test import ElbeTestException, system
 from elbepack.directories import elbe_exe, pack_dir
 
 import pytest
-
-
-flake8_opts = ['--max-line-length=100',
-               '--show-source']
 
 
 def _python_files():
@@ -22,7 +18,4 @@ def _python_files():
 
 @pytest.mark.parametrize('f', _python_files())
 def test_flake8(f):
-    try:
-        system(f'flake8 {" ".join(flake8_opts)} {f}')
-    except ElbeTestException as e:
-        pytest.fail(e.out)
+    subprocess.run(['flake8', '--max-line-length=100', '--show-source', f], check=True)

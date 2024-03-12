@@ -3,10 +3,8 @@
 # SPDX-FileCopyrightText: 2020-2021 Linutronix GmbH
 
 import os
-import sys
 
-from elbepack.commands.test import system
-from elbepack.directories import elbe_dir, elbe_exe
+from elbepack.directories import elbe_dir, run_elbe
 
 import pytest
 
@@ -22,4 +20,4 @@ def _test_cases():
 
 @pytest.mark.parametrize('f', _test_cases())
 def test_preproc(f):
-    system(f'{sys.executable} {elbe_exe} preprocess "{f}"')
+    run_elbe(['preprocess', f], check=True)
