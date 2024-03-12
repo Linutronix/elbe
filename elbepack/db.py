@@ -34,7 +34,6 @@ from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessi
 from sqlalchemy.orm.exc import NoResultFound
 
 
-os.environ['SQLALCHEMY_SILENCE_UBER_WARNING'] = '1'
 Base = declarative_base()
 
 

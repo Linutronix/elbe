@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
-SQLALCHEMY_SILENCE_UBER_WARNING=1 elbe db init --name=root --password=foo
+elbe db init --name=root --password=foo
 #DEBHELPER#
