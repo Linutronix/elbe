@@ -4,9 +4,10 @@
 
 import logging
 import os
+import subprocess
 
 from elbepack.filesystem import hostfs
-from elbepack.shellhelper import CommandError, get_command_out, system
+from elbepack.shellhelper import get_command_out, system
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
@@ -288,7 +289,7 @@ def unarmor_openpgp_keyring(armored):
     """
     try:
         conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor', stdin=armored)
-    except CommandError as e:
+    except subprocess.CalledProcessError as e:
         logging.error(e)
         return b''
 

@@ -3,8 +3,9 @@
 # SPDX-FileCopyrightText: 2019 Linutronix GmbH
 
 import os
+import subprocess
 
-from elbepack.shellhelper import CommandError, do
+from elbepack.shellhelper import do
 
 
 class Packer:
@@ -30,7 +31,7 @@ class InPlacePacker(Packer):
         try:
             fpath = os.path.join(builddir, fname)
             do(f'{self.cmd} "{fpath}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             # in case of an error, we just return None
             # which means, that the orig file does not
             # exist anymore
@@ -55,7 +56,7 @@ class TarArchiver(Packer):
                 f'tar --create --verbose --sparse {self.flag} '
                 f'--file "{archname}" --directory "{dirname}" "{basename}"')
             do(f'rm -f "{fpath}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             # in case of an error, we just return None
             # which means, that the orig file does not
             # exist anymore.

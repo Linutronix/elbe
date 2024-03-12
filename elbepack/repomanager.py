@@ -3,13 +3,14 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import os
+import subprocess
 
 from debian.deb822 import Deb822
 
 from elbepack.egpg import export_key, generate_elbe_internal_key, unlock_key
 from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
-from elbepack.shellhelper import CommandError, do
+from elbepack.shellhelper import do
 
 
 class RepoAttributes:
@@ -195,7 +196,7 @@ class RepoBase:
             self._includedeb(path, self.repo_attr.codename,
                              components=components,
                              prio=prio)
-        except CommandError as ce:
+        except subprocess.CalledProcessError as ce:
             if force and pkgname is not None:
                 # Including deb did not work.
                 # Maybe we have the same Version with a
@@ -310,7 +311,7 @@ class RepoBase:
     def includedsc(self, path, components=None, force=False):
         try:
             self._includedsc(path, self.repo_attr.codename, components)
-        except CommandError as ce:
+        except subprocess.CalledProcessError as ce:
             if force:
                 # Including dsc did not work.
                 # Maybe we have the same Version with a

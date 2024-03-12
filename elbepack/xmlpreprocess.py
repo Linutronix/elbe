@@ -5,6 +5,7 @@
 import logging
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import time
@@ -18,7 +19,7 @@ from elbepack.config import cfg
 from elbepack.directories import elbe_exe
 from elbepack.isooptions import iso_option_valid
 from elbepack.schema import xml_schema_file
-from elbepack.shellhelper import CommandError, command_out_stderr
+from elbepack.shellhelper import command_out_stderr
 from elbepack.validate import error_log_to_strings
 
 from lxml import etree
@@ -435,7 +436,7 @@ class PreprocessWrapper:
         if ret != 0:
             print('elbe preprocess failed.', file=sys.stderr)
             print(err, file=sys.stderr)
-            raise CommandError(cmd, ret)
+            raise subprocess.CalledProcessError(ret, cmd)
 
         return self
 

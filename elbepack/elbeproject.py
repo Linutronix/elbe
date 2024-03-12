@@ -8,6 +8,7 @@ import glob
 import io
 import logging
 import os
+import subprocess
 import sys
 
 from elbepack.aptpkgutils import XMLPackage
@@ -33,7 +34,7 @@ from elbepack.pbuilder import (
 from elbepack.repomanager import ProjectRepo
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import CommandError, chroot, do, system
+from elbepack.shellhelper import chroot, do, system
 from elbepack.templates import write_pack_template
 
 validation = logging.getLogger('validation')
@@ -812,7 +813,7 @@ class ElbeProject:
                                            pbuilderdir,
                                            'result',
                                            '*.changes'))
-        except CommandError:
+        except subprocess.CalledProcessError:
             logging.exception('Package fails to build.\n'
                               'Please make sure, that the submitted package '
                               'builds in pbuilder')

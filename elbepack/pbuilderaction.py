@@ -3,11 +3,12 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 import os
+import subprocess
 import sys
 
 from elbepack.directories import elbe_exe
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.shellhelper import CommandError, command_out_stderr, system
+from elbepack.shellhelper import command_out_stderr, system
 from elbepack.xmlpreprocess import PreprocessWrapper
 
 
@@ -94,7 +95,7 @@ class CreateAction(PBuilderAction):
                         print(err, file=sys.stderr)
                         print('Giving up', file=sys.stderr)
                         sys.exit(153)
-            except CommandError:
+            except subprocess.CalledProcessError:
                 # this is the failure from PreprocessWrapper
                 # it already printed the error message from
                 # elbe preprocess
@@ -117,14 +118,14 @@ class CreateAction(PBuilderAction):
         try:
             system(f'{sys.executable} {elbe_exe} control '
                    f'build_pbuilder "{prjdir}" {crossopt} {ccacheopt} {ccachesize}')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control build_pbuilder Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(156)
 
         try:
             system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control wait_busy Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(157)
@@ -156,7 +157,7 @@ class UpdateAction(PBuilderAction):
 
         try:
             system(f'{sys.executable} {elbe_exe} control update_pbuilder "{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control update_pbuilder Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(159)
@@ -196,14 +197,14 @@ class BuildAction(PBuilderAction):
 
             try:
                 system(f'{sys.executable} {elbe_exe} control build_pbuilder "{prjdir}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('elbe control build_pbuilder Failed', file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(161)
 
             try:
                 system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('elbe control wait_busy Failed', file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(162)
@@ -225,7 +226,7 @@ class BuildAction(PBuilderAction):
         print('')
         try:
             system(f'tar cfz "{tmp.fname("pdebuild.tar.gz")}" .')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('tar Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(164)
@@ -237,7 +238,7 @@ class BuildAction(PBuilderAction):
             try:
                 system(
                     f'{sys.executable} {elbe_exe} control set_orig "{prjdir}" "{of}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('elbe control set_orig Failed', file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(165)
@@ -251,13 +252,13 @@ class BuildAction(PBuilderAction):
                 f'{sys.executable} {elbe_exe} control set_pdebuild --cpuset "{opt.cpuset}" '
                 f'--profile "{opt.profile}" {crossopt} '
                 f'"{prjdir}" "{tmp.fname("pdebuild.tar.gz")}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control set_pdebuild Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(166)
         try:
             system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control wait_busy Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(167)
@@ -272,14 +273,14 @@ class BuildAction(PBuilderAction):
             try:
                 system(
                     f'{sys.executable} {elbe_exe} control --pbuilder-only get_files "{prjdir}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('elbe control get_files Failed', file=sys.stderr)
                 print('', file=sys.stderr)
                 print('dumping logfile', file=sys.stderr)
 
                 try:
                     system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
-                except CommandError:
+                except subprocess.CalledProcessError:
                     print('elbe control dump_file Failed', file=sys.stderr)
                     print('', file=sys.stderr)
                     print('Giving up', file=sys.stderr)
@@ -299,14 +300,14 @@ class BuildAction(PBuilderAction):
                 system(
                     f'{sys.executable} {elbe_exe} control --pbuilder-only get_files '
                     f'--output "{opt.outdir}" "{prjdir}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('elbe control get_files Failed', file=sys.stderr)
                 print('', file=sys.stderr)
                 print('dumping logfile', file=sys.stderr)
 
                 try:
                     system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
-                except CommandError:
+                except subprocess.CalledProcessError:
                     print('elbe control dump_file Failed', file=sys.stderr)
                     print('', file=sys.stderr)
                     print('Giving up', file=sys.stderr)

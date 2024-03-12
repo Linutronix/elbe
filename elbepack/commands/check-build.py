@@ -7,6 +7,7 @@ import logging
 import optparse
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import traceback
@@ -15,7 +16,7 @@ from elbepack import qemu_firmware
 from elbepack.directories import elbe_exe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import CommandError, command_out, do, get_command_out
+from elbepack.shellhelper import command_out, do, get_command_out
 from elbepack.treeutils import etree
 
 import pexpect
@@ -112,7 +113,7 @@ class CheckCdroms(CheckBase):
     def extract_cdrom(self, tgt, cdrom):
         try:
             do(f'7z x -o"{tgt}" "{cdrom}"')
-        except CommandError as E:
+        except subprocess.CalledProcessError as E:
             self.fail(f'Failed to extract cdrom {cdrom}:\n{E}')
 
     def dpkg_get_infos(self, path, fmt):
@@ -123,7 +124,7 @@ class CheckCdroms(CheckBase):
             elif path.endswith('.dsc'):
                 cmd = f'grep -E "^({"|".join(fmt)}):" {path}'
             return get_command_out(cmd).decode('utf-8')
-        except CommandError as E:
+        except subprocess.CalledProcessError as E:
             self.fail(
                 f"Failed to get debian infos ({'|'.join(fmt)}) "
                 f'for {path}:\n{E}')

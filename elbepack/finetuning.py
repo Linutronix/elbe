@@ -6,6 +6,7 @@ import base64
 import errno
 import logging
 import os
+import subprocess
 from shutil import rmtree
 
 from apt.package import FetchError
@@ -15,7 +16,7 @@ from elbepack.filesystem import ImgMountFilesystem
 from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do, get_command_out
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
@@ -736,7 +737,7 @@ def do_finetuning(xml, buildenv, target):
             logging.exception("Unimplemented finetuning action '%s'",
                               i.et.tag)
             raise
-        except CommandError as e:
+        except subprocess.CalledProcessError as e:
             logging.exception('Finetuning Error: %s', e)
             raise
         except FinetuningException as e:
@@ -756,7 +757,7 @@ def do_prj_finetuning(xml, buildenv, target, builddir):
         except KeyError:
             logging.exception("Unimplemented Project Finetuning action '%s'",
                               i.et.tag)
-        except CommandError as e:
+        except subprocess.CalledProcessError as e:
             logging.exception('Project Finetuning Error: %s', e)
             raise
         except FinetuningException as e:

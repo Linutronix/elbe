@@ -5,11 +5,12 @@
 
 import logging
 import os
+import subprocess
 from urllib.parse import urlsplit
 
 from elbepack.efilesystem import BuildImgFs
 from elbepack.egpg import unarmor_openpgp_keyring
-from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do, get_command_out
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 
 
@@ -203,9 +204,9 @@ class BuildEnv:
                 if keyring:
                     self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
                 do(cmd)
-            except CommandError:
+            except subprocess.CalledProcessError as e:
                 cleanup = True
-                raise DebootstrapException()
+                raise DebootstrapException() from e
             finally:
                 self.cdrom_umount()
                 if cleanup:
@@ -245,9 +246,9 @@ class BuildEnv:
 
             chroot(self.rfs.path, 'dpkg --configure -a')
 
-        except CommandError:
+        except subprocess.CalledProcessError as e:
             cleanup = True
-            raise DebootstrapException()
+            raise DebootstrapException() from e
         finally:
             self.cdrom_umount()
             if cleanup:

@@ -4,13 +4,14 @@
 
 import logging
 import os
+import subprocess
 import sys
 from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import system
 
 
 def run_command(argv):
@@ -60,11 +61,11 @@ def run_command(argv):
             try:
                 with project.targetfs:
                     system(f'/usr/sbin/chroot {project.targetpath} {cmd}')
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 print(repr(e))
         else:
             try:
                 with project.buildenv:
                     system(f'/usr/sbin/chroot {project.chrootpath} {cmd}')
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 print(repr(e))

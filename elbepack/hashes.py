@@ -3,8 +3,9 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import hashlib
+import subprocess
 
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import system
 
 
 class HashValidationFailed(Exception):
@@ -45,7 +46,7 @@ class HashValidator:
         url = self.base_url + upstream_fname
         try:
             system(f'wget -O "{local_fname}" "{url}"')
-        except CommandError:
-            raise HashValidationFailed(f'Failed to download {url}')
+        except subprocess.CalledProcessError as e:
+            raise HashValidationFailed(f'Failed to download {url}') from e
 
         self.validate_file(upstream_fname, local_fname)

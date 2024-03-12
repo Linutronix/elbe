@@ -4,6 +4,7 @@
 # SPDX-FileCopyrightText: 2015 Matthias Buehler <Matthias.Buehler@de.trumpf.com>
 
 import logging
+import subprocess
 import sys
 from optparse import OptionParser
 
@@ -12,7 +13,6 @@ from elbepack.db import ElbeDB
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import CommandError
 
 from sqlalchemy.exc import OperationalError
 
@@ -97,7 +97,7 @@ def run_command(argv):
                 opt.cdrom_size,
                 opt.skip_pkglist,
                 opt.skip_pbuild)
-        except CommandError as ce:
+        except subprocess.CalledProcessError as ce:
             logging.error('Command in project build failed: %s', ce.cmd)
             sys.exit(29)
 

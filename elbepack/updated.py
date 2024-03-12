@@ -24,7 +24,7 @@ from elbepack.aptprogress import (
 )
 from elbepack.config import cfg
 from elbepack.egpg import unsign_file
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import system
 from elbepack.treeutils import etree
 
 from packaging import version
@@ -173,7 +173,7 @@ class rw_access:
             self.status.log(f'remount {self.mount} read/writeable')
             try:
                 system(f'mount -o remount,rw {self.mount}')
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
 
     def __exit__(self, _typ, _value, _traceback):
@@ -181,11 +181,11 @@ class rw_access:
             self.status.log(f'remount {self.mount} readonly')
             try:
                 system('sync')
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
             try:
                 system(f'mount -o remount,ro {self.mount}')
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 self.status.log(repr(e))
 
     def get_mount_status(self):
@@ -429,7 +429,7 @@ def apply_update(fname, status):
         # is locked. We currently don't understand this behaviour :(
         try:
             system('apt-get clean')
-        except CommandError as e:
+        except subprocess.CalledProcessError as e:
             status.log(repr(e))
         if p.exitcode != 0:
             raise Exception(

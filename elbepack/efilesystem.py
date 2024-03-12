@@ -15,7 +15,7 @@ from elbepack.fstab import fstabentry
 from elbepack.hdimg import do_hdimg
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import CommandError, chroot, do, get_command_out, system
+from elbepack.shellhelper import chroot, do, get_command_out, system
 from elbepack.version import elbe_version
 
 
@@ -78,7 +78,7 @@ def copy_filelist(src, file_lst, dst):
                 system(
                     'cp -a --reflink=auto '
                     f'"{src.realpath(f)}" "{dst.realpath(f)}"')
-            except CommandError as E:
+            except subprocess.CalledProcessError as E:
                 logging.warning('Error while copying from %s to %s of file %s - %s',
                                 src.path, dst.path, f, E)
 
@@ -435,7 +435,7 @@ class TargetFs(ChRootFilesystem):
                 do(cmd % args)
                 # only append filename if creating tarball was successful
                 self.images.append(targz_name)
-            except CommandError:
+            except subprocess.CalledProcessError:
                 # error was logged; continue creating cpio image
                 pass
 
@@ -449,7 +449,7 @@ class TargetFs(ChRootFilesystem):
                     f'{os.path.join(targetdir, cpio_name)}')
                 # only append filename if creating cpio was successful
                 self.images.append(cpio_name)
-            except CommandError:
+            except subprocess.CalledProcessError:
                 # error was logged; continue
                 pass
             os.chdir(oldwd)
@@ -468,7 +468,7 @@ class TargetFs(ChRootFilesystem):
                     f'-noappend -no-progress {options}')
                 # only append filename if creating mksquashfs was successful
                 self.images.append(sfs_name)
-            except CommandError:
+            except subprocess.CalledProcessError:
                 # error was logged; continue
                 pass
             os.chdir(oldwd)

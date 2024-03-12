@@ -4,11 +4,12 @@
 
 import logging
 import os
+import subprocess
 from pathlib import Path
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.shellhelper import CommandError, chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do, get_command_out
 
 import parted
 
@@ -46,7 +47,7 @@ def mkfs_mtd(mtd, fslabel, target):
                f'{fslabel[label].mkfsopt}')
             # only append the ubifs file if creation didn't fail
             img_files.append(f'{label}.ubifs')
-        except CommandError:
+        except subprocess.CalledProcessError:
             # continue creating further ubifs filesystems
             pass
 
@@ -117,7 +118,7 @@ def build_image_mtd(mtd, target):
         # only add file to list if ubinize command was successful
         img_files.append(mtd.text('name'))
 
-    except CommandError:
+    except subprocess.CalledProcessError:
         # continue with generating further images
         pass
 
@@ -197,7 +198,7 @@ class grubinstaller202(grubinstaller_base):
                     f'grub-install {user_args} --target=i386-pc '
                     f'--no-floppy {poopdev}')
 
-        except CommandError as E:
+        except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
 
         finally:
@@ -271,7 +272,7 @@ class grubinstaller97(grubinstaller_base):
                 f'chroot {imagemnt} '
                 f'grub-install {user_args} --no-floppy {poopdev}')
 
-        except CommandError as E:
+        except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
 
         finally:

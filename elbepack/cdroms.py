@@ -4,6 +4,7 @@
 
 import logging
 import os
+import subprocess
 from shutil import copyfile
 
 from apt.package import FetchError
@@ -14,7 +15,7 @@ from elbepack.filesystem import Filesystem, hostfs
 from elbepack.isooptions import get_iso_options
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import CommandError, do
+from elbepack.shellhelper import do
 
 CDROM_SIZE = 640 * 1000 * 1000
 
@@ -130,7 +131,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # not touch the repo config, nor generate a new key.
     try:
         do(f'cp -av /var/cache/elbe/initvm-bin-repo "{repo_path}"')
-    except CommandError:
+    except subprocess.CalledProcessError:
         # When /var/cache/elbe/initvm-bin-repo has not been created
         # (because the initvm install was an old version or somthing,
         #  log an error, and continue with an empty directory.

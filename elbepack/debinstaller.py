@@ -4,6 +4,7 @@
 
 import os
 import re
+import subprocess
 import sys
 from shutil import copyfile
 from urllib.request import urlopen
@@ -11,7 +12,7 @@ from urllib.request import urlopen
 from elbepack.egpg import OverallStatus, check_signature
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.hashes import HashValidationFailed, HashValidator
-from elbepack.shellhelper import CommandError, system
+from elbepack.shellhelper import system
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
@@ -95,14 +96,14 @@ def setup_apt_keyring(gpg_home, keyring_fname):
             system(
                 f'gpg {gpg_options} '
                 f'--import "{os.path.join("/etc/apt/trusted.gpg.d", key)}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
 
 def download(url, local_fname):
     try:
         system(f'wget -O "{local_fname}" "{url}"')
-    except CommandError:
+    except subprocess.CalledProcessError:
         raise NoKinitrdException(f'Failed to download {url}')
 
 

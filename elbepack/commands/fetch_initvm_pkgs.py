@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import logging
+import subprocess
 import sys
 from optparse import OptionParser
 
@@ -16,7 +17,7 @@ from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.filesystem import hostfs
 from elbepack.log import elbe_logging
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
-from elbepack.shellhelper import CommandError, do
+from elbepack.shellhelper import do
 
 
 def run_command(argv):
@@ -125,7 +126,7 @@ def run_command(argv):
                         logging.exception('Package "%s" missing name or version',
                                           pkg_id)
                         retry = 3
-                    except CommandError:
+                    except subprocess.CalledProcessError:
                         logging.exception('Package "%s-%s" could not be added to repo.',
                                           pkg.name, pkgver.version)
                         retry += 1
@@ -169,7 +170,7 @@ def run_command(argv):
                         logging.exception('Package "%s" missing name or version',
                                           pkg_id)
                         retry = 3
-                    except CommandError:
+                    except subprocess.CalledProcessError:
                         logging.exception('Package "%s" could not be added to repo.',
                                           pkg_id)
                         retry += 1

@@ -6,6 +6,7 @@
 import datetime
 import io
 import os
+import subprocess
 import sys
 import time
 
@@ -15,7 +16,7 @@ from elbepack.directories import elbe_exe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
-from elbepack.shellhelper import CommandError, command_out_stderr, system
+from elbepack.shellhelper import command_out_stderr, system
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import PreprocessWrapper
 
@@ -316,7 +317,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
                 print(err, file=sys.stderr)
                 print('Giving up', file=sys.stderr)
                 sys.exit(129)
-    except CommandError:
+    except subprocess.CalledProcessError:
         # this is the failure from PreprocessWrapper
         # it already printed the error message from
         # elbe preprocess
@@ -331,7 +332,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('Uploading CDROM. This might take a while')
         try:
             system(f'{sys.executable} {elbe_exe} control set_cdrom "{prjdir}" "{cdrom}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control set_cdrom Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(131)
@@ -348,7 +349,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     try:
         system(f'{sys.executable} {elbe_exe} control build "{prjdir}" {build_opts}')
-    except CommandError:
+    except subprocess.CalledProcessError:
         print('elbe control build Failed', file=sys.stderr)
         print('Giving up', file=sys.stderr)
         sys.exit(132)
@@ -357,7 +358,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     try:
         system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
-    except CommandError:
+    except subprocess.CalledProcessError:
         print('elbe control wait_busy Failed', file=sys.stderr)
         print('', file=sys.stderr)
         print('The project will not be deleted from the initvm.',
@@ -382,7 +383,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     if opt.build_sdk:
         try:
             system(f'{sys.executable} {elbe_exe} control build_sdk "{prjdir}" {build_opts}')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control build_sdk Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(134)
@@ -391,7 +392,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
         try:
             system(f'{sys.executable} {elbe_exe} control wait_busy "{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
             print('', file=sys.stderr)
@@ -417,14 +418,14 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     try:
         system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" validation.txt')
-    except CommandError:
+    except subprocess.CalledProcessError:
         print(
             'Project failed to generate validation.txt',
             file=sys.stderr)
         print('Getting log.txt', file=sys.stderr)
         try:
             system(f'{sys.executable} {elbe_exe} control dump_file "{prjdir}" log.txt')
-        except CommandError:
+        except subprocess.CalledProcessError:
 
             print('Failed to dump log.txt', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -436,7 +437,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('')
         try:
             system(f'{sys.executable} {elbe_exe} control get_files "{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control get_files Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(137)
@@ -454,7 +455,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             system(
                 f'{sys.executable} {elbe_exe} control get_files --output "{opt.outdir}" '
                 f'"{prjdir}"')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('elbe control get_files Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(138)
@@ -462,7 +463,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         if not opt.keep_files:
             try:
                 system(f'{sys.executable} {elbe_exe} control del_project "{prjdir}"')
-            except CommandError:
+            except subprocess.CalledProcessError:
                 print('remove project from initvm failed',
                       file=sys.stderr)
                 sys.exit(139)
@@ -551,7 +552,7 @@ class CreateAction(InitVMAction):
                   'It may belong to an old elbe version. '
                   'Please stop it to prevent interfering with this version.', file=sys.stderr)
             sys.exit(143)
-        except CommandError:
+        except subprocess.CalledProcessError:
             pass
 
         # Init cdrom to None, if we detect it, we set it
@@ -612,7 +613,7 @@ class CreateAction(InitVMAction):
                         f'{sys.executable} {elbe_exe} init {init_opts} '
                         f'--directory "{initvmdir}" "{ppw.preproc}"')
 
-        except CommandError:
+        except subprocess.CalledProcessError:
             print("'elbe init' Failed", file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(145)
@@ -624,7 +625,7 @@ class CreateAction(InitVMAction):
         # Register initvm in libvirt
         try:
             self.conn.defineXML(xml)
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('Registering initvm in libvirt failed', file=sys.stderr)
             print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`"
                   'to delete existing initvm',
@@ -634,14 +635,14 @@ class CreateAction(InitVMAction):
         # Build initvm
         try:
             system(f'cd "{initvmdir}"; make')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('Building the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(147)
 
         try:
             system(f'{sys.executable} {elbe_exe} initvm start')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('Starting the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(148)
@@ -677,7 +678,7 @@ class SubmitAction(InitVMAction):
     def execute(self, _initvmdir, opt, args):
         try:
             system(f'{sys.executable} {elbe_exe} initvm ensure')
-        except CommandError:
+        except subprocess.CalledProcessError:
             print('Starting the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(150)
@@ -719,5 +720,5 @@ class SyncAction(InitVMAction):
                    "--exclude='examples' "
                    f"--rsh='ssh -p {cfg['sshport']}' --chown=root:root "
                    f'{top_dir}/ root@localhost:/var/cache/elbe/devel')
-        except CommandError as E:
+        except subprocess.CalledProcessError as E:
             print(E)

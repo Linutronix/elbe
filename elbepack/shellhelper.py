@@ -5,8 +5,9 @@
 
 import logging
 import os
+import subprocess
 from io import BytesIO, TextIOWrapper
-from subprocess import PIPE, Popen, STDOUT, call
+from subprocess import PIPE, Popen, STDOUT
 
 from elbepack.log import async_logging_ctx
 
@@ -14,21 +15,10 @@ log = logging.getLogger('log')
 soap = logging.getLogger('soap')
 
 
-class CommandError(Exception):
-
-    def __init__(self, cmd, returncode):
-        super(CommandError, self).__init__(cmd, returncode)
-        self.returncode = returncode
-        self.cmd = cmd
-
-    def __str__(self):
-        return f'Error: {self.returncode} returned from Command {self.cmd}'
-
-
 def system(cmd, allow_fail=False, env_add=None):
     """system() - Execute cmd in a shell.
 
-    Throws a CommandError if cmd returns none-zero and allow_fail=False
+    Throws a subprocess.CalledProcessError if cmd returns none-zero and allow_fail=False
 
     --
 
@@ -39,18 +29,14 @@ def system(cmd, allow_fail=False, env_add=None):
     >>> system("$FALSE", env_add={"FALSE":"false"}) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
 
     """
     new_env = os.environ.copy()
     if env_add:
         new_env.update(env_add)
 
-    ret = call(cmd, shell=True, env=new_env)
-
-    if ret != 0:
-        if not allow_fail:
-            raise CommandError(cmd, ret)
+    subprocess.run(cmd, shell=True, env=new_env, check=not allow_fail)
 
 
 def command_out(cmd, stdin=None, output=PIPE, env_add=None):
@@ -111,7 +97,7 @@ def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
     >>> system_out("false") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
 
     >>> system_out("false", allow_fail=True)
     ''
@@ -121,7 +107,7 @@ def system_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
     if code != 0:
         if not allow_fail:
-            raise CommandError(cmd, code)
+            raise subprocess.CalledProcessError(code, cmd)
 
     return out
 
@@ -171,7 +157,7 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
-    Throws a CommandError if cmd failed with allow_Fail=False.
+    Throws a subprocess.CalledProcessError if cmd returns none-zero and allow_fail=False
 
     --
 
@@ -192,12 +178,12 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     >>> do("cat - && false", stdin=b"ELBE") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
 
     >>> do("false") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
     """
 
     new_env = os.environ.copy()
@@ -220,7 +206,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
         p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
-        raise CommandError(cmd, p.returncode)
+        raise subprocess.CalledProcessError(p.returncode, cmd)
 
 
 def chroot(directory, cmd, env_add=None, **kwargs):
@@ -237,7 +223,7 @@ def chroot(directory, cmd, env_add=None, **kwargs):
     >>> chroot("/", "true") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
     """
 
     new_env = {'LANG': 'C',
@@ -265,7 +251,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     >>> get_command_out("false") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    elbepack.shellhelper.CommandError: ...
+    subprocess.CalledProcessError: ...
 
     >>> get_command_out("false", allow_fail=True)
     b''
@@ -298,6 +284,6 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
         stdout, _ = p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
-        raise CommandError(cmd, p.returncode)
+        raise subprocess.CalledProcessError(p.returncode, cmd)
 
     return stdout

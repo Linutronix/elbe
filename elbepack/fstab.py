@@ -4,9 +4,10 @@
 # SPDX-FileCopyrightText: 2015 Matthias Buehler <matthias.buehler@de.trumpf.com>
 
 import os
+import subprocess
 import time
 
-from elbepack.shellhelper import CommandError, do, get_command_out
+from elbepack.shellhelper import do, get_command_out
 
 
 def get_mtdnum(xml, label):
@@ -96,7 +97,7 @@ class hdpart:
 
             try:
                 loopdev = get_command_out(cmd)
-            except CommandError as e:
+            except subprocess.CalledProcessError as e:
                 if e.returncode != 1:
                     raise
                 do('sync')
