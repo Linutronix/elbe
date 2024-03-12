@@ -168,37 +168,6 @@ def command_out_stderr(cmd, stdin=None, env_add=None):
     return p.returncode, output, stderr
 
 
-def system_out_stderr(cmd, stdin=None, allow_fail=False, env_add=None):
-    """system_out_stderr() - Wrapper around command_out_stderr()
-
-    Throws CommandError if cmd failed and allow_fail=False.  Otherwise,
-    returns the stdout and stderr of cmd.
-
-    --
-
-    >>> system_out_stderr("false") # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    elbepack.shellhelper.CommandError: ...
-
-    >>> system_out_stderr("cat - && false", allow_fail=True, stdin=b"ELBE")
-    ('ELBE', '')
-
-    >>> system_out_stderr("1>&2 cat -", allow_fail=True, stdin=b"ELBE")
-    ('', 'ELBE')
-
-    >>> system_out_stderr("1>&2 cat -", allow_fail=True, stdin="ELBE")
-    ('', 'ELBE')
-    """
-    code, out, err = command_out_stderr(cmd, stdin, env_add)
-
-    if code != 0:
-        if not allow_fail:
-            raise CommandError(cmd, code)
-
-    return out, err
-
-
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
