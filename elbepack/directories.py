@@ -22,8 +22,6 @@ def get_cmdlist():
 
 pack_dir = elbepack.__path__[0]
 
-xsdtoasciidoc_mako_fname = os.path.join(pack_dir, 'xsdtoasciidoc.mako')
-
 
 def run_elbe(args, **kwargs):
     return subprocess.run([sys.executable, elbe_exe, *args], **kwargs)

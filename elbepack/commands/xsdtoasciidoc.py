@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 
+import importlib.resources
 import sys
 from optparse import OptionParser
 
-from elbepack.directories import xsdtoasciidoc_mako_fname
+import elbepack
 from elbepack.templates import write_template
 from elbepack.treeutils import etree
 
@@ -34,4 +35,5 @@ def run_command(argv):
     d = {'opt': opt,
          'xml': xml}
 
-    write_template(opt.out, xsdtoasciidoc_mako_fname, d)
+    template = importlib.resources.files(elbepack) / 'xsdtoasciidoc.mako'
+    write_template(opt.out, template, d)
