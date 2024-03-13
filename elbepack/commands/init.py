@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2015, 2017, 2018 Linutronix GmbH
 
+import importlib.resources
 import logging
 import os
 import shutil
@@ -9,9 +10,10 @@ import subprocess
 import sys
 from optparse import OptionParser
 
+import elbepack.init
 from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
-from elbepack.directories import elbe_dir, init_template_dir
+from elbepack.directories import elbe_dir
 from elbepack.filesystem import Filesystem
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import do, system
@@ -194,13 +196,16 @@ def run_command(argv):
             ('default-init.xml', out_path, False, False),
         ]
 
+        template_dir = importlib.resources.files(elbepack.init)
+
         for t, out_dir, make_executable, linebreak in templates:
             o = t.replace('.mako', '')
 
-            write_template(
-                os.path.join(out_dir, o),
-                os.path.join(init_template_dir, t), d, linebreak=linebreak,
-            )
+            with importlib.resources.as_file(template_dir / t) as template:
+                write_template(
+                    os.path.join(out_dir, o),
+                    template, d, linebreak=linebreak,
+                )
 
             if make_executable:
                 os.chmod(os.path.join(out_dir, o), 0o755)

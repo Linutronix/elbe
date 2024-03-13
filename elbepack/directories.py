@@ -22,7 +22,6 @@ def get_cmdlist():
 
 pack_dir = elbepack.__path__[0]
 
-init_template_dir = os.path.join(pack_dir, 'init')
 mako_template_dir = os.path.join(pack_dir, 'makofiles')
 
 default_preseed_fname = os.path.join(pack_dir, 'default-preseed.xml')
