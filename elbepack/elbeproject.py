@@ -8,6 +8,7 @@ import glob
 import io
 import logging
 import os
+import shutil
 import subprocess
 import sys
 
@@ -34,7 +35,7 @@ from elbepack.pbuilder import (
 from elbepack.repomanager import ProjectRepo
 from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import chroot, do, system
+from elbepack.shellhelper import chroot, do
 from elbepack.templates import write_pack_template
 
 validation = logging.getLogger('validation')
@@ -64,7 +65,7 @@ class UnsupportedSDKException(Exception):
 
 
 def test_gen_sdk_scripts():
-    system('mkdir -p /tmp/test/sdk')
+    os.makedirs('/tmp/test/sdk')
     gen_sdk_scripts('armhf-linux-gnueabihf',
                     'ARM',
                     'testproject',
@@ -684,7 +685,8 @@ class ElbeProject:
         self.targetfs.pack_images(self.builddir)
 
         if os.path.exists(self.validationpath):
-            system(f'cat "{self.validationpath}"')
+            with open(self.validationpath) as f:
+                shutil.copyfileobj(f, sys.stdout)
 
     def pdebuild_init(self):
         # Remove pdebuilder directory, containing last build results
@@ -995,10 +997,10 @@ class ElbeProject:
             inrelease = glob.glob(f'{self.chrootpath}/var/lib/apt/lists/*InRelease')
             release_gpg = glob.glob(f'{self.chrootpath}/var/lib/apt/lists/*.gpg')
             if inrelease:
-                system(f'rm {inrelease[0]};')
+                os.remove(inrelease[0])
                 logging.info('Removed InRelease file!')
             if release_gpg:
-                system(f'rm {release_gpg[0]};')
+                os.remove(release_gpg[0])
                 logging.info('Removed Release.gpg file!')
 
         with target:
