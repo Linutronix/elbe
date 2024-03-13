@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import importlib.resources
 import os
 
-from elbepack.directories import default_preseed_fname, mako_template_dir
+import elbepack.makofiles
+from elbepack.directories import default_preseed_fname
 from elbepack.treeutils import etree
 
 from mako import exceptions
@@ -33,9 +35,10 @@ def write_template(outname, fname, d, linebreak=False):
 
 
 def write_pack_template(outname, fname, d, linebreak=False):
-    template_name = os.path.join(mako_template_dir, fname)
+    template_dir = importlib.resources.files(elbepack.makofiles)
 
-    write_template(outname, template_name, d, linebreak)
+    with importlib.resources.as_file(template_dir / fname) as template:
+        write_template(outname, template, d, linebreak)
 
 
 def get_preseed(xml):
