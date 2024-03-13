@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2018 Linutronix GmbH
 
-
-from elbepack.directories import pack_dir
+import pathlib
+import sys
 
 elbe_version = '14.9.3'
 
@@ -14,7 +14,4 @@ elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'elbe-schema',
                            'python3-elbe-bin']
 
-if pack_dir.startswith('/usr/lib/python'):
-    is_devel = False
-else:
-    is_devel = True
+is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)

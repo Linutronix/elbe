@@ -20,8 +20,5 @@ def get_cmdlist():
     return [x for _, x, _ in iter_modules(elbepack.commands.__path__)]
 
 
-pack_dir = elbepack.__path__[0]
-
-
 def run_elbe(args, **kwargs):
     return subprocess.run([sys.executable, elbe_exe, *args], **kwargs)
