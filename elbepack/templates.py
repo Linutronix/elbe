@@ -18,7 +18,7 @@ def fix_linebreak_escapes(s):
 def template(fname, d, linebreak=False):
     try:
         return Template(
-            filename=fname,
+            filename=os.fspath(fname),
             preprocessor=fix_linebreak_escapes if linebreak else None,
         ).render(**d)
     except BaseException:
