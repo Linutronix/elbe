@@ -447,7 +447,10 @@ class CheckImage(CheckBase):
         img_name = tag.text('./img')
         qemu = tag.text('./interpreter')
 
-        fw_opts = self._firmware_opts(tag.et.find('./interpreter-firmware'))
+        fw_opts = ''
+        interpreter_firmware = tag.et.find('./interpreter-firmware')
+        if interpreter_firmware is not None:
+            fw_opts = self._firmware_opts(tag)
 
         with self.open_img(img_name) as img:
 
