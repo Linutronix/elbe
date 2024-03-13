@@ -39,7 +39,7 @@ def simple_build(request, tmp_path_factory):
     system(f'{sys.executable} {elbe_exe} control list_projects | '
            f'grep {uuid} | grep build_done || false')
 
-    yield uuid
+    yield build_dir
 
     _delete_project(uuid)
 
