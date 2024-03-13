@@ -75,10 +75,8 @@ def copy_filelist(src, file_lst, dst):
 
         else:
             try:
-                system(
-                    'cp -a --reflink=auto '
-                    f'"{src.realpath(f)}" "{dst.realpath(f)}"')
-            except subprocess.CalledProcessError as E:
+                shutil.copy2(src.realpath(f), dst.realpath(f))
+            except OSError as E:
                 logging.warning('Error while copying from %s to %s of file %s - %s',
                                 src.path, dst.path, f, E)
 
@@ -257,28 +255,28 @@ class Excursion:
     def _do_excursion(self, rfs):
         if rfs.lexists(self.origin) and self.restore is True:
             save_to = self._saved_to()
-            system(f'mv {rfs.fname(self.origin)} {rfs.fname(save_to)}')
+            shutil.move(rfs.fname(self.origin), rfs.fname(save_to))
         if os.path.exists(self.origin):
             if self.dst is not None:
                 dst = self.dst
             else:
                 dst = self.origin
-            system(f'cp {self.origin} {rfs.fname(dst)}')
+            shutil.copy2(self.origin, rfs.fname(dst))
 
     # This should be a method of rfs
     @staticmethod
     def _del_rfs_file(filename, rfs):
         if rfs.lexists(filename):
-            flags = '-f'
             if rfs.isdir(filename):
-                flags += 'r'
-            system(f'rm {flags} {rfs.fname(filename)}')
+                shutil.rmtree(rfs.fname(filename))
+            else:
+                os.unlink(rfs.fname(filename))
 
     def _undo_excursion(self, rfs):
         saved_to = self._saved_to()
         self._del_rfs_file(self.origin, rfs)
         if self.restore is True and rfs.lexists(saved_to):
-            system(f'mv {rfs.fname(saved_to)} {rfs.fname(self.origin)}')
+            shutil.move(rfs.fname(saved_to), rfs.fname(self.origin))
 
 
 class ChRootFilesystem(ElbeFilesystem):
