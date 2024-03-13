@@ -22,7 +22,6 @@ def get_cmdlist():
 
 pack_dir = elbepack.__path__[0]
 
-default_preseed_fname = os.path.join(pack_dir, 'default-preseed.xml')
 xsdtoasciidoc_mako_fname = os.path.join(pack_dir, 'xsdtoasciidoc.mako')
 
 

@@ -5,8 +5,8 @@
 import importlib.resources
 import os
 
+import elbepack
 import elbepack.makofiles
-from elbepack.directories import default_preseed_fname
 from elbepack.treeutils import etree
 
 from mako import exceptions
@@ -41,8 +41,13 @@ def write_pack_template(outname, fname, d, linebreak=False):
         write_template(outname, template, d, linebreak)
 
 
+def _default_preseed():
+    with importlib.resources.files(elbepack) / 'default-preseed.xml' as f:
+        return etree(f)
+
+
 def get_preseed(xml):
-    def_xml = etree(default_preseed_fname)
+    def_xml = _default_preseed()
 
     preseed = {}
     for c in def_xml.node('/preseed'):
@@ -64,7 +69,7 @@ def get_preseed(xml):
 
 
 def get_initvm_preseed(xml):
-    def_xml = etree(default_preseed_fname)
+    def_xml = _default_preseed()
 
     preseed = {}
     for c in def_xml.node('/preseed'):
