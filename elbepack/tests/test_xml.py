@@ -2,28 +2,19 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
-import os
 import subprocess
 
-from elbepack.directories import elbe_dir, run_elbe
+from elbepack.directories import run_elbe
+from elbepack.tests import parametrize_xml_test_files, xml_test_files
 
 import pytest
-
-
-def _test_cases(prefix):
-    return [
-        os.path.join(elbe_dir, 'tests', fname)
-        for fname
-        in os.listdir(os.path.join(elbe_dir, 'tests'))
-        if fname.startswith(prefix) and fname.endswith('.xml')
-    ]
 
 
 def _delete_project(uuid):
     run_elbe(['control', 'del_project', uuid])
 
 
-@pytest.fixture(scope='module', params=_test_cases('simple'))
+@pytest.fixture(scope='module', params=xml_test_files('simple'), ids=lambda f: f.name)
 def simple_build(request, tmp_path_factory):
     build_dir = tmp_path_factory.mktemp('build_dir')
     prj = build_dir / 'uuid.prj'
@@ -56,7 +47,7 @@ def test_simple_build(simple_build, check_build):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize('xml', _test_cases('pbuilder'))
+@parametrize_xml_test_files('xml', 'pbuilder')
 def test_pbuilder_build(xml, tmp_path, request):
     build_dir = tmp_path
     prj = build_dir / 'uuid.prj'
