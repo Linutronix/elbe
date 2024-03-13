@@ -4,6 +4,7 @@
 # SPDX-FileCopyrightText: 2018 Oliver Brandt <oliver.brandt@lenze.com>
 
 import os
+import shutil
 import sys
 
 # don't remove the apt import, it is really needed, due to some magic in
@@ -15,7 +16,6 @@ import apt_pkg
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.rfs import create_apt_prefs
-from elbepack.shellhelper import system
 
 
 def getdeps(pkg):
@@ -186,11 +186,9 @@ class VirtApt:
             sys.exit(204)
 
         if os.path.exists('/etc/apt/trusted.gpg'):
-            system(f'cp /etc/apt/trusted.gpg "{ring_path}"')
+            shutil.copyfile('/etc/apt/trusted.gpg', ring_path)
 
-        trustkeys = os.listdir('/etc/apt/trusted.gpg.d')
-        for key in trustkeys:
-            system(f'cp "/etc/apt/trusted.gpg.d/{key}" "{ring_path}.d"')
+        shutil.copytree('/etc/apt/trusted.gpg.d', ring_path + '.d')
 
     def mark_install(self, pkgname):
         self.depcache.mark_install(self.cache[pkgname])
