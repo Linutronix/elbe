@@ -2,22 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020-2021 Linutronix GmbH
 
-import os
-
-from elbepack.directories import elbe_dir, run_elbe
-
-import pytest
+from elbepack.directories import run_elbe
+from elbepack.tests import parametrize_xml_test_files
 
 
-def _test_cases():
-    return [
-        os.path.join(elbe_dir, 'tests', fname)
-        for fname
-        in os.listdir(os.path.join(elbe_dir, 'tests'))
-        if fname.startswith('preproc') and fname.endswith('.xml')
-    ]
-
-
-@pytest.mark.parametrize('f', _test_cases())
+@parametrize_xml_test_files('f', 'preproc')
 def test_preproc(f):
     run_elbe(['preprocess', f], check=True)
