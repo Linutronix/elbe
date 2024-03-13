@@ -185,27 +185,25 @@ def run_command(argv):
                               'on how to work around the issue')
             sys.exit(85)
 
-        templates = os.listdir(init_template_dir)
+        templates = [
+            ('init-elbe.sh.mako', out_path, True, False),
+            ('preseed.cfg.mako', out_path, True, False),
+            ('Makefile.mako', opt.directory, False, True),
+            ('libvirt.xml.mako', opt.directory, False, True),
+            ('apt.conf.mako', out_path, False, False),
+            ('default-init.xml', out_path, False, False),
+        ]
 
-        make_executable = ['init-elbe.sh.mako',
-                           'preseed.cfg.mako']
-
-        for t in templates:
+        for t, out_dir, make_executable, linebreak in templates:
             o = t.replace('.mako', '')
 
-            if t in ('Makefile.mako', 'libvirt.xml.mako'):
-                write_template(
-                    os.path.join(
-                        opt.directory, o), os.path.join(
-                        init_template_dir, t), d, linebreak=True)
-            else:
-                write_template(
-                    os.path.join(
-                        out_path, o), os.path.join(
-                        init_template_dir, t), d, linebreak=False)
+            write_template(
+                os.path.join(out_dir, o),
+                os.path.join(init_template_dir, t), d, linebreak=linebreak,
+            )
 
-            if t in make_executable:
-                os.chmod(os.path.join(out_path, o), 0o755)
+            if make_executable:
+                os.chmod(os.path.join(out_dir, o), 0o755)
 
         shutil.copyfile(args[0],
                         os.path.join(out_path, 'source.xml'))
