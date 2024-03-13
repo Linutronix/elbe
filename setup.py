@@ -4,18 +4,17 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2014, 2017-2018 Linutronix GmbH
 
-import subprocess
 import os
-import glob
+import subprocess
+
+from elbepack.version import elbe_version
 
 from setuptools import setup
 from setuptools.command.install import install
 
-from elbepack.version import elbe_version
-
 
 def abspath(path):
-    """A method to determine absolute path
+    """ method to determine absolute path
 for a relative path inside project's directory."""
 
     return os.path.abspath(
@@ -28,15 +27,15 @@ class my_install(install):
     def run(self):
         install.run(self)
         if self.root:
-            envvars = dict({"prefix": self.prefix,
-                            "DESTDIR": self.root},
+            envvars = dict({'prefix': self.prefix,
+                            'DESTDIR': self.root},
                            **dict(os.environ))
         else:
-            envvars = dict({"prefix": self.prefix}, **dict(os.environ))
+            envvars = dict({'prefix': self.prefix}, **dict(os.environ))
 
-        docs_dir = abspath("./docs/")
+        docs_dir = abspath('./docs/')
 
-        output = subprocess.Popen("make install",
+        output = subprocess.Popen('make install',
                                   shell=True,
                                   stdout=subprocess.PIPE,
                                   cwd=docs_dir,
@@ -56,19 +55,19 @@ setup(name='elbe',
                 'elbepack.daemons.soap',
                 'elbepack.schema',
                 ],
-      package_data={'elbepack': ["makofiles/*.mako",
-                                 "init/*.mako",
-                                 "init/*.xml",
-                                 "default-preseed.xml",
-                                 "xsdtoasciidoc.mako",
-                                 "schema/dbsfed.xsd",
-                                 "schema/xml.xsd"]},
+      package_data={'elbepack': ['makofiles/*.mako',
+                                 'init/*.mako',
+                                 'init/*.xml',
+                                 'default-preseed.xml',
+                                 'xsdtoasciidoc.mako',
+                                 'schema/dbsfed.xsd',
+                                 'schema/xml.xsd']},
       scripts=['elbe'],
-      cmdclass={"install": my_install},
-      install_requires=["lxml",
-                        "Mako",
-                        "passlib",
-                        "pycdlib",
-                        "python-debian",
-                        "suds-community"]
+      cmdclass={'install': my_install},
+      install_requires=['lxml',
+                        'Mako',
+                        'passlib',
+                        'pycdlib',
+                        'python-debian',
+                        'suds-community']
       )
