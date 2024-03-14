@@ -13,7 +13,6 @@ import elbepack
 
 # set global variables that are used in other modules via imports
 elbe_exe = os.path.abspath(os.path.realpath(__main__.__file__))
-elbe_dir = os.path.dirname(elbe_exe)
 
 
 def get_cmdlist():
