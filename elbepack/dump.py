@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import collections
 import logging
 from datetime import datetime
 from fnmatch import fnmatchcase
@@ -203,11 +204,27 @@ def elbe_report(xml, buildenv, cache, targetfs):
     report.info('')
     report.info('Installed Packages List')
     report.info('-----------------------')
-    report.info('')
 
     instpkgs = cache.get_installed_pkgs()
+
+    groups = collections.defaultdict(list)
     for p in instpkgs:
-        report.info('|%s|%s|%s', p.name, p.installed_version, p.origin)
+        o, _, _ = p.origin.split(' ')
+        if o.endswith('.debian.org'):
+            # Group upstream packages together.
+            o = 'Debian'
+
+        groups[o].append(p)
+
+    # Sort alphabetically, 'Debian' last.
+    for origin, pkgs in sorted(groups.items(), key=lambda x: (x[0] == 'Debian', x[0])):
+        report.info('')
+        report.info('%s', origin)
+        report.info('~' * len(origin))
+        report.info('')
+
+        for p in pkgs:
+            report.info('|%s|%s|%s', p.name, p.installed_version, p.origin)
 
     index = cache.get_fileindex(removeprefix='/usr')
     mt_index = targetfs.mtime_snap()
