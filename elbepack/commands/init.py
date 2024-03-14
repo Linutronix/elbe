@@ -5,6 +5,7 @@
 import importlib.resources
 import logging
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
@@ -13,10 +14,9 @@ from optparse import OptionParser
 import elbepack.init
 from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
-from elbepack.directories import elbe_dir
 from elbepack.filesystem import Filesystem
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import do, system
+from elbepack.shellhelper import do
 from elbepack.templates import get_initvm_preseed, write_template
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
@@ -241,18 +241,16 @@ def run_command(argv):
             env_add={'GNUPGHOME': out_path})
 
         if opt.devel:
-            out_real = os.path.realpath(out_path)
-            opts = []
-            if out_real.startswith(elbe_dir + os.sep):
-                opts.append(
-                    f'--exclude "{os.path.relpath(out_path, start=elbe_dir)}"')
+            opts = [
+                '--exclude-vcs',
+                '--exclude-vcs-ignores',
+            ]
 
-            opts.append('--exclude-vcs')
-            opts.append('--exclude-vcs-ignores')
-            opts.append("--exclude='elbe-build*'")
-            opts.append("--exclude='docs/*'")
             tar_fname = os.path.join(out_path, 'elbe-devel.tar.bz2')
-            system(f'tar cfj "{tar_fname}" {" ".join(opts)} -C "{elbe_dir}" .')
+            source_dir = pathlib.Path(__file__).parents[2]
+            subprocess.run([
+                'tar', 'cfj', tar_fname, *opts, '-C', source_dir, 'elbepack', 'elbe'
+            ], check=True)
 
         to_cpy = [('apt.conf', 'etc/apt'),
                   ('init-elbe.sh', ''),
