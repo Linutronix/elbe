@@ -10,7 +10,7 @@ from optparse import OptionParser
 from apt import Cache
 from apt.package import FetchError
 
-from elbepack.aptpkgutils import fetch_binary, fetch_source, get_corresponding_source_packages
+from elbepack.aptpkgutils import fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
 from elbepack.elbexml import ElbeXML, ValidationError
@@ -110,9 +110,7 @@ def run_command(argv):
                     try:
                         p = cache[pkg.name]
                         pkgver = p.installed
-                        deb = fetch_binary(pkgver,
-                                           opt.archive,
-                                           ElbeAcquireProgress(cb=None))
+                        deb = pkgver.fetch_binary(opt.archive, ElbeAcquireProgress(cb=None))
                         repo.includedeb(deb, 'main', prio=pkgver.priority)
                         break
                     except ValueError:

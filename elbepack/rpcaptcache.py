@@ -15,7 +15,6 @@ from apt_pkg import config, version_compare
 
 from elbepack.aptpkgutils import (
     APTPackage,
-    fetch_binary,
     fetch_source,
     get_corresponding_source_packages,
     getalldeps,
@@ -332,9 +331,7 @@ class RPCAPTCache(InChRootObject):
             pkgver = p.installed
         else:
             pkgver = p.versions[version]
-        rel_filename = fetch_binary(pkgver,
-                                    path,
-                                    ElbeAcquireProgress())
+        rel_filename = pkgver.fetch_binary(path, ElbeAcquireProgress())
         return self.rfs.fname(rel_filename)
 
     def download_source(self, src_name, src_version, dest_dir):

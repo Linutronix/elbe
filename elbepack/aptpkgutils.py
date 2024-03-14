@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2005-2009 Canonical
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-import logging
 import os
 
 import apt
@@ -93,57 +92,6 @@ def pkgorigin(pkg):
         origin = None
 
     return origin
-
-
-def _file_is_same(path, size, sha256):
-    """Return ``True`` if the file is the same."""
-    if os.path.exists(path) and os.path.getsize(path) == size:
-        with open(path) as fobj:
-            return apt_pkg.sha256sum(fobj) == sha256
-    return False
-
-
-def fetch_binary(version, destdir='', progress=None):
-    """Fetch the binary version of the package.
-
-    The parameter *destdir* specifies the directory where the package will
-    be fetched to.
-
-    The parameter *progress* may refer to an apt_pkg.AcquireProgress()
-    object. If not specified or None, apt.progress.text.AcquireProgress()
-    is used.
-
-    taken from python-apt-1.8.4
-    https://salsa.debian.org/apt-team/python-apt/-/blob/1.8.4/apt/package.py
-
-    ---------------------------------------------------------
-    Copyright (c) 2005-2009 Canonical
-
-    Author: Michael Vogt <michael.vogt@ubuntu.com>
-    ---------------------------------------------------------
-
-    Then fixed up to use sha256 and pass pycodestyle.
-    """
-    base = os.path.basename(version._records.filename)
-    destfile = os.path.join(destdir, base)
-    if _file_is_same(destfile, version.size, version._records.sha256_hash):
-        logging.debug('Ignoring already existing file: %s', destfile)
-        return os.path.abspath(destfile)
-    acq = apt_pkg.Acquire(progress or apt.progress.text.AcquireProgress())
-    acqfile = apt_pkg.AcquireFile(acq,
-                                  version.uri,
-                                  'SHA256:' + version._records.sha256_hash,
-                                  version.size,
-                                  base,
-                                  destfile=destfile)
-    acq.run()
-
-    if acqfile.status != acqfile.STAT_DONE:
-        raise FetchError(
-            f'The item {acqfile.destfile} could not be fetched: '
-            f'{acqfile.error_text}')
-
-    return os.path.abspath(destfile)
 
 
 def fetch_source(name, version, destdir, progress=None):
