@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pkgutil import iter_modules
 
-import elbepack
+import elbepack.commands
 
 
 # set global variables that are used in other modules via imports

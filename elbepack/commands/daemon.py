@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-import sys
+import importlib
 from optparse import OptionParser
 from pkgutil import iter_modules
 
@@ -37,8 +37,7 @@ def run_command(argv):
     for d in daemons:
         print(f'enable {d}')
         module = 'elbepack.daemons.' + str(d)
-        _ = __import__(module)
-        cmdmod = sys.modules[module]
+        cmdmod = importlib.import_module(module)
         cherrypy.tree.graft(
             cmdmod.get_app(cherrypy.engine), '/' + str(d))
 
