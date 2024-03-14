@@ -28,32 +28,19 @@ def run_command(argv):
                        help='port to host daemon')
 
     for d in daemons:
-        oparser.add_option('--' + str(d), dest=str(d), default=False,
+        # unused, compatibility with old initscripts
+        oparser.add_option('--' + str(d), dest='_ignored', default=False,
                            action='store_true', help='enable ' + str(d))
 
     (opt, _) = oparser.parse_args(argv)
 
-    active = False
-
     for d in daemons:
-        for o in dir(opt):
-            if str(o) == str(d):
-                if getattr(opt, o):
-                    active = True
-                    print(f'enable {d}')
-                    module = 'elbepack.daemons.' + str(d)
-                    _ = __import__(module)
-                    cmdmod = sys.modules[module]
-                    cherrypy.tree.graft(
-                        cmdmod.get_app(
-                            cherrypy.engine),
-                        '/' + str(d))
-    if not active:
-        print('no daemon activated, use')
-        for d in daemons:
-            print(f'   --{d}')
-        print('to activate at least one daemon')
-        return
+        print(f'enable {d}')
+        module = 'elbepack.daemons.' + str(d)
+        _ = __import__(module)
+        cmdmod = sys.modules[module]
+        cherrypy.tree.graft(
+            cmdmod.get_app(cherrypy.engine), '/' + str(d))
 
     cherrypy.server.unsubscribe()
     server = cherrypy._cpserver.Server()
