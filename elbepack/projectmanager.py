@@ -7,7 +7,6 @@ import os
 from os import path
 from shutil import rmtree
 from threading import Lock
-from uuid import uuid4
 
 from elbepack.asyncworker import (
     APTCommitJob,
@@ -29,6 +28,7 @@ from elbepack.asyncworker import (
 from elbepack.db import ElbeDB, get_versioned_filename
 from elbepack.elbexml import ValidationMode
 from elbepack.log import read_loggingQ
+from elbepack.uuid7 import uuid7
 
 
 class ProjectManagerError(Exception):
@@ -80,7 +80,7 @@ class ProjectManager:
         self.worker.stop()
 
     def new_project(self, userid):
-        subdir = str(uuid4())
+        subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
         self.db.create_project(builddir, owner_id=userid)
         return builddir
@@ -90,7 +90,7 @@ class ProjectManager:
             userid,
             xml_file,
             url_validation=ValidationMode.CHECK_ALL):
-        subdir = str(uuid4())
+        subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
 
         with self.lock:

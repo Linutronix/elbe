@@ -38,6 +38,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/templates.py
 ./usr/lib/python3.*/*-packages/elbepack/toolchain.py
 ./usr/lib/python3.*/*-packages/elbepack/treeutils.py
+./usr/lib/python3.*/*-packages/elbepack/uuid7.py
 ./usr/lib/python3.*/*-packages/elbepack/validate.py
 ./usr/lib/python3.*/*-packages/elbepack/version.py
 ./usr/lib/python3.*/*-packages/elbepack/virtapt.py

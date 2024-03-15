@@ -7,14 +7,14 @@
 # TODO: Relativ file path for diskimage
 
 
-import uuid
 import multiprocessing
 import os
 import shutil
 from elbepack.filesystem import size_to_int
+from elbepack.uuid7 import uuid7
 
 # Generate UUID
-uid = uuid.uuid4()
+uid = uuid7()
 
 name = cfg['initvm_domain']
 cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
