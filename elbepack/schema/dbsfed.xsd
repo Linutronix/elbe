@@ -2979,6 +2979,15 @@ SPDX-FileCopyrightText: Linutronix GmbH
             the given mirrors into the target rootfilesystem.
           </documentation>
         </annotation>
+        <unique name="pkg-list-mutual-exclusive-pkg-pin-or-version">
+          <annotation>
+            <documentation>
+              Only one of pin= or version= can be specified at the same time.
+            </documentation>
+          </annotation>
+          <selector xpath="."/>
+          <field xpath="@pin | @version"/>
+        </unique>
       </element>
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
@@ -3015,6 +3024,15 @@ SPDX-FileCopyrightText: Linutronix GmbH
             Reference to a binary debian package which is supposed to be installed.
           </documentation>
         </annotation>
+        <unique name="fullpkg-list-mutual-exclusive-pkg-pin-or-version">
+          <annotation>
+            <documentation>
+              Only one of pin= or version= can be specified at the same time.
+            </documentation>
+          </annotation>
+          <selector xpath="."/>
+          <field xpath="@pin | @version"/>
+        </unique>
       </element>
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
