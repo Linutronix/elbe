@@ -76,11 +76,6 @@ def run_command(argv):
     oparser.add_option('--port', dest='port', type=int, default=7587,
                        help='port to host daemon')
 
-    for d in daemons:
-        # unused, compatibility with old initscripts
-        oparser.add_option('--' + str(d), dest='_ignored', default=False,
-                           action='store_true', help='enable ' + str(d))
-
     (opt, _) = oparser.parse_args(argv)
 
     with contextlib.ExitStack() as stack:
