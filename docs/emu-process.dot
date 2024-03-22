@@ -1,0 +1,18 @@
+digraph {
+	node [shape="box"]
+
+	debootstrap
+	pkg [label="package installation" style="filled" fillcolor="lightgrey"]
+	copy
+	unpack_cfg_1 [label="unpack config archive"]
+	finetuning
+	unpack_cfg_2 [label="unpack config archive"]
+	tar [label="generate tar"]
+	disk_image [label="generate disk image"]
+	iso_image [label="generate ISO image(s)"]
+
+	debootstrap -> pkg -> copy -> unpack_cfg_1 -> finetuning -> unpack_cfg_2
+	unpack_cfg_2 -> tar
+	unpack_cfg_2 -> disk_image
+	unpack_cfg_2 -> iso_image
+}

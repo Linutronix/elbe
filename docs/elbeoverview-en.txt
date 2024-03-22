@@ -78,13 +78,19 @@ When an xml File is now submitted into the initvm, the following happens:
 
 This diagram illustrates the complete process:
 
-image:elbe-process.png[]
+["graphviz", "elbe-process.png", "neato"]
+------------------------------------------------------------------------------
+include::elbe-process.dot[]
+------------------------------------------------------------------------------
 
 The following figure shows the steps performed inside the build VM during the
 build process of the target. The highlighted steps are performed inside a
 chroot environment:
 
-image:emu-process.png[]
+[graphviz]
+------------------------------------------------------------------------------
+include::emu-process.dot[]
+------------------------------------------------------------------------------
 
 .No automatic startup of services during package installation
 ******************************************************************************

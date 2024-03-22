@@ -42,7 +42,6 @@ MANPAGE_XSL = manpage-normal.xsl
 XMLTO_EXTRA =
 INSTALL?=install
 RM ?= rm -f
-DIA ?= dia
 
 DOCBOOK_XSL_172=1
 
@@ -84,7 +83,6 @@ clean:
 	$(RM) article*.rst elbe*.rst *.xml *.xml+ *.html *.html+ *.1 *.5 *.7
 	$(RM) *.texi *.texi+ *.texi++ git.info gitman.info
 	$(RM) *.pdf
-	$(RM) *.png
 	$(RM) howto-index.txt howto/*.html doc.dep
 	$(RM) technical/api-*.html technical/api-index.txt
 	$(RM) $(cmds_txt) *.made
@@ -115,15 +113,7 @@ manpage-base-url.xsl: manpage-base-url.xsl.in
 		$(ASCIIDOC_EXTRA) -agit_version=$(ELBE_VERSION) -o $@+ $< && \
 	mv $@+ $@
 
-%.svg : %.dia
-	$(RM) $@ && \
-	$(DIA) --export=$@ $<
-
-%.png : %.dia
-	$(RM) $@ && \
-	$(DIA) --export=$@ $<
-
-elbeoverview-en.html : elbeoverview-en.txt elbe-process.png emu-process.png
+elbeoverview-en.html : elbeoverview-en.txt
 	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o elbeoverview-en.xml $< && \
 	pandoc -r docbook -w rst -o article-elbeoverview-en.rst elbeoverview-en.xml
 	sed -i "1s/^/************************\n\n/" article-elbeoverview-en.rst
@@ -139,7 +129,7 @@ quickstart.html : quickstart.txt
 	sed -i "1s/^/************************\n/" article-quickstart.rst
 	$(ASCIIDOC) -a toc2 $(ASCIIDOC_EXTRA) $(ASCIIDOC_DATA_URI) -b xhtml11 quickstart.txt
 
-elbeoverview-en-ie.html: elbeoverview-en.txt elbe-process.png emu-process.png
+elbeoverview-en-ie.html: elbeoverview-en.txt
 	$(ASCIIDOC) -d article -b docbook -agit_version=$(ELBE_VERSION) -o $*.xml $< && \
 	pandoc -r docbook -w rst -o article-$*.rst $*.xml
 	sed -i "1s/^/************************\n\n/" $*.rst

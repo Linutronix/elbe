@@ -1,0 +1,92 @@
+digraph {
+/*
+	zero_zero [pos="0,0!" style=filled fillcolor=red];
+	zero_ten [pos="0,10!" style=filled fillcolor=red];
+	ten_zero [pos="10,0!" style=filled fillcolor=red];
+	ten_ten [pos="10,10!" style=filled fillcolor=red];
+*/
+
+        build_vm [
+		label="       build VM" labelloc=t
+		shape=box style=filled fillcolor=cornflowerblue
+		width=4 height=7 pos="3.3,5!"
+	];
+        build_vm_installation [
+		label="build VM installation" labelloc=t
+		shape=box style=filled fillcolor=lightgrey
+		width=3 height=2 pos="3,7!"
+	];
+        target_build [
+		label="target build" labelloc=t
+		shape=box style=filled fillcolor=lightgrey
+		width=3.5 height=2 pos="3.3,4.6!"
+	];
+
+	elbe_mirror_2 [shape="cylinder" label="Elbe mirror" pos="0.5,6.2!"];
+	debian_mirror_1 [shape="cylinder" label="Debian mirror" pos="0.5,6.8!"];
+
+	debian_mirror_2 [shape="cylinder" label="Debian mirror" pos="0.5,3.7!"];
+	other_repo [shape="cylinder" label="other repo" pos="0.5,4.3!"];
+
+	xml [label="xml file" shape=box pos="3,10!"];
+	build_vm_directory [label="build VM directory" shape=box pos="3,9!"];
+	elbe_mirror_1 [label="Elbe mirror" shape="cylinder" pos="1,9.5!"];
+	buildenv_img [label="buildenv.img" shape=box pos="6,6.5!"];
+
+
+	rfs_tgz [label="rfs.tar.gz" shape=box pos="6,4.6!"];
+	rfs_img [label="rfs.img" shape=box pos="6,4!"];
+	install_iso [label="install.iso" shape=box pos="6,3.4!"];
+
+	connector_xml_build_vm_directory [shape = point width = 0 pos="3,9.5!"];
+
+	xml -> connector_xml_build_vm_directory [arrowhead = none];
+	elbe_mirror_1 -> connector_xml_build_vm_directory;
+	connector_xml_build_vm_directory -> build_vm_directory;
+
+	subgraph {
+		style="filled";
+		fillcolor="lightblue";
+		label="Build VM";
+
+		node [style="filled", fillcolor="white"];
+
+
+		elbe_buildenv [label="elbe-buildenv" shape=box pos="3,7.5!"];
+		debian_installation_1 [label="Debian installation" pos="3,6.5!"];
+
+		subgraph {
+			label="target build";
+			style="filled";
+			fillcolor="lightgrey";
+
+			pkglist [shape=box pos="2,5!"];
+			finetuning [shape=box pos="3,5!"];
+			config_archive[label="config archive" shape=box pos="4.3,5!"];
+			debian_installation_2[label="Debian installation" pos="3,4!"];
+		}
+
+		chroot [shape=box pos="3,3!"];
+		target_chroot [label="target chroot" shape=box style=filled fillcolor=lightgrey width=3 height=0.5 pos="3,2!"];
+	}
+
+	build_vm_directory -> build_vm_installation;
+	build_vm_installation -> target_build;
+
+	debian_mirror_1 -> debian_installation_1;
+	elbe_mirror_2 -> debian_installation_1;
+	debian_installation_1 -> buildenv_img;
+	elbe_buildenv -> debian_installation_1;
+
+	debian_mirror_2 -> debian_installation_2;
+	other_repo -> debian_installation_2;
+	pkglist -> debian_installation_2;
+	finetuning -> debian_installation_2;
+	config_archive -> debian_installation_2;
+	debian_installation_2 -> chroot;
+	debian_installation_2 -> rfs_tgz;
+	debian_installation_2 -> rfs_img;
+	debian_installation_2 -> install_iso;
+
+	chroot -> target_chroot;
+}
