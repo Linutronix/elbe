@@ -1,0 +1,380 @@
+************************
+elbe-parselicence
+************************
+
+.. _`_name`:
+
+NAME
+====
+
+elbe-parselicence - Generate a file containing the licences of the
+packages included in a project.
+
+.. _`_synopsis`:
+
+SYNOPSIS
+========
+
+   ::
+
+      elbe parselicence \
+              --mapping <filename> \
+              [ --output <filename> \
+              [ --tvout <filename> \
+              [ --use-nomos ] \
+              [ --errors-only ] \
+              <licence.xml filename>
+
+.. _`_description`:
+
+DESCRIPTION
+===========
+
+*elbe-parselicence* parses an xml file with licence information. This
+xml file is generated during an elbe build. SPDX Licenses information is
+generated using mappings and overrides found in the mapping file.
+
+This information is written to an output xml file, and to a tagvalue
+based SPDX File.
+
+.. _`_options`:
+
+OPTIONS
+=======
+
+--mapping <filename>
+   Use <filename> to aid with packages which contain
+   non-machine-readable or incomplete Licence infos. The format is
+   explained in the chapter MAPPING FILE.
+
+--output <filename>
+   Write the xml result to <filename>.
+
+--tvout <filename>
+   Write the tagvalue result to <filename>.
+
+--use-nomos
+   Also pipe licence text through nomos, and add this info to xml
+   Datastructures.
+
+--errors-only
+   Only Output Packages with errors. This is useful during the Phase
+   where the mapping file is setup.
+
+<licence.xml filename>
+   licence.xml File generated during elbe build.
+
+.. _`_workflow`:
+
+WORKFLOW
+========
+
+Elbe generates a ``license.xml`` File. This file is then parsed using
+
+::
+
+   elbe parselicence --mapping my_mapping.xml /path/to/license.xml --errors-only --output out.xml
+
+.. note::
+
+   an example mapping is still missing. Maybe you can use some text from
+   this man page.
+
+The previous step will only output nodes into out.xml where an error
+happened. The errors need to be fixed by expanding ``my_mapping.xml``
+
+.. note::
+
+   ``my_mapping.xml`` is describe in it own chapter.
+
+When no more errors happen, one can remove the option ``--errors-only``
+and use the out.xml or generate tag-value output using option
+``--tvout <filename>``
+
+::
+
+   elbe parselicence --mapping my_mapping.xml /path/to/license.xml --tvout spdx_licenses.tagvalue
+
+.. _`_license_xml_file`:
+
+LICENSE.XML FILE
+================
+
+When elbe builds an image, it will look at all
+``/usr/share/doc/*/copyright`` Files, and concatenate them into
+``license.txt``. Elbe will also generate ``license.xml``, which also
+contains meta-data extracted from machine-readable copyright files, or
+generated via heuristics.
+
+There are 3 possibitlities per Package:
+
+.. _`_copyright_file_is_machine_readable`:
+
+Copyright File is machine-readable
+----------------------------------
+
+The debian Licenses and all per file information is put into the xml
+file if the copyright file is machine-readable.
+
+The ``<pkglicense>`` tag will contain a ``<machinereadable />`` tag, and
+also ``<debian_licenses>`` and a ``<detailed>`` tag.
+
+Example:
+
+.. code:: xml
+
+   <pkglicense name="liblogging-stdlog0"><text>Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+   Upstream-Name: liblogging
+   Source: http://www.liblogging.org/
+
+   Files: *
+   Copyright: 2002-2014 Rainer Gerhards and Adiscon GmbH.
+   License: BSD-2-Clause
+
+   License: BSD-2-Clause
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    .
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE HOLDERS OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   </text>
+   <machinereadable />
+   <debian_licenses><license>BSD-2-Clause</license>
+   </debian_licenses>
+   <detailed><files><glob>*</glob>
+   <license>BSD-2-Clause</license>
+   <copyright>2002-2014 Rainer Gerhards and Adiscon GmbH.</copyright>
+   </files>
+   </detailed>
+   </pkglicense>
+
+.. _`_some_information_can_be_extracted_via_heuristics`:
+
+Some information can be extracted via heuristics
+------------------------------------------------
+
+There are quite a few copyright files which almost adopted the new
+machine readable Format. But the parser does not accept it.
+
+The heuristic will look for lines containing ``License: *`` and will
+extract that info into a ``<debian_licenses>`` tag.
+
+Example:
+
+.. code:: xml
+
+   <pkglicense name="libapt-pkg4.12"><text>Apt is copyright 1997, 1998, 1999 Jason Gunthorpe and others.
+   Apt is currently developed by APT Development Team &lt;deity@lists.debian.org&gt;.
+
+   License: GPLv2+
+
+       This program is free software; you can redistribute it and/or modify
+       it under the terms of the GNU General Public License as published by
+       the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This program is distributed in the hope that it will be useful,
+       but WITHOUT ANY WARRANTY; without even the implied warranty of
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+       GNU General Public License for more details.
+
+       You should have received a copy of the GNU General Public License
+       along with this program; if not, write to the Free Software
+       Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+
+   See /usr/share/common-licenses/GPL-2, or
+   &lt;http://www.gnu.org/copyleft/gpl.txt&gt; for the terms of the latest version
+   of the GNU General Public License.
+
+   </text>
+   <heuristics />
+   <debian_licenses><license>GPLv2+</license>
+   </debian_licenses>
+   </pkglicense>
+
+.. _`_no_information_can_be_extracted_automatically`:
+
+No information can be extracted automatically
+---------------------------------------------
+
+Only the text will be put into the xml File.
+
+Example:
+
+.. code:: xml
+
+   <pkglicense name="bsd-mailx"><text>This package was debianized by Loic Prylli &lt;lprylli@graville.fdn.fr&gt; on
+   Mon, 23 Dec 1996 00:13:13 +0100.
+   The package is currently maintained by Robert Luberda &lt;robert@debian.org&gt;
+
+   It is now based on OpenBSD in directory src/usr.bin/mail on a lot of major
+   ftp sites.
+   See the README.Debian (and changelog.Debian) for the complicated history
+   of the Debian package.
+
+   Copyright (c) 1980, 1993 The Regents of the University of California.
+
+
+
+   This software is licensed under the BSD License. The complete text of
+   the license is included below:
+
+
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions
+      are met:
+      1. Redistributions of source code must retain the above copyright
+         notice, this list of conditions and the following disclaimer.
+      2. Redistributions in binary form must reproduce the above copyright
+         notice, this list of conditions and the following disclaimer in the
+         documentation and/or other materials provided with the distribution.
+      3. Neither the name of the University nor the names of its contributors
+         may be used to endorse or promote products derived from this software
+         without specific prior written permission.
+
+      THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+      ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+      IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+      ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+      FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+      DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+      OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+      HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+      LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+      OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+      SUCH DAMAGE.
+   </text>
+   </pkglicense>
+
+.. _`_mapping_file`:
+
+MAPPING FILE
+============
+
+In order to help ``elbe parselicence`` with decisions, which it can not
+make automatically, a mapping file is needed.
+
+It defines the following items:
+
+-  global mappings from Debian License to SPDX License Identifier in
+   node ``<global>``
+
+-  per package mappings ``<perpackage> <package> <mapping>``
+
+-  per package override definitions
+
+Here is an example mapping.xml:
+
+.. code:: xml
+
+   <?xml version='1.0' encoding='utf-8'?>
+   <license_map>
+           <global>
+                   <mapping name='GPL-1+'>GPL-1.0+</mapping>
+                   <mapping name='GPL-2'>GPL-2.0</mapping>
+                   <mapping name='GPL-2.0'>GPL-2.0</mapping>
+                   <mapping name='GPL-2+'>GPL-2.0+</mapping>
+                   <mapping name='GPLv2+'>GPL-2.0+</mapping>
+                   <mapping name='GPL-2.0+'>GPL-2.0+</mapping>
+                   <mapping name='GPL-2.1+'>GPL-2.1+</mapping>
+                   <mapping name='GPL-3+'>GPL-3.0+</mapping>
+                   <mapping name='GPLv3+'>GPL-3.0+</mapping>
+                   <mapping name='GPL-3.0+'>GPL-3.0+</mapping>
+
+                   <mapping name='LGPL-2'>LGPL-2.0</mapping>
+                   <mapping name='LGPL-2.0'>LGPL-2.0</mapping>
+                   <mapping name='LGPL-2+'>LGPL-2.0+</mapping>
+                   <mapping name='LGPL2.1'>LGPL-2.1</mapping>
+                   <mapping name='LGPL-2.1'>LGPL-2.1</mapping>
+                   <mapping name='LGPL-2.1+'>LGPL-2.1+</mapping>
+                   <mapping name='LGPL-3+'>LGPL-3.0+</mapping>
+                   <mapping name='LGPL-3.0+'>LGPL-3.0+</mapping>
+                   <mapping name='LGPL'>LGPL-3.0+</mapping>
+
+                   <mapping name='GFDL-1.2'>GFDL-1.2</mapping>
+                   <mapping name='GFDL-1.2+'>GFDL-1.2+</mapping>
+                   <mapping name='GFDL-1.3'>GFDL-1.3</mapping>
+                   <mapping name='GFDL-1.3+'>GFDL-1.3+</mapping>
+
+                   <mapping name='BSD-2-clause'>BSD-2-Clause</mapping>
+                   <mapping name='BSD-2-Clause'>BSD-2-Clause</mapping>
+                   <mapping name='BSD-3-clause'>BSD-3-Clause</mapping>
+                   <mapping name='BSD-3-Clause'>BSD-3-Clause</mapping>
+                   <mapping name='BSD-4-clause'>BSD-4-Clause</mapping>
+                   <mapping name='BSD-4-Clause'>BSD-4-Clause</mapping>
+                   <mapping name='MIT'>MIT</mapping>
+                   <mapping name='CC-BY-SA-3.0'>CC-BY-SA-3.0</mapping>
+
+                   <mapping name='ZLIB'>Zlib</mapping>
+                   <mapping name='MPL-2.0'>MPL-2.0</mapping>
+                   <mapping name='Apache-2.0'>Apache-2.0</mapping>
+                   <mapping name='GPL-3.0-with-GCC-exception'>GPL-3.0 WITH GCC-exception-3.1</mapping>
+                   <mapping name='GPL-3+ with GCC-Runtime-3.1 exception'>GPL-3.0+ WITH GCC-exception-3.1</mapping>
+                   <mapping name='Artistic'>Artistic-1.0</mapping>
+                   <mapping name='Artistic-2'>Artistic-2.0</mapping>
+                   <mapping name='GPL-3+ with OpenSSL exception'>GPL-3.0+ WITH openvpn-openssl-exception</mapping>
+                   <mapping name='FTL'>FTL</mapping>
+                   <mapping name='ISC'>ISC</mapping>
+                   <mapping name='Gzip'>Zlib</mapping>
+
+                   <mapping name='X-Consortium'>X11</mapping>
+
+                   <mapping name='Expat'>MIT</mapping>
+                   <mapping name='public-domain'>CC-0</mapping>
+           </global>
+
+           <perpackage>
+                   <package name='grub-common'>
+                           <!-- heuristics override, because of error in machine read-->
+                           <license>GPL-3.0+</license>
+                           <license>MIT</license>
+                           <license>CC-BY-SA-3.0</license>
+                   </package>
+                   <package name='init-system-helpers'>
+                           <mapping name='BSD'>BSD-3-Clause</mapping>
+                   </package>
+
+                   <package name='liblzo2-2'>
+                           <license>GPL-2.0+</license>
+                   </package>
+                   <package name='logrotate'>
+                           <license>GPL-2.0+</license>
+                   </package>
+           </perpackage>
+   </license_map>
+
+As you can see, it is also necessary to add identity mappings, like
+``<mapping name='GPL-2.0'>GPL-2.0</mapping>``
+
+Its not allowed to mix ``<license>`` and ``<mapping>`` in a single
+<package> node.
+
+.. _`_nomos`:
+
+NOMOS
+=====
+
+Nomos is part of fossology. See https://www.fossology.org/get-started/
+to find out, how to install the nomos executable.
+
+.. _`_elbe`:
+
+ELBE
+====
+
+Part of the ``elbe(1)`` suite

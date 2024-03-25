@@ -28,8 +28,6 @@ docs/*.1
 docs/*.html
 docs/*.png
 docs/*.xml
-docs/elbe*.rst
-docs/article-*.rst
 docs/manpage-base-url.xsl
 docs/elbe-schema-reference.txt
 debian/.control.swp
