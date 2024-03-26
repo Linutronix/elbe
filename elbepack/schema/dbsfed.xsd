@@ -16,7 +16,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
     <annotation>
       <documentation>
         describes one elbe project. An elbe project contains the creation of a
-        build environemt and the definition of a elbe target rootfilesystem.
+        build environment and the definition of a elbe target rootfilesystem.
       </documentation>
     </annotation>
    </element>
