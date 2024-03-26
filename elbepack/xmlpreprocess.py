@@ -143,6 +143,41 @@ def preprocess_initvm_ports(xml):
             forward.getparent().remove(forward)
 
 
+def preprocess_pkg_pinning(xml):
+    """Do search and replace on pkg attributes, replacing 'pin' with 'release-name'."""
+
+    errors = False
+    for pkg in xml.iterfind('//target/pkg-list/pkg'):
+        if 'pin' in pkg.attrib:
+            if 'release-name' in pkg.attrib:
+                logging.error(
+                    'Found attributes "pin" and "release-name" for "%s". '
+                    'Please remove attribute "pin".',
+                    pkg.text)
+                errors = True
+                continue
+
+            logging.warning(
+                'Attribute pin= for element <pkg> is deprecated. Use release-name= instead.')
+
+            pkg.attrib['release-name'] = pkg.attrib['pin']
+            del pkg.attrib['pin']
+
+        # Check that max one attribute of 'version', 'origin', 'release-*' is set
+        if ('version' in pkg.attrib) \
+            + ('origin' in pkg.attrib) \
+            + (0 != len([a for a in pkg.attrib if a.startswith('release-')])) \
+                > 1:
+            logging.error(
+                'Invalid pkg pinning attribute combination for "%s".'
+                ' Use only either of "version" OR "origin" OR "release-* | pin"',
+                pkg.text)
+            errors = True
+
+    if errors:
+        raise XMLPreprocessError('Invalid package pinning attributes')
+
+
 def preprocess_proxy_add(xml, opt_proxy=None):
     """Add proxy to mirrors from CLI arguments or environment variable"""
 
@@ -392,6 +427,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
         preprocess_mirrors(xml)
 
         preprocess_passwd(xml)
+
+        preprocess_pkg_pinning(xml)
 
         if schema.validate(xml):
             # if validation succedes write xml file
