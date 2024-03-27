@@ -23,6 +23,9 @@ import sys
 sys.path.insert(0, os.path.abspath('ext'))
 sys.path.insert(0, os.path.abspath('..'))
 
+import elbepack.directories  # noqa: E402
+from elbepack.version import elbe_version  # noqa: E402
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -59,7 +62,7 @@ author = u'Torben Hohn, Manuel Traut'
 # built documents.
 #
 # The short X.Y version.
-from elbepack.version import elbe_version as version  # noqa: E402
+version = elbe_version
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -143,6 +146,13 @@ latex_documents = [
 man_pages = [
     (master_doc, 'elbe', u'ELBE Documentation',
      [author], 1)
+]
+man_pages = [
+    ('elbe', 'elbe', '', [], 1),
+] + [
+    ('elbe-' + cmd, 'elbe-' + cmd, '', [], 1)
+    for cmd in elbepack.directories.get_cmdlist()
+    if cmd not in {'adjustpkgs', 'bootup-check', 'check-build', 'pin_versions'}
 ]
 
 
