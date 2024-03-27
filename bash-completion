@@ -16,7 +16,7 @@ _elbe_commands()
         # list (as of Nov 2022)
         echo 'add check_updates chg_archive control diff get_archive
               init initvm parselicence pbuilder pin_versions pkgdiff preprocess
-              prjrepo remove_sign repodir setsel show sign validate xsdtoasciidoc'
+              prjrepo remove_sign repodir setsel show sign validate'
     fi
 }
 
@@ -165,11 +165,6 @@ _cmd_args_completion_elbe()
             show)
                 file_arg=true
                 cmd_opt=$(_elbe_cmd_with_options '-h --help --verbose --skip-validation')
-                ;;
-            xsdtoasciidoc)
-                file_arg=true
-                disable_space=true
-                cmd_opt=$(_elbe_cmd_with_options '-h --help --output=')
                 ;;
             *)
                 ;;

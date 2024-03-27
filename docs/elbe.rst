@@ -102,10 +102,6 @@ Elbe COMMANDS
 ``elbe-validate(1)``
    validate the given XML file against the Elbe XML Schema.
 
-``elbe-xsdtoasciidoc(1)``
-   create an asciidoc documentation from an annotated XML Schema file
-   (xsd).
-
 .. _`_see_also`:
 
 SEE ALSO

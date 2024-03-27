@@ -17,5 +17,3 @@
 ./usr/lib/python3.*/*-packages/elbepack/commands/show.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/sign.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/validate.py
-./usr/lib/python3.*/*-packages/elbepack/commands/xsdtoasciidoc.py
-./usr/lib/python3.*/*-packages/elbepack/xsdtoasciidoc.mako
