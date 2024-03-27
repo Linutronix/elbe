@@ -35,7 +35,9 @@ subprocess.run(['make'], check=True)
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = [
+    'sphinx.ext.graphviz',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -158,3 +160,5 @@ texinfo_documents = [
 ]
 
 html_sidebars = {'**': ['globaltoc.html']}
+
+graphviz_output_format = 'svg'

@@ -97,15 +97,14 @@ happens:
 
 This diagram illustrates the complete process:
 
-.. figure:: elbe-process.png
-   :alt: elbe-process.png
+.. graphviz:: elbe-process.dot
+   :layout: neato
 
 The following figure shows the steps performed inside the build VM
 during the build process of the target. The highlighted steps are
 performed inside a chroot environment:
 
-.. figure:: elbeoverview-en__1.png
-   :alt: elbeoverview-en\__1.png
+.. graphviz:: emu-process.dot
 
 On regular Debian installations, init scripts installed by packages are
 started automatically during the post-installation step. Please note
