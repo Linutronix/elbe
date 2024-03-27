@@ -5,12 +5,12 @@
 import importlib.resources
 import os
 
+from mako import exceptions
+from mako.template import Template
+
 import elbepack
 import elbepack.makofiles
 from elbepack.treeutils import etree
-
-from mako import exceptions
-from mako.template import Template
 
 
 def fix_linebreak_escapes(s):

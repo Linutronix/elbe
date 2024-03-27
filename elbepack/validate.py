@@ -5,10 +5,10 @@
 import os
 import sys
 
-from elbepack.schema import xml_schema_file
-
 from lxml import etree
 from lxml.etree import XMLParser, parse
+
+from elbepack.schema import xml_schema_file
 
 
 def error_log_to_strings(error_log):

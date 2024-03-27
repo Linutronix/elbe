@@ -10,14 +10,14 @@ import subprocess
 import tarfile
 from tempfile import NamedTemporaryFile
 
-from elbepack.elbexml import ValidationMode
-from elbepack.filesystem import hostfs
-from elbepack.version import elbe_version, is_devel
-
 from spyne.decorator import rpc
 from spyne.model.complex import Array
 from spyne.model.primitive import Boolean, Integer, String
 from spyne.service import ServiceBase
+
+from elbepack.elbexml import ValidationMode
+from elbepack.filesystem import hostfs
+from elbepack.version import elbe_version, is_devel
 
 from .authentication import authenticated_admin, authenticated_uid
 from .datatypes import SoapCmdReply, SoapFile, SoapProject

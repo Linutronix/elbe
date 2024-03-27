@@ -13,10 +13,6 @@ from shutil import copyfile, copyfileobj, rmtree
 from threading import Thread
 from urllib.parse import quote
 
-from elbepack.dosunix import dos2unix
-from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import ElbeXML, ValidationMode
-
 from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy import (
@@ -32,6 +28,10 @@ from sqlalchemy import (
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+
+from elbepack.dosunix import dos2unix
+from elbepack.elbeproject import ElbeProject
+from elbepack.elbexml import ElbeXML, ValidationMode
 
 
 Base = declarative_base()

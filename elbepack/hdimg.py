@@ -7,11 +7,11 @@ import os
 import subprocess
 from pathlib import Path
 
+import parted
+
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
 from elbepack.shellhelper import chroot, do, get_command_out
-
-import parted
 
 
 def mkfs_mtd(mtd, fslabel, target):

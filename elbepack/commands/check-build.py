@@ -12,14 +12,14 @@ import sys
 import tempfile
 import traceback
 
+import pexpect
+
 from elbepack import qemu_firmware
 from elbepack.directories import elbe_exe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import do, get_command_out
 from elbepack.treeutils import etree
-
-import pexpect
 
 
 def run_command(argv):

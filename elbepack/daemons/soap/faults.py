@@ -5,11 +5,11 @@
 from functools import wraps
 from traceback import format_exc
 
+from spyne.model.fault import Fault
+
 from elbepack.db import ElbeDBError, InvalidLogin
 from elbepack.elbexml import ValidationError
 from elbepack.projectmanager import InvalidState, ProjectManagerError
-
-from spyne.model.fault import Fault
 
 
 class SoapElbeDBError(Fault):

@@ -1,8 +1,8 @@
 import os
 
-import elbepack.directories
-
 import pytest
+
+import elbepack.directories
 
 
 def pytest_sessionstart(session):

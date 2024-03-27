@@ -17,15 +17,6 @@ import apt
 
 import apt_pkg
 
-from elbepack.aptprogress import (
-    ElbeAcquireProgress,
-    ElbeInstallProgress,
-    ElbeOpProgress,
-)
-from elbepack.config import cfg
-from elbepack.egpg import unsign_file
-from elbepack.treeutils import etree
-
 from packaging import version
 
 from spyne import Application
@@ -34,6 +25,15 @@ from spyne.model.primitive import String
 from spyne.service import ServiceBase
 
 from suds.client import Client
+
+from elbepack.aptprogress import (
+    ElbeAcquireProgress,
+    ElbeInstallProgress,
+    ElbeOpProgress,
+)
+from elbepack.config import cfg
+from elbepack.egpg import unsign_file
+from elbepack.treeutils import etree
 
 
 class UpdateStatus:

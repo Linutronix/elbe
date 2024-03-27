@@ -16,13 +16,13 @@ from urllib.error import URLError
 
 import deb822
 
+from suds import WebFault
+from suds.client import Client
+
 from elbepack.config import cfg
 from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_initvm_packagelist, elbe_version
-
-from suds import WebFault
-from suds.client import Client
 
 
 def set_suds_debug(debug):

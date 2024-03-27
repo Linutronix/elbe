@@ -8,11 +8,11 @@ from beaker.middleware import SessionMiddleware
 
 from cherrypy.process.plugins import SimplePlugin
 
-from elbepack.projectmanager import ProjectManager
-
 from spyne import Application
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
+
+from elbepack.projectmanager import ProjectManager
 
 from .esoap import ESoap
 

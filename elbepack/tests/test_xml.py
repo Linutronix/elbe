@@ -4,10 +4,10 @@
 
 import subprocess
 
+import pytest
+
 from elbepack.directories import run_elbe
 from elbepack.tests import parametrize_xml_test_files, xml_test_files
-
-import pytest
 
 
 def _delete_project(uuid):

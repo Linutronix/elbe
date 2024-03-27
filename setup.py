@@ -7,10 +7,10 @@
 import os
 import subprocess
 
-from elbepack.version import elbe_version
-
 from setuptools import setup
 from setuptools.command.install import install
+
+from elbepack.version import elbe_version
 
 
 def abspath(path):

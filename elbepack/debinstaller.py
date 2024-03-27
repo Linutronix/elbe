@@ -10,12 +10,12 @@ import sys
 from shutil import copyfile
 from urllib.request import urlopen
 
+from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP
+
 from elbepack.egpg import OverallStatus, check_signature
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.hashes import HashValidationFailed, HashValidator
-
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP
 
 
 class InvalidSignature(Exception):

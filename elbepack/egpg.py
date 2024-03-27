@@ -6,12 +6,12 @@ import logging
 import os
 import subprocess
 
-from elbepack.filesystem import hostfs
-from elbepack.shellhelper import env_add, get_command_out
-
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
 from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
+
+from elbepack.filesystem import hostfs
+from elbepack.shellhelper import env_add, get_command_out
 
 
 elbe_internal_key_param = """

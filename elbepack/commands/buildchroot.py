@@ -8,13 +8,13 @@ import subprocess
 import sys
 from optparse import OptionParser
 
+from sqlalchemy.exc import OperationalError
+
 from elbepack.cdroms import CDROM_SIZE
 from elbepack.db import ElbeDB
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
 from elbepack.log import elbe_logging
-
-from sqlalchemy.exc import OperationalError
 
 
 def run_command(argv):

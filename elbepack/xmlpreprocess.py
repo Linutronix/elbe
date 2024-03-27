@@ -14,17 +14,17 @@ from optparse import OptionGroup
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
+from lxml import etree
+from lxml.etree import Element, SubElement, XMLParser
+
+from passlib.hash import sha512_crypt
+
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.isooptions import iso_option_valid
 from elbepack.schema import xml_schema_file
 from elbepack.validate import error_log_to_strings
-
-from lxml import etree
-from lxml.etree import Element, SubElement, XMLParser
-
-from passlib.hash import sha512_crypt
 
 
 # list of sections that are allowed to exists multiple times before

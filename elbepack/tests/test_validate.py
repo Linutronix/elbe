@@ -5,9 +5,9 @@
 import itertools
 import os
 
-from elbepack.directories import run_elbe
-
 import pytest
+
+from elbepack.directories import run_elbe
 
 
 def _test_cases():

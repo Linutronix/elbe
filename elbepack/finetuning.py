@@ -11,15 +11,15 @@ from shutil import rmtree
 
 from apt.package import FetchError
 
+from gpg import core
+from gpg.constants import PROTOCOL_OpenPGP
+
 from elbepack.egpg import unlock_key
 from elbepack.filesystem import ImgMountFilesystem
 from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do, get_command_out
-
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP
 
 
 class FinetuningException(Exception):

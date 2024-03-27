@@ -8,12 +8,12 @@ from http.client import BadStatusLine
 from optparse import OptionGroup, OptionParser
 from urllib.error import URLError
 
+from suds import WebFault
+
 from elbepack.config import cfg
 from elbepack.elbexml import ValidationMode
 from elbepack.soapclient import ClientAction, ElbeSoapClient
 from elbepack.version import elbe_version
-
-from suds import WebFault
 
 
 def run_command(argv):

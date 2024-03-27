@@ -9,11 +9,11 @@ import sys
 from optparse import OptionParser
 from wsgiref.simple_server import make_server
 
-from elbepack.updated import UpdateApplication, UpdateService, UpdateStatus
-from elbepack.updated_monitors import FileMonitor
-
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
+
+from elbepack.updated import UpdateApplication, UpdateService, UpdateStatus
+from elbepack.updated_monitors import FileMonitor
 
 try:
     from elbepack.updated_monitors import USBMonitor
