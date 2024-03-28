@@ -2877,10 +2877,61 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </annotation>
     <simpleContent>
       <extension base="rfs:string">
+        <attribute name="origin" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined version of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-name" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined codename of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-archive" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined archive/suite of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-version" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined Debian release version of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-component" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined component of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-origin" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined originator of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="release-label" type="string" use="optional">
+          <annotation>
+            <documentation>
+              prefer the defined label of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="pin" type="string" use="optional">
           <annotation>
             <documentation>
               prefer the defined version of the debian package
+
+              Deprecated, use attribute "release-name" instead.
             </documentation>
           </annotation>
         </attribute>
@@ -2979,15 +3030,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
             the given mirrors into the target rootfilesystem.
           </documentation>
         </annotation>
-        <unique name="pkg-list-mutual-exclusive-pkg-pin-or-version">
-          <annotation>
-            <documentation>
-              Only one of pin= or version= can be specified at the same time.
-            </documentation>
-          </annotation>
-          <selector xpath="."/>
-          <field xpath="@pin | @version"/>
-        </unique>
       </element>
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
@@ -3024,15 +3066,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
             Reference to a binary debian package which is supposed to be installed.
           </documentation>
         </annotation>
-        <unique name="fullpkg-list-mutual-exclusive-pkg-pin-or-version">
-          <annotation>
-            <documentation>
-              Only one of pin= or version= can be specified at the same time.
-            </documentation>
-          </annotation>
-          <selector xpath="."/>
-          <field xpath="@pin | @version"/>
-        </unique>
       </element>
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
