@@ -4,8 +4,7 @@ Documentation=man:elbe-daemon(1)
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/default/python3-elbe-daemon
-ExecStart=/usr/bin/elbe $DAEMON_ARGS
+ExecStart=/usr/bin/elbe daemon --port=7588
 
 [Install]
 WantedBy=multi-user.target
