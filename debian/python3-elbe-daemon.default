@@ -1,3 +1,0 @@
-# elbe daemon configuration
-
-DAEMON_ARGS="daemon --port=7588"
