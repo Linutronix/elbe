@@ -1,0 +1,9 @@
+[Unit]
+Description=ELBE Bootup check
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/elbe bootup-check
+
+[Install]
+WantedBy=multi-user.target
