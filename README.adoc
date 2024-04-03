@@ -37,7 +37,7 @@ Crash Course
 1. use an Elbe XML file (e.g. from /usr/share/doc/elbe/examples or
    examples/ in the elbe source tree)
 
-2. run "./elbe initvm create ./examples/armhf-ti-beaglebone-black.xml
+2. run `./elbe initvm create ./examples/armhf-ti-beaglebone-black.xml`
 
    * This command creates an initvm directory in the current working directory,
    * installs and starts a virtual build environment
@@ -45,4 +45,4 @@ Crash Course
    * after the build finished the build results will be copied into
         elbe-build-<TIMESTAMP>
 
-3. copy the rfs to a sdcard: 'sudo dd if=elbe-build*/sdcard.img of=/dev/mmcblk0'
+3. copy the rfs to a sdcard: `sudo dd if=elbe-build*/sdcard.img of=/dev/mmcblk0`
