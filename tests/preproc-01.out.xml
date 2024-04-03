@@ -2,12 +2,9 @@
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-FileCopyrightText: Linutronix GmbH
 -->
-<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
-		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		    created="2009-05-20T08:50:56" revision="6"
-		    xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xi="http://www.w3.org/2003/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 
-	<project>
+	<project xml:base="xinclude/simple.xml">
 		<name>simple-armhf-with-grub-tighten</name>
 		<version>1.0</version>
 		<suite>buster</suite>
@@ -22,9 +19,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-	</project>
-
-	<target>
+	</project><target xml:base="xinclude/simple.xml">
 		<hostname>armhf-buster</hostname>
 		<domain>elbe-ci</domain>
 		<!-- <passwd>root</passwd> -->
@@ -35,7 +30,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<msdoshd>
 				<name>sda.img</name>
 				<size>2000MiB</size>
-				<grub-install />
+				<grub-install/>
 				<partition>
 					<size>1000MiB</size>
 					<label>rfs</label>
@@ -60,7 +55,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>linux-image-armmp</pkg>
 		</pkg-list>
 
-		<install-recommends />
+		<install-recommends/>
 
 		<finetuning>
 			<file dst="/etc/hosts" append="true" encoding="plain">
@@ -74,13 +69,12 @@ SPDX-FileCopyrightText: Linutronix GmbH
 
 		<project-finetuning>
 		</project-finetuning>
-	</target>
-	<check-image-list>
+	</target><check-image-list xml:base="xinclude/simple.xml">
 		<check>
 			<img>sda.img.tar.gz</img>
 			<interpreter>qemu-system-arm</interpreter>
 			<interpreter-opts>-m 2G -M vexpress-a15 -drive format=raw,file=$ELBE_IMG -nographic -kernel vmlinuz-4.19.0-14-armmp -initrd initrd.img-4.19.0-14-armmp -dtb vexpress-v2p-ca15-tc1.dtb</interpreter-opts>
-			<action> <login /> </action>
+			<action> <login/> </action>
 		</check>
 	</check-image-list>
 </ns0:RootFileSystem>
