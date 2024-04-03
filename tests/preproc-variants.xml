@@ -1,0 +1,31 @@
+<!--
+SPDX-License-Identifier: 0BSD
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name>aarch64</name>
+		<version>1.0</version>
+		<buildtype>aarch64</buildtype>
+		<mirror>
+			<primary_host>deb.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+		</mirror>
+		<suite>bookworm</suite>
+	</project>
+	<target>
+		<hostname>lx64</hostname>
+		<domain>linutronix.de</domain>
+		<!-- <passwd>root</passwd> -->
+		<passwd_hashed>$6$9Qq25BkNNlhJir0v$4OHpMS5BqY2fLY2g2wzp8TIjKNmmSHNSFjAM84gIU0rZesJY45bg1uoyq08KI8ZIg/BXTCUPOwuWSNDtSCE7X/</passwd_hashed>
+		<pkg-list>
+			<pkg>package1</pkg>
+			<pkg variant="variant1">package2</pkg>
+			<pkg variant="variant2">package3</pkg>
+			<pkg variant="variant1,variant2">package4</pkg>
+			<pkg variant="variant2,variant1">package5</pkg>
+			<pkg variant="variant-nonexistent">package6</pkg>
+		</pkg-list>
+	</target>
+</ns0:RootFileSystem>
