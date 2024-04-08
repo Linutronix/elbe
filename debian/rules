@@ -27,4 +27,4 @@ override_dh_install:
 	dh_installxmlcatalogs
 
 %:
-	dh $@ --buildsystem=pybuild --with bash-completion,python3
+	dh $@ --buildsystem=pybuild --with bash-completion,python3,sphinxdoc

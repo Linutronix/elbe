@@ -33,7 +33,9 @@ Build-Depends: debhelper-compat (= 12),
   python3-gpg,
   python3-libvirt,
   python3-passlib,
-  python3-pytest
+  python3-pytest,
+  python3-sphinx,
+  python3-sphinx-rtd-theme
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
 Homepage: http://elbe-rfs.org
@@ -41,7 +43,7 @@ Homepage: http://elbe-rfs.org
 Package: elbe-doc
 Section: doc
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends} ${sphinxdoc:Depends}
 Description: man-pages, examples and documentation
  man-pages for elbe and all elbe subcommands. Some documentation and howtos.
  And examples for several targets.

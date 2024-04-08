@@ -34,6 +34,8 @@ man1dir=$(mandir)/man1
 man5dir=$(mandir)/man5
 man7dir=$(mandir)/man7
 
+sphinxbuilddir?=_build
+
 MAN_BASE_URL = file://$(htmldir)/
 
 ASCIIDOC=asciidoc
@@ -42,6 +44,7 @@ MANPAGE_XSL = manpage-normal.xsl
 XMLTO_EXTRA =
 INSTALL?=install
 RM ?= rm -f
+CP ?= cp
 
 DOCBOOK_XSL_172=1
 
@@ -54,13 +57,21 @@ endif
 
 ASCIIDOC_DATA_URI = -a data-uri -a iconsdir=/usr/share/asciidoc/icons
 
-all: html man
+all: sphinx
 html: $(DOC_HTML)
 
 sphinx:
-	sphinx-build . _build
+	sphinx-build -b man  . $(sphinxbuilddir)/man
+	sphinx-build -b html . $(sphinxbuilddir)/html
 
-install: install-man install-html
+install-sphinx: sphinx
+	$(INSTALL) -d -m 755 $(DESTDIR)$(man1dir)
+	$(INSTALL) -m 644 $(sphinxbuilddir)/man/* $(DESTDIR)$(man1dir)
+
+	$(INSTALL) -d -m 755 $(DESTDIR)$(htmldir)
+	$(CP) -r $(sphinxbuilddir)/html/ $(DESTDIR)$(htmldir)
+
+install: install-sphinx
 
 install-man: man
 	$(INSTALL) -d -m 755 $(DESTDIR)$(man1dir)
@@ -79,7 +90,7 @@ man7: $(DOC_MAN7)
 
 
 clean:
-	$(RM) -r _build
+	$(RM) -r $(sphinxbuilddir)
 	$(RM) article*.rst elbe*.rst *.xml *.xml+ *.html *.html+ *.1 *.5 *.7
 	$(RM) *.texi *.texi+ *.texi++ git.info gitman.info
 	$(RM) *.pdf
