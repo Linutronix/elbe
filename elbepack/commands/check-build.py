@@ -8,17 +8,16 @@ import os
 import pathlib
 import shutil
 import subprocess
-import sys
 import tempfile
 import traceback
 
 import pexpect
 
 from elbepack import qemu_firmware
-from elbepack.directories import elbe_exe
+from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
-from elbepack.shellhelper import do, get_command_out
+from elbepack.shellhelper import env_add
 from elbepack.treeutils import etree
 
 
@@ -111,7 +110,7 @@ class CheckCdroms(CheckBase):
 
     def extract_cdrom(self, tgt, cdrom):
         try:
-            do(f'7z x -o"{tgt}" "{cdrom}"')
+            subprocess.run(['7z', 'x', '-o' + tgt, cdrom], check=True)
         except subprocess.CalledProcessError as E:
             self.fail(f'Failed to extract cdrom {cdrom}:\n{E}')
 
@@ -119,10 +118,10 @@ class CheckCdroms(CheckBase):
         """Get dpkg infos for .deb and .dsc file formats"""
         try:
             if path.endswith('.deb'):
-                cmd = f'dpkg -f "{path}" {" ".join(fmt)}'
+                cmd = ['dpkg', '-f', path, *fmt]
             elif path.endswith('.dsc'):
-                cmd = f'grep -E "^({"|".join(fmt)}):" {path}'
-            return get_command_out(cmd).decode('utf-8')
+                cmd = ['grep', '-E', '^(' + '|'.join(fmt) + '):', path]
+            return subprocess.run(cmd, capture_output=True).stdout.decode('utf-8')
         except subprocess.CalledProcessError as E:
             self.fail(
                 f"Failed to get debian infos ({'|'.join(fmt)}) "
@@ -630,13 +629,14 @@ exit 1
             os.chmod(copy, 0o744)
 
             # Extract to temporary directory with 'yes' to all answers
-            do(f'{copy} -y -d {tmp.path}')
+            subprocess.run([copy, '-y', '-d', tmp.path], check=True)
 
             # Get environment file
             env = tmp.glob('environment-setup*')[0]
 
             # NOTE!  This script requires binfmt to be installed.
-            do(f'cd {tmp.path}; /bin/sh', stdin=self.script, env_add={'ELBE_SDK_ENV': env})
+            subprocess.run(['/bin/sh'], input=self.script, cwd=tmp.path,
+                           env=env_add({'ELBE_SDK_ENV': env}), check=True)
 
     def run(self):
         for sdk in self.directory.glob('setup-elbe-sdk*'):
@@ -647,5 +647,5 @@ exit 1
 class CheckRebuild(CheckBase):
 
     def run(self):
-        do(f'{sys.executable} {elbe_exe} '
-           'initvm submit --skip-build-source {self.directory / "bin-cdrom.iso"}')
+        run_elbe(['initvm', 'submit', '--skip-build-source', self.directory / 'bin-cdrom.iso'],
+                 check=True)
