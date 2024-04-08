@@ -450,7 +450,7 @@ class CheckImage(CheckBase):
         fw_opts = ''
         interpreter_firmware = tag.et.find('./interpreter-firmware')
         if interpreter_firmware is not None:
-            fw_opts = self._firmware_opts(tag)
+            fw_opts = self._firmware_opts(interpreter_firmware)
 
         with self.open_img(img_name) as img:
 
