@@ -2,15 +2,11 @@
 elbe-diff
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-diff - Looks at 2 directories and makes Suggestions to modify the
 xml file.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,8 +14,6 @@ SYNOPSIS
    ::
 
       elbe diff <generated_dir> <fixed_dir>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -29,8 +23,6 @@ tweaks. It is supplied with the generated and the fixed rootfs, and will
 suggest a finetuning section and a commandline to generate an archive
 file.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -39,8 +31,6 @@ OPTIONS
 
 <fixed_dir>
    This should point to the fixed directory.
-
-.. _`_elbe`:
 
 ELBE
 ====

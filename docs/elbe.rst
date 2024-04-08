@@ -2,14 +2,10 @@
 elbe
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe - Embedded Linux Build Environment
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,8 +14,6 @@ SYNOPSIS
 
       elbe <command> [<args>]
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -27,8 +21,6 @@ Elbe is a system to build Rootfilesystems from XML description files. It
 also includes tools to modify xml files.
 
 The *<command>* is a name of an Elbe command (see below).
-
-.. _`_elbe_commands`:
 
 Elbe COMMANDS
 =============
@@ -102,14 +94,10 @@ Elbe COMMANDS
 ``elbe-validate(1)``
    validate the given XML file against the Elbe XML Schema.
 
-.. _`_see_also`:
-
 SEE ALSO
 ========
 
 ``elbe(1)``
-
-.. _`_elbe`:
 
 ELBE
 ====

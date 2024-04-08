@@ -2,15 +2,11 @@
 elbe-genlicence
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-genlicence - Generate a file containing the licences of the
 packages included in a project.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -22,8 +18,6 @@ SYNOPSIS
               [ --xml <xmlfilename> ] \
               <project-dir>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -32,8 +26,6 @@ packages included in a project, generated from the *copyright* files in
 the */usr/share/doc/\** directories of the root filesystem.
 
 This command has to be run **inside the Elbe build VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -53,8 +45,6 @@ OPTIONS
 <project>
    The build directory of the project to process.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -64,8 +54,6 @@ EXAMPLES
    ::
 
       # elbe genlicence --output myproject-licences.txt /var/cache/elbe/<uuid>
-
-.. _`_elbe`:
 
 ELBE
 ====

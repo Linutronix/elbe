@@ -4,8 +4,6 @@ ELBE Overview
 
 Debian-based system to generate root filesystems for embedded devices.
 
-.. _`_general_notes`:
-
 General Notes
 =============
 
@@ -47,8 +45,6 @@ Elbe takes a different approach to solve these problems:
 
 -  Updating, adding, or removing a package is done via Debian’s
    package-management (apt) which also resolves package dependencies.
-
-.. _`_overview`:
 
 Overview
 ========
@@ -115,8 +111,6 @@ will cause problems during installation. This typically includes
 database application packages, which set up a database in their postinst
 script and rely on the database server to be already running.
 
-.. _`_create_initvm_and_build_a_first_xml_file_from_the_examples`:
-
 Create initvm and build a first xml file from the examples
 ==========================================================
 
@@ -149,8 +143,6 @@ If you need to start the initvm again, use
 ::
 
    elbe initvm start --directory ~/elbe-initvm
-
-.. _`_example_xml_files`:
 
 Example XML Files
 -----------------
@@ -221,8 +213,6 @@ initvm has not been created yet, use:
 
    elbe initvm create --directory ~/elbe-initvm example.xml
 
-.. _`_passwords_in_xml`:
-
 Passwords in XML
 ----------------
 
@@ -282,8 +272,6 @@ must be given in plain-text. This plain-text password will not be
 removed by the preprocessing and will stay also in the generated XML
 files ``/etc/elbe_base.xml`` and ``source.xml``.
 
-.. _`_changing_the_subset_that_is_extracted_as_the_root_filesystem`:
-
 Changing the subset that is extracted as the root filesystem
 ============================================================
 
@@ -299,8 +287,6 @@ root-filesystem.
    subsets.
 
 -  The embedded archive.
-
-.. _`_finetuning`:
 
 Finetuning
 ----------
@@ -372,8 +358,6 @@ example finetuning section:
 
 The copy, mv, and rm commands operate on full directories.
 
-.. _`_useful_directories_to_trim_with_finetuning`:
-
 Useful directories to trim with finetuning
 ------------------------------------------
 
@@ -414,8 +398,6 @@ to get a smaller target image.
 
 -  debconf cache is also not necessary
 
-.. _`_archive`:
-
 Archive
 -------
 
@@ -430,8 +412,6 @@ command can be used to embed the archive into the XML file:
 
 This feature is useful to place custom configuration-files into the
 final image.
-
-.. _`_slimming_the_root_filesystem_with_the_different_modes`:
 
 Slimming the root filesystem with the different modes
 =====================================================
@@ -464,8 +444,6 @@ configured.
 
      </target>
 
-.. _`_install_recommends`:
-
 install-recommends
 ------------------
 
@@ -478,16 +456,12 @@ This is not strictly a mode as described in the following paragraphs. It
 can be combined with any of them, and the following modes are mutually
 exclusive.
 
-.. _`_default`:
-
 default
 -------
 
 The default mode generates a full copy of the build image. This mode is
 the easiest to use, but its not possible to generate images which have
 the Debian package management removed.
-
-.. _`_setsel`:
 
 setsel
 ------
@@ -519,8 +493,6 @@ The setsel mode works by feeding the pkg list to
 that there is no need to cope with some unregistered configuration
 files.
 
-.. _`_diet`:
-
 diet
 ----
 
@@ -542,16 +514,12 @@ Do not use this for normal filesystems.
 
 This also holds for the *tighten* mode.
 
-.. _`_tighten`:
-
 tighten
 -------
 
 Tighten mode only extracts the files referenced by the packages in
 *pkg-list*. No dependencies are resolved. This mode is intended for
 compatibility with old XML files, do not use in new elbe projects.
-
-.. _`_cdrom_functionality`:
 
 CDROM Functionality
 ===================
@@ -565,8 +533,6 @@ can also serve as an installation source.
        <mirror>
                <cdrom>/home/user/elbe-example/install.iso</cdrom>
        </mirror>
-
-.. _`_install_reports`:
 
 Install Reports
 ===============
@@ -582,8 +548,6 @@ command:
 This report lists all files in the root-file-system, including the
 origin Debian package.
 
-.. _`_validation`:
-
 Validation
 ==========
 
@@ -592,8 +556,6 @@ installed packages and versions. If this information is already present
 in a file used with ``elbe create`` the installed package versions and
 md5 hashes are validated and a report is printed and saved to
 ``validation.txt``. This file is also in asciidoc format.
-
-.. _`_xml_reference`:
 
 XML Reference
 =============
@@ -756,8 +718,6 @@ configuration for a different architecture
 
 -  The package list resides here.
 
-.. _`_building_ubi_images`:
-
 Building ubi images
 -------------------
 
@@ -888,8 +848,6 @@ partitions and mountpoints. Lets look at an example *target* section.
    this section. Entries for */proc*, */sys* etc. can be generated with
    *bydev* nodes.
 
-.. _`_building_harddisk_sdcard_images`:
-
 Building harddisk / sdcard images
 ---------------------------------
 
@@ -963,8 +921,6 @@ partitions and mountpoints. Lets look at an example *target* section.
 
 A complete reference that is automatically generated from the schema
 file is also available.
-
-.. _`_elbe_init_detailed_explanation`:
 
 Elbe init (detailed Explanation)
 ================================

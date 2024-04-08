@@ -2,15 +2,11 @@
 elbe-setsel
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-setsel - Replace the package list of an Elbe XML file by a list
 obtained from *dpkg-getselections*.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,8 +14,6 @@ SYNOPSIS
    ::
 
       elbe setsel <xmlfile> <pkglist>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -46,8 +40,6 @@ filesystem). The recommended usage is as follows:
 
 7. Rebuild using the setsel mode of Elbe.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -56,8 +48,6 @@ OPTIONS
 
 <pkglist>
    The package list from *dpkg --get-selections*.
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -68,8 +58,6 @@ EXAMPLES
    ::
 
       $ elbe setsel myproject.xml myproject.pkgs
-
-.. _`_elbe`:
 
 ELBE
 ====

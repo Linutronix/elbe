@@ -2,15 +2,11 @@
 elbe-check_updates
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-check_updates - Check whether package updates are available for an
 Elbe project.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -21,8 +17,6 @@ SYNOPSIS
               [ --script <script> ] \
               [ --skip-validation ] \
               <source-xmlfile>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -49,8 +43,6 @@ started like this:
 
 If none of the above is true, the script will not be started.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -64,8 +56,6 @@ OPTIONS
 <source-xmlfile>
    Path to the *source.xml* file of the project.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -77,8 +67,6 @@ EXAMPLES
 
       $ elbe check_updates --script /scratch/fixpackages.sh \
               /scratch/example/source.xml
-
-.. _`_elbe`:
 
 ELBE
 ====

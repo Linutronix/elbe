@@ -2,14 +2,10 @@
 elbe-control
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-control - Low level interface to elbe Soap Daemon running in initvm
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -39,8 +35,6 @@ SYNOPSIS
       elbe control [options] shutdown_initvm
       elbe control [options] install_elbe_version <version>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -54,8 +48,6 @@ opened inside the soap server. So it is not possible to have a single
 user build 2 projects at once.
 
 You can only wait on the project, that you are currently building.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -92,8 +84,6 @@ OPTIONS
 --profile
    Specify pbuilder profile(s) to build. Provide multiple profiles as a
    comma separated list.
-
-.. _`_commands`:
 
 COMMANDS
 ========
@@ -204,8 +194,6 @@ a ./debian folder with a valid debianization.
    version of the elbe executable. This requires, that the initvm has
    package sources configured properly.
 
-.. _`_examples`:
-
 Examples
 ========
 
@@ -237,14 +225,10 @@ Examples
       elbe-report.txt         (Report)
       log.txt         (Log file)
 
-.. _`_see_also`:
-
 SEE ALSO
 ========
 
 ``elbe-initvm(1)`` ``git-daemon(1)``
-
-.. _`_elbe`:
 
 ELBE
 ====

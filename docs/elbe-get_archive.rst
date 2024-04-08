@@ -2,14 +2,10 @@
 elbe-get_archive
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-get_archive - Extract the archive from an xmlfile.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,15 +14,11 @@ SYNOPSIS
 
       elbe get_archive <xmlfile> <archive>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 This command extracts the archive from an xml file. It will not
 overwrite anything.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -37,8 +29,6 @@ OPTIONS
 <archive>
    Name of the extracted archive file. The archive must be a tar.bz2.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -47,8 +37,6 @@ EXAMPLES
    ::
 
       $ elbe get_archive project.xml archive.tar.bz2
-
-.. _`_elbe`:
 
 ELBE
 ====

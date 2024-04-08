@@ -2,14 +2,10 @@
 elbe-buildsysroot
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-buildsysroot - Build a sysroot archive.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -20,8 +16,6 @@ SYNOPSIS
               [ --buildtype <type> ] \
               [ --skip-validation ] \
               <builddir>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -43,8 +37,6 @@ package list of the project for this to work, as well as the relevant
 development packages. The XML file of the project also needs a *triplet*
 definition.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -57,8 +49,6 @@ OPTIONS
 <builddir>
    The build directory to generate the sysroot archive from.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -67,8 +57,6 @@ EXAMPLES
    ::
 
       # elbe buildsysroot /root/myarm
-
-.. _`_elbe`:
 
 ELBE
 ====

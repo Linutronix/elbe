@@ -2,14 +2,10 @@
 elbe-buildchroot
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-buildchroot - Build a root filesystem.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -20,8 +16,6 @@ SYNOPSIS
 
 <xmlfile>
    The XML describing the Elbe project.
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -35,8 +29,6 @@ which will contain all packages installed into the root filesystem. It
 can also be used as an installation source. For details, please refer to
 ``elbe-mkcdrom(1)``. Optionally, a source CD-ROM image can be generated,
 too.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -83,8 +75,6 @@ OPTIONS
    Obsolete option, from the time, before --build-bin and
    --build-sources existed.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -102,8 +92,6 @@ EXAMPLES
 
       # elbe buildchroot --output myarm.txt --target /root/myarm \
               --build-sources --build-bin myarm.xml
-
-.. _`_elbe`:
 
 ELBE
 ====

@@ -2,14 +2,10 @@
 elbe-hdimg
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-hdimg - Create hard disk and flash images from the given XML file.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -22,16 +18,12 @@ SYNOPSIS
               [ --skip-grub ] \
               <xmlfile>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 *elbe hdimg* creates hard disk and flash images from the *images*
 section in the given XML file. The command has to be run as root
 **inside the Elbe build VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -55,8 +47,6 @@ OPTIONS
 <xmlfile>
    The XML file to use.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -66,8 +56,6 @@ EXAMPLES
 
       elbe hdimg --target /root/myproject --output /root/hdimg.log \
               /root/myproject/source.xml
-
-.. _`_elbe`:
 
 ELBE
 ====

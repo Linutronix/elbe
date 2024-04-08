@@ -2,15 +2,11 @@
 elbe-preprocess
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-preprocess - resolves xinclude, external resources and resolves
 variants
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,8 +14,6 @@ SYNOPSIS
    ::
 
       'elbe preprocess [options] <xmlfile>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -33,8 +27,6 @@ tag will only be used if *elbe preprocess* is called with
 --variant=audio or --variant=video or --variant=audio,video. If no
 --variant is given, the tag will be dropped.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -46,8 +38,6 @@ OPTIONS
 
 --output <filename>
    preprocessed output file, defaults to preprocess.xml
-
-.. _`_elbe`:
 
 ELBE
 ====

@@ -2,15 +2,11 @@
 elbe-mkcdrom
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-mkcdrom - Create an ISO image containing binary and/or source
 packages used in the given project.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -28,16 +24,12 @@ SYNOPSIS
               [ --rfs-only ] \
               <builddir>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 *elbe mkcdrom* creates an ISO image containing the binary and/or source
 packages used in the given project. This command has to be run as root
 **inside the Elbe build VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -79,8 +71,6 @@ OPTIONS
    of the build directory. In that case the *--rfs-only* option has to
    be given.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -95,8 +85,6 @@ EXAMPLES
    ::
 
       # elbe mkcdrom --source foo/myproject
-
-.. _`_elbe`:
 
 ELBE
 ====

@@ -2,16 +2,12 @@
 elbe-pbuilder
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-pbuilder - High Level Interface to the ELBE Package Build System.
 Allows one to create a package builder for a project and to build Debian
 packages.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -21,15 +17,11 @@ SYNOPSIS
       elbe pbuilder build  [--project <project> | --xmlfile <xmlfile>]
       elbe pbuilder create [--project <project> | --xmlfile <xmlfile>] [--writeproject <filename>]
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 Creates a pbuilder for a specified project and builds the Debian package
 like pbuilder, but for the configured ELBE project.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -68,8 +60,6 @@ OPTIONS
    be a number followed by an optional suffix: k, M, G, T. Use 0 for no
    limit.
 
-.. _`_xml_options`:
-
 XML OPTIONS
 ===========
 
@@ -78,8 +68,6 @@ XML OPTIONS
 
 --proxy <proxy>
    add proxy to mirrors
-
-.. _`_commands`:
 
 COMMANDS
 ========
@@ -104,8 +92,6 @@ COMMANDS
    directory will be built. The result of the package build is stored in
    ../ like pbuilder does.
 
-.. _`_notes`:
-
 NOTES
 =====
 
@@ -127,8 +113,6 @@ pbuilder ccache create 6m44,117s pbuilder ccache build 1. 7m36,130s 2.
 
 pbuilder ccache cross create 4m4,190s pbuilder ccache cross build 1.
 2m40,159s 2. 2m32,650s
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -156,14 +140,10 @@ EXAMPLES
       # cd program
       # elbe pbuilder build --project `cat ../myarm.prj` --cpuset 1
 
-.. _`_see_also`:
-
 SEE ALSO
 ========
 
 ``elbe-control(1)`` ``elbe-initvm(1)`` ``pdebuild(1)``
-
-.. _`_elbe`:
 
 ELBE
 ====

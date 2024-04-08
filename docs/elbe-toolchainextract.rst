@@ -2,14 +2,10 @@
 elbe-toolchainextract
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-toolchainextract - extract libraries from a cross-toolchain
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -22,8 +18,6 @@ SYNOPSIS
               [ --codename <distro codename for repository> ]
               [ --buildtype <shortname for the toolchain type> ]
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -31,8 +25,6 @@ DESCRIPTION
 packages that have been generated from a given cross-toolchain.
 
 This command has to be run as root **inside the Elbe build VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -49,8 +41,6 @@ OPTIONS
 
 --buildtype <shortname of the toolchain type>
    currently armhf-linaro48 or armel-linaro48 can be used.
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -95,8 +85,6 @@ EXAMPLES
 
       /opt/gcc-linaro-arm-linux-gnueabihf-4.8-2013.10_repo/pool/main/libs/libstdc++6:
       libstdc++6_4.8.3_armhf.deb
-
-.. _`_elbe`:
 
 ELBE
 ====

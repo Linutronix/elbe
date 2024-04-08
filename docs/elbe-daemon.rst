@@ -2,14 +2,10 @@
 elbe-daemon
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-daemon - control the ELBE daemon.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,14 +14,10 @@ SYNOPSIS
 
       elbe daemon [options]
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 This command controls the ELBE daemon and is run inside the inivm.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -39,8 +31,6 @@ OPTIONS
 
 --<daemon>
    Enable <daemon>.
-
-.. _`_elbe`:
 
 ELBE
 ====

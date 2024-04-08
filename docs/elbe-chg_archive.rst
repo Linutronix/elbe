@@ -2,14 +2,10 @@
 elbe-chg_archive
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-chg_archive - Insert a new config archive (.tbz) into a XML file.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -17,8 +13,6 @@ SYNOPSIS
    ::
 
       elbe chg_archive [options] <xmlfile> [<archive.tar.bz2> | <directory>]
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -28,8 +22,6 @@ specified.
 
 The archive tbz is used to insert configuration files into the
 root-filesystem.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -53,8 +45,6 @@ OPTIONS
    directory will be archived in a tar.bz2 format and then stored
    uuencoded in the <archive> tag of the specified <xmlfile>.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -71,8 +61,6 @@ EXAMPLES
       $ mkdir -p my-rfs-overlay/etc
       $ echo 'my-very-special-config' > my-rfs-overlay/etc/my.cfg
       $ elbe chg_archive mybsp.xml my-rfs-overlay
-
-.. _`_elbe`:
 
 ELBE
 ====

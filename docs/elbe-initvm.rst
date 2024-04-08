@@ -2,15 +2,11 @@
 elbe-initvm
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-initvm - High Level Interface to the ELBE System. Allows one to
 create an initvm and directly build Rootfilesystems using ELBE.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -24,8 +20,6 @@ SYNOPSIS
       elbe initvm [options] stop
       elbe initvm [options] ensure
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -33,8 +27,6 @@ This command allows one to build and manage an initvm.
 
 Initvms are managed via libvirt, and it’s necessary that a user is a
 member of the libvirt group.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -85,8 +77,6 @@ OPTIONS
 --qemu
    Use QEMU directly instead of libvirt.
 
-.. _`_xml_options`:
-
 XML OPTIONS
 ===========
 
@@ -95,8 +85,6 @@ XML OPTIONS
 
 --proxy <proxy>
    add proxy to mirrors
-
-.. _`_commands`:
 
 COMMANDS
 ========
@@ -141,8 +129,6 @@ COMMANDS
 *ensure*
    Make sure an initvm is running in the Background.
 
-.. _`_examples`:
-
 Examples
 ========
 
@@ -159,14 +145,10 @@ Examples
 
       $ elbe initvm submit /usr/share/doc/elbe-doc/examples/elbe-desktop.xml
 
-.. _`_see_also`:
-
 SEE ALSO
 ========
 
 ``elbe-control(1)``
-
-.. _`_elbe`:
 
 ELBE
 ====

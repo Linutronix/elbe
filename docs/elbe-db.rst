@@ -2,14 +2,10 @@
 elbe-db
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-db - interface to the ELBE db. Must be run inside the initvm.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -33,14 +29,10 @@ SYNOPSIS
       elbe db [options] del_versions <project_dir> <version>
       elbe db [options] build <project_dir>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 This command controls the ELBE daemon and is run inside the initvm.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -82,8 +74,6 @@ OPTIONS
 --description
    Description of the project version which shall be stored in the
    database.
-
-.. _`_commands`:
 
 COMMANDS
 ========
@@ -142,8 +132,6 @@ COMMANDS
 
 *print_version_xml* <project_dir> <version>
    Prints ELBE xml file in <project_dir> of version <version>.
-
-.. _`_elbe`:
 
 ELBE
 ====

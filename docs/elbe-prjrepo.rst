@@ -2,15 +2,11 @@
 elbe-prjrepo
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-prjrepo - Provides access to the Debian repositories in each
 project folder.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -21,8 +17,6 @@ SYNOPSIS
       elbe prjrepo upload_pkg <project_dir> [<debfile> | <dscfile> | <changesfile>]
       elbe prjrepo list_packages <project_dir>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -31,8 +25,6 @@ Debian repository which is located in the project folder inside the
 initvm. Packages in this repository can then be installed into a root
 file system. The ``elbe-prjrepo`` command allows the user to interact
 with this repository, i.e. list, upload and download packages.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -46,8 +38,6 @@ OPTIONS
 --retries <N>
    How many times to retry the connection to the server before giving up
    (default is 10 times, yielding 10 seconds).
-
-.. _`_commands`:
 
 COMMANDS
 ========
@@ -69,8 +59,6 @@ COMMANDS
 *list_packages* <project_dir>
    Lists all packages available in the Debian repository of the project.
 
-.. _`_example`:
-
 Example
 =======
 
@@ -80,8 +68,6 @@ Example
    ::
 
       $ elbe prjrepo list_packages "/var/cache/elbe/38599ce2-4cad-4578-bfe1-06fa793b883a"
-
-.. _`_elbe`:
 
 ELBE
 ====

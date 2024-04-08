@@ -2,14 +2,10 @@
 elbe-updated
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-updated - Elbe update daemon.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -22,8 +18,6 @@ SYNOPSIS
               [ --nosign ] \
               [ --port <port> ] \
               [ --usb ]
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -43,8 +37,6 @@ This command has to be run as root **on the target system**. Please note
 that *elbe updated* is usually started by the init script of its
 package, so in most cases there should be no need to start it by
 invoking this command directly.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -67,8 +59,6 @@ OPTIONS
    Enable the USB monitor. This option requires pyudev module and an
    automount system for the usb drives (e.g. usbmount).
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -78,8 +68,6 @@ EXAMPLES
    ::
 
       # elbe updated --directory /updates --nosign
-
-.. _`_elbe`:
 
 ELBE
 ====

@@ -2,14 +2,10 @@
 elbe-chroot
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-chroot - Enter an Elbe root filesystem using chroot.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -19,16 +15,12 @@ SYNOPSIS
       elbe chroot [--skip-validation] [--buildtype=TYPE] [--target] <builddir> \
               ["command"]
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 Enters buildenv of a previously built Elbe root filesystem using chroot.
 The command has to be run as root **inside the Elbe build VM** (created
 with ``elbe-init(1)``).
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -45,8 +37,6 @@ OPTIONS
 
 <builddir>
    The build directory of the root filesystem to work with.
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -82,8 +72,6 @@ EXAMPLES
 
       # elbe chroot /root/testrfs_arm
       (chroot) #
-
-.. _`_elbe`:
 
 ELBE
 ====

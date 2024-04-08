@@ -9,8 +9,6 @@ filesystem.
 This quickstart guide describes the steps necessary to rebuild the
 root-filesystem from the XML file and to simple modifications.
 
-.. _`_steps_necessary`:
-
 Steps necessary
 ===============
 
@@ -30,8 +28,6 @@ Steps 1,2 and 3 need only be performed once.
    When Debian is running inside a VM (vmware etc), you need to make
    sure, that nested KVM is working.
 
-.. _`_customization_of_the_build`:
-
 Customization of the build
 ==========================
 
@@ -48,8 +44,6 @@ ELBE allows manipulating the generated root filesystem through a set of
 user, change directory permissions, and remove files from the root
 filesystem.
 
-.. _`_installing_elbe`:
-
 Installing ELBE
 ===============
 
@@ -58,8 +52,6 @@ by installing prebuilt binary packages via Linutronix package repository
 on a Debian 10 (Buster) system.
 
 But ELBE can also be installed from git.
-
-.. _`_binary_debian_packages`:
 
 Binary Debian packages
 ----------------------
@@ -88,8 +80,6 @@ Then run (as root):
 
    # apt update
    # apt install elbe
-
-.. _`_create_initvm_and_submit_xml_files`:
 
 Create initvm and submit XML files
 ==================================
@@ -136,8 +126,6 @@ directory.
     mkdir -p .stamps
     touch .stamps/stamp-install-initial-image
     *****
-
-.. _`_submitting_an_xml_file`:
 
 Submitting an XML file
 ======================
@@ -220,20 +208,14 @@ using
 The result of the build is stored in elbe-build-<TIMESTAMP> below your
 current working directory.
 
-.. _`_ports_opened_by_initvm`:
-
 Ports opened by initvm
 ======================
 
 The initvm will open port 7587 on localhost. This is used by the elbe
 tools on your host to communicate with the initvm.
 
-.. _`_advanced_usage`:
-
 Advanced usage
 ==============
-
-.. _`_elbe_archive`:
 
 ELBE Archive
 ------------
@@ -246,8 +228,6 @@ It is done with the following XML node:
 .. code:: xml
 
    <archivedir>foo</archivedir>
-
-.. _`_archivedir`:
 
 archivedir
 ----------
@@ -264,8 +244,6 @@ Example snippet to use ‘archivedir’:
    <archivedir>foo</archivedir>
    <archivedir variant="production">bar</archivedir>
 
-.. _`_adding_packages_to_the_list_of_packages_to_install`:
-
 Adding packages to the "list of packages to install"
 ----------------------------------------------------
 
@@ -277,8 +255,6 @@ the ``<target>`` XML node. Inserting a line containing
    <pkg>util-linux</pkg>
 
 will add the ``util-linux`` package to the target-rfs.
-
-.. _`_using_the_finetuning_rules`:
 
 Using the finetuning rules
 --------------------------
@@ -295,14 +271,10 @@ example finetuning from
            <adduser passwd="elbe" shell="/bin/bash">elbe</adduser>
    </finetuning>
 
-.. _`_rm`:
-
 rm
 ~~
 
 The ``<rm>`` node removes files from the target-rfs.
-
-.. _`_adduser`:
 
 adduser
 ~~~~~~~
@@ -338,8 +310,6 @@ attribute in the XML.
 
    <adduser passwd_hashed="$6$rounds=656000$7vWuOPVX0YKaISh5$cJhevq/z7kJ215n18dnksv/zOeUf6uPoLgICwLeTSu/2xoLHkyYQABaM7a99sQmpilCV.SlK9jfHZz3m7/s2a." shell="/bin/bash">elbe</adduser>
 
-.. _`_changing_ownership_of_directories_or_files`:
-
 Changing ownership of directories or files
 ------------------------------------------
 
@@ -352,15 +322,11 @@ which allows running any command that is available in the target-rfs.
    <command>chown elbe:elbe /mnt</command>
    <command>chmod 777 /mnt</command>
 
-.. _`_further_example`:
-
 Further Example
 ~~~~~~~~~~~~~~~
 
 A more complete example can be found in the ELBE overview document that
 is installed at ``/usr/share/doc/elbe-doc/elbeoverview-en.html``
-
-.. _`_using_the_elbe_pbuilder_feature`:
 
 Using the Elbe Pbuilder Feature
 ===============================
@@ -431,8 +397,6 @@ profiles:
    $ cd linux*/
    $ ../elbe pbuilder --cross --origfile ../linux*.orig.tar.xz --profile nodoc,nopython build --project `cat ../pbuilder.prj`
 
-.. _`_custom_repository`:
-
 Custom Repository
 =================
 
@@ -440,8 +404,6 @@ You might have your own packages which should be installed into your
 image. This can be done with a custom repository. You can use
 `reprepro <https://mirrorer.alioth.debian.org/>`__ to create your own
 repository or the above mentioned pbuilder feature.
-
-.. _`_repository_key`:
 
 Repository Key
 --------------
@@ -490,8 +452,6 @@ used to export the public key into a repo.pub file.
 
    gpg --export --armor CF837F1AAAC35E084062AE4468E68615BB6CB47C > repo.pub
 
-.. _`_reprepro_configuration`:
-
 reprepro configuration
 ----------------------
 
@@ -525,8 +485,6 @@ put ``repo.pub`` into your ``repo`` directory.
    ├── conf
    │   └── distributions
    └── repo.pub
-
-.. _`_insert_pkgs_into_repo`:
 
 insert pkgs into repo
 ---------------------

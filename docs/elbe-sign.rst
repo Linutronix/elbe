@@ -2,14 +2,10 @@
 elbe-sign
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-sign - Add a signature to the given file
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -17,8 +13,6 @@ SYNOPSIS
    ::
 
       elbe sign <filename> <fingerprint>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -32,8 +26,6 @@ The person receiving the file can use *gpg --decrypt* or
 ``elbe-remove_sign(1)`` to verify the file and to get the original
 content.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
@@ -43,8 +35,6 @@ OPTIONS
 <fingerprint>
    The fingerprint of the private GPG key to use for signing the file.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -53,8 +43,6 @@ EXAMPLES
    ::
 
       elbe sign rfs.tar.bz2 FEE1DEAD
-
-.. _`_elbe`:
 
 ELBE
 ====

@@ -2,14 +2,10 @@
 elbe-debianize
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-debianize - How to debianize software
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -51,8 +47,6 @@ should be derived from some defconfig value if needed.
 Several Linux versions will not generate all the Build-Depends that are
 needed to build in a clean environment and you will probably need to fix
 them manually.
-
-.. _`_examples`:
 
 EXAMPLES
 ========

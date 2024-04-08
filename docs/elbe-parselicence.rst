@@ -2,15 +2,11 @@
 elbe-parselicence
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-parselicence - Generate a file containing the licences of the
 packages included in a project.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -25,8 +21,6 @@ SYNOPSIS
               [ --errors-only ] \
               <licence.xml filename>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -36,8 +30,6 @@ generated using mappings and overrides found in the mapping file.
 
 This information is written to an output xml file, and to a tagvalue
 based SPDX File.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -63,8 +55,6 @@ OPTIONS
 
 <licence.xml filename>
    licence.xml File generated during elbe build.
-
-.. _`_workflow`:
 
 WORKFLOW
 ========
@@ -95,8 +85,6 @@ and use the out.xml or generate tag-value output using option
 
    elbe parselicence --mapping my_mapping.xml /path/to/license.xml --tvout spdx_licenses.tagvalue
 
-.. _`_license_xml_file`:
-
 LICENSE.XML FILE
 ================
 
@@ -107,8 +95,6 @@ contains meta-data extracted from machine-readable copyright files, or
 generated via heuristics.
 
 There are 3 possibitlities per Package:
-
-.. _`_copyright_file_is_machine_readable`:
 
 Copyright File is machine-readable
 ----------------------------------
@@ -163,8 +149,6 @@ Example:
    </detailed>
    </pkglicense>
 
-.. _`_some_information_can_be_extracted_via_heuristics`:
-
 Some information can be extracted via heuristics
 ------------------------------------------------
 
@@ -206,8 +190,6 @@ Example:
    <debian_licenses><license>GPLv2+</license>
    </debian_licenses>
    </pkglicense>
-
-.. _`_no_information_can_be_extracted_automatically`:
 
 No information can be extracted automatically
 ---------------------------------------------
@@ -260,8 +242,6 @@ Example:
       SUCH DAMAGE.
    </text>
    </pkglicense>
-
-.. _`_mapping_file`:
 
 MAPPING FILE
 ============
@@ -364,15 +344,11 @@ As you can see, it is also necessary to add identity mappings, like
 Its not allowed to mix ``<license>`` and ``<mapping>`` in a single
 <package> node.
 
-.. _`_nomos`:
-
 NOMOS
 =====
 
 Nomos is part of fossology. See https://www.fossology.org/get-started/
 to find out, how to install the nomos executable.
-
-.. _`_elbe`:
 
 ELBE
 ====

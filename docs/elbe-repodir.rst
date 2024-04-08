@@ -2,14 +2,10 @@
 elbe-repodir
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-repodir - preprocesses and hosts repodirs on an Elbe client
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -17,8 +13,6 @@ SYNOPSIS
    ::
 
       'elbe repodir [options] <xmlfile>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -36,16 +30,12 @@ key file must be a relative path to repodir’s PATH.
 After the output file is written, the started webserver(s) will log
 their accessed files.
 
-.. _`_options`:
-
 OPTIONS
 =======
 
 --output <filename>
    preprocessed output file, defaults to repodir.xml. If this exists it
    will be overridden.
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -78,8 +68,6 @@ i. is preprocessed to:
 
 i. with randomly chosen TCP port 36071 serving PATH1 and port 33187
    serving PATH2.
-
-.. _`_elbe`:
 
 ELBE
 ====

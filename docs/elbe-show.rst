@@ -2,14 +2,10 @@
 elbe-show
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-show - Get a human readable representation of a ELBE XML file.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -18,8 +14,6 @@ SYNOPSIS
 
       elbe show [--verbose] <xmlfile>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -27,8 +21,6 @@ This command generates a human readable overview of a given ELBE XML
 file.
 
 It’s useful to get an idea what a specific XML file was designed for.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -40,8 +32,6 @@ OPTIONS
 <xmlfile>
    The xmlfile to be shown.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -50,8 +40,6 @@ EXAMPLES
    ::
 
       $ elbe show project.xml
-
-.. _`_elbe`:
 
 ELBE
 ====

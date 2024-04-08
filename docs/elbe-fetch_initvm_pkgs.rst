@@ -2,14 +2,10 @@
 elbe-fetch_initvm_pkgs
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-fetch_initvm_pkgs - Download initvm binary and source Packages
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -27,8 +23,6 @@ SYNOPSIS
               [--skip-build-bin] \
               <xmlfile>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -41,8 +35,6 @@ generate the initvm related repositories.
 
 This command is used by elbe internally during the creation of the
 initvm. It is currently not supposed to be called by users.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -76,8 +68,6 @@ OPTIONS
 
 <xmlfile>
    the XML file to use.
-
-.. _`_elbe`:
 
 ELBE
 ====

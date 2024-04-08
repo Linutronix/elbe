@@ -2,14 +2,10 @@
 elbe-init
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-init - create a project for an Elbe build virtual machine
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -24,8 +20,6 @@ SYNOPSIS
               [ --skip-cds ] \
               [ --skip-validation ] \
               <xmlfile>
-
-.. _`_description`:
 
 DESCRIPTION
 ===========
@@ -42,8 +36,6 @@ The build VM can be started by executing *make run* (or *make run-con*,
 if a serial console is enough). After that, the virtual machine can be
 used to work inside the generated root filesystem. To do so, please use
 the ``elbe-chroot(1)`` command **inside the VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -75,8 +67,6 @@ OPTIONS
 <xmlfile>
    The XML describing the Elbe project.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -88,8 +78,6 @@ EXAMPLES
       $ elbe init --directory=/scratch/example project.xml
       $ cd /scratch/example
       $ make
-
-.. _`_elbe`:
 
 ELBE
 ====

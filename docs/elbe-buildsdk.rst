@@ -2,14 +2,10 @@
 elbe-buildsdk
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-buildsdk - Build a yocto style sdk.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -21,14 +17,10 @@ SYNOPSIS
 <directory>
    directory containing the elbe project.
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
 creates a yocto style SDK
-
-.. _`_examples`:
 
 EXAMPLES
 ========
@@ -40,8 +32,6 @@ EXAMPLES
 
       # elbe buildchroot --output myarm.txt --target /root/myarm myarm.xml
       # elbe buildsdk /root/myarm
-
-.. _`_elbe`:
 
 ELBE
 ====

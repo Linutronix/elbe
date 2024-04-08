@@ -2,14 +2,10 @@
 elbe-gen_update
 ************************
 
-.. _`_name`:
-
 NAME
 ====
 
 elbe-gen_update - Generate an update archive to be used by elbe-updated.
-
-.. _`_synopsis`:
 
 SYNOPSIS
 ========
@@ -23,8 +19,6 @@ SYNOPSIS
               [ --skip-validation ] \
               <base_sourcexml>
 
-.. _`_description`:
-
 DESCRIPTION
 ===========
 
@@ -35,8 +29,6 @@ and all updated packages and can be used to update the target system
 with ``elbe-updated(1)``.
 
 This command has to be run as root **inside the Elbe build VM**.
-
-.. _`_options`:
 
 OPTIONS
 =======
@@ -63,8 +55,6 @@ OPTIONS
 <base_sourcexml>
    The *source.xml* file of the base version of the project.
 
-.. _`_examples`:
-
 EXAMPLES
 ========
 
@@ -77,8 +67,6 @@ EXAMPLES
       # elbe gen_update --target /root/myproject \
           --output /root/v0.1-v0.2.upd \
               /root/v0.1.xml
-
-.. _`_elbe`:
 
 ELBE
 ====
