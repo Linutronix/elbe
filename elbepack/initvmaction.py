@@ -753,7 +753,7 @@ class CreateAction(InitVMAction):
                 init_opts.append('--skip-build-bin')
 
             if not opt.build_sources:
-                init_opts.append(' --skip-build-source')
+                init_opts.append('--skip-build-source')
 
             if cdrom:
                 cdrom_opts = ['--cdrom', cdrom]
