@@ -1,5 +1,7 @@
 ./usr/bin/*
 ./usr/share/man/man1/elbe.1
+./usr/lib/python3.*/*-packages/elbepack/__main__.py
+./usr/lib/python3.*/*-packages/elbepack/main.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/add.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/add.py
 ./usr/lib/python3.*/*-packages/elbepack/commands/check_updates.py

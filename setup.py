@@ -61,7 +61,11 @@ setup(name='elbe',
                                  'default-preseed.xml',
                                  'schema/dbsfed.xsd',
                                  'schema/xml.xsd']},
-      scripts=['elbe'],
+      entry_points={
+          'console_scripts': [
+              'elbe=elbepack.main:main',
+          ],
+      },
       cmdclass={'install': my_install},
       install_requires=['lxml',
                         'Mako',
