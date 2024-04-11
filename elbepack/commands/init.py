@@ -53,13 +53,6 @@ def run_command(argv):
         help='start qemu in graphical mode to enable console switch')
 
     oparser.add_option(
-        '--devel',
-        dest='devel',
-        action='store_true',
-        default=False,
-        help='use devel mode, and install current builddir inside initvm')
-
-    oparser.add_option(
         '--nesting',
         dest='nesting',
         action='store_true',
@@ -93,12 +86,6 @@ def run_command(argv):
         sys.exit(79)
 
     with elbe_logging({'files': None}):
-        if opt.devel:
-            if not is_devel:
-                logging.error('Devel Mode only valid, '
-                              'when running from elbe checkout')
-                sys.exit(80)
-
         if not opt.skip_validation:
             validation = validate_xml(args[0])
             if validation:
@@ -152,12 +139,13 @@ def run_command(argv):
         initvm_http_proxy = http_proxy.replace('http://localhost:',
                                                'http://10.0.2.2:')
         elbe_exe = '/usr/bin/elbe'
-        if opt.devel:
+        if is_devel:
             elbe_exe = '/var/cache/elbe/devel/elbe'
         prj = xml.node('/initvm')
 
         d = {'elbe_exe': elbe_exe,
              'elbe_version': elbe_version,
+             'is_devel': is_devel,
              'defs': defs,
              'opt': opt,
              'xml': xml,
@@ -240,7 +228,7 @@ def run_command(argv):
                 --output {export_keyring}',
             env_add={'GNUPGHOME': out_path})
 
-        if opt.devel:
+        if is_devel:
             opts = [
                 '--exclude-vcs',
                 '--exclude-vcs-ignores',
@@ -261,7 +249,7 @@ def run_command(argv):
 
         elbe_in = Filesystem(out_path)
 
-        if opt.devel:
+        if is_devel:
             to_cpy.append(('elbe-devel.tar.bz2', ''))
 
         # Convert relative rfs path to absolute in the system

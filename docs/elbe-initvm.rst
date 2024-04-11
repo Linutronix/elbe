@@ -38,9 +38,6 @@ OPTIONS
 --cdrom <CDROM>
    ISO image of Binary cdrom.
 
---devel
-   Install elbe Version from the current working into initvm.
-
 --skip-download
    After the build has finished, the generated Files are downloaded from
    the initvm to the host. This step is skipped, when this option is

@@ -46,7 +46,3 @@ Crash Course
         elbe-build-<TIMESTAMP>
 
 3. copy the rfs to a sdcard: `sudo dd if=elbe-build*/sdcard.img of=/dev/mmcblk0`
-
-NOTE: When using a specific ELBE git checkout or during development you may
-want to use the `./elbe initvm create --devel` parameter to make the elbe
-version in the initvm match the one in your git checkout.

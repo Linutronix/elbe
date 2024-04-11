@@ -22,13 +22,6 @@ def run_command(argv):
     oparser.add_option('--cdrom', dest='cdrom', default=None,
                        help='iso image of Binary cdrom')
 
-    oparser.add_option(
-        '--devel',
-        action='store_true',
-        dest='devel',
-        default=False,
-        help='Install elbe Version from the current working into initvm')
-
     oparser.add_option('--skip-download', action='store_true',
                        dest='skip_download', default=False,
                        help='Skip downloading generated Files')

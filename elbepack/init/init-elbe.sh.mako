@@ -42,7 +42,7 @@ EOF
 
 in-target update-initramfs -u
 
-% if opt.devel:
+% if is_devel:
    mkdir /buildenv/var/cache/elbe/devel
    tar xj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh

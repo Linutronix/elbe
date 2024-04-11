@@ -743,9 +743,6 @@ class CreateAction(InitVMAction):
 
         try:
             init_opts = []
-            if opt.devel:
-                init_opts.append('--devel')
-
             if opt.nesting:
                 init_opts.append('--nesting')
 
