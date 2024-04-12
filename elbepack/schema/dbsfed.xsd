@@ -1976,56 +1976,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
     </restriction>
   </simpleType>
 
-  <complexType name="part_nr">
-    <annotation>
-      <documentation>
-        Helper around part_nr_restriction to allow XML base attribute
-      </documentation>
-    </annotation>
-    <simpleContent>
-      <extension base="rfs:part_nr_restriction">
-	<attributeGroup ref="xml:specialAttrs"/>
-      </extension>
-    </simpleContent>
-  </complexType>
-  
-  <simpleType name="part_nr_restriction">
-    <annotation>
-      <documentation>
-         allow maximum 4 primary partitions
-      </documentation>
-    </annotation>
-    <restriction base="integer">
-      <minInclusive value="1" />
-      <maxInclusive value="4" />
-    </restriction>
-  </simpleType>
-
-  <complexType name="part_type">
-    <annotation>
-      <documentation>
-        Helper around part_type_restriction to allow XML base attribute
-      </documentation>
-    </annotation>
-    <simpleContent>
-      <extension base="rfs:part_type_restriction">
-	<attributeGroup ref="xml:specialAttrs"/>
-      </extension>
-    </simpleContent>
-  </complexType>
-  
-  <simpleType name="part_type_restriction">
-    <annotation>
-      <documentation>
-         list of supported partition types
-      </documentation>
-    </annotation>
-    <restriction base="string">
-      <enumeration value="linux" />
-      <enumeration value="swap" />
-    </restriction>
-  </simpleType>
-
   <complexType name="fs_type">
     <annotation>
       <documentation>
