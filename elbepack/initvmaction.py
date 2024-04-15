@@ -536,7 +536,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
 
     if opt.build_sdk:
         try:
-            run_elbe(['control', 'wait_busy', prjdir], check=True)
+            run_elbe(['control', 'build_sdk', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control build_sdk Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
