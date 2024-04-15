@@ -248,34 +248,27 @@ class RepoBase:
     def removedeb(self, pkgname, components=None):
         self._removedeb(pkgname, self.repo_attr.codename, components)
 
-    def _removesrc(self, srcname, codename, components=None):
+    def _removesrc(self, srcname, codename):
 
         global_opt = [f'--basedir {self.fs.path}']
-
-        if components is not None:
-            # Compatibility with old callers
-            if isinstance(components, str):
-                components = [components]
-            global_opt.append(f'--component "{"|".join(components)}"')
 
         global_opt = ' '.join(global_opt)
 
         do(f'reprepro {global_opt} removesrc {codename} {srcname}',
            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
-    def removesrc(self, path, components=None):
+    def removesrc(self, path):
         with open(path) as fp:
             for p in Deb822.iter_paragraphs(fp):
                 if 'Source' in p:
                     self._removesrc(p['Source'],
-                                    self.repo_attr.codename,
-                                    components)
+                                    self.repo_attr.codename)
 
     def _remove(self, path, codename, components=None):
         with open(path) as fp:
             for p in Deb822.iter_paragraphs(fp):
                 if 'Source' in p:
-                    self._removesrc(p['Source'], codename, components)
+                    self._removesrc(p['Source'], codename)
                 elif 'Package' in p:
                     self._removedeb(p['Package'], codename, components)
                 elif 'Binary' in p:
@@ -318,7 +311,7 @@ class RepoBase:
                 # different md5 already.
                 #
                 # Try remove, and add again.
-                self.removesrc(path, components)
+                self.removesrc(path)
                 self._includedsc(path, self.repo_attr.codename, components)
             else:
                 raise ce
