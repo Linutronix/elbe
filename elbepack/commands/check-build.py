@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
-import glob
 import logging
 import optparse
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
@@ -46,13 +46,14 @@ def run_command(argv):
     total_cnt = 0
     fail_cnt = 0
 
+    directory = pathlib.Path(args[1])
+
     with elbe_logging({'streams': None}):
 
         for test in tests:
 
             logging.info('Starting test %s (%s)', test.__name__, test.__doc__)
-            os.chdir(args[1])
-            ret = test()()
+            ret = test(directory)()
 
             total_cnt += 1
             if ret:
@@ -73,7 +74,8 @@ class CheckBase:
 
     tests = dict()
 
-    def __init__(self):
+    def __init__(self, directory):
+        self.directory = directory
         self.ret = 0
 
     def __call__(self):
@@ -135,7 +137,7 @@ class CheckCdroms(CheckBase):
     def do_src(self, sources, src_total):
         """Check for sources in src-cdrom*"""
 
-        iso_it = glob.iglob('src-cdrom*')
+        iso_it = self.directory.glob('src-cdrom*')
         src_cnt = 0
 
         # For every src-cdrom*, extract it to a temporary directory
@@ -233,7 +235,7 @@ class CheckCdroms(CheckBase):
 
         # Every build has a source.xml where the list of binaries
         # installed can be found
-        xml = etree('source.xml')
+        xml = etree(self.directory / 'source.xml')
 
         # Initial statistics fo the build
         bin_cnt = 0
@@ -261,7 +263,7 @@ class CheckCdroms(CheckBase):
         # For every bin-cdrom, create a temporary directory where to
         # extract it and find all *.deb files
         #
-        for cdrom in glob.glob('bin-cdrom*'):
+        for cdrom in self.directory.glob('bin-cdrom*'):
             with TmpdirFilesystem() as tmp:
                 self.extract_cdrom(tmp.path, cdrom)
                 for _, realpath in tmp.walk_files():
@@ -394,13 +396,13 @@ class CheckImage(CheckBase):
         return tmp
 
     def open_img(self, path):
-        if path.endswith('.tar.gz'):
+        if path.name.endswith('.tar.gz'):
             return self.open_tgz(path)
         return open(path)
 
     def run(self):
 
-        self.xml = etree('source.xml')
+        self.xml = etree(self.directory / 'source.xml')
 
         fail_cnt = 0
         total_cnt = 0
@@ -444,7 +446,7 @@ class CheckImage(CheckBase):
 
     def do_img(self, tag):
 
-        img_name = tag.text('./img')
+        img_name = self.directory / tag.text('./img')
         qemu = tag.text('./interpreter')
 
         fw_opts = ''
@@ -622,25 +624,22 @@ exit 1
         with TmpdirFilesystem() as tmp:
 
             # Make a copy of the installer
-            shutil.copyfile(sdk, tmp.fname(sdk))
-
-            # Let's work in our temp dir from now on
-            os.chdir(tmp.path)
+            copy = shutil.copyfile(sdk, tmp.fname(sdk.name))
 
             # The script is self extracting; it needs to be executable
-            os.chmod(sdk, 0o744)
+            os.chmod(copy, 0o744)
 
-            # Extract here with 'yes' to all answers
-            do(f'./{sdk} -y -d .')
+            # Extract to temporary directory with 'yes' to all answers
+            do(f'{copy} -y -d {tmp.path}')
 
             # Get environment file
             env = tmp.glob('environment-setup*')[0]
 
             # NOTE!  This script requires binfmt to be installed.
-            do('/bin/sh', stdin=self.script, env_add={'ELBE_SDK_ENV': env})
+            do(f'cd {tmp.path}; /bin/sh', stdin=self.script, env_add={'ELBE_SDK_ENV': env})
 
     def run(self):
-        for sdk in glob.glob('setup-elbe-sdk*'):
+        for sdk in self.directory.glob('setup-elbe-sdk*'):
             self.do_sdk(sdk)
 
 
@@ -648,4 +647,5 @@ exit 1
 class CheckRebuild(CheckBase):
 
     def run(self):
-        do(f'{sys.executable} {elbe_exe} initvm submit --skip-build-source bin-cdrom.iso')
+        do(f'{sys.executable} {elbe_exe} '
+           'initvm submit --skip-build-source {self.directory / "bin-cdrom.iso"}')
