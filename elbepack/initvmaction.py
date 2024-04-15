@@ -14,7 +14,7 @@ import time
 
 import elbepack
 from elbepack.config import cfg
-from elbepack.directories import elbe_exe, run_elbe
+from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
@@ -29,6 +29,9 @@ def is_soap_local():
 def cmd_exists(x):
     return any(os.access(os.path.join(path, x), os.X_OK)
                for path in os.environ['PATH'].split(os.pathsep))
+
+
+prog = os.path.basename(sys.argv[0])
 
 # Create download directory with timestamp,
 # if necessary
@@ -520,12 +523,12 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('The files, that have been built, can be downloaded using:',
               file=sys.stderr)
         print(
-            f'{elbe_exe} control get_files --output "{opt.outdir}" "{prjdir}"',
+            f'{prog} control get_files --output "{opt.outdir}" "{prjdir}"',
             file=sys.stderr)
         print('', file=sys.stderr)
         print('The project can then be removed using:',
               file=sys.stderr)
-        print(f'{elbe_exe} control del_project "{prjdir}"',
+        print(f'{prog} control del_project "{prjdir}"',
               file=sys.stderr)
         print('', file=sys.stderr)
         sys.exit(133)
@@ -555,13 +558,13 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             print('The files, that have been built, can be downloaded using:',
                   file=sys.stderr)
             print(
-                f'{elbe_exe} control get_files --output "{opt.outdir}" '
+                f'{prog} control get_files --output "{opt.outdir}" '
                 f'"{prjdir}"',
                 file=sys.stderr)
             print('', file=sys.stderr)
             print('The project can then be removed using:',
                   file=sys.stderr)
-            print(f'{elbe_exe} control del_project "{prjdir}"',
+            print(f'{prog} control del_project "{prjdir}"',
                   file=sys.stderr)
             print('', file=sys.stderr)
             sys.exit(135)
