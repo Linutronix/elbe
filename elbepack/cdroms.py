@@ -66,6 +66,13 @@ def mk_source_cdrom(components, codename,
                            cache, pkg, version,
                            forbiddenPackages)
 
+        if component == 'main' and xml is not None:
+            for p in xml.node('debootstrappkgs'):
+                pkg = XMLPackage(p, None)
+                srcpkgs = cache.get_corresponding_source_packages([pkg])
+                for srcpkg, srcpkg_ver in srcpkgs:
+                    add_source_pkg(repo, component, cache, srcpkg, srcpkg_ver, forbiddenPackages)
+
     # elbe fetch_initvm_pkgs has downloaded all sources to
     # /var/cache/elbe/sources
     # use walk_files to scan it, and add all dsc files.
