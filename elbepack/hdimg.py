@@ -152,16 +152,11 @@ class grubinstaller202(grubinstaller_base):
         imagemntfs = Filesystem(imagemnt)
         try:
             loopdev = self.losetup(self.fs['/'].filename)
-            loopnum = loopdev.replace('/dev/loop', '')
-            poopdev = '/dev/poop' + loopnum
-
-            do(f'cp -a {loopdev} {poopdev}')
-            do(f'kpartx -as {poopdev}')
 
             for entry in self.fs.depthlist():
                 do(
                     'mount '
-                    f'/dev/mapper/poop{loopnum}p{entry.partnum} '
+                    f'{loopdev}p{entry.partnum} '
                     f'{imagemntfs.fname(entry.mountpoint)}')
 
             do(f"mount --bind /dev {imagemntfs.fname('dev')}")
@@ -171,7 +166,7 @@ class grubinstaller202(grubinstaller_base):
             do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
             devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-            devmap.write(f'(hd0) {poopdev}\n')
+            devmap.write(f'(hd0) {loopdev}\n')
             devmap.close()
 
             chroot(imagemnt, 'update-grub2')
@@ -181,7 +176,7 @@ class grubinstaller202(grubinstaller_base):
                 do(
                     f'chroot {imagemnt} '
                     f'grub-install {user_args} --target={grub_tgt} --removable '
-                    f'--no-floppy {poopdev}')
+                    f'--no-floppy {loopdev}')
             if 'shimfix' in self.fw_type:
                 # grub-install is heavily dependent on the running system having
                 # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
@@ -194,7 +189,7 @@ class grubinstaller202(grubinstaller_base):
                 do(
                     f'chroot {imagemnt} '
                     f'grub-install {user_args} --target=i386-pc '
-                    f'--no-floppy {poopdev}')
+                    f'--no-floppy {loopdev}')
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -207,11 +202,10 @@ class grubinstaller202(grubinstaller_base):
 
             for entry in reversed(self.fs.depthlist()):
                 do(
-                    f'umount /dev/mapper/poop{loopnum}p{entry.partnum}',
+                    f'umount {loopdev}p{entry.partnum}',
                     allow_fail=True)
 
-            do(f'kpartx -d {poopdev}', allow_fail=True)
-            do(f'losetup -d {poopdev}', allow_fail=True)
+            do(f'losetup -d {loopdev}', allow_fail=True)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -224,11 +218,6 @@ class grubinstaller97(grubinstaller_base):
         imagemntfs = Filesystem(imagemnt)
         try:
             loopdev = self.losetup(self.fs['/'].filename)
-            loopnum = loopdev.replace('/dev/loop', '')
-            poopdev = '/dev/poop' + loopnum
-
-            do(f'cp -a {loopdev} {poopdev}')
-            do(f'kpartx -as {poopdev}')
 
             bootentry = 0
 
@@ -238,7 +227,7 @@ class grubinstaller97(grubinstaller_base):
                     bootentry = int(entry.partnum)
                 do(
                     'mount '
-                    f'/dev/mapper/poop{loopnum}p{entry.partnum} '
+                    f'{loopdev}p{entry.partnum} '
                     f'{imagemntfs.fname(entry.mountpoint)}')
 
             if not bootentry:
@@ -252,7 +241,7 @@ class grubinstaller97(grubinstaller_base):
             do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
             devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-            devmap.write(f'(hd0) {poopdev}\n')
+            devmap.write(f'(hd0) {loopdev}\n')
             devmap.close()
 
             # Replace groot and kopt because else they will be given
@@ -268,7 +257,7 @@ class grubinstaller97(grubinstaller_base):
 
             do(
                 f'chroot {imagemnt} '
-                f'grub-install {user_args} --no-floppy {poopdev}')
+                f'grub-install {user_args} --no-floppy {loopdev}')
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -281,11 +270,10 @@ class grubinstaller97(grubinstaller_base):
 
             for entry in reversed(self.fs.depthlist()):
                 do(
-                    f'umount /dev/mapper/poop{loopnum}p{entry.partnum}',
+                    f'umount {loopdev}p{entry.partnum}',
                     allow_fail=True)
 
-            do(f'kpartx -d {poopdev}', allow_fail=True)
-            do(f'losetup -d {poopdev}', allow_fail=True)
+            do(f'losetup -d {loopdev}', allow_fail=True)
 
 
 class simple_fstype:
