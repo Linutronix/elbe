@@ -158,26 +158,19 @@ def get_corresponding_source_packages(cache, pkg_lst=None):
 
     src_set = set()
 
-    with apt_pkg.TagFile('/var/lib/dpkg/status') as tagfile:
-        for section in tagfile:
+    for pkg in pkg_lst:
+        version = cache[pkg].installed or cache[pkg.candidate]
+        src_set.add((version.source_name, version.source_version))
 
-            pkg = section['Package']
+        built_using = version.record.get('Built-Using')
+        if built_using is None:
+            continue
 
-            if pkg not in pkg_lst:
-                continue
-
-            tmp = cache[pkg].installed or cache[pkg].candidate
-
-            src_set.add((tmp.source_name, tmp.source_version))
-
-            if 'Built-Using' not in section:
-                continue
-
-            built_using_lst = section['Built-Using'].split(', ')
-            for built_using in built_using_lst:
-                name, version = built_using.split(' ', 1)
-                version = version.strip('(= )')
-                src_set.add((name, version))
+        built_using_lst = built_using.split(', ')
+        for built_using in built_using_lst:
+            name, version = built_using.split(' ', 1)
+            version = version.strip('(= )')
+            src_set.add((name, version))
 
     return list(src_set)
 
