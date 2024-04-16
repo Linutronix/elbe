@@ -159,7 +159,11 @@ def get_corresponding_source_packages(cache, pkg_lst=None):
     src_set = set()
 
     for pkg in pkg_lst:
-        version = cache[pkg].installed or cache[pkg.candidate]
+        if isinstance(pkg, str):
+            version = cache[pkg].installed or cache[pkg.candidate]
+        elif isinstance(pkg, PackageBase):
+            version = cache[pkg.name].versions[pkg.installed_version]
+
         src_set.add((version.source_name, version.source_version))
 
         built_using = version.record.get('Built-Using')
