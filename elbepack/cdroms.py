@@ -108,7 +108,7 @@ def mk_source_cdrom(components, codename,
                         if volume_number in repo.volume_indexes:
                             do(
                                 f'tar xvfj "{fp.name}" -h -C '
-                                f'"{repo.get_volume_fs(volume_number).path}"')
+                                f'"{repo.get_volume_path(volume_number)}"')
                         else:
                             logging.warning("The src-cdrom archive's volume value "
                                             'is not contained in the actual volumes')

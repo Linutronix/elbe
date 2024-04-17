@@ -3,12 +3,12 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import os
+import pathlib
 import subprocess
 
 from debian.deb822 import Deb822
 
 from elbepack.egpg import export_key, generate_elbe_internal_key, unlock_key
-from elbepack.filesystem import Filesystem
 from elbepack.pkgutils import get_dsc_size
 from elbepack.shellhelper import do
 
@@ -81,12 +81,12 @@ class RepoBase:
         self.origin = origin
         self.description = description
         self.maxsize = maxsize
-        self.fs = self.get_volume_fs(self.volume_count)
+        self.volume = self.get_volume_path(self.volume_count)
 
         # if repo exists retrive the keyid otherwise
         # generate a new key and generate repository config
-        if self.fs.isdir('/'):
-            repo_conf = self.fs.read_file('conf/distributions')
+        if self.volume.is_dir():
+            repo_conf = self.volume.joinpath('conf', 'distributions').read_text()
             for lic in repo_conf.splitlines():
                 if lic.startswith('SignWith'):
                     self.keyid = lic.split()[1]
@@ -96,7 +96,7 @@ class RepoBase:
             unlock_key(self.keyid)
             self.gen_repo_conf()
 
-    def get_volume_fs(self, volume):
+    def get_volume_path(self, volume):
         if self.maxsize:
             if volume >= 0:
                 volume_no = volume
@@ -104,89 +104,88 @@ class RepoBase:
                 # negative numbers represent the volumes counted from last
                 # (-1: last, -2: second last, ...)
                 volume_no = self.volume_count + 1 + volume
-            volname = os.path.join(self.vol_path, f'vol{volume_no:02}')
-            return Filesystem(volname)
+            return pathlib.Path(self.vol_path, f'vol{volume_no:02}')
 
-        return Filesystem(self.vol_path)
+        return pathlib.Path(self.vol_path)
 
     def new_repo_volume(self):
         self.volume_count += 1
-        self.fs = self.get_volume_fs(self.volume_count)
+        self.volume = self.get_volume_path(self.volume_count)
         self.gen_repo_conf()
 
     def gen_repo_conf(self):
-        self.fs.mkdir_p('conf')
-        fp = self.fs.open('conf/distributions', 'w')
+        dists = self.volume.joinpath('conf', 'distributions')
+        dists.parent.mkdir(parents=True)
+        dists.touch()
+        with dists.open('w') as fp:
 
-        need_update = False
+            need_update = False
 
-        for att in self.attrs:
-            fp.write('Origin: ' + self.origin + '\n')
-            fp.write('Label: ' + self.origin + '\n')
-            fp.write('Codename: ' + att.codename + '\n')
-            fp.write('Architectures: ' + ' '.join(att.arch) + '\n')
-            fp.write('Components: ' + ' '.join(att.components.difference(
-                set(['main/debian-installer']))) + '\n')
-            fp.write('UDebComponents: ' + ' '.join(att.components.difference(
-                set(['main/debian-installer']))) + '\n')
-            fp.write('Description: ' + self.description + '\n')
-            fp.write('SignWith: ' + self.keyid + '\n')
+            for att in self.attrs:
+                fp.write('Origin: ' + self.origin + '\n')
+                fp.write('Label: ' + self.origin + '\n')
+                fp.write('Codename: ' + att.codename + '\n')
+                fp.write('Architectures: ' + ' '.join(att.arch) + '\n')
+                fp.write('Components: ' + ' '.join(att.components.difference(
+                    set(['main/debian-installer']))) + '\n')
+                fp.write('UDebComponents: ' + ' '.join(att.components.difference(
+                    set(['main/debian-installer']))) + '\n')
+                fp.write('Description: ' + self.description + '\n')
+                fp.write('SignWith: ' + self.keyid + '\n')
 
-            if 'main/debian-installer' in att.components:
-                fp.write('Update: di\n')
+                if 'main/debian-installer' in att.components:
+                    fp.write('Update: di\n')
 
-                ufp = self.fs.open('conf/updates', 'w')
+                    with self.volume.joinpath('conf', 'updates').open('w') as ufp:
 
-                ufp.write('Name: di\n')
-                ufp.write('Method: ' + att.mirror + '\n')
-                ufp.write('VerifyRelease: blindtrust\n')
-                ufp.write('Components: \n')
-                ufp.write('GetInRelease: no\n')
-                # It would be nicer, to use this
-                # ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
-                # But we end up with 'armel amd64' sometimes.
-                # So lets just use the init_attr...
-                if self.init_attr:
-                    ufp.write(
-                        'Architectures: ' +
-                        ' '.join(
-                            self.init_attr.arch) +
-                        '\n')
-                else:
-                    ufp.write('Architectures: ' + ' '.join(att.arch) + '\n')
+                        ufp.write('Name: di\n')
+                        ufp.write('Method: ' + att.mirror + '\n')
+                        ufp.write('VerifyRelease: blindtrust\n')
+                        ufp.write('Components: \n')
+                        ufp.write('GetInRelease: no\n')
+                        # It would be nicer, to use this
+                        # ufp.write( "Architectures: " + " ".join (att.arch) + "\n" )
+                        # But we end up with 'armel amd64' sometimes.
+                        # So lets just use the init_attr...
+                        if self.init_attr:
+                            ufp.write(
+                                'Architectures: ' +
+                                ' '.join(
+                                    self.init_attr.arch) +
+                                '\n')
+                        else:
+                            ufp.write('Architectures: ' + ' '.join(att.arch) + '\n')
 
-                ufp.write('UDebComponents: main>main\n')
-                ufp.close()
+                        ufp.write('UDebComponents: main>main\n')
 
-                need_update = True
+                    need_update = True
 
-            fp.write('\n')
-        fp.close()
+                fp.write('\n')
 
-        export_key(self.keyid, self.fs.fname('/repo.pub'))
+        export_key(self.keyid, self.volume / 'repo.pub')
 
         if need_update:
-            cmd = f'reprepro --export=force --basedir "{self.fs.path}" update'
+            cmd = f'reprepro --export=force --basedir "{self.volume}" update'
             do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
         else:
             for att in self.attrs:
-                do(f'reprepro --basedir "{self.fs.path}" export {att.codename}',
+                do(f'reprepro --basedir "{self.volume}" export {att.codename}',
                    env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def finalize(self):
         for att in self.attrs:
-            cmd = f'reprepro --basedir "{self.fs.path}" export {att.codename}'
+            cmd = f'reprepro --basedir "{self.volume}" export {att.codename}'
             do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, components=None, prio=None):
         if self.maxsize:
-            new_size = _disk_usage(self.fs.path) + os.path.getsize(path)
+            new_size = _disk_usage(self.volume) + os.path.getsize(path)
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
         global_opt = ['--keepunreferencedfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.fs.path}"']
+                      f'--basedir "{self.volume}"']
 
         if prio is not None:
             global_opt.append(f'--priority {prio}')
@@ -227,7 +226,7 @@ class RepoBase:
                       '--ignore=surprisingbinary',
                       '--keepunreferencedfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.fs.path}"',
+                      f'--basedir "{self.volume}"',
                       '--priority normal',
                       '--section misc']
 
@@ -243,7 +242,7 @@ class RepoBase:
 
     def _removedeb(self, pkgname, codename, components=None):
 
-        global_opt = [f'--basedir "{self.fs.path}"']
+        global_opt = [f'--basedir "{self.volume}"']
 
         if components is not None:
             # Compatibility with old callers
@@ -261,7 +260,7 @@ class RepoBase:
 
     def _removesrc(self, srcname, codename):
 
-        global_opt = [f'--basedir {self.fs.path}']
+        global_opt = [f'--basedir {self.volume}']
 
         global_opt = ' '.join(global_opt)
 
@@ -288,17 +287,17 @@ class RepoBase:
 
     def _includedsc(self, path, codename, components=None):
         if self.maxsize:
-            new_size = _disk_usage(self.fs.path) + get_dsc_size(path)
+            new_size = _disk_usage(self.volume) + get_dsc_size(path)
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        if self.maxsize and (_disk_usage(self.fs.path) > self.maxsize):
+        if self.maxsize and (_disk_usage(self.volume) > self.maxsize):
             self.new_repo_volume()
 
         global_opt = ['--keepunreferencedfiles',
                       '--keepunusednewfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.fs.path}"',
+                      f'--basedir "{self.volume}"',
                       '--priority normal',
                       '--section misc']
 
@@ -341,15 +340,14 @@ class RepoBase:
     def buildiso(self, fname, options=''):
         files = []
         if self.volume_count == 0:
-            new_path = '"' + self.fs.path + '"'
-            do(f'genisoimage {options} -o {fname} -J -joliet-long -R {new_path}')
+            do(f'genisoimage {options} -o {fname} -J -joliet-long -R "{self.volume}"')
             files.append(fname)
         else:
             for i in self.volume_indexes:
-                volfs = self.get_volume_fs(i)
+                vol = self.get_volume_path(i)
                 newname = fname + (f'{i:02}')
                 do(f'genisoimage {options} -o {newname} -J -joliet-long '
-                   f'-R {volfs.path}')
+                   f'-R {vol}')
                 files.append(newname)
 
         return files
