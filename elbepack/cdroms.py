@@ -4,6 +4,7 @@
 
 import logging
 import os
+import pathlib
 import subprocess
 from shutil import copyfile
 
@@ -11,7 +12,6 @@ from apt.package import FetchError
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.archivedir import archive_tmpfile
-from elbepack.filesystem import Filesystem
 from elbepack.isooptions import get_iso_options
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -75,19 +75,18 @@ def mk_source_cdrom(components, codename,
 
     # elbe fetch_initvm_pkgs has downloaded all sources to
     # /var/cache/elbe/sources
-    # use walk_files to scan it, and add all dsc files.
+    # use os.walk to scan it, and add all dsc files.
     #
     # we can not just copy the source repo, like we do
     # with the bin repo, because the src cdrom can be split
     # into multiple cdroms
 
-    initvm_repo = Filesystem('/var/cache/elbe/sources')
+    for dirpath, _, filenames in os.walk('/var/cache/elbe/sources'):
+        for filename in filenames:
+            if not filename.endswith('.dsc'):
+                continue
 
-    for _, dsc_real in initvm_repo.walk_files():
-        if not dsc_real.endswith('.dsc'):
-            continue
-
-        repos['main'].include_init_dsc(dsc_real, 'initvm')
+            repos['main'].include_init_dsc(os.path.join(dirpath, filename), 'initvm')
 
     for repo in repos.values():
         repo.finalize()
@@ -130,8 +129,8 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     else:
         mirror = 'http://deb.debian.org/debian'
 
-    repo_path = os.path.join(target, 'binrepo')
-    target_repo_path = os.path.join(repo_path, 'targetrepo')
+    repo_path = pathlib.Path(target, 'binrepo')
+    target_repo_path = repo_path / 'targetrepo'
 
     # initvm repo has been built upon initvm creation
     # just copy it. the repo __init__() afterwards will
@@ -193,25 +192,25 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
 
     # Mark the binary repo with the necessary Files
     # to make the installer accept this as a CDRom
-    repo_fs = Filesystem(repo_path)
-    repo_fs.mkdir_p('.disk')
-    repo_fs.write_file('.disk/base_installable', 0o644, 'main\n')
-    repo_fs.write_file('.disk/base_components', 0o644, 'main\n')
-    repo_fs.write_file('.disk/cd_type', 0o644, 'not_complete\n')
-    repo_fs.write_file('.disk/info', 0o644, 'elbe inst cdrom - full cd\n')
-    repo_fs.symlink('.', 'debian', allow_exists=True)
-    repo_fs.write_file('md5sum.txt', 0o644, '')
+    dot_disk = repo_path / '.disk'
+    dot_disk.mkdir()
+    dot_disk.joinpath('base_installable').write_text('main\n')
+    dot_disk.joinpath('base_components').write_text('main\n')
+    dot_disk.joinpath('cd_type').write_text('not_complete\n')
+    dot_disk.joinpath('info').write_text('elbe inst cdrom - full cd\n')
+
+    repo_path.joinpath('debian').symlink_to(repo_path)
+    repo_path.joinpath('md5sum.txt').touch()
 
     # write source xml onto cdrom
-    xml.xml.write(repo_fs.fname('source.xml'))
+    xml.xml.write(repo_path / 'source.xml')
 
     # copy initvm-cdrom.gz and vmlinuz
     copyfile('/var/cache/elbe/installer/initrd-cdrom.gz',
-             repo_fs.fname('initrd-cdrom.gz'))
+             repo_path / 'initrd-cdrom.gz')
     copyfile('/var/cache/elbe/installer/vmlinuz',
-             repo_fs.fname('vmlinuz'))
+             repo_path / 'vmlinuz')
 
-    target_repo_fs = Filesystem(target_repo_path)
-    target_repo_fs.write_file('.aptignr', 0o644, '')
+    target_repo_path.joinpath('.aptignr').touch()
 
     return repo.buildiso(os.path.join(target, 'bin-cdrom.iso'))
