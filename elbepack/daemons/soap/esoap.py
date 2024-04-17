@@ -6,6 +6,7 @@
 import binascii
 import fnmatch
 import os
+import pathlib
 import subprocess
 import tarfile
 from tempfile import NamedTemporaryFile
@@ -16,7 +17,6 @@ from spyne.model.primitive import Boolean, Integer, String
 from spyne.service import ServiceBase
 
 from elbepack.elbexml import ValidationMode
-from elbepack.filesystem import hostfs
 from elbepack.version import elbe_version, is_devel
 
 from .authentication import authenticated_admin, authenticated_uid
@@ -66,8 +66,9 @@ class ESoap (ServiceBase):
         # prerm/postinst scripts.
         # elbe daemon does it itself, because cherrypy
         # notices that.
-        hostfs.write_file('usr/sbin/policy-rc.d',
-                          0o755, '#!/bin/sh\nexit 101\n')
+        policy_rc_d = pathlib.Path('/usr/sbin/policy-rc.d')
+        policy_rc_d.touch(mode=0o755)
+        policy_rc_d.write_text('#!/bin/sh\nexit 101\n')
         try:
             env = os.environ()
             env.update({
@@ -83,7 +84,7 @@ class ESoap (ServiceBase):
 
             ps = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         finally:
-            hostfs.remove('usr/sbin/policy-rc.d')
+            policy_rc_d.unlink()
 
         return SoapCmdReply(ps.returncode, ps.stdout)
 

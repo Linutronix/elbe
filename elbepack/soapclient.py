@@ -21,7 +21,6 @@ from suds.client import Client
 
 from elbepack.config import cfg
 from elbepack.elbexml import ElbeXML, ValidationMode
-from elbepack.filesystem import Filesystem
 from elbepack.version import elbe_initvm_packagelist, elbe_version
 
 
@@ -438,9 +437,8 @@ class GetFileAction(ClientAction):
         dst_fname = filename
 
         if opt.output:
-            fs = Filesystem('/')
             dst = os.path.abspath(opt.output)
-            fs.mkdir_p(dst)
+            os.makedirs(dst, exist_ok=True)
             dst_fname = str(os.path.join(dst, filename)).encode()
 
         client.download_file(builddir, filename, dst_fname)
@@ -530,9 +528,8 @@ class GetFilesAction(ClientAction):
                 print(f'{f.name}')
 
             if opt.output:
-                fs = Filesystem('/')
                 dst = os.path.abspath(opt.output)
-                fs.mkdir_p(dst)
+                os.makedirs(dst, exist_ok=True)
                 dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
                 client.download_file(builddir, f.name, dst_fname)
 

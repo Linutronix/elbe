@@ -4,13 +4,13 @@
 
 import logging
 import os
+import pathlib
 import subprocess
 
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
 from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
 
-from elbepack.filesystem import hostfs
 from elbepack.shellhelper import env_add, get_command_out
 
 
@@ -263,11 +263,12 @@ EOT = 4294967295
 
 
 def generate_elbe_internal_key():
-    hostfs.mkdir_p('/var/cache/elbe/gnupg')
-    hostfs.write_file('/var/cache/elbe/gnupg/gpg-agent.conf', 0o600,
-                      'allow-preset-passphrase\n'
-                      f'default-cache-ttl {EOT}\n'
-                      f'max-cache-ttl {EOT}\n')
+    gpg_agent_conf = pathlib.Path('/var/cache/elbe/gnupg/gpg-agent.conf')
+    gpg_agent_conf.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+    gpg_agent_conf.write_text('allow-preset-passphrase\n'
+                              f'default-cache-ttl {EOT}\n'
+                              f'max-cache-ttl {EOT}\n')
+
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,

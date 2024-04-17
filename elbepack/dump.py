@@ -4,6 +4,7 @@
 
 import collections
 import logging
+import pathlib
 from datetime import datetime
 from fnmatch import fnmatchcase
 
@@ -11,7 +12,6 @@ from apt import Cache
 
 from elbepack.aptpkgutils import APTPackage
 from elbepack.archivedir import archive_tmpfile
-from elbepack.filesystem import hostfs
 from elbepack.finetuning import do_finetuning
 from elbepack.shellhelper import do
 from elbepack.version import elbe_version
@@ -36,7 +36,7 @@ def dump_fullpkgs(xml, rfs, cache):
         xml.append_full_pkg(p)
 
     sources_list = xml.xml.ensure_child('sources_list')
-    slist = rfs.read_file('etc/apt/sources.list')
+    slist = pathlib.Path('/etc/apt/sources.list').read_text()
     sources_list.set_text(slist)
 
     try:
@@ -63,12 +63,12 @@ def dump_initvmpkgs(xml):
         xml.append_initvm_pkg(p)
 
     sources_list = xml.xml.ensure_child('initvm_sources_list')
-    slist = hostfs.read_file('etc/apt/sources.list')
+    slist = pathlib.Path('/etc/apt/sources.list').read_text()
     sources_list.set_text(slist)
 
     try:
         preferences = xml.xml.ensure_child('initvm_apt_prefs')
-        prefs = hostfs.read_file('etc/apt/preferences')
+        prefs = pathlib.Path('/etc/apt/preferences').read_text()
         preferences.set_text(prefs)
     except IOError:
         pass

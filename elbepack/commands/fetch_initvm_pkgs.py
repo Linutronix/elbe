@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import logging
+import os
 import subprocess
 import sys
 from optparse import OptionParser
@@ -14,7 +15,6 @@ from elbepack.aptpkgutils import fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
 from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.filesystem import hostfs
 from elbepack.log import elbe_logging
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
 from elbepack.shellhelper import do
@@ -97,7 +97,7 @@ def run_command(argv):
         #
         repo = CdromInitRepo(init_codename, opt.binrepo, mirror)
 
-        hostfs.mkdir_p(opt.archive)
+        os.makedirs(opt.archive, exist_ok=True)
 
         if opt.build_bin:
             pkglist = get_initvm_pkglist()
@@ -137,7 +137,7 @@ def run_command(argv):
         # Source Repo
         #
         repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, 0, mirror)
-        hostfs.mkdir_p(opt.srcarchive)
+        os.makedirs(opt.srcarchive, exist_ok=True)
 
         # a cdrom build does not have sources
         # skip adding packages to the source repo

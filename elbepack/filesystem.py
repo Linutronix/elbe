@@ -520,6 +520,3 @@ class ImgMountFilesystem(Filesystem):
 
     def __exit__(self, typ, value, traceback):
         do(f'umount "{self.path}"')
-
-
-hostfs = Filesystem('/')

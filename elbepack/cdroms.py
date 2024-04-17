@@ -11,7 +11,7 @@ from apt.package import FetchError
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.archivedir import archive_tmpfile
-from elbepack.filesystem import Filesystem, hostfs
+from elbepack.filesystem import Filesystem
 from elbepack.isooptions import get_iso_options
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -40,7 +40,7 @@ def mk_source_cdrom(components, codename,
                     cdrom_size=CDROM_SIZE, xml=None,
                     mirror='http://deb.debian.org/debian'):
 
-    hostfs.mkdir_p('/var/cache/elbe/sources')
+    os.makedirs('/var/cache/elbe/sources', exist_ok=True)
 
     forbiddenPackages = []
     if xml is not None and xml.has('target/pkg-list'):
