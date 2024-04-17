@@ -408,17 +408,9 @@ class Filesystem:
         >>> this.mkdir_p("mkdir_p/foo/bar/baz") # doctest: +ELLIPSIS
         Traceback (most recent call last):
         ...
-        OSError: a file with the same name as the desired dir, ...
+        FileExistsError: ...
         """
-        if self.isdir(newdir):
-            pass
-        elif self.isfile(newdir):
-            raise OSError(
-                'a file with the same name as the desired '
-                f"dir, '{newdir}', already exists. in RFS {self.path}")
-        else:
-            self.mkdir(newdir)
-            self.chmod(newdir, mode)
+        os.makedirs(self.fname(newdir), mode=mode, exist_ok=True)
 
     def touch_file(self, fname):
         if self.exists(fname):
