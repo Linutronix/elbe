@@ -14,7 +14,6 @@ from optparse import OptionParser
 import elbepack.init
 from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
-from elbepack.filesystem import Filesystem
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import do
 from elbepack.templates import get_initvm_preseed, write_template
@@ -239,18 +238,18 @@ def run_command(argv):
                   ('vmlinuz', ''),
                   ('preseed.cfg', '')]
 
-        elbe_in = Filesystem(out_path)
+        elbe_in = pathlib.Path(out_path)
 
         if is_devel:
             to_cpy.append(('elbe-devel.tar.bz2', ''))
 
         # Convert relative rfs path to absolute in the system
-        to_cpy = [(elbe_in.fname(src), elbe_in.fname(os.path.join('initrd-tree', dst)))
+        to_cpy = [(elbe_in / src, elbe_in / 'initrd-tree' / dst)
                   for src, dst
                   in to_cpy]
 
         # These are already absolute path!
-        keyrings = elbe_in.fname(os.path.join('initrd-tree', 'usr/share/keyrings'))
+        keyrings = elbe_in / 'initrd-tree' / 'usr/share/keyrings'
         for gpg in elbe_in.glob('*.gpg'):
             to_cpy.append((gpg, keyrings))
 
@@ -261,7 +260,7 @@ def run_command(argv):
                 pass
             shutil.copy(src, dst)
 
-        os.makedirs(elbe_in.fname('initrd-tree/usr/lib/finish-install.d'), exist_ok=True)
+        elbe_in.joinpath('initrd-tree/usr/lib/finish-install.d').mkdir(parents=True, exist_ok=True)
 
         def create_as_exec(file, flags):
             return os.open(file, flags, mode=0o755)
@@ -278,7 +277,7 @@ def run_command(argv):
         if prj.has('mirror/cdrom'):
             cdrom_opts = '--cdrom-device /dev/sr0 --cdrom-mount-path /media/cdrom0'
 
-        with open(elbe_in.fname('initrd-tree/usr/lib/finish-install.d/93initvm-repo'),
+        with open(elbe_in / 'initrd-tree/usr/lib/finish-install.d/93initvm-repo',
                   mode='x', opener=create_as_exec) as f:
 
             f.write(f'in-target {elbe_exe} '
