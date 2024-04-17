@@ -15,7 +15,7 @@ from elbepack.fstab import fstabentry
 from elbepack.hdimg import do_hdimg
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do
 from elbepack.version import elbe_version
 
 
@@ -87,6 +87,12 @@ def copy_filelist(src, file_lst, dst):
             shutil.copystat(src.fname(f), dst.fname(f))
 
 
+def dpkg_architecture():
+    return subprocess.check_output(
+        ['dpkg', '--print-architecture'], text=True, encoding='ascii',
+    ).rstrip('\n')
+
+
 def extract_target(src, xml, dst, cache):
 
     # create filelists describing the content of the target rfs
@@ -143,7 +149,7 @@ def extract_target(src, xml, dst, cache):
             for item in pkglist:
                 f.write(f'{item}  install\n')
 
-        host_arch = get_command_out('dpkg --print-architecture').strip()
+        host_arch = dpkg_architecture()
         if xml.is_cross(host_arch):
             ui = '/usr/share/elbe/qemu-elbe/' + str(xml.defs['userinterpr'])
             if not os.path.exists(ui):

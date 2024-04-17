@@ -8,9 +8,9 @@ import os
 import subprocess
 from urllib.parse import urlsplit
 
-from elbepack.efilesystem import BuildImgFs
+from elbepack.efilesystem import BuildImgFs, dpkg_architecture
 from elbepack.egpg import unarmor_openpgp_keyring
-from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 
 
@@ -176,7 +176,7 @@ class BuildEnv:
         if arch == 'default':
             arch = self.xml.text('project/buildimage/arch', key='arch')
 
-        host_arch = get_command_out('dpkg --print-architecture').strip().decode()
+        host_arch = dpkg_architecture()
 
         strapcmd = 'debootstrap'
 
