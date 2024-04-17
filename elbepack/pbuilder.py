@@ -3,9 +3,8 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 import os
+import pathlib
 from urllib.request import urlopen
-
-from elbepack.filesystem import Filesystem
 
 
 def pbuilder_write_config(builddir, xml, noccache):
@@ -160,7 +159,7 @@ def get_apt_keys(builddir, xml):
     if not xml.prj.has('mirror') and not xml.prj.has('mirror/cdrom'):
         return (['# No mirrors configured'], [])
 
-    keys = [Filesystem(builddir).read_file('repo/repo.pub')]
+    keys = [pathlib.Path(builddir, 'repo', 'repo.pub').read_text()]
 
     if xml.prj.has('mirror/primary_host') and xml.prj.has('mirror/url-list'):
 
