@@ -13,6 +13,17 @@ from elbepack.pkgutils import get_dsc_size
 from elbepack.shellhelper import do
 
 
+def _disk_usage(root):
+    total = 0
+
+    for dirpath, dirnames, filenames in os.walk(root):
+        total += os.path.getsize(dirpath)
+        for filename in filenames:
+            total += os.path.getsize(os.path.join(dirpath, filename))
+
+    return total
+
+
 class RepoAttributes:
     def __init__(self, codename, arch, components,
                  mirror='http://deb.debian.org/debian'):
@@ -169,7 +180,7 @@ class RepoBase:
 
     def _includedeb(self, path, codename, components=None, prio=None):
         if self.maxsize:
-            new_size = self.fs.disk_usage('') + os.path.getsize(path)
+            new_size = _disk_usage(self.fs.path) + os.path.getsize(path)
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
@@ -277,11 +288,11 @@ class RepoBase:
 
     def _includedsc(self, path, codename, components=None):
         if self.maxsize:
-            new_size = self.fs.disk_usage('') + get_dsc_size(path)
+            new_size = _disk_usage(self.fs.path) + get_dsc_size(path)
             if new_size > self.maxsize:
                 self.new_repo_volume()
 
-        if self.maxsize and (self.fs.disk_usage('') > self.maxsize):
+        if self.maxsize and (_disk_usage(self.fs.path) > self.maxsize):
             self.new_repo_volume()
 
         global_opt = ['--keepunreferencedfiles',

@@ -458,22 +458,6 @@ class Filesystem:
 
         return mtime_index
 
-    def __disk_usage(self, directory):
-        size = os.path.getsize(directory)
-
-        for i in os.listdir(directory):
-            full = os.path.join(directory, i)
-            if os.path.isfile(full):
-                size += os.path.getsize(full)
-            elif os.path.isdir(full):
-                size += self.__disk_usage(full)
-
-        return size
-
-    def disk_usage(self, dirname=''):
-        directory = self.fname(dirname)
-        return self.__disk_usage(directory)
-
 
 class TmpdirFilesystem (Filesystem):
     def __init__(self, debug=False):
