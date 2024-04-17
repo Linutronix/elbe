@@ -523,4 +523,3 @@ class ImgMountFilesystem(Filesystem):
 
 
 hostfs = Filesystem('/')
-wdfs = Filesystem(os.getcwd())
