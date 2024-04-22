@@ -37,8 +37,6 @@ class AsyncWorkerJob:
 
 
 class BuildSysrootJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -67,8 +65,6 @@ class BuildSysrootJob(AsyncWorkerJob):
 
 
 class BuildSDKJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -127,8 +123,6 @@ class BuildCDROMsJob(AsyncWorkerJob):
 
 
 class BuildChrootTarJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -266,8 +260,6 @@ class CreatePbuilderJob(AsyncWorkerJob):
 
 
 class UpdatePbuilderJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -295,8 +287,6 @@ class UpdatePbuilderJob(AsyncWorkerJob):
 
 
 class APTUpdateJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -323,8 +313,6 @@ class APTUpdateJob(AsyncWorkerJob):
 
 
 class APTUpdUpgrJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir, ['build_done', 'has_changes'])
@@ -352,8 +340,6 @@ class APTUpdUpgrJob(AsyncWorkerJob):
 
 
 class APTCommitJob(AsyncWorkerJob):
-    def __init__(self, project):
-        AsyncWorkerJob.__init__(self, project)
 
     def enqueue(self, queue, db):
         old_status = db.set_busy(self.project.builddir,
