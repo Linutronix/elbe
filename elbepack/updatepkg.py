@@ -14,8 +14,7 @@ from elbepack.ziparchives import create_zip_archive
 
 
 class MissingData(Exception):
-    def __init__(self, message):
-        Exception.__init__(self, message)
+    pass
 
 
 def inlucdedir(destination, directory, source, mode=None):
