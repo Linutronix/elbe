@@ -27,8 +27,7 @@ def ensure_outdir(opt):
 
 
 class PBuilderError(Exception):
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
+    pass
 
 
 class PBuilderAction:
@@ -58,9 +57,6 @@ class PBuilderAction:
 class CreateAction(PBuilderAction):
 
     tag = 'create'
-
-    def __init__(self, node):
-        PBuilderAction.__init__(self, node)
 
     def execute(self, opt, _args):
         crossopt = []
@@ -139,9 +135,6 @@ class UpdateAction(PBuilderAction):
 
     tag = 'update'
 
-    def __init__(self, node):
-        PBuilderAction.__init__(self, node)
-
     def execute(self, opt, _args):
 
         if not opt.project:
@@ -170,9 +163,6 @@ PBuilderAction.register(CreateAction)
 class BuildAction(PBuilderAction):
 
     tag = 'build'
-
-    def __init__(self, node):
-        PBuilderAction.__init__(self, node)
 
     def execute(self, opt, _args):
 
