@@ -60,9 +60,6 @@ class FinetuningAction:
 @FinetuningAction.register('image_finetuning', False)
 class ImageFinetuningAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, _target):
         raise NotImplementedError(
             f'<{self.tag}> may only be used in <image-finetuning>')
@@ -73,9 +70,6 @@ class ImageFinetuningAction(FinetuningAction):
 
 @FinetuningAction.register('rm')
 class RmAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         files = target.glob(self.node.et.text)
@@ -95,18 +89,12 @@ class RmAction(FinetuningAction):
 @FinetuningAction.register('mkdir')
 class MkdirAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         do(f'mkdir -p {target.fname(self.node.et.text)}')
 
 
 @FinetuningAction.register('mknod')
 class MknodAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         do(
@@ -117,18 +105,12 @@ class MknodAction(FinetuningAction):
 @FinetuningAction.register('buildenv_mkdir')
 class BuildenvMkdirAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, buildenv, _target):
         do(f'mkdir -p {buildenv.rfs.fname(self.node.et.text)}')
 
 
 @FinetuningAction.register('cp')
 class CpAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
@@ -140,9 +122,6 @@ class CpAction(FinetuningAction):
 @FinetuningAction.register('buildenv_cp')
 class BuildenvCpAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
         cmd = f'cp -av %s {buildenv.rfs.fname(self.node.et.text)}'
@@ -152,9 +131,6 @@ class BuildenvCpAction(FinetuningAction):
 
 @FinetuningAction.register('b2t_cp')
 class B2TCpAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, buildenv, target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
@@ -166,9 +142,6 @@ class B2TCpAction(FinetuningAction):
 @FinetuningAction.register('t2b_cp')
 class T2BCpAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
         cmd = f'cp -av %s {buildenv.rfs.fname(self.node.et.text)}'
@@ -178,9 +151,6 @@ class T2BCpAction(FinetuningAction):
 
 @FinetuningAction.register('t2p_mv')
 class T2PMvAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         if self.node.et.text[0] == '/':
@@ -198,9 +168,6 @@ class T2PMvAction(FinetuningAction):
 @FinetuningAction.register('mv')
 class MvAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
         cmd = f'mv -v %s {target.fname(self.node.et.text)}'
@@ -210,9 +177,6 @@ class MvAction(FinetuningAction):
 
 @FinetuningAction.register('ln')
 class LnAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         target_name = self.node.et.attrib['path']
@@ -226,9 +190,6 @@ class LnAction(FinetuningAction):
 @FinetuningAction.register('buildenv_mv')
 class BuildenvMvAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
         cmd = f'mv -v %s {buildenv.rfs.fname(self.node.et.text)}'
@@ -238,9 +199,6 @@ class BuildenvMvAction(FinetuningAction):
 
 @FinetuningAction.register('adduser')
 class AddUserAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, target):
         with target:
@@ -281,9 +239,6 @@ class AddUserAction(FinetuningAction):
 @FinetuningAction.register('addgroup')
 class AddGroupAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         with target:
             att = self.node.et.attrib
@@ -300,9 +255,6 @@ class AddGroupAction(FinetuningAction):
 
 @FinetuningAction.register('file')
 class AddFileAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     @staticmethod
     def decode(text, encoding):
@@ -362,9 +314,6 @@ class AddFileAction(FinetuningAction):
 @FinetuningAction.register('raw_cmd')
 class RawCmdAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         with target:
             chroot(target.path, self.node.et.text)
@@ -372,9 +321,6 @@ class RawCmdAction(FinetuningAction):
 
 @FinetuningAction.register('command')
 class CmdAction(ImageFinetuningAction):
-
-    def __init__(self, node):
-        ImageFinetuningAction.__init__(self, node)
 
     def execute_img(self, _buildenv, _target, builddir, loop_dev):
 
@@ -403,9 +349,6 @@ class CmdAction(ImageFinetuningAction):
 @FinetuningAction.register('buildenv_command')
 class BuildenvCmdAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, buildenv, _target):
         with buildenv:
             chroot(buildenv.path, '/bin/sh', stdin=self.node.et.text)
@@ -414,9 +357,6 @@ class BuildenvCmdAction(FinetuningAction):
 @FinetuningAction.register('purge')
 class PurgeAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         with target:
             chroot(target.path, f'dpkg --purge {self.node.et.text}')
@@ -424,9 +364,6 @@ class PurgeAction(FinetuningAction):
 
 @FinetuningAction.register('updated')
 class UpdatedAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, buildenv, target):
 
@@ -502,9 +439,6 @@ class UpdatedAction(FinetuningAction):
 @FinetuningAction.register('artifact')
 class ArtifactAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, target):
         if os.path.isfile('../target/' + self.node.et.text):
             target.images.append('target' + self.node.et.text)
@@ -523,9 +457,6 @@ class ArtifactAction(FinetuningAction):
 @FinetuningAction.register('rm_artifact')
 class RmArtifactAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<rm_artifact> may only be '
                                   'used in <project-finetuning>')
@@ -540,9 +471,6 @@ class RmArtifactAction(FinetuningAction):
 
 @FinetuningAction.register('losetup')
 class LosetupAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<losetup> may only be '
@@ -564,9 +492,6 @@ class LosetupAction(FinetuningAction):
 
 @FinetuningAction.register('img_convert')
 class ImgConvertAction(FinetuningAction):
-
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<img_convert> may only be '
@@ -599,9 +524,6 @@ class ImgConvertAction(FinetuningAction):
 @FinetuningAction.register('set_packer')
 class SetPackerAction(FinetuningAction):
 
-    def __init__(self, node):
-        FinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<set_packer> may only be '
                                   'used in <project-finetuning>')
@@ -615,9 +537,6 @@ class SetPackerAction(FinetuningAction):
 
 @FinetuningAction.register('extract_partition')
 class ExtractPartitionAction(ImageFinetuningAction):
-
-    def __init__(self, node):
-        ImageFinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<extract_partition> may only be '
@@ -635,9 +554,6 @@ class ExtractPartitionAction(ImageFinetuningAction):
 
 @FinetuningAction.register('copy_from_partition')
 class CopyFromPartition(ImageFinetuningAction):
-
-    def __init__(self, node):
-        ImageFinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<copy_from_partition> may only be '
@@ -671,9 +587,6 @@ class CopyFromPartition(ImageFinetuningAction):
 @FinetuningAction.register('copy_to_partition')
 class CopyToPartition(ImageFinetuningAction):
 
-    def __init__(self, node):
-        ImageFinetuningAction.__init__(self, node)
-
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<copy_to_partition> may only be '
                                   'used in <losetup>')
@@ -692,9 +605,6 @@ class CopyToPartition(ImageFinetuningAction):
 
 @FinetuningAction.register('set_partition_type')
 class SetPartitionTypeAction(ImageFinetuningAction):
-
-    def __init__(self, node):
-        ImageFinetuningAction.__init__(self, node)
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<set_partition_type> may only be '
