@@ -160,9 +160,6 @@ class RemoveLogAction(ClientAction):
 
     tag = 'rm_log'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print('usage: elbe control rm_log <project_dir>', file=sys.stderr)
@@ -178,9 +175,6 @@ ClientAction.register(RemoveLogAction)
 class ListProjectsAction(ClientAction):
 
     tag = 'list_projects'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, _args):
         projects = client.service.list_projects()
@@ -201,9 +195,6 @@ class ListUsersAction(ClientAction):
 
     tag = 'list_users'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, _args):
         users = client.service.list_users()
 
@@ -216,9 +207,6 @@ ClientAction.register(ListUsersAction)
 
 class AddUserAction(ClientAction):
     tag = 'add_user'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 4:
@@ -252,9 +240,6 @@ class CreateProjectAction(ClientAction):
 
     tag = 'create_project'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, _args):
 
         uuid = client.service.new_project()
@@ -267,9 +252,6 @@ ClientAction.register(CreateProjectAction)
 class ResetProjectAction(ClientAction):
 
     tag = 'reset_project'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 1:
@@ -289,9 +271,6 @@ class DeleteProjectAction(ClientAction):
 
     tag = 'del_project'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
@@ -309,9 +288,6 @@ ClientAction.register(DeleteProjectAction)
 class SetXmlAction(ClientAction):
 
     tag = 'set_xml'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 2:
@@ -373,9 +349,6 @@ class BuildAction(ClientAction):
 
     tag = 'build'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, opt, args):
         if len(args) != 1:
             print('usage: elbe control build <project_dir>', file=sys.stderr)
@@ -392,9 +365,6 @@ ClientAction.register(BuildAction)
 class BuildSysrootAction(ClientAction):
 
     tag = 'build_sysroot'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 1:
@@ -414,9 +384,6 @@ class BuildSDKAction(ClientAction):
 
     tag = 'build_sdk'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
@@ -434,9 +401,6 @@ ClientAction.register(BuildSDKAction)
 class BuildCDROMsAction(ClientAction):
 
     tag = 'build_cdroms'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
         if len(args) != 1:
@@ -461,9 +425,6 @@ ClientAction.register(BuildCDROMsAction)
 class GetFileAction(ClientAction):
 
     tag = 'get_file'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
         if len(args) != 2:
@@ -493,9 +454,6 @@ class BuildChrootAction(ClientAction):
 
     tag = 'build_chroot_tarball'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
@@ -514,9 +472,6 @@ ClientAction.register(BuildChrootAction)
 class DumpFileAction(ClientAction):
 
     tag = 'dump_file'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 2:
@@ -547,9 +502,6 @@ ClientAction.register(DumpFileAction)
 class GetFilesAction(ClientAction):
 
     tag = 'get_files'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
         if len(args) != 1:
@@ -594,9 +546,6 @@ ClientAction.register(GetFilesAction)
 class WaitProjectBusyAction(ClientAction):
 
     tag = 'wait_busy'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 1:
@@ -649,9 +598,6 @@ class SetCdromAction(ClientAction):
 
     tag = 'set_cdrom'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
 
         if len(args) != 2:
@@ -674,9 +620,6 @@ ClientAction.register(SetCdromAction)
 class SetOrigAction(ClientAction):
 
     tag = 'set_orig'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
 
@@ -701,9 +644,6 @@ class ShutdownInitvmAction(ClientAction):
 
     tag = 'shutdown_initvm'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if args:
             print('usage: elbe control shutdown_initvm', file=sys.stderr)
@@ -722,9 +662,6 @@ ClientAction.register(ShutdownInitvmAction)
 class SetPdebuilderAction(ClientAction):
 
     tag = 'set_pdebuild'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, opt, args):
 
@@ -749,9 +686,6 @@ class BuildPbuilderAction(ClientAction):
 
     tag = 'build_pbuilder'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, opt, args):
         if len(args) != 1:
             print(
@@ -771,9 +705,6 @@ class UpdatePbuilderAction(ClientAction):
 
     tag = 'update_pbuilder'
 
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
@@ -791,9 +722,6 @@ ClientAction.register(UpdatePbuilderAction)
 class InstallElbeVersion(ClientAction):
 
     tag = 'install_elbe_version'
-
-    def __init__(self, node):
-        ClientAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) > 1:
@@ -846,9 +774,6 @@ class ListPackagesAction(RepoAction):
 
     tag = 'list_packages'
 
-    def __init__(self, node):
-        RepoAction.__init__(self, node)
-
     def execute(self, client, _opt, args):
         if len(args) != 1:
             print(
@@ -866,9 +791,6 @@ RepoAction.register(ListPackagesAction)
 class DownloadAction(RepoAction):
 
     tag = 'download'
-
-    def __init__(self, node):
-        RepoAction.__init__(self, node)
 
     def execute(self, client, _opt, args):
         if len(args) != 1:
@@ -896,9 +818,6 @@ RepoAction.register(DownloadAction)
 class UploadPackageAction(RepoAction):
 
     tag = 'upload_pkg'
-
-    def __init__(self, node):
-        RepoAction.__init__(self, node)
 
     @staticmethod
     def upload_file(client, f, builddir):
