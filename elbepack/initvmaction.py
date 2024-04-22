@@ -46,8 +46,7 @@ def ensure_outdir(opt):
 
 
 class InitVMError(Exception):
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
+    pass
 
 
 class InitVMAction:
@@ -209,9 +208,6 @@ def check_initvm_dir(initvmdir):
 @InitVMAction.register('start')
 class StartAction(InitVMAction):
 
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
-
     def _attach_disk_fds(self):
         # libvirt does not necessarily have permissions to directly access the
         # image file. libvirt 9.0 provides FDAssociate() to pass an open file
@@ -292,9 +288,6 @@ class StartAction(InitVMAction):
 @InitVMAction.register('ensure')
 class EnsureAction(InitVMAction):
 
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
-
     def execute(self, _initvmdir, opt, _args):
 
         # initvm might be running on a different host, thus skipping
@@ -322,9 +315,6 @@ class EnsureAction(InitVMAction):
 
 @InitVMAction.register('stop')
 class StopAction(InitVMAction):
-
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
     def _stop_qemu_vm(self, initvmdir):
         """
@@ -391,9 +381,6 @@ class StopAction(InitVMAction):
 
 @InitVMAction.register('attach')
 class AttachAction(InitVMAction):
-
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
 
     def _attach_qemu_vm(self, initvmdir):
         """
@@ -828,9 +815,6 @@ class CreateAction(InitVMAction):
 @InitVMAction.register('submit')
 class SubmitAction(InitVMAction):
 
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, qemu_mode=qemu_mode)
-
     def execute(self, initvmdir, opt, args):
         # In case of QEMU mode, we need to forward the additional parameters.
         additional_params = []
@@ -868,9 +852,6 @@ class SubmitAction(InitVMAction):
 
 @InitVMAction.register('sync')
 class SyncAction(InitVMAction):
-
-    def __init__(self, node, qemu_mode=False):
-        super(SyncAction, self).__init__(node, qemu_mode=qemu_mode)
 
     def execute(self, _initvmdir, _opt, _args):
         top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
