@@ -2027,6 +2027,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <enumeration value="ext2" />
       <enumeration value="ext3" />
       <enumeration value="ext4" />
+      <enumeration value="f2fs" />
       <enumeration value="ubifs" />
       <enumeration value="tmpfs" />
       <enumeration value="debugfs" />
