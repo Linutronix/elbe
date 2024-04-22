@@ -158,8 +158,6 @@ def extract_target(src, xml, dst, cache):
 
 
 class ElbeFilesystem(Filesystem):
-    def __init__(self, path, clean=False):
-        Filesystem.__init__(self, path, clean)
 
     def dump_elbeversion(self, xml):
         f = self.open('etc/elbe_version', 'w+')
@@ -467,5 +465,4 @@ class TargetFs(ChRootFilesystem):
 
 
 class BuildImgFs(ChRootFilesystem):
-    def __init__(self, path, interpreter):
-        ChRootFilesystem.__init__(self, path, interpreter)
+    pass
