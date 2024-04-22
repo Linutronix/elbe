@@ -32,8 +32,7 @@ from elbepack.uuid7 import uuid7
 
 
 class ProjectManagerError(Exception):
-    def __init__(self, message):
-        Exception.__init__(self, message)
+    pass
 
 
 class AlreadyOpen(ProjectManagerError):
@@ -54,8 +53,7 @@ class NoOpenProject(ProjectManagerError):
 
 
 class InvalidState(ProjectManagerError):
-    def __init__(self, message):
-        ProjectManagerError.__init__(self, message)
+    pass
 
 
 class OpenProjectFile:
