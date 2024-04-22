@@ -75,8 +75,6 @@ class ebase:
 
 
 class elem(ebase):
-    def __init__(self, el):
-        ebase.__init__(self, el)
 
     def ensure_child(self, tag):
         retval = self.et.find('./' + tag)
