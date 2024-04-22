@@ -38,9 +38,6 @@ class DbAction:
 class InitAction(DbAction):
     tag = 'init'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         oparser = OptionParser(usage='usage: %prog db init [options]')
         oparser.add_option('--name', dest='name', default='root')
@@ -61,9 +58,6 @@ DbAction.register(InitAction)
 
 class AddUserAction(DbAction):
     tag = 'add_user'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         oparser = OptionParser(
@@ -95,9 +89,6 @@ DbAction.register(AddUserAction)
 
 class DelUserAction(DbAction):
     tag = 'del_user'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         oparser = OptionParser(
@@ -147,9 +138,6 @@ class ListProjectsAction(DbAction):
 
     tag = 'list_projects'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, _args):
         db = ElbeDB()
         projects = db.list_projects()
@@ -165,9 +153,6 @@ class ListUsersAction(DbAction):
 
     tag = 'list_users'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, _args):
         db = ElbeDB()
         users = db.list_users()
@@ -182,9 +167,6 @@ DbAction.register(ListUsersAction)
 class CreateProjectAction(DbAction):
 
     tag = 'create_project'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         oparser = OptionParser(
@@ -209,9 +191,6 @@ class DeleteProjectAction(DbAction):
 
     tag = 'del_project'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         if len(args) != 1:
             print('usage: elbe db del_project <project_dir>')
@@ -228,9 +207,6 @@ class SetXmlAction(DbAction):
 
     tag = 'set_xml'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         if len(args) != 2:
             print('usage: elbe db set_xml <project_dir> <xml>')
@@ -246,9 +222,6 @@ DbAction.register(SetXmlAction)
 class BuildAction(DbAction):
 
     tag = 'build'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         if len(args) != 1:
@@ -277,9 +250,6 @@ class GetFilesAction(DbAction):
 
     tag = 'get_files'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         if len(args) != 1:
             print('usage: elbe db get_files <project_dir>')
@@ -300,9 +270,6 @@ DbAction.register(GetFilesAction)
 class ResetProjectAction(DbAction):
 
     tag = 'reset_project'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         oparser = OptionParser(
@@ -328,9 +295,6 @@ class SetProjectVersionAction(DbAction):
 
     tag = 'set_project_version'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         if len(args) != 2:
             print('usage: elbe db set_project_version <project_dir> <version>')
@@ -346,9 +310,6 @@ DbAction.register(SetProjectVersionAction)
 class ListVersionsAction(DbAction):
 
     tag = 'list_versions'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         if len(args) != 1:
@@ -371,9 +332,6 @@ DbAction.register(ListVersionsAction)
 class SaveVersionAction(DbAction):
 
     tag = 'save_version'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         oparser = OptionParser(
@@ -398,9 +356,6 @@ class DelVersionAction(DbAction):
 
     tag = 'del_version'
 
-    def __init__(self, node):
-        DbAction.__init__(self, node)
-
     def execute(self, args):
         if len(args) != 2:
             print('usage: elbe db del_version <project_dir> <version>')
@@ -416,9 +371,6 @@ DbAction.register(DelVersionAction)
 class PrintVersionXMLAction(DbAction):
 
     tag = 'print_version_xml'
-
-    def __init__(self, node):
-        DbAction.__init__(self, node)
 
     def execute(self, args):
         if len(args) != 2:
