@@ -11,7 +11,8 @@ import parted
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.imgutils import losetup
+from elbepack.shellhelper import chroot, do
 
 
 def mkfs_mtd(mtd, fslabel, target):
@@ -136,11 +137,6 @@ class grubinstaller_base:
     def install(self, target, user_args):
         pass
 
-    @staticmethod
-    def losetup(f):
-        loopdev = get_command_out(f'losetup --find --show --partscan "{f}"')
-        return loopdev.decode().rstrip('\n')
-
 
 class grubinstaller202(grubinstaller_base):
 
@@ -151,45 +147,44 @@ class grubinstaller202(grubinstaller_base):
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
         try:
-            loopdev = self.losetup(self.fs['/'].filename)
+            with losetup(self.fs['/'].filename) as loopdev:
+                for entry in self.fs.depthlist():
+                    do(
+                        'mount '
+                        f'{loopdev}p{entry.partnum} '
+                        f'{imagemntfs.fname(entry.mountpoint)}')
 
-            for entry in self.fs.depthlist():
-                do(
-                    'mount '
-                    f'{loopdev}p{entry.partnum} '
-                    f'{imagemntfs.fname(entry.mountpoint)}')
+                do(f"mount --bind /dev {imagemntfs.fname('dev')}")
+                do(f"mount --bind /proc {imagemntfs.fname('proc')}")
+                do(f"mount --bind /sys {imagemntfs.fname('sys')}")
 
-            do(f"mount --bind /dev {imagemntfs.fname('dev')}")
-            do(f"mount --bind /proc {imagemntfs.fname('proc')}")
-            do(f"mount --bind /sys {imagemntfs.fname('sys')}")
+                do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
-            do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
+                devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
+                devmap.write(f'(hd0) {loopdev}\n')
+                devmap.close()
 
-            devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-            devmap.write(f'(hd0) {loopdev}\n')
-            devmap.close()
+                chroot(imagemnt, 'update-grub2')
 
-            chroot(imagemnt, 'update-grub2')
-
-            if 'efi' in self.fw_type:
-                grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
-                do(
-                    f'chroot {imagemnt} '
-                    f'grub-install {user_args} --target={grub_tgt} --removable '
-                    f'--no-floppy {loopdev}')
-            if 'shimfix' in self.fw_type:
-                # grub-install is heavily dependent on the running system having
-                # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
-                # shim installation.
-                do(f"chroot {imagemnt}  /bin/bash -c '"
-                   'cp -r /boot/efi/EFI/BOOT /boot/efi/EFI/debian && '
-                   'cd /usr/lib/shim && f=( shim*.efi.signed ) && cp '
-                   "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'")
-            if not self.fw_type or 'bios' in self.fw_type:
-                do(
-                    f'chroot {imagemnt} '
-                    f'grub-install {user_args} --target=i386-pc '
-                    f'--no-floppy {loopdev}')
+                if 'efi' in self.fw_type:
+                    grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
+                    do(
+                        f'chroot {imagemnt} '
+                        f'grub-install {user_args} --target={grub_tgt} --removable '
+                        f'--no-floppy {loopdev}')
+                if 'shimfix' in self.fw_type:
+                    # grub-install is heavily dependent on the running system having
+                    # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
+                    # shim installation.
+                    do(f"chroot {imagemnt}  /bin/bash -c '"
+                       'cp -r /boot/efi/EFI/BOOT /boot/efi/EFI/debian && '
+                       'cd /usr/lib/shim && f=( shim*.efi.signed ) && cp '
+                       "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'")
+                if not self.fw_type or 'bios' in self.fw_type:
+                    do(
+                        f'chroot {imagemnt} '
+                        f'grub-install {user_args} --target=i386-pc '
+                        f'--no-floppy {loopdev}')
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -204,8 +199,6 @@ class grubinstaller202(grubinstaller_base):
                 do(
                     f'umount {loopdev}p{entry.partnum}',
                     allow_fail=True)
-
-            do(f'losetup -d {loopdev}', allow_fail=True)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -217,47 +210,47 @@ class grubinstaller97(grubinstaller_base):
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
         try:
-            loopdev = self.losetup(self.fs['/'].filename)
+            with losetup(self.fs['/'].filename) as loopdev:
 
-            bootentry = 0
+                bootentry = 0
 
-            for entry in self.fs.depthlist():
-                if entry.mountpoint.startswith('/boot'):
+                for entry in self.fs.depthlist():
+                    if entry.mountpoint.startswith('/boot'):
+                        bootentry_label = entry.label
+                        bootentry = int(entry.partnum)
+                    do(
+                        'mount '
+                        f'{loopdev}p{entry.partnum} '
+                        f'{imagemntfs.fname(entry.mountpoint)}')
+
+                if not bootentry:
                     bootentry_label = entry.label
                     bootentry = int(entry.partnum)
+
+                do(f"mount --bind /dev {imagemntfs.fname('dev')}")
+                do(f"mount --bind /proc {imagemntfs.fname('proc')}")
+                do(f"mount --bind /sys {imagemntfs.fname('sys')}")
+
+                do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
+
+                devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
+                devmap.write(f'(hd0) {loopdev}\n')
+                devmap.close()
+
+                # Replace groot and kopt because else they will be given
+                # bad values
+                #
+                # FIXME - Pylint says: Using possibly undefined loop
+                # variable 'entry' (undefined-loop-variable).  entry is
+                # defined in the previous for-loop.
+                do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')  # noqa: E501
+                do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')  # noqa: E501
+
+                chroot(imagemnt, 'update-grub')
+
                 do(
-                    'mount '
-                    f'{loopdev}p{entry.partnum} '
-                    f'{imagemntfs.fname(entry.mountpoint)}')
-
-            if not bootentry:
-                bootentry_label = entry.label
-                bootentry = int(entry.partnum)
-
-            do(f"mount --bind /dev {imagemntfs.fname('dev')}")
-            do(f"mount --bind /proc {imagemntfs.fname('proc')}")
-            do(f"mount --bind /sys {imagemntfs.fname('sys')}")
-
-            do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
-
-            devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-            devmap.write(f'(hd0) {loopdev}\n')
-            devmap.close()
-
-            # Replace groot and kopt because else they will be given
-            # bad values
-            #
-            # FIXME - Pylint says: Using possibly undefined loop
-            # variable 'entry' (undefined-loop-variable).  entry is
-            # defined in the previous for-loop.
-            do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')  # noqa: E501
-            do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')  # noqa: E501
-
-            chroot(imagemnt, 'update-grub')
-
-            do(
-                f'chroot {imagemnt} '
-                f'grub-install {user_args} --no-floppy {loopdev}')
+                    f'chroot {imagemnt} '
+                    f'grub-install {user_args} --no-floppy {loopdev}')
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -272,8 +265,6 @@ class grubinstaller97(grubinstaller_base):
                 do(
                     f'umount {loopdev}p{entry.partnum}',
                     allow_fail=True)
-
-            do(f'losetup -d {loopdev}', allow_fail=True)
 
 
 class simple_fstype:
@@ -333,7 +324,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     loopdev = entry.losetup()
 
-    try:
+    with entry.losetup() as loopdev:
         do(
             f'mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} '
             f'{loopdev}')
@@ -352,8 +343,6 @@ def create_label(disk, part, ppart, fslabel, target, grub):
                 allow_fail=True)
         finally:
             do(f'umount {loopdev}')
-    finally:
-        do(f'losetup -d {loopdev}')
 
     return ppart
 
@@ -373,9 +362,7 @@ def create_binary(disk, part, ppart, target):
     entry = hdpart()
     entry.set_geometry(ppart, disk)
 
-    loopdev = entry.losetup()
-
-    try:
+    with entry.losetup() as loopdev:
         # copy from buildenv if path starts with /
         if part.text('binary')[0] == '/':
             tmp = target + '/' + 'chroot' + part.text('binary')
@@ -384,8 +371,6 @@ def create_binary(disk, part, ppart, target):
             tmp = target + '/' + part.text('binary')
 
         do(f'dd if="{tmp}" of="{loopdev}"')
-    finally:
-        do(f'losetup -d "{loopdev}"')
 
 
 def create_logical_partitions(disk,

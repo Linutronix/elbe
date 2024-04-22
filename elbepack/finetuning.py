@@ -16,10 +16,11 @@ from gpg.constants import PROTOCOL_OpenPGP
 
 from elbepack.egpg import unlock_key
 from elbepack.filesystem import ImgMountFilesystem
+from elbepack.imgutils import losetup
 from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
-from elbepack.shellhelper import chroot, do, get_command_out
+from elbepack.shellhelper import chroot, do
 
 
 class FinetuningException(Exception):
@@ -479,15 +480,11 @@ class LosetupAction(FinetuningAction):
     def execute_prj(self, buildenv, target, builddir):
         imgname = self.node.et.attrib['img']
         imgpath = os.path.join(builddir, imgname)
-        cmd = f'losetup --find --show --partscan "{imgpath}"'
 
-        loop_dev = get_command_out(cmd).decode().strip()
-        try:
+        with losetup(imgpath) as loop_dev:
             for i in self.node:
                 action = ImageFinetuningAction(i)
                 action.execute_img(buildenv, target, builddir, loop_dev)
-        finally:
-            do(f'losetup --detach "{loop_dev}"')
 
 
 @FinetuningAction.register('img_convert')

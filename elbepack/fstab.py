@@ -7,7 +7,8 @@ import os
 import subprocess
 import time
 
-from elbepack.shellhelper import do, get_command_out
+from elbepack.imgutils import losetup
+from elbepack.shellhelper import do
 
 
 def get_mtdnum(xml, label):
@@ -89,23 +90,17 @@ class hdpart:
         self.number = f'{disk.type}{ppart.number}'
 
     def losetup(self):
-
-        cmd = (f'losetup --offset {self.offset} --sizelimit {self.size} '
-               f'--find --show "{self.filename}"')
-
         while True:
-
             try:
-                loopdev = get_command_out(cmd)
+                return losetup(self.filename, [
+                    '--offset', str(self.offset),
+                    '--sizelimit', str(self.size),
+                ])
             except subprocess.CalledProcessError as e:
                 if e.returncode != 1:
                     raise
                 do('sync')
                 time.sleep(1)
-            else:
-                break
-
-        return loopdev.decode().rstrip('\n')
 
 
 class fstabentry(hdpart):

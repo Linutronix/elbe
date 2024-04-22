@@ -24,6 +24,7 @@
 ./usr/lib/python3.*/*-packages/elbepack/egpg.py
 ./usr/lib/python3.*/*-packages/elbepack/hashes.py
 ./usr/lib/python3.*/*-packages/elbepack/hdimg.py
+./usr/lib/python3.*/*-packages/elbepack/imgutils.py
 ./usr/lib/python3.*/*-packages/elbepack/initvmaction.py
 ./usr/lib/python3.*/*-packages/elbepack/isooptions.py
 ./usr/lib/python3.*/*-packages/elbepack/licencexml.py
