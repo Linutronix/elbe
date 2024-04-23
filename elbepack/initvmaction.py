@@ -862,7 +862,8 @@ class SyncAction(InitVMAction):
                 *[arg for e in excludes for arg in ('--exclude', e)],
                 f'--rsh=ssh -p {cfg["sshport"]} -oUserKnownHostsFile=/dev/null',
                 '--chown=root:root',
-                f'{top_dir}/',
+                f'{top_dir}/elbe',
+                f'{top_dir}/elbepack',
                 'root@localhost:/var/cache/elbe/devel'
             ], check=True)
         except subprocess.CalledProcessError as E:
