@@ -163,11 +163,13 @@ def parse_built_using(value):
     if value is None:
         return
 
-    built_using_lst = value.split(', ')
-    for built_using in built_using_lst:
-        name, version = built_using.split(' ', 1)
-        version = version.strip('(= )')
-        yield name, version
+    for group in apt_pkg.parse_src_depends(value):
+        assert len(group) == 1
+
+        package, version, operation = group[0]
+        assert operation == '='
+
+        yield package, version
 
 
 def get_corresponding_source_packages(cache, pkg_lst=None):
