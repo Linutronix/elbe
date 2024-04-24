@@ -140,6 +140,12 @@ class BuildEnv:
             do(f'rm {self.path}/etc/apt/sources.list.d/local.list')
             do(f'rm {self.path}/etc/apt/trusted.gpg.d/elbe-localrepo.gpg')
 
+    def _cleanup_bootstrap(self):
+        # debootstrap helpfully copies configuration into the new tree
+        # elbe is managing these files already
+        for f in {'/etc/resolv.conf', '/etc/hostname'}:
+            self.rfs.remove(f)
+
     def debootstrap(self, arch='default'):
 
         cleanup = False
@@ -204,6 +210,7 @@ class BuildEnv:
                 if keyring:
                     self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
                 do(cmd)
+                self._cleanup_bootstrap()
             except subprocess.CalledProcessError as e:
                 cleanup = True
                 raise DebootstrapException() from e
@@ -244,6 +251,7 @@ class BuildEnv:
                 chroot(self.rfs.path,
                        '/debootstrap/debootstrap --second-stage')
 
+            self._cleanup_bootstrap()
             chroot(self.rfs.path, 'dpkg --configure -a')
 
         except subprocess.CalledProcessError as e:
