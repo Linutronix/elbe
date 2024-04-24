@@ -4,12 +4,16 @@
 
 import doctest
 
+import pytest
+
+import elbepack.aptpkgutils as aptpkgutils
 import elbepack.filesystem as filesystem
 import elbepack.shellhelper as shellhelper
 
 
-def test_shellhelper():
-    fail, _ = doctest.testmod(shellhelper)
+@pytest.mark.parametrize('mod', [shellhelper, aptpkgutils])
+def test(mod):
+    fail, _ = doctest.testmod(mod)
     assert fail == 0
 
 

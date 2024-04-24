@@ -151,6 +151,25 @@ def fetch_source(name, version, destdir, progress=None):
     return os.path.abspath(dsc)
 
 
+def parse_built_using(value):
+    """
+    >>> list(parse_built_using(None))
+    []
+
+    >>> list(parse_built_using('grub2 (= 1.99-9), loadlin (= 1.6e-1)'))
+    [('grub2', '1.99-9'), ('loadlin', '1.6e-1')]
+    """
+
+    if value is None:
+        return
+
+    built_using_lst = value.split(', ')
+    for built_using in built_using_lst:
+        name, version = built_using.split(' ', 1)
+        version = version.strip('(= )')
+        yield name, version
+
+
 def get_corresponding_source_packages(cache, pkg_lst=None):
 
     if pkg_lst is None:
@@ -166,15 +185,8 @@ def get_corresponding_source_packages(cache, pkg_lst=None):
 
         src_set.add((version.source_name, version.source_version))
 
-        built_using = version.record.get('Built-Using')
-        if built_using is None:
-            continue
-
-        built_using_lst = built_using.split(', ')
-        for built_using in built_using_lst:
-            name, version = built_using.split(' ', 1)
-            version = version.strip('(= )')
-            src_set.add((name, version))
+        for name, ver in parse_built_using(version.record.get('Built-Using')):
+            src_set.add((name, ver))
 
     return list(src_set)
 

@@ -14,6 +14,7 @@ import traceback
 import pexpect
 
 from elbepack import qemu_firmware
+from elbepack.aptpkgutils import parse_built_using
 from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
@@ -312,13 +313,9 @@ class CheckCdroms(CheckBase):
                         # seperated by a comma
                         elif line.startswith('Built-Using:'):
 
-                            built_using = line.split('Built-Using:')[1].strip(' ').split(',')
+                            built_using = line.split('Built-Using:')[1].strip(' ')
 
-                            for src in built_using:
-
-                                name, version = src.strip(' ').split(' ', 1)
-                                version = version.strip('(= )')
-
+                            for name, version in parse_built_using(built_using):
                                 # TODO - This is not component aware!
                                 if name in sources:
                                     if version not in sources[name]:
