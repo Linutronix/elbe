@@ -338,6 +338,13 @@ class ChRootFilesystem(ElbeFilesystem):
         for excursion in self._excursions:
             excursion.end(self)
 
+    def end_excursion(self, origin):
+        for excursion in self._excursions:
+            if origin == excursion.origin:
+                self._excursions.remove(excursion)
+                excursion.end(self)
+                return
+
     def mount(self):
         if self.path == '/':
             return

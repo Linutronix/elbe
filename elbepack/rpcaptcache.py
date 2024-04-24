@@ -232,6 +232,10 @@ class RPCAPTCache(InChRootObject):
         self.cache.update(fetch_progress=ElbeAcquireProgress())
         self.cache.open(progress=ElbeOpProgress())
 
+    def fetch_archives(self):
+        print('Fetching packages...')
+        self.cache.fetch_archives(ElbeAcquireProgress())
+
     def commit(self):
         os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
         os.environ['DEBONF_NONINTERACTIVE_SEEN'] = 'true'

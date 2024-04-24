@@ -1065,6 +1065,11 @@ class ElbeProject:
             # the functions cleans up to much
             # self.get_rpcaptcache().cleanup(debootstrap_pkgs + pkgs)
 
+            self.get_rpcaptcache(env=target).fetch_archives()
+
+            # The package installation below may want to manage resolv.conf.
+            target.rfs.end_excursion('/etc/resolv.conf')
+
             try:
                 self.get_rpcaptcache(env=target).commit()
             except SystemError as e:
