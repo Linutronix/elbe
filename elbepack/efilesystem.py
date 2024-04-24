@@ -218,41 +218,12 @@ class ElbeFilesystem(Filesystem):
 
 class Excursion:
 
-    RFS = {}
-
-    @classmethod
-    def begin(cls, rfs):
-        cls.RFS[rfs.path] = []
-
-    @classmethod
-    def add(cls, rfs, path, restore=True, dst=None):
-        cls.RFS[rfs.path].append(Excursion(path, restore, dst))
-
-    @classmethod
-    def do(cls, rfs):
-        r = cls.RFS[rfs.path]
-        for tmp in r:
-            tmp._do_excursion(rfs)
-
-    @classmethod
-    def end(cls, rfs):
-        r = cls.RFS[rfs.path]
-        for tmp in r:
-            if tmp.origin not in rfs.protect_from_excursion:
-                tmp._undo_excursion(rfs)
-            else:
-                tmp._del_rfs_file(tmp._saved_to(), rfs)
-        del r
-
-    def __init__(self, path, restore, dst):
+    def __init__(self, path, restore=True, dst=None):
         self.origin = path
         self.restore = restore
         self.dst = dst
 
-    def _saved_to(self):
-        return f'{self.origin}.orig'
-
-    def _do_excursion(self, rfs):
+    def do(self, rfs):
         if rfs.lexists(self.origin) and self.restore is True:
             save_to = self._saved_to()
             shutil.move(rfs.fname(self.origin), rfs.fname(save_to))
@@ -262,6 +233,15 @@ class Excursion:
             else:
                 dst = self.origin
             shutil.copy2(self.origin, rfs.fname(dst))
+
+    def end(self, rfs):
+        if self.origin not in rfs.protect_from_excursion:
+            self._undo_excursion(rfs)
+        else:
+            self._del_rfs_file(self._saved_to(), rfs)
+
+    def _saved_to(self):
+        return f'{self.origin}.orig'
 
     # This should be a method of rfs
     @staticmethod
@@ -292,23 +272,25 @@ class ChRootFilesystem(ElbeFilesystem):
         os.close(self.cwd)
 
     def __enter__(self):
-        Excursion.begin(self)
-        Excursion.add(self, '/etc/resolv.conf')
-        Excursion.add(self, '/etc/apt/apt.conf')
-        Excursion.add(self, '/usr/sbin/policy-rc.d')
+        self._excursions = [
+            Excursion('/etc/resolv.conf'),
+            Excursion('/etc/apt/apt.conf'),
+            Excursion('/usr/sbin/policy-rc.d'),
+        ]
 
         if self.interpreter:
             if not self.exists('usr/bin'):
                 if self.islink('usr/bin'):
-                    Excursion.add(self, '/usr/bin')
+                    self._excursions.append(Excursion('/usr/bin'))
 
             ui = '/usr/share/elbe/qemu-elbe/' + self.interpreter
             if not os.path.exists(ui):
                 ui = '/usr/bin/' + self.interpreter
 
-            Excursion.add(self, ui, False, '/usr/bin')
+            self._excursions.append(Excursion(ui, False, '/usr/bin'))
 
-        Excursion.do(self)
+        for excursion in self._excursions:
+            excursion.do(self)
 
         self.mkdir_p('usr/bin')
         self.mkdir_p('usr/sbin')
@@ -321,7 +303,8 @@ class ChRootFilesystem(ElbeFilesystem):
             self.leave_chroot()
         self.umount()
 
-        Excursion.end(self)
+        for excursion in self._excursions:
+            excursion.end(self)
         self.protect_from_excursion = set()
 
     def protect(self, files):
