@@ -111,9 +111,7 @@ run:
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-netdev user,ipv4,id=user.0${fwd} \
-% if opt.nesting:
 		-cpu host \
-% endif
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
@@ -126,9 +124,7 @@ run-con:
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-netdev user,ipv4,id=user.0${fwd} \
-% if opt.nesting:
 		-cpu host \
-% endif
 		-m $(MEMSIZE) \
 		-usb \
 		-nographic \

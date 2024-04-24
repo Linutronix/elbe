@@ -48,14 +48,6 @@ def run_command(argv):
                        help='write project name to file')
 
     oparser.add_option(
-        '--nesting',
-        dest='nesting',
-        action='store_true',
-        default=False,
-        help='allow initvm to support nested kvm. '
-             'This makes /proc/cpuinfo inside initvm differ per host.')
-
-    oparser.add_option(
         '--build-sdk',
         dest='build_sdk',
         action='store_true',

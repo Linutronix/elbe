@@ -43,11 +43,9 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
   <memory unit='KiB'>${memory}</memory>
   <currentMemory unit='KiB'>${memory}</currentMemory>
   <vcpu placement='static'>${cpus}</vcpu>
-% if opt.nesting:
   <cpu mode='host-model' check='partial'>
     <model fallback='allow'/>
   </cpu>
-% endif
   <os>
     <type arch='x86_64' machine='pc'>hvm</type>
   </os>

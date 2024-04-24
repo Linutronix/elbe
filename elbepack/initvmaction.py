@@ -746,8 +746,6 @@ class CreateAction(InitVMAction):
 
         try:
             init_opts = []
-            if opt.nesting:
-                init_opts.append('--nesting')
 
             if not opt.build_bin:
                 init_opts.append('--skip-build-bin')

@@ -53,14 +53,6 @@ def run_command(argv):
         help='start qemu in graphical mode to enable console switch')
 
     oparser.add_option(
-        '--nesting',
-        dest='nesting',
-        action='store_true',
-        default=False,
-        help='allow initvm to support nested kvm. '
-             'This makes /proc/cpuinfo inside initvm differ per host.')
-
-    oparser.add_option(
         '--skip-build-bin',
         action='store_false',
         dest='build_bin',
