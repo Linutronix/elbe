@@ -503,7 +503,7 @@ class CheckImage(CheckBase):
 
     def do_comm(self, img_name, qemu, opts, comm):
 
-        child = pexpect.spawn(qemu + ' ' + opts)
+        child = pexpect.spawn(qemu + ' ' + opts, cwd=self.directory)
         transcript = []
         ret = 0
 
