@@ -5,6 +5,7 @@
 
 import logging
 import os
+import shlex
 import subprocess
 from subprocess import PIPE, Popen, STDOUT
 
@@ -12,6 +13,17 @@ from elbepack.log import async_logging_ctx
 
 log = logging.getLogger('log')
 soap = logging.getLogger('soap')
+
+
+def _is_shell_cmd(cmd):
+    return isinstance(cmd, str)
+
+
+def _log_cmd(cmd):
+    if _is_shell_cmd(cmd):
+        return cmd
+    else:
+        return shlex.join(cmd)
 
 
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
@@ -53,14 +65,16 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(log_cmd or cmd, extra={'context': '[CMD] '})
+    shell = _is_shell_cmd(cmd)
+
+    logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
 
     r, w = os.pipe()
 
     if stdin is None:
-        p = Popen(cmd, shell=True, stdout=w, stderr=STDOUT, env=new_env)
+        p = Popen(cmd, shell=shell, stdout=w, stderr=STDOUT, env=new_env)
     else:
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
+        p = Popen(cmd, shell=shell, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
 
     with async_logging_ctx(r, w, soap, log):
         p.communicate(input=stdin)
@@ -131,14 +145,16 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    logging.info(cmd, extra={'context': '[CMD] '})
+    shell = _is_shell_cmd(cmd)
+
+    logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
 
     r, w = os.pipe()
 
     if stdin is None:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=w, env=new_env)
+        p = Popen(cmd, shell=shell, stdout=PIPE, stderr=w, env=new_env)
     else:
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
+        p = Popen(cmd, shell=shell, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
 
     with async_logging_ctx(r, w, soap, log):
         stdout, _ = p.communicate(input=stdin)
