@@ -105,7 +105,11 @@ def chroot(directory, cmd, env_add=None, **kwargs):
                'LC_ALL': 'C'}
     if env_add:
         new_env.update(env_add)
-    do(f'chroot {directory} {cmd}', env_add=new_env, **kwargs)
+
+    if _is_shell_cmd(cmd):
+        do(['chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
+    else:
+        do(['chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
 def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
