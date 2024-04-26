@@ -221,32 +221,35 @@ def close_logging():
     local.handlers = []
 
 
-class AsyncLogging:
+class AsyncLogging(threading.Thread):
 
-    def __init__(self, atmost, stream, block):
+    def __init__(self, atmost, stream, block, r, w):
+        super().__init__(daemon=True)
         self.lines = []
         self.atmost = atmost
-        self.fd = None
+        self.read_fd = r
+        self.write_fd = w
         calling_thread = threading.current_thread().ident
         extra = {'_thread': calling_thread}
         extra['context'] = ''
         self.stream = logging.LoggerAdapter(stream, extra)
         self.block = logging.LoggerAdapter(block, extra)
 
-    def __call__(self, r, w):
-        os.close(w)
-        self.fd = r
-        try:
-            self.run()
-        finally:
-            os.close(r)
-
     def run(self):
+        try:
+            self.__run()
+        finally:
+            os.close(self.read_fd)
+
+    def shutdown(self):
+        os.close(self.write_fd)
+
+    def __run(self):
         rest = ''
 
         while True:
 
-            buf = os.read(self.fd, self.atmost).decode('utf-8', errors='replace')
+            buf = os.read(self.read_fd, self.atmost).decode('utf-8', errors='replace')
 
             # Pipe broke
             if not buf:
@@ -282,9 +285,7 @@ class AsyncLogging:
 
 
 def async_logging(r, w, stream, block, atmost=4096):
-    t = threading.Thread(target=AsyncLogging(atmost, stream, block),
-                         args=(r, w))
-    t.daemon = True
+    t = AsyncLogging(atmost, stream, block, r, w)
     t.start()
     return t
 
@@ -295,4 +296,5 @@ def async_logging_ctx(*args, **kwargs):
     try:
         yield
     finally:
+        t.shutdown()
         t.join()

@@ -56,8 +56,9 @@ class MyMan(BaseManager):
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
         r, w = os.pipe()
+        alog = async_logging(r, w, soap, log)
+        self.log_finalizer = Finalize(self, alog.shutdown)
         super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
-        async_logging(r, w, soap, log)
 
 
 class InChRootObject:
