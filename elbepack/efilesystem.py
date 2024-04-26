@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 
+import filecmp
 import io
 import logging
 import os
+import pathlib
 import shutil
 import stat
 import subprocess
@@ -220,6 +222,30 @@ class ElbeFilesystem(Filesystem):
             licence_xml.write(xml_fname)
 
 
+def _file_or_directory_seem_equal(a, b):
+    a = pathlib.Path(a)
+    b = pathlib.Path(b)
+
+    if not a.exists() and not b.exists():
+        return True
+
+    elif a.exists() != b.exists():
+        return False
+
+    elif a.is_file() and b.is_file():
+        return filecmp.cmp(a, b, shallow=False)
+
+    elif a.is_dir() and b.is_dir():
+        dircmp = filecmp.dircmp(a, b, shallow=False)
+        return any([
+            dircmp.left_only, dircmp.right_only,
+            dircmp.common_funny, dircmp.diff_files, dircmp.funny_files,
+        ])
+
+    else:
+        raise ValueError(f'{a} and {b} have conflicting or unhandled types')
+
+
 class Excursion:
 
     def __init__(self, path, restore=True, dst=None):
@@ -258,6 +284,11 @@ class Excursion:
 
     def _undo_excursion(self, rfs):
         saved_to = self._saved_to()
+
+        if not _file_or_directory_seem_equal(rfs.fname(self.origin), rfs.fname(saved_to)):
+            # Excursed file was modified, keep the changes.
+            return
+
         self._del_rfs_file(self.origin, rfs)
         if self.restore is True and rfs.lexists(saved_to):
             shutil.move(rfs.fname(saved_to), rfs.fname(self.origin))
