@@ -292,5 +292,7 @@ def async_logging(r, w, stream, block, atmost=4096):
 @contextmanager
 def async_logging_ctx(*args, **kwargs):
     t = async_logging(*args, **kwargs)
-    yield
-    t.join()
+    try:
+        yield
+    finally:
+        t.join()
