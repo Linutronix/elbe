@@ -182,10 +182,7 @@ class LnAction(FinetuningAction):
     def execute(self, _buildenv, target):
         target_name = self.node.et.attrib['path']
         link_name = self.node.et.text
-        with target.protect({link_name}):
-            chroot(
-                target.path,
-                f"""/bin/sh -c 'ln -sf {target_name} "{link_name}"' """)
+        chroot(target.path, ['ln', '-sf', target_name, link_name])
 
 
 @FinetuningAction.register('buildenv_mv')

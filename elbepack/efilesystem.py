@@ -265,9 +265,7 @@ class Excursion:
             shutil.copy2(self.origin, rfs.fname(dst))
 
     def end(self, rfs):
-        if self.origin not in rfs.protect_from_excursion:
-            self._undo_excursion(rfs)
-
+        self._undo_excursion(rfs)
         self._del_rfs_file(self._saved_to(), rfs)
 
     def _saved_to(self):
@@ -301,7 +299,6 @@ class ChRootFilesystem(ElbeFilesystem):
         self.interpreter = interpreter
         self.cwd = os.open('/', os.O_RDONLY)
         self.inchroot = False
-        self.protect_from_excursion = set()
 
     def __del__(self):
         os.close(self.cwd)
@@ -340,11 +337,6 @@ class ChRootFilesystem(ElbeFilesystem):
 
         for excursion in self._excursions:
             excursion.end(self)
-        self.protect_from_excursion = set()
-
-    def protect(self, files):
-        self.protect_from_excursion = files
-        return self
 
     def mount(self):
         if self.path == '/':
