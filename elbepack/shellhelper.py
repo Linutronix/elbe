@@ -7,7 +7,6 @@ import logging
 import os
 import shlex
 import subprocess
-from subprocess import PIPE, Popen, STDOUT
 
 from elbepack.log import async_logging_ctx
 
@@ -65,20 +64,11 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    shell = _is_shell_cmd(cmd)
-
     logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
 
     with async_logging_ctx(soap, log) as w:
-        if stdin is None:
-            p = Popen(cmd, shell=shell, stdout=w, stderr=STDOUT, env=new_env)
-        else:
-            p = Popen(cmd, shell=shell, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
-
-        p.communicate(input=stdin)
-
-    if p.returncode and not allow_fail:
-        raise subprocess.CalledProcessError(p.returncode, cmd)
+        subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=w, stderr=subprocess.STDOUT,
+                       env=new_env, check=not allow_fail, input=stdin)
 
 
 def chroot(directory, cmd, env_add=None, **kwargs):
@@ -147,22 +137,12 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
     if isinstance(stdin, str):
         stdin = stdin.encode()
 
-    shell = _is_shell_cmd(cmd)
-
     logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
 
     with async_logging_ctx(soap, log) as w:
-        if stdin is None:
-            p = Popen(cmd, shell=shell, stdout=PIPE, stderr=w, env=new_env)
-        else:
-            p = Popen(cmd, shell=shell, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
-
-        stdout, _ = p.communicate(input=stdin)
-
-    if p.returncode and not allow_fail:
-        raise subprocess.CalledProcessError(p.returncode, cmd)
-
-    return stdout
+        ps = subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=subprocess.PIPE, stderr=w,
+                            env=new_env, check=not allow_fail, input=stdin)
+        return ps.stdout
 
 
 def env_add(d):
