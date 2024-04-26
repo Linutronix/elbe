@@ -241,8 +241,8 @@ class Excursion:
     def end(self, rfs):
         if self.origin not in rfs.protect_from_excursion:
             self._undo_excursion(rfs)
-        else:
-            self._del_rfs_file(self._saved_to(), rfs)
+
+        self._del_rfs_file(self._saved_to(), rfs)
 
     def _saved_to(self):
         return f'{self.origin}.orig'
