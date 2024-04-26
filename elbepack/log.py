@@ -223,12 +223,11 @@ def close_logging():
 
 class AsyncLogging(threading.Thread):
 
-    def __init__(self, atmost, stream, block, r, w):
+    def __init__(self, atmost, stream, block):
         super().__init__(daemon=True)
         self.lines = []
         self.atmost = atmost
-        self.read_fd = r
-        self.write_fd = w
+        self.read_fd, self.write_fd = os.pipe()
         calling_thread = threading.current_thread().ident
         extra = {'_thread': calling_thread}
         extra['context'] = ''
@@ -284,8 +283,8 @@ class AsyncLogging(threading.Thread):
             self.block.info('\n'.join(self.lines))
 
 
-def async_logging(r, w, stream, block, atmost=4096):
-    t = AsyncLogging(atmost, stream, block, r, w)
+def async_logging(stream, block, atmost=4096):
+    t = AsyncLogging(atmost, stream, block)
     t.start()
     return t
 
@@ -294,7 +293,7 @@ def async_logging(r, w, stream, block, atmost=4096):
 def async_logging_ctx(*args, **kwargs):
     t = async_logging(*args, **kwargs)
     try:
-        yield
+        yield t.write_fd
     finally:
         t.shutdown()
         t.join()

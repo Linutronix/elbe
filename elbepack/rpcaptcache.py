@@ -41,9 +41,8 @@ class MyMan(BaseManager):
         return _register
 
     @staticmethod
-    def redirect_outputs(r, w):
+    def redirect_outputs(w):
         """Redirect all outputs to the writing end of a pipe 'w'"""
-        os.close(r)
         os.dup2(w, os.sys.stdout.fileno())
         os.dup2(w, os.sys.stderr.fileno())
         # Buffering of 1 because in Python3 buffering of 0 is illegal
@@ -55,10 +54,9 @@ class MyMan(BaseManager):
 
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
-        r, w = os.pipe()
-        alog = async_logging(r, w, soap, log)
+        alog = async_logging(soap, log)
         self.log_finalizer = Finalize(self, alog.shutdown)
-        super(MyMan, self).start(MyMan.redirect_outputs, [r, w])
+        super(MyMan, self).start(MyMan.redirect_outputs, [alog.write_fd])
 
 
 class InChRootObject:

@@ -69,14 +69,12 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
 
     logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
 
-    r, w = os.pipe()
+    with async_logging_ctx(soap, log) as w:
+        if stdin is None:
+            p = Popen(cmd, shell=shell, stdout=w, stderr=STDOUT, env=new_env)
+        else:
+            p = Popen(cmd, shell=shell, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
 
-    if stdin is None:
-        p = Popen(cmd, shell=shell, stdout=w, stderr=STDOUT, env=new_env)
-    else:
-        p = Popen(cmd, shell=shell, stdin=PIPE, stdout=w, stderr=STDOUT, env=new_env)
-
-    with async_logging_ctx(r, w, soap, log):
         p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
@@ -153,14 +151,12 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
     logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
 
-    r, w = os.pipe()
+    with async_logging_ctx(soap, log) as w:
+        if stdin is None:
+            p = Popen(cmd, shell=shell, stdout=PIPE, stderr=w, env=new_env)
+        else:
+            p = Popen(cmd, shell=shell, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
 
-    if stdin is None:
-        p = Popen(cmd, shell=shell, stdout=PIPE, stderr=w, env=new_env)
-    else:
-        p = Popen(cmd, shell=shell, stdin=PIPE, stdout=PIPE, stderr=w, env=new_env)
-
-    with async_logging_ctx(r, w, soap, log):
         stdout, _ = p.communicate(input=stdin)
 
     if p.returncode and not allow_fail:
