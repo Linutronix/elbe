@@ -201,37 +201,33 @@ class AddUserAction(FinetuningAction):
     def execute(self, _buildenv, target):
         with target:
             att = self.node.et.attrib
-            options = ''
+            options = []
             if 'groups' in att:
-                options += f'-G "{att["groups"]}" '
+                options.extend(['-G',  att['groups']])
             if 'shell' in att:
-                options += f'-s "{att["shell"]}" '
+                options.extend(['-s',  att['shell']])
             if 'uid' in att:
-                options += f'-u "{att["uid"]}" '
+                options.extend(['-u',  att['uid']])
             if 'gid' in att:
-                options += f'-g "{att["gid"]}" '
+                options.extend(['-g',  att['gid']])
             if 'home' in att:
-                options += f'-d "{att["home"]}" '
+                options.extend(['-d',  att['home']])
             if 'system' in att and att['system'] == 'true':
-                options += '-r '
+                options.append('-r')
             if 'create_home' in att and att['create_home'] == 'false':
-                options += '-M '
+                options.append('-M')
             else:
-                options += '-m '
+                options.append('-m')
             if 'create_group' in att and att['create_group'] == 'false':
-                options += '-N '
+                options.append('-N')
             else:
-                options += '-U '
+                options.append('-U')
 
-            chroot(
-                target.path,
-                f'/usr/sbin/useradd {options} "{self.node.et.text}"')
+            chroot(target.path, ['/usr/sbin/useradd', *options, self.node.et.text])
 
             if 'passwd_hashed' in att:
-                chroot(
-                    target.path,
-                    'chpasswd --encrypted',
-                    stdin=f"{self.node.et.text}:{att['passwd_hashed']}")
+                chroot(target.path, ['chpasswd', '--encrypted'],
+                       stdin=f"{self.node.et.text}:{att['passwd_hashed']}")
 
 
 @FinetuningAction.register('addgroup')
@@ -241,14 +237,12 @@ class AddGroupAction(FinetuningAction):
         with target:
             att = self.node.et.attrib
             # we use -f always
-            options = '-f '
+            options = ['-f']
             if 'gid' in att:
-                options += f'-g "{att["gid"]}" '
+                options.extend(['-g', att['gid']])
             if 'system' in att and att['system'] == 'True':
-                options += '-r'
-            chroot(
-                target.path,
-                f'/usr/sbin/groupadd {options} "{self.node.et.text}"')
+                options.append('r')
+            chroot(target.path, ['/usr/sbin/groupadd', *options, self.node.et.text])
 
 
 @FinetuningAction.register('file')
@@ -300,13 +294,13 @@ class AddFileAction(FinetuningAction):
             target.write_file(dst, None, content)
 
         if owner is not None:
-            chroot(target.path, f'chown "{owner}" "{dst}"')
+            chroot(target.path, ['chown', owner, dst])
 
         if group is not None:
-            chroot(target.path, f'chgrp "{group}" "{dst}"')
+            chroot(target.path, ['chgrp', group, dst])
 
         if mode is not None:
-            chroot(target.path, f'chmod "{mode}" "{dst}"')
+            chroot(target.path, ['chmod', mode, dst])
 
 
 @FinetuningAction.register('raw_cmd')
