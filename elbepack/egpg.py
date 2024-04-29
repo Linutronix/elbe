@@ -5,6 +5,7 @@
 import logging
 import os
 import pathlib
+import shutil
 import subprocess
 
 from gpg import core
@@ -159,10 +160,10 @@ def unsign_file(fname):
 
     try:
         infile = core.Data(file=fname)
-        outfile = core.Data(file=outfilename)
     except (GPGMEError, ValueError) as E:
         print(f'Error: Opening file {fname} or {outfilename} - {E}')
     else:
+        outfile = core.Data()
         # obtain signature and write unsigned file
         ctx.op_verify(infile, None, outfile)
         vres = ctx.op_verify_result()
@@ -173,6 +174,10 @@ def unsign_file(fname):
 
         if overall_status.to_exitcode():
             return None
+
+        with open(outfilename, 'wb') as f:
+            outfile.seek(0, os.SEEK_SET)
+            shutil.copyfileobj(outfile, f)
 
         return outfilename
 
