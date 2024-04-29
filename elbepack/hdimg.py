@@ -4,6 +4,8 @@
 
 import logging
 import os
+import pathlib
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -168,23 +170,19 @@ class grubinstaller202(grubinstaller_base):
 
                 if 'efi' in self.fw_type:
                     grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
-                    do(
-                        f'chroot {imagemnt} '
-                        f'grub-install {user_args} --target={grub_tgt} --removable '
-                        f'--no-floppy {loopdev}')
+                    chroot(imagemnt, ['grub-install', *user_args, '--target', grub_tgt,
+                                      '--removable', '--no-floppy', loopdev])
                 if 'shimfix' in self.fw_type:
                     # grub-install is heavily dependent on the running system having
                     # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
                     # shim installation.
-                    do(f"chroot {imagemnt}  /bin/bash -c '"
-                       'cp -r /boot/efi/EFI/BOOT /boot/efi/EFI/debian && '
-                       'cd /usr/lib/shim && f=( shim*.efi.signed ) && cp '
-                       "${f[0]} /boot/efi/EFI/debian/${f[0]%%.signed}'")
+                    chroot(imagemnt, ['cp', '-r', '/boot/efi/EFI/BOOT', '/boot/efi/EFI/debian'])
+                    shim_dir = pathlib.Path(imagemnt, 'usr', 'lib', 'shim')
+                    signed = next(shim_dir.glob('shim*.efi.signed'))
+                    do(['cp', signed, imagemnt + '/boot/efi/EFI/debian/' + signed.stem])
                 if not self.fw_type or 'bios' in self.fw_type:
-                    do(
-                        f'chroot {imagemnt} '
-                        f'grub-install {user_args} --target=i386-pc '
-                        f'--no-floppy {loopdev}')
+                    chroot(imagemnt, ['grub-install', *user_args, '--target', 'i386-pc',
+                                      '--no-floppy', loopdev])
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -239,18 +237,14 @@ class grubinstaller97(grubinstaller_base):
 
                 # Replace groot and kopt because else they will be given
                 # bad values
-                #
-                # FIXME - Pylint says: Using possibly undefined loop
-                # variable 'entry' (undefined-loop-variable).  entry is
-                # defined in the previous for-loop.
-                do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')  # noqa: E501
-                do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')  # noqa: E501
+                chroot(imagemnt, ['sed', '-in',
+                                  '-e', rf's/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/',
+                                  '-e', rf's/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/',
+                                  '/boot/grub/menu.lst'])
 
                 chroot(imagemnt, ['update-grub'])
 
-                do(
-                    f'chroot {imagemnt} '
-                    f'grub-install {user_args} --no-floppy {loopdev}')
+                chroot(imagemnt, ['grub-install', *user_args, '--no-floppy', loopdev])
 
         except subprocess.CalledProcessError as E:
             logging.error('Fail installing grub device: %s', E)
@@ -463,7 +457,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     disk.commit()
 
     if hd.has('grub-install') and grub_version:
-        grub.install(target, hd.text('grub-install'))
+        grub.install(target, shlex.split(hd.text('grub-install')))
 
     return hd.text('name')
 
