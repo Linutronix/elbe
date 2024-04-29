@@ -246,13 +246,13 @@ class BuildEnv:
 
             if self.xml.has('project/noauth'):
                 chroot(self.rfs.path,
-                       '/debootstrap/debootstrap --no-check-gpg --second-stage')
+                       ['/debootstrap/debootstrap', '--no-check-gpg', '--second-stage'])
             else:
                 chroot(self.rfs.path,
-                       '/debootstrap/debootstrap --second-stage')
+                       ['/debootstrap/debootstrap', '--second-stage'])
 
             self._cleanup_bootstrap()
-            chroot(self.rfs.path, 'dpkg --configure -a')
+            chroot(self.rfs.path, ['dpkg', '--configure', '-a'])
 
         except subprocess.CalledProcessError as e:
             cleanup = True
@@ -306,50 +306,41 @@ class BuildEnv:
         preseed_txt = preseed_to_text(preseed)
         self.rfs.write_file('var/cache/elbe/preseed.txt', 0o644, preseed_txt)
         with self.rfs:
-            chroot(self.rfs.path, 'debconf-set-selections /var/cache/elbe/preseed.txt')
+            chroot(self.rfs.path, ['debconf-set-selections', '/var/cache/elbe/preseed.txt'])
 
     def seed_etc(self):
         passwd = self.xml.text('target/passwd_hashed')
         stdin = f'root:{passwd}'
-        chroot(self.rfs.path, 'chpasswd --encrypted', stdin=stdin)
+        chroot(self.rfs.path, ['chpasswd', '--encrypted'], stdin=stdin)
 
         hostname = self.xml.text('target/hostname')
         fqdn = hostname
         if self.xml.has('target/domain'):
             fqdn = (f"{hostname}.{self.xml.text('target/domain')}")
 
-        chroot(self.rfs.path,
-               """/bin/sh -c 'echo "127.0.0.1 localhost" >> /etc/hosts'""")
+        self.rfs.append_file('/etc/hosts',
+                             '\n127.0.0.1 localhost'
+                             f'\n127.0.1.1 {fqdn} {hostname} elbe-daemon\n')
 
-        chroot(self.rfs.path,
-               f"""/bin/sh -c 'echo "127.0.1.1 {fqdn} {hostname} elbe-daemon" >> """
-               """/etc/hosts'""")
-
-        chroot(self.rfs.path,
-               f"""/bin/sh -c 'echo "{hostname}" > /etc/hostname'""")
-
-        chroot(self.rfs.path,
-               f"""/bin/sh -c 'echo "{fqdn}" > """
-               """/etc/mailname'""")
+        self.rfs.write_file('/etc/hostname', 0o644, hostname)
+        self.rfs.write_file('/etc/mailname', 0o644, fqdn)
 
         if self.xml.has('target/console'):
             serial_con, serial_baud = self.xml.text(
                 'target/console').split(',')
             if serial_baud:
-                chroot(self.rfs.path,
-                       """/bin/sh -c '[ -f /etc/inittab ] && """
-                       f"""echo "T0:23:respawn:/sbin/getty -L
-                       {serial_con} {serial_baud} vt100" >> """
-                       """/etc/inittab'""",
-                       allow_fail=True)
+                if self.rfs.exists('/etc/inittab'):
+                    self.rfs.append_file(
+                        '/etc/inittab',
+                        f'T0:23:respawn:/sbin/getty -L {serial_con} {serial_baud} vt100\n')
 
-                chroot(self.rfs.path,
-                       """/bin/sh -c """
-                       """'[ -f /lib/systemd/system/serial-getty@.service ] && """
-                       """ln -s /lib/systemd/system/serial-getty@.service """
-                       """/etc/systemd/system/getty.target.wants/"""
-                       f"""serial-getty@{serial_con}.service'""",
-                       allow_fail=True)
+                if self.rfs.exists('/lib/systemd/system/serial-getty@.service'):
+                    self.rfs.symlink(
+                        '/lib/systemd/system/serial-getty@.service',
+                        f'/etc/systemd/system/getty.target.wants/serial-getty@{serial_con}.service',
+                        allow_exists=True,
+                    )
+
             else:
                 logging.error('parsing console tag failed, needs to be of '
                               "'/dev/ttyS0,115200' format.")
