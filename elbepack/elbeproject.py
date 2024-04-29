@@ -289,7 +289,7 @@ class ElbeProject:
         sysrootfilelist = os.path.join(self.builddir, 'sysroot-filelist')
 
         with self.sysrootenv.rfs:
-            chroot(self.sysrootpath, '/usr/bin/symlinks -cr /usr/lib')
+            chroot(self.sysrootpath, ['/usr/bin/symlinks', '-cr', '/usr/lib'])
 
         paths = self.get_sysroot_paths()
 
@@ -427,11 +427,11 @@ class ElbeProject:
         elif p.tag == 'svn':
             do(f'svn co --non-interactive {src_uri} {src_path}')
         elif p.tag == 'src-pkg':
-            apt_args = '--yes -q --download-only'
+            apt_args = ['--yes', '-q', '--download-only']
             if self.xml.prj.has('noauth'):
-                apt_args += ' --allow-unauthenticated'
-            chroot(self.chrootpath, '/usr/bin/apt-get update')
-            chroot(self.chrootpath, f'/usr/bin/apt-get source {apt_args} "{src_uri}"')
+                apt_args.append('--allow-unauthenticated')
+            chroot(self.chrootpath, ['/usr/bin/apt-get', 'update'])
+            chroot(self.chrootpath, ['/usr/bin/apt-get', 'source', *apt_args, src_uri])
 
             do(f'dpkg-source -x {self.chrootpath}/*.dsc "{src_path}"; rm {self.chrootpath}/*.dsc')
         else:
