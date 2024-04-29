@@ -47,6 +47,8 @@ in-target update-initramfs -u
    tar xj -f elbe-devel.tar.bz2 -C /buildenv/var/cache/elbe/devel
    echo "export PATH=/var/cache/elbe/devel:\$PATH" > /buildenv/etc/profile.d/elbe-devel-path.sh
    sed -i s%/usr/bin/elbe%/var/cache/elbe/devel/elbe% /buildenv/lib/systemd/system/python3-elbe-daemon.service
+
+   echo 'PermitRootLogin yes' >> /buildenv/etc/ssh/sshd_config
 % endif
 
 # since elbe fetch_initvm_pkgs generates repo keys,
