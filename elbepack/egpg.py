@@ -231,7 +231,7 @@ def sign(infile, outfile, fingerprint):
         else:
             outdata.seek(0, os.SEEK_SET)
             signature = outdata.read()
-            with open(outfile, 'w') as fd:
+            with open(outfile, 'wb') as fd:
                 fd.write(signature)
 
 
