@@ -23,7 +23,7 @@ def _log_cmd(cmd):
     if _is_shell_cmd(cmd):
         return cmd
     else:
-        return shlex.join(cmd)
+        return shlex.join(map(os.fspath, cmd))
 
 
 def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
