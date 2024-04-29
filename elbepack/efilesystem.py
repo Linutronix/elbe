@@ -158,11 +158,11 @@ def extract_target(src, xml, dst, cache):
                 ui = '/usr/bin/' + str(xml.defs['userinterpr'])
             do(f"cp {ui} {dst.fname('usr/bin')}")
 
-        cmds = ['--clear-selections',
-                f'--set-selections < {dst.fname(psel)}',
-                '--purge -a']
+        cmds = [['--clear-selections'],
+                ['--set-selections', dst.fname(psel)],
+                ['--purge', '-a']]
         for cmd in cmds:
-            chroot(dst.path, f'/usr/bin/dpkg {cmd}')
+            chroot(dst.path, ['/usr/bin/dpkg', *cmd])
 
 
 class ElbeFilesystem(Filesystem):
