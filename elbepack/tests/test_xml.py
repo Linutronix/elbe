@@ -60,5 +60,6 @@ def test_pbuilder_build(xml, tmp_path, request):
     for package in ['libgpio', 'gpiotest']:
         subprocess.run(['git', 'clone', f'https://github.com/Linutronix/{package}.git'],
                        check=True, cwd=build_dir)
-        run_elbe(['pbuilder', 'build', '--project', uuid, '--source', build_dir.joinpath(package)],
+        run_elbe(['pbuilder', 'build', '--project', uuid,
+                  '--source', build_dir.joinpath(package), '--output', build_dir.joinpath('out')],
                  check=True)
