@@ -13,6 +13,7 @@ def losetup(dev, extra_args=[]):
         f'losetup --find --show --partscan {" ".join(extra_args)} "{dev}"'
     ).decode('ascii').rstrip('\n')
 
-    yield loopdev
-
-    do(f'losetup --detach {loopdev}', allow_fail=True)
+    try:
+        yield loopdev
+    finally:
+        do(f'losetup --detach {loopdev}', allow_fail=True)
