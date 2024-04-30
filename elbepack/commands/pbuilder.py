@@ -32,6 +32,9 @@ def run_command(argv):
         action='append',
         help='upload orig file')
 
+    oparser.add_option('--source', dest='srcdir', default='.',
+                       help='directory containing sources')
+
     oparser.add_option('--output', dest='outdir', default=None,
                        help='directory where to save downloaded Files')
 

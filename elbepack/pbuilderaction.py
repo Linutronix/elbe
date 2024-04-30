@@ -212,7 +212,8 @@ class BuildAction(PBuilderAction):
         print('Packing Source into tmp archive')
         print('')
         try:
-            subprocess.run(['tar', 'cfz', tmp.fname('pdebuild.tar.gz'), '.'], check=True)
+            subprocess.run(['tar', '-C', opt.srcdir, '-czf', tmp.fname('pdebuild.tar.gz'), '.'],
+                           check=True)
         except subprocess.CalledProcessError:
             print('tar Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
