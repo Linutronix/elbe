@@ -109,8 +109,7 @@ Depends: ${misc:Depends},
   python3-elbe-common (= ${binary:Version}),
   python3-elbe-buildenv (= ${binary:Version}),
   python3-cherrypy3,
-  python3-beaker,
-  lsb-base (>= 3.0-6)
+  python3-beaker
 Description: wsgi daemon interface
  subcommand to start wsgi services.
 
@@ -160,8 +159,7 @@ Depends: ${misc:Depends},
   python3,
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
-  python3-apt,
-  lsb-base (>= 3.0-6)
+  python3-apt
 Description: bootup checker
  This package is typically installed on a embedded system. The bootup checker
  shows some information about the installed software on the embedded device.
@@ -201,8 +199,7 @@ Depends: ${misc:Depends},
   python3-packaging,
   python3-pyudev,
   python3-suds,
-  python3-spyne,
-  lsb-base (>= 3.0-6)
+  python3-spyne
 Suggests: usbmount
 Description: update daemon for embedded systems
  This package is typically installed on a embedded system. The update daemon
