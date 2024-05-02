@@ -164,7 +164,7 @@ class grubinstaller202(grubinstaller_base):
                 devmap.write(f'(hd0) {loopdev}\n')
                 devmap.close()
 
-                chroot(imagemnt, 'update-grub2')
+                chroot(imagemnt, ['update-grub2'])
 
                 if 'efi' in self.fw_type:
                     grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
@@ -246,7 +246,7 @@ class grubinstaller97(grubinstaller_base):
                 do(rf'chroot {imagemnt} sed -in "s/^# groot=.*$/# groot=\(hd0,{bootentry - 1}\)/" /boot/grub/menu.lst')  # noqa: E501
                 do(rf'chroot {imagemnt} sed -in "s/^# kopt=.*$/# kopt=root=LABEL={bootentry_label}/" /boot/grub/menu.lst')  # noqa: E501
 
-                chroot(imagemnt, 'update-grub')
+                chroot(imagemnt, ['update-grub'])
 
                 do(
                     f'chroot {imagemnt} '
