@@ -7,10 +7,10 @@ ELBE docs
 
 .. toctree::
    :maxdepth: 2
-   :glob:
-   :reversed:
 
-   article*
+   article-quickstart
+   article-elbeoverview-en
+   article-elbe-schema-reference
 
 .. toctree::
    :maxdepth: 1
