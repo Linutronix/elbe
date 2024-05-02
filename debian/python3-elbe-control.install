@@ -1,5 +1,5 @@
-./usr/lib/python3.*/*-packages/elbepack/commands/control.py
-./usr/lib/python3.*/*-packages/elbepack/commands/initvm.py
-./usr/lib/python3.*/*-packages/elbepack/commands/pbuilder.py
-./usr/lib/python3.*/*-packages/elbepack/commands/prjrepo.py
-./usr/lib/python3.*/*-packages/elbepack/soapclient.py
+usr/lib/python3.*/*-packages/elbepack/commands/control.py
+usr/lib/python3.*/*-packages/elbepack/commands/initvm.py
+usr/lib/python3.*/*-packages/elbepack/commands/pbuilder.py
+usr/lib/python3.*/*-packages/elbepack/commands/prjrepo.py
+usr/lib/python3.*/*-packages/elbepack/soapclient.py
