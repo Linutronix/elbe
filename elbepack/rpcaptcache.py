@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
-import logging
 import os
 import sys
 import time
@@ -25,9 +24,6 @@ from elbepack.aptprogress import (
     ElbeOpProgress,
 )
 from elbepack.log import async_logging
-
-log = logging.getLogger('log')
-soap = logging.getLogger('soap')
 
 
 class MyMan(BaseManager):
@@ -54,7 +50,7 @@ class MyMan(BaseManager):
 
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
-        alog = async_logging(soap, log)
+        alog = async_logging()
         self.log_finalizer = Finalize(self, alog.shutdown)
         super(MyMan, self).start(MyMan.redirect_outputs, [alog.write_fd])
 

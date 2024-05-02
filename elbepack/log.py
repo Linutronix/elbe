@@ -16,6 +16,8 @@ root.setLevel(logging.DEBUG)
 local = threading.local()
 context_fmt = logging.Formatter('%(context)s%(message)s')
 msgonly_fmt = logging.Formatter('%(message)s')
+log = logging.getLogger('log')
+soap = logging.getLogger('soap')
 
 logging_methods = []
 
@@ -223,7 +225,7 @@ def close_logging():
 
 class AsyncLogging(threading.Thread):
 
-    def __init__(self, atmost, stream, block):
+    def __init__(self, atmost):
         super().__init__(daemon=True)
         self.lines = []
         self.atmost = atmost
@@ -231,8 +233,8 @@ class AsyncLogging(threading.Thread):
         calling_thread = threading.current_thread().ident
         extra = {'_thread': calling_thread}
         extra['context'] = ''
-        self.stream = logging.LoggerAdapter(stream, extra)
-        self.block = logging.LoggerAdapter(block, extra)
+        self.stream = logging.LoggerAdapter(soap, extra)
+        self.block = logging.LoggerAdapter(log, extra)
 
     def run(self):
         try:
@@ -283,8 +285,8 @@ class AsyncLogging(threading.Thread):
             self.block.info('\n'.join(self.lines))
 
 
-def async_logging(stream, block, atmost=4096):
-    t = AsyncLogging(atmost, stream, block)
+def async_logging(atmost=4096):
+    t = AsyncLogging(atmost)
     t.start()
     return t
 

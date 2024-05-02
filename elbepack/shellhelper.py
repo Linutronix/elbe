@@ -10,9 +10,6 @@ import subprocess
 
 from elbepack.log import async_logging_ctx
 
-log = logging.getLogger('log')
-soap = logging.getLogger('soap')
-
 
 def _is_shell_cmd(cmd):
     return isinstance(cmd, str)
@@ -66,7 +63,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
 
     logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
 
-    with async_logging_ctx(soap, log) as w:
+    with async_logging_ctx() as w:
         subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=w, stderr=subprocess.STDOUT,
                        env=new_env, check=not allow_fail, input=stdin)
 
@@ -139,7 +136,7 @@ def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
 
     logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
 
-    with async_logging_ctx(soap, log) as w:
+    with async_logging_ctx() as w:
         ps = subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=subprocess.PIPE, stderr=w,
                             env=new_env, check=not allow_fail, input=stdin)
         return ps.stdout
