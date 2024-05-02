@@ -56,7 +56,7 @@ Package: python3-elbe-bin
 Conflicts: elbe-common, python-elbe-bin
 Breaks: elbe (<< 12.3)
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3-elbe-common (= ${binary:Version}),
   python3,
   python3-mako,
@@ -69,7 +69,7 @@ Description: elbe executable
 Package: python3-elbe-common
 Section: python
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   elbe-schema (= ${binary:Version}),
   python3,
   python3-lxml,
@@ -103,7 +103,7 @@ Description: Embedded Linux Build Environment
 
 Package: python3-elbe-daemon
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
@@ -115,7 +115,7 @@ Description: wsgi daemon interface
 
 Package: python3-elbe-buildenv
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   binfmt-support,
   btrfs-progs,
@@ -155,7 +155,7 @@ Description: Embedded Linux Build Environment Server Component
 
 Package: python3-elbe-bootup-check
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
@@ -166,7 +166,7 @@ Description: bootup checker
 
 Package: python3-elbe-soap
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   python3-spyne,
   python3-elbe-buildenv (= ${binary:Version}),
@@ -176,7 +176,7 @@ Description: SOAP Interface for elbe buildenv
 
 Package: python3-elbe-control
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   python3-suds,
   python3-debian,
@@ -189,7 +189,7 @@ Description: Commandline Tool to control an elbe buildenv
 
 Package: python3-elbe-updated
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, ${python3:Depends},
   python3,
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
