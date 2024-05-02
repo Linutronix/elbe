@@ -856,11 +856,12 @@ class SyncAction(InitVMAction):
     def execute(self, _initvmdir, _opt, _args):
         top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
+        ssh = ' '.join(['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null'])
         try:
             subprocess.run([
                 'rsync', '--info=name1,stats1', '--archive', '--times',
                 *[arg for e in excludes for arg in ('--exclude', e)],
-                f'--rsh=ssh -p {cfg["sshport"]} -oUserKnownHostsFile=/dev/null',
+                '--rsh', ssh,
                 '--chown=root:root',
                 f'{top_dir}/elbe',
                 f'{top_dir}/elbepack',
