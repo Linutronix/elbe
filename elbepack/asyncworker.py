@@ -448,10 +448,11 @@ class SaveVersionJob(AsyncWorkerJob):
 
         if self.project.savesh_file:
             logging.info('save version script:')
-            do((f'{self.project.savesh_file} "{self.project.builddir} '
-                f'{self.project.xml.text("project/version")} '
-                f'{self.project.xml.text("project/name")}"'
-                ), check=False)
+            do([
+                self.project.savesh_file, self.project.builddir,
+                self.project.xml.text('project/version'),
+                self.project.xml.text('project/name'),
+            ], check=False)
 
         logging.info('Enqueueing project to save package archive')
         AsyncWorkerJob.enqueue(self, queue, db)
