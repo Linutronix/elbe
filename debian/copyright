@@ -11,12 +11,6 @@ Files: contrib/k8s/*
 Copyright: Manuel Traut <manuel.traut@mt.com>
 License: GPL-3+
 
-Files: docs/elbe-*.svg
-Comment: Debian logo taken from https://www.debian.org/logos/
-Copyright: 1999 Software in the Public Interest, Inc.
-           2014 Linutronix GmbH
-License: GPL-3+
-
 Files: elbepack/makofiles/environment-setup-elbe.mako
 Copyright: Richard Purdie <richard.purdie@linuxfoundation.org>
            Lianhao Lu <lianhao.lu@intel.com>
@@ -62,8 +56,7 @@ Copyright: Aníbal Limón <anibal.limon@linux.intel.com>
            Wenlin Kang <wenlin.kang@windriver.com>
 License: Expat
 
-Files: AUTHORS THANKS examples/*
-       docs/asciidoc.conf docs/conf.py
+Files: AUTHORS THANKS examples/* docs/conf.py
 Copyright: Linutronix GmbH
 License: 0BSD
  Permission to use, copy, modify, and/or distribute this software for any
@@ -81,7 +74,7 @@ Files: examples/armhf-ubuntu.xml
 Copyright: 2020 Kory Maincent <kory.maincent@bootlin.com>
 License: GPL-3+
 
-Files: schema/xml.xsd
+Files: elbepack/schema/xml.xsd
 Copyright: 2001 World Wide Web Consortium, (Massachusetts Institute of Technology,
  European Research Consortium for Informatics and Mathematics, Keio University).
  All Rights Reserved.
