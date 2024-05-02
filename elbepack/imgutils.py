@@ -11,13 +11,13 @@ from elbepack.shellhelper import do, get_command_out
 @contextlib.contextmanager
 def losetup(dev, extra_args=[]):
     loopdev = get_command_out(
-        f'losetup --find --show --partscan {" ".join(extra_args)} "{dev}"'
+        ['losetup', '--find', '--show', '--partscan', *extra_args, dev]
     ).decode('ascii').rstrip('\n')
 
     try:
         yield loopdev
     finally:
-        do(f'losetup --detach {loopdev}', check=False)
+        do(['losetup', '--detach', loopdev], check=False)
 
 
 class _Mount:
