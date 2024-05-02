@@ -212,7 +212,7 @@ def copy_kinitrd(prj, target_dir):
         tmp = TmpdirFilesystem()
         if prj.has('mirror/cdrom'):
             subprocess.run([
-                '7z', 'x', f'-o{tmp.fname("/")}',
+                '7z', 'x', '-o' + tmp.fname('/'),
                 prj.text('mirror/cdrom'),
                 'initrd-cdrom.gz', 'vmlinuz',
             ], check=True)
