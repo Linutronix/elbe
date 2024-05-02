@@ -40,6 +40,7 @@ Package: elbe-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Built-Using: ${sphinxdoc:Built-Using}
 Description: man-pages, examples and documentation
  man-pages for elbe and all elbe subcommands. Some documentation and howtos.
  And examples for several targets.
