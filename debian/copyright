@@ -62,7 +62,7 @@ Copyright: Aníbal Limón <anibal.limon@linux.intel.com>
            Wenlin Kang <wenlin.kang@windriver.com>
 License: Expat
 
-Files: .gitignore AUTHORS THANKS examples/*
+Files: AUTHORS THANKS examples/*
        docs/asciidoc.conf docs/conf.py
 Copyright: Linutronix GmbH
 License: 0BSD
