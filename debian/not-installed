@@ -1,0 +1,3 @@
+usr/lib/python3*/dist-packages/elbepack/schema/__init__.py
+usr/lib/python3*/dist-packages/elbepack/schema/xml.xsd
+usr/lib/python3*/dist-packages/elbepack/schema/dbsfed.xsd
