@@ -297,7 +297,7 @@ def unarmor_openpgp_keyring(armored):
     Returns a binary string (empty for invalid keys).
     """
     try:
-        conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor', stdin=armored)
+        conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor', input=armored)
     except subprocess.CalledProcessError as e:
         logging.error(e)
         return b''
