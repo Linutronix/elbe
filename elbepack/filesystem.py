@@ -10,8 +10,6 @@ from glob import glob
 from string import digits
 from tempfile import mkdtemp
 
-from elbepack.shellhelper import do
-
 
 def size_to_int(size):
     if size[-1] in digits:
@@ -481,18 +479,3 @@ class TmpdirFilesystem (Filesystem):
     def __exit__(self, exec_type, exec_value, tb):
         self.delete()
         return False
-
-
-class ImgMountFilesystem(Filesystem):
-    def __init__(self, mntpoint, dev):
-        Filesystem.__init__(self, mntpoint)
-
-        self.dev = dev
-
-    def __enter__(self):
-        do(f'mount "{self.dev}" "{self.path}"')
-
-        return self
-
-    def __exit__(self, typ, value, traceback):
-        do(f'umount "{self.path}"')

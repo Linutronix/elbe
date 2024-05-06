@@ -15,8 +15,8 @@ from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
 
 from elbepack.egpg import unlock_key
-from elbepack.filesystem import ImgMountFilesystem
-from elbepack.imgutils import losetup
+from elbepack.filesystem import Filesystem
+from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -319,9 +319,9 @@ class CmdAction(ImageFinetuningAction):
                env_add={'ELBE_DEV': dev},
                log_cmd=script)
         else:
-            with ImgMountFilesystem(mnt, dev) as fs:
+            with mount(dev, mnt):
                 do(['/bin/sh'], input=script.encode('ascii'),
-                   env_add={'ELBE_MNT': fs.path},
+                   env_add={'ELBE_MNT': mnt},
                    log_cmd=script)
 
     def execute(self, _buildenv, target):
@@ -545,7 +545,8 @@ class CopyFromPartition(ImageFinetuningAction):
         img_mnt = os.path.join(builddir, 'imagemnt')
         device = f'{loop_dev}p{part_nr}'
 
-        with ImgMountFilesystem(img_mnt, device) as mnt_fs:
+        with mount(device, img_mnt):
+            mnt_fs = Filesystem(img_mnt)
             fname = mnt_fs.glob(self.node.et.text)
 
             if not fname:
@@ -577,7 +578,8 @@ class CopyToPartition(ImageFinetuningAction):
         img_mnt = os.path.join(builddir, 'imagemnt')
         device = f'{loop_dev}p{part_nr}'
 
-        with ImgMountFilesystem(img_mnt, device) as mnt_fs:
+        with mount(device, img_mnt):
+            mnt_fs = Filesystem(img_mnt)
             fname = mnt_fs.fname(self.node.et.text)
             do(['cp', '-av', os.path.join(builddir, aname), fname])
 
