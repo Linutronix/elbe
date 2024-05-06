@@ -22,7 +22,7 @@ def _log_cmd(cmd):
         return shlex.join(map(os.fspath, cmd))
 
 
-def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
+def do(cmd, /, *, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
     Throws a subprocess.CalledProcessError if cmd returns none-zero and allow_fail=False
@@ -68,7 +68,7 @@ def do(cmd, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
                        env=new_env, check=not allow_fail, input=stdin)
 
 
-def chroot(directory, cmd, env_add=None, **kwargs):
+def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     """chroot() - Wrapper around do().
 
     --
@@ -97,7 +97,7 @@ def chroot(directory, cmd, env_add=None, **kwargs):
         do(['chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
-def get_command_out(cmd, stdin=None, allow_fail=False, env_add=None):
+def get_command_out(cmd, /, *, stdin=None, allow_fail=False, env_add=None):
     """get_command_out() - Like do() but returns stdout.
 
     --
