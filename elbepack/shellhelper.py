@@ -58,9 +58,6 @@ def do(cmd, /, *, check=True, input=None, env_add=None, log_cmd=None):
     if env_add:
         new_env.update(env_add)
 
-    if isinstance(input, str):
-        input = input.encode()
-
     logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
 
     with async_logging_ctx() as w:
@@ -121,18 +118,12 @@ def get_command_out(cmd, /, *, input=None, check=True, env_add=None):
 
     >>> get_command_out("cat -", input=b"ELBE", env_add={"TRUE":"true"})
     b'ELBE'
-
-    >>> get_command_out("cat -", input="ELBE", env_add={"TRUE":"true"})
-    b'ELBE'
     """
 
     new_env = os.environ.copy()
 
     if env_add:
         new_env.update(env_add)
-
-    if isinstance(input, str):
-        input = input.encode()
 
     logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
 

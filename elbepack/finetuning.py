@@ -227,7 +227,7 @@ class AddUserAction(FinetuningAction):
 
             if 'passwd_hashed' in att:
                 chroot(target.path, ['chpasswd', '--encrypted'],
-                       input=f"{self.node.et.text}:{att['passwd_hashed']}")
+                       input=f"{self.node.et.text}:{att['passwd_hashed']}".encode('ascii'))
 
 
 @FinetuningAction.register('addgroup')
@@ -324,18 +324,19 @@ class CmdAction(ImageFinetuningAction):
         dev = f"{loop_dev}p{self.node.et.attrib['part']}"
 
         if self.node.bool_attr('nomount'):
-            do('/bin/sh', input=script,
+            do('/bin/sh', input=script.encode('ascii'),
                env_add={'ELBE_DEV': dev},
                log_cmd=script)
         else:
             with ImgMountFilesystem(mnt, dev) as fs:
-                do('/bin/sh', input=script,
+                do('/bin/sh', input=script.encode('ascii'),
                    env_add={'ELBE_MNT': fs.path},
                    log_cmd=script)
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, '/bin/sh', input=self.node.et.text, log_cmd=self.node.et.text)
+            chroot(target.path, '/bin/sh', input=self.node.et.text.encode('ascii'),
+                   log_cmd=self.node.et.text)
 
 
 @FinetuningAction.register('buildenv_command')
@@ -343,7 +344,7 @@ class BuildenvCmdAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         with buildenv:
-            chroot(buildenv.path, '/bin/sh', input=self.node.et.text)
+            chroot(buildenv.path, '/bin/sh', input=self.node.et.text.encode('ascii'))
 
 
 @FinetuningAction.register('purge')
