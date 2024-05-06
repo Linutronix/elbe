@@ -207,7 +207,7 @@ def run_command(argv):
                  --no-default-keyring \
                  --keyring {import_keyring} --import',
            stdin=''.join(keys).encode('ascii'),
-           allow_fail=True,
+           check=False,
            env_add={'GNUPGHOME': out_path})
 
         export_keyring = import_keyring + '.gpg'

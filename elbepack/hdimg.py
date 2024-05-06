@@ -189,14 +189,14 @@ class grubinstaller202(grubinstaller_base):
 
         finally:
             os.unlink(imagemntfs.fname('boot/grub/device.map'))
-            do(f"umount {imagemntfs.fname('dev')}", allow_fail=True)
-            do(f"umount {imagemntfs.fname('proc')}", allow_fail=True)
-            do(f"umount {imagemntfs.fname('sys')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('dev')}", check=False)
+            do(f"umount {imagemntfs.fname('proc')}", check=False)
+            do(f"umount {imagemntfs.fname('sys')}", check=False)
 
             for entry in reversed(self.fs.depthlist()):
                 do(
                     f'umount {loopdev}p{entry.partnum}',
-                    allow_fail=True)
+                    check=False)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -251,14 +251,14 @@ class grubinstaller97(grubinstaller_base):
 
         finally:
             os.unlink(imagemntfs.fname('boot/grub/device.map'))
-            do(f"umount {imagemntfs.fname('dev')}", allow_fail=True)
-            do(f"umount {imagemntfs.fname('proc')}", allow_fail=True)
-            do(f"umount {imagemntfs.fname('sys')}", allow_fail=True)
+            do(f"umount {imagemntfs.fname('dev')}", check=False)
+            do(f"umount {imagemntfs.fname('proc')}", check=False)
+            do(f"umount {imagemntfs.fname('sys')}", check=False)
 
             for entry in reversed(self.fs.depthlist()):
                 do(
                     f'umount {loopdev}p{entry.partnum}',
-                    allow_fail=True)
+                    check=False)
 
 
 class simple_fstype:
@@ -334,7 +334,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
             do(
                 f'cp -a "{os.path.join(target, "filesystems", entry.id)}/." '
                 f'"{mount_path}/"',
-                allow_fail=True)
+                check=False)
         finally:
             do(f'umount {loopdev}')
 
@@ -404,7 +404,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     size_in_sectors = s // sector_size
 
     imagename = os.path.join(target, hd.text('name'))
-    do(f'rm -f "{imagename}"', allow_fail=True)
+    do(f'rm -f "{imagename}"', check=False)
     f = open(imagename, 'wb')
     f.truncate(size_in_sectors * sector_size)
     f.close()
@@ -539,7 +539,7 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
             do(
                f'mv "{rfs.fname(lic.mountpoint)}"/* '
                f'"{os.path.join(fspath, lic.id)}"',
-               allow_fail=True)
+               check=False)
 
     try:
         # Now iterate over all images and create filesystems and partitions
@@ -571,7 +571,7 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
                 do(
                    f'mv "{os.path.join(fspath, i.id)}"/* '
                    f'"{rfs.fname(i.mountpoint)}"',
-                   allow_fail=True)
+                   check=False)
 
     # Files are now moved back. ubinize needs files in place, so we run it now.
     for i in xml.tgt.node('images'):

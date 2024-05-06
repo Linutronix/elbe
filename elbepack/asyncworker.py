@@ -451,7 +451,7 @@ class SaveVersionJob(AsyncWorkerJob):
             do((f'{self.project.savesh_file} "{self.project.builddir} '
                 f'{self.project.xml.text("project/version")} '
                 f'{self.project.xml.text("project/name")}"'
-                ), allow_fail=True)
+                ), check=False)
 
         logging.info('Enqueueing project to save package archive')
         AsyncWorkerJob.enqueue(self, queue, db)

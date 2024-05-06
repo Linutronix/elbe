@@ -22,10 +22,10 @@ def _log_cmd(cmd):
         return shlex.join(map(os.fspath, cmd))
 
 
-def do(cmd, /, *, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
+def do(cmd, /, *, check=True, stdin=None, env_add=None, log_cmd=None):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
-    Throws a subprocess.CalledProcessError if cmd returns none-zero and allow_fail=False
+    Throws a subprocess.CalledProcessError if cmd returns none-zero and check=True
 
     --
 
@@ -37,7 +37,7 @@ def do(cmd, /, *, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
     >>> do("true")
     [CMD] true
 
-    >>> do("false", allow_fail=True)
+    >>> do("false", check=False)
     [CMD] false
 
     >>> do("cat -", stdin=b"ELBE")
@@ -65,7 +65,7 @@ def do(cmd, /, *, allow_fail=False, stdin=None, env_add=None, log_cmd=None):
 
     with async_logging_ctx() as w:
         subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=w, stderr=subprocess.STDOUT,
-                       env=new_env, check=not allow_fail, input=stdin)
+                       env=new_env, check=check, input=stdin)
 
 
 def chroot(directory, cmd, /, *, env_add=None, **kwargs):
@@ -97,7 +97,7 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
         do(['chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
-def get_command_out(cmd, /, *, stdin=None, allow_fail=False, env_add=None):
+def get_command_out(cmd, /, *, stdin=None, check=True, env_add=None):
     """get_command_out() - Like do() but returns stdout.
 
     --
@@ -116,7 +116,7 @@ def get_command_out(cmd, /, *, stdin=None, allow_fail=False, env_add=None):
     ...
     subprocess.CalledProcessError: ...
 
-    >>> get_command_out("false", allow_fail=True)
+    >>> get_command_out("false", check=False)
     b''
 
     >>> get_command_out("cat -", stdin=b"ELBE", env_add={"TRUE":"true"})
@@ -138,7 +138,7 @@ def get_command_out(cmd, /, *, stdin=None, allow_fail=False, env_add=None):
 
     with async_logging_ctx() as w:
         ps = subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=subprocess.PIPE, stderr=w,
-                            env=new_env, check=not allow_fail, input=stdin)
+                            env=new_env, check=check, input=stdin)
         return ps.stdout
 
 

@@ -141,4 +141,4 @@ def gen_update_pkg(project, xml_filename, upd_filename,
         logging.info('Postbuild script')
         cmd = (f' "{upd_filename} {project.xml.text("project/version")} '
                f'{project.xml.text("project/name")}"')
-        do(project.postbuild_file + cmd, allow_fail=True)
+        do(project.postbuild_file + cmd, check=False)

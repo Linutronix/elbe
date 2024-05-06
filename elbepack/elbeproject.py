@@ -293,7 +293,7 @@ class ElbeProject:
 
         paths = self.get_sysroot_paths()
 
-        do(f'rm {sysrootfilelist}', allow_fail=True)
+        do(f'rm {sysrootfilelist}', check=False)
         os.chdir(self.sysrootpath)
         for p in paths:
             do(f'find -path "{p}" >> {sysrootfilelist}')
@@ -675,7 +675,7 @@ class ElbeProject:
             logging.info('Postbuild script')
             cmd = (f' "{self.builddir} {self.xml.text("project/version")} '
                    f'{self.xml.text("project/name")}"')
-            do(self.postbuild_file + cmd, allow_fail=True)
+            do(self.postbuild_file + cmd, check=False)
 
         do_prj_finetuning(self.xml,
                           self.buildenv,

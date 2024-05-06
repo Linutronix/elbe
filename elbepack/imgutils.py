@@ -16,4 +16,4 @@ def losetup(dev, extra_args=[]):
     try:
         yield loopdev
     finally:
-        do(f'losetup --detach {loopdev}', allow_fail=True)
+        do(f'losetup --detach {loopdev}', check=False)
