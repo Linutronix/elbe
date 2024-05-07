@@ -14,7 +14,7 @@ import parted
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.imgutils import losetup, mount
+from elbepack.imgutils import dd, losetup, mount
 from elbepack.shellhelper import chroot, do
 
 
@@ -42,13 +42,13 @@ def mkfs_mtd(mtd, fslabel, target):
             continue
 
         try:
-            do(f'mkfs.ubifs '
-               f"-r {os.path.join(target, 'filesystems', fslabel[label].id)} "
-               f'-o {os.path.join(target, label)}.ubifs '
-               f"-m {ubivg.text('miniosize')} "
-               f"-e {ubivg.text('logicaleraseblocksize')} "
-               f"-c {ubivg.text('maxlogicaleraseblockcount')} "
-               f'{fslabel[label].mkfsopt}')
+            do(['mkfs.ubifs',
+                '-r', os.path.join(target, 'filesystems', fslabel[label].id),
+                '-o', os.path.join(target, label) + '.ubifs',
+                '-m', ubivg.text('miniosize'),
+                '-e', ubivg.text('logicaleraseblocksize'),
+                '-c', ubivg.text('maxlogicaleraseblockcount'),
+                fslabel[label].mkfsopt])
             # only append the ubifs file if creation didn't fail
             img_files.append(f'{label}.ubifs')
         except subprocess.CalledProcessError:
@@ -83,7 +83,7 @@ def build_image_mtd(mtd, target):
                     # copy from project directory
                     else:
                         tmp = target + '/' + vol.text('binary')
-                    do(f"cp {tmp} {target}/{vol.text('label')}.ubibin")
+                    do(['cp', tmp, target + '/' + vol.text('label') + '.ubibin'])
                     img_files.append(vol.text('label') + '.ubibin')
                     fp.write(
                         f"image={os.path.join(target, vol.text('label'))}.ubibin\n")
@@ -113,12 +113,11 @@ def build_image_mtd(mtd, target):
         subp = ''
 
     try:
-        do(
-            f'ubinize {subp} '
-            f"-o {os.path.join(target, mtd.text('name'))} "
-            f"-p {ubivg.text('physicaleraseblocksize')} "
-            f"-m {ubivg.text('miniosize')} "
-            f"{target}/{mtd.text('name')}_{ubivg.text('label')}.cfg")
+        do(['ubinize', subp,
+            '-o', os.path.join(target, mtd.text('name')),
+            '-p', ubivg.text('physicaleraseblocksize'),
+            '-m', ubivg.text('miniosize'),
+            f"{target}/{mtd.text('name')}_{ubivg.text('label')}.cfg"])
         # only add file to list if ubinize command was successful
         img_files.append(mtd.text('name'))
 
@@ -301,10 +300,11 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
         with mount(loopdev, mount_path):
             _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-            do(
-                f'cp -a "{os.path.join(target, "filesystems", entry.id)}/." '
-                f'"{mount_path}/"',
-                check=False)
+            do([
+                'cp', '-a',
+                os.path.join(target, 'filesystems', entry.id) + '/.',
+                str(mount_path) + '/',
+            ], check=False)
 
     return ppart
 
@@ -332,7 +332,7 @@ def create_binary(disk, part, ppart, target):
         else:
             tmp = target + '/' + part.text('binary')
 
-        do(f'dd if="{tmp}" of="{loopdev}"')
+        dd({'if': tmp, 'of': loopdev})
 
 
 def create_logical_partitions(disk,
@@ -372,7 +372,7 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
     size_in_sectors = s // sector_size
 
     imagename = os.path.join(target, hd.text('name'))
-    do(f'rm -f "{imagename}"', check=False)
+    do(['rm', '-f', imagename], check=False)
     f = open(imagename, 'wb')
     f.truncate(size_in_sectors * sector_size)
     f.close()
@@ -456,9 +456,7 @@ def add_binary_blob(hd, target):
             # use file from /var/cache/elbe/<uuid> project dir
             bf = os.path.join(target, binary.et.text)
 
-        do(
-            f'dd if="{bf}" of="{imagename}" seek="{offset}" bs="{bs}" '
-            'conv=notrunc')
+        dd({'if': bf, 'of': imagename, 'seek': offset, 'bs': bs, 'conv': 'notrunc'})
 
 
 def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
@@ -493,16 +491,16 @@ def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
     # create directories, where we want our
     # filesystems later
     fspath = os.path.join(target, 'filesystems')
-    do(f'mkdir -p {fspath}')
+    do(['mkdir', '-p', fspath])
 
     imagemnt = os.path.join(target, 'imagemnt')
-    do(f'mkdir -p {imagemnt}')
+    do(['mkdir', '-p', imagemnt])
 
     # now move all mountpoints into own directories
     # begin from deepest mountpoints
     for lic in reversed(fslist):
-        do(f'mkdir -p "{os.path.join(fspath, lic.id)}"')
-        do(f'mkdir -p "{rfs.fname("")}{lic.mountpoint}"')
+        do(['mkdir', '-p', os.path.join(fspath, lic.id)])
+        do(['mkdir', '-p', rfs.fname(lic.mountpoint)])
         if rfs.listdir(lic.mountpoint):
             do(
                f'mv "{rfs.fname(lic.mountpoint)}"/* '
