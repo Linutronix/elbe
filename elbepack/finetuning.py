@@ -84,30 +84,28 @@ class RmAction(FinetuningAction):
             if os.path.basename(f) in exclude:
                 continue
 
-            do(f"rm -rvf '{f}'")
+            do(['rm', '-rvf', f])
 
 
 @FinetuningAction.register('mkdir')
 class MkdirAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
-        do(f'mkdir -p {target.fname(self.node.et.text)}')
+        do(['mkdir', '-p', target.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('mknod')
 class MknodAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
-        do(
-            f'mknod {target.fname(self.node.et.text)} '
-            f"{self.node.et.attrib['opts']}")
+        do(['mknod', target.fname(self.node.et.text), self.node.et.attrib['opts']])
 
 
 @FinetuningAction.register('buildenv_mkdir')
 class BuildenvMkdirAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
-        do(f'mkdir -p {buildenv.rfs.fname(self.node.et.text)}')
+        do(['mkdir', '-p', buildenv.rfs.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('cp')
@@ -115,9 +113,8 @@ class CpAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = f'cp -av %s {target.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['cp', '-av', f, target.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('buildenv_cp')
@@ -125,9 +122,8 @@ class BuildenvCpAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.glob(self.node.et.attrib['path'])
-        cmd = f'cp -av %s {buildenv.rfs.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['cp', '-av', f, buildenv.rfs.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('b2t_cp')
@@ -135,9 +131,8 @@ class B2TCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
-        cmd = f'cp -av %s {target.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['cp', '-av', f, target.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('t2b_cp')
@@ -145,9 +140,8 @@ class T2BCpAction(FinetuningAction):
 
     def execute(self, buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = f'cp -av %s {buildenv.rfs.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['cp', '-av', f, buildenv.rfs.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('t2p_mv')
@@ -161,9 +155,8 @@ class T2PMvAction(FinetuningAction):
         dest = os.path.join('..', dest)
 
         src = target.glob(self.node.et.attrib['path'])
-        cmd = f'mv -v %s {dest}'
         for f in src:
-            do(cmd % f)
+            do(['mv', '-v', f, dest])
 
 
 @FinetuningAction.register('mv')
@@ -171,9 +164,8 @@ class MvAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         src = target.glob(self.node.et.attrib['path'])
-        cmd = f'mv -v %s {target.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['mv', '-v', f, target.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('ln')
@@ -190,9 +182,8 @@ class BuildenvMvAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         src = buildenv.rfs.glob(self.node.et.attrib['path'])
-        cmd = f'mv -v %s {buildenv.rfs.fname(self.node.et.text)}'
         for f in src:
-            do(cmd % f)
+            do(['mv', '-v', f, buildenv.rfs.fname(self.node.et.text)])
 
 
 @FinetuningAction.register('adduser')
@@ -324,12 +315,12 @@ class CmdAction(ImageFinetuningAction):
         dev = f"{loop_dev}p{self.node.et.attrib['part']}"
 
         if self.node.bool_attr('nomount'):
-            do('/bin/sh', input=script.encode('ascii'),
+            do(['/bin/sh'], input=script.encode('ascii'),
                env_add={'ELBE_DEV': dev},
                log_cmd=script)
         else:
             with ImgMountFilesystem(mnt, dev) as fs:
-                do('/bin/sh', input=script.encode('ascii'),
+                do(['/bin/sh'], input=script.encode('ascii'),
                    env_add={'ELBE_MNT': fs.path},
                    log_cmd=script)
 
@@ -382,8 +373,7 @@ class UpdatedAction(FinetuningAction):
 
             target.mkdir_p('/var/cache/elbe/gnupg', mode=0o700)
             with target:
-                do(
-                    f'gpg --import {target.path}/pub.key',
+                do(['gpg', '--import', target.path + '/pub.key'],
                     env_add={'GNUPGHOME': f'{target.path}/var/cache/elbe/gnupg'})
 
         logging.info('generate base repo')
@@ -500,7 +490,7 @@ class ImgConvertAction(FinetuningAction):
         src_fname = os.path.join(builddir, src)
         dst_fname = os.path.join(builddir, dst)
 
-        do(f'qemu-img convert -O "{fmt}" "{src_fname}" "{dst_fname}"')
+        do(['qemu-img', 'convert', '-O', fmt, src_fname, dst_fname])
 
         target.images.append(dst)
         target.image_packers[dst] = default_packer
@@ -535,7 +525,7 @@ class ExtractPartitionAction(ImageFinetuningAction):
         part_nr = self.node.et.attrib['part']
         imgname = os.path.join(builddir, self.node.et.text)
 
-        do(f'dd if={loop_dev}p{part_nr} of="{imgname}"')
+        do(['dd', f'if={loop_dev}p{part_nr}', f'of={imgname}'])
 
         target.images.append(self.node.et.text)
         target.image_packers[self.node.et.text] = default_packer
@@ -568,7 +558,7 @@ class CopyFromPartition(ImageFinetuningAction):
                              self.node.et.text, len(fname))
                 raise FinetuningException('Patter matches too many files')
 
-            do(f'cp -av "{fname[0]}" "{os.path.join(builddir, aname)}"')
+            do(['cp', '-av', fname[0], os.path.join(builddir, aname)])
 
             target.images.append(aname)
 
@@ -589,7 +579,7 @@ class CopyToPartition(ImageFinetuningAction):
 
         with ImgMountFilesystem(img_mnt, device) as mnt_fs:
             fname = mnt_fs.fname(self.node.et.text)
-            do(f'cp -av "{os.path.join(builddir, aname)}" "{fname}"')
+            do(['cp', '-av', os.path.join(builddir, aname), fname])
 
 
 @FinetuningAction.register('set_partition_type')
@@ -603,7 +593,7 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         part_nr = self.node.et.attrib['part']
         part_type = self.node.et.attrib['type']
 
-        do(f'sfdisk --lock --part-type {loop_dev} {part_nr} {part_type}')
+        do(['sfdisk', '--lock', '--part-type', loop_dev, part_nr, part_type])
 
 
 @FinetuningAction.register('rm_apt_source')
