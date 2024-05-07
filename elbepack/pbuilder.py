@@ -7,6 +7,10 @@ import pathlib
 from urllib.request import urlopen
 
 
+def _write_env(fp, k, v):
+    fp.write(f'{k}="{v}"\n')
+
+
 def pbuilder_write_config(builddir, xml, noccache):
     distname = xml.prj.text('suite')
     pbuilderrc_fname = os.path.join(builddir, 'pbuilderrc')
@@ -14,32 +18,30 @@ def pbuilder_write_config(builddir, xml, noccache):
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
-    fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False)}"\n')
-    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main"\n')
-    fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder", "base.tgz")}"\n')
-    fp.write(f'DISTRIBUTION="{distname}"\n')
-    fp.write(f'BUILDRESULT="{os.path.join(builddir, "pbuilder", "result")}"\n')
-    fp.write(f'APTCACHE="{os.path.join(builddir, "pbuilder", "aptcache")}"\n')
-    fp.write(f'HOOKDIR="{os.path.join(builddir, "pbuilder", "hooks.d")}"\n')
-    fp.write('PATH="/usr/share/elbe/qemu-elbe:$PATH"\n')
+    _write_env(fp, 'MIRRORSITE', xml.get_primary_mirror(False))
+    _write_env(fp, 'OTHERMIRROR', f'deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main')
+    _write_env(fp, 'BASETGZ', os.path.join(builddir, 'pbuilder', 'base.tgz'))
+    _write_env(fp, 'DISTRIBUTION', distname)
+    _write_env(fp, 'BUILDRESULT', os.path.join(builddir, 'pbuilder', 'result'))
+    _write_env(fp, 'APTCACHE', os.path.join(builddir, 'pbuilder', 'aptcache'))
+    _write_env(fp, 'HOOKDIR', os.path.join(builddir, 'pbuilder', 'hooks.d'))
+    _write_env(fp, 'PATH', '/usr/share/elbe/qemu-elbe:$PATH')
 
     if xml.text('project/arch', key='arch') != 'amd64':
-        fp.write(f'ARCHITECTURE="{xml.text("project/buildimage/arch", key="arch")}"\n')
-        fp.write('DEBOOTSTRAP="qemu-debootstrap"\n')
-        fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" '
-                 '"--arch=$ARCHITECTURE")\n')
+        _write_env(fp, 'ARCHITECTURE', xml.text('project/buildimage/arch', key='arch'))
+        _write_env(fp, 'DEBOOTSTRAP', 'qemu-debootstrap')
+        fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--arch=$ARCHITECTURE")\n')
 
     if xml.prj.has('noauth'):
-        fp.write(
-            'DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
+        fp.write('DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--no-check-gpg")\n')
         fp.write("""for i in "${!DEBOOTSTRAPOPTS[@]}"; do if [[ ${DEBOOTSTRAPOPTS[i]}
                  == "--force-check-gpg" ]]; then unset 'DEBOOTSTRAPOPTS[i]'; break; fi done\n""")
         fp.write('export ALLOWUNTRUSTED="yes"\n')
 
     # aptitude segfaults with armhf changeroots, great! :)
     # link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=834990
-    fp.write('PBUILDERSATISFYDEPENDSCMD='
-             '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental\n')
+    _write_env(fp, 'PBUILDERSATISFYDEPENDSCMD',
+               '/usr/lib/pbuilder/pbuilder-satisfydepends-experimental')
 
     if not noccache:
         fp.write(f'export CCACHE_DIR="{builddir}/ccache"\n')
@@ -57,17 +59,15 @@ def pbuilder_write_cross_config(builddir, xml, noccache):
 
     fp.write('#!/bin/sh\n')
     fp.write('set -e\n')
-    fp.write(f'MIRRORSITE="{xml.get_primary_mirror(False, hostsysroot=True)}"\n')
-    fp.write(f'OTHERMIRROR="deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main"\n')
-    fp.write(f'BASETGZ="{os.path.join(builddir, "pbuilder_cross", "base.tgz")}"\n')
-
-    fp.write(f'DISTRIBUTION="{distname}"\n')
-
-    fp.write(f'BUILDRESULT="{os.path.join(builddir, "pbuilder_cross", "result")}"\n')
-    fp.write(f'APTCACHE="{os.path.join(builddir, "pbuilder_cross", "aptcache")}"\n')
-    fp.write(f'HOOKDIR="{os.path.join(builddir, "pbuilder_cross", "hooks.d")}"\n')
-    fp.write('PBUILDERSATISFYDEPENDSCMD='
-             '/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n')
+    _write_env(fp, 'MIRRORSITE', xml.get_primary_mirror(False, hostsysroot=True))
+    _write_env(fp, 'OTHERMIRROR', f'deb http://127.0.0.1:7588/repo{builddir}/repo {distname} main')
+    _write_env(fp, 'BASETGZ', os.path.join(builddir, 'pbuilder_cross', 'base.tgz'))
+    _write_env(fp, 'DISTRIBUTION', distname)
+    _write_env(fp, 'BUILDRESULT', os.path.join(builddir, 'pbuilder_cross', 'result'))
+    _write_env(fp, 'APTCACHE', os.path.join(builddir, 'pbuilder_cross', 'aptcache'))
+    _write_env(fp, 'HOOKDIR', os.path.join(builddir, 'pbuilder_cross', 'hooks.d'))
+    _write_env(fp, 'PBUILDERSATISFYDEPENDSCMD',
+               '/usr/lib/pbuilder/pbuilder-satisfydepends-apt')
 
     if xml.prj.has('noauth'):
         fp.write(
