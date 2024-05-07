@@ -161,11 +161,9 @@ class grubinstaller202(grubinstaller_base):
                     stack.enter_context(
                         mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
-                do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
-
-                devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-                devmap.write(f'(hd0) {loopdev}\n')
-                devmap.close()
+                imagemntfs.mkdir_p('boot/grub')
+                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {loopdev}\n')
+                stack.callback(imagemntfs.remove, 'boot/grub/device.map')
 
                 chroot(imagemnt, ['update-grub2'])
 
@@ -187,9 +185,6 @@ class grubinstaller202(grubinstaller_base):
 
             except subprocess.CalledProcessError as E:
                 logging.error('Fail installing grub device: %s', E)
-
-            finally:
-                os.unlink(imagemntfs.fname('boot/grub/device.map'))
 
 
 class grubinstaller97(grubinstaller_base):
@@ -221,11 +216,9 @@ class grubinstaller97(grubinstaller_base):
                     stack.enter_context(
                         mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
-                do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
-
-                devmap = open(imagemntfs.fname('boot/grub/device.map'), 'w')
-                devmap.write(f'(hd0) {loopdev}\n')
-                devmap.close()
+                imagemntfs.mkdir_p('boot/grub')
+                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {loopdev}\n')
+                stack.callback(imagemntfs.remove, 'boot/grub/device.map')
 
                 # Replace groot and kopt because else they will be given
                 # bad values
@@ -240,9 +233,6 @@ class grubinstaller97(grubinstaller_base):
 
             except subprocess.CalledProcessError as E:
                 logging.error('Fail installing grub device: %s', E)
-
-            finally:
-                os.unlink(imagemntfs.fname('boot/grub/device.map'))
 
 
 class simple_fstype:
