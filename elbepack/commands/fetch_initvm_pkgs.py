@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
+import contextlib
 import logging
 import os
 import subprocess
@@ -15,9 +16,9 @@ from elbepack.aptpkgutils import fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
 from elbepack.elbexml import ElbeXML, ValidationError
+from elbepack.imgutils import mount
 from elbepack.log import elbe_logging
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
-from elbepack.shellhelper import do
 
 
 def run_command(argv):
@@ -78,11 +79,11 @@ def run_command(argv):
         print('xml validation failed. Bailing out')
         sys.exit(47)
 
-    with elbe_logging({'streams': sys.stdout}):
+    with elbe_logging({'streams': sys.stdout}), contextlib.ExitStack() as stack:
 
         if opt.cdrom_path:
             if opt.cdrom_device:
-                do(f'mount "{opt.cdrom_device}" "{opt.cdrom_path}"')
+                stack.enter_context(mount(opt.cdrom_device, opt.cdrom_path))
 
             # a cdrom build is identified by the cdrom option
             # the xml file that is copied into the initvm
@@ -177,6 +178,3 @@ def run_command(argv):
                                       pkg_id)
 
         repo.finalize()
-
-        if opt.cdrom_device:
-            do(f'umount "{opt.cdrom_device}"')
