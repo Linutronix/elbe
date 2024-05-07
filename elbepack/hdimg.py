@@ -148,8 +148,8 @@ class grubinstaller202(grubinstaller_base):
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
-        try:
-            with losetup(self.fs['/'].filename) as loopdev:
+        with losetup(self.fs['/'].filename) as loopdev:
+            try:
                 for entry in self.fs.depthlist():
                     do(
                         'mount '
@@ -184,19 +184,19 @@ class grubinstaller202(grubinstaller_base):
                     chroot(imagemnt, ['grub-install', *user_args, '--target', 'i386-pc',
                                       '--no-floppy', loopdev])
 
-        except subprocess.CalledProcessError as E:
-            logging.error('Fail installing grub device: %s', E)
+            except subprocess.CalledProcessError as E:
+                logging.error('Fail installing grub device: %s', E)
 
-        finally:
-            os.unlink(imagemntfs.fname('boot/grub/device.map'))
-            do(f"umount {imagemntfs.fname('dev')}", check=False)
-            do(f"umount {imagemntfs.fname('proc')}", check=False)
-            do(f"umount {imagemntfs.fname('sys')}", check=False)
+            finally:
+                os.unlink(imagemntfs.fname('boot/grub/device.map'))
+                do(f"umount {imagemntfs.fname('dev')}", check=False)
+                do(f"umount {imagemntfs.fname('proc')}", check=False)
+                do(f"umount {imagemntfs.fname('sys')}", check=False)
 
-            for entry in reversed(self.fs.depthlist()):
-                do(
-                    f'umount {loopdev}p{entry.partnum}',
-                    check=False)
+                for entry in reversed(self.fs.depthlist()):
+                    do(
+                        f'umount {loopdev}p{entry.partnum}',
+                        check=False)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -207,8 +207,8 @@ class grubinstaller97(grubinstaller_base):
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
-        try:
-            with losetup(self.fs['/'].filename) as loopdev:
+        with losetup(self.fs['/'].filename) as loopdev:
+            try:
 
                 bootentry = 0
 
@@ -246,19 +246,19 @@ class grubinstaller97(grubinstaller_base):
 
                 chroot(imagemnt, ['grub-install', *user_args, '--no-floppy', loopdev])
 
-        except subprocess.CalledProcessError as E:
-            logging.error('Fail installing grub device: %s', E)
+            except subprocess.CalledProcessError as E:
+                logging.error('Fail installing grub device: %s', E)
 
-        finally:
-            os.unlink(imagemntfs.fname('boot/grub/device.map'))
-            do(f"umount {imagemntfs.fname('dev')}", check=False)
-            do(f"umount {imagemntfs.fname('proc')}", check=False)
-            do(f"umount {imagemntfs.fname('sys')}", check=False)
+            finally:
+                os.unlink(imagemntfs.fname('boot/grub/device.map'))
+                do(f"umount {imagemntfs.fname('dev')}", check=False)
+                do(f"umount {imagemntfs.fname('proc')}", check=False)
+                do(f"umount {imagemntfs.fname('sys')}", check=False)
 
-            for entry in reversed(self.fs.depthlist()):
-                do(
-                    f'umount {loopdev}p{entry.partnum}',
-                    check=False)
+                for entry in reversed(self.fs.depthlist()):
+                    do(
+                        f'umount {loopdev}p{entry.partnum}',
+                        check=False)
 
 
 class simple_fstype:
