@@ -113,7 +113,7 @@ def mk_source_cdrom(components, codename,
                             logging.warning("The src-cdrom archive's volume value "
                                             'is not contained in the actual volumes')
     else:
-        options = ''
+        options = []
 
     return [(repo.buildiso(os.path.join(target, f'src-cdrom-{component}.iso'),
             options=options)) for component, repo in repos.items()]

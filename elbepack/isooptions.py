@@ -39,7 +39,7 @@ def get_iso_options(xml):
     options = []
     src_opts = xml.node('src-cdrom/src-opts')
     if src_opts is None:
-        return ''
+        return options
     for node in src_opts:
         if node.tag not in iso_options:
             continue
@@ -47,4 +47,4 @@ def get_iso_options(xml):
         logging.info('Adding option %s\n%s', node.tag, option[2])
         text = node.et.text[:option[1]]
         options.append('%s "%s"' % (option[0], text.replace('"', '\\"')))
-    return ' '.join(options)
+    return options

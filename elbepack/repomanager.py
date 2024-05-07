@@ -165,17 +165,17 @@ class RepoBase:
         export_key(self.keyid, self.volume / 'repo.pub')
 
         if need_update:
-            cmd = f'reprepro --export=force --basedir "{self.volume}" update'
-            do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            do(['reprepro', '--export=force', '--basedir', self.volume, 'update'],
+               env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
         else:
             for att in self.attrs:
-                do(f'reprepro --basedir "{self.volume}" export {att.codename}',
+                do(['reprepro', '--basedir', self.volume, 'export', att.codename],
                    env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def finalize(self):
         for att in self.attrs:
-            cmd = f'reprepro --basedir "{self.volume}" export {att.codename}'
-            do(cmd, env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            do(['reprepro', '--basedir', self.volume, 'export', att.codename],
+               env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def _includedeb(self, path, codename, components=None, prio=None):
         if self.maxsize:
@@ -185,20 +185,18 @@ class RepoBase:
 
         global_opt = ['--keepunreferencedfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.volume}"']
+                      '--basedir', self.volume]
 
         if prio is not None:
-            global_opt.append(f'--priority {prio}')
+            global_opt.extend(['--priority', prio])
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append(f'--component "{"|".join(components)}"')
+            global_opt.extend(['--component', '|'.join(components)])
 
-        global_opt = ' '.join(global_opt)
-
-        do(f'reprepro {global_opt} includedeb {codename} {path}')
+        do(['reprepro', *global_opt, 'includedeb', codename, path])
 
     def includedeb(self, path, components=None, pkgname=None, force=False, prio=None):
         # pkgname needs only to be specified if force is enabled
@@ -226,33 +224,29 @@ class RepoBase:
                       '--ignore=surprisingbinary',
                       '--keepunreferencedfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.volume}"',
-                      '--priority normal',
-                      '--section misc']
+                      '--basedir', self.volume,
+                      '--priority', 'normal',
+                      '--section', 'misc']
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append(f'--component "{"|".join(components)}"')
+            global_opt.extend(['--component', '|'.join(components)])
 
-        global_opt = ' '.join(global_opt)
-
-        do(f'reprepro {global_opt} include {codename} {path}')
+        do(['reprepro', *global_opt, 'include', codename, path])
 
     def _removedeb(self, pkgname, codename, components=None):
 
-        global_opt = [f'--basedir "{self.volume}"']
+        global_opt = ['--basedir', self.volume]
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append(f'--component "{"|".join(components)}"')
+            global_opt.extend(['--component', '|'.join(components)])
 
-        global_opt = ' '.join(global_opt)
-
-        do(f'reprepro {global_opt} remove {codename} {pkgname}',
+        do(['reprepro', *global_opt, 'remove', codename, pkgname],
            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removedeb(self, pkgname, components=None):
@@ -260,11 +254,9 @@ class RepoBase:
 
     def _removesrc(self, srcname, codename):
 
-        global_opt = [f'--basedir {self.volume}']
+        global_opt = ['--basedir', self.volume]
 
-        global_opt = ' '.join(global_opt)
-
-        do(f'reprepro {global_opt} removesrc {codename} {srcname}',
+        do(['reprepro', *global_opt, 'removesrc', codename, srcname],
            env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
 
     def removesrc(self, path):
@@ -297,19 +289,17 @@ class RepoBase:
         global_opt = ['--keepunreferencedfiles',
                       '--keepunusednewfiles',
                       '--export=silent-never',
-                      f'--basedir "{self.volume}"',
-                      '--priority normal',
-                      '--section misc']
+                      '--basedir', self.volume,
+                      '--priority', 'normal',
+                      '--section', 'misc']
 
         if components is not None:
             # Compatibility with old callers
             if isinstance(components, str):
                 components = [components]
-            global_opt.append(f'--component "{"|".join(components)}"')
+            global_opt.extend(['--component', '|'.join(components)])
 
-        global_opt = ' '.join(global_opt)
-
-        do(f'reprepro {global_opt} includedsc {codename} {path}')
+        do(['reprepro', *global_opt, 'includedsc', codename, path])
 
     def includedsc(self, path, components=None, force=False):
         try:
@@ -337,17 +327,16 @@ class RepoBase:
     def include_init_dsc(self, path, components=None):
         self._includedsc(path, self.init_attr.codename, components)
 
-    def buildiso(self, fname, options=''):
+    def buildiso(self, fname, options=[]):
         files = []
         if self.volume_count == 0:
-            do(f'genisoimage {options} -o {fname} -J -joliet-long -R "{self.volume}"')
+            do(['genisoimage', *options, '-o', fname, '-J', '-joliet-long', '-R', self.volume])
             files.append(fname)
         else:
             for i in self.volume_indexes:
                 vol = self.get_volume_path(i)
                 newname = fname + (f'{i:02}')
-                do(f'genisoimage {options} -o {newname} -J -joliet-long '
-                   f'-R {vol}')
+                do(['genisoimage', *options, '-o', newname, '-J', '-joliet-long', '-R', vol])
                 files.append(newname)
 
         return files
