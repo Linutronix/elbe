@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
+import contextlib
 import logging
 import os
 import pathlib
@@ -13,7 +14,7 @@ import parted
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.imgutils import losetup
+from elbepack.imgutils import losetup, mount
 from elbepack.shellhelper import chroot, do
 
 
@@ -148,17 +149,17 @@ class grubinstaller202(grubinstaller_base):
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
-        with losetup(self.fs['/'].filename) as loopdev:
+        with contextlib.ExitStack() as stack:
             try:
-                for entry in self.fs.depthlist():
-                    do(
-                        'mount '
-                        f'{loopdev}p{entry.partnum} '
-                        f'{imagemntfs.fname(entry.mountpoint)}')
+                loopdev = stack.enter_context(losetup(self.fs['/'].filename))
 
-                do(f"mount --bind /dev {imagemntfs.fname('dev')}")
-                do(f"mount --bind /proc {imagemntfs.fname('proc')}")
-                do(f"mount --bind /sys {imagemntfs.fname('sys')}")
+                for entry in self.fs.depthlist():
+                    stack.enter_context(
+                        mount(f'{loopdev}p{entry.partnum}', imagemntfs.fname(entry.mountpoint)))
+
+                for bindmnt in ['/dev', '/proc', '/sys']:
+                    stack.enter_context(
+                        mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
                 do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
@@ -189,14 +190,6 @@ class grubinstaller202(grubinstaller_base):
 
             finally:
                 os.unlink(imagemntfs.fname('boot/grub/device.map'))
-                do(f"umount {imagemntfs.fname('dev')}", check=False)
-                do(f"umount {imagemntfs.fname('proc')}", check=False)
-                do(f"umount {imagemntfs.fname('sys')}", check=False)
-
-                for entry in reversed(self.fs.depthlist()):
-                    do(
-                        f'umount {loopdev}p{entry.partnum}',
-                        check=False)
 
 
 class grubinstaller97(grubinstaller_base):
@@ -207,8 +200,9 @@ class grubinstaller97(grubinstaller_base):
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
-        with losetup(self.fs['/'].filename) as loopdev:
+        with contextlib.ExitStack() as stack:
             try:
+                loopdev = stack.enter_context(losetup(self.fs['/'].filename))
 
                 bootentry = 0
 
@@ -216,18 +210,16 @@ class grubinstaller97(grubinstaller_base):
                     if entry.mountpoint.startswith('/boot'):
                         bootentry_label = entry.label
                         bootentry = int(entry.partnum)
-                    do(
-                        'mount '
-                        f'{loopdev}p{entry.partnum} '
-                        f'{imagemntfs.fname(entry.mountpoint)}')
+                    stack.enter_context(
+                        mount(f'{loopdev}p{entry.partnum}', imagemntfs.fname(entry.mountpoint)))
 
                 if not bootentry:
                     bootentry_label = entry.label
                     bootentry = int(entry.partnum)
 
-                do(f"mount --bind /dev {imagemntfs.fname('dev')}")
-                do(f"mount --bind /proc {imagemntfs.fname('proc')}")
-                do(f"mount --bind /sys {imagemntfs.fname('sys')}")
+                for bindmnt in ['/dev', '/proc', '/sys']:
+                    stack.enter_context(
+                        mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
                 do(f'mkdir -p "{imagemntfs.fname("boot/grub")}"')
 
@@ -251,14 +243,6 @@ class grubinstaller97(grubinstaller_base):
 
             finally:
                 os.unlink(imagemntfs.fname('boot/grub/device.map'))
-                do(f"umount {imagemntfs.fname('dev')}", check=False)
-                do(f"umount {imagemntfs.fname('proc')}", check=False)
-                do(f"umount {imagemntfs.fname('sys')}", check=False)
-
-                for entry in reversed(self.fs.depthlist()):
-                    do(
-                        f'umount {loopdev}p{entry.partnum}',
-                        check=False)
 
 
 class simple_fstype:
@@ -324,17 +308,13 @@ def create_label(disk, part, ppart, fslabel, target, grub):
         _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
 
         mount_path = Path(target, 'imagemnt')
-        do(f'mount {loopdev} {mount_path}')
 
-        _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-
-        try:
+        with mount(loopdev, mount_path):
+            _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
             do(
                 f'cp -a "{os.path.join(target, "filesystems", entry.id)}/." '
                 f'"{mount_path}/"',
                 check=False)
-        finally:
-            do(f'umount {loopdev}')
 
     return ppart
 
