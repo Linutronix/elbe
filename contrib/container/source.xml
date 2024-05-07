@@ -1,0 +1,158 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<initvm>
+		<buildtype>amd64</buildtype>
+		<mirror>
+			<primary_host>deb.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<url-list>
+				<url>
+					<binary>
+						http://deb.debian.org/debian-security bookworm-security main
+					</binary>
+					<source>
+						http://deb.debian.org/debian-security bookworm-security main
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://deb.debian.org/debian bookworm-backports main
+					</binary>
+					<source>
+						http://deb.debian.org/debian bookworm-backports main
+					</source>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe bookworm main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe bookworm main
+					</source>
+					<raw-key>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+lffHf8U7HFvRg+zm
+=3i/P
+-----END PGP PUBLIC KEY BLOCK-----
+					</raw-key>
+				</url>
+				<url>
+					<binary>
+						http://debian.linutronix.de/elbe-common bookworm main
+					</binary>
+					<source>
+						http://debian.linutronix.de/elbe-common bookworm main
+					</source>
+					<raw-key>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+lffHf8U7HFvRg+zm
+=3i/P
+-----END PGP PUBLIC KEY BLOCK-----
+					</raw-key>
+				</url>
+			</url-list>
+		</mirror>
+		<suite>bookworm</suite>
+		<pkg-list>
+			<pkg>openssh-server</pkg>
+			<pkg>debootstrap</pkg>
+			<pkg>reprepro</pkg>
+		</pkg-list>
+		<preseed>
+			<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://deb.debian.org/debian"/>
+		</preseed>
+		<size>80G</size>
+		<swap-size>10GiB</swap-size>
+		<img>qcow2</img>
+		<portforwarding>
+		</portforwarding>
+	</initvm>
+</ns0:RootFileSystem>
