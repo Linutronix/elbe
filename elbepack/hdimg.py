@@ -316,8 +316,6 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     grub.add_fs_entry(entry)
 
-    loopdev = entry.losetup()
-
     with entry.losetup() as loopdev:
         do(
             f'mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} '
