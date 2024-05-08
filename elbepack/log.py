@@ -272,7 +272,7 @@ class AsyncLogging(threading.Thread):
                 logbuf = '\n'.join(self.lines[-cnt:])
 
                 # filter out ansi sequences.
-                logbuf = re.sub('\u001b[.*?[@-~]', '', logbuf)
+                logbuf = re.sub('\u001b[.*?[@-~(=]', '', logbuf)
                 logbuf = re.sub('\u0008', '', logbuf)
 
                 self.stream.info(logbuf)
