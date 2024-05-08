@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 
+import contextlib
 import filecmp
 import io
 import logging
@@ -15,6 +16,7 @@ import time
 from elbepack.filesystem import Filesystem
 from elbepack.fstab import fstabentry
 from elbepack.hdimg import do_hdimg
+from elbepack.imgutils import mount
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
 from elbepack.shellhelper import chroot, do
@@ -327,13 +329,24 @@ class ChRootFilesystem(ElbeFilesystem):
         self.mkdir_p('usr/bin')
         self.mkdir_p('usr/sbin')
         self.write_file('usr/sbin/policy-rc.d', 0o755, '#!/bin/sh\nexit 101\n')
-        self.mount()
+
+        self._exitstack = contextlib.ExitStack()
+        if self.path != '/':
+            self._exitstack.enter_context(
+                    mount(None, self.fname('/proc'), type='proc', log_output=False))
+            self._exitstack.enter_context(
+                    mount(None, self.fname('/sys'), type='sysfs', log_output=False))
+            self._exitstack.enter_context(
+                    mount('/dev', self.fname('/dev'), bind=True, log_output=False))
+            self._exitstack.enter_context(
+                    mount('/dev/pts', self.fname('/dev/pts'), bind=True, log_output=False))
+
         return self
 
-    def __exit__(self, _typ, _value, _traceback):
+    def __exit__(self, typ, value, traceback):
         if self.inchroot:
             self.leave_chroot()
-        self.umount()
+        self._exitstack.__exit__(typ, value, traceback)
 
         for excursion in self._excursions:
             excursion.end(self)
@@ -344,22 +357,6 @@ class ChRootFilesystem(ElbeFilesystem):
                 self._excursions.remove(excursion)
                 excursion.end(self)
                 return
-
-    def mount(self):
-        if self.path == '/':
-            return
-        try:
-            subprocess.run(['mount', '-t', 'proc', 'none', os.path.join(self.path, 'proc')],
-                           check=True)
-            subprocess.run(['mount', '-t', 'sysfs', 'none', os.path.join(self.path, 'sys')],
-                           check=True)
-            subprocess.run(['mount', '-o', 'bind', '/dev', os.path.join(self.path, 'dev')],
-                           check=True)
-            subprocess.run(['mount', '-o', 'bind', '/dev/pts', os.path.join(self.path, 'dev/pts')],
-                           check=True)
-        except BaseException:
-            self.umount()
-            raise
 
     def enter_chroot(self):
         assert not self.inchroot
@@ -375,21 +372,6 @@ class ChRootFilesystem(ElbeFilesystem):
             return
 
         os.chroot(self.path)
-
-    def _umount(self, path):
-        path = os.path.join(self.path, path)
-        if os.path.ismount(path):
-            subprocess.run(['umount', path], check=True)
-
-    def umount(self):
-        if self.path == '/':
-            return
-        self._umount('proc/sys/fs/binfmt_misc')
-        self._umount('proc')
-        self._umount('sys')
-        self._umount('dev/pts')
-        time.sleep(0.5)
-        self._umount('dev')
 
     def leave_chroot(self):
         assert self.inchroot
