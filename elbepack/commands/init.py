@@ -12,6 +12,7 @@ import sys
 from optparse import OptionParser
 
 import elbepack.init
+from elbepack.commands import add_deprecated_optparse_option
 from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
 from elbepack.log import elbe_logging
@@ -50,6 +51,9 @@ def run_command(argv):
         action='store_true',
         default=False,
         help='start qemu in graphical mode to enable console switch')
+
+    add_deprecated_optparse_option(oparser, '--nesting')
+    add_deprecated_optparse_option(oparser, '--devel')
 
     oparser.add_option(
         '--skip-build-bin',

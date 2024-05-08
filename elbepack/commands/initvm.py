@@ -6,6 +6,7 @@ import os
 import sys
 from optparse import OptionParser
 
+from elbepack.commands import add_deprecated_optparse_option
 from elbepack.initvmaction import InitVMAction, InitVMError
 from elbepack.xmlpreprocess import PreprocessWrapper
 
@@ -46,6 +47,9 @@ def run_command(argv):
 
     oparser.add_option('--writeproject', dest='writeproject', default=None,
                        help='write project name to file')
+
+    add_deprecated_optparse_option(oparser, '--nesting')
+    add_deprecated_optparse_option(oparser, '--devel')
 
     oparser.add_option(
         '--build-sdk',
