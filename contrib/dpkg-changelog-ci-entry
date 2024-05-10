@@ -5,7 +5,7 @@ set -e
 ver="$(dpkg-parsechangelog  --show-field VERSION).c${BUILD_NUMBER:?}.g$(git rev-parse HEAD)"
 dist="$(dpkg-parsechangelog  --show-field DISTRIBUTION)"
 
-export DEBEMAIL=nobody@localhost
+export DEBEMAIL=nobody@linutronix.de
 export DEBFULLNAME=nobody
 
 debchange --newversion "$ver" --distribution "$dist" --urgency low "CI version"
