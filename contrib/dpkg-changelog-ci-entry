@@ -2,7 +2,7 @@
 
 set -e
 
-ver="$(dpkg-parsechangelog  --show-field VERSION).c${BUILD_NUMBER:?}.g$(git rev-parse --short HEAD)"
+ver="$(dpkg-parsechangelog  --show-field VERSION).local.c${BUILD_NUMBER:?}.g$(git rev-parse --short HEAD)"
 dist="$(dpkg-parsechangelog  --show-field DISTRIBUTION)"
 
 export DEBEMAIL=nobody@linutronix.de
