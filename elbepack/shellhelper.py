@@ -89,9 +89,9 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
         new_env.update(env_add)
 
     if _is_shell_cmd(cmd):
-        do(['chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
+        do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
     else:
-        do(['chroot', directory] + cmd, env_add=new_env, **kwargs)
+        do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
 def get_command_out(cmd, /, *, input=None, check=True, env_add=None, **kwargs):
