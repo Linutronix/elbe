@@ -145,8 +145,8 @@ def pbuilder_write_repo_hook(builddir, xml, cross):
         # /etc/apt/sources.list
         f.write(f'cat -> /etc/apt/sources.list <<EOF\n{mirrors}\nEOF\n')
 
-        for key in keys:
-            f.write(f'cat << EOF | apt-key add -\n{key}\nEOF\n')
+        for name, key in keys:
+            f.write(f'cat -> /etc/apt/trusted.gpg.d/{name}.asc <<EOF\n{key}\nEOF\n')
 
         f.write('apt-get update\n')
 
@@ -159,11 +159,11 @@ def get_apt_keys(builddir, xml):
     if not xml.prj.has('mirror') and not xml.prj.has('mirror/cdrom'):
         return (['# No mirrors configured'], [])
 
-    keys = [pathlib.Path(builddir, 'repo', 'repo.pub').read_text()]
+    keys = [('elbe-localrepo', pathlib.Path(builddir, 'repo', 'repo.pub').read_text())]
 
     if xml.prj.has('mirror/primary_host') and xml.prj.has('mirror/url-list'):
 
-        for url in xml.prj.node('mirror/url-list'):
+        for i, url in enumerate(xml.prj.node('mirror/url-list')):
 
             if url.has('options'):
                 options = '[%s]' % ' '.join([opt.et.text.strip(' \t\n')
@@ -181,6 +181,6 @@ def get_apt_keys(builddir, xml):
                                 for line
                                 in url.text('raw-key').splitlines()[1:-1])
 
-                keys.append(key)
+                keys.append((f'elbe-xml-raw-key{i}', key))
 
     return keys
