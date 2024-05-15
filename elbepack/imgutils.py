@@ -59,3 +59,7 @@ class _Mount:
 
 
 mount = _Mount
+
+
+def dd(args, /, **kwargs):
+    do(['dd', *[f'{k}={v}' for k, v in args.items()]], **kwargs)
