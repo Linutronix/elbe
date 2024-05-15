@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2016 Linutronix GmbH
 
+import base64
 import logging
 import os
 import pathlib
@@ -12,7 +13,7 @@ from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
 from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
 
-from elbepack.shellhelper import env_add, get_command_out
+from elbepack.shellhelper import env_add
 
 
 elbe_internal_key_param = """
@@ -296,11 +297,12 @@ def unarmor_openpgp_keyring(armored):
     Unarmors one ascii-armored (string) OpenPGP keyring.
     Returns a binary string (empty for invalid keys).
     """
+    b64 = armored.strip()                                              \
+                 .removeprefix('-----BEGIN PGP PUBLIC KEY BLOCK-----') \
+                 .removesuffix('-----END PGP PUBLIC KEY BLOCK-----')   \
+                 .strip()
     try:
-        conv_cmd = get_command_out('/usr/bin/gpg --no-options --dearmor',
-                                   input=armored.encode('ascii'))
-    except subprocess.CalledProcessError as e:
+        return base64.b64decode(b64)
+    except Exception as e:
         logging.error(e)
         return b''
-
-    return conv_cmd
