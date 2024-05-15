@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2016 Linutronix GmbH
 
 import base64
-import logging
 import os
 import pathlib
 import shutil
@@ -295,14 +294,9 @@ def export_key(fingerprint, outfile):
 def unarmor_openpgp_keyring(armored):
     """
     Unarmors one ascii-armored (string) OpenPGP keyring.
-    Returns a binary string (empty for invalid keys).
     """
     b64 = armored.strip()                                              \
                  .removeprefix('-----BEGIN PGP PUBLIC KEY BLOCK-----') \
                  .removesuffix('-----END PGP PUBLIC KEY BLOCK-----')   \
                  .strip()
-    try:
-        return base64.b64decode(b64)
-    except Exception as e:
-        logging.error(e)
-        return b''
+    return base64.b64decode(b64)
