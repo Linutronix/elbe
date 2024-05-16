@@ -760,6 +760,8 @@ class CreateAction(InitVMAction):
             with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
                 xml = f.read()
 
+            xml = self._libvirt_enable_kvm(xml)
+
             # Register initvm in libvirt.
             try:
                 self.conn.defineXML(xml)
@@ -810,6 +812,18 @@ class CreateAction(InitVMAction):
                 xmlfile = tmp.fname('source.xml')
 
             submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
+
+    def _libvirt_enable_kvm(self, xml):
+        caps_tree = etree(io.StringIO(self.conn.getCapabilities()))
+        domain_tree = etree(io.StringIO(xml))
+
+        arch = domain_tree.et.find('.//os/type').attrib['arch']
+
+        if caps_tree.et.find('.//guest/arch[@name="' + arch + '"]/domain[@type="kvm"]') is None:
+            return xml
+
+        domain_tree.root.et.attrib['type'] = 'kvm'
+        return domain_tree.tostring()
 
 
 @InitVMAction.register('submit')

@@ -36,7 +36,7 @@ forward += ',hostfwd=%s::%s-:%s' % ("tcp", cfg['soapport'], "7588")
 if cfg['sshport'] != '-1':
     forward += ',hostfwd=%s::%s-:%s' % ("tcp", cfg['sshport'], "22")
 
-%><domain type='kvm'
+%><domain type='qemu'
 xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
 <name>${name}</name>
 <uuid>${uid}</uuid>
