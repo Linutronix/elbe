@@ -128,7 +128,6 @@ ppc64el_defaults = {
 amd64_defaults = {
     'arch': 'amd64',
     'interpreter': 'qemu-system-x86_64',
-    'interpreter-args': ['-accel', 'kvm'],
     'console': 'ttyS0,115200n1',
     'machine': 'pc',
     'nicmodel': 'virtio',

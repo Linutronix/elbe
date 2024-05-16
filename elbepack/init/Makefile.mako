@@ -5,17 +5,24 @@
 
 <%
 import multiprocessing
+import os
+import subprocess
 from elbepack.filesystem import size_to_int
 
 max_cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024 // 1024
+interpreter = prj.text('interpreter', default=defs, key='interpreter')
+use_kvm = os.path.exists('/dev/kvm') and b'kvm' in subprocess.check_output([interpreter, '-accel', 'help'])
 %>
 
 MEMSIZE?=${memory}
 SMP?=$$((`nproc` > ${max_cpus} ? ${max_cpus} : `nproc`))
-INTERPRETER?=${prj.text('interpreter', default=defs, key='interpreter')}
+INTERPRETER?=${interpreter}
 % if defs["interpreter-args"] is not None:
 INTERPRETER-ARGS= ${" ".join(defs["interpreter-args"])}
+% endif
+% if use_kvm:
+INTERPRETER-ARGS+= -accel kvm -cpu host
 % endif
 MACHINE?=pc
 
@@ -82,13 +89,9 @@ $(BASE): $(INITRD)
 		-m $(MEMSIZE) \
 		-smp $(SMP) \
 		-usb \
-		-cpu host \
 		|| ( echo; \
 		     echo "------------------------------------------------------------------"; \
-		     echo "kvm failed to start"; \
-		     echo "This is most likely the case, because /dev/kvm is not available."; \
-		     echo "To use KVM inside a VMWARE or other VM instance,"; \
-		     echo "nested KVM needs to be supported"; \
+		     echo "VM failed to start"; \
 		     echo "------------------------------------------------------------------"; \
 		     echo; \
 		     false \
@@ -111,7 +114,6 @@ run:
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-netdev user,ipv4,id=user.0${fwd} \
-		-cpu host \
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
@@ -124,7 +126,6 @@ run-con:
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-netdev user,ipv4,id=user.0${fwd} \
-		-cpu host \
 		-m $(MEMSIZE) \
 		-usb \
 		-nographic \
@@ -142,7 +143,6 @@ run_qemu:
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
 		-netdev user,ipv4=on,id=user.0,hostfwd=tcp::7587-:7588${fwd} \
-		-cpu host \
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
