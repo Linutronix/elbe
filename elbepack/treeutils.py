@@ -5,7 +5,7 @@
 import copy
 
 from lxml.etree import Element, ElementTree, SubElement
-from lxml.etree import XMLParser, parse
+from lxml.etree import XMLParser, parse, tostring
 
 # ElementTree helpers
 
@@ -121,7 +121,7 @@ class etree(ebase):
         self.et.write(fname, encoding=encoding)
 
     def tostring(self):
-        return self.et.tostring()
+        return tostring(self.et, encoding='utf-8').decode('utf-8')
 
     def ensure_child(self, tag):
         retval = self.et.find('./' + tag)
