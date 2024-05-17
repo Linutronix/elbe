@@ -553,9 +553,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
         Describes a sequence of check to be done on images.
       </documentation>
     </annotation>
-    <sequence>
+    <choice>
       <element name="check" type="rfs:check-img" />
-    </sequence>
+      <element name="check-script" type="rfs:check-script" />
+    </choice>
     <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
@@ -695,6 +696,28 @@ SPDX-FileCopyrightText: Linutronix GmbH
       </element>
     </choice>
   </group>
+
+  <complexType name="check-script">
+    <annotation>
+      <documentation>
+        Validate the build results by running a script.
+
+	The script will be passed the build directory as argument.
+	Exit code 0 means success.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="location" type="string" use="optional">
+         <annotation>
+          <documentation>
+          Read the script from a location on disk.
+          </documentation>
+         </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
 
   <simpleType name="suite-initvm">
     <restriction base="string">

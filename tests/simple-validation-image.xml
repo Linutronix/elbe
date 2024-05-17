@@ -57,4 +57,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<set_packer packer="none">sda.img</set_packer>
 		</project-finetuning>
 	</target>
+	<check-image-list>
+		<check-script location="simple-validation-image-test.py" />
+	</check-image-list>
 </ns0:RootFileSystem>

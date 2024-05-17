@@ -20,6 +20,9 @@ from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import env_add
 from elbepack.treeutils import etree
+from elbepack.version import is_devel
+
+import elbevalidate
 
 
 def run_command(argv):
@@ -408,6 +411,10 @@ class CheckImage(CheckBase):
             fail_cnt += self.do_img(tag)
             total_cnt += 1
 
+        for tag in self.xml.all('.//check-image-list/check-script'):
+            fail_cnt += self.do_check_script(tag)
+            total_cnt += 1
+
         logging.info('Succesfully validate %d images out of %d',
                      total_cnt - fail_cnt, total_cnt)
 
@@ -559,6 +566,32 @@ class CheckImage(CheckBase):
                      img_name, ''.join(transcript))
 
         return ret or child.exitstatus
+
+    def do_check_script(self, tag):
+        with tempfile.NamedTemporaryFile(prefix='elbe-test-script-') as script:
+            script.write(tag.et.text.encode('utf-8'))
+            # To execute the file it needs to be closed.
+            script.file.close()
+
+            os.chmod(script.name, 0o500)
+
+            env = None
+            if is_devel:
+                env = os.environ.copy()
+                _append_to_path_variable('PYTHONPATH',
+                                         pathlib.Path(elbevalidate.__file__).parents[1],
+                                         env)
+
+            ps = subprocess.run([script.name, self.directory], env=env)
+
+        return not not ps.returncode
+
+
+def _append_to_path_variable(var, value, env):
+    if var in env:
+        env[var] = env[var] + ':' + value
+    else:
+        env[var] = value
 
 
 @CheckBase.register('sdk')

@@ -4,6 +4,7 @@
 
 import logging
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -176,6 +177,17 @@ def preprocess_pkg_pinning(xml):
 
     if errors:
         raise XMLPreprocessError('Invalid package pinning attributes')
+
+
+def preprocess_check_script(xml, basedir):
+    """Inline check scripts"""
+
+    for script in xml.iterfind('//check-image-list/check-script'):
+        location = script.attrib.pop('location', None)
+        if location is None:
+            continue
+
+        script.text = basedir.joinpath(location).read_text()
 
 
 def preprocess_proxy_add(xml, opt_proxy=None):
@@ -360,6 +372,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
         xml = etree.parse(xml_input_file, parser=parser)
         xml.xinclude()
 
+        basedir = pathlib.Path(xml_input_file).parent
+
         # Variant management
         # check all nodes for variant field, and act accordingly.
         # The result will not contain any variant attributes anymore.
@@ -429,6 +443,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
         preprocess_passwd(xml)
 
         preprocess_pkg_pinning(xml)
+
+        preprocess_check_script(xml, basedir)
 
         if schema.validate(xml):
             # if validation succedes write xml file
