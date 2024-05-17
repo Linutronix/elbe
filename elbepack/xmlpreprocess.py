@@ -341,8 +341,8 @@ def preprocess_passwd(xml):
 def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
-       `xml_input_file` is either a file-like object or a path (str) to the input file.
-       `xml_output_file` is either a file-like object or a path (str) to the output file.
+       `xml_input_file` is a path (str) to the input file.
+       `xml_output_file` is a path (str) to the output file.
     """
 
     # first convert variants to a set
