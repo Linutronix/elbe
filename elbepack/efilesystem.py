@@ -285,7 +285,7 @@ class Excursion:
     def _undo_excursion(self, rfs):
         saved_to = self._saved_to()
 
-        if not _file_or_directory_seem_equal(rfs.fname(self.origin), rfs.fname(saved_to)):
+        if not _file_or_directory_seem_equal(rfs.fname(self.origin), self.origin):
             # Excursed file was modified, keep the changes.
             return
 
