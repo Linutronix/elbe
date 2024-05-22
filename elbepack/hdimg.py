@@ -304,7 +304,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
                 'cp', '-a',
                 os.path.join(target, 'filesystems', entry.id) + '/.',
                 str(mount_path) + '/',
-            ], check=False)
+            ])
 
     return ppart
 
