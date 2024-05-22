@@ -40,7 +40,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<name>sdcard.img</name>
 				<size>1500MiB</size>
 					<partition>
-						<size>50MiB</size>
+						<size>200MiB</size>
 						<label>boot</label>
 						<bootable />
 					</partition>
