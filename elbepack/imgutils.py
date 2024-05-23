@@ -5,14 +5,15 @@
 import contextlib
 import subprocess
 
-from elbepack.shellhelper import do, get_command_out
+from elbepack.shellhelper import ELBE_LOGGING, do, run
 
 
 @contextlib.contextmanager
 def losetup(dev, extra_args=[]):
-    loopdev = get_command_out(
-        ['losetup', '--find', '--show', '--partscan', *extra_args, dev]
-    ).decode('ascii').rstrip('\n')
+    loopdev = run(
+        ['losetup', '--find', '--show', '--partscan', *extra_args, dev],
+        stdout=subprocess.PIPE, stderr=ELBE_LOGGING,
+    ).stdout.decode('ascii').rstrip('\n')
 
     try:
         yield loopdev
