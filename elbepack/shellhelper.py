@@ -163,45 +163,6 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
         do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
-def get_command_out(cmd, /, *, check=True, env_add=None, **kwargs):
-    """get_command_out() - Like do() but returns stdout.
-
-    --
-
-    Let's quiet the loggers
-
-    >>> import os
-    >>> from elbepack.log import open_logging
-    >>> open_logging({"files":os.devnull})
-
-    >>> get_command_out("echo ELBE")
-    b'ELBE\\n'
-
-    >>> get_command_out("false") # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    subprocess.CalledProcessError: ...
-
-    >>> get_command_out("false", check=False)
-    b''
-
-    >>> get_command_out("cat -", input=b"ELBE", env_add={"TRUE":"true"})
-    b'ELBE'
-    """
-
-    new_env = os.environ.copy()
-
-    if env_add:
-        new_env.update(env_add)
-
-    logging.info(_log_cmd(cmd), extra={'context': '[CMD] '})
-
-    with async_logging_ctx() as w:
-        ps = subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=subprocess.PIPE, stderr=w,
-                            env=new_env, check=check, **kwargs)
-        return ps.stdout
-
-
 def env_add(d):
     env = os.environ.copy()
     env.update(d)
