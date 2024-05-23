@@ -22,7 +22,7 @@ def _log_cmd(cmd):
         return shlex.join(map(os.fspath, cmd))
 
 
-def do(cmd, /, *, check=True, input=None, env_add=None, log_cmd=None, **kwargs):
+def do(cmd, /, *, check=True, env_add=None, log_cmd=None, **kwargs):
     """do() - Execute cmd in a shell and redirect outputs to logging.
 
     Throws a subprocess.CalledProcessError if cmd returns none-zero and check=True
@@ -62,7 +62,7 @@ def do(cmd, /, *, check=True, input=None, env_add=None, log_cmd=None, **kwargs):
 
     with async_logging_ctx() as w:
         subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=w, stderr=subprocess.STDOUT,
-                       env=new_env, check=check, input=input, **kwargs)
+                       env=new_env, check=check, **kwargs)
 
 
 def chroot(directory, cmd, /, *, env_add=None, **kwargs):
@@ -94,7 +94,7 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
         do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
-def get_command_out(cmd, /, *, input=None, check=True, env_add=None, **kwargs):
+def get_command_out(cmd, /, *, check=True, env_add=None, **kwargs):
     """get_command_out() - Like do() but returns stdout.
 
     --
@@ -129,7 +129,7 @@ def get_command_out(cmd, /, *, input=None, check=True, env_add=None, **kwargs):
 
     with async_logging_ctx() as w:
         ps = subprocess.run(cmd, shell=_is_shell_cmd(cmd), stdout=subprocess.PIPE, stderr=w,
-                            env=new_env, check=check, input=input, **kwargs)
+                            env=new_env, check=check, **kwargs)
         return ps.stdout
 
 
