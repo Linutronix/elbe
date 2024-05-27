@@ -231,7 +231,7 @@ class AddGroupAction(FinetuningAction):
             options = ['-f']
             if 'gid' in att:
                 options.extend(['-g', att['gid']])
-            if 'system' in att and att['system'] == 'True':
+            if self.node.bool_attr('system'):
                 options.append('-r')
             chroot(target.path, ['/usr/sbin/groupadd', *options, self.node.et.text])
 
