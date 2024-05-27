@@ -22,13 +22,16 @@ class _PurePath:
         self._p = pathlib.PurePosixPath(*pathsegments)
         self._guestfs = guestfs
 
-    def joinpath(self, *pathsegments):
+    def _create_from_posixpath(self, p):
         return type(self)(
-                self._p.joinpath(*pathsegments),
+                p,
                 device=self.device,
                 guestfs=self._guestfs,
                 root=self.root,
         )
+
+    def joinpath(self, *pathsegments):
+        return self._create_from_posixpath(self._p.joinpath(*pathsegments))
 
     def __truediv__(self, key):
         try:
@@ -125,11 +128,7 @@ class Path(_PurePath):
 
     def readlink(self):
         with _guestfs_ctx():
-            return type(self)(
-                self._guestfs.readlink(self._path),
-                device=self.device,
-                guestfs=self._guestfs,
-            )
+            return self._create_from_posixpath(self._guestfs.readlink(self._path))
 
     def exists(self):
         with _guestfs_ctx():
