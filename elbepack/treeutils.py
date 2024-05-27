@@ -10,6 +10,16 @@ from lxml.etree import XMLParser, parse, tostring
 # ElementTree helpers
 
 
+def xml_bool(value):
+    if value is None:
+        return None
+    if value in ('true', '1'):
+        return True
+    if value in ('false', '0'):
+        return False
+    raise ValueError(value)
+
+
 class eiter:
     def __init__(self, it):
         self.it = it
@@ -96,10 +106,7 @@ class elem(ebase):
         self.et.remove(child.et)
 
     def bool_attr(self, attrname):
-        attr = self.et.attrib.get(attrname)
-        if attr in ('true', '1'):
-            return True
-        return False
+        return xml_bool(self.et.attrib.get(attrname))
 
     def get_parent(self):
         return elem(self.et.getparent())
