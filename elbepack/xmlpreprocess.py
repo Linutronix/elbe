@@ -24,6 +24,7 @@ from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.isooptions import iso_option_valid
 from elbepack.schema import xml_schema_file
+from elbepack.treeutils import xml_bool
 from elbepack.validate import error_log_to_strings
 
 
@@ -104,8 +105,7 @@ def preprocess_iso_option(xml):
     if src_opts is None:
         return
 
-    strict = ('strict' in src_opts.attrib
-              and src_opts.attrib['strict'] == 'true')
+    strict = xml_bool(src_opts.attrib.get('strict'))
 
     for opt in src_opts.iterfind('./*'):
         valid = iso_option_valid(opt.tag, opt.text)
