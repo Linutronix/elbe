@@ -6,6 +6,7 @@ import base64
 import errno
 import logging
 import os
+import shlex
 import subprocess
 from shutil import rmtree
 
@@ -98,7 +99,7 @@ class MkdirAction(FinetuningAction):
 class MknodAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
-        do(['mknod', target.fname(self.node.et.text), self.node.et.attrib['opts']])
+        do(['mknod', target.fname(self.node.et.text), *shlex.split(self.node.et.attrib['opts'])])
 
 
 @FinetuningAction.register('buildenv_mkdir')
