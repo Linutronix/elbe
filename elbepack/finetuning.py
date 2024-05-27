@@ -203,7 +203,7 @@ class AddUserAction(FinetuningAction):
                 options.extend(['-g',  att['gid']])
             if 'home' in att:
                 options.extend(['-d',  att['home']])
-            if 'system' in att and att['system'] == 'true':
+            if self.node.bool_attr('system'):
                 options.append('-r')
             if 'create_home' in att and att['create_home'] == 'false':
                 options.append('-M')
@@ -279,7 +279,7 @@ class AddFileAction(FinetuningAction):
 
         content = AddFileAction.decode(content, encoding)
 
-        if 'append' in att and att['append'] == 'true':
+        if self.node.bool_attr('append'):
             target.append_file(dst, content)
         else:
             target.write_file(dst, None, content)
