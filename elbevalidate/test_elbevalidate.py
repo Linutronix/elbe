@@ -108,6 +108,13 @@ def test_elbevalidate(tmp_path):
         assert 'DEVNAME' not in part0_blkid
 
         with part0.files() as root:
+            path = root.joinpath('foo.tar.gz')
+            assert path.suffix == '.gz'
+            assert path.suffixes == ['.tar', '.gz']
+            assert path.stem == 'foo.tar'
+            assert path.parent == root.root
+            assert path.parents == [root.root]
+
             assert root.joinpath('foo').exists()
             assert not root.joinpath('bar').exists()
 

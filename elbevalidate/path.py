@@ -52,6 +52,34 @@ class _PurePath:
     def __repr__(self):
         return f'{self.__class__.__name__}({str(self)})'
 
+    @property
+    def parts(self):
+        return self._p.parts
+
+    @property
+    def parents(self):
+        return [self._create_from_posixpath(p) for p in self._p.parents]
+
+    @property
+    def parent(self):
+        return self._create_from_posixpath(self._p.parent)
+
+    @property
+    def name(self):
+        return self._p.name
+
+    @property
+    def suffix(self):
+        return self._p.suffix
+
+    @property
+    def suffixes(self):
+        return self._p.suffixes
+
+    @property
+    def stem(self):
+        return self._p.stem
+
 
 @contextlib.contextmanager
 def _guestfs_ctx():
