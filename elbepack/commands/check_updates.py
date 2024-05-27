@@ -78,9 +78,8 @@ def run_command(argv):
 
     for p in fullp:
         pname = p.et.text
-        pauto = p.et.get('auto')
 
-        if pauto != 'true':
+        if p.bool_attr('auto'):
             v.mark_install(pname)
 
     errors = 0
@@ -91,7 +90,6 @@ def run_command(argv):
     for p in fullp:
         xp = XMLPackage(p, arch)
         pname = p.et.text
-        pauto = p.et.get('auto')
 
         if not v.has_pkg(xp.name):
             if not xp.is_auto_installed:
