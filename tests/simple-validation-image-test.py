@@ -24,6 +24,50 @@ def test_build_directory_contents(build_dir):
         assert f in created_files
 
 
+def _test_finetuning(root):
+    # <rm>var/cache/apt/archives/*.deb</rm>
+    for f in root.joinpath('var', 'cache', 'apt', 'archives').iterdir():
+        assert f.suffix != '.deb'
+
+    # <mkdir>/var/cache/test-dir</mkdir>
+    assert root.joinpath('var', 'cache', 'test-dir').is_dir()
+
+    # <mknod opts="c 0 5">/dev/null2</mknod>
+    assert root.joinpath('dev', 'null2').is_char_device()
+
+    # <cp path="/etc/hosts">/etc/hosts2</cp>
+    assert root.joinpath('etc', 'hosts2').is_file()
+    assert root.joinpath('etc', 'hosts2').read_text() == root.joinpath('etc', 'hosts').read_text()
+
+    # <mv path="/etc/issue">/etc/issue2</mv>
+    assert root.joinpath('etc', 'issue2').is_file()
+    assert not root.joinpath('etc', 'issue').exists()
+
+    # <ln path="/etc/hosts">/etc/hosts3</ln>
+    assert root.joinpath('etc', 'hosts3').is_symlink()
+    assert root.joinpath('etc', 'hosts3').readlink() == root.joinpath('etc', 'hosts')
+
+    # <adduser groups="nogroup,staff" shell="/bin/sh" uid="2000"
+    #          home="/home/nottestuser" system="true" create_home="true" create_group="true">
+    #   testuser
+    # </adduser>
+    assert '\ntestuser:x:2000:997::/home/nottestuser:/bin/sh\n' in \
+        root.joinpath('etc', 'passwd').read_text()
+
+    # <addgroup gid="2001" system="false">testgroup</addgroup>
+    assert '\ntestgroup:x:2001:\n' in root.joinpath('etc', 'group').read_text()
+
+    # <file dst="/testfile" encoding="plain" owner="nobody" group="nogroup" mode="640">
+    # 	Some cöntent wíth spe©ial characters
+    # </file>
+    assert root.joinpath('testfile').is_file()
+    assert root.joinpath('testfile').read_text() == 'Some cöntent wíth spe©ial characters'
+
+    # <raw_cmd>cat /etc/hosts | cat -n > /etc/hosts4</raw_cmd>
+    assert root.joinpath('etc', 'hosts4').is_file()
+    assert root.joinpath('etc', 'hosts4').read_text().startswith('     1\t127.0.0.1\tlocalhost\n')
+
+
 def _test_rfs_partition(part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
@@ -69,6 +113,8 @@ def _test_rfs_partition(part):
                                       'serial-getty@ttyS0.service')
         assert getty_service.is_symlink()
         assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
+
+        _test_finetuning(root)
 
 
 def test_image(build_dir):

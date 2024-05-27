@@ -53,6 +53,25 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<pkg-list>
 		</pkg-list>
 
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<mkdir>/var/cache/test-dir</mkdir>
+			<mknod opts="c 0 5">/dev/null2</mknod>
+			<cp path="/etc/hosts">/etc/hosts2</cp>
+			<mv path="/etc/issue">/etc/issue2</mv>
+			<ln path="/etc/hosts">/etc/hosts3</ln>
+
+			<adduser groups="nogroup,staff" shell="/bin/sh" uid="2000"
+				 home="/home/nottestuser" system="true" create_home="true" create_group="true">testuser</adduser>
+			<addgroup gid="2001" system="false">testgroup</addgroup>
+
+			<file dst="/testfile" encoding="plain" owner="nobody" group="nogroup" mode="640">
+				Some cöntent wíth spe©ial characters
+			</file>
+
+			<raw_cmd>cat /etc/hosts | cat -n > /etc/hosts4</raw_cmd>
+		</finetuning>
+
 		<project-finetuning>
 			<set_packer packer="none">sda.img</set_packer>
 		</project-finetuning>
