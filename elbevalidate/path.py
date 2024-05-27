@@ -42,6 +42,9 @@ class _PurePath:
     def __str__(self):
         return str(self._p)
 
+    def __eq__(self, other):
+        return self.root is other.root and self._p == other._p
+
     @property
     def _path(self):
         return str(self._p)
