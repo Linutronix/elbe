@@ -1,0 +1,70 @@
+h1, h2, h3, h4, h5, h6 {
+	color: #d70751;
+}
+
+ul.elbe-website-version-list {
+	column-width: 5em;
+}
+
+div.elbe-website-index-lead {
+	background-image: url(elbe-wallpaper.jpg);
+	background-color: #d70751; /* as fallback if the image does not work */
+	text-align: center;
+}
+
+div.elbe-website-index-lead {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+div.elbe-website-index-lead h1 {
+	color: white;
+	font-size: 210%;
+	margin-bottom: 20px;
+}
+
+div.elbe-website-index-lead h1 > a.headerlink {
+	display: none;
+}
+
+div.elbe-website-index-lead ul {
+	list-style: none;
+	margin: 0;
+}
+
+div.elbe-website-index-lead ul > li {
+	display: inline-block;
+	min-width: 40%;
+}
+
+div.elbe-website-index-lead ul > li a {
+	color: black;
+	border-bottom: none;
+	background-color: white;
+	font-size: 0.87rem;
+	border-radius: 30px;
+	transition: background 0.2s,border 0.2s;
+	font-family: sans-serif;
+	padding: 8px 20px;
+	line-height: 5;
+}
+
+div.elbe-website-index-lead ul > li a:hover {
+	color: white;
+	background-color: black;
+}
+
+div.elbe-website-index-tiles {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 1em;
+}
+
+div.elbe-website-index-tiles h2 {
+	font-size: 140%;
+}
+
+div.elbe-website-index-tiles > section {
+	min-width: 15em;
+	flex: 45%;
+}
