@@ -1,0 +1,45 @@
+:title: ELBE 14.9 release
+:excerpt: debianize removal, fs-finetuning, initvm suite compatibility, docs
+:author: Bastian Germann
+
+=================
+ELBE 14.9 release
+=================
+
+
+Debian packages for “ELBE 14.9” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+Removed Feature
+===============
+
+-  elbe debianize (alternatives explained in its man page)
+
+New Feature
+===========
+
+-  Introduce generic filesystem tuning
+
+Minor
+=====
+
+-  Add CONTRIBUTE documentation on ELBE development
+-  pbuilder: declare pdebuilder/current directory as safe for git
+-  describe elbe initvm sync command
+-  Ignore sqlalchemy 2.0 warning (needed for installing initvm on
+   bookworm)
+-  schema: Allow free-form text for suite-proj
+-  schema: Drop initvm support for buster
+
+Bugfixes
+========
+
+-  egpg: Add missing import
+-  rfs: Prevent cutting OpenPGP armor end line
+-  Fix badly rendered ELBE sphinx docs
+-  SDK: relocate absolute links
+-  SDK: fix paths in ascii file

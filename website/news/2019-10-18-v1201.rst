@@ -1,0 +1,33 @@
+:title: ELBE 12.1 release
+:excerpt: minor bug fix release (processing license files, pbuilder, examples)
+:author: Volker Haspel
+
+=================
+ELBE 12.1 release
+=================
+
+
+Debian packages for “ELBE 12.1” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Processing License Files
+========================
+
+Fixed a bug in the license file processing which end up in a build
+failure is fixed.
+
+pbuilder
+========
+
+If a pbuilder builded a broken package, the error was persisted in the
+logging queue, and it was never reseted. This bug is fixed in version
+12.1.
+
+examples
+========
+
+The example x86_64-pc-hdimg-gnome3.xml is working again.

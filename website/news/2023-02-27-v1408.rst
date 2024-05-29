@@ -1,0 +1,38 @@
+:title: ELBE 14.8 release
+:excerpt: bash completion, bookworm compatibility, sha512crypt rounds
+:author: Bastian Germann
+
+=================
+ELBE 14.8 release
+=================
+
+
+Debian packages for “ELBE 14.8” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+New Feature
+===========
+
+-  initvmaction: Alternative iso extract implementation
+
+Minor
+=====
+
+-  Replace gnupg dependencies with gpg (less dependencies end up on the
+   target)
+-  Replace qemu -enable-kvm option (enables running the client on
+   bookworm)
+
+Bugfixes
+========
+
+-  preprocess: Only use 5000 sha512crypt rounds with warning
+-  Fix bash completion support
+-  initvmaction: Let ‘ensure’ show the control error
+-  Update device mapping on losetup
+-  dump: only compare /usr-unprefixed file names (fixes report’s package
+   list)

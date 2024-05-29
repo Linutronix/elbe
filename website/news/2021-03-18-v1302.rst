@@ -1,0 +1,50 @@
+:title: ELBE 13.2 release
+:excerpt: consolidation
+:author: Torben Hohn
+
+=================
+ELBE 13.2 release
+=================
+
+
+Debian packages for “ELBE 13.2” are available from linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Elbe test consolidation
+=======================
+
+``elbe test`` is improved, with armhf and arm64 tests. subtests and
+error report collection works properly now.
+
+SDK for amd64 does not crash anymore
+====================================
+
+Non-cross SDK’s did not work properly.
+
+HD image generation
+===================
+
+Partitions with binary contents and setting of arbitrary partition types
+is now supported. This allows Xilinx bootloaders for example.
+
+Arm64 validate bug fixed
+========================
+
+Validation of arm64 projects always failed. This is fixed and arm64
+works fine now.
+
+Source cdrom split
+==================
+
+This elbe version now builds more than one Source CDROM. It builds:
+
+-  ``src-cdrom-target.iso``
+-  ``src-cdrom-main.iso``
+-  ``src-cdrom-added.iso``
+
+This scheme might get some changes in the future. But the isolation of
+the target cdrom will remain.

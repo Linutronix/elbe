@@ -1,0 +1,35 @@
+:title: ELBE 14.4 release
+:excerpt: bugfixes and archiver improvements
+:author: Bastian Germann
+
+=================
+ELBE 14.4 release
+=================
+
+
+Debian packages for “ELBE 14.4” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+New Features
+============
+
+These are the exciting new features:
+
+-  Hashed passwords in XML
+-  Document mkpasswd call to make use of hashed passwords
+-  Example usage of parts of ELBE in a cloud-based CI
+
+Bugfixes
+========
+
+This release features some bugfixes:
+
+-  elbe-updated: Fix .default file loading
+-  debian: Add buildsdk elbe-command to deb package
+-  initvm: Define NIC’s PCI bus slot (makes Elbe run with current
+   bookworm/sid)
+-  schema: Prevent xfs filesystems

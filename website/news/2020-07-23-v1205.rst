@@ -1,0 +1,68 @@
+:title: ELBE 12.5 release
+:excerpt: bugfixes and features
+:author: Volker Haspel
+
+=================
+ELBE 12.5 release
+=================
+
+
+Debian packages for “ELBE 12.5” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Processing License Files
+========================
+
+There are now more than one License File. Packages which are not
+installed on the target will not show up in licence-target.xml.
+
+pbuilder speedup
+================
+
+Pbuilder now supports cross builds, and ccache.
+
+Ubuntu
+======
+
+Building ubuntu targets is now supported.
+
+Testing
+=======
+
+Some parts of the new unittesting are merged.
+
+Full changelog
+==============
+
+-  Fix building sdk for amd64
+-  Add cross build support to pbuilder.
+-  Add ccache support to pbuilder.
+-  Limited finetuning support for initvm.
+-  First part of the elbe test suite
+
+   -  doctests for filesystem
+   -  doctests for shellhelper
+   -  pylint as unittest
+
+-  schema: Add possibility to add multiple binary blobs
+-  debianize: kernel: Add lzop build dependency
+-  initvmaction: Add sync action
+-  Include Source Packages for Built-Using: Entries into src-cdrom.
+-  src-cdrom now sorts packages in components for sysroot, host-sysroot,
+   target, etc.
+-  Source packages only show up in target component if files from the
+   package are contained in the target.
+-  Python3 is now used on the host side. (initvm is still waiting for
+   python3-spyne)
+-  The preprocessor now handles proxy setup.
+-  initvm: create: Add COW logic for initvm
+-  initvmaction: Fix soap host (Fixes: #271)
+-  finetuning: Add command action in image context
+-  elbeproject: cope with incremental build without initvm node
+-  Fix bin-cdrom.iso signature validation in initvm-create (Fixes: #260)
+-  hdimg: Add support for specifying the first partition offset
+-  Basic Support for building ubuntu targets.

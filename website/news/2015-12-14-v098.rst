@@ -1,0 +1,39 @@
+:layout: article
+:category: news
+:title: elbe v0.9.8 released
+:excerpt: pbuilder support, and more
+:author: Manuel Traut
+
+====================
+elbe v0.9.8 released
+====================
+
+
+The ‘big’ news in this release include:
+
+-  an USB Monitor for updated
+
+-  elbe chg_archive takes a directory OR a .tar.gz file as input
+
+-  pbuilder support to rebuild debian packages
+
+Howto use the pbuilder feature:
+
+::
+
+   # build an initvm with the current elbe version 0.9.8
+   $ elbe initvm create
+   # retrieve the source of a debian package you'd like to rebuild
+   $ apt-get source nano
+   # go to the source directory
+   $ cd nano-2.4.2
+   # we currently only support debian source format git and native
+   $ echo "3.0 (native)" > debian/source/format
+   # if wanted, the source or debian/ files can be modified now
+   $ vi src/nano.c
+   # increase the package version
+   $ dch
+   # use any ELBE XML file to..
+   $ zcat /usr/share/doc/elbe-doc/examples/armhf-ti-beaglebone-black.xml.gz > /tmp/bbb.xml
+   # ..rebuild the package against
+   $ elbe pbuilder build --xmlfile /tmp/bbb.xml

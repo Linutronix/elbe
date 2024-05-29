@@ -1,0 +1,69 @@
+:title: ELBE 12.0 release
+:excerpt: Logging, initvm to Buster, Versioning, ..
+:author: Volker Haspel
+
+=================
+ELBE 12.0 release
+=================
+
+
+ELBE 12.0 is released. The XML format is compatible.
+
+Debian packages for “ELBE 12.0” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Versioning Schema
+=================
+
+The last ELBE versions had a lot of minor bug fixes. As result, the
+version numbers increased very fast. Therefore we switch to a version
+schema with major and minor numbers.
+
+New Logging
+===========
+
+The logging and error handling code is completely new. The logging
+output is improved and a build failure now results in error return
+codes, and no files will be downloaded. This is especially the case for
+finetuning errors which have been ignored before.
+
+INITVM Version Buster
+=====================
+
+The initvm is now using Debian 10 (Buster)
+
+Limit src-cdrom size
+====================
+
+The src-cdrom can be split up in multiple cd-roms. This can be
+configured in the xml file.
+
+Example:
+
+::
+
+   <src-cdrom>
+       <size>640M</size>
+       <src-opts>
+           <publisher>Linutronix</publisher>
+       </src-opts>
+   </src-cdrom>
+
+Customize src-cdrom
+===================
+
+It is possible to add custom specific files to the src-cdrom. This can
+be done with ‘archivedir’ tags in the ‘src-cdrom’ section.
+
+Repository Key in xml file
+==========================
+
+The key of a repository is now stored in the ELBE xml file using the tag
+‘raw-key’. The old key tags are replaced by the preprocessor now.
+
+An example of the usage of ‘raw-key’, can be found at:
+examples/includes/devel/mirrors.xml

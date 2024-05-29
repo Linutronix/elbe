@@ -1,0 +1,28 @@
+:title: ELBE 14.5 release
+:excerpt: initvm cleanup
+:author: Bastian Germann
+
+=================
+ELBE 14.5 release
+=================
+
+
+Debian packages for “ELBE 14.5” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+Minor
+=====
+
+-  Move some packages from the initvm template to the Debian package
+   dependencies (apt install elbe-daemon now installs every required
+   initvm package)
+-  initvm: Drop support for ancient qemu/kvm versions
+
+Bugfixes
+========
+
+-  Let elbe show deal with the lately introduced hashed passwords

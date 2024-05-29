@@ -1,0 +1,38 @@
+:title: ELBE 14.3 release
+:excerpt: bugfixes and archiver improvements
+:author: Bastian Germann
+
+=================
+ELBE 14.3 release
+=================
+
+
+Debian packages for “ELBE 14.3” are available from Linutronix. This will
+be the last version that supports stretch (Python 3.5) on the host. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Minor Improvements
+==================
+
+These are the improvements to existing features:
+
+-  Ubuntu jammy support via debootstrap and schema update
+-  schema: remove url-list entries limit
+-  documentation updates
+
+Minor Bugfixes
+==============
+
+This release features some bugfixes:
+
+-  hdimg: remove Python 3.6 format string (stretch support was broken in
+   14.1 and 14.2)
+-  efilesystem: close xml file after use
+-  efilesystem: fix missing close if no fstab is generated
+-  debian: python3-elbe-bin: add python3-parted dependency
+-  schema: Drop stretch as valid initvm suite
+-  esoap daemon: update package index before elbe installation

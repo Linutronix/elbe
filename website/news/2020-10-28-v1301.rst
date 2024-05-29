@@ -1,0 +1,22 @@
+:title: ELBE 13.1 release
+:excerpt: bugfix pointrelease
+:author: Torben Hohn
+
+=================
+ELBE 13.1 release
+=================
+
+
+Debian packages for “ELBE 13.1” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Python2 conversion fallout
+==========================
+
+The python2 conversion produced a little bit of fallout. The passwd from
+the xml file was expanded with ``b'passwd'`` elbe-updated now checks for
+the correct new package name ``python3-elbe-updated``.

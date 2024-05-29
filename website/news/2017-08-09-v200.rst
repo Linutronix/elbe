@@ -1,0 +1,78 @@
+:title: elbe v2.0 released
+:excerpt: including pbuilder and stretch support
+:author: Manuel Traut
+
+==================
+elbe v2.0 released
+==================
+
+
+All features of elbe-1.x are still available. The XML format is
+compatible. Additional the following features are added:
+
+The following new features can be used for targets:
+
+-  stretch target support
+
+-  arm64/aarch64 support
+
+-  extended partitions support for msdoshd
+
+-  support xmls with xincludes, see e.g.
+   `examples/x86_32-pc-hdimg-with-include-development.xml <https://github.com/Linutronix/elbe/blob/devel/elbe-2.0/examples/x86_32-pc-hdimg-with-include-development.xml>`__
+
+-  comments are now longer removed from elbe xml files, if
+   e.g. chg_archive is called
+
+The pbuilder is able to build binary debian packages from debian source
+packages for a certain project and host them in a debian repo:
+
+-  more information about the pbuilder support are in the man-page
+   :doc:`elbe:elbe-pbuilder`.
+   There is also an example
+   `examples/armhf-ti-beaglebone-black.xml <https://github.com/Linutronix/elbe/blob/devel/elbe-2.0/examples/armhf-ti-beaglebone-black.xml>`__
+   that shows howto trigger pbuilder jobs during image generation.
+
+-  the packages build by pbuilder are hosted in a project local debian
+   repo. There are elbe commands to e.g. copy the repo to the host pc.
+   The commands are explained in the :doc:`elbe:elbe-prjrepo`.
+   man page.
+
+*elbe debianize* helps generating debian source packages for common
+source trees like the linux kernel:
+
+-  elbe debianize currently supports packaging the linux kernel and the
+   barebox bootloader. More infos can be found in the man page
+   :doc:`elbe:elbe-pbuilder`.
+
+Other user visible changes are:
+
+-  the progress of an image or pbuilder run is now displayed on the host
+   pc
+
+-  it is posible to blacklist packages that they are not added to the
+   sysroot. More infos about this feature are in the commit message of
+   the according `git
+   commit <https://github.com/Linutronix/elbe/commit/0d40931e2bd3c2f0e129749aa16c5ef17b0fa968>`__
+   The :doc:`elbe:article-elbe-schema-reference` describes the syntax.
+
+-  we now generate an :doc:`Index <../docs>` for multiple versions of elbe.
+
+-  there are systemd service files for all elbe daemons
+
+The Debian packages for elbe 2.x are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe stretch main
+   deb-src http://debian.linutronix.de/elbe stretch main
+
+The new development branch on github is devel/elbe-3.0. To retrieve
+Debian packages for the development version of elbe add sth. like this
+to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe-testing stretch main
+   deb-src http://debian.linutronix.de/elbe-testing stretch main
