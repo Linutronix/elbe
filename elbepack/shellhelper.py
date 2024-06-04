@@ -75,6 +75,9 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
     ELBE
     ELBE
     CompletedProcess(args=['echo', 'ELBE'], returncode=0)
+
+    >>> run(['echo', 'ELBE'], capture_output=True)
+    CompletedProcess(args=['echo', 'ELBE'], returncode=0, stdout=b'ELBE\\n', stderr=b'')
     """
     stdout = kwargs.pop('stdout', None)
     stderr = kwargs.pop('stderr', None)
@@ -87,7 +90,8 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
             if stderr is ELBE_LOGGING:
                 stderr = log_fd
 
-        logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
+            logging.info(log_cmd or _log_cmd(cmd), extra={'context': '[CMD] '})
+
         return subprocess.run(cmd, stdout=stdout, stderr=stderr, check=check, **kwargs)
 
 
