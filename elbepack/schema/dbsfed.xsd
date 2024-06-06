@@ -554,8 +554,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       </documentation>
     </annotation>
     <sequence>
-      <element name="check" type="rfs:check-img" minOccurs="0" maxOccurs="10">
-      </element>
+      <element name="check" type="rfs:check-img" />
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
