@@ -5,7 +5,9 @@
 import copy
 
 from lxml.etree import Element, ElementTree, SubElement
-from lxml.etree import XMLParser, parse, tostring
+from lxml.etree import XMLParser, XMLSchema, parse, tostring
+
+from elbepack.schema import xml_schema_file
 
 # ElementTree helpers
 
@@ -18,6 +20,12 @@ def xml_bool(value):
     if value in ('false', '0'):
         return False
     raise ValueError(value)
+
+
+def dbsfed_schema():
+    with xml_schema_file('dbsfed.xsd') as schema_file:
+        schema_tree = parse(schema_file)
+    return XMLSchema(schema_tree)
 
 
 class eiter:

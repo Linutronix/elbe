@@ -24,8 +24,7 @@ from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.isooptions import iso_option_valid
-from elbepack.schema import xml_schema_file
-from elbepack.treeutils import xml_bool
+from elbepack.treeutils import dbsfed_schema, xml_bool
 from elbepack.validate import error_log_to_strings
 
 
@@ -364,9 +363,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
         variants = set(variants)
 
     parser = XMLParser(huge_tree=True)
-    with xml_schema_file('dbsfed.xsd') as schema_file:
-        schema_tree = etree.parse(schema_file)
-    schema = etree.XMLSchema(schema_tree)
+    schema = dbsfed_schema()
 
     try:
         xml = etree.parse(xml_input_file, parser=parser)
