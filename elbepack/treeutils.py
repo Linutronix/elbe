@@ -5,7 +5,7 @@
 import copy
 
 from lxml.etree import Element, ElementTree, SubElement
-from lxml.etree import XMLParser, XMLSchema, parse, tostring
+from lxml.etree import Resolver, XMLParser, XMLSchema, parse, tostring
 
 from elbepack.schema import xml_schema_file
 
@@ -22,9 +22,17 @@ def xml_bool(value):
     raise ValueError(value)
 
 
+class _ElbepackSchemaResolver(Resolver):
+    def resolve(self, url, id, context):
+        if url == 'http://www.w3.org/2009/01/xml.xsd':
+            return self.resolve_file(xml_schema_file('xml.xsd'), context)
+
+
 def dbsfed_schema():
+    parser = XMLParser(no_network=True)
+    parser.resolvers.add(_ElbepackSchemaResolver())
     with xml_schema_file('dbsfed.xsd') as schema_file:
-        schema_tree = parse(schema_file)
+        schema_tree = parse(schema_file, parser=parser)
     return XMLSchema(schema_tree)
 
 
