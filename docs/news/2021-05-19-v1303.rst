@@ -1,0 +1,35 @@
+:title: ELBE 13.3 release
+:excerpt: consolidation
+:author: Torben Hohn
+
+======================
+ELBE 13.3 (2021-05-19)
+======================
+
+
+Debian packages for “ELBE 13.3” are available from linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Arm64 fix bullseye
+==================
+
+Arm64 and bullseye resulted in a qemu crash in debootstrap. Use
+buster-backports version of qemu in the initvm to fix this.
+
+Elbe test consolidation
+=======================
+
+Consolidation of ``elbe test`` continues:
+
+-  test-preproc: initial implementation
+-  fix check-build images in armhf and arm64
+-  consolidate subtest result collection
+
+LOCALMACHINE Proxy Fix
+======================
+
+Setting the proxy to ``LOCALMACHINE`` is now fixed.

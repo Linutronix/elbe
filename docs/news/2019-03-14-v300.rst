@@ -1,0 +1,223 @@
+:title: ELBE 3 release
+:excerpt: variant-management, SDK, ..
+:author: Manuel Traut
+
+===================
+ELBE 3 (2019-03-14)
+===================
+
+
+All features of elbe-2.x and elbe-2.9.x are still available. The XML
+format is compatible.
+
+Debian packages for “ELBE 3” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe stretch main
+
+New development model
+=====================
+
+Future development will be integrated into the ‘master’ branch of
+github. There will be no longer “testing” releases of ELBE. The next
+stable release will be “ELBE 4” and includes just one new feature or
+bugfix.
+
+The most important new features since ELBE 2.4 are described in the
+following chapters.
+
+Variant management
+==================
+
+Other build-systems allow building different flavours or variants of a
+image based on some config values. This eases the maintainance of very
+similar images.
+
+A new parameter ‘–variant’ was added to the ‘initvm’ and ‘preprocess’
+subcommand. A XML tag inside the XML file given to ‘preprocess’ can
+contain a ‘variant’ attribute. If the value of the variant attribute
+inside XML matches with a variant given as parameter to the preprocess
+command, the XML tag stays inside the XML file. If the XML tag has a
+variant attribute but doesn’t match with the variant given as parameter
+to ‘preprocess’ the XML tag will be dropped. If no ‘variant’ parameter
+is given to the ‘preprocess’ subcommand all tags with a ‘variant’
+parameter are dropped.
+
+This allows XML snippets like this:
+
+::
+
+   <url variant='security'>
+           <binary>http://security.debian.org/ stretch/updates main</binary>
+           <source>http://security.debian.org/ stretch/updates main</source>
+   </url>
+   <pkg-list>
+           <pkg variant='security'>openssh-server</pkg>
+           <pkg variant='audio,video'>totem</pkg>
+   </pkg-list>
+
+It is also possible to use multiple sections with variant attributes
+like this:
+
+::
+
+   <pkg-list variant='audio>
+           <pkg>alsa</pkg>
+           <pkg>pavucontrol</pkg>
+   </pkg-list>
+   <pkg-list variant='video>
+           <pkg>totem</pkg>
+           <pkg>ffmpeg</pkg>
+   </pkg-list>
+
+This needs defining mergeable sections by xpath.
+
+This is the list of currently supported mergeable sections: -
+target/finetuning - target/pkg-list - project/buildimage/pkg-list
+
+If one of these sections occure multiple times the contents are merged
+into a single section.
+
+If the above example will be submited by specifying
+
+::
+
+   elbe initvm submit --variant=audio,security'
+
+It will use all elements but not
+
+::
+
+   <pkg>totem</pkg>
+   <pkg>ffmpeg</pkg>.
+
+archivedir
+==========
+
+The new XML element ‘archivedir’ points to an local directory and adds
+the content into a newly created archive. ‘archivedir’ can be specified
+more then once. The content of the direcories is copied in order of
+appearance. Existing files are overwritten by the later ones. ‘archive’
+and ‘archivedir’ are mutual exclusive.
+
+‘archivedir’ is only allowed in XML files going into ‘elbe preprocess’
+or ‘elbe initvm’ and are converted into an ‘archive’ tag by this elbe
+subcommands.
+
+Example snippet to use ‘archivedir’:
+
+::
+
+   <archivedir>foo</archivedir>
+   <archivedir variant="production">bar</archivedir>
+   <archivedir keep-attributes="true">baz</archivedir>
+   <archivedir>file:///overlay</archivedir>
+
+SDK
+===
+
+Currently only x86_64 host and armhf targets are supported.
+
+::
+
+   $ elbe initvm submit --keep-files --writeproject uuid.prj examples/armhf-ti-beaglebone-black.xml
+   $ elbe control build_sdk `cat uuid.prj`
+   $ elbe control wait_busy `cat uuid.prj`
+   $ mkdir -p sdk
+   $ elbe control --output sdk get_files `cat uuid.prj`
+
+To use the SDK, follow the instructions from the `Yocto SDK Manual
+(Chapter
+2) <https://www.yoctoproject.org/docs/2.1/sdk-manual/sdk-manual.html#sdk-using-the-standard-sdk>`__
+
+Docker
+======
+
+It’s possible to run elbe inside a docker environment.
+‘contrib/dockerfile’ inside the elbe source includes a Makefile for
+generating a Dockerfile and running/stopping the container.
+
+debootstrap: specify variant, add extra packages
+================================================
+
+ELBE 3 allows more specific control over debootstrapping the base
+system.
+
+debootstrap variants are used to define, what is going to be installed
+in a basic debian system. Known variants are: \* minbase, which only
+includes essential packages and apt \* buildd, which installs the
+build-essential packages into the rfs \* fakechroot, which installs the
+packages without root privileges
+
+E.g.
+
+::
+
+   <debootstrapvariant>minbase</debootstrapvariant>
+
+can now be used in an ELBE XML to specify the debootstrapvariant.
+
+The debootstrapvariant element also allows an “includepkgs” attribute to
+specify additional packages that should be installed during debootstrap.
+
+Project finetuning
+==================
+
+Is a new finetung list that is executed after the images are created. It
+supports converting an image into a different format, copy files from or
+to a partition or setting a specific packer for an image. E.g.
+
+::
+
+   <project-finetuning>
+     <losetup img="sdcard.img">
+       <!-- globs work, but must make sure, that only a single file is matched -->
+       <copy_from_partition part="1" artifact="vmlinuz">/vmlinuz-3.16.0-*-arm64</copy_from_partition>
+     </losetup>
+     <img_convert fmt="qcow2" dst="sdcard.qcow2">sdcard.img</img_convert>
+     <set_packer packer="tarxz">sdcard.qcow2</set_packer>
+   </project-finetuning>
+
+pbuilder: build-profiles
+========================
+
+dpkg-buildpackage allows to specify build profiles using -P option
+
+Specifying a profile is now also supported by elbe by adding –profile to
+the “elbe pbuilder” command.
+
+grub/x86: support for UEFI incl. hybrid boot
+============================================
+
+It’s now possible to build x86 images with UEFI grub support. See
+examples/x86_64-pc-hdimg-grub-hybrid-stretch.xml and
+examples/x86_64-pc-hdimg-grub-uefi-stretch.xml for usage.
+
+elbe-debianize: supports debianizing u-boot
+===========================================
+
+debianizing u-boot >= 2014.04 is now supported by “elbe debianize”
+
+Initvm is registered at libvirt
+===============================
+
+ELBE 2.x used a tmux session to run the initvm in the background. In
+ELBE 3 this was replaced by registering the initvm at libvirtd. “elbe
+initvm” now uses the python libvirt bindings to control the initvm.
+There is still a Makefile next to the initvm image to start/stop the
+initvm without using libvirt.
+
+Upgrade/downgrade version of elbe inside the initvm
+===================================================
+
+‘elbe control install_elbe_version [version]’ makes the initvm install a
+specific elbe version. It defaults to the version of the elbe executable
+used to issue the command.
+
+Source-code cleanups
+====================
+
+Elbe now uses SPDX licence tags. It follows the pep8 codingy-style. And
+a lot of pylint complains have been fixed.

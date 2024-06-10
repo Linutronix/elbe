@@ -1,0 +1,32 @@
+:title: ELBE 14.1 release
+:excerpt: bugfixes
+:author: Bastian Germann
+
+======================
+ELBE 14.1 (2022-01-27)
+======================
+
+
+Debian packages for “ELBE 14.1” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Minor Improvements
+==================
+
+These are the improvements to existing features:
+
+-  schema: Add swap to valid filesystems
+-  finetuning: Add nomount attribute to in
+
+Minor Bugfixes
+==============
+
+This release features some bugfixes:
+
+-  debian: fix library dependencies for check_updates
+-  finetuning: Fix action
+-  elbexml: Improve xml validation messages

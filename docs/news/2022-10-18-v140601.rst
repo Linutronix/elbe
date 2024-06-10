@@ -1,0 +1,21 @@
+:title: ELBE 14.6.1 release
+:excerpt: bugfix release
+:author: Bastian Germann
+
+========================
+ELBE 14.6.1 (2022-10-18)
+========================
+
+
+Debian packages for “ELBE 14.6.1” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+Bugfixes
+========
+
+-  Update contrib Dockerfiles to bullseye
+-  initvm: Prevent early repodir webserver termination

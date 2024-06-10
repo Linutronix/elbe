@@ -1,0 +1,31 @@
+:title: ELBE 14.7 release
+:excerpt: schema documentation, SDK bug fix, bash completion
+:author: Bastian Germann
+
+======================
+ELBE 14.7 (2022-12-07)
+======================
+
+
+Debian packages for “ELBE 14.7” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+New Feature
+===========
+
+-  Add basic support for bash completion for elbe
+
+Minor
+=====
+
+-  Amend the schema documentation
+-  Skip appending a pkg’s copyright if it does not exist
+
+Bugfixes
+========
+
+-  Only find x86_64 version of ld-linux in for patchelf replacements

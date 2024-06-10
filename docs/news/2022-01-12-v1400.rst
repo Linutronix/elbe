@@ -1,0 +1,37 @@
+:title: ELBE 14.0 release
+:excerpt: bullseye
+:author: Torben Hohn
+
+======================
+ELBE 14.0 (2022-01-12)
+======================
+
+
+Debian packages for “ELBE 14.0” are available from linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Initvm now with bullseye
+========================
+
+The initvm is upgraded to bullseye. This is the reason for the major
+version bump.
+
+Minor Bugfixes
+==============
+
+This release features some bugfixes:
+
+-  fix pbuilder origtargz auto download
+-  debianize: fix the text user interface
+-  hdimg: clean up losetup() when exceptions are thrown
+-  elbeproject: prevent pbuilder from checking signature when noauth is
+   given
+-  schema: Support for gpthd
+-  many pylint fixes
+-  Support GRUB 2.06
+-  Remove duplicated slashes from primary mirror
+-  Use new debootstrap configuration

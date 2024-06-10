@@ -1,0 +1,30 @@
+:title: ELBE 14.9.3 release
+:excerpt: housekeeping update
+:author: Eduard Krein
+
+========================
+ELBE 14.9.3 (2023-10-26)
+========================
+
+
+Debian packages for “ELBE 14.9.3” are available from Linutronix. For
+installation instructions take a look at:
+
+::
+
+   https://elbe-rfs.org/download/
+
+Minor Bugfixes
+==============
+
+-  White space and formatting fixes
+-  Removing unused files and deprecated warnings
+-  Adding missing copyright information
+
+Updates
+=======
+
+-  RISC-V support
+-  Replace deprecated project-finetuning function
+-  Introduce a parameter to explicitly set compression level for
+   preprocess

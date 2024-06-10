@@ -1,0 +1,49 @@
+:title: ELBE 13.0 release
+:excerpt: python2 removal
+:author: Torben Hohn
+
+======================
+ELBE 13.0 (2020-10-07)
+======================
+
+
+Debian packages for “ELBE 13.0” are available from linutronix. Add sth.
+like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe buster main
+
+Python2 Removal
+===============
+
+The transition to Python3 has completed by removing Python2. This
+prepares us for running debian bullseye inside the initvm.
+
+Testing
+=======
+
+Even more unittesting has been merged.
+
+Full changelog
+==============
+
+-  initvm:
+
+   -  fix initvm ensure
+   -  fix problems with initvm stop
+
+-  allow specifying mirror options via
+-  test:
+
+   -  pylint test is now parameterized
+   -  test xml builds
+   -  test pbuilder
+   -  check-build tester
+
+-  finetuning: generate an error if an artifact does not exist
+-  fix problems with losetup
+-  debianize: fix problems with kernel build
+-  examples: add docker related examples
+-  pbuilder: fix adding built packages to internal repo.
+-  python3: remove python2 packages and switch to python3 everywhere

@@ -11,6 +11,7 @@ ELBE docs
    article-quickstart
    article-elbeoverview-en
    article-elbe-schema-reference
+   news/index
 
 .. toctree::
    :maxdepth: 1

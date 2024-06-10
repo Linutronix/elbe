@@ -1,0 +1,33 @@
+:title: ELBE 14.6 release
+:excerpt: documentation, repodir, grub-install arguments
+:author: Bastian Germann
+
+======================
+ELBE 14.6 (2022-10-10)
+======================
+
+
+Debian packages for “ELBE 14.6” are available from Linutronix. Add
+something like this to your sources.list:
+
+::
+
+   deb http://debian.linutronix.de/elbe bullseye main
+
+New Feature
+===========
+
+-  New command repodir: Preprocess XML and serve Debian repositories
+
+Minor
+=====
+
+-  Various documentation updates
+-  examples: Relicense to 0BSD
+-  hdimg: Allow additional arguments for grub-install
+
+Bugfixes
+========
+
+-  Prevent rebuild of initramfs on target image
+-  docs: Remove empty indices from index

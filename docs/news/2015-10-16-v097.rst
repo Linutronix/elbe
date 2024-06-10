@@ -1,0 +1,12 @@
+:title: elbe v0.9.7 released
+:excerpt: speedup with gzipped images
+:author: Manuel Traut
+
+========================
+elbe v0.9.7 (2015-10-16)
+========================
+
+
+a major speedup of ‘elbe initvm submit’ was realized, because image
+files are gzipped now inside the initvm. This reduces the copy time to
+the host PC by far.

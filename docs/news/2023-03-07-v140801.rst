@@ -1,0 +1,31 @@
+:title: ELBE 14.8.1 release
+:excerpt: key handling, pbuilder src-pkg fix
+:author: Bastian Germann
+
+========================
+ELBE 14.8.1 (2023-03-07)
+========================
+
+
+Debian packages for “ELBE 14.8.1” are available from Linutronix. For
+installation instructions take a look at:
+
+::
+
+   https://elbe-rfs.org/download/
+
+Minor
+=====
+
+-  Drop gpg from debootstrap include (may influence the package set on
+   targets)
+-  examples: Renew and centralize outdated public key
+-  initvm: Replace with to have an authenticated trust anchor
+
+Bugfixes
+========
+
+-  pbuilder: Download src-pkg sources from target mirrors instead of
+   initvm mirror
+-  pbuilder: Install full gnupg for pbuilder again
+-  Eliminate apt-key calls ending up in calls to unavailable gpg-agent
