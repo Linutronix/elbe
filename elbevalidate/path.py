@@ -1,5 +1,5 @@
 """
-Classes mimicking pathlib.Path-like that operate on files within a libguestfs context.
+Classes mimicking :py:class:`pathlib.Path` that operate on files within a libguestfs context.
 """
 
 import contextlib
@@ -10,7 +10,7 @@ import pathlib
 
 class _PurePath:
     """
-    Reference to a path inside an image.
+    Reference to a path inside an block device.
     API is the same as of pathlib.
 
     Pure variant that only provides path-manipulation methods.
@@ -108,10 +108,9 @@ def _guestfs_ctx():
 
 class Path(_PurePath):
     """
-    Reference to a path inside an image.
-    API is the same as of pathlib.
+    Reference to a path inside a :py:class:`elbevalidate.BlockDevice`.
 
-    Normal variant containing IO functionality.
+    For documentation see :py:mod:`pathlib`.
     """
 
     def iterdir(self):

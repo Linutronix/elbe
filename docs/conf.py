@@ -36,7 +36,9 @@ from elbepack.version import elbe_version  # noqa: E402
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.graphviz',
+    'sphinx.ext.intersphinx',
     'xmlschema',
 ]
 
@@ -84,6 +86,12 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+# manpages.debian.org/{path} seems to be broken
+manpages_url = 'https://man.archlinux.org/search?q={path}'
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+}
 
 # -- Options for HTML output ----------------------------------------------
 

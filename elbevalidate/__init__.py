@@ -1,3 +1,19 @@
+"""
+Utility to validate the contents of a created image.
+The image is not booted but only mounted safely through libguestfs.
+
+Example usage:
+
+.. code:: python
+
+    with Image.from_file('sda.img') as image:
+        for partition in image.partitions:
+            print(partition)
+
+        with image.files() as root:
+            print(root.joinpath('etc', 'hostname').read_text())
+"""
+
 import abc
 import collections
 import contextlib
@@ -13,17 +29,30 @@ from elbevalidate.path import Path as ImagePath
 
 
 class BlockDevice(abc.ABC):
+    """
+    The abstract interface for block devices.
+    """
+
     @property
     @abc.abstractmethod
     def size(self) -> int:
+        """ Size in bytes. """
         pass
 
     @abc.abstractmethod
     def blkid(self) -> dict:
+        """
+        Device attributes as detected by :command:`blkid`.
+
+        For common tags, see :manpage:`libblkid(3)`.
+        """
         pass
 
     @abc.abstractmethod
     def files(self) -> typing.ContextManager[ImagePath]:
+        """
+        Access to the files as found inside the block device.
+        """
         pass
 
 
@@ -36,10 +65,25 @@ def _blkid(instance):
 
 @dataclasses.dataclass
 class Partition(BlockDevice):
+    """ A single partition """
+
     _parent: BlockDevice = dataclasses.field(repr=False)
+
     number: int
+    """ Number of the partition, starting at 1 """
+
     type: str
+    """
+
+    Type of the partition. One of
+
+    * a GPT UUID (see :py:class:`elbevalidate.constants.GPTPartitionType`)
+    * a DOS partition type number, formatted as hex
+    """
+
     start: int
+    """ Start offset of the partition in the :py:class:`Image`, in bytes."""
+
     _size: int
 
     def __post_init__(self):
@@ -67,9 +111,15 @@ class Partition(BlockDevice):
 
 
 @dataclasses.dataclass
-class PartitionTable:
+class PartitionTable(collections.abc.Sequence):
+    """ List of :py:class:`Partition` inside an :py:class:`Image`. """
+
     label: PartitionLabel
+    """ Type of the partition table. """
+
     sector_size: int
+    """ Size of each sector in bytes. """
+
     _partitions: list[Partition]
 
     def __len__(self):
@@ -80,6 +130,10 @@ class PartitionTable:
 
 
 class Image(BlockDevice):
+    """
+    A full system image, containing a :py:class:`PartitionTable` with :py:class:`Partition`.
+    """
+
     def __init__(self, gfs):
         self._gfs = gfs
         self._gfs_blockdev = '/dev/sda'
@@ -87,6 +141,7 @@ class Image(BlockDevice):
     @classmethod
     @contextlib.contextmanager
     def from_file(cls, image) -> collections.abc.Generator[typing.Self, None, None]:
+        """ Construct an :py:class:`Image` from a local file. """
         gfs = guestfs.GuestFS(python_return_dict=True)
         instance = cls(gfs)
 
@@ -113,6 +168,7 @@ class Image(BlockDevice):
 
     @functools.cached_property
     def partitions(self) -> PartitionTable:
+        """ Partitions contained in this image. """
         parttype = self._gfs.part_get_parttype(self._gfs_blockdev)
         gfs_parts = self._gfs.part_list(self._gfs_blockdev)
 
@@ -151,4 +207,5 @@ class Image(BlockDevice):
 
 # This is a module-level API in the stdlib, so we do the same here.
 def statvfs(path: ImagePath):
+    """ An equivalent of :py:func:`os.statvfs` working with :py:class:`elbevalidate.path.Path`. """
     return path._statvfs()
