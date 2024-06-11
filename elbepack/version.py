@@ -5,7 +5,7 @@
 import pathlib
 import sys
 
-elbe_version = '15.0-alpha1'
+elbe_version = '15.0.alpha1'
 
 elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'python3-elbe-soap',

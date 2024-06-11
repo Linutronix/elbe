@@ -3,7 +3,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           elbe
-Version:        15.0-alpha1
+Version:        15.0.alpha1
 Release:        1
 Summary:        Elbe (Embedded Linux Build Environment)
 
