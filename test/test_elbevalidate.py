@@ -1,10 +1,22 @@
+import importlib
 import pathlib
 import struct
 import subprocess
 import tempfile
 import textwrap
 
-import elbevalidate
+import pytest
+
+
+@pytest.fixture
+def elbevalidate():
+    try:
+        return importlib.import_module('elbevalidate', package=__name__)
+    except ModuleNotFoundError as e:
+        if e.name == 'guestfs':
+            pytest.skip(f'module {e.name} not found')
+        else:
+            raise
 
 
 def _round_to(n, g):
@@ -61,7 +73,7 @@ def _make_partition(path):
         return pathlib.Path(t.name).read_bytes()
 
 
-def test_elbevalidate(tmp_path):
+def test_elbevalidate(elbevalidate, tmp_path):
     part1_dir = tmp_path / 'part1'
     part1_dir.mkdir()
 
