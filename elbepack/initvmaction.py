@@ -31,7 +31,7 @@ prog = os.path.basename(sys.argv[0])
 
 class InitVMAction:
     actiondict = {}
-    qemu_mode = False
+    initvmNeeded = True
 
     @classmethod
     def register(cls, tag):
@@ -47,15 +47,15 @@ class InitVMAction:
         for a in cls.actiondict:
             print(f'   {a}', file=sys.stderr)
 
-    def __new__(cls, node, qemu_mode=False):
-        action = cls.actiondict[node]
-        return object.__new__(action)
+    @classmethod
+    def get_action_class(cls, action):
+        return cls.actiondict[action]
 
-    def __init__(self, node, initvmNeeded=True, qemu_mode=False):
+    def __init__(self, directory, opt):
+        self.directory = directory
 
         self.initvm = None
         self.conn = None
-        self.node = node
 
         # The initvm might be running on a different host. Thus there's
         # no need to talk with libvirt.
@@ -63,7 +63,7 @@ class InitVMAction:
             return
 
         # Skip checking and finding the libvirt vm for QEMU mode.
-        if qemu_mode:
+        if opt.qemu_mode:
             return
 
         import libvirt
@@ -127,10 +127,10 @@ class InitVMAction:
             if d.name() == cfg['initvm_domain']:
                 self.initvm = d
 
-        if not self.initvm and initvmNeeded:
+        if not self.initvm and self.initvmNeeded:
             sys.exit(121)
 
-    def execute(self, _initvmdir, _opt, _args):
+    def execute(self, _opt, _args):
         raise NotImplementedError('execute() not implemented')
 
     def initvm_state(self):
@@ -257,10 +257,10 @@ class StartAction(InitVMAction):
                 time.sleep(1)
             print('*')
 
-    def execute(self, initvmdir, opt, _args):
+    def execute(self, opt, _args):
         # handle QEMU mode
         if opt.qemu_mode:
-            self._run_qemu_vm(initvmdir)
+            self._run_qemu_vm(self.directory)
         else:
             self._run_libvirt()
 
@@ -268,7 +268,7 @@ class StartAction(InitVMAction):
 @InitVMAction.register('ensure')
 class EnsureAction(InitVMAction):
 
-    def execute(self, _initvmdir, opt, _args):
+    def execute(self, opt, _args):
 
         # initvm might be running on a different host, thus skipping
         # the check
@@ -327,9 +327,9 @@ class StopAction(InitVMAction):
         else:
             print('\ninitvm stopped successfully')
 
-    def execute(self, initvmdir, opt, _args):
+    def execute(self, opt, _args):
         if opt.qemu_mode:
-            self._stop_qemu_vm(initvmdir)
+            self._stop_qemu_vm(self.directory)
             return
 
         import libvirt
@@ -413,9 +413,9 @@ class AttachAction(InitVMAction):
         subprocess.run(['virsh', '--connect', 'qemu:///system', 'console', cfg['initvm_domain']],
                        check=True)
 
-    def execute(self, initvmdir, opt, _args):
+    def execute(self, opt, _args):
         if opt.qemu_mode:
-            self._attach_qemu_vm(initvmdir)
+            self._attach_qemu_vm(self.directory)
         else:
             self._attach_libvirt_vm()
 
@@ -653,11 +653,9 @@ def extract_cdrom(cdrom):
 
 @InitVMAction.register('create')
 class CreateAction(InitVMAction):
+    initvmNeeded = False
 
-    def __init__(self, node, qemu_mode=False):
-        InitVMAction.__init__(self, node, initvmNeeded=False, qemu_mode=qemu_mode)
-
-    def execute(self, initvmdir, opt, args):
+    def execute(self, opt, args):
 
         if self.initvm is not None and not opt.qemu_mode:
             print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")
@@ -735,7 +733,7 @@ class CreateAction(InitVMAction):
                 cdrom_opts = []
 
             with preprocess_file(xmlfile, opt.variants) as preproc:
-                run_elbe(['init', *init_opts, '--directory', initvmdir, *cdrom_opts, preproc],
+                run_elbe(['init', *init_opts, '--directory', self.directory, *cdrom_opts, preproc],
                          check=True)
 
         except subprocess.CalledProcessError:
@@ -746,7 +744,7 @@ class CreateAction(InitVMAction):
         # Skip libvirt VM creation in QEMU mode.
         if not opt.qemu_mode:
             # Read xml file for libvirt.
-            with open(os.path.join(initvmdir, 'libvirt.xml')) as f:
+            with open(os.path.join(self.directory, 'libvirt.xml')) as f:
                 xml = f.read()
 
             xml = self._libvirt_enable_kvm(xml)
@@ -762,7 +760,7 @@ class CreateAction(InitVMAction):
 
         # Build initvm
         try:
-            subprocess.run(['make'], cwd=initvmdir, check=True)
+            subprocess.run(['make'], cwd=self.directory, check=True)
         except subprocess.CalledProcessError:
             print('Building the initvm Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
@@ -771,7 +769,7 @@ class CreateAction(InitVMAction):
         # In case of QEMU mode, we need to forward the additional parameters.
         additional_params = []
         if opt.qemu_mode:
-            additional_params = ['--qemu', f'--directory={initvmdir}']
+            additional_params = ['--qemu', '--directory', self.directory]
 
         ps = run_elbe(['initvm', 'start', *additional_params], capture_output=False,
                       encoding='utf-8')
@@ -817,11 +815,11 @@ class CreateAction(InitVMAction):
 @InitVMAction.register('submit')
 class SubmitAction(InitVMAction):
 
-    def execute(self, initvmdir, opt, args):
+    def execute(self, opt, args):
         # In case of QEMU mode, we need to forward the additional parameters.
         additional_params = []
         if opt.qemu_mode:
-            additional_params = ['--qemu', f'--directory={initvmdir}']
+            additional_params = ['--qemu', '--directory', directory]
 
         ps = run_elbe(['initvm', 'ensure', *additional_params], capture_output=True,
                       encoding='utf-8')
@@ -855,7 +853,7 @@ class SubmitAction(InitVMAction):
 @InitVMAction.register('sync')
 class SyncAction(InitVMAction):
 
-    def execute(self, _initvmdir, _opt, _args):
+    def execute(self, _opt, _args):
         top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
         ssh = ['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null']

@@ -83,10 +83,11 @@ def run_command(argv):
     directory = os.path.abspath(directory)
 
     try:
-        action = InitVMAction(args[0], qemu_mode=opt.qemu_mode)
+        action_class = InitVMAction.get_action_class(args[0])
     except KeyError:
         print('elbe initvm - unknown subcommand', file=sys.stderr)
         InitVMAction.print_actions()
         sys.exit(49)
 
-    action.execute(directory, opt, args[1:])
+    action = action_class(directory=directory, opt=opt)
+    action.execute(opt, args[1:])
