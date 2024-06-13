@@ -95,15 +95,15 @@ class BuildEnv:
     def cdrom_umount(self):
         if self.xml.prj.has('mirror/cdrom'):
             cdrompath = self.rfs.fname('cdrom')
-            do(f'umount "{cdrompath}"')
-            do(f'rm -f {self.path}/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg')
-            do(f'rm -f {self.path}/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg')
+            do(['umount', cdrompath])
+            do(['rm', '-f', self.path + '/etc/apt/trusted.gpg.d/elbe-cdrepo.gpg'])
+            do(['rm', '-f', self.path + '/etc/apt/trusted.gpg.d/elbe-cdtargetrepo.gpg'])
 
     def cdrom_mount(self):
         if self.xml.has('project/mirror/cdrom'):
             cdrompath = self.rfs.fname('cdrom')
-            do(f'mkdir -p "{cdrompath}"')
-            do(f'mount -o loop "{self.xml.text("project/mirror/cdrom")}" "{cdrompath}"')
+            do(['mkdir', '-p', cdrompath])
+            do(['mount', '-o', 'loop', self.xml.text('project/mirror/cdrom'), cdrompath])
 
     def convert_asc_to_gpg(self, infile_asc, outfile_gpg):
         with open(self.rfs.fname(infile_asc)) as pubkey:
@@ -113,7 +113,7 @@ class BuildEnv:
 
     def __enter__(self):
         if os.path.exists(self.path + '/../repo/pool'):
-            do(f'mv {self.path}/../repo {self.path}')
+            do(['mv', self.path + '/../repo', self.path])
             do(f'echo "deb copy:///repo {self.xml.text("project/suite")} main" > '
                f'{self.path}/etc/apt/sources.list.d/local.list')
             do(f'echo "deb-src copy:///repo {self.xml.text("project/suite")} main" >> '
@@ -136,9 +136,9 @@ class BuildEnv:
         self.rfs.__exit__(typ, value, traceback)
         self.cdrom_umount()
         if os.path.exists(self.path + '/repo'):
-            do(f'mv {self.path}/repo {self.path}/../')
-            do(f'rm {self.path}/etc/apt/sources.list.d/local.list')
-            do(f'rm {self.path}/etc/apt/trusted.gpg.d/elbe-localrepo.gpg')
+            do(['mv', self.path + '/repo', self.path + '/../'])
+            do(['rm', self.path + '/etc/apt/sources.list.d/local.list'])
+            do(['rm', self.path + '/etc/apt/trusted.gpg.d/elbe-localrepo.gpg'])
 
     def _cleanup_bootstrap(self):
         # debootstrap helpfully copies configuration into the new tree
@@ -242,7 +242,7 @@ class BuildEnv:
             if not os.path.exists(ui):
                 ui = '/usr/bin/' + self.xml.defs['userinterpr']
 
-            do(f'cp {ui} {self.rfs.fname("usr/bin")}')
+            do(['cp', ui, self.rfs.fname('usr/bin')])
 
             if self.xml.has('project/noauth'):
                 chroot(self.rfs.path,
