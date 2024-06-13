@@ -112,11 +112,13 @@ class BuildEnv:
                 outfile.write(binpubkey)
 
     def __enter__(self):
+        suite = self.xml.text('project/suite')
+
         if os.path.exists(self.path + '/../repo/pool'):
             do(['mv', self.path + '/../repo', self.path])
-            do(f'echo "deb copy:///repo {self.xml.text("project/suite")} main" > '
+            do(f'echo "deb copy:///repo {suite} main" > '
                f'{self.path}/etc/apt/sources.list.d/local.list')
-            do(f'echo "deb-src copy:///repo {self.xml.text("project/suite")} main" >> '
+            do(f'echo "deb-src copy:///repo {suite} main" >> '
                f'{self.path}/etc/apt/sources.list.d/local.list')
 
         self.cdrom_mount()
@@ -193,6 +195,7 @@ class BuildEnv:
             strapcmd += f" --exclude=\"{self.xml.text('target/debootstrap/exclude')}\""
 
         keyring = ''
+        keyring_file = self.rfs.fname('/elbe.keyring')
 
         if not self.xml.is_cross(host_arch):
             if self.xml.has('project/noauth'):
@@ -200,7 +203,7 @@ class BuildEnv:
                        f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
             else:
                 if self.xml.has('project/mirror/cdrom'):
-                    keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
+                    keyring = f' --keyring="{keyring_file}"'
 
                 cmd = (f'{strapcmd} --arch={arch} '
                        f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
@@ -226,7 +229,7 @@ class BuildEnv:
                    f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
         else:
             if self.xml.has('project/mirror/cdrom'):
-                keyring = f' --keyring="{self.rfs.fname("/elbe.keyring")}"'
+                keyring = f' --keyring="{keyring_file}"'
 
             cmd = (f'{strapcmd} --foreign --arch={arch} '
                    f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
