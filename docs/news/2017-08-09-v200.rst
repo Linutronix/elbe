@@ -27,23 +27,23 @@ The following new features can be used for targets:
 The pbuilder is able to build binary debian packages from debian source
 packages for a certain project and host them in a debian repo:
 
--  more information about the pbuilder support are in the man-page
-   :doc:`/elbe-pbuilder`.
+-  more information about the pbuilder support are in the
+   :command:`elbe-pbuilder` man-page.
    There is also an example
    `examples/armhf-ti-beaglebone-black.xml <https://github.com/Linutronix/elbe/blob/devel/elbe-2.0/examples/armhf-ti-beaglebone-black.xml>`__
    that shows howto trigger pbuilder jobs during image generation.
 
 -  the packages build by pbuilder are hosted in a project local debian
    repo. There are elbe commands to e.g. copy the repo to the host pc.
-   The commands are explained in the :doc:`/elbe-prjrepo`.
+   The commands are explained in the :command:`elbe-prjrepo`.
    man page.
 
 *elbe debianize* helps generating debian source packages for common
 source trees like the linux kernel:
 
 -  elbe debianize currently supports packaging the linux kernel and the
-   barebox bootloader. More infos can be found in the man page
-   :doc:`/elbe-pbuilder`.
+   barebox bootloader. More infos can be found in the
+   :command:`elbe-pbuilder` man-page.
 
 Other user visible changes are:
 
@@ -54,7 +54,7 @@ Other user visible changes are:
    sysroot. More infos about this feature are in the commit message of
    the according `git
    commit <https://github.com/Linutronix/elbe/commit/0d40931e2bd3c2f0e129749aa16c5ef17b0fa968>`__
-   The :doc:`/article-elbe-schema-reference` describes the syntax.
+   The schema reference describes the syntax.
 
 -  we now generate an Index for multiple versions of elbe.
 
