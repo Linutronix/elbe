@@ -695,13 +695,13 @@ class ElbeProject:
         # Remove pbuilder/result directory
         do(
             f'rm -rf "{os.path.join(self.builddir, "pbuilder", "result")}" '
-            f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
+            f'"{os.path.join(self.builddir, "pbuilder_cross", "result")}"')
 
         # Recreate the directories removed
         if os.path.exists(os.path.join(self.builddir, 'pbuilder_cross')):
             do(
                 'mkdir -p '
-                f'"{os.path.join(self.builddir, "pbuilder_cross","result")}"')
+                f'"{os.path.join(self.builddir, "pbuilder_cross", "result")}"')
         else:
             do(
                 'mkdir -p '
