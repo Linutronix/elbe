@@ -178,3 +178,5 @@ texinfo_documents = [
 html_sidebars = {'**': ['globaltoc.html']}
 
 graphviz_output_format = 'svg'
+
+autodoc_mock_imports = ['guestfs']
