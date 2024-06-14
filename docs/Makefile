@@ -8,6 +8,7 @@ mandir?=$(prefix)/share/man
 man1dir=$(mandir)/man1
 
 sphinxbuilddir?=_build
+sphinxflags?=-W
 
 INSTALL?=install
 RM ?= rm -f
@@ -16,8 +17,8 @@ CP ?= cp
 all: sphinx
 
 sphinx:
-	sphinx-build -b man  . $(sphinxbuilddir)/man
-	sphinx-build -b html . $(sphinxbuilddir)/html
+	sphinx-build $(sphinxflags) -b man  . $(sphinxbuilddir)/man
+	sphinx-build $(sphinxflags) -b html . $(sphinxbuilddir)/html
 
 install-sphinx: sphinx
 	$(INSTALL) -d -m 755 $(DESTDIR)$(man1dir)
