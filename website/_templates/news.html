@@ -2,7 +2,9 @@
 {% block body %}
   {{ body }}
 
+{% if 'author' in meta and 'date' in meta %}
   <p>
     <small>{{ meta.author }} on {{ meta.date }}</small>
   </p>
+{% endif %}
 {% endblock %}

@@ -11,8 +11,8 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     if pagename.startswith('news/') and pagename != 'news/index':
         context['meta']['date'] = _date_from_pagename(pagename)
         # print(app, pagename, templatename, context, doctree)
-        assert context['meta'].get('author'), pagename
-        assert context['meta'].get('date'), pagename
+        #assert context['meta'].get('author'), pagename
+        #assert context['meta'].get('date'), pagename
         return 'news.html'
 
 
