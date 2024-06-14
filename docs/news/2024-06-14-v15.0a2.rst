@@ -1,0 +1,36 @@
+elbe 15.0a2 (2024-06-14)
+========================
+
+Features
+--------
+
+- A log of the initvm installation is kept to help analyzing issues.
+  Shell-control characters are not printed anymore.
+- A new package `elbevalidate` is provided to validate the contents of created images.
+  It is used in the testsuite of elbe itself, too.
+- F2FS can be used.
+- Packages can now be pinned more flexibly.
+  See `release-archive`, `release-component`, `release-label`, `release-name`,
+  `release-origin` and `release-version` in the schema documentation.
+- The initvm can be created without libvirt, using only QEMU. Use `elbe initvm create --qemu`.
+- The initvm can now be built from HTTPS repositories.
+- The options `--nested` and `--devel` are now automatically detected and don't need to be specified anymore.
+
+
+Bugfixes
+--------
+
+- (Nearly) all lintian errors about the Debian package have been fixed.
+- Internally many cleanups have been performed.
+- The existing unittests of ELBE where cleaned up and bit-rot issues are fixes.
+- The initvm can now also work with the default `/home` permissions on Debian bookworm.
+- `/etc/resolv.conf` from the initvm is not leaked anymore into the image.
+  Finetuning can also modify `/etc/resolv.conf` properly.
+
+
+Improved Documentation
+----------------------
+
+- The build of the documentation is simplified greatly.
+  Only Sphinx is necessary now.
+- The website is now maintained as part of the ELBE source tree and built with Sphinx.
