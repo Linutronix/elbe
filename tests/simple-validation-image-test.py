@@ -24,6 +24,32 @@ def test_build_directory_contents(build_dir):
         assert f in created_files
 
 
+def test_validation_txt(build_dir):
+    assert build_dir.joinpath('validation.txt').read_text().strip() in [
+        textwrap.dedent("""
+            ELBE Package validation
+            =======================
+
+            Package List validation
+            -----------------------
+
+            No Errors found
+        """).strip(),
+
+        textwrap.dedent("""
+            ELBE Package validation
+            =======================
+
+            Package List validation
+            -----------------------
+
+            No Errors found
+            Binary CD
+            Source CD
+        """).strip(),
+    ]
+
+
 def _test_finetuning(root):
     # <rm>var/cache/apt/archives/*.deb</rm>
     for f in root.joinpath('var', 'cache', 'apt', 'archives').iterdir():
