@@ -50,6 +50,64 @@ def test_validation_txt(build_dir):
     ]
 
 
+def test_elbe_report_txt(build_dir):
+    elbe_report = build_dir.joinpath('elbe-report.txt').read_text()
+
+    assert elbe_report.startswith('ELBE Report for Project simple-validation-image')
+
+    assert textwrap.dedent("""
+        Apt Sources dump
+        ----------------
+
+        deb [arch=amd64] http://deb.debian.org/debian bookworm main
+
+
+        Apt Preferences dump
+        --------------------
+    """) in elbe_report or textwrap.dedent("""
+        Apt Sources dump
+        ----------------
+
+        deb-src [] http://deb.debian.org/debian bookworm main
+        deb [arch=amd64] http://deb.debian.org/debian bookworm main
+
+
+        Apt Preferences dump
+        --------------------
+    """) in elbe_report
+
+    assert textwrap.dedent("""
+        Apt Preferences dump
+        --------------------
+
+
+
+
+
+        Installed Packages List
+        -----------------------
+    """) in elbe_report
+
+    assert textwrap.dedent("""
+        Installed Packages List
+        -----------------------
+
+        Debian
+        ~~~~~~
+
+        |adduser|
+    """.rstrip()) in elbe_report
+
+    assert textwrap.dedent("""
+        File List
+        ---------
+
+        |+//testfile+|added in finetuning
+    """) in elbe_report
+
+    assert '\n|+/usr/bin/mount+|mount\n' in elbe_report
+
+
 def _test_finetuning(root):
     # <rm>var/cache/apt/archives/*.deb</rm>
     for f in root.joinpath('var', 'cache', 'apt', 'archives').iterdir():
