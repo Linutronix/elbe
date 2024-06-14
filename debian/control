@@ -36,7 +36,7 @@ Build-Depends: debhelper-compat (= 13),
   linux-image-amd64 [amd64]
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
-Homepage: http://elbe-rfs.org
+Homepage: https://elbe-rfs.org
 
 Package: elbe-doc
 Section: doc
