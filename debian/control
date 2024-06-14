@@ -1,7 +1,7 @@
 Source: elbe
 Section: misc
 Priority: optional
-Maintainer: Linutronix GmbH <info@linutronix.de>
+Maintainer: Linutronix GmbH <elbe-users@linutronix.de>
 Build-Depends: debhelper-compat (= 13),
   dh-python,
   bash-completion,
