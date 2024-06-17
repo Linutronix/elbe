@@ -454,7 +454,7 @@ class ElbeProject:
         env = None
         sysrootstr = ''
         if os.path.exists(self.sysrootpath):
-            sysrootstr = '(including sysroot packages)'
+            sysrootstr = ' (including sysroot packages)'
             env = BuildEnv(self.xml, self.sysrootpath,
                            build_sources=build_sources, clean=False)
         else:
@@ -473,7 +473,7 @@ class ElbeProject:
             init_codename = self.xml.get_initvm_codename()
 
             if build_bin:
-                validation.info('Binary CD %s', sysrootstr)
+                validation.info('Binary CD' + sysrootstr)
 
                 self.repo_images += mk_binary_cdrom(env.rfs,
                                                     self.arch,
@@ -485,7 +485,7 @@ class ElbeProject:
                 if not cdrom_size and self.xml.has('src-cdrom/size'):
                     cdrom_size = size_to_int(self.xml.text('src-cdrom/size'))
 
-                validation.info('Source CD %s', sysrootstr)
+                validation.info('Source CD' + sysrootstr)
 
                 # Target component
                 cache = self.get_rpcaptcache(env=self.buildenv)
