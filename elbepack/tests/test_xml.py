@@ -10,12 +10,32 @@ from elbepack.directories import run_elbe
 from elbepack.tests import parametrize_xml_test_files, xml_test_files
 
 
+@pytest.fixture(scope='module')
+def initvm(tmp_path_factory, request):
+    if request.config.getoption('--elbe-use-existing-initvm'):
+        yield
+        return
+
+    initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
+
+    run_elbe(['initvm', 'create', '--directory', initvm_dir], check=True)
+
+    yield
+
+    subprocess.run([
+        'virsh', '--connect', 'qemu:///system', 'undefine', 'initvm',
+    ])
+    subprocess.run([
+        'virsh', '--connect', 'qemu:///system', 'destroy', 'initvm',
+    ])
+
+
 def _delete_project(uuid):
     run_elbe(['control', 'del_project', uuid])
 
 
 @pytest.fixture(scope='module', params=xml_test_files('simple'), ids=lambda f: f.name)
-def simple_build(request, tmp_path_factory):
+def simple_build(request, initvm, tmp_path_factory):
     build_dir = tmp_path_factory.mktemp('build_dir')
     prj = build_dir / 'uuid.prj'
 
