@@ -107,6 +107,13 @@ class CheckBase:
         raise CheckException(reason)
 
 
+@CheckBase.register('schema')
+class CheckSchema(CheckBase):
+
+    def run(self):
+        run_elbe(['validate', self.directory / 'source.xml'])
+
+
 @CheckBase.register('cdrom')
 class CheckCdroms(CheckBase):
 

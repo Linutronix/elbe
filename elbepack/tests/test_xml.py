@@ -41,7 +41,7 @@ def simple_build(request, tmp_path_factory):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize('check_build', ('cdrom', 'img', 'sdk', 'rebuild'))
+@pytest.mark.parametrize('check_build', ('schema', 'cdrom', 'img', 'sdk', 'rebuild'))
 def test_simple_build(simple_build, check_build):
     run_elbe(['check-build', check_build, simple_build], check=True)
 
