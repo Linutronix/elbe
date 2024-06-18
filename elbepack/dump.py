@@ -10,7 +10,7 @@ from fnmatch import fnmatchcase
 
 from apt import Cache
 
-from elbepack.aptpkgutils import APTPackage
+from elbepack.aptpkgutils import APTPackage, XMLPackage
 from elbepack.archivedir import archive_tmpfile
 from elbepack.finetuning import do_finetuning
 from elbepack.shellhelper import do
@@ -120,10 +120,9 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
     pindex = {}
     for p in fullpkgs:
+        xml_pkg = XMLPackage(p, None)
         name = p.et.text
         ver = p.et.get('version')
-        md5 = p.et.get('md5')
-        sha256 = p.et.get('sha256')
 
         pindex[name] = p
 
@@ -145,22 +144,16 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
             errors += 1
             continue
 
-        if md5:
-            if pkg.installed_md5 != md5:
-                validation.error("Package '%s' md5 %s does not match installed md5 %s",
-                                 name, md5, pkg.installed_md5)
-                errors += 1
-
-        if sha256:
-            if pkg.installed_sha256 != sha256:
-                validation.error("Package '%s' sha256 %s does not match installed sha256 %s",
-                                 name, sha256, pkg.installed_sha256)
-                errors += 1
-
-        if not md5 and not sha256:
+        if not xml_pkg.installed_hashes:
             validation.error("Package '%s' has no hash setup in package list.",
                              name)
             errors += 1
+        else:
+            for k, v in xml_pkg.installed_hashes.items():
+                if v != pkg.installed_hashes[k]:
+                    validation.error("Package '%s' %s %s does not match installed %s %s",
+                                     name, k, v, k, pkg.installed_hashes[k])
+                    errors += 1
 
     for cp in cache.get_installed_pkgs():
         if cp.name not in pindex:
@@ -302,13 +295,14 @@ def elbe_report(xml, buildenv, cache, targetfs):
         f = targetfs.open('etc/elbe_pkglist', 'w')
     for pkg in tgt_pkg_list:
         p = pkgindex[pkg]
+        hashes = ','.join(p.installed_hashes.values())
         report.info('|%s|%s|%s|%s',
                     p.name,
                     p.installed_version,
                     p.is_auto_installed,
-                    p.installed_md5)
+                    hashes)
         if xml.has('target/pkgversionlist'):
-            f.write(f'{p.name} {p.installed_version} {p.installed_md5}\n')
+            f.write(f'{p.name} {p.installed_version} {hashes}\n')
 
     if xml.has('target/pkgversionlist'):
         f.close()

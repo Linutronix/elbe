@@ -387,16 +387,15 @@ class ElbeXML:
         pak.et.tail = '\n'
         if aptpkg.installed_version is not None:
             pak.et.set('version', aptpkg.installed_version)
-            if aptpkg.installed_md5:
-                pak.et.set('md5', aptpkg.installed_md5)
-            pak.et.set('sha256', aptpkg.installed_sha256)
             pak.et.set('prio', aptpkg.installed_prio)
+            hashes = aptpkg.installed_hashes
         else:
             pak.et.set('version', aptpkg.candidate_version)
-            if aptpkg.candidate_md5:
-                pak.et.set('md5', aptpkg.candidate_md5)
-            pak.et.set('sha256', aptpkg.candidate_sha256)
             pak.et.set('prio', aptpkg.candidate_prio)
+            hashes = aptpkg.candidate_hashes
+
+        for k, v in hashes.items():
+            pak.et.set(k, v)
 
         if aptpkg.is_auto_installed:
             pak.et.set('auto', 'true')

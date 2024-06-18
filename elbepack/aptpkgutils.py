@@ -27,22 +27,25 @@ statestring = {
 }
 
 
-def apt_pkg_md5(pkg):
-    hashes = pkg._records.hashes
-    for i in range(len(hashes)):
-        h = str(hashes[i])
-        if h.startswith('MD5'):
-            return h.split(':')[1]
-    return ''
+# Mapping from apt_pkg.HashString to elbe xml
+_apt_hash_mapping = {
+    'MD5Sum': 'md5',
+    'SHA256': 'sha256',
+}
 
 
-def apt_pkg_sha256(pkg):
-    hashes = pkg._records.hashes
-    for i in range(len(hashes)):
-        h = str(hashes[i])
-        if h.startswith('SHA256'):
-            return h.split(':')[1]
-    return ''
+def _apt_pkg_hashes(pkg):
+    r = {}
+
+    for h in pkg._records.hashes:
+        t = _apt_hash_mapping.get(h.hashtype)
+        if t is None:
+            continue
+
+        assert t not in r
+        r[t] = h.hashvalue
+
+    return r
 
 
 def getdeps(pkg):
@@ -197,18 +200,15 @@ class PackageBase:
 
     def __init__(self, name,
                  installed_version, candidate_version,
-                 installed_md5, candidate_md5,
-                 installed_sha256, candidate_sha256,
+                 installed_hashes, candidate_hashes,
                  installed_prio, candidate_prio,
                  state, is_auto_installed, origin, architecture):
 
         self.name = name
         self.installed_version = installed_version
         self.candidate_version = candidate_version
-        self.installed_md5 = installed_md5
-        self.candidate_md5 = candidate_md5
-        self.installed_sha256 = installed_sha256
-        self.candidate_sha256 = candidate_sha256
+        self.installed_hashes = installed_hashes
+        self.candidate_hashes = candidate_hashes
         self.installed_prio = installed_prio
         self.candidate_prio = candidate_prio
         self.state = state
@@ -234,10 +234,8 @@ class APTPackage(PackageBase):
 
         iver = pkg.installed and pkg.installed.version
         cver = pkg.candidate and pkg.candidate.version
-        imd5 = pkg.installed and apt_pkg_md5(pkg.installed)
-        cmd5 = pkg.candidate and apt_pkg_md5(pkg.candidate)
-        isha256 = pkg.installed and apt_pkg_sha256(pkg.installed)
-        csha256 = pkg.candidate and apt_pkg_sha256(pkg.candidate)
+        ihashes = pkg.installed and _apt_pkg_hashes(pkg.installed)
+        chashes = pkg.candidate and _apt_pkg_hashes(pkg.candidate)
         iprio = pkg.installed and pkg.installed.priority
         cprio = pkg.candidate and pkg.candidate.priority
 
@@ -258,8 +256,7 @@ class APTPackage(PackageBase):
 
         PackageBase.__init__(self, pkg.name,
                              iver, cver,
-                             imd5, cmd5,
-                             isha256, csha256,
+                             ihashes, chashes,
                              iprio, cprio,
                              pkgstate(pkg), pkg.is_auto_installed,
                              origin, arch)
@@ -267,10 +264,15 @@ class APTPackage(PackageBase):
 
 class XMLPackage(PackageBase):
     def __init__(self, node, arch):
+        hashes = {}
+        for h in _apt_hash_mapping.values():
+            v = node.et.get(h)
+            if v is not None:
+                hashes[h] = v
+
         PackageBase.__init__(self, node.et.text,
                              node.et.get('version'), None,
-                             node.et.get('md5'), None,
-                             node.et.get('sha256'), None,
+                             hashes, None,
                              node.et.get('prio'), None,
                              INSTALLED, node.et.get('auto') == 'true',
                              None, arch)
