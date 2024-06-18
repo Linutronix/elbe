@@ -32,6 +32,7 @@ _apt_hash_mapping = {
     'MD5Sum': 'md5',
     'SHA1': 'sha1',
     'SHA256': 'sha256',
+    'SHA512': 'sha512',
 }
 
 

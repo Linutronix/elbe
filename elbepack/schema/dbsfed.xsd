@@ -2993,6 +2993,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="sha512" type="string" use="optional">
+          <annotation>
+            <documentation>
+              sha512 sum of the package.
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="prio" type="string" use="optional">
           <annotation>
             <documentation>
