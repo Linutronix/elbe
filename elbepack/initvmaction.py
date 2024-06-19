@@ -390,18 +390,7 @@ class CreateAction(InitVMAction):
             sys.exit(145)
 
         self.initvm._build()
-
-        # In case of QEMU mode, we need to forward the additional parameters.
-        additional_params = []
-        if opt.qemu_mode:
-            additional_params = ['--qemu', '--directory', self.directory]
-
-        ps = run_elbe(['initvm', 'start', *additional_params], capture_output=False,
-                      encoding='utf-8')
-        if ps.returncode != 0:
-            print('Starting the initvm Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(148)
+        self.initvm.start()
 
         if len(args) == 1:
             # If provided xml file has no initvm section xmlfile is set to a
@@ -429,17 +418,7 @@ class CreateAction(InitVMAction):
 class SubmitAction(InitVMAction):
 
     def execute(self, opt, args):
-        # In case of QEMU mode, we need to forward the additional parameters.
-        additional_params = []
-        if opt.qemu_mode:
-            additional_params = ['--qemu', '--directory', self.directory]
-
-        ps = run_elbe(['initvm', 'ensure', *additional_params], capture_output=True,
-                      encoding='utf-8')
-        if ps.returncode != 0:
-            print('Starting the initvm Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(150)
+        self.initvm.ensure()
 
         # Init cdrom to None, if we detect it, we set it
         cdrom = None

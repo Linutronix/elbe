@@ -254,7 +254,7 @@ class LibvirtInitVM(_InitVM):
     def ensure(self):
         state = self._state(self._get_domain())
         if state == self._libvirt.VIR_DOMAIN_SHUTOFF:
-            run_elbe(['initvm', 'start'], check=True)
+            self.start()
         elif state == self._libvirt.VIR_DOMAIN_RUNNING:
             _test_soap_communication()
         else:
