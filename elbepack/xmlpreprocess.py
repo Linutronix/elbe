@@ -10,7 +10,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from itertools import islice
 from optparse import OptionGroup
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
@@ -217,37 +216,6 @@ def preprocess_proxy_add(xml, opt_proxy=None):
         mirror.append(proxy_e)
 
 
-def preprocess_mirror_replacement(xml):
-    """Do search and replace on mirror urls
-       The sed patterns are a space separate list
-       in cfg['mirrorsed']
-    """
-
-    ms = cfg['mirrorsed'].split()
-    if (len(ms) % 2) == 1:
-        raise XMLPreprocessError('Uneven number of (search, replace) Values !')
-
-    # now zip even and uneven elements of mirrorsed.split()
-    replacements = list(zip(islice(ms, 0, None, 2), islice(ms, 1, None, 2)))
-
-    # do the replace in the text nodes
-    victims = ['.//mirror/url-list/url/binary',
-               './/mirror/url-list/url/source',
-               './/mirror/url-list/url/key',
-               './/mirror/primary_host']
-
-    for v in victims:
-        for u in xml.iterfind(v):
-            for r in replacements:
-                u.text = u.text.replace(r[0], r[1])
-
-    # mirrorsite is special, because the url to be replaced is
-    # in the 'value' attrib
-    for u in xml.iterfind('//initvm/preseed/conf[@key="pbuilder/mirrorsite"]'):
-        for r in replacements:
-            u.attrib['value'] = u.attrib['value'].replace(r[0], r[1])
-
-
 def preprocess_mirrors(xml):
     """Insert a trusted=yes mirror option for all mirrors if <noauth> is
     present.  Also convert binary option <binary> [opts] url </binary>
@@ -417,8 +385,6 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
 
         # handle archivedir elements
         xml = combinearchivedir(xml)
-
-        preprocess_mirror_replacement(xml)
 
         preprocess_proxy_add(xml, proxy)
 
