@@ -14,7 +14,6 @@ import sys
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.cdroms import mk_binary_cdrom, mk_source_cdrom
-from elbepack.config import cfg
 from elbepack.dump import (
     check_full_pkgs,
     dump_debootstrappkgs,
@@ -782,7 +781,7 @@ class ElbeProject:
 
         try:
             debuild_env = {
-                'DEBUILD_DPKG_BUILDPACKAGE_OPTS': ' '.join('-sa', '-j' + cfg['pbuilder_jobs']),
+                'DEBUILD_DPKG_BUILDPACKAGE_OPTS': '-sa -jauto',
                 'DEB_BUILD_PROFILES': profile.replace(',', ' '),
                 'DEB_BUILD_OPTIONS': ' '.join(deb_build_opts),
             }

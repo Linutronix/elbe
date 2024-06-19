@@ -14,7 +14,6 @@ class Config(dict):
         self['sshport'] = '5022'
         self['elbeuser'] = 'root'
         self['elbepass'] = 'foo'
-        self['pbuilder_jobs'] = 'auto'
         self['initvm_domain'] = 'initvm'
 
         if 'ELBE_SOAPPORT' in os.environ:
@@ -34,9 +33,6 @@ class Config(dict):
 
         if 'ELBE_PASS' in os.environ:
             self['elbepass'] = os.environ['ELBE_PASS']
-
-        if 'ELBE_PBUILDER_JOBS' in os.environ:
-            self['pbuilder_jobs'] = os.environ['ELBE_PBUILDER_JOBS']
 
         if 'ELBE_INITVM_DOMAIN' in os.environ:
             self['initvm_domain'] = os.environ['ELBE_INITVM_DOMAIN']
