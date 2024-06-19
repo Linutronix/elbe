@@ -59,14 +59,14 @@ class ElbeSoapClient:
 
         # Attributes
         self.wsdl = 'http://' + host + ':' + str(port) + '/soap/?wsdl'
-        self.control = None
+        control = None
         current_retries = 0
 
         # Loop and try to connect
-        while self.control is None:
+        while control is None:
             current_retries += 1
             try:
-                self.control = Client(self.wsdl, timeout=cfg['soaptimeout'])
+                control = Client(self.wsdl, timeout=cfg['soaptimeout'])
             except URLError as e:
                 if current_retries > retries:
                     raise e
@@ -82,7 +82,7 @@ class ElbeSoapClient:
 
         # Make sure, that client.service still maps
         # to the service object.
-        self.service = self.control.service
+        self.service = control.service
 
         ElbeVersionMismatch.check(elbe_version, self.service.get_version())
 
