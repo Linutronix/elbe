@@ -92,7 +92,7 @@ def pkgstate(pkg):
 def pkgorigin(pkg):
     if pkg.installed:
         o = pkg.installed.origins[0]
-        origin = f'{o.site} {o.archive} {o.component}'
+        origin = f'{o.site} {o.codename} {o.component}'
     else:
         origin = None
 
