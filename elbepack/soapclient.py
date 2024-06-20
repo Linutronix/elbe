@@ -21,7 +21,6 @@ from suds.client import Client
 
 from elbepack.config import cfg
 from elbepack.elbexml import ElbeXML, ValidationMode
-from elbepack.version import elbe_initvm_packagelist, elbe_version
 
 
 def set_suds_debug(debug):
@@ -714,36 +713,6 @@ class UpdatePbuilderAction(ClientAction):
 
 
 ClientAction.register(UpdatePbuilderAction)
-
-
-class InstallElbeVersion(ClientAction):
-
-    tag = 'install_elbe_version'
-
-    def execute(self, client, _opt, args):
-        if len(args) > 1:
-            print(
-                'usage: elbe control install_elbe_version [version]',
-                file=sys.stderr)
-            sys.exit(198)
-
-        if args:
-            version = args[0]
-        else:
-            version = elbe_version
-
-        result = client.service.install_elbe_version(version,
-                                                     elbe_initvm_packagelist)
-
-        print(result.out)
-
-        if result.ret == 0:
-            print('\nSuccess !!!')
-        else:
-            print(f'\nError: apt returns {result.ret}')
-
-
-ClientAction.register(InstallElbeVersion)
 
 
 class RepoAction(ClientAction):

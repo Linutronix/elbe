@@ -33,7 +33,6 @@ SYNOPSIS
       elbe control [options] get_file <build-dir> <filename>
       elbe control [options] dump_file <build-dir> <filename>
       elbe control [options] shutdown_initvm
-      elbe control [options] install_elbe_version <version>
 
 DESCRIPTION
 ===========
@@ -188,11 +187,6 @@ a ./debian folder with a valid debianization.
 
 *shutdown_initvm*
    Make the initvm shutdown.
-
-*install_elbe_version* [version]
-   Make the initvm install a specific elbe version. Defaults to the
-   version of the elbe executable. This requires, that the initvm has
-   package sources configured properly.
 
 Examples
 ========

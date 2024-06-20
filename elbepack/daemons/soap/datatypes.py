@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 from spyne.model.complex import ComplexModel
-from spyne.model.primitive import DateTime, Integer, Unicode
+from spyne.model.primitive import DateTime, Unicode
 
 
 class SoapProject (ComplexModel):
@@ -21,14 +21,3 @@ class SoapFile (ComplexModel):
 
     name = Unicode()
     description = Unicode()
-
-
-class SoapCmdReply (ComplexModel):
-    __namespace__ = 'soap'
-
-    ret = Integer()
-    out = Unicode()
-
-    def __init__(self, ret, out):
-        self.ret = ret
-        self.out = out

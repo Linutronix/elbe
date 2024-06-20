@@ -160,9 +160,6 @@ def run_command(argv):
                 'Please install same versions of elbe in initvm and on your '
                 'machine.',
                 file=sys.stderr)
-            print(
-                f'To install elbe v{elbe_version} into the initvm use '
-                "'elbe control --ignore-version-diff install_elbe_version'")
 
             if not opt.ignore_version:
                 sys.exit(16)

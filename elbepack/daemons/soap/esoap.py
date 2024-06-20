@@ -6,7 +6,6 @@
 import binascii
 import fnmatch
 import os
-import pathlib
 import subprocess
 import tarfile
 from tempfile import NamedTemporaryFile
@@ -17,10 +16,10 @@ from spyne.model.primitive import Boolean, Integer, String
 from spyne.service import ServiceBase
 
 from elbepack.elbexml import ValidationMode
-from elbepack.version import elbe_version, is_devel
+from elbepack.version import elbe_version
 
 from .authentication import authenticated_admin, authenticated_uid
-from .datatypes import SoapCmdReply, SoapFile, SoapProject
+from .datatypes import SoapFile, SoapProject
 from .faults import soap_faults
 
 
@@ -50,43 +49,6 @@ class ESoap (ServiceBase):
     @authenticated_admin
     def list_users(self):
         return [u.name for u in self.app.pm.db.list_users()]
-
-    @rpc(String, String(max_occurs='unbounded'), _returns=SoapCmdReply)
-    @soap_faults
-    @authenticated_admin
-    def install_elbe_version(self, version, pkglist):
-        if is_devel:
-            return SoapCmdReply(10,
-                                'Initvm is in devel mode: installing another\n'
-                                'elbe version will not have any effect.\n')
-
-        pkgs = [F'"{p}={version}*"' for p in pkglist]
-
-        # Prevent, that elbe daemon is restarted by the
-        # prerm/postinst scripts.
-        # elbe daemon does it itself, because cherrypy
-        # notices that.
-        policy_rc_d = pathlib.Path('/usr/sbin/policy-rc.d')
-        policy_rc_d.touch(mode=0o755)
-        policy_rc_d.write_text('#!/bin/sh\nexit 101\n')
-        try:
-            env = os.environ()
-            env.update({
-                'LANG': 'C',
-                'LANGUAGE': 'C',
-                'LC_ALL': 'C',
-                'DEBIAN_FRONTEND': 'noninteractive',
-                'DEBCONF_NONINTERACTIVE_SEEN': 'true',
-            })
-
-            cmd = ('apt-get update; '
-                   f"apt-get install -y --allow-downgrades {' '.join(pkgs)}")
-
-            ps = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        finally:
-            policy_rc_d.unlink()
-
-        return SoapCmdReply(ps.returncode, ps.stdout)
 
     @rpc(String, String, String, String, Boolean)
     @soap_faults
