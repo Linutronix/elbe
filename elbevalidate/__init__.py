@@ -112,7 +112,22 @@ class Partition(BlockDevice):
 
 @dataclasses.dataclass
 class PartitionTable(collections.abc.Sequence):
-    """ List of :py:class:`Partition` inside an :py:class:`Image`. """
+    """
+
+    List of :py:class:`Partition` inside an :py:class:`Image`.
+
+    .. describe:: len(table)
+
+        Number of partitions.
+
+    .. describe:: table[index]
+
+        Partition at index.
+
+    .. describe:: partition in table
+
+        Iterate over partitions.
+    """
 
     label: PartitionLabel
     """ Type of the partition table. """
