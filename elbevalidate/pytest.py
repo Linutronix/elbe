@@ -1,8 +1,11 @@
+import importlib
 import os
-import pathlib
 import sys
 
 import pytest
+
+# Don't import the plugin here as pytest will perform some import-time hooks
+plugin = importlib.util.resolve_name('.._pytest_plugin', __name__)
 
 
 class _MainModule(pytest.Module):
@@ -14,31 +17,15 @@ class _ElbeValidationPlugin:
     def __init__(self, test_script):
         self.test_script = test_script
 
-    def pytest_addoption(self, parser):
-        group = parser.getgroup('elbevalidate')
-        group.addoption(
-            '--elbe-build-dir',
-            dest='elbe_build_dir',
-        )
-
-    @staticmethod
-    def _elbe_build_dir(config):
-        bd = config.option.elbe_build_dir
-        if bd is None:
-            raise ValueError('--elbe-build-dir was not specified')
-        return bd
-
-    @pytest.fixture(name='build_dir')
-    def build_dir_fixture(self, request):
-        return pathlib.Path(self._elbe_build_dir(request.config))
-
-    def pytest_report_header(self, config):
-        bd = self._elbe_build_dir(config)
-        return ['elbe build dir: ' + bd]
-
     def pytest_collect_file(self, file_path, parent):
         if os.fspath(file_path) == os.fspath(self.test_script):
             return _MainModule.from_parent(parent, path=file_path)
+
+    @pytest.hookimpl
+    def pytest_cmdline_parse(self, pluginmanager, args):
+        # May already have been registered through conftest.py
+        if not pluginmanager.has_plugin(plugin):
+            pluginmanager.register(pluginmanager.import_plugin(plugin))
 
 
 def run_with_pytest(test_script: os.PathLike, build_dir: os.PathLike):
