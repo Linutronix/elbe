@@ -379,6 +379,17 @@ class StopAction(InitVMAction):
         print('\nInitvm shutoff')
 
 
+@InitVMAction.register('destroy')
+class DestroyAction(InitVMAction):
+
+    def execute(self, initvmdir, opt, _args):
+        if not opt.qemu_mode:
+            self.initvm.destroy()
+            self.initvm.undefine()
+
+        shutil.rmtree(initvmdir)
+
+
 @InitVMAction.register('attach')
 class AttachAction(InitVMAction):
 
@@ -675,8 +686,7 @@ class CreateAction(InitVMAction):
         if self.initvm is not None and not opt.qemu_mode:
             print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")
             print('If you want to build in your old initvm, use `elbe initvm submit <xml>`.')
-            print('If you want to remove your old initvm from libvirt '
-                  f"run `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`.\n")
+            print('If you want to remove your old initvm from libvirt run `elbe initvm destroy`.\n')
             print('You can specify another libvirt domain by setting the '
                   'ELBE_INITVM_DOMAIN environment variable to an unused domain name.\n')
             print('Note:')
@@ -767,8 +777,7 @@ class CreateAction(InitVMAction):
                 self.conn.defineXML(xml)
             except subprocess.CalledProcessError:
                 print('Registering initvm in libvirt failed', file=sys.stderr)
-                print(f"Try `virsh --connect qemu:///system undefine {cfg['initvm_domain']}`"
-                      'to delete existing initvm',
+                print('Try `elbe initvm destroy` to delete existing initvm',
                       file=sys.stderr)
                 sys.exit(146)
 

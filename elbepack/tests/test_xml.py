@@ -22,12 +22,7 @@ def initvm(tmp_path_factory, request):
 
     yield
 
-    subprocess.run([
-        'virsh', '--connect', 'qemu:///system', 'undefine', 'initvm',
-    ])
-    subprocess.run([
-        'virsh', '--connect', 'qemu:///system', 'destroy', 'initvm',
-    ])
+    run_elbe(['initvm', 'destroy', '--directory', initvm_dir])
 
 
 def _delete_project(uuid):

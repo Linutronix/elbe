@@ -19,6 +19,7 @@ SYNOPSIS
       elbe initvm [options] start
       elbe initvm [options] stop
       elbe initvm [options] ensure
+      elbe initvm [options] destroy
 
 DESCRIPTION
 ===========
@@ -125,6 +126,9 @@ COMMANDS
 
 *ensure*
    Make sure an initvm is running in the Background.
+
+*destroy*
+   Clean up resources used by the initvm. initvm should be stopped before.
 
 Examples
 ========

@@ -1,0 +1,1 @@
+Implement `elbe initvm destroy`.
