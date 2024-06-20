@@ -50,5 +50,5 @@ def run_with_pytest(test_script: os.PathLike, build_dir: os.PathLike):
                       Available to tests as fixture `build_dir` of :class:`pathlib.Path`.
     """
 
-    sys.exit(pytest.main(['--elbe-build-dir', build_dir, '--', test_script],
+    sys.exit(pytest.main(['--elbe-build-dir', os.fspath(build_dir), '--', os.fspath(test_script)],
                          [_ElbeValidationPlugin(test_script)]))
