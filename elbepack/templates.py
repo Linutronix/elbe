@@ -42,7 +42,7 @@ def write_pack_template(outname, fname, d, linebreak=False):
 
 
 def _default_preseed():
-    with importlib.resources.files(elbepack) / 'default-preseed.xml' as f:
+    with importlib.resources.files(elbepack).joinpath('default-preseed.xml').open('rb') as f:
         return etree(f)
 
 
