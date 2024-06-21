@@ -146,7 +146,7 @@ def preprocess_pkg_pinning(xml):
     """Do search and replace on pkg attributes, replacing 'pin' with 'release-name'."""
 
     errors = False
-    for pkg in xml.iterfind('//target/pkg-list/pkg'):
+    for pkg in xml.iterfind('.//target/pkg-list/pkg'):
         if 'pin' in pkg.attrib:
             if 'release-name' in pkg.attrib:
                 logging.error(
@@ -180,7 +180,7 @@ def preprocess_pkg_pinning(xml):
 def preprocess_check_script(xml, basedir):
     """Inline check scripts"""
 
-    for script in xml.iterfind('//check-image-list/check-script'):
+    for script in xml.iterfind('.//check-image-list/check-script'):
         location = script.attrib.pop('location', None)
         if location is None:
             continue

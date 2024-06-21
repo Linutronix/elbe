@@ -218,7 +218,7 @@ class StartAction(InitVMAction):
             return
 
         xml = etree(io.StringIO(self.initvm.XMLDesc()))
-        disk = xml.et.find('/devices/disk')
+        disk = xml.et.find('.//devices/disk')
 
         for source in disk.findall('.//source'):
             flags = os.O_RDWR if source.getparent() is disk else os.O_RDONLY

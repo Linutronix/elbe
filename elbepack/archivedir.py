@@ -131,7 +131,7 @@ def _combinearchivedir(xml, xpath, use_volume):
 
 
 def combinearchivedir(xml):
-    if xml.find('//archivedir') is None:
+    if xml.find('.//archivedir') is None:
         return xml
 
     _combinearchivedir(xml, 'archivedir', False)

@@ -64,17 +64,17 @@ def validate_xml_content(xml):
     #
     # If apt-transport-https or ca-certificates is included in bootstrap,
     # we are probably fine
-    bootstrap_include = xml.findtext('/target/debootstrap/include', '')
+    bootstrap_include = xml.findtext('./target/debootstrap/include', '')
     if ('apt-transport-https' not in bootstrap_include
        and 'ca-certificates' not in bootstrap_include):
 
         # Check if primary mirror is using https
-        primary_proto = xml.findtext('/project/mirror/primary_proto', '')
+        primary_proto = xml.findtext('./project/mirror/primary_proto', '')
         is_primary_proto_https = (primary_proto.lower() == 'https')
 
         # Check if any additional mirror is using https
         has_https_urls = False
-        for url in xml.findall('/project/mirror/url-list/url'):
+        for url in xml.findall('./project/mirror/url-list/url'):
             b = url.findtext('binary', '').lower()
             s = url.findtext('source', '').lower()
             if b.startswith('https') or s.startswith('https'):
