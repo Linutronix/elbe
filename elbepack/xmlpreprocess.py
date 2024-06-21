@@ -295,6 +295,10 @@ def preprocess_mirrors(xml):
             options.append(option)
 
 
+def _hash_password(passwd):
+    return sha512_crypt.using(rounds=5000).hash(passwd)
+
+
 def preprocess_passwd(xml):
     """Preprocess plain-text passwords. Plain-text passwords for root and
        adduser will be replaced with their hashed values.
@@ -307,7 +311,7 @@ def preprocess_passwd(xml):
             xml.find('.//action/login').text = passwd.text
 
         passwd.tag = 'passwd_hashed'
-        passwd.text = f'{sha512_crypt.hash(passwd.text, rounds=5000)}'
+        passwd.text = _hash_password(passwd.text)
         logging.warning('Please replace <passwd> with <passwd_hashed>. '
                         'The generated sha512crypt hash only applies 5000 rounds for '
                         'backwards compatibility reasons. This is considered insecure nowadays.')
@@ -315,7 +319,7 @@ def preprocess_passwd(xml):
     # migrate user passwords
     for adduser in xml.iterfind('.//target/finetuning/adduser[@passwd]'):
         passwd = adduser.attrib['passwd']
-        adduser.attrib['passwd_hashed'] = sha512_crypt.hash(passwd, rounds=5000)
+        adduser.attrib['passwd_hashed'] = _hash_password(passwd)
         del adduser.attrib['passwd']
         logging.warning("Please replace adduser's passwd attribute with passwd_hashed. "
                         'The generated sha512crypt hash only applies 5000 rounds for '
