@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import warnings
 from optparse import OptionGroup
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
@@ -17,7 +18,11 @@ from urllib.request import urlopen
 from lxml import etree
 from lxml.etree import Element, SubElement, XMLParser
 
-from passlib.hash import sha512_crypt
+with warnings.catch_warnings():
+    # passlib has code to handle absence of the crypt module and will work just
+    # fine for our usecase without it.
+    warnings.filterwarnings('ignore', "'crypt' is deprecated", DeprecationWarning)
+    from passlib.hash import sha512_crypt
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
