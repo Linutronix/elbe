@@ -63,7 +63,7 @@ def test_simple_build(simple_build, check_build):
 
 @pytest.mark.slow
 @parametrize_xml_test_files('xml', 'pbuilder')
-def test_pbuilder_build(xml, tmp_path, request):
+def test_pbuilder_build(initvm, xml, tmp_path, request):
     build_dir = tmp_path
     prj = build_dir / 'uuid.prj'
 
