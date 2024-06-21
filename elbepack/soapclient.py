@@ -636,25 +636,6 @@ class SetOrigAction(ClientAction):
 ClientAction.register(SetOrigAction)
 
 
-class ShutdownInitvmAction(ClientAction):
-
-    tag = 'shutdown_initvm'
-
-    def execute(self, client, _opt, args):
-        if args:
-            print('usage: elbe control shutdown_initvm', file=sys.stderr)
-            sys.exit(194)
-
-        # if shutdown kills the daemon before it can answer the request
-        try:
-            client.service.shutdown_initvm()
-        except BadStatusLine:
-            pass
-
-
-ClientAction.register(ShutdownInitvmAction)
-
-
 class SetPdebuilderAction(ClientAction):
 
     tag = 'set_pdebuild'

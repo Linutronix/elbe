@@ -109,7 +109,7 @@ _cmd_args_completion_elbe()
                 cmd_opt=$(_elbe_subcmd_with_opt 'rm_log list_projects list_users add_user create_project reset_project \
                                                  del_project set_xml build build_sysroot build_sdk build_cdroms get_file \
                                                  build_chroot_tarball dump_file get_files wait_busy set_cdrom set_orig \
-						 shutdown_initvm set_pdebuild build_pbuilder update_pbuilder')
+						 set_pdebuild build_pbuilder update_pbuilder')
                 ;;
             check_updates)
                 file_arg=true

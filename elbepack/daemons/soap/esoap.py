@@ -6,7 +6,6 @@
 import binascii
 import fnmatch
 import os
-import subprocess
 import tarfile
 from tempfile import NamedTemporaryFile
 
@@ -329,12 +328,6 @@ class ESoap (ServiceBase):
         if not msg and not ret:
             return 'ELBE-FINISH'
         return msg
-
-    @rpc()
-    @authenticated_admin
-    @soap_faults
-    def shutdown_initvm(self):
-        subprocess.run(['systemctl', '--no-block', 'poweroff'], check=True)
 
     @rpc(String)
     @authenticated_uid

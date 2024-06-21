@@ -32,7 +32,6 @@ SYNOPSIS
       elbe control [options] rm_log <build-dir>
       elbe control [options] get_file <build-dir> <filename>
       elbe control [options] dump_file <build-dir> <filename>
-      elbe control [options] shutdown_initvm
 
 DESCRIPTION
 ===========
@@ -184,9 +183,6 @@ a ./debian folder with a valid debianization.
 
 *dump_file* <build-dir> <filename>
    Dump a single File from the project to stdout.
-
-*shutdown_initvm*
-   Make the initvm shutdown.
 
 Examples
 ========
