@@ -14,7 +14,7 @@ from datetime import datetime
 from http.client import BadStatusLine
 from urllib.error import URLError
 
-import deb822
+import debian.deb822
 
 from suds import WebFault
 from suds.client import Client
@@ -823,11 +823,11 @@ class UploadPackageAction(RepoAction):
 
         # Parse .dsc-File and append neccessary source files to files
         if filetype == '.dsc':
-            for f in deb822.Dsc(open(filename))['Files']:
+            for f in debian.deb822.Dsc(open(filename))['Files']:
                 files.append(f['name'])
 
         if filetype == '.changes':
-            for f in deb822.Changes(open(filename))['Files']:
+            for f in debian.deb822.Changes(open(filename))['Files']:
                 files.append(f['name'])
 
         # Check whether all files are available
