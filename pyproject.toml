@@ -4,3 +4,6 @@ package = 'elbepack'
 directory = 'newsfragments'
 single_file = false
 filename = 'docs/news/{project_date}-v{version}.rst'
+
+[tool.pytest.ini_options]
+filterwarnings = 'error'

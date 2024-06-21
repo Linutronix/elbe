@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 
@@ -14,6 +16,11 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     config.addinivalue_line('markers', 'slow: mark test as slow to run')
+
+    # Make sure the setting is also propagated through run_elbe.
+    warnings = config.getini('filterwarnings')
+    if warnings:
+        os.environ.setdefault('PYTHONWARNINGS', ' '.join(warnings))
 
 
 def pytest_collection_modifyitems(config, items):
