@@ -36,7 +36,7 @@ class _ElbeValidationPlugin:
         bd = self._elbe_build_dir(config)
         return ['elbe build dir: ' + bd]
 
-    def pytest_collect_file(self, file_path, path, parent):
+    def pytest_collect_file(self, file_path, parent):
         if os.fspath(file_path) == os.fspath(self.test_script):
             return _MainModule.from_parent(parent, path=file_path)
 
