@@ -3,7 +3,7 @@
 ## SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 <%
-  from elbepack.version import elbe_version, elbe_initvm_packagelist
+  from elbepack.version import elbe_version_base, elbe_initvm_packagelist
   from elbepack.filesystem import size_to_int
   swap = size_to_int(prj.text('swap-size', default=defs, key='swap-size')) // 1024 // 1024
 %>
@@ -136,7 +136,7 @@ d-i finish-install/reboot_in_progress note
 d-i pkgsel/include string rng-tools-debian \
                           dbus \
 % for p in elbe_initvm_packagelist:
-                          ${p}=${elbe_version}* \
+                          ${p}=${elbe_version_base}* \
 % endfor
 % for n in pkgs:
 % if n.tag == "pkg":

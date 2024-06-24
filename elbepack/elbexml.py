@@ -17,7 +17,7 @@ from urllib.request import (
 
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.version import elbe_version, is_devel
+from elbepack.version import elbe_version
 from elbepack.xmldefaults import ElbeDefaults
 
 
@@ -462,13 +462,8 @@ class ElbeXML:
         cdrom.set_text(abspath)
 
     def dump_elbe_version(self):
-        if is_devel:
-            ver_text = elbe_version + '-devel'
-        else:
-            ver_text = elbe_version
-
         version = self.xml.ensure_child('elbe_version')
-        version.set_text(ver_text)
+        version.set_text(elbe_version)
 
     def get_elbe_version(self):
         if self.has('elbe_version'):

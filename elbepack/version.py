@@ -5,7 +5,12 @@
 import pathlib
 import sys
 
-elbe_version = '14.9.3'
+
+is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)
+elbe_version_base = '14.9.3'
+elbe_version = elbe_version_base
+if is_devel:
+    elbe_version += '.dev0'
 
 elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'python3-elbe-soap',
@@ -13,5 +18,3 @@ elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'python3-elbe-daemon',
                            'elbe-schema',
                            'python3-elbe-bin']
-
-is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)
