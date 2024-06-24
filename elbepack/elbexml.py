@@ -397,6 +397,9 @@ class ElbeXML:
         for k, v in hashes.items():
             pak.et.set(k, v)
 
+        pak.et.set('release-origin', aptpkg.origin.origin)
+        pak.et.set('release-name', aptpkg.origin.codename)
+
         if aptpkg.is_auto_installed:
             pak.et.set('auto', 'true')
         else:
