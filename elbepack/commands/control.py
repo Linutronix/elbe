@@ -13,7 +13,6 @@ from suds import WebFault
 from elbepack.config import cfg
 from elbepack.elbexml import ValidationMode
 from elbepack.soapclient import ClientAction, ElbeSoapClient
-from elbepack.version import elbe_version
 
 
 def run_command(argv):
@@ -103,11 +102,6 @@ def run_command(argv):
                      dest='debug', default=False,
                      help='Enable debug mode.')
 
-    devel.add_option('--ignore-version-diff', action='store_true',
-                     dest='ignore_version', default=False,
-                     help='allow different elbe version on host and initvm')
-    oparser.add_option_group(devel)
-
     (opt, args) = oparser.parse_args(argv)
 
     if not args:
@@ -150,25 +144,6 @@ def run_command(argv):
         print('Check, whether the initvm is actually running.', file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(15)
-
-    try:
-        v_server = control.service.get_version()
-        if v_server != elbe_version:
-            print(
-                f'elbe v{v_server} is used in initvm, this is not compatible '
-                f'with elbe v{elbe_version} that is used on this machine. '
-                'Please install same versions of elbe in initvm and on your '
-                'machine.',
-                file=sys.stderr)
-
-            if not opt.ignore_version:
-                sys.exit(16)
-    except AttributeError:
-        print("the elbe installation inside the initvm doesn't provide a "
-              'get_version interface. Please create a new initvm or upgrade '
-              'elbe inside the existing initvm.', file=sys.stderr)
-        if not opt.ignore_version:
-            sys.exit(24)
 
     try:
         action = ClientAction(args[0])

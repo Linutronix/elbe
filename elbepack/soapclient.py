@@ -21,6 +21,19 @@ from suds.client import Client
 
 from elbepack.config import cfg
 from elbepack.elbexml import ElbeXML, ValidationMode
+from elbepack.version import elbe_version
+
+
+class ElbeVersionMismatch(RuntimeError):
+    def __init__(self, client_version, server_version):
+        self.client_version = client_version
+        self.server_version = server_version
+        super().__init__(f'Client: {client_version} Server: {server_version}')
+
+    @classmethod
+    def check(cls, client_version, server_version):
+        if client_version != server_version:
+            raise cls(client_version, server_version)
 
 
 def set_suds_debug(debug):
@@ -70,6 +83,8 @@ class ElbeSoapClient:
         # Make sure, that client.service still maps
         # to the service object.
         self.service = self.control.service
+
+        ElbeVersionMismatch.check(elbe_version, self.service.get_version())
 
         # We have a Connection, now login
         self.service.login(user, passwd)
