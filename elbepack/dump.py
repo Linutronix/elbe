@@ -202,7 +202,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     groups = collections.defaultdict(list)
     for p in instpkgs:
-        o, _, _ = p.origin.split(' ')
+        o = p.origin.site
         if o.endswith('.debian.org'):
             # Group upstream packages together.
             o = 'Debian'
@@ -217,7 +217,8 @@ def elbe_report(xml, buildenv, cache, targetfs):
         report.info('')
 
         for p in pkgs:
-            report.info('|%s|%s|%s', p.name, p.installed_version, p.origin)
+            report.info('|%s|%s|%s', p.name, p.installed_version,
+                        f'{p.origin.site} {p.origin.codename} {p.origin.component}')
 
     index = cache.get_fileindex(removeprefix='/usr')
     mt_index = targetfs.mtime_snap()

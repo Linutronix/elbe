@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2005-2009 Canonical
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
+import dataclasses
 import os
 
 import apt
@@ -34,6 +35,14 @@ _apt_hash_mapping = {
     'SHA256': 'sha256',
     'SHA512': 'sha512',
 }
+
+
+@dataclasses.dataclass
+class Origin:
+    origin: str
+    codename: str
+    site: str
+    component: str
 
 
 def _apt_pkg_hashes(pkg):
@@ -92,7 +101,7 @@ def pkgstate(pkg):
 def pkgorigin(pkg):
     if pkg.installed:
         o = pkg.installed.origins[0]
-        origin = f'{o.site} {o.codename} {o.component}'
+        origin = Origin(origin=o.origin, codename=o.codename, site=o.site, component=o.component)
     else:
         origin = None
 
