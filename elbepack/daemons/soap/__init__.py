@@ -6,8 +6,6 @@ import logging
 
 from beaker.middleware import SessionMiddleware
 
-from cherrypy.process.plugins import SimplePlugin
-
 from spyne import Application
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
@@ -25,18 +23,13 @@ class EsoapApp(Application):
         self.pm = ProjectManager('/var/cache/elbe')
 
 
-class MySession (SessionMiddleware, SimplePlugin):
-    def __init__(self, app, pm, engine):
+class MySession(SessionMiddleware):
+    def __init__(self, app, pm):
         self.pm = pm
-        SessionMiddleware.__init__(self, app)
-
-        SimplePlugin.__init__(self, engine)
+        super().__init__(app)
 
     def stop(self):
         self.pm.stop()
-
-    def __call__(self, environ, start_response):
-        return SessionMiddleware.__call__(self, environ, start_response)
 
 
 def get_app(engine):
@@ -46,4 +39,4 @@ def get_app(engine):
                    out_protocol=Soap11())
 
     wsgi = WsgiApplication(app)
-    return MySession(wsgi, app.pm, engine)
+    return MySession(wsgi, app.pm)
