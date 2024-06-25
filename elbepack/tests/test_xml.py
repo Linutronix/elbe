@@ -18,7 +18,7 @@ def initvm(tmp_path_factory, request):
 
     initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
 
-    run_elbe(['initvm', 'create', '--directory', initvm_dir], check=True)
+    run_elbe(['initvm', 'create', '--fail-on-warning', '--directory', initvm_dir], check=True)
 
     yield
 
