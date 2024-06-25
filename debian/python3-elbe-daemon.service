@@ -4,6 +4,7 @@ Documentation=man:elbe-daemon(1)
 
 [Service]
 Type=notify
+EnvironmentFile=-/etc/default/python3-elbe-daemon
 ExecStart=/usr/bin/elbe daemon --port=7588
 
 [Install]
