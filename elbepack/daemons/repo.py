@@ -24,5 +24,5 @@ def _app(environ, respond):
         return [b'not found']
 
 
-def get_app(engine):
+def get_app():
     return _app

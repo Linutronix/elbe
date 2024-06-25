@@ -40,7 +40,7 @@ def run_command(argv):
             print(f'enable {d}')
             module = 'elbepack.daemons.' + str(d)
             cmdmod = importlib.import_module(module)
-            app = cmdmod.get_app(cherrypy.engine)
+            app = cmdmod.get_app()
             if hasattr(app, 'stop'):
                 stack.callback(app.stop)
             cherrypy.tree.graft(app, '/' + str(d))

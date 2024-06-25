@@ -32,7 +32,7 @@ class MySession(SessionMiddleware):
         self.pm.stop()
 
 
-def get_app(engine):
+def get_app():
 
     app = EsoapApp([ESoap], 'soap',
                    in_protocol=Soap11(validator='lxml'),
