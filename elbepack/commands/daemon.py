@@ -4,12 +4,39 @@
 
 import contextlib
 import importlib
+import wsgiref.simple_server
 from optparse import OptionParser
 from pkgutil import iter_modules
 
-import cherrypy
-
 import elbepack.daemons
+
+
+def _not_found(start_response):
+    start_response('404 Not Found', [('Content-Type', 'text/plain')])
+    return [b'not found']
+
+
+class _WsgiDispatcher:
+    def __init__(self, mapping):
+        self.mapping = mapping
+
+    def __call__(self, environ, start_response):
+        path_info = environ['PATH_INFO']
+        parts = path_info.split('/', maxsplit=2)
+        if len(parts) != 3:
+            return _not_found(start_response)
+        _, app_name, _ = parts
+
+        app = self.mapping.get(app_name)
+        if app is None:
+            return _not_found(start_response)
+
+        return app(environ, start_response)
+
+
+class _ElbeWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
+    def log_request(self, *args, **kargs):
+        pass  # Noop
 
 
 def get_daemonlist():
@@ -36,6 +63,8 @@ def run_command(argv):
     (opt, _) = oparser.parse_args(argv)
 
     with contextlib.ExitStack() as stack:
+        mapping = {}
+
         for d in daemons:
             print(f'enable {d}')
             module = 'elbepack.daemons.' + str(d)
@@ -43,20 +72,12 @@ def run_command(argv):
             app = cmdmod.get_app()
             if hasattr(app, 'stop'):
                 stack.callback(app.stop)
-            cherrypy.tree.graft(app, '/' + str(d))
+            mapping[d] = app
 
-        cherrypy.server.unsubscribe()
-        server = cherrypy._cpserver.Server()
-        server.socket_host = opt.host
-        server.socket_port = opt.port
-        server.thread_pool = 30
+        dispatcher = _WsgiDispatcher(mapping)
 
-        # For SSL Support
-        # server.ssl_module            = 'pyopenssl'
-        # server.ssl_certificate       = 'ssl/certificate.crt'
-        # server.ssl_private_key       = 'ssl/private.key'
-        # server.ssl_certificate_chain = 'ssl/bundle.crt'
-
-        server.subscribe()
-        cherrypy.engine.start()
-        cherrypy.engine.block()
+        with wsgiref.simple_server.make_server(
+                opt.host, opt.port, dispatcher,
+                handler_class=_ElbeWSGIRequestHandler,
+        ) as httpd:
+            httpd.serve_forever()
