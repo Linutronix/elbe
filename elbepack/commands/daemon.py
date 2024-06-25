@@ -24,7 +24,7 @@ def run_command(argv):
     oparser = OptionParser(usage='usage: %prog')
     oparser.add_option('--host', dest='host', default='0.0.0.0',
                        help='interface to host daemon')
-    oparser.add_option('--port', dest='port', default=7587,
+    oparser.add_option('--port', dest='port', type=int, default=7587,
                        help='port to host daemon')
 
     for d in daemons:
@@ -44,7 +44,7 @@ def run_command(argv):
     cherrypy.server.unsubscribe()
     server = cherrypy._cpserver.Server()
     server.socket_host = opt.host
-    server.socket_port = int(opt.port)
+    server.socket_port = opt.port
     server.thread_pool = 30
 
     # For SSL Support
