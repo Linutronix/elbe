@@ -13,7 +13,6 @@ Build-Depends: debhelper-compat (= 13),
   git,
   xml-core,
   python3-beaker,
-  python3-cherrypy3,
   python3-debian,
   python3-passlib,
   python3-spyne,
@@ -110,7 +109,6 @@ Depends: ${misc:Depends}, ${python3:Depends},
   python3-elbe-bin (= ${binary:Version}),
   python3-elbe-common (= ${binary:Version}),
   python3-elbe-buildenv (= ${binary:Version}),
-  python3-cherrypy3,
   python3-beaker
 Description: wsgi daemon interface
  subcommand to start wsgi services.
