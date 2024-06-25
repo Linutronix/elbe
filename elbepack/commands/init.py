@@ -9,7 +9,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 
 import elbepack.init
 from elbepack.commands import add_deprecated_optparse_option
@@ -68,6 +68,10 @@ def run_command(argv):
         dest='build_sources',
         default=True,
         help='Skip building Source CDROM')
+
+    oparser.add_option('--fail-on-warning', action='store_true',
+                       dest='fail_on_warning', default=False,
+                       help=SUPPRESS_HELP)
 
     (opt, args) = oparser.parse_args(argv)
 

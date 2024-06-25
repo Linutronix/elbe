@@ -750,6 +750,9 @@ class CreateAction(InitVMAction):
             if not opt.build_sources:
                 init_opts.append('--skip-build-source')
 
+            if opt.fail_on_warning:
+                init_opts.append('--fail-on-warning')
+
             if cdrom:
                 cdrom_opts = ['--cdrom', cdrom]
             else:

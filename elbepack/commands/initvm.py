@@ -4,7 +4,7 @@
 
 import os
 import sys
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 
 from elbepack.commands import add_deprecated_optparse_option
 from elbepack.initvmaction import InitVMAction, InitVMError
@@ -61,6 +61,10 @@ def run_command(argv):
     oparser.add_option('--qemu', action='store_true',
                        dest='qemu_mode', default=False,
                        help='Use QEMU direct instead of libvirtd.')
+
+    oparser.add_option('--fail-on-warning', action='store_true',
+                       dest='fail_on_warning', default=False,
+                       help=SUPPRESS_HELP)
 
     PreprocessWrapper.add_options(oparser)
 

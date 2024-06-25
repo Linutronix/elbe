@@ -51,6 +51,10 @@ in-target update-initramfs -u
    echo 'PermitRootLogin yes' >> /buildenv/etc/ssh/sshd_config
 % endif
 
+% if opt.fail_on_warning:
+   echo 'PYTHONWARNINGS="error"' >> /buildenv/etc/default/python3-elbe-daemon
+% endif
+
 # since elbe fetch_initvm_pkgs generates repo keys,
 # we need entropy in the target
 
