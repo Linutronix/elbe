@@ -202,12 +202,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     groups = collections.defaultdict(list)
     for p in instpkgs:
-        o = p.origin.site
-        if o.endswith('.debian.org'):
-            # Group upstream packages together.
-            o = 'Debian'
-
-        groups[o].append(p)
+        groups[p.origin.origin].append(p)
 
     # Sort alphabetically, 'Debian' last.
     for origin, pkgs in sorted(groups.items(), key=lambda x: (x[0] == 'Debian', x[0])):
