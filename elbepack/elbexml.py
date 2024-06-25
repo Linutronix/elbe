@@ -399,6 +399,7 @@ class ElbeXML:
 
         pak.et.set('release-origin', aptpkg.origin.origin)
         pak.et.set('release-name', aptpkg.origin.codename)
+        pak.et.set('uri', aptpkg.origin.uri)
 
         if aptpkg.is_auto_installed:
             pak.et.set('auto', 'true')

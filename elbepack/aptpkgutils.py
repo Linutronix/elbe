@@ -43,6 +43,7 @@ class Origin:
     codename: str
     site: str
     component: str
+    uri: str
 
 
 def _apt_pkg_hashes(pkg):
@@ -101,7 +102,8 @@ def pkgstate(pkg):
 def pkgorigin(pkg):
     if pkg.installed:
         o = pkg.installed.origins[0]
-        origin = Origin(origin=o.origin, codename=o.codename, site=o.site, component=o.component)
+        origin = Origin(origin=o.origin, codename=o.codename,
+                        site=o.site, component=o.component, uri=pkg.installed.uri)
     else:
         origin = None
 

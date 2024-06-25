@@ -2949,6 +2949,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="uri" type="string" use="optional">
+          <annotation>
+            <documentation>
+              uniform resource identifier of the debian package
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="pin" type="string" use="optional">
           <annotation>
             <documentation>
