@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
+import contextlib
 import importlib
 from optparse import OptionParser
 from pkgutil import iter_modules
@@ -34,25 +35,28 @@ def run_command(argv):
 
     (opt, _) = oparser.parse_args(argv)
 
-    for d in daemons:
-        print(f'enable {d}')
-        module = 'elbepack.daemons.' + str(d)
-        cmdmod = importlib.import_module(module)
-        cherrypy.tree.graft(
-            cmdmod.get_app(cherrypy.engine), '/' + str(d))
+    with contextlib.ExitStack() as stack:
+        for d in daemons:
+            print(f'enable {d}')
+            module = 'elbepack.daemons.' + str(d)
+            cmdmod = importlib.import_module(module)
+            app = cmdmod.get_app(cherrypy.engine)
+            if hasattr(app, 'stop'):
+                stack.callback(app.stop)
+            cherrypy.tree.graft(app, '/' + str(d))
 
-    cherrypy.server.unsubscribe()
-    server = cherrypy._cpserver.Server()
-    server.socket_host = opt.host
-    server.socket_port = opt.port
-    server.thread_pool = 30
+        cherrypy.server.unsubscribe()
+        server = cherrypy._cpserver.Server()
+        server.socket_host = opt.host
+        server.socket_port = opt.port
+        server.thread_pool = 30
 
-    # For SSL Support
-    # server.ssl_module            = 'pyopenssl'
-    # server.ssl_certificate       = 'ssl/certificate.crt'
-    # server.ssl_private_key       = 'ssl/private.key'
-    # server.ssl_certificate_chain = 'ssl/bundle.crt'
+        # For SSL Support
+        # server.ssl_module            = 'pyopenssl'
+        # server.ssl_certificate       = 'ssl/certificate.crt'
+        # server.ssl_private_key       = 'ssl/private.key'
+        # server.ssl_certificate_chain = 'ssl/bundle.crt'
 
-    server.subscribe()
-    cherrypy.engine.start()
-    cherrypy.engine.block()
+        server.subscribe()
+        cherrypy.engine.start()
+        cherrypy.engine.block()

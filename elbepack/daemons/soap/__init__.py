@@ -31,7 +31,6 @@ class MySession (SessionMiddleware, SimplePlugin):
         SessionMiddleware.__init__(self, app)
 
         SimplePlugin.__init__(self, engine)
-        self.subscribe()
 
     def stop(self):
         self.pm.stop()
