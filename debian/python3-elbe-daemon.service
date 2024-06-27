@@ -3,7 +3,7 @@ Description=ELBE Daemon
 Documentation=man:elbe-daemon(1)
 
 [Service]
-Type=simple
+Type=notify
 ExecStart=/usr/bin/elbe daemon --port=7588
 
 [Install]

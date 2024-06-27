@@ -3,7 +3,10 @@
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
 import contextlib
+import errno
 import importlib
+import os
+import socket
 import wsgiref.simple_server
 from optparse import OptionParser
 from pkgutil import iter_modules
@@ -43,6 +46,24 @@ def get_daemonlist():
     return [x for _, x, _ in iter_modules(elbepack.daemons.__path__)]
 
 
+# From sd_notify(3).
+def _sd_notify(message):
+    socket_path = os.environ.get('NOTIFY_SOCKET')
+    if not socket_path:
+        return
+
+    if socket_path[0] not in ('/', '@'):
+        raise OSError(errno.EAFNOSUPPORT, 'Unsupported socket type')
+
+    # Handle abstract socket.
+    if socket_path[0] == '@':
+        socket_path = '\0' + socket_path[1:]
+
+    with socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_CLOEXEC) as sock:
+        sock.connect(socket_path)
+        sock.sendall(message)
+
+
 def run_command(argv):
     daemons = get_daemonlist()
 
@@ -80,4 +101,6 @@ def run_command(argv):
                 opt.host, opt.port, dispatcher,
                 handler_class=_ElbeWSGIRequestHandler,
         ) as httpd:
+            _sd_notify(b'READY=1\n'
+                       b'STATUS=Serving requests\n')
             httpd.serve_forever()
