@@ -215,7 +215,7 @@ class PackageBase:
                  installed_version, candidate_version,
                  installed_hashes, candidate_hashes,
                  installed_prio, candidate_prio,
-                 state, is_auto_installed, origin, architecture):
+                 state, is_auto_installed, origin):
 
         self.name = name
         self.installed_version = installed_version
@@ -227,7 +227,6 @@ class PackageBase:
         self.state = state
         self.is_auto_installed = is_auto_installed
         self.origin = origin
-        self.architecture = architecture
 
     def __repr__(self):
         return (f'<APTPackage {self.name}-{self.installed_version} state: '
@@ -257,13 +256,8 @@ class APTPackage(PackageBase):
         origin = pkgorigin(pkg)
 
         if pkg.installed:
-            arch = pkg.installed.architecture
             self.installed_deb = os.path.basename(pkg.installed.filename)
-        elif pkg.candidate:
-            arch = pkg.candidate.architecture
-            self.installed_deb = None
         else:
-            arch = None
             self.installed_deb = None
 
         PackageBase.__init__(self, pkg.name,
@@ -271,7 +265,7 @@ class APTPackage(PackageBase):
                              ihashes, chashes,
                              iprio, cprio,
                              pkgstate(pkg), pkg.is_auto_installed,
-                             origin, arch)
+                             origin)
 
 
 class XMLPackage(PackageBase):
@@ -287,4 +281,4 @@ class XMLPackage(PackageBase):
                              hashes, None,
                              node.et.get('prio'), None,
                              INSTALLED, node.et.get('auto') == 'true',
-                             None, arch)
+                             None)
