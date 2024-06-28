@@ -215,6 +215,7 @@ class PackageBase:
                  installed_version, candidate_version,
                  installed_hashes, candidate_hashes,
                  installed_prio, candidate_prio,
+                 installed_arch, candidate_arch,
                  state, is_auto_installed, origin):
 
         self.name = name
@@ -224,6 +225,8 @@ class PackageBase:
         self.candidate_hashes = candidate_hashes
         self.installed_prio = installed_prio
         self.candidate_prio = candidate_prio
+        self.installed_arch = installed_arch
+        self.candidate_arch = candidate_arch
         self.state = state
         self.is_auto_installed = is_auto_installed
         self.origin = origin
@@ -250,6 +253,8 @@ class APTPackage(PackageBase):
         chashes = pkg.candidate and _apt_pkg_hashes(pkg.candidate)
         iprio = pkg.installed and pkg.installed.priority
         cprio = pkg.candidate and pkg.candidate.priority
+        iarch = pkg.installed and pkg.installed.architecture
+        carch = pkg.candidate and pkg.candidate.architecture
 
         self.state = pkgstate(pkg)
         self.is_auto_installed = pkg.is_auto_installed
@@ -264,6 +269,7 @@ class APTPackage(PackageBase):
                              iver, cver,
                              ihashes, chashes,
                              iprio, cprio,
+                             iarch, carch,
                              pkgstate(pkg), pkg.is_auto_installed,
                              origin)
 
@@ -280,5 +286,6 @@ class XMLPackage(PackageBase):
                              node.et.get('version'), None,
                              hashes, None,
                              node.et.get('prio'), None,
+                             node.et.get('arch'), None,
                              INSTALLED, node.et.get('auto') == 'true',
                              None)

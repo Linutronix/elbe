@@ -3014,6 +3014,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="arch" type="string" use="optional">
+          <annotation>
+            <documentation>
+              architecture of the package in the original repository.
+            </documentation>
+          </annotation>
+        </attribute>
         <attribute name="on_src_cd" type="string" use="optional">
           <annotation>
             <documentation>

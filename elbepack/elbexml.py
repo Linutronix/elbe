@@ -388,10 +388,12 @@ class ElbeXML:
         if aptpkg.installed_version is not None:
             pak.et.set('version', aptpkg.installed_version)
             pak.et.set('prio', aptpkg.installed_prio)
+            pak.et.set('arch', aptpkg.installed_arch)
             hashes = aptpkg.installed_hashes
         else:
             pak.et.set('version', aptpkg.candidate_version)
             pak.et.set('prio', aptpkg.candidate_prio)
+            pak.et.set('arch', aptpkg.candidate_arch)
             hashes = aptpkg.candidate_hashes
 
         for k, v in hashes.items():
