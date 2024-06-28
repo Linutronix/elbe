@@ -68,7 +68,7 @@ def mk_source_cdrom(components, codename,
 
         if component == 'main' and xml is not None:
             for p in xml.node('debootstrappkgs'):
-                pkg = XMLPackage(p, None)
+                pkg = XMLPackage(p)
                 srcpkgs = cache.get_corresponding_source_packages([pkg])
                 for srcpkg, srcpkg_ver in srcpkgs:
                     add_source_pkg(repo, component, cache, srcpkg, srcpkg_ver, forbiddenPackages)
@@ -156,7 +156,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)
         for p in xml.node('debootstrappkgs'):
-            pkg = XMLPackage(p, arch)
+            pkg = XMLPackage(p)
             pkg_id = f'{pkg.name}-{pkg.installed_version}'
             try:
                 deb = cache.download_binary(pkg.name,

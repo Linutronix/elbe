@@ -120,7 +120,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
 
     pindex = {}
     for p in fullpkgs:
-        xml_pkg = XMLPackage(p, None)
+        xml_pkg = XMLPackage(p)
         name = p.et.text
         ver = p.et.get('version')
 

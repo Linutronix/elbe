@@ -269,7 +269,7 @@ class APTPackage(PackageBase):
 
 
 class XMLPackage(PackageBase):
-    def __init__(self, node, arch):
+    def __init__(self, node):
         hashes = {}
         for h in _apt_hash_mapping.values():
             v = node.et.get(h)

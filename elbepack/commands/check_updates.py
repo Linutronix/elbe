@@ -72,8 +72,6 @@ def run_command(argv):
 
     fullp = xml.node('fullpkgs')
 
-    arch = xml.text('project/buildimage/arch', key='arch')
-
     v = virtapt.VirtApt(xml)
 
     for p in fullp:
@@ -88,7 +86,7 @@ def run_command(argv):
     update_packages = []
 
     for p in fullp:
-        xp = XMLPackage(p, arch)
+        xp = XMLPackage(p)
         pname = p.et.text
 
         if not v.has_pkg(xp.name):

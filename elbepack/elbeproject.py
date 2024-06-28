@@ -496,7 +496,7 @@ class ElbeProject:
                 if self.xml is not None:
                     tmp_lst = []
                     for pkg_node in self.xml.node('debootstrappkgs'):
-                        pkg = XMLPackage(pkg_node, self.arch)
+                        pkg = XMLPackage(pkg_node)
                         tmp_lst.append(pkg.name)
                     main_lst = cache.get_corresponding_source_packages(pkg_lst=tmp_lst)
                 components['main'] = (env.rfs, cache, main_lst)
