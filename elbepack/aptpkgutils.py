@@ -258,8 +258,7 @@ class APTPackage(PackageBase):
 
         if pkg.installed:
             arch = pkg.installed.architecture
-            self.installed_deb = pkg.name + '_' + iver.replace(':', '%3a') + \
-                '_' + arch + '.deb'
+            self.installed_deb = os.path.basename(pkg.installed.filename)
         elif pkg.candidate:
             arch = pkg.candidate.architecture
             self.installed_deb = None
