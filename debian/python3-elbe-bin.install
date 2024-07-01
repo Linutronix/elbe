@@ -7,6 +7,7 @@ usr/lib/python3.*/*-packages/elbepack/commands/add.py
 usr/lib/python3.*/*-packages/elbepack/commands/check_updates.py
 usr/lib/python3.*/*-packages/elbepack/commands/check-build.py
 usr/lib/python3.*/*-packages/elbepack/commands/chg_archive.py
+usr/lib/python3.*/*-packages/elbepack/commands/cyclonedx-sbom.py
 usr/lib/python3.*/*-packages/elbepack/commands/diff.py
 usr/lib/python3.*/*-packages/elbepack/commands/get_archive.py
 usr/lib/python3.*/*-packages/elbepack/commands/init.py
