@@ -25,3 +25,13 @@ def test_schema():
     with here.joinpath('bom-1.6.schema.json').open() as f:
         bom_schema = json.load(f)
     jsonschema.validate(test_bom, bom_schema)
+
+
+def test_reference_data():
+    test_bom = generate_test_bom()
+    test_bom['metadata']['timestamp'] = 'INVALID'
+    test_bom['serialNumber'] = 'INVALID'
+    test_bom['metadata']['tools'][0]['version'] = 'INVALID'
+    with here.joinpath('cyclonedx_reference.json').open() as f:
+        reference_data = json.load(f)
+    assert test_bom == reference_data

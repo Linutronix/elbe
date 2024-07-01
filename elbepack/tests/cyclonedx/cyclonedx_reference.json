@@ -1,0 +1,22 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "INVALID",
+  "version": 1,
+  "metadata": {
+    "timestamp": "INVALID",
+    "tools": [
+      {
+        "vendor": "Linutronix",
+        "name": "Elbe",
+        "version": "INVALID"
+      }
+    ],
+    "component": {
+      "type": "operating-system",
+      "name": "cyclonedx-example",
+      "version": "1",
+      "description": "example for generation of cyclonedx sboms"
+    }
+  }
+}
