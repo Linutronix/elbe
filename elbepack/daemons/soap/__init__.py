@@ -7,6 +7,11 @@ import warnings
 
 from beaker.middleware import SessionMiddleware
 
+# spyne uses a bundled version of six, which triggers warnings in spyne version 2.14.0.
+# As the warnings can happen during any import, a scoped .catch_warnings() is not enough.
+if True:  # avoid flake8 errors for the following imports
+    warnings.filterwarnings('ignore', '_SixMetaPathImporter', ImportWarning)
+
 from spyne import Application
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore', "'cgi' is deprecated", DeprecationWarning)
