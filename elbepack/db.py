@@ -7,13 +7,18 @@ import errno
 import glob
 import os
 import re
+import warnings
 from contextlib import contextmanager
 from datetime import datetime
 from shutil import copyfile, copyfileobj, rmtree
 from threading import Thread
 from urllib.parse import quote
 
-from passlib.hash import pbkdf2_sha512
+with warnings.catch_warnings():
+    # passlib has code to handle absence of the crypt module and will work just
+    # fine for our usecase without it.
+    warnings.filterwarnings('ignore', "'crypt' is deprecated", DeprecationWarning)
+    from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy import (
     Boolean,
