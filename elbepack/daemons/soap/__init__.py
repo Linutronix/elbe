@@ -3,11 +3,14 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import logging
+import warnings
 
 from beaker.middleware import SessionMiddleware
 
 from spyne import Application
-from spyne.protocol.soap import Soap11
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore', "'cgi' is deprecated", DeprecationWarning)
+    from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
 from elbepack.projectmanager import ProjectManager
