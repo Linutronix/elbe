@@ -18,5 +18,2347 @@
       "version": "1",
       "description": "example for generation of cyclonedx sboms"
     }
-  }
+  },
+  "components": [
+    {
+      "type": "application",
+      "name": "adduser",
+      "version": "3.134",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "3f5b94b9878c6df571f9aa5f86dab452"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "c24fe4eb8e60d8632d72ed104cce7c92cff200847c897dc8ba764b6c47b519e0"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "apt",
+      "version": "2.6.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2a077296b9b9f4f8b027f86d9500192b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6ea03cbbc7a7bfcee601c9fb08d4e026fd522ede5350561f06867ad9c0a0fa6b"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "apt-utils",
+      "version": "2.6.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "659572e506b32a873bafdf7d10c05216"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b4fc5ac8cc5e4f17305ca31c259272132bde19b9e86d81003549c35e82bb6e8e"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "base-files",
+      "version": "12.4+deb12u6",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a0fc87dbcb223197e10232b0b8d651bb"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6de342750e6a3940b321a5d056d0e17512d5ad3eb2fcf1fa6dbd783fcb4b7f0e"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "base-passwd",
+      "version": "3.6.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "652645fa6f182394ddee2ce6a36fe347"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "908ca1b35125f49125ae56945a72bc11ce0fcec85a8d980d10d83bb3a610f518"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "bash",
+      "version": "5.2.15-2+b7",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "7909b40781bb5e4786c51371d045012f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d3c65202568384a588ea32017b243fe64ca054943a008cba4e5bd8f9e79975c4"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "bsdutils",
+      "version": "1:2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6767feed1be8cb721cdb69d41ed712f7"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "bd036aa19f93ad75c312d6130653eb559e5eb4376bd82fde8653ac33732dfa3a"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "coreutils",
+      "version": "9.1-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "422d5a39db59ce199e9588ac35167081"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "61038f857e346e8500adf53a2a0a20859f4d3a3b51570cc876b153a2d51a3091"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "cpio",
+      "version": "2.13+dfsg-7.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "3202b0e730eb92019cee3bd47ced792e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "73d4a22bdd7eb6be1e480d6884b103eb500cfd539cc20ae0f3e44dd8b0614798"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "cron",
+      "version": "3.0pl1-162",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b6d92df8eb8949b9fd3cb7f0cc151727"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "c1e12d9c993460e6396107668aa7ba79f8633decebb53aa6c38049584448be3f"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "cron-daemon-common",
+      "version": "3.0pl1-162",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b5d86b4a7b08caf42f6613275059e4bf"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "0976761a354ce802a2cc6ac02d7585d93ad5fda231c27572d8529a6a62272c7f"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "dash",
+      "version": "0.5.12-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "4f19daace3f998b7e719575ff5e5b316"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "33ea40061da2f1a861ec46212b2b6a34f0776a049b1a3f0abce2fb8cb994258f"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "debconf",
+      "version": "1.5.82",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ab40b7d3c7dd743f16d0d24ce3373270"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "74ab14194a3762b2fc717917dcfda42929ab98e3c59295a063344dc551cd7cc8"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "debconf-i18n",
+      "version": "1.5.82",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "28667fcf2e7195a31b1dfe2e7a31fde0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "2f2c83f2d13ccc87d754526e40d156351f271e203fa54e1c822c60988b543dd0"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "debian-archive-keyring",
+      "version": "2023.3+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "0020f1d90d3c0b1de756d520ca67f1b2"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "c1bac61abefa0d957394d33c02b7bfb2a3ab3ce5e6d90617c4019ddea4bdbf63"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "debianutils",
+      "version": "5.7-0.5~deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "1982880343ff077fcdd8f4866d35f80c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "55f951359670eb3236c9e2ccd5fac9ccb3db734f5a22aff21589e7a30aee48c9"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "diffutils",
+      "version": "1:3.8-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "df3a18721cde3835767fa1edd8c01eca"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8bdfedc14c1035e3750e9f055ac9c1ecd9b5d05d9e6dc6466c4e9237eef407dd"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "dmidecode",
+      "version": "3.4-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "d2b9aef8e2a1b773213a5c044bc53687"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d993666c87dd290d6df2a69bf0beba608c38b1157a5c97795d2011e51b0db96e"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "dmsetup",
+      "version": "2:1.02.185-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "0cf37f6e610cbe0bfeff16477cab5abb"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "c73fc490b93c83550ed272de69ec96c5da30d4456b889f9e93c7fd8e53860b85"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "dpkg",
+      "version": "1.21.22",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "295ad587aaeddf6d491e2cffc8e4192b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "9d97f27d8a8a06dd4800e8e0291337ca02e11cdfd7df09a4566a982a6d9fe4c4"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "e2fsprogs",
+      "version": "1.47.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "75e5967e03d3ceca473bfde17fb28fea"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4018d17d6a44ffeb19c002dc9f721bf474e6879ad814f1bfcdd6666803e30178"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "fdisk",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "0d8be8801599c7a706fe1586840f8164"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ef49a1bfa24d22ac8b0f70f3ab2ddb7fa53cd5d1612fa1a01abc3be76717dfd2"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "findutils",
+      "version": "4.9.0-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2e00b139a6fae85aa2acb88f954cab39"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "5dd86bd0af4aa73f067dfd6b8339dd868f2dd84056aa79db29d1206d4fbc5e04"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "gcc-12-base",
+      "version": "12.2.0-14",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "cafae34a8d7395260118ba01e242a1c0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1a03df5a57833d65b5bb08cfa19d50e76f29088dc9e64fb934af42d9023a0807"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "gpgv",
+      "version": "2.2.40-1.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "84afede6a5bf5a70b06ed81291596c3d"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "0a43a9785f32d517a967d99e00d8e0a69edc0be09d4e63a08d7fd64466a11a0f"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "grep",
+      "version": "3.8-5",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "27b22f639181225c8c60680519f527c5"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3264acea728df3c48a54f20e9291b965130e306b9d00adac76647049da7196df"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "gzip",
+      "version": "1.12-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e788a50043963ca0c8424988c63d0133"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "eabec1dde2834f72540d7b93fc5df2625f52611c06d93d61f5cdb12480e0e6a3"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "hostname",
+      "version": "3.23+nmu1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "fa27a5add564eec66b15b32435e541de"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "17d9a2f3c05004499d80e180d2440fd716f84c32b65f09d96c9a024af4d1d0e7"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "ifupdown",
+      "version": "0.8.41",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "12adb9118927a491de65a120ff82b97e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "304383c78f31e3fe419d30f3ddc710c120c412d654bafe2754258da6a7f7c059"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "init",
+      "version": "1.65.2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b7cea428c54910edd40b8c40d7fd0bfb"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3949151042bb50f568808c316a16b4fd711b44414c754e6076a61b4b936f7d51"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "init-system-helpers",
+      "version": "1.65.2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a49426e72be828de529e688f328da020"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "f9ce24cbf69957dc1851fc55adba0a60b5bc617d51587b6478f2be64786442f1"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "iproute2",
+      "version": "6.1.0-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "760019bc0e5c3728d2b97e98a8e0a025"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1204b29e916e836267096d0b9d778106752f821ebde0d281539008b4386d9070"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "iputils-ping",
+      "version": "3:20221126-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6785514108f7260ab984ad890089b783"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6ca78fda233f9ca803c5048e29dd558ad7a2af7fe6db53e9fce76d9d750538c8"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "isc-dhcp-client",
+      "version": "4.4.3-P1-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a2dadf5ff95c5b1966786da410e4d812"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "243dd7288443d3edec79558925b839f038637964cecb7202a9a0f95fadbeb6e3"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "isc-dhcp-common",
+      "version": "4.4.3-P1-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b27c996b1c8d2d582652afbce6de4477"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "fae84a7dd63ef610ef5ff5e42972252f25e86f79a989aba62755a2cf3f9e3e6a"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "kmod",
+      "version": "30+20221128-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "5cd0242bf374c46fdf3830f3a211dc6d"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e21ae247204fe8a14ac29a5f510227d45b41cd3c41059cc942f2502d25765165"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "less",
+      "version": "590-2.1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b6531e76cbda0d6af2dcea833040beb6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3c4ee8ce5e0f625e1169da9584e309c375a8a68e22de5821461d14446825cc1a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libacl1",
+      "version": "2.3.1-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "8423d92245333668fed0ab9edaf7dd14"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8be9df5795114bfe90e2be3d208ef47a5edd3fc7b3e20d387a597486d444e5e2"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libapparmor1",
+      "version": "3.0.8-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "c33328a4d9e616e5383fe418cd8b09c2"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4b79f49eafc2017374da9ec206b5495433eadd2b1ea078c3895c99e72825e9d3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libapt-pkg6.0",
+      "version": "2.6.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "58f061cc2d2da9c8b6628a0f390de03b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ccab743f6784b4cc7bd69e1810630edaf726cd69c1e735e39a16266d470bfdc0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libargon2-1",
+      "version": "0~20171227-0.3+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6fea2246340c2bd4c23570496092fcf2"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4a8155b06270b88eed34d132acfc8ccc0b85499e1c4bfd7f31f8b199af42b1de"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libattr1",
+      "version": "1:2.5.1-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "52fea1b13209029d52405624225a473e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "c4945123d66d0503ba42e2fc0585abc76d0838978c6d277b9cc37a4da25d1a34"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libaudit-common",
+      "version": "1:3.0.9-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "c1f13138b89bb7eb29ee6cf93ccca204"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "17d0341ca6ce604ce59c296780ac2c2a24141a769823c50669af942c025e6591"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libaudit1",
+      "version": "1:3.0.9-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "928a8f60fce2c09e42ef9108b02b7dab"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "30954df4b5a7c505661ba8ae5e6ea94f5805e408899fb400783bb166eb5ff306"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libblkid1",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "063c012c7bb5410a90ae3e671a3faea6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "151f59ca2b73ce8f85a576980f019dbbf9d44dd6ff4331f7954163e3704c1c06"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libbpf1",
+      "version": "1:1.1.0-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a3c5e18dbda8492943474bc9ad21386c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1b3787787b884d835ec1008ed51e62cd9256ce1ed8a0d2917d9965af08140674"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libbsd0",
+      "version": "0.11.7-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "5d382c22b266715b019f46576a3f3146"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "bb31cc8b40f962a85b2cec970f7f79cc704a1ae4bad24257a822055404b2c60b"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libbz2-1.0",
+      "version": "1.0.8-5+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "fe53af115b01a7225546ac9346bc47ee"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "54149da3f44b22d523b26b692033b84503d822cc5122fed606ea69cc83ca5aeb"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libc-bin",
+      "version": "2.36-9+deb12u7",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ce029352e3b8bca04696ace1af60e0b8"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "687687d1ace90565cc451b1be527914246123968b747c823e276cd7f8b57ba3d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libc6",
+      "version": "2.36-9+deb12u7",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a9480b37954b1c6327b09526cc1974c3"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "eba944bd99c2f5142baf573e6294a70f00758083bc3c2dca4c9e445943a3f8e6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcap-ng0",
+      "version": "0.8.3-1+b3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "9e964fb1431185213fdd4c06a7e6ce8f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b4b54769c77e4a71c8b33aee4d600ba28a9994a1c6f60d55d4ebe7fc44882e07"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcap2",
+      "version": "1:2.66-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "7d691e081e1df30b19ba336f2f0431f6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b36fefe9867f9e59b540f952e957a72ebdc241e997179d826da19a9511ade4a3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcap2-bin",
+      "version": "1:2.66-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "470f4ce6dfa5f96ad01c4b65a0cf73b1"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "72da6038877cc5c7d71538a547e22d03346b1ef99a35169d7ff3500f5675df1e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcom-err2",
+      "version": "1.47.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ba5a51941be95a58dfd60443697eacf9"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8010e4285276bb344c05ae780deae2fffb45e237116c3a78481365c5954125ec"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcrypt1",
+      "version": "1:4.4.33-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "62f2b13bce2b331289624fbd095c29f0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "f5f60a5cdfd4e4eaa9438ade5078a57741a7a78d659fcb0c701204f523e8bd29"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libcryptsetup12",
+      "version": "2:2.6.1-4~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "14d2f4bface218daada4000e1328e750"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b9a607c219be5ef04bc0fcfaec3752d9a1ba07df8d3bb2aed9bf348f90d1b6cc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libdb5.3",
+      "version": "5.3.28+dfsg2-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "00cffaa14fbe0c2f9e08c6887951c313"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "7dc5127b8dd0da80e992ba594954c005ae4359d839a24eb65d0d8129b5235c84"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libdebconfclient0",
+      "version": "0.270",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "288151eff77d7217e6c0600e9c4ca676"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "7d2b2b700bae0ba67a13655fabba6a98da3f6ce7dee43d1ee0ac433b7ca1d947"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libdevmapper1.02.1",
+      "version": "2:1.02.185-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "4c33a6b366c9b52e259d66f9c7365105"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "aaa78ca236055fedccf637eacf7bda02bf1980b2db668dccd202b04d0d2cfe04"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libedit2",
+      "version": "3.1-20221030-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a61fc7ab10d74db949c8d3c50fb4711a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1cf14abf2716d3279db12d0657a5737cf70074a1e71d3bdf73206625e3c89ce6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libelf1",
+      "version": "0.188-2.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "5bb888192be34d577ee3d4dd319bb6ed"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "619add379c606b3ac6c1a175853b918e6939598a83d8ebadf3bdfd50d10b3c8c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libext2fs2",
+      "version": "1.47.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f635cb38575df45ee53089c5e005144a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e28d141cebb72f1ac1f1d0ea6528b343e41287128db3d4b217ce7790a22352cf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libfdisk1",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "33eb0e7bdfcdca9017ba425cfbe8374c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "a4d852a882d62d64561a9311821bc58cbf7de52d23f99da7086e442345ac1ac1"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libffi8",
+      "version": "3.4.4-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "00818ad9c6c9af6929e58bfd27e3c993"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6d9f6c25c30efccce6d4bceaa48ea86c329a3432abb360a141f76ac223a4c34a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgcc-s1",
+      "version": "12.2.0-14",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f00018bcad3c773b1fbb378bbdd6b9d1"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "f3d1d48c0599aea85b7f2077a01d285badc42998c1a1e7473935d5cf995c8141"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgcrypt20",
+      "version": "1.10.1-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "362c347d600a61a0efbd350a4b43fb76"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "bffcac7e4f69e39d37d4a33e841d6371ac8b5aba6cd55546b385dc7ff6c702f5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgmp10",
+      "version": "2:6.2.1+dfsg1-1.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2209aba19c24b8f42a1d7a154ba47cd1"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "187aedef2ed763f425c1e523753b9719677633c7eede660401739e9c893482bd"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgnutls30",
+      "version": "3.7.9-2+deb12u3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "70939e1ee83d0a50027417006972029e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "cee417d4107bbe94ddcc124524366ea675e89d106b70969a7d508ef26e92a713"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgpg-error0",
+      "version": "1.46-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2d0cca0b63d2cfc5b3afc131017147e9"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "89944ee11d7370ce6ef46fc52f094c4a6512eff8943ec4c6ebefeae6360ceada"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libgssapi-krb5-2",
+      "version": "1.20.1-2+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "0e70b419fae4df067ae71e8440f2cedd"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6631304ce4b5b9ba0af3fdebf088a734aed2d28ffad2a03ba79e4fcb2e226dd6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libhogweed6",
+      "version": "3.8.1-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "d9beb5af0e88a0b786a65735f602d4f2"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ed8185c28b2cb519744a5a462dcd720d3b332c9b88a1d0002eac06dc8550cb94"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libidn2-0",
+      "version": "2.3.3-1+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "fc24dfe2b8b11c0e8463dabd059fb254"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d50716d5824083d667427817d506b45d3f59dc77e1ca52de000f3f62d4918afa"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libip4tc2",
+      "version": "1.8.9-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e672965aaff063a7c07d92257c975d88"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "f2c48b367f9ec13f9aa577e7ccf81b371ce5d5fe22dddf9d7aa99f1e0bb7cfc4"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libjansson4",
+      "version": "2.14-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "bba5be3ad532792749e18495e91732aa"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3fc9742f9f1a37bcb9931df6074b4d1483419ef832ad5349f47323e75fc27864"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libjson-c5",
+      "version": "0.16-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f2f6ecf1d26a6e0716cc2cda7a542e52"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d0e1ed8637d1c26b9720f6057d6355f18378bba5cc2553e459d1632783c00d70"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libk5crypto3",
+      "version": "1.20.1-2+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b24cee9bd5a90f08e55a27fd094849dd"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6a91eee690e6ad2207df3a355fc329a58d8e31bf5ca9a9dd4de8f7a1c812ddc5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libkeyutils1",
+      "version": "1.6.3-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "9b3c8e3ff42ecfc7d0a0fc9d45c2dd6e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "cfac89e6a7a54ff3c6a4f843310e25efeddaa771baeae470bd98bd588c373563"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libkmod2",
+      "version": "30+20221128-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b919ebdf3d659d2eff4ffe630a0f6983"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "af63bbbfc15fbd1f254b15c393b3b95b18b18cc81348fc1b4f1c9c34b4d672d7"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libkrb5-3",
+      "version": "1.20.1-2+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "7ad5f041789b9a492c4fa8961e416409"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "03ebdf235600f4a8a6d4fbc7080de0a776b1a701f43c4e9697944757591d7809"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libkrb5support0",
+      "version": "1.20.1-2+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "15db06264b91defce5fb09b9bc5574da"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e489a9282c4b765c29d9eda7c4747e1cb58be71161012c3a57e2a8bc63dc0f5a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "liblocale-gettext-perl",
+      "version": "1.07-5",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "4e0b035f3cd0a510dc476d80f1a43313"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "fe524a9de7ed6b2a1465693f12d5f7be2d2d9f6d6e6bf028f17109263e173dc8"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "liblz4-1",
+      "version": "1.9.4-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "c3c89bf35e204be45d53cd72ad969d87"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "64cde86cef1deaf828bd60297839b59710b5cd8dc50efd4f12643caaee9389d3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "liblzma5",
+      "version": "5.4.1-0.2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "fdadb138fc8b657b4e6a1b2c150d58fb"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d4b7736e58512a2b047f9cb91b71db5a3cf9d3451192fc6da044c77bf51fe869"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libmd0",
+      "version": "1.0.4-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "fa8bd4f83ccfb4f5d29fb7c7a39a7bad"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "03539fd30c509e27101d13a56e52eda9062bdf1aefe337c07ab56def25a13eab"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libmnl0",
+      "version": "1.0.4-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b05c852d37ca1cdd984445d0a9f45481"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4581f42e3373cb72f9ea4e88163b17873afca614a6c6f54637e95aa75983ea7c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libmount1",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a428fb0c8a073070c43ae750882b0088"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "a259d82ccbcfa230b492752d8d525d0a40d7938bf62fb90e83e16048ee88bf83"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libncursesw6",
+      "version": "6.4-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ebd2db8f34a8772d9679697c65b0e02b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "98fa7a53dc565a38b65fb70422ad08001bf5361d8fbc74255280c329996a6bec"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libnettle8",
+      "version": "3.8.1-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "1ad1f57c575b2d5d172ee243d88c0b9f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "45922e6e289ffd92f0f92d2bb9159e84236ff202d552a461bf10e5335b3f0261"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libnewt0.52",
+      "version": "0.52.23-1+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "c61cce4f802c8dfd37a3f26b4b5e2708"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4b0eca370e8e65268a0a7917dd82a2d615ef5ae7cba1032db6b51f998cfb25d5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libnftables1",
+      "version": "1.0.6-2+deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "027528ec1fa07bf07de783710c9e0b7c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3a8223f9bfba99d97bf25296ac83de307ab036e1df63e5965f88809266851947"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libnftnl11",
+      "version": "1.2.4-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "9c2691df1e5ec30a3511d2f19fe46d96"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "9e619e1470a1915264e906020f3bfc046fd8458043b1342686d997b5078213af"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libp11-kit0",
+      "version": "0.24.1-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6d84497f59de9c380c20577e3e89e888"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "251330faddbf013f060fcdb41f4b0c037c8a6e89ba7c09b04bfcc4e3f0807b22"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpam-modules",
+      "version": "1.5.2-6+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a3a85d0b342f633a142b4010f6341df0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "851d270e36707787ab1cd269dbd9597864feaf3f8453ecd3c426caaa56142222"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpam-modules-bin",
+      "version": "1.5.2-6+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "48a2a8fce85b1e38a99a0f828dcee43d"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "fc6a692d2f399b83ef5a7f310883286a5e4326095812d8bb934925125002981c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpam-runtime",
+      "version": "1.5.2-6+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "3cb222bc390cfdcba87deaa1954839f8"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "da03311a716bdcb73d1a93d322901ac46dce8eac67b5ccc95a6d8b776bfb4021"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpam0g",
+      "version": "1.5.2-6+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "7cfd37384af96d90fd3755b06dcfdc3a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e360be5f17f9c09c8f17bae809f6c6f091c5bb6ab1a44fc33e4fb86c5e5559df"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpcre2-8-0",
+      "version": "10.42-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2164cb282e379d053789306c07ce9828"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "030db54f4d76cdfe2bf0e8eb5f9efea0233ab3c7aa942d672c7b63b52dbaf935"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libpopt0",
+      "version": "1.19+dfsg-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "365e3af92c50fb2890666ecd473433c7"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6f94b488255acd996254f775c77ff3956557c61f860a3c9caeaf65457554194f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libproc2-0",
+      "version": "2:4.0.2-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b233f887c17fba7e938b166d8266d206"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e82ba5d01929eafb8b9954606a3c38b0332a987c2b3432388b4ee7365e54deae"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libreadline8",
+      "version": "8.2-1.3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2a103a569879b1945a5a54f0cf791fb3"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e02ebbd3701cf468dbf98d6d917fbe0325e881f07fe8b316150c8d2a64486e66"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libseccomp2",
+      "version": "2.5.4-1+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "5293b60f5e27046c0b7901f6c9188fe7"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "108fe67957ca7cf9ba51d801118a1b37d404bea7b6e365025cd00779e9eca38d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libselinux1",
+      "version": "3.4-1+b6",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "78f9188026cbf5e150859a45ec6a608f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "2b07f5287b9105f40158b56e4d70cc1652dac56a408f3507b4ab3d061eed425f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsemanage-common",
+      "version": "3.4-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "3a71ea9db512c570fe636acb6844947d"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "835f806c21ae25e39053bd3057051640341b0cf08e1db9746fd82e370d82fa30"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsemanage2",
+      "version": "3.4-1+b5",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f35a246fd80222e3d84623c1fffebfbe"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "fd36d0972866adde5a52269a309fcecd76a8e45e557dd0ecd33aa221cabc2a8c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsepol2",
+      "version": "3.4-2.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "99cb287f27e4aacd87d105f1863822db"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b998946bb9818a97b387a962826caae33bc7fdcb6d706b2782c0470510be6b48"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libslang2",
+      "version": "2.3.3-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f10be5210053ea9e4b2bc5c8d6712e26"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "5b3cecc829ef229125b340ccd2ca45ced75d24e9aa191912105016b1af94413f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsmartcols1",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e4b638d03be6b1c77f67a0b973877033"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "81c54dabc8ba03116f92c5412c9e0a7bafbde9533fc08e5dc4cba19b3f3a05d8"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libss2",
+      "version": "1.47.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "dd9024336bbe8632e2d1c432867e7dde"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "75bbf628518966bea04498df28391b5c070ccae110332302c52affcce8cb7b68"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libssl3",
+      "version": "3.0.13-1~deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2e82f301e29b3cbffd7c1c44e49033e7"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8e88b98b3fc634721d0899f498d4cf2e62405faaab6582123c7923b1ec8129e1"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libstdc++6",
+      "version": "12.2.0-14",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "f027aa0a6fcdd1c58564245045787969"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "9b1b269020cec6aced3b39f096f7b67edd1f0d4ab24f412cb6506d0800e19cbf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsystemd-shared",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "d0b5a0fc26bf73482de069a91129ae25"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b1bbf59d929c2725235b88799b59a92836b23c98990e7167f519d378af96fc20"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsystemd0",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "0ee0b156d83a03e59d64a2a8310057ed"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "079c4def8c5d296e2d61242b428ba7b97596abf47564c9856a468a75115b65ca"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtasn1-6",
+      "version": "4.19.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "8f812dbd969a6d4a7ba486b4ca35c2da"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "eec4dc9d949d2c666b1da3fa762a340e8ba10c3a04d3eed32749a97695c15641"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtext-charwidth-perl",
+      "version": "0.04-11",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "c73f71595c4a2fb6d6384ce8ad6f63c6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "96d8d2e55c51c998becbe4ec3b009022ee61d52526f811696ec10ee11b08910e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtext-iconv-perl",
+      "version": "1.7-8",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6781c6eb3a707839827958277facbb12"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "5d5c9bf766aa437c1836bc8bcc66a71dff3855888817da301c0e604c03489b28"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtext-wrapi18n-perl",
+      "version": "0.06-10",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b57a11d040f8e9055f8f2e83ed3dd70b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "17f98c7c09af8ac3bdbfd5a5dad32f3f51c71b02cdfc411366f49092a395de85"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtinfo6",
+      "version": "6.4-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "51ccb2d0571b096ed33c73eee1a59a01"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "072d908f38f51090ca28ca5afa3b46b2957dc61fe35094c0b851426859a49a51"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtirpc-common",
+      "version": "1.3.3+ds-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e49aca93814724ed80fa8932a1f7523b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3e3ef129b4bf61513144236e15e1b4ec57fa5ae3dc8a72137abdbefb7a63af85"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtirpc3",
+      "version": "1.3.3+ds-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "b759d3e9dc474c3404da044249e84d2b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "2a46d5a5e9486da11ffeff5740931740d6deae4f92cd6098df060dc5dff1e1c7"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libudev1",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e6aaa7910e08be63d292ae312cf8ce09"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ed1e715a79492808b9aa3a25ebca508743aef282c099b6e0216b5dd8dd8b3796"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libunistring2",
+      "version": "1.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "99464838ea11e1526f490ba03c6ed906"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d466bbfe011d764d793c1d9d777cad9c7cf65b938e11598f27408171ad95a951"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libuuid1",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "4590de67ab21ae9e4344896731fce903"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1ff16517fd1cfaa266de47255b98c44ff51e8a1653f7d8f1fe9c386ff0f1aa7e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libxtables12",
+      "version": "1.8.9-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "40e4d0ba39c9a3f040955da1e7b19300"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "cb841d66950a43af4a398625313d2f3da9065299c9738538de6c2c3495857040"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libxxhash0",
+      "version": "0.8.1-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "839ed6a69aef7f4a3ca484f9278087a1"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6c19a5d18c8350744581fbd25d5d29e2b7101053e25aafa4e1ffcc2b505b2f1c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libzstd1",
+      "version": "1.5.4+dfsg2-5",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "7d65bcd33a26756fa56a48114de4a52f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "6315b5ac38b724a710fb96bf1042019398cb656718b1522279a5185ed39318fa"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "login",
+      "version": "1:4.13+dfsg1-1+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "930c5694551ad9d8d41457218fff9de6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "86b1f3504cf50fd4873be364c8a4e49a8c28e3442b31963a98a758135283db9d"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "logrotate",
+      "version": "3.21.0-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ca437fbf6cd7213667aefcbd28bc2b6a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "4e6acd31f55af85b2f12bd61a636c84e19fc1d0f419540b71bbe8aba6985aa32"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "logsave",
+      "version": "1.47.0-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "a284830cbf8e8e3c9c1827739333ca0a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "245f55e17d9ec050d9a1de80b35bc6b8f64f277b6f12183ff7769be5b3678eb8"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "mawk",
+      "version": "1.3.4.20200120-3.1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "31b4bf928cdc04e445b5f61ba621ac74"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "bcbc83f391854ea9d50ce2a4101aacf330de3b8b71d81a798faadba14a157f78"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "mount",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "20a844b39e14503d4ae57c5a15d5e807"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "f3fe9b80a2dcd2a7f464f3ada4d92b56999c32cd08e25da115cc3c3509e6a901"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "nano",
+      "version": "7.2-1+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "03eeaaa603022ccbd061c8a4751fc947"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "45a9b3960aa5ac18552459225ec26800abb73fc2edd11626046daf6d968ac968"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "ncurses-base",
+      "version": "6.4-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "d4772a6d6a48b0d6e9b8e3f7a170a098"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "bfd1d89f833c09a28b062ee916495cf69649ca2bf529532476c7b69d75d24909"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "ncurses-bin",
+      "version": "6.4-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ad1152421b82e3ae613129ca127b3e6b"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "396d6e453aee6d71b7141f0bfb333a6c08a44c64f77632bdf52894ccd123db46"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "netbase",
+      "version": "6.4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "814246d2f01d3238bbd3ef8c15c57076"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "29b23c48c0fe6f878e56c5ddc9f65d1c05d729360f3690a593a8c795031cd867"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "nftables",
+      "version": "1.0.6-2+deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "79577befa1f8df7ecbbebad5a0440cde"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "966ff20ce58c17163a771c02ddbca264291408f94c512bd85dd18da0ebdbe88c"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "passwd",
+      "version": "1:4.13+dfsg1-1+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "9059c3d83577115d853363009bbcd39c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "343b60a755ceb2c3687f9a5c9c9dc00eea0e44a7de49a537c36df17894f784b3"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "perl-base",
+      "version": "5.36.0-7+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "22a6c9b0c9d019b0e152ad361345482f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "b4327c2d8e2ca92402205ac6b5845b3110fa2a1d50925c0e61c39624583a8baf"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "procps",
+      "version": "2:4.0.2-3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "3ec3649d38e1ade32c96ece131efa0e6"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d9d0e75779cb79af869181f17b93c5c263a2b89cac6a0193c436160a4483ddc1"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "readline-common",
+      "version": "8.2-1.3",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ad338a71bb8d67bdbcbe411ae6f65d20"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "69317523fe56429aa361545416ad339d138c1500e5a604856a80dd9074b4e35c"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "sed",
+      "version": "4.9-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "51b1137d3dc311c2351d9740a410bd39"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "177cacdfe9508448d84bf25534a87a7fcc058d8e2dcd422672851ea13f2115df"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "sensible-utils",
+      "version": "0.0.17+nmu1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "d617862548d914db9da74cf2b79f5e00"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e0e66f783996ec4670ed5041c446160ec671c723d4be47d3bc27af93c2958a76"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "systemd",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "da9011d642351ddb1615d0b384cf386c"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "481a0b837aa3ce9871773b59755e039c0fd15a801f84ce4e607b54596480f875"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "systemd-sysv",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "5dd5ab8d369ea51a95733b1bfe405254"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "fff5012ff0022b485b039e5849ae8dbcdeff19d93c2aca842865b3293af0fb53"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "sysvinit-utils",
+      "version": "3.06-4",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "931432082ae59bf88b9c52100e82d003"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "11790842108768ec52432ea22e7b4f057232813b7c27ef6dfe1aba776a5cb90e"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "tar",
+      "version": "1.34+dfsg-1.2+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "2778ee13125dd948e3840af6ee5d9a83"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "24fb92e98c2969171f81a8b589263d705f6b1670f95d121cd74c810d4605acc3"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "tasksel",
+      "version": "3.73",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "eccff65985702b297b7e6252ecb5230f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "618679dfc90630dd0605f0079ddebd9a06a090913566f1063326e3ad21c7c55d"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "tasksel-data",
+      "version": "3.73",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "db48e97e5589890bb031d8b4ac7aaa9d"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "0016fb47a32ff54f9ade80d07e76e2524888f6df17916aad4318087cb3321521"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "tzdata",
+      "version": "2024a-0+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "14d216857e42b1b0862d1f39f10347e8"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "0ca0baec1fca55df56039047a631fc1541c5a44c1c4879d553aaa3a70844eb12"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "udev",
+      "version": "252.26-1~deb12u2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "95e6746678eb9f9b5ac5046e6ddcfcfd"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "65e8708dc4d310afb1392266db33eff990eb5cc6cd590aaf0cf759b77d903758"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "usr-is-merged",
+      "version": "37~deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "36826e1d6b6eb875e7053b3c95b02017"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "908b80730d99afe6f59ed7f449827b7047ceeeaa7637c368c03e4912e0a6de99"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "util-linux",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e802b4f13fdf9a66b4710bd823411ebc"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "cc96c6e07db33c0422ff8945e13c004489c979f5e070daa67b9c6c219b22d980"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "util-linux-extra",
+      "version": "2.38.1-5+deb12u1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "510c1d5a1379a8bdcce4b82a297c7d80"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "45b08b5e928ceb229721ba13b4d8e7559957222d8c35b43b6413b81d9c2d06f8"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "vim-common",
+      "version": "2:9.0.1378-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "6fb08ae092f46d7bc6b02db5981bd8b0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "82f4d33e2f0ded27ad1145a726cbc44ed0e2413becda3632a932e902b3df976b"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "vim-tiny",
+      "version": "2:9.0.1378-2",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "e62f41ef5a679ff8f0673aa8bd8ec72e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3fe784f4d5ec8a4b4b7101dea351778b7393a6a7cebf4a19e5349c6706c7e69b"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "whiptail",
+      "version": "0.52.23-1+b1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "beb813196711eb33ab02e83258f39915"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "61f7b57a599d1655d4866f5119c5274505cdd619c71b1c1c2b79b603b32f55ca"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "zlib1g",
+      "version": "1:1.2.13.dfsg-1",
+      "hashes": [
+        {
+          "alg": "MD5",
+          "content": "ec42cc09e926444a817ddd913057af67"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d7dd1d1411fedf27f5e27650a6eff20ef294077b568f4c8c5e51466dc7c08ce4"
+        }
+      ]
+    }
+  ]
 }
