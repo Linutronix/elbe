@@ -8,7 +8,7 @@ import sys
 
 from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
-from elbepack.xmlpreprocess import PreprocessWrapper
+from elbepack.xmlpreprocess import preprocess_file
 
 
 def cmd_exists(x):
@@ -69,7 +69,7 @@ class CreateAction(PBuilderAction):
 
         if opt.xmlfile:
             try:
-                with PreprocessWrapper(opt.xmlfile, opt) as ppw:
+                with preprocess_file(opt.xmlfile, opt.variants) as preproc:
                     ps = run_elbe(['control', 'create_project'],
                                   capture_output=True, encoding='utf-8')
                     if ps.returncode != 0:
@@ -80,7 +80,7 @@ class CreateAction(PBuilderAction):
                         sys.exit(152)
 
                     prjdir = ps.stdout.strip()
-                    ps = run_elbe(['control', 'set_xml', prjdir, ppw.preproc],
+                    ps = run_elbe(['control', 'set_xml', prjdir, preproc],
                                   capture_output=True, encoding='utf-8')
 
                     if ps.returncode != 0:

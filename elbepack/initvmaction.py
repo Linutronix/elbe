@@ -19,7 +19,7 @@ from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.repodir import Repodir, RepodirError
 from elbepack.treeutils import etree
-from elbepack.xmlpreprocess import PreprocessWrapper
+from elbepack.xmlpreprocess import preprocess_file
 
 
 def is_soap_local():
@@ -453,8 +453,7 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
 def submit_and_dl_result(xmlfile, cdrom, opt):
 
     try:
-        with PreprocessWrapper(xmlfile, opt) as ppw:
-            xmlfile = ppw.preproc
+        with preprocess_file(xmlfile, opt.variants) as xmlfile:
 
             ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
             if ps.returncode != 0:
@@ -758,8 +757,8 @@ class CreateAction(InitVMAction):
             else:
                 cdrom_opts = []
 
-            with PreprocessWrapper(xmlfile, opt) as ppw:
-                run_elbe(['init', *init_opts, '--directory', initvmdir, *cdrom_opts, ppw.preproc],
+            with preprocess_file(xmlfile, opt.variants) as preproc:
+                run_elbe(['init', *init_opts, '--directory', initvmdir, *cdrom_opts, preproc],
                          check=True)
 
         except subprocess.CalledProcessError:

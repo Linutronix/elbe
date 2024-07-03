@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2017-2018 Linutronix GmbH
 
+import contextlib
 import logging
 import os
 import pathlib
 import re
-import subprocess
 import sys
 import tempfile
-import time
 import warnings
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
@@ -25,7 +24,6 @@ with warnings.catch_warnings():
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.config import cfg
-from elbepack.directories import run_elbe
 from elbepack.isooptions import iso_option_valid
 from elbepack.treeutils import dbsfed_schema, xml_bool
 from elbepack.validate import error_log_to_strings
@@ -440,31 +438,9 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
     raise XMLPreprocessError('\n'.join(error_log_to_strings(schema.error_log)))
 
 
-class PreprocessWrapper:
-    def __init__(self, xmlfile, opt):
-        self.xmlfile = xmlfile
-        self.outxml = None
-        self.options = []
-
-        if opt.variant:
-            self.options.extend(['--variants', opt.variant])
-
-    def __enter__(self):
-        fname = f'elbe-{time.time_ns()}.xml'
-        self.outxml = os.path.join(tempfile.gettempdir(), fname)
-
-        ps = run_elbe(['preprocess', *self.options, '-o', self.outxml, self.xmlfile],
-                      capture_output=True, encoding='utf-8')
-        if ps.returncode != 0:
-            print('elbe preprocess failed.', file=sys.stderr)
-            print(ps.stderr, file=sys.stderr)
-            raise subprocess.CalledProcessError(ps.returncode, ps.args)
-
-        return self
-
-    def __exit__(self, _typ, _value, _traceback):
-        os.remove(self.outxml)
-
-    @property
-    def preproc(self):
-        return self.outxml
+@contextlib.contextmanager
+def preprocess_file(xmlfile, variants):
+    with tempfile.NamedTemporaryFile(suffix='elbe.xml') as preproc:
+        xmlpreprocess(xmlfile, preproc, variants=variants)
+        preproc.seek(0)
+        yield preproc.name
