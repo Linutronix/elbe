@@ -17,7 +17,7 @@ def _comma_separated_list(option, opt, value, parser):
 
 
 def _add_options(oparser):
-    oparser.add_option('-v', '--variants', dest='variant',
+    oparser.add_option('-v', '--variants', dest='variants',
                        action='callback', callback=_comma_separated_list, type=str,
                        help='enable only tags with empty or given variant')
 
@@ -57,7 +57,7 @@ def run_command(argv):
         sys.exit(113)
 
     try:
-        xmlpreprocess(args[0], opt.output, opt.variant, opt.proxy, opt.gzip)
+        xmlpreprocess(args[0], opt.output, opt.variants, opt.proxy, opt.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(114)
