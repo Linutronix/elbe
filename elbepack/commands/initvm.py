@@ -7,8 +7,8 @@ import sys
 from optparse import OptionParser, SUPPRESS_HELP
 
 from elbepack.commands import add_deprecated_optparse_option
+from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_options
 from elbepack.initvmaction import InitVMAction, InitVMError
-from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def run_command(argv):
@@ -66,7 +66,7 @@ def run_command(argv):
                        dest='fail_on_warning', default=False,
                        help=SUPPRESS_HELP)
 
-    PreprocessWrapper.add_options(oparser)
+    add_xmlpreprocess_passthrough_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
 

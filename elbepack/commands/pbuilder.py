@@ -5,8 +5,8 @@
 import sys
 from optparse import OptionParser
 
+from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_options
 from elbepack.pbuilderaction import PBuilderAction, PBuilderError
-from elbepack.xmlpreprocess import PreprocessWrapper
 
 
 def run_command(argv):
@@ -61,7 +61,7 @@ def run_command(argv):
                             '(should be a number followed by an optional '
                             'suffix: k, M, G, T. Use 0 for no limit.)')
 
-    PreprocessWrapper.add_options(oparser)
+    add_xmlpreprocess_passthrough_options(oparser)
 
     (opt, args) = oparser.parse_args(argv)
 

@@ -11,7 +11,6 @@ import sys
 import tempfile
 import time
 import warnings
-from optparse import OptionGroup
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
@@ -465,18 +464,6 @@ class PreprocessWrapper:
 
     def __exit__(self, _typ, _value, _traceback):
         os.remove(self.outxml)
-
-    @staticmethod
-    def add_options(oparser):
-        # import it here because of cyclic imports
-        from elbepack.commands.preprocess import add_pass_through_options
-
-        group = OptionGroup(oparser,
-                            'Elbe preprocess options',
-                            'Options passed through to invocation of '
-                            '"elbe preprocess"')
-        add_pass_through_options(group)
-        oparser.add_option_group(group)
 
     @property
     def preproc(self):

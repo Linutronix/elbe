@@ -4,12 +4,12 @@
 
 import os
 import sys
-from optparse import OptionParser
+from optparse import OptionGroup, OptionParser
 
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
 
-def add_pass_through_options(oparser):
+def _add_options(oparser):
     oparser.add_option('-v', '--variants', dest='variant',
                        default=None,
                        help='enable only tags with empty or given variant')
@@ -23,12 +23,21 @@ def add_pass_through_options(oparser):
                        help='gzip compression level 1-9 (0: no compression)')
 
 
+def add_xmlpreprocess_passthrough_options(oparser):
+    group = OptionGroup(oparser,
+                        'Elbe preprocess options',
+                        'Options passed through to invocation of '
+                        '"elbe preprocess"')
+    _add_options(group)
+    oparser.add_option_group(group)
+
+
 def run_command(argv):
     oparser = OptionParser(usage='usage: %prog preprocess [options] <xmlfile>')
     oparser.add_option('-o', '--output', dest='output',
                        default='preprocess.xml',
                        help='preprocessed output file', metavar='<xmlfile>')
-    add_pass_through_options(oparser)
+    _add_options(oparser)
     (opt, args) = oparser.parse_args(argv)
 
     if len(args) != 1:
