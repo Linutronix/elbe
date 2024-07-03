@@ -68,32 +68,25 @@ class CreateAction(PBuilderAction):
             ccacheopt = ['--ccache-size', opt.ccachesize]
 
         if opt.xmlfile:
-            try:
-                with preprocess_file(opt.xmlfile, opt.variants) as preproc:
-                    ps = run_elbe(['control', 'create_project'],
-                                  capture_output=True, encoding='utf-8')
-                    if ps.returncode != 0:
-                        print('elbe control create_project failed.',
-                              file=sys.stderr)
-                        print(ps.stderr, file=sys.stderr)
-                        print('Giving up', file=sys.stderr)
-                        sys.exit(152)
+            with preprocess_file(opt.xmlfile, opt.variants) as preproc:
+                ps = run_elbe(['control', 'create_project'],
+                              capture_output=True, encoding='utf-8')
+                if ps.returncode != 0:
+                    print('elbe control create_project failed.',
+                          file=sys.stderr)
+                    print(ps.stderr, file=sys.stderr)
+                    print('Giving up', file=sys.stderr)
+                    sys.exit(152)
 
-                    prjdir = ps.stdout.strip()
-                    ps = run_elbe(['control', 'set_xml', prjdir, preproc],
-                                  capture_output=True, encoding='utf-8')
+                prjdir = ps.stdout.strip()
+                ps = run_elbe(['control', 'set_xml', prjdir, preproc],
+                              capture_output=True, encoding='utf-8')
 
-                    if ps.returncode != 0:
-                        print('elbe control set_xml failed.', file=sys.stderr)
-                        print(ps.stderr, file=sys.stderr)
-                        print('Giving up', file=sys.stderr)
-                        sys.exit(153)
-            except subprocess.CalledProcessError:
-                # this is the failure from PreprocessWrapper
-                # it already printed the error message from
-                # elbe preprocess
-                print('Giving up', file=sys.stderr)
-                sys.exit(154)
+                if ps.returncode != 0:
+                    print('elbe control set_xml failed.', file=sys.stderr)
+                    print(ps.stderr, file=sys.stderr)
+                    print('Giving up', file=sys.stderr)
+                    sys.exit(153)
 
             if opt.writeproject:
                 wpf = open(opt.writeproject, 'w')

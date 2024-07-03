@@ -452,31 +452,24 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
 
 def submit_and_dl_result(xmlfile, cdrom, opt):
 
-    try:
-        with preprocess_file(xmlfile, opt.variants) as xmlfile:
+    with preprocess_file(xmlfile, opt.variants) as xmlfile:
 
-            ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
-            if ps.returncode != 0:
-                print('elbe control create_project failed.', file=sys.stderr)
-                print(ps.stderr, file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(128)
+        ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
+        if ps.returncode != 0:
+            print('elbe control create_project failed.', file=sys.stderr)
+            print(ps.stderr, file=sys.stderr)
+            print('Giving up', file=sys.stderr)
+            sys.exit(128)
 
-            prjdir = ps.stdout.strip()
+        prjdir = ps.stdout.strip()
 
-            ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
-                          capture_output=True, encoding='utf-8')
-            if ps.returncode != 0:
-                print('elbe control set_xml failed2', file=sys.stderr)
-                print(ps.stderr, file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(129)
-    except subprocess.CalledProcessError:
-        # this is the failure from PreprocessWrapper
-        # it already printed the error message from
-        # elbe preprocess
-        print('Giving up', file=sys.stderr)
-        sys.exit(130)
+        ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
+                      capture_output=True, encoding='utf-8')
+        if ps.returncode != 0:
+            print('elbe control set_xml failed2', file=sys.stderr)
+            print(ps.stderr, file=sys.stderr)
+            print('Giving up', file=sys.stderr)
+            sys.exit(129)
 
     if opt.writeproject:
         with open(opt.writeproject, 'w') as wpf:
