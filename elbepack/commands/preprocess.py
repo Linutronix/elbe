@@ -9,9 +9,16 @@ from optparse import OptionGroup, OptionParser
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
 
+def _comma_separated_list(option, opt, value, parser):
+    if value is None:
+        return
+
+    setattr(parser.values, option.dest, value.split(','))
+
+
 def _add_options(oparser):
     oparser.add_option('-v', '--variants', dest='variant',
-                       default=None,
+                       action='callback', callback=_comma_separated_list, type=str,
                        help='enable only tags with empty or given variant')
 
     oparser.add_option('-p', '--proxy', dest='proxy',
@@ -49,12 +56,8 @@ def run_command(argv):
         print(f"{args[0]} doesn't exist", file=sys.stderr)
         sys.exit(113)
 
-    variants = []
-    if opt.variant:
-        variants = opt.variant.split(',')
-
     try:
-        xmlpreprocess(args[0], opt.output, variants, opt.proxy, opt.gzip)
+        xmlpreprocess(args[0], opt.output, opt.variant, opt.proxy, opt.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(114)
