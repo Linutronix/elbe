@@ -282,10 +282,16 @@ class XMLPackage(PackageBase):
             if v is not None:
                 hashes[h] = v
 
+        origin = Origin(origin=node.et.get('release-origin'),
+                        codename=node.et.get('release-name'),
+                        uri=node.et.get('uri'),
+                        site=None,
+                        component=None)
+
         PackageBase.__init__(self, node.et.text,
                              node.et.get('version'), None,
                              hashes, None,
                              node.et.get('prio'), None,
                              node.et.get('arch'), None,
                              INSTALLED, node.et.get('auto') == 'true',
-                             None)
+                             origin)
