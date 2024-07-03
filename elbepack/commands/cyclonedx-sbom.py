@@ -5,6 +5,7 @@ import json
 import optparse
 import os
 import sys
+import urllib
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.elbexml import ElbeXML
@@ -16,6 +17,38 @@ class CycloneDXEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
+
+
+def _repository_url(uri):
+    uri_parts = uri.split('/')
+    if len(uri_parts) < 6:
+        raise ValueError('URI needs to be in pool layout, and pool being the 5th or 6th segment')
+    if uri_parts[-5] == 'pool':
+        # http://deb.debian.org/debian/pool/main/a/adduser/adduser_3.134_all.deb
+        return '/'.join(uri_parts[:-5])
+    elif uri_parts[-6] == 'pool':
+        # http://deb.debian.org/debian-security/pool/updates/main/u/util-linux/bsdutils_2.38.1-5%2bdeb12u1_amd64.deb
+        return '/'.join(uri_parts[:-6])
+    else:
+        raise ValueError('URI needs to be in pool layout, and pool being the 5th or 6th segment')
+
+
+def _purl_from_pkg(pkg):
+    purl_qualifiers = urllib.parse.urlencode({
+                          'arch': pkg.installed_arch,
+                          'distro': pkg.origin.codename,
+                          'repository_url': _repository_url(pkg.origin.uri),
+                      })
+    return urllib.parse.urlunparse(
+               urllib.parse.ParseResult(
+                   scheme='pkg',
+                   netloc='',
+                   path=f'deb/{pkg.origin.origin.lower()}/{pkg.name}@{pkg.installed_version}',
+                   params='',
+                   query=purl_qualifiers,
+                   fragment='',
+               )
+           )
 
 
 def _component_from_apt_pkg(pkg):
@@ -41,6 +74,7 @@ def _component_from_apt_pkg(pkg):
         'name': pkg.name,
         'version': pkg.installed_version,
         'hashes': hashes,
+        'purl': _purl_from_pkg(pkg),
     }
 
 
