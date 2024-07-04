@@ -7,3 +7,9 @@ filename = 'docs/news/{project_date}-v{version}.rst'
 
 [tool.pytest.ini_options]
 filterwarnings = 'error'
+
+[tool.mypy]
+packages = [
+  'elbevalidate',
+]
+ignore_missing_imports = true
