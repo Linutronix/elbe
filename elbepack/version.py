@@ -7,7 +7,7 @@ import sys
 
 
 is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)
-elbe_version_base = '14.9.3'
+elbe_version_base = '15.0a4'
 elbe_version = elbe_version_base
 if is_devel:
     elbe_version += '.dev0'
