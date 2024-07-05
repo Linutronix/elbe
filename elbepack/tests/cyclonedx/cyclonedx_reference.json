@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "INVALID",
+  "serialNumber": "urn:uuid:00000000-0000-0000-0000-000000000000",
   "version": 1,
   "metadata": {
     "timestamp": "INVALID",

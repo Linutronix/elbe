@@ -4,6 +4,7 @@
 
 import json
 import pathlib
+import uuid
 
 import jsonschema
 
@@ -30,7 +31,7 @@ def test_schema():
 def test_reference_data():
     test_bom = generate_test_bom()
     test_bom['metadata']['timestamp'] = 'INVALID'
-    test_bom['serialNumber'] = 'INVALID'
+    test_bom['serialNumber'] = uuid.UUID(int=0).urn
     test_bom['metadata']['tools'][0]['version'] = 'INVALID'
     with here.joinpath('cyclonedx_reference.json').open() as f:
         reference_data = json.load(f)
