@@ -30,7 +30,7 @@ def test_schema():
 
 def test_reference_data():
     test_bom = generate_test_bom()
-    test_bom['metadata']['timestamp'] = 'INVALID'
+    test_bom['metadata']['timestamp'] = '0001-01-01T00:00:00+00:00'
     test_bom['serialNumber'] = uuid.UUID(int=0).urn
     test_bom['metadata']['tools'][0]['version'] = 'INVALID'
     with here.joinpath('cyclonedx_reference.json').open() as f:
