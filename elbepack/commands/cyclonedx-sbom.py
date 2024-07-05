@@ -1,6 +1,7 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 
 import datetime
+import itertools
 import json
 import optparse
 import os
@@ -100,6 +101,15 @@ def run_command(argv):
     for pkg in pkg_list:
         components.append(_component_from_apt_pkg(pkg))
 
+    formulation_components = []
+    for p in itertools.chain(
+        source_file.node('debootstrappkgs'),
+        source_file.node('initvmpkgs'),
+    ):
+        # Duplicates are disallowed by the schema
+        if _component_from_apt_pkg(XMLPackage(p)) not in formulation_components:
+            formulation_components.append(_component_from_apt_pkg(XMLPackage(p)))
+
     output = {
         'bomFormat': 'CycloneDX',
         'specVersion': '1.6',
@@ -122,6 +132,11 @@ def run_command(argv):
           },
         },
         'components': components,
+        'formulation': [
+          {
+            'components': formulation_components,
+          },
+        ],
     }
 
     json.dump(output, sys.stdout, indent=2, cls=CycloneDXEncoder)
