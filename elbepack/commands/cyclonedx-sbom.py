@@ -16,7 +16,9 @@ from elbepack.version import elbe_version
 
 class CycloneDXEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, (datetime.date, datetime.datetime)):
+        if isinstance(obj, datetime.datetime):
+            if obj.tzinfo is not datetime.timezone.utc:
+                raise ValueError('only UTC datetimes are supported')
             return obj.isoformat()
 
 
@@ -84,7 +86,7 @@ def run_command(argv):
     oparser.add_option('-d', dest='elbe_build')
     options, args = oparser.parse_args()
 
-    ts = datetime.datetime.now()
+    ts = datetime.datetime.now(tz=datetime.timezone.utc)
     project_dir = options.elbe_build
     source_file = ElbeXML(os.path.join(project_dir, 'source.xml'))
 
