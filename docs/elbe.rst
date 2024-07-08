@@ -35,9 +35,6 @@ Elbe COMMANDS
 ``elbe-buildchroot(1)``
    build a root filesystem.
 
-``elbe-buildsysroot(1)``
-   build a sysroot archive.
-
 ``elbe-check_updates(1)``
    check whether package updates are available for a given project.
 
