@@ -8,6 +8,7 @@ import pkgutil
 import sys
 
 import elbepack.commands
+from elbepack.cli import format_exception
 from elbepack.version import elbe_version
 
 
@@ -18,6 +19,7 @@ def get_cmdlist():
 def main(argv=sys.argv):
     parser = argparse.ArgumentParser(prog='elbe')
     parser.add_argument('--version', action='version', version=f'%(prog)s v{elbe_version}')
+    parser.add_argument('--stacktrace-on-error', action='store_true', dest='stacktrace_on_error')
 
     subparsers = parser.add_subparsers(required=True, dest='cmd')
 
@@ -28,4 +30,9 @@ def main(argv=sys.argv):
 
     cmdmod = importlib.import_module('.' + args.cmd, elbepack.commands.__name__)
 
-    cmdmod.run_command(cmd_argv)
+    try:
+        cmdmod.run_command(cmd_argv)
+    except Exception as e:
+        sys.exit(format_exception(e, output=sys.stderr,
+                                  base_module=elbepack,
+                                  verbose=args.stacktrace_on_error))
