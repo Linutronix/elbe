@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<license_map>
+        <global>
+                <mapping name='GPL-1+'>GPL-1.0+</mapping>
+                <mapping name='GPL-2'>GPL-2.0</mapping>
+                <mapping name='GPL-2.0'>GPL-2.0</mapping>
+                <mapping name='GPL-2+'>GPL-2.0+</mapping>
+                <mapping name='GPLv2+'>GPL-2.0+</mapping>
+                <mapping name='GPL-2.0+'>GPL-2.0+</mapping>
+                <mapping name='GPL-2.1+'>GPL-2.1+</mapping>
+                <mapping name='GPL-3+'>GPL-3.0+</mapping>
+                <mapping name='GPLv3+'>GPL-3.0+</mapping>
+                <mapping name='GPL-3.0+'>GPL-3.0+</mapping>
+
+                <mapping name='LGPL-2'>LGPL-2.0</mapping>
+                <mapping name='LGPL-2.0'>LGPL-2.0</mapping>
+                <mapping name='LGPL-2+'>LGPL-2.0+</mapping>
+                <mapping name='LGPL2.1'>LGPL-2.1</mapping>
+                <mapping name='LGPL-2.1'>LGPL-2.1</mapping>
+                <mapping name='LGPL-2.1+'>LGPL-2.1+</mapping>
+                <mapping name='LGPL-3+'>LGPL-3.0+</mapping>
+                <mapping name='LGPL-3.0+'>LGPL-3.0+</mapping>
+                <mapping name='LGPL'>LGPL-3.0+</mapping>
+
+                <mapping name='GFDL-1.2'>GFDL-1.2</mapping>
+                <mapping name='GFDL-1.2+'>GFDL-1.2+</mapping>
+                <mapping name='GFDL-1.3'>GFDL-1.3</mapping>
+                <mapping name='GFDL-1.3+'>GFDL-1.3+</mapping>
+
+                <mapping name='BSD-2-clause'>BSD-2-Clause</mapping>
+                <mapping name='BSD-2-Clause'>BSD-2-Clause</mapping>
+                <mapping name='BSD-3-clause'>BSD-3-Clause</mapping>
+                <mapping name='BSD-3-Clause'>BSD-3-Clause</mapping>
+                <mapping name='BSD-4-clause'>BSD-4-Clause</mapping>
+                <mapping name='BSD-4-Clause'>BSD-4-Clause</mapping>
+                <mapping name='MIT'>MIT</mapping>
+                <mapping name='CC-BY-SA-3.0'>CC-BY-SA-3.0</mapping>
+
+                <mapping name='ZLIB'>Zlib</mapping>
+                <mapping name='MPL-2.0'>MPL-2.0</mapping>
+                <mapping name='Apache-2.0'>Apache-2.0</mapping>
+                <mapping name='GPL-3.0-with-GCC-exception'>GPL-3.0 WITH GCC-exception-3.1</mapping>
+                <mapping name='GPL-3+ with GCC-Runtime-3.1 exception'>GPL-3.0+ WITH GCC-exception-3.1</mapping>
+                <mapping name='Artistic'>Artistic-1.0</mapping>
+                <mapping name='Artistic-2'>Artistic-2.0</mapping>
+                <mapping name='GPL-3+ with OpenSSL exception'>GPL-3.0+ WITH openvpn-openssl-exception</mapping>
+                <mapping name='FTL'>FTL</mapping>
+                <mapping name='ISC'>ISC</mapping>
+                <mapping name='Gzip'>Zlib</mapping>
+
+                <mapping name='X-Consortium'>X11</mapping>
+
+                <mapping name='Expat'>MIT</mapping>
+                <mapping name='public-domain'>CC-0</mapping>
+        </global>
+
+        <perpackage>
+                <package name='grub-common'>
+                        <!-- heuristics override, because of error in machine read-->
+                        <license>GPL-3.0+</license>
+                        <license>MIT</license>
+                        <license>CC-BY-SA-3.0</license>
+                </package>
+                <package name='init-system-helpers'>
+                        <mapping name='BSD'>BSD-3-Clause</mapping>
+                </package>
+
+                <package name='liblzo2-2'>
+                        <license>GPL-2.0+</license>
+                </package>
+                <package name='logrotate'>
+                        <license>GPL-2.0+</license>
+                </package>
+        </perpackage>
+</license_map>
