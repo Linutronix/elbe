@@ -86,6 +86,11 @@ def run_command(argv):
     oparser.add_option('-d', dest='elbe_build')
     options, args = oparser.parse_args(argv)
 
+    if args != [] or options.elbe_build is None:
+        print('invalid options')
+        oparser.print_help()
+        sys.exit(1)
+
     ts = datetime.datetime.now(tz=datetime.timezone.utc)
     project_dir = options.elbe_build
     source_file = ElbeXML(os.path.join(project_dir, 'source.xml'))
