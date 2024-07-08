@@ -160,7 +160,7 @@ man_pages = [
 ] + [
     ('elbe-' + cmd, 'elbe-' + cmd, '', [], 1)
     for cmd in elbepack.directories.get_cmdlist()
-    if cmd not in {'adjustpkgs', 'bootup-check', 'check-build', 'pin_versions'}
+    if cmd not in {'bootup-check', 'check-build', 'pin_versions'}
 ]
 
 
