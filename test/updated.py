@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
+import argparse
 import sys
 import threading
 import time
-from optparse import OptionParser
 from wsgiref.simple_server import make_server
 
 from spyne import Application, ServiceBase, rpc
@@ -48,44 +48,44 @@ def shutdown(mon):
     sys.exit(0)
 
 
-oparser = OptionParser(usage='usage: %prog [options]')
+aparser = argparse.ArgumentParser()
 
-oparser.add_option('--debug', dest='debug', action='store_true',
-                   default=False, help='run in debug mode')
+aparser.add_argument('--debug', dest='debug', action='store_true',
+                     default=False, help='run in debug mode')
 
-oparser.add_option('--target', dest='target', default='localhost',
-                   help='ip or hostname of target', type='string')
+aparser.add_argument('--target', dest='target', default='localhost',
+                     help='ip or hostname of target', type='string')
 
-oparser.add_option('--port', dest='port', default='8080',
-                   help='port of updated on target', type='string')
+aparser.add_argument('--port', dest='port', default='8080',
+                     help='port of updated on target', type='string')
 
-oparser.add_option('--listen', dest='host', default='localhost',
-                   help='interface ip', type='string')
+aparser.add_argument('--listen', dest='host', default='localhost',
+                     help='interface ip', type='string')
 
-oparser.add_option('--monitorport', dest='monitorport', default='8087',
-                   help='port used for update monitor', type='string')
+aparser.add_argument('--monitorport', dest='monitorport', default='8087',
+                     help='port used for update monitor', type='string')
 
-(opt, args) = oparser.parse_args(sys.argv)
+args = aparser.parse_args(sys.argv)
 
-if opt.debug:
+if args.debug:
     import logging
     logging.basicConfig(level=logging.INFO)
     logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
-wsdl = 'http://' + opt.target + ':' + opt.port + '/?wsdl'
+wsdl = 'http://' + args.target + ':' + args.port + '/?wsdl'
 try:
     control = Client(wsdl)
 except BaseException:
     print(wsdl, 'not reachable')
     sys.exit(1)
 
-monitor = MonitorThread(opt.monitorport)
+monitor = MonitorThread(args.monitorport)
 monitor.start()
 
 time.sleep(1)  # hack to ensure that monitor server was started
 
 try:
-    monitor_wsdl = 'http://' + opt.host + ':' + opt.monitorport + '/?wsdl'
+    monitor_wsdl = 'http://' + args.host + ':' + args.monitorport + '/?wsdl'
     control.service.register_monitor(monitor_wsdl)
 except BaseException:
     print("monitor couldn\'t be registered (port already in use?)")
