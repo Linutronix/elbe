@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013, 2015, 2017 Linutronix GmbH
 
+import argparse
 import sys
-from optparse import OptionParser
 
 from elbepack.archivedir import chg_archive
 from elbepack.treeutils import etree
@@ -11,38 +11,33 @@ from elbepack.treeutils import etree
 
 def run_command(argv):
 
-    oparser = OptionParser(
-        usage='usage: %prog chg_archive [options] <xmlfile> '
-              '[<archive>|<directory>]')
-    oparser.add_option(
+    aparser = argparse.ArgumentParser(prog='elbe chg_archive')
+    aparser.add_argument(
         '--keep-attributes',
         action='store_true',
         help='keep file owners and groups, if not specified all files will '
              'belong to root:root',
         dest='keep_attributes',
         default=False)
+    aparser.add_argument('xmlfile')
+    aparser.add_argument('archive', metavar='[archive.tar.bz2 | directory]')
 
-    (opt, args) = oparser.parse_args(argv)
-
-    if len(args) != 2:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(42)
+    args = aparser.parse_args(argv)
 
     try:
-        xml = etree(args[0])
+        xml = etree(args.xmlfile)
     except BaseException:
         print('Error reading xml file!')
         sys.exit(43)
 
     try:
-        xml = chg_archive(xml, args[1], opt.keep_attributes)
+        xml = chg_archive(xml, args.archive, args.keep_attributes)
     except BaseException:
         print('Error reading archive')
         sys.exit(44)
 
     try:
-        xml.write(args[0])
+        xml.write(args.xmlfile)
     except BaseException:
         print('Unable to write new xml file')
         sys.exit(45)
