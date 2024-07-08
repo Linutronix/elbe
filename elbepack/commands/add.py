@@ -2,25 +2,22 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
+import argparse
 import sys
-from optparse import OptionParser
 
 from elbepack.elbexml import ElbeXML, ValidationError
 
 
 def run_command(argv):
 
-    oparser = OptionParser(
-        usage='usage: %prog add [options] <xmlfile> <pkg1> [pkgN]')
-    (_, args) = oparser.parse_args(argv)
+    aparser = argparse.ArgumentParser(prog='elbe add')
+    aparser.add_argument('xmlfile')
+    aparser.add_argument('pkg', nargs='+')
 
-    if len(args) < 2:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(86)
+    args = aparser.parse_args(argv)
 
-    xmlfile = args[0]
-    pkg_lst = args[1:]
+    xmlfile = args.xmlfile
+    pkg_lst = args.pkg
 
     try:
         xml = ElbeXML(xmlfile)
