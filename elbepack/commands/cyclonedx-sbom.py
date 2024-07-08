@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
+import argparse
 import datetime
 import itertools
 import json
-import optparse
 import os
 import sys
 import urllib
@@ -84,17 +84,12 @@ def _component_from_apt_pkg(pkg):
 
 
 def run_command(argv):
-    oparser = optparse.OptionParser()
-    oparser.add_option('-d', dest='elbe_build')
-    options, args = oparser.parse_args(argv)
-
-    if args != [] or options.elbe_build is None:
-        print('invalid options')
-        oparser.print_help()
-        sys.exit(1)
+    aparser = argparse.ArgumentParser(prog='elbe cyclonedx-sbom')
+    aparser.add_argument('-d', dest='elbe_build', required=True)
+    args = aparser.parse_args(argv)
 
     ts = datetime.datetime.now(tz=datetime.timezone.utc)
-    project_dir = options.elbe_build
+    project_dir = args.elbe_build
     source_file = ElbeXML(os.path.join(project_dir, 'source.xml'))
 
     project_name = source_file.text('/name').strip()
