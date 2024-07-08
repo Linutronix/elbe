@@ -53,10 +53,6 @@ Elbe COMMANDS
 ``elbe-init(1)``
    create a project for an Elbe build virtual machine.
 
-``elbe-mkcdrom(1)``
-   create an ISO image containing all binary or source packages used in
-   the given project.
-
 ``elbe-pbuilder(1)``
    generate a pbuilder environment and build packages within it
 
