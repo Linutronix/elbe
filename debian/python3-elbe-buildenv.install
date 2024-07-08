@@ -1,5 +1,4 @@
 usr/lib/python3.*/*-packages/elbepack/commands/adjustpkgs.py
-usr/lib/python3.*/*-packages/elbepack/commands/buildchroot.py
 usr/lib/python3.*/*-packages/elbepack/commands/chroot.py
 usr/lib/python3.*/*-packages/elbepack/commands/db.py
 usr/lib/python3.*/*-packages/elbepack/commands/fetch_initvm_pkgs.py

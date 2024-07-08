@@ -32,9 +32,6 @@ Elbe COMMANDS
 ``elbe-control(1)``
    low-level interface to projects inside the initvm.
 
-``elbe-buildchroot(1)``
-   build a root filesystem.
-
 ``elbe-check_updates(1)``
    check whether package updates are available for a given project.
 

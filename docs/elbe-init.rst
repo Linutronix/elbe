@@ -28,9 +28,7 @@ This command generates a project directory for an Elbe build virtual
 machine.
 
 When *make* is executed in that directory, a VM is started, which
-installs Debian and the Elbe build environment. If the XML file contains
-a *target* section, then the target root filesystem will be built inside
-the virtual machine using ``elbe-buildchroot(1)``.
+installs Debian and the Elbe build environment.
 
 The build VM can be started by executing *make run* (or *make run-con*,
 if a serial console is enough). After that, the virtual machine can be
