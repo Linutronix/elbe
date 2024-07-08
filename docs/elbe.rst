@@ -50,10 +50,6 @@ Elbe COMMANDS
 ``elbe-gen_update(1)``
    generate an update archive for elbe-updated.
 
-``elbe-genlicence(1)``
-   generate a file containing the licences of all packages included in a
-   project.
-
 ``elbe-get_archive(1)``
    extract a config archive (.tbz) from a XML file.
 
