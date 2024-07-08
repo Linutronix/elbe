@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
 """
 Debian and Python have different ways to represent non-release versions.

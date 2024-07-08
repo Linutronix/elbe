@@ -1,3 +1,7 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2013-2014, 2017-2018 Linutronix GmbH
+
 import importlib
 import pathlib
 import struct

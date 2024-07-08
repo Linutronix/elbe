@@ -1,3 +1,7 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2024 Linutronix GmbH
+
 """
 Utility to validate the contents of a created image.
 The image is not booted but only mounted safely through libguestfs.
