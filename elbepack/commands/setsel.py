@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2014, 2017 Linutronix GmbH
 
-import sys
-from optparse import OptionParser
+import argparse
 
 from elbepack.treeutils import etree
 
@@ -32,24 +31,21 @@ def parse_selections(fname):
 
 def run_command(argv):
 
-    oparser = OptionParser(usage='usage: %prog setsel <xmlfile> <pkglist.txt>')
-    (_, args) = oparser.parse_args(argv)
+    aparser = argparse.ArgumentParser(prog='elbe setsel')
+    aparser.add_argument('xmlfile')
+    aparser.add_argument('pkglist')
+    args = aparser.parse_args(argv)
 
-    if len(args) != 2:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(23)
-
-    xml = etree(args[0])
+    xml = etree(args.xmlfile)
 
     pkg_list = xml.node('/pkg-list')
 
     pkg_list.clear()
 
-    sels = parse_selections(args[1])
+    sels = parse_selections(args.pkglist)
 
     for s in sels:
         new = pkg_list.append('pkg')
         new.set_text(s)
 
-    xml.write(args[0])
+    xml.write(args.xmlfile)
