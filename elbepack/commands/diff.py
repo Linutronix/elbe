@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2014, 2017 Linutronix GmbH
 
+import argparse
 import filecmp
 import os
-import sys
-from optparse import OptionParser
 
 
 def walk_generated(gen_path, fix_path, exclude):
@@ -95,24 +94,21 @@ def walk_fixed(gen_path, fix_path, exclude):
 
 def run_command(argv):
 
-    oparser = OptionParser(usage='usage: %prog diff [options] <dir1> <dir2>')
-    oparser.add_option('--exclude', action='append', dest='exclude',
-                       help='Paths to exclude')
-    (opt, args) = oparser.parse_args(argv)
+    aparser = argparse.ArgumentParser(prog='elbe diff')
+    aparser.add_argument('--exclude', action='append', dest='exclude',
+                         help='Paths to exclude')
+    aparser.add_argument('dir1')
+    aparser.add_argument('dir2')
+    args = aparser.parse_args(argv)
 
-    if len(args) != 2:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(106)
+    if args.exclude is None:
+        args.exclude = []
 
-    if opt.exclude is None:
-        opt.exclude = []
+    gen_rfs = args.dir1
+    fix_rfs = args.dir2
 
-    gen_rfs = args[0]
-    fix_rfs = args[1]
-
-    differ, rm = walk_generated(gen_rfs, fix_rfs, opt.exclude)
-    only, mkdir = walk_fixed(gen_rfs, fix_rfs, opt.exclude)
+    differ, rm = walk_generated(gen_rfs, fix_rfs, args.exclude)
+    only, mkdir = walk_fixed(gen_rfs, fix_rfs, args.exclude)
 
     print('suggesting:')
     print()
