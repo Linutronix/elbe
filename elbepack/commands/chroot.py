@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import argparse
 import logging
 import os
 import subprocess
 import sys
-from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError, ValidationMode
@@ -14,29 +14,25 @@ from elbepack.log import elbe_logging
 
 
 def run_command(argv):
-    oparser = OptionParser(
-        usage='usage: %prog chroot [options] <builddir> [cmd]')
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
-    oparser.add_option('--target', action='store_true', dest='target',
-                       help='chroot into target instead of buildenv',
-                       default=False)
-    oparser.add_option('--buildtype', dest='buildtype',
-                       help='Override the buildtype')
+    aparser = argparse.ArgumentParser(prog='elbe chroot')
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
+    aparser.add_argument('--target', action='store_true', dest='target',
+                         help='chroot into target instead of buildenv',
+                         default=False)
+    aparser.add_argument('--buildtype', dest='buildtype',
+                         help='Override the buildtype')
+    aparser.add_argument('builddir')
+    aparser.add_argument('cmd', nargs='*')
 
-    (opt, args) = oparser.parse_args(argv)
-
-    if not args:
-        print('wrong number of arguments')
-        oparser.print_help()
-        sys.exit(72)
+    args = aparser.parse_args(argv)
 
     with elbe_logging({'streams': sys.stdout}):
         try:
-            project = ElbeProject(args[0],
-                                  override_buildtype=opt.buildtype,
-                                  skip_validate=opt.skip_validation,
+            project = ElbeProject(args.builddir,
+                                  override_buildtype=args.buildtype,
+                                  skip_validate=args.skip_validation,
                                   url_validation=ValidationMode.NO_CHECK)
         except ValidationError:
             logging.exception('XML validation failed.  Bailing out')
@@ -48,12 +44,9 @@ def run_command(argv):
         # TODO: howto set env in chroot?
         os.environ['PS1'] = project.xml.text('project/name') + r': \w\$'
 
-        chroot_args = ['/bin/bash']
+        chroot_args = args.cmd or ['/bin/bash']
 
-        if len(args) > 1:
-            chroot_args = args[1:]
-
-        chroot, path = (project.targetfs, project.targetpath) if opt.target else \
+        chroot, path = (project.targetfs, project.targetpath) if args.target else \
                        (project.buildenv, project.chrootpath)
 
         try:
