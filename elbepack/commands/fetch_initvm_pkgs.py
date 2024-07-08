@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
+import argparse
 import contextlib
 import logging
 import os
 import subprocess
 import sys
-from optparse import OptionParser
 
 from apt import Cache
 from apt.package import FetchError
@@ -23,57 +23,48 @@ from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
 
 def run_command(argv):
 
-    # TODO - Set threshold and remove pylint directives
-    #
-    # We might want to make the threshold higher for certain
-    # files/directories or just globaly.
+    aparser = argparse.ArgumentParser(prog='elbe fetch_initvm_pkgs')
 
-    oparser = OptionParser(
-        usage='usage: %prog fetch_initvm_pkgs [options] <xmlfile>')
+    aparser.add_argument('-b', '--binrepo', dest='binrepo',
+                         default='/var/cache/elbe/initvm-bin-repo',
+                         help='directory where the bin repo should reside')
 
-    oparser.add_option('-b', '--binrepo', dest='binrepo',
-                       default='/var/cache/elbe/initvm-bin-repo',
-                       help='directory where the bin repo should reside')
+    aparser.add_argument('-s', '--srcrepo', dest='srcrepo',
+                         default='/var/cache/elbe/initvm-src-repo',
+                         help='directory where the src repo should reside')
 
-    oparser.add_option('-s', '--srcrepo', dest='srcrepo',
-                       default='/var/cache/elbe/initvm-src-repo',
-                       help='directory where the src repo should reside')
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
 
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
+    aparser.add_argument('--cdrom-mount-path', dest='cdrom_path',
+                         help='path where cdrom is mounted')
 
-    oparser.add_option('--cdrom-mount-path', dest='cdrom_path',
-                       help='path where cdrom is mounted')
+    aparser.add_argument('--cdrom-device', dest='cdrom_device',
+                         help='cdrom device, in case it has to be mounted')
 
-    oparser.add_option('--cdrom-device', dest='cdrom_device',
-                       help='cdrom device, in case it has to be mounted')
+    aparser.add_argument('--apt-archive', dest='archive',
+                         default='/var/cache/elbe/binaries/main',
+                         help='path where binary packages are downloaded to.')
 
-    oparser.add_option('--apt-archive', dest='archive',
-                       default='/var/cache/elbe/binaries/main',
-                       help='path where binary packages are downloaded to.')
+    aparser.add_argument('--src-archive', dest='srcarchive',
+                         default='/var/cache/elbe/sources',
+                         help='path where src packages are downloaded to.')
 
-    oparser.add_option('--src-archive', dest='srcarchive',
-                       default='/var/cache/elbe/sources',
-                       help='path where src packages are downloaded to.')
+    aparser.add_argument('--skip-build-sources', action='store_false',
+                         dest='build_sources', default=True,
+                         help='Skip downloading Source Packages')
 
-    oparser.add_option('--skip-build-sources', action='store_false',
-                       dest='build_sources', default=True,
-                       help='Skip downloading Source Packages')
+    aparser.add_argument('--skip-build-bin', action='store_false',
+                         dest='build_bin', default=True,
+                         help='Skip downloading binary packages')
 
-    oparser.add_option('--skip-build-bin', action='store_false',
-                       dest='build_bin', default=True,
-                       help='Skip downloading binary packages')
+    aparser.add_argument('xmlfile')
 
-    (opt, args) = oparser.parse_args(argv)
-
-    if len(args) != 1:
-        print('wrong number of arguments')
-        oparser.print_help()
-        sys.exit(46)
+    args = aparser.parse_args(argv)
 
     try:
-        xml = ElbeXML(args[0], skip_validate=opt.skip_validation)
+        xml = ElbeXML(args.xmlfile, skip_validate=args.skip_validation)
     except ValidationError as e:
         print(str(e))
         print('xml validation failed. Bailing out')
@@ -81,26 +72,26 @@ def run_command(argv):
 
     with elbe_logging({'streams': sys.stdout}), contextlib.ExitStack() as stack:
 
-        if opt.cdrom_path:
-            if opt.cdrom_device:
-                stack.enter_context(mount(opt.cdrom_device, opt.cdrom_path))
+        if args.cdrom_path:
+            if args.cdrom_device:
+                stack.enter_context(mount(args.cdrom_device, args.cdrom_path))
 
             # a cdrom build is identified by the cdrom option
             # the xml file that is copied into the initvm
             # by the initrd does not have the cdrom tags setup.
-            mirror = f'file://{opt.cdrom_path}'
+            mirror = f'file://{args.cdrom_path}'
         else:
-            mirror = xml.get_initvm_primary_mirror(opt.cdrom_path)
+            mirror = xml.get_initvm_primary_mirror(args.cdrom_path)
 
         init_codename = xml.get_initvm_codename()
 
         # Binary Repo
         #
-        repo = CdromInitRepo(init_codename, opt.binrepo, mirror)
+        repo = CdromInitRepo(init_codename, args.binrepo, mirror)
 
-        os.makedirs(opt.archive, exist_ok=True)
+        os.makedirs(args.archive, exist_ok=True)
 
-        if opt.build_bin:
+        if args.build_bin:
             pkglist = get_initvm_pkglist()
             cache = Cache()
             cache.open()
@@ -111,7 +102,7 @@ def run_command(argv):
                     try:
                         p = cache[pkg.name]
                         pkgver = p.installed
-                        deb = pkgver.fetch_binary(opt.archive, ElbeAcquireProgress(cb=None))
+                        deb = pkgver.fetch_binary(args.archive, ElbeAcquireProgress(cb=None))
                         repo.includedeb(deb, 'main', prio=pkgver.priority)
                         break
                     except ValueError:
@@ -137,24 +128,24 @@ def run_command(argv):
 
         # Source Repo
         #
-        repo = CdromSrcRepo(init_codename, init_codename, opt.srcrepo, 0, mirror)
-        os.makedirs(opt.srcarchive, exist_ok=True)
+        repo = CdromSrcRepo(init_codename, init_codename, args.srcrepo, 0, mirror)
+        os.makedirs(args.srcarchive, exist_ok=True)
 
         # a cdrom build does not have sources
         # skip adding packages to the source repo
         #
         # FIXME: we need a way to add source cdroms later on
-        if opt.cdrom_path:
-            opt.build_sources = False
+        if args.cdrom_path:
+            args.build_sources = False
 
-        if opt.build_sources:
+        if args.build_sources:
             srcpkglist = get_corresponding_source_packages(cache, [pkg.name for pkg in pkglist])
             for name, version in srcpkglist:
                 pkg_id = f'{name}-{version}'
                 retry = 1
                 while retry < 3:
                     try:
-                        dsc = fetch_source(name, version, opt.srcarchive,
+                        dsc = fetch_source(name, version, args.srcarchive,
                                            ElbeAcquireProgress())
                         repo.include_init_dsc(dsc, 'initvm')
                         break
