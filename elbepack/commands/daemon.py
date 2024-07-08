@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
+import argparse
 import contextlib
 import errno
 import importlib
 import os
 import socket
 import wsgiref.simple_server
-from optparse import OptionParser
 from pkgutil import iter_modules
 
 import elbepack.daemons
@@ -70,13 +70,13 @@ def run_command(argv):
     if not daemons:
         print('no elbe daemons installed')
 
-    oparser = OptionParser(usage='usage: %prog')
-    oparser.add_option('--host', dest='host', default='0.0.0.0',
-                       help='interface to host daemon')
-    oparser.add_option('--port', dest='port', type=int, default=7587,
-                       help='port to host daemon')
+    aparser = argparse.ArgumentParser(prog='elbe daemon')
+    aparser.add_argument('--host', dest='host', default='0.0.0.0',
+                         help='interface to host daemon')
+    aparser.add_argument('--port', dest='port', type=int, default=7587,
+                         help='port to host daemon')
 
-    (opt, _) = oparser.parse_args(argv)
+    args = aparser.parse_args(argv)
 
     with contextlib.ExitStack() as stack:
         mapping = {}
@@ -93,7 +93,7 @@ def run_command(argv):
         dispatcher = _WsgiDispatcher(mapping)
 
         with wsgiref.simple_server.make_server(
-                opt.host, opt.port, dispatcher,
+                args.host, args.port, dispatcher,
                 handler_class=_ElbeWSGIRequestHandler,
         ) as httpd:
             _sd_notify(b'READY=1\n'
