@@ -2,12 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
+import argparse
 import io
 import os
 import subprocess
-import sys
 from datetime import datetime
-from optparse import OptionParser
 from tempfile import NamedTemporaryFile
 
 from elbepack.treeutils import etree
@@ -122,49 +121,41 @@ def license_string(pkg):
 
 def run_command(argv):
 
-    oparser = OptionParser(
-        usage='usage: %prog parselicence [options] <licencefile>')
-    oparser.add_option('--output', dest='output',
-                       help='outputfilename')
-    oparser.add_option('--mapping', dest='mapping',
-                       help='mapping filename')
-    oparser.add_option(
+    aparser = argparse.ArgumentParser(prog='elbe parselicence')
+    aparser.add_argument('--output', dest='output',
+                         help='outputfilename')
+    aparser.add_argument('--mapping', dest='mapping',
+                         required=True,
+                         help='mapping filename')
+    aparser.add_argument(
         '--use-nomos',
         action='store_true',
         dest='use_nomos',
         default=False,
         help='Use the external nomos tool on the copyright text, '
              'and record the ouput in out xml')
-    oparser.add_option(
+    aparser.add_argument(
         '--errors-only',
         action='store_true',
         dest='only_errors',
         default=False,
         help='Only Output Packages with errors, '
              'needing a fix in the mapping file')
-    oparser.add_option('--tvout', dest='tagvalue',
-                       help='tag value output filename')
+    aparser.add_argument('--tvout', dest='tagvalue',
+                         help='tag value output filename')
 
-    (opt, args) = oparser.parse_args(argv)
+    aparser.add_argument('licencefile')
 
-    if len(args) != 1:
-        print('wrong number of arguments')
-        oparser.print_help()
-        sys.exit(53)
+    args = aparser.parse_args(argv)
 
-    tree = etree(args[0])
+    tree = etree(args.licencefile)
 
     num_pkg = 0
     mr = 0
     hr = 0
     err_pkg = 0
 
-    if not opt.mapping:
-        print('A mapping file is required')
-        oparser.print_help()
-        sys.exit(54)
-
-    mapping = license_dep5_to_spdx(opt.mapping)
+    mapping = license_dep5_to_spdx(args.mapping)
 
     # Dont use direct iterator, because we might want to delete
     # elements, when --errors-only is active
@@ -216,7 +207,7 @@ def run_command(argv):
                     ll = sp.append('license')
                     ll.et.text = lic
 
-        if opt.use_nomos:
+        if args.use_nomos:
             nomos_l = scan_nomos(pkg.text('text'))
             if nomos_l[0] != 'No_license_found':
                 nomos_node = pkg.append('nomos_licenses')
@@ -230,13 +221,13 @@ def run_command(argv):
                 ee = pkg.append('error')
                 ee.et.text = e
             err_pkg += 1
-        elif opt.only_errors:
+        elif args.only_errors:
             # No Errors, and only_errors is active
             # Remove package node
             tree.root.remove_child(pkg)
 
-    if opt.tagvalue is not None:
-        with io.open(opt.tagvalue, 'wt', encoding='utf-8') as fp:
+    if args.tagvalue is not None:
+        with io.open(args.tagvalue, 'wt', encoding='utf-8') as fp:
             fp.write('SPDXVersion: SPDX-1.2\n')
             fp.write('DataLicense: CC0-1.0\n')
             fp.write('\n')
@@ -264,8 +255,8 @@ def run_command(argv):
                 fp.write('PackageLicenseInfoFromFiles: NOASSERTION\n')
                 fp.write('\n')
 
-    if opt.output is not None:
-        tree.write(opt.output)
+    if args.output is not None:
+        tree.write(args.output)
 
     print('statistics:')
     print(f'num:{num_pkg} mr:{mr} hr:{hr} err_pkg:{err_pkg}')
