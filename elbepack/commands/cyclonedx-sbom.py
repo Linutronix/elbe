@@ -84,7 +84,7 @@ def _component_from_apt_pkg(pkg):
 def run_command(argv):
     oparser = optparse.OptionParser()
     oparser.add_option('-d', dest='elbe_build')
-    options, args = oparser.parse_args()
+    options, args = oparser.parse_args(argv)
 
     ts = datetime.datetime.now(tz=datetime.timezone.utc)
     project_dir = options.elbe_build
