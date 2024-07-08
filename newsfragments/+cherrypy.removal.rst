@@ -1,1 +1,0 @@
-Remove cherrypy depdendency.
