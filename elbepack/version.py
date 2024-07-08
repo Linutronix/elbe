@@ -10,7 +10,7 @@ is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)
 elbe_version_base = '15.0'
 elbe_version = elbe_version_base
 if is_devel:
-    elbe_version += ''
+    elbe_version += '.dev0'
 
 elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'python3-elbe-soap',
