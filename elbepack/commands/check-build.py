@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
+import argparse
 import logging
-import optparse
 import os
 import pathlib
 import shutil
@@ -26,30 +26,24 @@ import elbevalidate
 
 
 def run_command(argv):
+    aparser = argparse.ArgumentParser(prog='elbe check-build')
+    aparser.add_argument('cmd', choices=['all', *CheckBase.tests],
+                         help='Check to run')
+    aparser.add_argument('build-dir', help='Build directory')
 
-    oparser = optparse.OptionParser(usage='usage: %prog check-build <cmd> <build-dir>')
+    args = aparser.parse_args(argv)
 
-    (_, args) = oparser.parse_args(argv)
-
-    if len(args) < 2:
-        oparser.print_help()
-        os.sys.exit(63)
-
-    if args[0] == 'all':
+    if args.cmd == 'all':
         tests = [CheckBase.tests[tag] for tag in CheckBase.tests]
-    elif args[0] in CheckBase.tests:
-        tests = [CheckBase.tests[args[0]]]
+    elif args.cmd in CheckBase.tests:
+        tests = [CheckBase.tests[args.cmd]]
     else:
-        print(f'Invalid check test {args[0]}')
-        print('Valid tests are:\n\tall')
-        for tag in CheckBase.tests:
-            print(f'\t{tag}')
-        os.sys.exit(64)
+        raise ValueError(args.cmd)
 
     total_cnt = 0
     fail_cnt = 0
 
-    directory = pathlib.Path(args[1])
+    directory = pathlib.Path(args.build_dir)
 
     with elbe_logging({'streams': None}):
 
