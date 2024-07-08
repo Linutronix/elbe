@@ -60,9 +60,6 @@ Elbe COMMANDS
 ``elbe-get_archive(1)``
    extract a config archive (.tbz) from a XML file.
 
-``elbe-hdimg(1)``
-   create a hard disk image from the given XML file.
-
 ``elbe-init(1)``
    create a project for an Elbe build virtual machine.
 
