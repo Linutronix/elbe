@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2018 Linutronix GmbH
 
+import argparse
 import subprocess
 import sys
-from optparse import OptionParser
 
 from elbepack import virtapt
 from elbepack.aptpkgutils import XMLPackage
@@ -14,7 +14,7 @@ from elbepack.pkgutils import ChangelogNeedsDependency, extract_pkg_changelog
 from elbepack.validate import validate_xml
 
 
-def build_changelog_xml(v, opt, update_packages):
+def build_changelog_xml(v, changelogs, update_packages):
     v.do_downloads()
 
     clx = changelogs_xml()
@@ -31,44 +31,39 @@ def build_changelog_xml(v, opt, update_packages):
 
         clx.add_pkg_changelog(xp, log)
 
-    clx.write(opt.changelogs)
+    clx.write(changelogs)
 
 
 def run_command(argv):
 
-    oparser = OptionParser(
-        usage='usage: %prog check_updates [options] <source-xmlfile>')
-    oparser.add_option(
+    aparser = argparse.ArgumentParser(prog='elbe check_updates')
+    aparser.add_argument(
         '-s',
         '--script',
         dest='script',
         help='filename of script to run when an update is required')
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
-    oparser.add_option(
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
+    aparser.add_argument(
         '-c',
         '--changelogs',
         dest='changelogs',
         help='filename of changelog xml file')
-    (opt, args) = oparser.parse_args(argv)
+    aparser.add_argument('source-xmlfile')
+    args = aparser.parse_args(argv)
 
-    if len(args) != 1:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(51)
-
-    if not opt.skip_validation:
-        validation = validate_xml(args[0])
+    if not args.skip_validation:
+        validation = validate_xml(args.source_xmlfile)
         if validation:
             print('xml validation failed. Bailing out')
             for i in validation:
                 print(i)
             sys.exit(52)
 
-    print(f'checking {args[0]}')
+    print(f'checking {args.source_xmlfile}')
 
-    xml = ElbeXML(args[0])
+    xml = ElbeXML(args.source_xmlfile)
 
     fullp = xml.node('fullpkgs')
 
@@ -107,7 +102,7 @@ def run_command(argv):
                 print(f'{xp.name}: {xp.installed_version} != {cver}')
                 required_updates += 1
 
-                if opt.changelogs:
+                if args.changelogs:
                     v.mark_pkg_download(xp.name)
                     xp.candidate_version = cver
                     update_packages.append(xp)
@@ -116,15 +111,15 @@ def run_command(argv):
     sys.stderr.flush()
     if errors > 0:
         print(f'{errors} Errors occured, xml files needs fixing')
-        if opt.script:
-            subprocess.run([opt.script, 'ERRORS', args[0]])
+        if args.script:
+            subprocess.run([args.script, 'ERRORS', args.source_xmlfile])
     elif required_updates > 0:
         print(f'{required_updates} updates required')
 
-        if opt.changelogs:
-            build_changelog_xml(v, opt, update_packages)
+        if args.changelogs:
+            build_changelog_xml(v, args.changelogs, update_packages)
 
-        if opt.script:
-            subprocess.run([opt.script, 'UPDATE', args[0]])
+        if args.script:
+            subprocess.run([args.script, 'UPDATE', args.source_xmlfile])
     else:
         print('No Updates available')
