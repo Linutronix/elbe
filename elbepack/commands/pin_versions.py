@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
+import argparse
 import sys
-from optparse import OptionParser
 
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
@@ -11,21 +11,16 @@ from elbepack.validate import validate_xml
 
 def run_command(argv):
 
-    oparser = OptionParser(
-        usage='usage: %prog pin_versions [options] <xmlfile>')
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
+    aparser = argparse.ArgumentParser(prog='elbe pin_versions')
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
+    aparser.add_argument('xmlfile')
 
-    (opt, args) = oparser.parse_args(argv)
+    args = aparser.parse_args(argv)
 
-    if len(args) != 1:
-        print('Wrong number of arguments')
-        oparser.print_help()
-        sys.exit(94)
-
-    if not opt.skip_validation:
-        validation = validate_xml(args[0])
+    if not args.skip_validation:
+        validation = validate_xml(args.xmlfile)
         if validation:
             print('xml validation failed. Bailing out')
             for i in validation:
@@ -33,7 +28,7 @@ def run_command(argv):
             sys.exit(95)
 
     try:
-        xml = etree(args[0])
+        xml = etree(args.xmlfile)
     except BaseException:
         print('Error reading xml file!')
         sys.exit(96)
@@ -57,7 +52,7 @@ def run_command(argv):
         pak.et.set('version', pver)
 
     try:
-        xml.write(args[0])
+        xml.write(args.xmlfile)
     except BaseException:
         print('Unable to write new xml file')
         sys.exit(98)
