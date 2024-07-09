@@ -3,6 +3,9 @@
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
 class SPDXChecker:
+    name = 'spdx'
+    version = '0.0.0'
+
     def __init__(self, tree, lines):
         self.lines = lines
 
