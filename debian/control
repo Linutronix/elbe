@@ -57,7 +57,6 @@ Depends: ${misc:Depends}, ${python3:Depends},
   python3-elbe-common (= ${binary:Version}),
   python3,
   python3-mako,
-  python3-parted,
   debian-archive-keyring (>= 2017.5+deb9u1)
 Description: elbe executable
  Common files for ELBE (embedded Linux build environment). These

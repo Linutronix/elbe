@@ -15,7 +15,6 @@ import time
 
 from elbepack.filesystem import Filesystem
 from elbepack.fstab import fstabentry
-from elbepack.hdimg import do_hdimg
 from elbepack.imgutils import mount
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
@@ -408,6 +407,7 @@ class TargetFs(ChRootFilesystem):
             f.close()
 
     def part_target(self, targetdir, grub_version, grub_fw_type=None):
+        from elbepack.hdimg import do_hdimg
 
         # create target images and copy the rfs into them
         hdimages = do_hdimg(self.xml,
