@@ -159,7 +159,7 @@ class Image(BlockDevice):
 
     @classmethod
     @contextlib.contextmanager
-    def from_file(cls, image) -> collections.abc.Generator[typing.Self, None, None]:
+    def from_file(cls, image) -> collections.abc.Generator['Image', None, None]:
         """ Construct an :py:class:`Image` from a local file. """
         gfs = guestfs.GuestFS(python_return_dict=True)
         instance = cls(gfs)
