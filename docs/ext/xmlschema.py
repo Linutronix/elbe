@@ -176,7 +176,7 @@ class XmlSchema(SphinxDirective):
             restrictions += nodes.title(text='Restrictions')
             table = nodes.table()
             tgroup = nodes.tgroup()
-            tgroup += [nodes.colspec(), nodes.colspec()]
+            tgroup += [nodes.colspec(colwidth=1), nodes.colspec(colwidth=1)]
             tbody = nodes.tbody()
             for r in n.node(RSTR):
                 row = nodes.row()
