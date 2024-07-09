@@ -2,121 +2,76 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import argparse
 import socket
 import sys
 from http.client import BadStatusLine
-from optparse import OptionGroup, OptionParser
 from urllib.error import URLError
 
 from suds import WebFault
 
+from elbepack.cli import add_arguments_from_decorated_function
 from elbepack.config import cfg
 from elbepack.elbexml import ValidationMode
-from elbepack.soapclient import ClientAction, ElbeSoapClient
+from elbepack.soapclient import ElbeSoapClient, client_actions
 
 
 def run_command(argv):
 
-    oparser = OptionParser(usage='usage: elbe control [options] <command>')
+    aparser = argparse.ArgumentParser(prog='elbe control')
 
-    oparser.add_option('--host', dest='host', default=cfg['soaphost'],
-                       help='Ip or hostname of elbe-daemon.')
+    aparser.add_argument('--host', dest='host', default=cfg['soaphost'],
+                         help='Ip or hostname of elbe-daemon.')
 
-    oparser.add_option('--port', dest='port', default=cfg['soapport'],
-                       help='Port of soap itf on elbe-daemon.')
+    aparser.add_argument('--port', dest='port', default=cfg['soapport'],
+                         help='Port of soap itf on elbe-daemon.')
 
-    oparser.add_option('--pass', dest='passwd', default=cfg['elbepass'],
-                       help='Password (default is foo).')
+    aparser.add_argument('--pass', dest='passwd', default=cfg['elbepass'],
+                         help='Password (default is foo).')
 
-    oparser.add_option('--user', dest='user', default=cfg['elbeuser'],
-                       help='Username (default is root).')
+    aparser.add_argument('--user', dest='user', default=cfg['elbeuser'],
+                         help='Username (default is root).')
 
-    oparser.add_option(
+    aparser.add_argument(
         '--retries',
         dest='retries',
-        default='10',
+        type=int,
+        default=10,
         help='How many times to retry the connection to the server before '
              'giving up (default is 10 times, yielding 10 seconds).')
 
-    oparser.add_option(
-        '--build-bin',
-        action='store_true',
-        dest='build_bin',
-        default=False,
-        help='Build binary repository CDROM, for exact reproduction.')
-
-    oparser.add_option('--build-sources', action='store_true',
-                       dest='build_sources', default=False,
-                       help='Build source CDROM')
-
-    oparser.add_option(
-        '--skip-pbuilder',
-        action='store_true',
-        dest='skip_pbuilder',
-        default=False,
-        help="skip pbuilder section of XML (don't build packages)")
-
-    oparser.add_option('--output',
-                       dest='output', default=None,
-                       help='Output files to <directory>')
-
-    oparser.add_option('--matches', dest='matches', default=False,
-                       help='Select files based on wildcard expression.')
-
-    oparser.add_option('--pbuilder-only', action='store_true',
-                       dest='pbuilder_only', default=False,
-                       help='Only list/download pbuilder Files')
-
-    oparser.add_option('--profile', dest='profile', default='',
-                       help='Make pbuilder commands build the specified profile')
-
-    oparser.add_option('--cross', dest='cross', default=False,
-                       action='store_true',
-                       help='Creates an environment for crossbuilding if '
-                            'combined with create. Combined with build it'
-                            ' will use this environment.')
-
-    oparser.add_option('--no-ccache', dest='noccache', default=False,
-                       action='store_true',
-                       help="Deactivates the compiler cache 'ccache'")
-
-    oparser.add_option('--ccache-size', dest='ccachesize', default='10G',
-                       action='store', type='string',
-                       help='set a limit for the compiler cache size '
-                            '(should be a number followed by an optional '
-                            'suffix: k, M, G, T. Use 0 for no limit.)')
-
-    devel = OptionGroup(
-        oparser,
+    devel = aparser.add_argument_group(
         'options for elbe developers',
         "Caution: Don't use these options in a productive environment")
-    devel.add_option('--skip-urlcheck', action='store_true',
-                     dest='url_validation', default=ValidationMode.CHECK_ALL,
-                     help='Skip URL Check inside initvm')
+    devel.add_argument('--skip-urlcheck', action='store_true',
+                       dest='url_validation', default=ValidationMode.CHECK_ALL,
+                       help='Skip URL Check inside initvm')
 
-    devel.add_option('--debug', action='store_true',
-                     dest='debug', default=False,
-                     help='Enable debug mode.')
+    devel.add_argument('--debug', action='store_true',
+                       dest='debug', default=False,
+                       help='Enable debug mode.')
 
-    (opt, args) = oparser.parse_args(argv)
+    subparsers = aparser.add_subparsers(required=True)
 
-    if not args:
-        print('elbe control - no subcommand given', file=sys.stderr)
-        ClientAction.print_actions()
-        return
+    for action_name, do_action in client_actions.items():
+        action_parser = subparsers.add_parser(action_name)
+        action_parser.set_defaults(func=do_action)
+        add_arguments_from_decorated_function(action_parser, do_action)
+
+    args = aparser.parse_args(argv)
+    args.parser = aparser
 
     try:
         control = ElbeSoapClient(
-            opt.host,
-            opt.port,
-            opt.user,
-            opt.passwd,
-            debug=opt.debug,
-            retries=int(
-                opt.retries))
+            args.host,
+            args.port,
+            args.user,
+            args.passwd,
+            debug=args.debug,
+            retries=args.retries)
     except URLError:
         print(
-            f'Failed to connect to Soap server {opt.host}:{opt.port}\n',
+            f'Failed to connect to Soap server {args.host}:{args.port}\n',
             file=sys.stderr)
         print('', file=sys.stderr)
         print('Check, whether the initvm is actually running.', file=sys.stderr)
@@ -124,7 +79,7 @@ def run_command(argv):
         sys.exit(13)
     except socket.error:
         print(
-            f'Failed to connect to Soap server {opt.host}:{opt.port}\n',
+            f'Failed to connect to Soap server {args.host}:{args.port}\n',
             file=sys.stderr)
         print('', file=sys.stderr)
         print(
@@ -134,7 +89,7 @@ def run_command(argv):
         sys.exit(14)
     except BadStatusLine:
         print(
-            f'Failed to connect to Soap server {opt.host}:{opt.port}\n',
+            f'Failed to connect to Soap server {args.host}:{args.port}\n',
             file=sys.stderr)
         print('', file=sys.stderr)
         print('Check, whether the initvm is actually running.', file=sys.stderr)
@@ -142,14 +97,7 @@ def run_command(argv):
         sys.exit(15)
 
     try:
-        action = ClientAction(args[0])
-    except KeyError:
-        print('elbe control - unknown subcommand', file=sys.stderr)
-        ClientAction.print_actions()
-        sys.exit(25)
-
-    try:
-        action.execute(control, opt, args[1:])
+        args.func(control, args)
     except WebFault as e:
         print('Server returned error:', file=sys.stderr)
         print('', file=sys.stderr)
