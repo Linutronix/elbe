@@ -6,6 +6,11 @@ single_file = false
 filename = 'docs/news/{project_date}-v{version}.rst'
 
 [tool.pytest.ini_options]
+python_files = [
+    'test_*.py',
+    '*_test.py',
+    'contrib/check-deb-py-versions.py',
+]
 filterwarnings = 'error'
 
 [tool.mypy]
