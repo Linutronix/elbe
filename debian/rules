@@ -8,7 +8,7 @@ endif
 export PYTHONDONTWRITEBYTECODE=1
 
 override_dh_auto_test:
-	pytest --junit-xml=junit.xml
+	python3 -m pytest --junit-xml=junit.xml
 
 override_dh_auto_configure:
 	cd docs && $(MAKE) $(MAKE_OPTS)
