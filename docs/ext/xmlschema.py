@@ -82,11 +82,11 @@ class XmlSchema(SphinxDirective):
 
         retval = ''
 
-        if e.et.attrib.has_key('minOccurs'):
+        if 'minOccurs' in e.et.attrib:
             min = e.et.attrib['minOccurs']
 
-        if e.et.attrib.has_key('maxOccurs'):
-            min = e.et.attrib['maxOccurs']
+        if 'maxOccurs' in e.et.attrib:
+            max = e.et.attrib['maxOccurs']
 
         if min == '0':
             retval += '*optional* '
