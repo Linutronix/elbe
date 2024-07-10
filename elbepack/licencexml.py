@@ -128,4 +128,4 @@ class copyright_xml:
         return
 
     def write(self, fname):
-        self.outxml.write(fname, encoding='iso-8859-1')
+        self.outxml.write(fname, encoding='utf-8')
