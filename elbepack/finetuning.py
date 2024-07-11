@@ -300,7 +300,7 @@ class RawCmdAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, self.node.et.text)
+            chroot(target.path, shlex.split(self.node.et.text))
 
 
 @FinetuningAction.register('command')

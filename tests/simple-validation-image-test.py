@@ -163,9 +163,13 @@ def _test_finetuning(root):
     assert root.joinpath('testfile').is_file()
     assert root.joinpath('testfile').read_text() == 'Some cöntent wíth spe©ial characters'
 
-    # <raw_cmd>cat /etc/hosts | cat -n > /etc/hosts4</raw_cmd>
+    # <command>cat /etc/hosts | cat -n > /etc/hosts4</command>
     assert root.joinpath('etc', 'hosts4').is_file()
     assert root.joinpath('etc', 'hosts4').read_text().startswith('     1\t127.0.0.1\tlocalhost\n')
+
+    # <raw_cmd>cp /etc/hosts /etc/hosts5</raw_cmd>
+    assert root.joinpath('etc', 'hosts5').is_file()
+    assert root.joinpath('etc', 'hosts5').read_text().startswith('127.0.0.1\tlocalhost\n')
 
 
 def _test_rfs_partition(build_dir, part):

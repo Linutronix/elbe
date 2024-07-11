@@ -69,7 +69,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				Some cöntent wíth spe©ial characters
 			</file>
 
-			<raw_cmd>cat /etc/hosts | cat -n > /etc/hosts4</raw_cmd>
+			<command>cat /etc/hosts | cat -n > /etc/hosts4</command>
+			<raw_cmd>cp /etc/hosts /etc/hosts5</raw_cmd>
 		</finetuning>
 
 		<project-finetuning>

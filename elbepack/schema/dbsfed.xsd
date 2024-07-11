@@ -2180,7 +2180,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="raw_cmd" type="rfs:string" minOccurs="0">
         <annotation>
           <documentation>
-            execute the defined command
+            execute the defined command without a shell
           </documentation>
         </annotation>
       </element>
