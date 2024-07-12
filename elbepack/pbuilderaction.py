@@ -252,7 +252,7 @@ class BuildAction(PBuilderAction):
             print('Listing available files:')
             print('')
             try:
-                run_elbe(['control', '--pbuilder-only', 'get_files', prjdir], check=True)
+                run_elbe(['control', 'get_files', '--pbuilder-only', prjdir], check=True)
             except subprocess.CalledProcessError:
                 print('elbe control get_files Failed', file=sys.stderr)
                 print('', file=sys.stderr)
@@ -277,7 +277,7 @@ class BuildAction(PBuilderAction):
             ensure_outdir(opt)
 
             try:
-                run_elbe(['control', '--pbuilder-only', 'get_files',
+                run_elbe(['control', 'get_files', '--pbuilder-only',
                           '--output', opt.outdir, prjdir], check=True)
             except subprocess.CalledProcessError:
                 print('elbe control get_files Failed', file=sys.stderr)
