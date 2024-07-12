@@ -310,7 +310,7 @@ class ProjectManager:
             self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross,
                                                   noccache))
 
-    def build_current_pdebuild(self, userid, cpuset, profile, cross):
+    def build_current_pdebuild(self, userid, profile, cross):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)
             if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
@@ -318,7 +318,7 @@ class ProjectManager:
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                    f'create --project {ep.builddir}" first')
 
-            self.worker.enqueue(PdebuildJob(ep, cpuset, profile, cross))
+            self.worker.enqueue(PdebuildJob(ep, profile, cross))
 
     def set_orig_fname(self, userid, fname):
         with self.lock:

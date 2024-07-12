@@ -36,12 +36,6 @@ OPTIONS
    This file is used to create a new ELBE project including the pbuilder
    environment.
 
---cpuset <int>
-   When this value is not -1 (the default), the pbuilder is run using
-   *taskset <cpuset>* which allows one to limit the number of cpus used
-   for the build. This is useful when multithreading and qemu-user yield
-   problem with e.g. java.
-
 --profile string
    Specify the build profile(s) to build. (dpkg-buildpackage
    -P<profile>) Provide multiple profiles as a comma separated list.
@@ -138,7 +132,7 @@ EXAMPLES
    ::
 
       # cd program
-      # elbe pbuilder build --project `cat ../myarm.prj` --cpuset 1
+      # elbe pbuilder build --project `cat ../myarm.prj`
 
 SEE ALSO
 ========

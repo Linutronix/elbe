@@ -138,7 +138,7 @@ _cmd_args_completion_elbe()
             pbuilder)
                 file_arg=true
                 disable_space=true
-                cmd_opt=$(_elbe_subcmd_with_opt 'build create --cpuset= --cross --help --origfile= -p \
+                cmd_opt=$(_elbe_subcmd_with_opt 'build create --cross --help --origfile= -p \
                                                  --project= --skip-download --variants= --xmlfile= --ccache-size= \
                                                  -h --no-ccache --output= --profile= --proxy= -v --writeproject=')
                 ;;

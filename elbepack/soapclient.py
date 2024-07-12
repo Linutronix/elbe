@@ -667,8 +667,7 @@ class SetPdebuilderAction(ClientAction):
 
         client.service.start_pdebuild(builddir)
         self.upload_file(client.service.append_pdebuild, builddir, filename)
-        client.service.finish_pdebuild(builddir, opt.cpuset,
-                                       opt.profile, opt.cross)
+        client.service.finish_pdebuild(builddir, opt.profile, opt.cross)
 
 
 ClientAction.register(SetPdebuilderAction)

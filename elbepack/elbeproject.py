@@ -441,9 +441,6 @@ class ElbeProject:
         else:
             logging.info('Unknown pbuild source: %s', p.tag)
 
-        # pdebuild_build(-1) means use all cpus
-        self.pdebuild_build(cpuset=-1, profile='', cross=False)
-
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None,
                      tgt_pkg_lst=None):
@@ -707,7 +704,7 @@ class ElbeProject:
         else:
             do(['mkdir', '-p', os.path.join(self.builddir, 'pbuilder', 'result')])
 
-    def pdebuild(self, cpuset, profile, cross):
+    def pdebuild(self, profile, cross):
         cross_pbuilderrc = os.path.join(self.builddir, 'cross_pbuilderrc')
         if cross and not os.path.exists(cross_pbuilderrc):
             logging.error('Please make sure that you create the pbuilder '
@@ -738,20 +735,10 @@ class ElbeProject:
             os.path.join(self.builddir, 'current_pdebuild.tar.gz'),
             '-C', pbdir])
 
-        self.pdebuild_build(cpuset, profile, cross)
+        self.pdebuild_build(profile, cross)
         self.repo.finalize()
 
-    def pdebuild_build(self, cpuset, profile, cross):
-        # check whether we have to use taskset to run pdebuild
-        # this might be useful, when things like java dont
-        # work with multithreading
-        #
-        if cpuset != -1:
-            cpuset_cmd = ['taskset', cpuset]
-        else:
-            # cpuset == -1 means empty cpuset_cmd
-            cpuset_cmd = []
-
+    def pdebuild_build(self, profile, cross):
         profile_list = profile.split(',')
         deb_build_opts = [i for i in profile_list if i in ('nodoc', 'nocheck')]
 
@@ -790,8 +777,7 @@ class ElbeProject:
                 do(['dpkg-source', '-b', '.'],
                    cwd=os.path.join(self.builddir, 'pdebuilder', 'current'),
                    env_add=debuild_env)
-                do([*cpuset_cmd,
-                    'pbuilder', 'build', '--host-arch', self.arch,
+                do(['pbuilder', 'build', '--host-arch', self.arch,
                     '--configfile', os.path.join(self.builddir, 'cross_pbuilderrc'),
                     '--basetgz', os.path.join(self.builddir, 'pbuilder_cross', 'base.tgz'),
                     '--buildresult', os.path.join(self.builddir, 'pbuilder_cross', 'result'),
@@ -800,7 +786,7 @@ class ElbeProject:
                    env_add=debuild_env)
                 pbuilderdir = 'pbuilder_cross'
             else:
-                do([*cpuset_cmd, 'pdebuild',
+                do(['pdebuild',
                     '--configfile', os.path.join(self.builddir, 'pbuilderrc'),
                     '--use-pdebuild-internal',
                     '--buildresult', os.path.join(self.builddir, 'pbuilder', 'result')],

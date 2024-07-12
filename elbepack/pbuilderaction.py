@@ -229,7 +229,7 @@ class BuildAction(PBuilderAction):
 
         try:
             run_elbe([
-                'control', 'set_pdebuild', '--cpuset', str(opt.cpuset),
+                'control', 'set_pdebuild',
                 '--profile', opt.profile, *crossopt,
                 prjdir, tmp.fname('pdebuild.tar.gz'),
             ], check=True)
