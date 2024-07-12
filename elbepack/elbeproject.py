@@ -814,10 +814,10 @@ class ElbeProject:
                                           'debian',
                                           'control'))
 
-            self.repo.include(os.path.join(self.builddir,
-                                           pbuilderdir,
-                                           'result',
-                                           '*.changes'))
+            self.repo.include(glob.glob(os.path.join(self.builddir,
+                                                     pbuilderdir,
+                                                     'result',
+                                                     '*.changes'))[0])
         except subprocess.CalledProcessError:
             logging.exception('Package fails to build.\n'
                               'Please make sure, that the submitted package '
