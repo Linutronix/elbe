@@ -165,7 +165,7 @@ class BuildAction(PBuilderAction):
         tmp = TmpdirFilesystem()
 
         if opt.xmlfile:
-            ps = run_elbe(['control', 'create_project', '--retries', '60', opt.xmlfile],
+            ps = run_elbe(['control', '--retries', '60', 'create_project', opt.xmlfile],
                           capture_output=True, encoding='utf-8')
             if ps.returncode != 0:
                 print('elbe control create_project failed.', file=sys.stderr)
