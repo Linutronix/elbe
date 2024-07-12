@@ -9,6 +9,7 @@ import importlib
 import os
 import socket
 import wsgiref.simple_server
+import wsgiref.util
 from pkgutil import iter_modules
 
 import elbepack.daemons
@@ -24,11 +25,9 @@ class _WsgiDispatcher:
         self.mapping = mapping
 
     def __call__(self, environ, start_response):
-        path_info = environ['PATH_INFO']
-        parts = path_info.split('/', maxsplit=2)
-        if len(parts) != 3:
+        app_name = wsgiref.util.shift_path_info(environ)
+        if app_name is None:
             return _not_found(start_response)
-        _, app_name, _ = parts
 
         app = self.mapping.get(app_name)
         if app is None:
