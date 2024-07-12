@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
 import argparse
+import dataclasses
 import datetime
 import io
 import os
@@ -12,6 +13,17 @@ from tempfile import NamedTemporaryFile
 from elbepack.spdx import SPDX_LICENSE_IDENTIFIERS
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
+
+
+@dataclasses.dataclass
+class Statistics:
+    total_pkgs: int = 0
+    num_machine_readable: int = 0
+    num_heuristics: int = 0
+    num_error_pkgs: int = 0
+
+    def __str__(self):
+        return ' '.join([f'{k}={v}' for k, v in dataclasses.asdict(self).items()])
 
 
 class license_dep5_to_spdx (dict):
@@ -132,56 +144,13 @@ def license_string(pkg):
     return ' AND '.join(l_list)
 
 
-def run_command(argv):
-
-    aparser = argparse.ArgumentParser(prog='elbe parselicence')
-    aparser.add_argument('--output', dest='output',
-                         help='outputfilename')
-    aparser.add_argument('--mapping', dest='mapping',
-                         required=True,
-                         help='mapping filename')
-    aparser.add_argument(
-        '--use-nomos',
-        action='store_true',
-        dest='use_nomos',
-        default=False,
-        help='Use the external nomos tool on the copyright text, '
-             'and record the ouput in out xml')
-    aparser.add_argument(
-        '--errors-only',
-        action='store_true',
-        dest='only_errors',
-        default=False,
-        help='Only Output Packages with errors, '
-             'needing a fix in the mapping file')
-    aparser.add_argument('--tvout', dest='tagvalue',
-                         help='tag value output filename')
-
-    aparser.add_argument('licencefile')
-
-    args = aparser.parse_args(argv)
-
-    tree = etree(args.licencefile)
-
-    num_pkg = 0
-    mr = 0
-    hr = 0
-    err_pkg = 0
-
-    mapping = license_dep5_to_spdx(args.mapping)
-
-    # Dont use direct iterator, because we might want to delete
-    # elements, when --errors-only is active
-    for pkg in list(tree.root):
+def _apply_mapping(licenses, mapping, *, use_nomos=False, only_errors=False):
+    for pkg in list(licenses.root):
         errors = []
 
         pkg_name = pkg.et.attrib['name']
-        num_pkg += 1
-        if pkg.has('machinereadable'):
-            mr += 1
 
         if pkg.has('heuristics'):
-            hr += 1
             if not mapping.have_override(pkg_name):
                 errors.append(
                     f'no override for heuristics based package "{pkg_name}"')
@@ -220,7 +189,16 @@ def run_command(argv):
                     ll = sp.append('license')
                     ll.et.text = lic
 
-        if args.use_nomos:
+        if errors:
+            for e in errors:
+                ee = pkg.append('error')
+                ee.et.text = e
+        elif only_errors:
+            # No Errors, and only_errors is active
+            # Remove package node
+            licenses.root.remove_child(pkg)
+
+        if use_nomos:
             nomos_l = scan_nomos(pkg.text('text'))
             if nomos_l[0] != 'No_license_found':
                 nomos_node = pkg.append('nomos_licenses')
@@ -229,15 +207,60 @@ def run_command(argv):
                     ll = nomos_node.append('license')
                     ll.et.text = lic
 
-        if errors:
-            for e in errors:
-                ee = pkg.append('error')
-                ee.et.text = e
-            err_pkg += 1
-        elif args.only_errors:
-            # No Errors, and only_errors is active
-            # Remove package node
-            tree.root.remove_child(pkg)
+
+def _compute_statistics(licenses):
+    statistics = Statistics()
+    for pkg in list(licenses.root):
+
+        statistics.total_pkgs += 1
+
+        if pkg.has('machinereadable'):
+            statistics.num_machine_readable += 1
+
+        if pkg.has('heuristics'):
+            statistics.num_heuristics += 1
+
+        if pkg.has('error'):
+            statistics.num_error_pkgs += 1
+
+    return statistics
+
+
+def run_command(argv):
+
+    aparser = argparse.ArgumentParser(prog='elbe parselicence')
+    aparser.add_argument('--output', dest='output',
+                         help='outputfilename')
+    aparser.add_argument('--mapping', dest='mapping',
+                         required=True,
+                         help='mapping filename')
+    aparser.add_argument(
+        '--use-nomos',
+        action='store_true',
+        dest='use_nomos',
+        default=False,
+        help='Use the external nomos tool on the copyright text, '
+             'and record the ouput in out xml')
+    aparser.add_argument(
+        '--errors-only',
+        action='store_true',
+        dest='only_errors',
+        default=False,
+        help='Only Output Packages with errors, '
+             'needing a fix in the mapping file')
+    aparser.add_argument('--tvout', dest='tagvalue',
+                         help='tag value output filename')
+
+    aparser.add_argument('licencefile')
+
+    args = aparser.parse_args(argv)
+
+    tree = etree(args.licencefile)
+
+    mapping = license_dep5_to_spdx(args.mapping)
+
+    _apply_mapping(tree, mapping, use_nomos=args.use_nomos, only_errors=args.only_errors)
+    statistics = _compute_statistics(tree)
 
     if args.tagvalue is not None:
         created = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
@@ -273,4 +296,4 @@ def run_command(argv):
         tree.write(args.output)
 
     print('statistics:')
-    print(f'num:{num_pkg} mr:{mr} hr:{hr} err_pkg:{err_pkg}')
+    print(statistics)

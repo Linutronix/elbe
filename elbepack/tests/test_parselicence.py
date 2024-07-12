@@ -30,7 +30,11 @@ def test_parselicence(tmp_path):
             here.joinpath('cyclonedx', 'build-simple-example', 'licence-target.xml'),
         ])
 
-    assert stdout.getvalue() == 'statistics:\nnum:156 mr:137 hr:3 err_pkg:86\n'
+    assert stdout.getvalue() == 'statistics:'\
+           '\ntotal_pkgs=156' \
+           ' num_machine_readable=137' \
+           ' num_heuristics=3' \
+           ' num_error_pkgs=86\n'
 
     xml_reference = here.joinpath('test_parselicence_reference.xml')
     assert xml_output.read_text() == xml_reference.read_text()

@@ -17583,20 +17583,20 @@ Comment: GPL-3+
  `/usr/share/common-licenses/GPL-3'
 </text>
 <heuristics/>
-<debian_licenses><license>GPL-3+</license>
-<license>GFDL-NIV-1.3</license>
-<license>LGPL-2.1+</license>
+<debian_licenses><license>GFDL-NIV-1.3</license>
 <license>LGPL-3+ or GPL-2+</license>
+<license>GPL-3+</license>
 <license>GPL-3+ with Bison exception</license>
 <license>BSD-2-clause</license>
+<license>LGPL-2.1+</license>
 </debian_licenses>
 <spdx_licenses>
-<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3)</license>
-<license>LGPL-2.1-or-later</license>
 <license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later</license>
 <license>GPL-3.0-or-later WITH Bison-exception-2.2</license>
 <license>BSD-2-Clause</license>
+<license>LGPL-2.1-or-later</license>
 </spdx_licenses><error>no override for heuristics based package "libelf1"</error>
 <error>no mapping for "GFDL-NIV-1.3" for pkg "libelf1"</error>
 </pkglicense>
@@ -22984,30 +22984,30 @@ Comment: https://github.com/benhoyt/inih
 </text>
 <heuristics/>
 <debian_licenses><license/>
-<license>BSD-3-Clause</license>
-<license>CC0 license</license>
-<license>The main library is licensed under GNU Lesser</license>
-<license>LGPLv3+_or_GPLv2+</license>
-<license>Expat</license>
-<license>LGPLv2.1+</license>
 <license>GPLv3+</license>
 <license>Apache-2.0</license>
+<license>The main library is licensed under GNU Lesser</license>
+<license>CC0 license</license>
+<license>LGPLv2.1+</license>
+<license>LGPLv3+_or_GPLv2+</license>
+<license>Expat</license>
+<license>BSD-3-Clause</license>
 </debian_licenses>
 <spdx_licenses>
 <license>Empty license</license>
-<license>BSD-3-Clause</license>
-<license>UNKNOWN_MAPPING(CC0 license)</license>
-<license>UNKNOWN_MAPPING(The main library is licensed under GNU Lesser)</license>
-<license>UNKNOWN_MAPPING(LGPLv3+_or_GPLv2+)</license>
-<license>MIT</license>
-<license>UNKNOWN_MAPPING(LGPLv2.1+)</license>
 <license>GPL-3.0-or-later</license>
 <license>Apache-2.0</license>
+<license>UNKNOWN_MAPPING(The main library is licensed under GNU Lesser)</license>
+<license>UNKNOWN_MAPPING(CC0 license)</license>
+<license>UNKNOWN_MAPPING(LGPLv2.1+)</license>
+<license>UNKNOWN_MAPPING(LGPLv3+_or_GPLv2+)</license>
+<license>MIT</license>
+<license>BSD-3-Clause</license>
 </spdx_licenses><error>no override for heuristics based package "libgnutls30"</error>
-<error>no mapping for "CC0 license" for pkg "libgnutls30"</error>
 <error>no mapping for "The main library is licensed under GNU Lesser" for pkg "libgnutls30"</error>
-<error>no mapping for "LGPLv3+_or_GPLv2+" for pkg "libgnutls30"</error>
+<error>no mapping for "CC0 license" for pkg "libgnutls30"</error>
 <error>no mapping for "LGPLv2.1+" for pkg "libgnutls30"</error>
+<error>no mapping for "LGPLv3+_or_GPLv2+" for pkg "libgnutls30"</error>
 </pkglicense>
 <pkglicense name="libgpg-error0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libgpg-error
