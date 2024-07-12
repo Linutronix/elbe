@@ -21,7 +21,10 @@ def _app(environ, respond):
     # Return 200 OK if file exists, otherwise 404 Not Found
     logger.warn('Serving as %s: "%s"', mime_type, fn)
     if os.path.exists(fn):
-        respond('200 OK', [('Content-Type', mime_type)])
+        respond('200 OK', [
+            ('Content-Type', mime_type),
+            ('Content-Length', str(os.stat(fn).st_size)),
+        ])
         return wsgiref.util.FileWrapper(open(fn, 'rb'))
     else:
         respond('404 Not Found', [('Content-Type', 'text/plain')])
