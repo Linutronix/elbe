@@ -747,10 +747,10 @@ class ElbeProject:
         # work with multithreading
         #
         if cpuset != -1:
-            cpuset_cmd = f'taskset {cpuset} '
+            cpuset_cmd = ['taskset', cpuset]
         else:
             # cpuset == -1 means empty cpuset_cmd
-            cpuset_cmd = ''
+            cpuset_cmd = []
 
         profile_list = profile.split(',')
         deb_build_opts = [i for i in profile_list if i in ('nodoc', 'nocheck')]
@@ -790,7 +790,7 @@ class ElbeProject:
                 do(['dpkg-source', '-b', '.'],
                    cwd=os.path.join(self.builddir, 'pdebuilder', 'current'),
                    env_add=debuild_env)
-                do([cpuset_cmd,
+                do([*cpuset_cmd,
                     'pbuilder', 'build', '--host-arch', self.arch,
                     '--configfile', os.path.join(self.builddir, 'cross_pbuilderrc'),
                     '--basetgz', os.path.join(self.builddir, 'pbuilder_cross', 'base.tgz'),
@@ -800,7 +800,7 @@ class ElbeProject:
                    env_add=debuild_env)
                 pbuilderdir = 'pbuilder_cross'
             else:
-                do([cpuset_cmd, 'pdebuild',
+                do([*cpuset_cmd, 'pdebuild',
                     '--configfile', os.path.join(self.builddir, 'pbuilderrc'),
                     '--use-pdebuild-internal',
                     '--buildresult', os.path.join(self.builddir, 'pbuilder', 'result')],
