@@ -29,7 +29,7 @@ def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe check-build')
     aparser.add_argument('cmd', choices=['all', *CheckBase.tests],
                          help='Check to run')
-    aparser.add_argument('build-dir', help='Build directory')
+    aparser.add_argument('build_dir', help='Build directory')
 
     args = aparser.parse_args(argv)
 
