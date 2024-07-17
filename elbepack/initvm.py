@@ -11,8 +11,10 @@ import shutil
 import socket
 import subprocess
 import sys
+import textwrap
 import time
 
+from elbepack.cli import CliError, with_cli_details
 from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.treeutils import etree
@@ -47,9 +49,7 @@ def _test_soap_communication(sleep=10, wait=120):
             if ps.returncode == 0:
                 break
         if time.time() > stop:
-            print(f'Waited for {wait/60} minutes and the daemon is still not active.',
-                  file=sys.stderr)
-            sys.exit(123)
+            raise CliError(123, f'Waited for {wait/60} minutes and the daemon is still not active.')
         print('*', end='', flush=True)
         time.sleep(sleep)
 
@@ -57,10 +57,8 @@ def _test_soap_communication(sleep=10, wait=120):
 def _build_initvm(directory):
     try:
         subprocess.run(['make'], cwd=directory, check=True)
-    except subprocess.CalledProcessError:
-        print('Building the initvm Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(147)
+    except subprocess.CalledProcessError as e:
+        raise with_cli_details(e, 147, 'Building the initvm failed')
 
 
 class _InitVM(abc.ABC):
@@ -125,30 +123,26 @@ class LibvirtInitVM(_InitVM):
                         break
 
                 if not self._conn:
-                    print('', file=sys.stderr)
-                    print('Accessing libvirt provider system not possible.', file=sys.stderr)
-                    print('Even after waiting 180 seconds.', file=sys.stderr)
-                    print("Make sure that package 'libvirt-daemon-system' is", file=sys.stderr)
-                    print('installed, and the service is running properly', file=sys.stderr)
-                    sys.exit(118)
+                    raise CliError(118, textwrap.dedent("""
+                        Accessing libvirt provider system not possible.
+                        Even after waiting 180 seconds.
+                        Make sure that package 'libvirt-daemon-system' is
+                        installed, and the service is running properly."""))
 
             elif verr.args[0].startswith('authentication unavailable'):
-                print('', file=sys.stderr)
-                print('Accessing libvirt provider system not allowed.', file=sys.stderr)
-                print('Users which want to use elbe'
-                      "need to be members of the 'libvirt' group.", file=sys.stderr)
-                print("'gpasswd -a <user> libvirt' and logging in again,", file=sys.stderr)
-                print('should fix the problem.', file=sys.stderr)
-                sys.exit(119)
+                raise CliError(119, textwrap.dedent("""
+                    Accessing libvirt provider system not allowed.
+                    Users which want to use elbe'
+                    need to be members of the 'libvirt' group.
+                    'gpasswd -a <user> libvirt' and logging in again,
+                    should fix the problem."""))
 
             elif verr.args[0].startswith('error from service: CheckAuthorization'):
-                print('', file=sys.stderr)
-                print('Accessing libvirt failed.', file=sys.stderr)
-                print('Probably entering the password for accssing libvirt', file=sys.stderr)
-                print("timed out. If this occured after 'elbe initvm create'", file=sys.stderr)
-                print("it should be safe to use 'elbe initvm start' to", file=sys.stderr)
-                print('continue.', file=sys.stderr)
-                sys.exit(120)
+                raise CliError(120, textwrap.dedent("""
+                    Accessing libvirt failed.
+                    Probably entering the password for accssing libvirt
+                    timed out. If this occured after 'elbe initvm create'
+                    it should be safe to use 'elbe initvm start' to continue."""))
 
             else:
                 # In case we get here, the exception is unknown, and we want to see it
@@ -179,18 +173,18 @@ class LibvirtInitVM(_InitVM):
 
     def _build(self):
         if self._get_domain() is not None:
-            print(f"Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.\n")
-            print('If you want to build in your old initvm, use `elbe initvm submit <xml>`.')
-            print('If you want to remove your old initvm from libvirt run `elbe initvm destroy`.\n')
-            print('You can specify another libvirt domain by setting the '
-                  'ELBE_INITVM_DOMAIN environment variable to an unused domain name.\n')
-            print('Note:')
-            print('\t1) You can reimport your old initvm via '
-                  '`virsh --connect qemu:///system define <file>`')
-            print('\t   where <file> is the corresponding libvirt.xml')
-            print('\t2) virsh --connect qemu:///system undefine does not delete the image '
-                  'of your old initvm.')
-            sys.exit(142)
+            raise CliError(142, textwrap.dedent(f"""
+                Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.
+                If you want to build in your old initvm, use `elbe initvm submit <xml>`.')
+                If you want to remove your old initvm from libvirt run `elbe initvm destroy`.
+                You can specify another libvirt domain by setting the
+                ELBE_INITVM_DOMAIN environment variable to an unused domain name.
+                Note:
+                \t1) You can reimport your old initvm via
+                `virsh --connect qemu:///system define <file>`
+                \t   where <file> is the corresponding libvirt.xml
+                \t2) virsh --connect qemu:///system undefine does not delete the image
+                of your old initvm."""))
 
         _build_initvm(self._directory)
 
@@ -203,12 +197,10 @@ class LibvirtInitVM(_InitVM):
         # Register initvm in libvirt.
         try:
             self._conn.defineXML(xml)
-        except subprocess.CalledProcessError:
-            print('Registering initvm in libvirt failed', file=sys.stderr)
-            print('Try `elbe initvm destroy` to delete existing initvm',
-                  'to delete existing initvm',
-                  file=sys.stderr)
-            sys.exit(146)
+        except Exception as e:
+            raise with_cli_details(e, 146, textwrap.dedent("""
+                Registering initvm in libvirt failed.
+                Try `elbe initvm destroy` to delete existing initvm."""))
 
     @staticmethod
     def _attach_disk_fds(domain):
@@ -235,8 +227,7 @@ class LibvirtInitVM(_InitVM):
 
         state = self._state(domain)
         if state == self._libvirt.VIR_DOMAIN_RUNNING:
-            print('Initvm already running.')
-            sys.exit(122)
+            raise CliError(122, 'Initvm already running.')
         elif state == self._libvirt.VIR_DOMAIN_SHUTOFF:
             self._attach_disk_fds(domain)
 
@@ -258,16 +249,14 @@ class LibvirtInitVM(_InitVM):
         elif state == self._libvirt.VIR_DOMAIN_RUNNING:
             _test_soap_communication()
         else:
-            print('Elbe initvm in bad state.')
-            sys.exit(124)
+            raise CliError(124, 'Elbe initvm in bad state.')
 
     def stop(self):
         domain = self._get_domain()
         state = self._state(domain)
 
         if state != self._libvirt.VIR_DOMAIN_RUNNING:
-            print('Initvm is not running.')
-            sys.exit(125)
+            raise CliError(125, 'Initvm is not running.')
 
         while True:
             sys.stdout.write('*')
@@ -291,8 +280,7 @@ class LibvirtInitVM(_InitVM):
 
     def attach(self):
         if self._state(self._get_domain()) != self._libvirt.VIR_DOMAIN_RUNNING:
-            print('Error: Initvm not running properly.')
-            sys.exit(126)
+            raise CliError(126, 'Error: Initvm not running properly.')
 
         print('Attaching to initvm console.')
         subprocess.run(['virsh', '--connect', 'qemu:///system', 'console', cfg['initvm_domain']],
@@ -314,8 +302,7 @@ class QemuInitVM(_InitVM):
 
     def _get_initvmdir(self):
         if not os.path.isdir(self._directory):
-            print('No initvm found!')
-            sys.exit(207)
+            raise CliError(207, 'No initvm found!')
 
         return self._directory
 
@@ -332,15 +319,14 @@ class QemuInitVM(_InitVM):
                 print('This initvm is already running.')
             else:
                 # If no unix socket file is found, assume another VM is bound to the soap port.
-                print('There is already another running initvm.\nPlease stop this VM first.')
-                sys.exit(211)
+                raise CliError(211, 'There is already another running initvm.\n'
+                                    'Please stop this VM first.')
         else:
             # Try to start the QEMU VM for the given directory.
             try:
                 subprocess.Popen(['make', 'run_qemu'], cwd=initvmdir)
             except Exception as e:
-                print(f'Running QEMU failed: {e}')
-                sys.exit(211)
+                raise with_cli_details(e, 211, 'Running QEMU failed')
 
             # This will sys.exit on error.
             _test_soap_communication(sleep=1, wait=60)
@@ -348,8 +334,7 @@ class QemuInitVM(_InitVM):
 
     def ensure(self):
         if not _is_soap_port_reachable():
-            print('Elbe initvm in bad state.\nNo process found on soap port.')
-            sys.exit(206)
+            raise CliError(206, 'Elbe initvm in bad state.\nNo process found on soap port.')
 
     def stop(self):
         """
@@ -364,8 +349,7 @@ class QemuInitVM(_InitVM):
 
         # Test if QEMU monitor unix-socket file exists, and error exit if not.
         if not os.path.exists(socket_path):
-            print('No unix socket found for this vm!\nunable to shutdown this vm.')
-            sys.exit(212)
+            raise CliError(212, 'No unix socket found for this vm!\nunable to shutdown this vm.')
 
         try:
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
@@ -393,8 +377,8 @@ class QemuInitVM(_InitVM):
 
         # Test if socat command is available.
         if shutil.which('socat') is None:
-            print('The command "socat" is required.\nPlease install socat: sudo apt install socat')
-            sys.exit(208)
+            raise CliError(208, 'The command "socat" is required.\n'
+                                'Please install socat: sudo apt install socat')
 
         # Connect to socket file, if it exists.
         if os.path.exists(os.path.join(initvmdir, 'vm-serial-socket')):
@@ -402,10 +386,10 @@ class QemuInitVM(_InitVM):
                             'unix-connect:vm-serial-socket'],
                            cwd=initvmdir, check=False)
         else:
-            print('No unix socket found for the console of this vm!\nUnable to attach.')
+            msg = 'No unix socket found for the console of this vm!\nUnable to attach.'
             if _is_soap_port_reachable():
-                print('There seems to be another initvm running. The soap port is in use.')
-            sys.exit(212)
+                msg += '\nThere seems to be another initvm running. The soap port is in use.'
+            raise CliError(212, msg)
 
     def destroy(self):
         shutil.rmtree(self._directory, ignore_errors=True)

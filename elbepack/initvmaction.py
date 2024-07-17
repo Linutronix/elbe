@@ -7,11 +7,12 @@ import argparse
 import os
 import subprocess
 import sys
+import textwrap
 import time
 
 import elbepack
 import elbepack.initvm
-from elbepack.cli import add_argument
+from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
@@ -78,9 +79,7 @@ def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
         with Repodir(xmlfile, preprocess_xmlfile):
             _submit_and_dl_result(preprocess_xmlfile, cdrom, args)
     except RepodirError as err:
-        print('elbe repodir failed', file=sys.stderr)
-        print(err, file=sys.stderr)
-        sys.exit(127)
+        raise with_cli_details(err, 127, 'elbe repodir failed')
     finally:
         os.remove(preprocess_xmlfile)
 
@@ -89,22 +88,13 @@ def _submit_and_dl_result(xmlfile, cdrom, args):
 
     with preprocess_file(xmlfile, args.variants) as xmlfile:
 
-        ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
-        if ps.returncode != 0:
-            print('elbe control create_project failed.', file=sys.stderr)
-            print(ps.stderr, file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(128)
+        ps = run_elbe(['control', 'create_project'],
+                      capture_output=True, encoding='utf-8', check=True)
 
         prjdir = ps.stdout.strip()
 
         ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
-                      capture_output=True, encoding='utf-8')
-        if ps.returncode != 0:
-            print('elbe control set_xml failed2', file=sys.stderr)
-            print(ps.stderr, file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(129)
+                      capture_output=True, encoding='utf-8', check=True)
 
     if args.writeproject:
         with open(args.writeproject, 'w') as wpf:
@@ -112,12 +102,7 @@ def _submit_and_dl_result(xmlfile, cdrom, args):
 
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')
-        try:
-            run_elbe(['control', 'set_cdrom', prjdir, cdrom], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control set_cdrom Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(131)
+        run_elbe(['control', 'set_cdrom', prjdir, cdrom], check=True)
 
         print('Upload finished')
 
@@ -129,46 +114,29 @@ def _submit_and_dl_result(xmlfile, cdrom, args):
     if cdrom:
         build_opts.append('--skip-pbuilder')
 
-    try:
-        run_elbe(['control', 'build', prjdir, *build_opts], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control build Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(132)
+    run_elbe(['control', 'build', prjdir, *build_opts], check=True)
 
     print('Build started, waiting till it finishes')
 
     try:
         run_elbe(['control', 'wait_busy', prjdir], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control wait_busy Failed', file=sys.stderr)
-        print('', file=sys.stderr)
-        print('The project will not be deleted from the initvm.',
-              file=sys.stderr)
-        print('The files, that have been built, can be downloaded using:',
-              file=sys.stderr)
-        print(
-            f'{prog} control get_files --output "{args.outdir}" "{prjdir}"',
-            file=sys.stderr)
-        print('', file=sys.stderr)
-        print('The project can then be removed using:',
-              file=sys.stderr)
-        print(f'{prog} control del_project "{prjdir}"',
-              file=sys.stderr)
-        print('', file=sys.stderr)
-        sys.exit(133)
+    except subprocess.CalledProcessError as e:
+        raise with_cli_details(e, 133, textwrap.dedent(f"""
+            elbe control wait_busy Failed
+
+            The project will not be deleted from the initvm.
+            The files, that have been built, can be downloaded using:
+            {prog} control get_files --output "{args.outdir}" "{prjdir}"
+
+            The project can then be removed using:
+            {prog} control del_project "{prjdir}" """))
 
     print('')
     print('Build finished !')
     print('')
 
     if args.build_sdk:
-        try:
-            run_elbe(['control', 'build_sdk', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control build_sdk Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(134)
+        run_elbe(['control', 'build_sdk', prjdir], check=True)
 
         print('SDK Build started, waiting till it finishes')
 
@@ -217,12 +185,7 @@ def _submit_and_dl_result(xmlfile, cdrom, args):
         print('')
         print('Listing available files:')
         print('')
-        try:
-            run_elbe(['control', 'get_files', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control get_files Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(137)
+        run_elbe(['control', 'get_files', prjdir], check=True)
 
         print('')
         print(f'Get Files with: elbe control get_file "{prjdir}" <filename>')
@@ -233,20 +196,10 @@ def _submit_and_dl_result(xmlfile, cdrom, args):
 
         print(f'Saving generated Files to {args.outdir}')
 
-        try:
-            run_elbe(['control', 'get_files', '--output', args.outdir, prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control get_files Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(138)
+        run_elbe(['control', 'get_files', '--output', args.outdir, prjdir], check=True)
 
         if not args.keep_files:
-            try:
-                run_elbe(['control', 'del_project', prjdir], check=True)
-            except subprocess.CalledProcessError:
-                print('remove project from initvm failed',
-                      file=sys.stderr)
-                sys.exit(139)
+            run_elbe(['control', 'del_project', prjdir], check=True)
 
 
 def _extract_cdrom(cdrom):
@@ -270,31 +223,18 @@ def _extract_cdrom(cdrom):
     print('', file=sys.stderr)
 
     if not tmp.isfile('source.xml'):
-        print(
-            'Iso image does not contain a source.xml file',
-            file=sys.stderr)
-        print(
-            "This is not supported by 'elbe initvm'",
-            file=sys.stderr)
-        print('', file=sys.stderr)
-        print('Exiting !!!', file=sys.stderr)
-        sys.exit(140)
+        raise CliError(140, textwrap.dedent("""
+            Iso image does not contain a source.xml file.
+            This is not supported by 'elbe initvm'."""))
 
     try:
         exml = ElbeXML(
             tmp.fname('source.xml'),
             url_validation=ValidationMode.NO_CHECK)
     except ValidationError as e:
-        print(
-            'Iso image does contain a source.xml file.',
-            file=sys.stderr)
-        print(
-            'But that xml does not validate correctly',
-            file=sys.stderr)
-        print('', file=sys.stderr)
-        print('Exiting !!!', file=sys.stderr)
-        print(e)
-        sys.exit(141)
+        raise with_cli_details(e, 141, textwrap.dedent("""
+            Iso image does contain a source.xml file.
+            But that xml does not validate correctly."""))
 
     print('Iso Image with valid source.xml detected !')
     print(f'Image was generated using Elbe Version {exml.get_elbe_version()}')
@@ -342,10 +282,10 @@ def _create(args):
     try:
         subprocess.run(['tmux', 'has-session', '-t', 'ElbeInitVMSession'],
                        stderr=subprocess.DEVNULL, check=True)
-        print('ElbeInitVMSession exists in tmux. '
-              'It may belong to an old elbe version. '
-              'Please stop it to prevent interfering with this version.', file=sys.stderr)
-        sys.exit(143)
+        raise CliError(143, textwrap.dedent("""
+            ElbeInitVMSession exists in tmux.
+            It may belong to an old elbe version.
+            Please stop it to prevent interfering with this version."""))
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
 
@@ -379,7 +319,6 @@ def _create(args):
             elbepack.__path__[0],
             'init/default-init.xml')
 
-    try:
         init_opts = []
 
         if not args.build_bin:
@@ -397,13 +336,12 @@ def _create(args):
             cdrom_opts = []
 
         with preprocess_file(xmlfile, args.variants) as preproc:
-            run_elbe(['init', *init_opts, '--directory', args.directory, *cdrom_opts, preproc],
-                     check=True)
+            try:
+                run_elbe(['init', *init_opts, '--directory', args.directory, *cdrom_opts, preproc],
+                         check=True)
 
-    except subprocess.CalledProcessError:
-        print("'elbe init' Failed", file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(145)
+            except subprocess.CalledProcessError as e:
+                raise with_cli_details(e, 145, 'elbe init failed')
 
     initvm = _initvm_from_args(args)
 
@@ -449,7 +387,6 @@ def _submit(args):
     elif args.input.endswith('.iso'):
         # We have an iso image, extract xml from there.
         tmp = _extract_cdrom(args.input)
-
         xmlfile = tmp.fname('source.xml')
         cdrom = args.input
     else:
@@ -462,21 +399,18 @@ def _sync(args):
     top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
     ssh = ['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null']
-    try:
-        subprocess.run([
-            'rsync', '--info=name1,stats1', '--archive', '--times',
-            *[arg for e in excludes for arg in ('--exclude', e)],
-            '--rsh', ' '.join(ssh),
-            '--chown=root:root',
-            f'{top_dir}/elbe',
-            f'{top_dir}/elbepack',
-            'root@localhost:/var/cache/elbe/devel'
-        ], check=True)
-        subprocess.run([
-            *ssh, 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
-        ], check=True)
-    except subprocess.CalledProcessError as E:
-        print(E)
+    subprocess.run([
+        'rsync', '--info=name1,stats1', '--archive', '--times',
+        *[arg for e in excludes for arg in ('--exclude', e)],
+        '--rsh', ' '.join(ssh),
+        '--chown=root:root',
+        f'{top_dir}/elbe',
+        f'{top_dir}/elbepack',
+        'root@localhost:/var/cache/elbe/devel'
+    ], check=True)
+    subprocess.run([
+        *ssh, 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
+    ], check=True)
 
 
 initvm_actions = {
