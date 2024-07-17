@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
+import contextlib
 import datetime
 import io
 import os
@@ -384,10 +385,14 @@ class DestroyAction(InitVMAction):
 
     def execute(self, initvmdir, opt, _args):
         if not opt.qemu_mode:
-            self.initvm.destroy()
-            self.initvm.undefine()
+            import libvirt
 
-        shutil.rmtree(initvmdir)
+            with contextlib.suppress(libvirt.libvirtError):
+                self.initvm.destroy()
+            with contextlib.suppress(libvirt.libvirtError):
+                self.initvm.undefineFlags(libvirt.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE)
+
+        shutil.rmtree(initvmdir, ignore_errors=True)
 
 
 @InitVMAction.register('attach')
