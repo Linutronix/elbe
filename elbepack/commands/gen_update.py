@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
+import argparse
 import logging
 import os
 import sys
-from optparse import OptionParser
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ValidationError
@@ -15,76 +15,68 @@ from elbepack.updatepkg import MissingData, gen_update_pkg
 
 def run_command(argv):
 
-    oparser = OptionParser(usage='usage: %prog gen_update [options] [xmlfile]')
-    oparser.add_option('-t', '--target', dest='target',
-                       help='directoryname of target')
-    oparser.add_option('-o', '--output', dest='output',
-                       help='filename of the update package')
-    oparser.add_option('-n', '--name', dest='name',
-                       help='name of the project (included in the report)')
-    oparser.add_option(
+    aparser = argparse.ArgumentParser(prog='elbe gen_update')
+    aparser.add_argument('-t', '--target', dest='target',
+                         help='directoryname of target')
+    aparser.add_argument('-o', '--output', dest='output',
+                         help='filename of the update package')
+    aparser.add_argument('-n', '--name', dest='name',
+                         help='name of the project (included in the report)')
+    aparser.add_argument(
         '-p',
         '--pre-sh',
         dest='presh_file',
         help='script that is executed before the update will be applied')
-    oparser.add_option(
+    aparser.add_argument(
         '-P',
         '--post-sh',
         dest='postsh_file',
         help='script that is executed after the update was applied')
-    oparser.add_option('-c', '--cfg-dir', dest='cfg_dir',
-                       help='files that are copied to target')
-    oparser.add_option('-x', '--cmd-dir', dest='cmd_dir',
-                       help='scripts that are executed on the target')
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
-    oparser.add_option('--buildtype', dest='buildtype',
-                       help='Override the buildtype')
-    oparser.add_option('--debug', action='store_true', dest='debug',
-                       default=False,
-                       help='Enable various features to debug the build')
+    aparser.add_argument('-c', '--cfg-dir', dest='cfg_dir',
+                         help='files that are copied to target')
+    aparser.add_argument('-x', '--cmd-dir', dest='cmd_dir',
+                         help='scripts that are executed on the target')
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
+    aparser.add_argument('--buildtype', dest='buildtype',
+                         help='Override the buildtype')
+    aparser.add_argument('--debug', action='store_true', dest='debug',
+                         default=False,
+                         help='Enable various features to debug the build')
+    aparser.add_argument('xmlfile', nargs='?')
 
-    (opt, args) = oparser.parse_args(argv)
+    args = aparser.parse_args(argv)
 
-    if len(args) != 1:
-        if not opt.cfg_dir and not opt.cmd_dir:
-            oparser.print_help()
-            sys.exit(31)
+    if args.xmlfile is None and (not args.cfg_dir and not args.cmd_dir):
+        aparser.error('xmlfile is not specificied and neither --cfg-dir nor --cmd-dir are given')
 
-    if len(args) == 1 and not opt.target:
-        print('No target specified')
-        sys.exit(32)
+    if args.xmlfile is not None and not args.target:
+        aparser.error('No target specified')
 
-    if not opt.output:
-        print('No output file specified')
-        sys.exit(33)
-
-    if opt.buildtype:
-        buildtype = opt.buildtype
-    else:
-        buildtype = None
+    if not args.output:
+        aparser.error('No output file specified')
 
     with elbe_logging({'streams': sys.stdout}):
         try:
-            project = ElbeProject(opt.target, name=opt.name,
-                                  override_buildtype=buildtype,
-                                  skip_validate=opt.skip_validation)
+            project = ElbeProject(args.target, name=args.name,
+                                  override_buildtype=args.buildtype,
+                                  skip_validate=args.skip_validation)
         except ValidationError:
             logging.exception('XML validation failed.  Bailing out')
             sys.exit(34)
 
-    if opt.presh_file:
-        if not os.path.isfile(opt.presh_file):
+    if args.presh_file:
+        if not os.path.isfile(args.presh_file):
             logging.error('pre.sh file does not exist')
             sys.exit(35)
-        project.presh_file = opt.presh_file
+        project.presh_file = args.presh_file
 
-    if opt.postsh_file:
-        if not os.path.isfile(opt.postsh_file):
+    if args.postsh_file:
+        if not os.path.isfile(args.postsh_file):
             logging.error('post.sh file does not exist')
             sys.exit(36)
-        project.postsh_file = opt.postsh_file
+        project.postsh_file = args.postsh_file
 
     update_xml = None
     if len(args) >= 1:
@@ -92,9 +84,9 @@ def run_command(argv):
 
     with elbe_logging({'projects': project.builddir}):
         try:
-            gen_update_pkg(project, update_xml, opt.output, buildtype,
-                           opt.skip_validation, opt.debug,
-                           cfg_dir=opt.cfg_dir, cmd_dir=opt.cmd_dir)
+            gen_update_pkg(project, update_xml, args.output, args.uildtype,
+                           args.skip_validation, args.debug,
+                           cfg_dir=args.cfg_dir, cmd_dir=args.cmd_dir)
 
         except ValidationError:
             logging.exception('XML validation failed.  Bailing out')
