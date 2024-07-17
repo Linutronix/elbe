@@ -5,6 +5,7 @@
 import argparse
 import dataclasses
 import datetime
+import enum
 import io
 import os
 import subprocess
@@ -24,6 +25,19 @@ class Statistics:
 
     def __str__(self):
         return ' '.join([f'{k}={v}' for k, v in dataclasses.asdict(self).items()])
+
+
+class LicenseType(enum.Enum):
+    SPDX = enum.auto()
+    SPDX_EXCEPTION = enum.auto()
+    UNKNOWN = enum.auto()
+
+
+@dataclasses.dataclass
+class License:
+    type: LicenseType
+    name: str
+    text: str
 
 
 class license_dep5_to_spdx (dict):
@@ -224,6 +238,58 @@ def _compute_statistics(licenses):
             statistics.num_error_pkgs += 1
 
     return statistics
+
+
+def extract_licenses_from_report(licence_file, mapping_file):
+    extracted_licenses = {}
+    licenses = etree(licence_file)
+    mapping = license_dep5_to_spdx(mapping_file)
+    _apply_mapping(licenses, mapping)
+    for pkg in list(licenses.root):
+
+        pkg_name = pkg.et.attrib['name']
+
+        if pkg.has('spdx_licenses'):
+
+            licenses = []
+            for ll in pkg.node('spdx_licenses'):
+                if ll.et.text.find('UNKNOWN_MAPPING') != -1:
+                    license = License(name=ll.et.text.replace(
+                                      'UNKNOWN_MAPPING(', '').replace(')', ''),
+                                      type=LicenseType.UNKNOWN,
+                                      text=pkg.node('text').et.text)
+                elif ll.et.text.find(' AND ') != -1:
+                    temp = ll.et.text.split(' AND ')
+                    for i in temp:
+                        license = License(name=i,
+                                          type=LicenseType.SPDX,
+                                          text=None)
+                elif ll.et.text.find(' WITH ') != -1:
+                    license = License(name=ll.et.text,
+                                      type=LicenseType.SPDX_EXCEPTION,
+                                      text=None)
+                elif ll.et.text.find(' OR ') != -1:
+                    license = License(name=ll.et.text,
+                                      type=LicenseType.UNKNOWN,
+                                      text=pkg.node('text').et.text)
+                elif ll.et.text == 'Empty license':
+                    license = None
+                else:
+                    license = License(name=ll.et.text,
+                                      type=LicenseType.SPDX,
+                                      text=None)
+
+                licenses.append(license)
+
+            errors = []
+            if pkg.has('error'):
+                for error in pkg.all('error'):
+                    if error.et.text not in errors:
+                        errors.append(error.et.text)
+
+        extracted_licenses[pkg_name] = (licenses, errors)
+
+    return extracted_licenses
 
 
 def run_command(argv):
