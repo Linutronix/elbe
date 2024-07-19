@@ -148,39 +148,6 @@ class ElbeDB:
 
             return ProjectData(p)
 
-    def set_savesh(self, builddir, savesh_file):
-        if not os.path.exists(builddir):
-            raise ElbeDBError('project directory does not exist')
-
-        with session_scope(self.session) as s:
-            p = None
-            try:
-                p = s.query(Project). \
-                    filter(Project.builddir == builddir).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            if p.status == 'busy':
-                raise ElbeDBError(
-                    f'cannot set savesh file while project {builddir} is busy')
-
-            p.edit = datetime.utcnow()
-            if p.status == 'empty_project' or p.status == 'build_failed':
-                p.status = 'needs_build'
-            elif p.status == 'build_done':
-                p.status = 'has_changes'
-
-            with open(builddir + '/save.sh', 'w') as dst:
-                copyfileobj(savesh_file, dst)
-
-            os.chmod(builddir + '/save.sh', 0o755)
-            dos2unix(builddir + '/save.sh')
-
-            return _update_project_file(
-                s, builddir,
-                'save.sh', 'application/sh', 'version save script')
-
     def set_presh(self, builddir, presh_file):
         if not os.path.exists(builddir):
             raise ElbeDBError('project directory does not exist')
