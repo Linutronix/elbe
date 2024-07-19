@@ -2,12 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
-import errno
 import logging
 from os import path, remove
 from shutil import copytree, move, rmtree
-
-from apt.package import FetchError
 
 from elbepack.repomanager import RepoAttributes, RepoBase
 
@@ -26,64 +23,6 @@ class ArchiveRepo(RepoBase):
                           repo_attrs,
                           description,
                           origin)
-
-
-def gen_binpkg_archive(ep, repodir):
-    repopath = path.join(ep.builddir, repodir)
-
-    try:
-        rmtree(repopath)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
-
-    # Create archive directory for packages we have to download
-    ep.buildenv.rfs.mkdir_p('/var/cache/elbe/pkgarchive')
-
-    try:
-        # Repository containing all packages currently installed
-        repo = ArchiveRepo(ep.xml, repopath, 'Elbe',
-                           'Elbe package archive', ['main'])
-
-        c = ep.get_rpcaptcache()
-        pkglist = c.get_installed_pkgs()
-
-        for pkg in pkglist:
-            # Use package from local APT archive, if the file exists
-            filename = pkg.installed_deb
-            rel_path = path.join('var/cache/apt/archives', filename)
-            abs_path = ep.buildenv.rfs.fname(rel_path)
-
-            if not path.isfile(abs_path):
-                # Package file does not exist, download it and adjust path name
-                logging.warning('Package file "%s" not found'
-                                'in var/cache/apt/archives, downloading it',
-                                filename)
-                abs_path = ep.buildenv.rfs.fname(rel_path)
-                pkg_id = f'{pkg.name}-{pkg.installed_version}'
-                try:
-                    abs_path = c.download_binary(pkg.name,
-                                                 '/var/cache/elbe/pkgarchive',
-                                                 pkg.installed_version)
-                except ValueError:
-                    logging.error('No package "%s"', pkg_id)
-                    raise
-                except FetchError:
-                    logging.error('Package "%s" could not be downloaded', pkg_id)
-                    raise
-                except TypeError:
-                    logging.error('Package "%s" missing name or version', pkg_id)
-                    raise
-
-            # Add package to repository
-            # XXX Use correct component
-            repo.includedeb(abs_path, 'main')
-
-        repo.finalize()
-
-    finally:
-        rmtree(ep.buildenv.rfs.fname('var/cache/elbe/pkgarchive'))
-        repo.finalize()
 
 
 def checkout_binpkg_archive(ep, repodir):

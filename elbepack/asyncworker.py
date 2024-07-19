@@ -13,9 +13,8 @@ from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
-from elbepack.pkgarchive import checkout_binpkg_archive, gen_binpkg_archive
+from elbepack.pkgarchive import checkout_binpkg_archive
 from elbepack.rfs import DebootstrapException
-from elbepack.shellhelper import do
 from elbepack.updatepkg import gen_update_pkg
 
 
@@ -421,54 +420,6 @@ class GenUpdateJob(AsyncWorkerJob):
         filename += quote(self.current_version) + '.upd'
 
         return filename
-
-
-class SaveVersionJob(AsyncWorkerJob):
-    def __init__(self, project, description):
-        AsyncWorkerJob.__init__(self, project)
-        self.description = description
-        self.name = self.project.xml.text('project/name')
-        self.version = self.project.xml.text('project/version')
-        self.old_status = None
-
-    def enqueue(self, queue, db):
-        self.old_status = db.set_busy(self.project.builddir,
-                                      ['build_done', 'has_changes'])
-
-        # Create the database entry now. This has the advantage that the
-        # user will see an error message immediately, if he tries to use
-        # the same version number twice. The time-consuming part is creating
-        # the package archive, which is done in execute.
-        try:
-            db.save_version(self.project.builddir, self.description)
-        except BaseException:
-            db.reset_busy(self.project.builddir, self.old_status)
-            raise
-
-        if self.project.savesh_file:
-            logging.info('save version script:')
-            do([
-                self.project.savesh_file, self.project.builddir,
-                self.project.xml.text('project/version'),
-                self.project.xml.text('project/name'),
-            ], check=False)
-
-        logging.info('Enqueueing project to save package archive')
-        AsyncWorkerJob.enqueue(self, queue, db)
-
-    def execute(self, db):
-        logging.info('Generating package archive')
-        repodir = get_versioned_filename(self.name, self.version,
-                                         '.pkgarchive')
-        try:
-            gen_binpkg_archive(self.project, repodir)
-        except Exception:
-            logging.exception('Saving version failed')
-            db.del_version(self.project.builddir, self.version, force=True)
-        else:
-            logging.info('Version saved successfully')
-        finally:
-            db.reset_busy(self.project.builddir, self.old_status)
 
 
 class CheckoutVersionJob(AsyncWorkerJob):

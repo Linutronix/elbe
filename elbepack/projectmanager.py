@@ -22,7 +22,6 @@ from elbepack.asyncworker import (
     CreatePbuilderJob,
     GenUpdateJob,
     PdebuildJob,
-    SaveVersionJob,
     UpdatePbuilderJob,
 )
 from elbepack.db import ElbeDB, get_versioned_filename
@@ -176,12 +175,6 @@ class ProjectManager:
 
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
-
-    def save_current_project_version(self, userid, description=None):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
-            self.worker.enqueue(SaveVersionJob(ep, description))
 
     def checkout_project_version(self, userid, version):
         with self.lock:
