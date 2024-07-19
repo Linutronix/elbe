@@ -155,7 +155,8 @@ class ListPackagesAction(RepoAction):
             sys.exit(199)
 
         builddir = args[0]
-        print(client.service.list_packages(builddir))
+        for pkg in client.service.list_packages(builddir):
+            print(pkg)
 
 
 RepoAction.register(ListPackagesAction)

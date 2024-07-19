@@ -336,17 +336,17 @@ class ESoap (ServiceBase):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.rm_log(uid)
 
-    @rpc(String, _returns=String)
+    @rpc(String, _returns=String.customize(max_occurs='unbounded'))
     @authenticated_uid
     @soap_faults
     def list_packages(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
-        s = ''
+        r = []
         for _, _, filenames in os.walk(
                 os.path.join(builddir, 'repo/pool/main')):
             for filename in fnmatch.filter(filenames, '*.deb'):
-                s += filename + '\n'
-        return s
+                r.append(filename)
+        return sorted(r)
 
     @rpc(String, String)
     @authenticated_uid
