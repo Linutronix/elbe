@@ -72,9 +72,20 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
     uuid = prj.read_text()
     request.addfinalizer(lambda: _delete_project(uuid))
 
+    ps = run_elbe(['prjrepo', 'list_packages', uuid], check=True, capture_output=True)
+    assert ps.stdout == b''
+
     for package in ['libgpio', 'gpiotest']:
         subprocess.run(['git', 'clone', f'https://github.com/Linutronix/{package}.git'],
                        check=True, cwd=build_dir)
         run_elbe(['pbuilder', 'build', '--project', uuid,
                   '--source', build_dir.joinpath(package), '--output', build_dir.joinpath('out')],
                  check=True)
+
+    ps = run_elbe(['prjrepo', 'list_packages', uuid], check=True, capture_output=True)
+    assert ps.stdout == (
+        b'gpiotest_1.0_amd64.deb\n'
+        b'libgpio-dev_3.0.0_amd64.deb\n'
+        b'libgpio1-dbgsym_3.0.0_amd64.deb\n'
+        b'libgpio1_3.0.0_amd64.deb\n'
+    )
