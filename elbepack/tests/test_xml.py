@@ -2,12 +2,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
+import pathlib
 import subprocess
 
 import pytest
 
 from elbepack.directories import run_elbe
 from elbepack.tests import parametrize_xml_test_files, xml_test_files
+
+
+here = pathlib.Path(__file__).parent
 
 
 @pytest.fixture(scope='module')
@@ -84,6 +88,17 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
 
     ps = run_elbe(['prjrepo', 'list_packages', uuid], check=True, capture_output=True)
     assert ps.stdout == (
+        b'gpiotest_1.0_amd64.deb\n'
+        b'libgpio-dev_3.0.0_amd64.deb\n'
+        b'libgpio1-dbgsym_3.0.0_amd64.deb\n'
+        b'libgpio1_3.0.0_amd64.deb\n'
+    )
+
+    run_elbe(['prjrepo', 'upload_pkg', uuid, here / 'equivs-dummy_1.0_all.deb'], check=True)
+
+    ps = run_elbe(['prjrepo', 'list_packages', uuid], check=True, capture_output=True)
+    assert ps.stdout == (
+        b'equivs-dummy_1.0_all.deb\n'
         b'gpiotest_1.0_amd64.deb\n'
         b'libgpio-dev_3.0.0_amd64.deb\n'
         b'libgpio1-dbgsym_3.0.0_amd64.deb\n'
