@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
-import errno
 import os
 from os import path
-from shutil import rmtree
 from threading import Lock
 
 from elbepack.asyncworker import (
@@ -23,7 +21,7 @@ from elbepack.asyncworker import (
     PdebuildJob,
     UpdatePbuilderJob,
 )
-from elbepack.db import ElbeDB, get_versioned_filename
+from elbepack.db import ElbeDB
 from elbepack.elbexml import ValidationMode
 from elbepack.log import read_loggingQ
 from elbepack.uuid7 import uuid7
@@ -174,22 +172,6 @@ class ProjectManager:
 
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
-
-    def del_current_project_version(self, userid, version):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
-            name = ep.xml.text('project/name')
-            self.db.del_version(ep.builddir, version)
-
-            # Delete corresponding package archive, if existing
-            pkgarchive = get_versioned_filename(name, version, '.pkgarchive')
-            pkgarchive_path = path.join(ep.builddir, pkgarchive)
-            try:
-                rmtree(pkgarchive_path)
-            except OSError as e:
-                if e.errno != errno.ENOENT:
-                    raise
 
     def build_current_project(
             self,
