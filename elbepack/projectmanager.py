@@ -175,12 +175,6 @@ class ProjectManager:
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
 
-    def set_current_project_version_description(self, userid, version,
-                                                description):
-        with self.lock:
-            ep = self._get_current_project(userid)
-            self.db.set_version_description(ep.builddir, version, description)
-
     def del_current_project_version(self, userid, version):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)

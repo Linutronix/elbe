@@ -512,18 +512,6 @@ class ElbeDB:
                                  'application/xml',
                                  f'source.xml for version {version}')
 
-    def set_version_description(self, builddir, version, description):
-        with session_scope(self.session) as s:
-            try:
-                v = s.query(ProjectVersion).\
-                    filter(ProjectVersion.builddir == builddir).\
-                    filter(ProjectVersion.version == version).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'no such project version: {builddir} (version {version})')
-
-            v.description = description
-
     def checkout_version_xml(self, builddir, version):
         with session_scope(self.session) as s:
             try:
