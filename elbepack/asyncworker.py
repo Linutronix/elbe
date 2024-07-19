@@ -9,7 +9,6 @@ from queue import Queue
 from threading import Thread
 from urllib.parse import quote
 
-from elbepack.dump import dump_fullpkgs
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
 from elbepack.rfs import DebootstrapException
@@ -278,97 +277,6 @@ class UpdatePbuilderJob(AsyncWorkerJob):
             else:
                 logging.info('Updating Pbuilder finished successfully')
                 success = self.build_done
-        finally:
-            db.reset_busy(self.project.builddir, success)
-
-
-class APTUpdateJob(AsyncWorkerJob):
-
-    def enqueue(self, queue, db):
-        db.set_busy(self.project.builddir,
-                    ['build_done', 'has_changes'])
-        logging.info('Enqueueing project for APT cache update')
-        AsyncWorkerJob.enqueue(self, queue, db)
-
-    def execute(self, db):
-        success = self.build_failed
-        try:
-            logging.info('APT cache update started')
-            with self.project.buildenv:
-                self.project.get_rpcaptcache().update()
-        except Exception:
-            logging.exception('APT cache update failed')
-        else:
-            if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info('APT cache update finished with Error')
-            else:
-                logging.info('APT cache update finished successfully')
-                success = self.has_changes
-        finally:
-            db.reset_busy(self.project.builddir, success)
-
-
-class APTUpdUpgrJob(AsyncWorkerJob):
-
-    def enqueue(self, queue, db):
-        db.set_busy(self.project.builddir, ['build_done', 'has_changes'])
-        logging.info('Enqueueing project for APT update & upgrade')
-        AsyncWorkerJob.enqueue(self, queue, db)
-
-    def execute(self, db):
-        success = self.build_failed
-        try:
-            logging.info('APT update started')
-            with self.project.buildenv:
-                self.project.get_rpcaptcache().update()
-            logging.info('APT update finished, upgrade started')
-            self.project.get_rpcaptcache().upgrade()
-        except Exception:
-            logging.exception('APT update & upgrade failed')
-        else:
-            if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info('APT upgrade finished with Error')
-            else:
-                logging.info('APT upgrade finished')
-                success = self.has_changes
-        finally:
-            db.reset_busy(self.project.builddir, success)
-
-
-class APTCommitJob(AsyncWorkerJob):
-
-    def enqueue(self, queue, db):
-        old_status = db.set_busy(self.project.builddir,
-                                 ['build_done', 'has_changes'])
-        if self.project.get_rpcaptcache().get_changes():
-            logging.info('Enqueueing project for package changes')
-            AsyncWorkerJob.enqueue(self, queue, db)
-        else:
-            db.reset_busy(self.project.builddir, old_status)
-
-    def execute(self, db):
-        success = self.build_failed
-        try:
-            logging.info('Applying package changes')
-            with self.project.buildenv:
-                # Commit changes, update full package list and write
-                # out new source.xml
-                self.project.get_rpcaptcache().commit()
-                dump_fullpkgs(self.project.xml,
-                              self.project.buildenv.rfs,
-                              self.project.get_rpcaptcache())
-
-            sourcexmlpath = path.join(self.project.builddir,
-                                      'source.xml')
-            self.project.xml.xml.write(sourcexmlpath)
-        except Exception:
-            logging.exception('Applying package changes failed')
-        else:
-            if read_maxlevel(self.project.builddir) >= logging.ERROR:
-                logging.info('Package changes applied with Error')
-            else:
-                logging.info('Package changes applied successfully')
-                success = self.has_changes
         finally:
             db.reset_busy(self.project.builddir, success)
 

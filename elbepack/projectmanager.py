@@ -7,9 +7,6 @@ from os import path
 from threading import Lock
 
 from elbepack.asyncworker import (
-    APTCommitJob,
-    APTUpdUpgrJob,
-    APTUpdateJob,
     AsyncWorker,
     BuildCDROMsJob,
     BuildChrootTarJob,
@@ -256,102 +253,6 @@ class ProjectManager:
 
             ep = self._get_current_project(userid)
             self.worker.enqueue(GenUpdateJob(ep, base_version))
-
-    def apt_upd_upgr(self, userid):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-            self.worker.enqueue(APTUpdUpgrJob(ep))
-
-    def apt_update(self, userid):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-            self.worker.enqueue(APTUpdateJob(ep))
-
-    def apt_commit(self, userid):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-            self.worker.enqueue(APTCommitJob(ep))
-
-    def apt_clear(self, userid):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            c.clear()
-
-    def apt_mark_install(self, userid, pkgname, version):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            c.mark_install(pkgname, version)
-            ep = self._get_current_project(userid)
-            pkgs = ep.xml.get_target_packages()
-            if pkgname not in pkgs:
-                pkgs.append(pkgname)
-            ep.xml.set_target_packages(pkgs)
-
-    def apt_mark_upgrade(self, userid, pkgname, version):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            c.mark_upgrade(pkgname, version)
-
-    def apt_mark_keep(self, userid, pkgname, version):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            c.mark_keep(pkgname, version)
-
-            ep = self._get_current_project(userid)
-            pkgs = ep.xml.get_target_packages()
-            if pkgname not in pkgs:
-                pkgs.append(pkgname)
-            ep.xml.set_target_packages(pkgs)
-
-    def apt_get_target_packages(self, userid):
-        with self.lock:
-            ep = self._get_current_project(userid)
-            return ep.xml.get_target_packages()
-
-    def apt_upgrade(self, userid, dist_upgrade=False):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            c.upgrade(dist_upgrade)
-
-    def apt_get_changes(self, userid):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_changes()
-
-    def apt_get_marked_install(self, userid, section='all'):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_marked_install(section=section)
-
-    def apt_get_installed(self, userid, section='all'):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_installed_pkgs(section=section)
-
-    def apt_get_upgradeable(self, userid, section='all'):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_upgradeable(section=section)
-
-    def apt_get_pkglist(self, userid, section='all'):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_pkglist(section)
-
-    def apt_get_pkg(self, userid, term):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_pkg(term)
-
-    def apt_get_pkgs(self, userid, term):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_pkgs(term)
-
-    def apt_get_sections(self, userid):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            return c.get_sections()
 
     def read_current_project_log(self, userid):
         with self.lock:
