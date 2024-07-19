@@ -9,11 +9,9 @@ from queue import Queue
 from threading import Thread
 from urllib.parse import quote
 
-from elbepack.db import get_versioned_filename
 from elbepack.dump import dump_fullpkgs
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
-from elbepack.pkgarchive import checkout_binpkg_archive
 from elbepack.rfs import DebootstrapException
 from elbepack.updatepkg import gen_update_pkg
 
@@ -420,59 +418,6 @@ class GenUpdateJob(AsyncWorkerJob):
         filename += quote(self.current_version) + '.upd'
 
         return filename
-
-
-class CheckoutVersionJob(AsyncWorkerJob):
-    def __init__(self, project, version):
-        AsyncWorkerJob.__init__(self, project)
-        self.version = version
-        self.name = self.project.xml.text('project/name')
-
-    def enqueue(self, queue, db):
-        old_status = db.set_busy(self.project.builddir,
-                                 ['build_done', 'has_changes', 'build_failed'])
-
-        # If old status was build_failed, just restore the source.xml of the
-        # given version and restore the status, indicating that we need a
-        # complete rebuild
-        if old_status == 'build_failed':
-            logging.warning('Previous project status indicated a failed build\n'
-                            'Just checking out the XML file.')
-
-            try:
-                db.checkout_version_xml(self.project.builddir, self.version)
-                self.project.set_xml(None)
-            finally:
-                db.reset_busy(self.project.builddir, old_status)
-            return
-
-        # Otherwise, restore the source.xml of the given version and enqueue
-        # the project for package archive checkout
-        try:
-            db.checkout_version_xml(self.project.builddir, self.version)
-            self.project.set_xml(None)
-        except BaseException:
-            db.reset_busy(self.project.builddir, old_status)
-            self.project.set_xml(None)
-            raise
-
-        logging.info('Enqueueing project for package archive checkout')
-        AsyncWorkerJob.enqueue(self, queue, db)
-
-    def execute(self, db):
-        logging.info('Checking out package archive')
-        repodir = get_versioned_filename(self.name, self.version,
-                                         '.pkgarchive')
-        success = self.build_failed
-        try:
-            checkout_binpkg_archive(self.project, repodir)
-            logging.info('Package archive checked out successfully')
-        except Exception:
-            logging.exception('Checking out package archive failed')
-        else:
-            success = self.has_changes
-        finally:
-            db.reset_busy(self.project.builddir, success)
 
 
 @contextmanager

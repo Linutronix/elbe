@@ -18,7 +18,6 @@ from elbepack.asyncworker import (
     BuildJob,
     BuildSDKJob,
     BuildSysrootJob,
-    CheckoutVersionJob,
     CreatePbuilderJob,
     GenUpdateJob,
     PdebuildJob,
@@ -175,12 +174,6 @@ class ProjectManager:
 
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
-
-    def checkout_project_version(self, userid, version):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
-            self.worker.enqueue(CheckoutVersionJob(ep, version))
 
     def set_current_project_version_description(self, userid, version,
                                                 description):

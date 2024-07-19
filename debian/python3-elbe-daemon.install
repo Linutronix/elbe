@@ -2,5 +2,4 @@ usr/lib/python3.*/*-packages/elbepack/daemons/__init__.py
 usr/lib/python3.*/*-packages/elbepack/daemons/repo.py
 usr/lib/python3.*/*-packages/elbepack/commands/daemon.py
 usr/lib/python3.*/*-packages/elbepack/asyncworker.py
-usr/lib/python3.*/*-packages/elbepack/pkgarchive.py
 usr/lib/python3.*/*-packages/elbepack/projectmanager.py
