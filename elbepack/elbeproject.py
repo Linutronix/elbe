@@ -121,7 +121,6 @@ class ElbeProject:
             skip_validate=False,
             url_validation=ValidationMode.CHECK_ALL,
             rpcaptcache_notifier=None,
-            private_data=None,
             postbuild_file=None,
             presh_file=None,
             postsh_file=None,
@@ -142,8 +141,6 @@ class ElbeProject:
         self.presh_file = presh_file
         self.postsh_file = postsh_file
         self.savesh_file = savesh_file
-
-        self.private_data = private_data
 
         # Apt-Cache will be created on demand with the specified notifier by
         # the get_rpcaptcache method
