@@ -165,11 +165,6 @@ class ProjectManager:
 
         self.db.del_project(builddir)
 
-    def get_current_project_files(self, userid):
-        with self.lock:
-            builddir = self._get_current_project(userid).builddir
-            return self.db.get_project_files(builddir)
-
     def open_current_project_file(self, userid, filename, mode='r'):
         with self.lock:
             builddir = self._get_current_project(
