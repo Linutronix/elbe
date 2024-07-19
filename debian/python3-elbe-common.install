@@ -17,7 +17,6 @@ usr/lib/python3.*/*-packages/elbepack/config.py
 usr/lib/python3.*/*-packages/elbepack/debinstaller.py
 usr/lib/python3.*/*-packages/elbepack/default-preseed.xml
 usr/lib/python3.*/*-packages/elbepack/directories.py
-usr/lib/python3.*/*-packages/elbepack/dosunix.py
 usr/lib/python3.*/*-packages/elbepack/efilesystem.py
 usr/lib/python3.*/*-packages/elbepack/elbexml.py
 usr/lib/python3.*/*-packages/elbepack/elbeproject.py
