@@ -177,13 +177,6 @@ class ProjectManager:
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
 
-    def set_current_project_postbuild(self, userid, postbuild_file):
-        with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
-            f = self.db.set_postbuild(ep.builddir, postbuild_file)
-            ep.postbuild_file = f
-
     def set_current_project_savesh(self, userid, savesh_file):
         with self.lock:
             ep = self._get_current_project(userid, allow_busy=False)

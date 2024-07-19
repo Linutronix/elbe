@@ -148,35 +148,6 @@ class ElbeDB:
 
             return ProjectData(p)
 
-    def set_postbuild(self, builddir, postbuild_file):
-        if not os.path.exists(builddir):
-            raise ElbeDBError('project directory does not exist')
-
-        with session_scope(self.session) as s:
-            p = None
-            try:
-                p = s.query(Project). \
-                    filter(Project.builddir == builddir).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            if p.status == 'busy':
-                raise ElbeDBError(
-                    'cannot set postbuild file while project '
-                    f'{builddir} is busy')
-
-            p.edit = datetime.utcnow()
-
-            with open(builddir + '/postbuild.sh', 'w') as dst:
-                copyfileobj(postbuild_file, dst)
-
-            os.chmod(builddir + '/postbuild.sh', 0o755)
-            dos2unix(builddir + '/postbuild.sh')
-
-            return _update_project_file(s, builddir,
-                                        'postbuild.sh', 'application/sh', 'postbuild script')
-
     def set_savesh(self, builddir, savesh_file):
         if not os.path.exists(builddir):
             raise ElbeDBError('project directory does not exist')
