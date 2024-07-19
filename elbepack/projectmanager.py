@@ -56,13 +56,6 @@ class InvalidState(ProjectManagerError):
     pass
 
 
-class OpenProjectFile:
-    def __init__(self, pfd, mode='r'):
-        self.path = path.join(pfd.builddir, pfd.name)
-        self.mime_type = pfd.mime_type
-        self.fobj = open(self.path, mode)
-
-
 class ProjectManager:
 
     def __init__(self, basepath):
@@ -164,14 +157,6 @@ class ProjectManager:
                                           self.builddir2userid[builddir]))
 
         self.db.del_project(builddir)
-
-    def open_current_project_file(self, userid, filename, mode='r'):
-        with self.lock:
-            builddir = self._get_current_project(
-                userid, allow_busy=False).builddir
-
-            pfd = self.db.get_project_file(builddir, filename)
-            return OpenProjectFile(pfd, mode)
 
     def set_current_project_private_data(self, userid, private_data):
         with self.lock:
