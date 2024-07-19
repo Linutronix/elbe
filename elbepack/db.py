@@ -10,7 +10,7 @@ import re
 import warnings
 from contextlib import contextmanager
 from datetime import datetime
-from shutil import copyfile, copyfileobj, rmtree
+from shutil import copyfile, rmtree
 from threading import Thread
 from urllib.parse import quote
 
@@ -34,7 +34,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
-from elbepack.dosunix import dos2unix
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationMode
 
@@ -147,38 +146,6 @@ class ElbeDB:
                     f'project {builddir} is not registered in the database')
 
             return ProjectData(p)
-
-    def set_postsh(self, builddir, postsh_file):
-        if not os.path.exists(builddir):
-            raise ElbeDBError('project directory does not exist')
-
-        with session_scope(self.session) as s:
-            p = None
-            try:
-                p = s.query(Project). \
-                    filter(Project.builddir == builddir).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            if p.status == 'busy':
-                raise ElbeDBError(
-                    f'cannot set postsh file while project {builddir} is busy')
-
-            p.edit = datetime.utcnow()
-            if p.status == 'empty_project' or p.status == 'build_failed':
-                p.status = 'needs_build'
-            elif p.status == 'build_done':
-                p.status = 'has_changes'
-
-            with open(builddir + '/post.sh', 'w') as dst:
-                copyfileobj(postsh_file, dst)
-
-            dos2unix(builddir + '/post.sh')
-
-            return _update_project_file(
-                s, builddir,
-                'post.sh', 'application/sh', 'post install script')
 
     def set_xml(self, builddir, xml_file):
         # This method can throw: ElbeDBError, ValidationError, OSError
