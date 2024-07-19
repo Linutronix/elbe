@@ -1,0 +1,25 @@
+Format: 1.8
+Date: Fri, 19 Jul 2024 10:31:58 +0000
+Source: equivs-dummy
+Binary: equivs-dummy
+Architecture: all
+Version: 1.0
+Distribution: unstable
+Urgency: low
+Maintainer: Equivs Dummy Package Generator <root@ee81e3fbef18>
+Changed-By: Equivs Dummy Package Generator <root@ee81e3fbef18>
+Description:
+ equivs-dummy - Dummy package to fulfill package dependencies
+Changes:
+ equivs-dummy (1.0) unstable; urgency=low
+ .
+   * First version
+Checksums-Sha1:
+ ccf8d8d5ab1ed378a7d3b84ceb8c8c9d5beeee51 2440 equivs-dummy_1.0_all.deb
+ 09f16fbfd5fef3854a2993f4536d860ac4096d6a 4694 equivs-dummy_1.0_amd64.buildinfo
+Checksums-Sha256:
+ 7dd3dd9b71011a4b4baf49f8dda74515ecbfcf1933a4e2fa88a11cf5824cbe4b 2440 equivs-dummy_1.0_all.deb
+ c4fa842f411798e82dd8ed68cc45932572c6f3bad786dd0b88bc5f2f10ffb296 4694 equivs-dummy_1.0_amd64.buildinfo
+Files:
+ 4bd47ce4db15ce8b8452a9a9820c9a5e 2440 misc optional equivs-dummy_1.0_all.deb
+ d42242a4f501dbad335bca1bef6b769f 4694 misc optional equivs-dummy_1.0_amd64.buildinfo
