@@ -316,7 +316,7 @@ def _set_orig(client, args):
 def _set_pdebuild(client, args):
     client.service.start_pdebuild(args.project_dir)
     _client_action_upload_file(client.service.append_pdebuild, args.project_dir, args.pdebuild_file)
-    client.service.finish_pdebuild(args.project_dir, args.cpuset, args.profile, args.cross)
+    client.service.finish_pdebuild(args.project_dir, args.profile, args.cross)
 
 
 @add_argument('--cross', dest='cross', action='store_true',
