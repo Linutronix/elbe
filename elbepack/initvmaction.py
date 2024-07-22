@@ -27,11 +27,6 @@ def is_soap_local():
     return cfg['soaphost'] in ('localhost', '127.0.0.1')
 
 
-def cmd_exists(x):
-    return any(os.access(os.path.join(path, x), os.X_OK)
-               for path in os.environ['PATH'].split(os.pathsep))
-
-
 prog = os.path.basename(sys.argv[0])
 
 # Create download directory with timestamp,

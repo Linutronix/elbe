@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
-import os
 import subprocess
 import sys
 
@@ -10,10 +9,6 @@ from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.xmlpreprocess import preprocess_file
 
-
-def cmd_exists(x):
-    return any(os.access(os.path.join(path, x), os.X_OK)
-               for path in os.environ['PATH'].split(os.pathsep))
 
 # Create download directory with timestamp,
 # if necessary
