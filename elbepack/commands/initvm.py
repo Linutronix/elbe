@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
+import datetime
 import os
 import sys
 from optparse import OptionParser, SUPPRESS_HELP
@@ -27,7 +28,8 @@ def run_command(argv):
                        dest='skip_download', default=False,
                        help='Skip downloading generated Files')
 
-    oparser.add_option('--output', dest='outdir', default=None,
+    oparser.add_option('--output', dest='outdir',
+                       default='elbe-build-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
                        help='directory where to save downloaded Files')
 
     oparser.add_option(

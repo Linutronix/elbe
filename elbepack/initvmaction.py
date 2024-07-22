@@ -4,7 +4,6 @@
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
 import contextlib
-import datetime
 import io
 import os
 import shutil
@@ -28,17 +27,6 @@ def is_soap_local():
 
 
 prog = os.path.basename(sys.argv[0])
-
-# Create download directory with timestamp,
-# if necessary
-
-
-def ensure_outdir(opt):
-    if opt.outdir is None:
-        opt.outdir = (
-            f"elbe-build-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}")
-
-    print(f'Saving generated Files to {opt.outdir}')
 
 
 class InitVMError(Exception):
@@ -596,7 +584,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('Getting generated Files')
         print('')
 
-        ensure_outdir(opt)
+        print(f'Saving generated Files to {opt.outdir}')
 
         try:
             run_elbe(['control', 'get_files', '--output', opt.outdir, prjdir], check=True)
