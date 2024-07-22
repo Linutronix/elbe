@@ -14,13 +14,6 @@ from elbepack.xmlpreprocess import preprocess_file
 # if necessary
 
 
-def ensure_outdir(opt):
-    if opt.outdir is None:
-        opt.outdir = '..'
-
-    print(f'Saving generated Files to {opt.outdir}')
-
-
 class PBuilderError(Exception):
     pass
 
@@ -266,10 +259,8 @@ class BuildAction(PBuilderAction):
             print(f"Get Files with: 'elbe control get_file {prjdir} <filename>'")
         else:
             print('')
-            print('Getting generated Files')
+            print(f'Saving generated Files to {opt.outdir}')
             print('')
-
-            ensure_outdir(opt)
 
             try:
                 run_elbe(['control', 'get_files', '--pbuilder-only',

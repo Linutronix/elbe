@@ -35,7 +35,7 @@ def run_command(argv):
     oparser.add_option('--source', dest='srcdir', default='.',
                        help='directory containing sources')
 
-    oparser.add_option('--output', dest='outdir', default=None,
+    oparser.add_option('--output', dest='outdir', default='..',
                        help='directory where to save downloaded Files')
 
     oparser.add_option('--profile', dest='profile', default='',
