@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2015, 2017, 2018 Linutronix GmbH
 
+import argparse
 import importlib.resources
 import logging
 import os
@@ -9,10 +10,9 @@ import pathlib
 import shutil
 import subprocess
 import sys
-from optparse import OptionParser, SUPPRESS_HELP
 
 import elbepack.init
-from elbepack.commands import add_deprecated_optparse_option
+from elbepack.commands import add_deprecated_argparse_argument
 from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
 from elbepack.log import elbe_logging
@@ -26,82 +26,75 @@ from elbepack.xmldefaults import ElbeDefaults
 
 def run_command(argv):
 
-    oparser = OptionParser(usage='usage: %prog init [options] <filename>')
+    aparser = argparse.ArgumentParser(prog='elbe init')
 
-    oparser.add_option('--skip-validation', action='store_true',
-                       dest='skip_validation', default=False,
-                       help='Skip xml schema validation')
+    aparser.add_argument('--skip-validation', action='store_true',
+                         dest='skip_validation', default=False,
+                         help='Skip xml schema validation')
 
-    oparser.add_option('--directory', dest='directory', default='./build',
-                       help='Working directory (default is build)',
-                       metavar='FILE')
+    aparser.add_argument('--directory', dest='directory', default='./build',
+                         help='Working directory (default is build)',
+                         metavar='FILE')
 
-    oparser.add_option(
+    aparser.add_argument(
         '--cdrom',
         dest='cdrom',
         help='Use FILE as cdrom iso, and use that to build the initvm',
         metavar='FILE')
 
-    oparser.add_option('--buildtype', dest='buildtype',
-                       help='Override the buildtype')
+    aparser.add_argument('--buildtype', dest='buildtype',
+                         help='Override the buildtype')
 
-    oparser.add_option(
+    aparser.add_argument(
         '--debug',
         dest='debug',
         action='store_true',
         default=False,
         help='start qemu in graphical mode to enable console switch')
 
-    add_deprecated_optparse_option(oparser, '--nesting')
-    add_deprecated_optparse_option(oparser, '--devel')
+    add_deprecated_argparse_argument(aparser, '--nesting', nargs=0)
+    add_deprecated_argparse_argument(aparser, '--devel', nargs=0)
 
-    oparser.add_option(
+    aparser.add_argument(
         '--skip-build-bin',
         action='store_false',
         dest='build_bin',
         default=True,
         help='Skip building Binary Repository CDROM, for exact Reproduction')
 
-    oparser.add_option(
+    aparser.add_argument(
         '--skip-build-sources',
         action='store_false',
         dest='build_sources',
         default=True,
         help='Skip building Source CDROM')
 
-    oparser.add_option('--fail-on-warning', action='store_true',
-                       dest='fail_on_warning', default=False,
-                       help=SUPPRESS_HELP)
+    aparser.add_argument('--fail-on-warning', action='store_true',
+                         dest='fail_on_warning', default=False,
+                         help=argparse.SUPPRESS)
 
-    (opt, args) = oparser.parse_args(argv)
+    aparser.add_argument('xmlfile')
 
-    if not args:
-        print('no filename specified')
-        oparser.print_help()
-        sys.exit(78)
-    elif len(args) > 1:
-        print('too many filenames specified')
-        oparser.print_help()
-        sys.exit(79)
+    args = aparser.parse_args(argv)
 
     with elbe_logging({'files': None}):
-        if not opt.skip_validation:
-            validation = validate_xml(args[0])
+        if not args.skip_validation:
+            validation = validate_xml(args.xmlfile)
             if validation:
                 logging.error('xml validation failed. Bailing out')
                 for i in validation:
                     logging.error(i)
                 sys.exit(81)
 
-        xml = etree(args[0])
+        xml = etree(args.xmlfile)
 
         if not xml.has('initvm'):
             logging.error('fatal error: '
                           "xml missing mandatory section 'initvm'")
             sys.exit(82)
 
-        if opt.buildtype:
-            buildtype = opt.buildtype
+        if args.buildtype:
+            buildtype = args.buildtype
         elif xml.has('initvm/buildtype'):
             buildtype = xml.text('/initvm/buildtype')
         else:
@@ -112,21 +105,21 @@ def run_command(argv):
         http_proxy = xml.text('/initvm/mirror/primary_proxy', default='')
         http_proxy = http_proxy.strip().replace('LOCALMACHINE', 'localhost')
 
-        if opt.cdrom:
+        if args.cdrom:
             mirror = xml.node('initvm/mirror')
             mirror.clear()
             cdrom = mirror.ensure_child('cdrom')
-            cdrom.set_text(os.path.abspath(opt.cdrom))
+            cdrom.set_text(os.path.abspath(args.cdrom))
 
         try:
-            os.makedirs(opt.directory)
+            os.makedirs(args.directory)
         except OSError as e:
             logging.error('unable to create project directory: %s (%s)',
-                          opt.directory,
+                          args.directory,
                           e.strerror)
             sys.exit(83)
 
-        out_path = os.path.join(opt.directory, '.elbe-in')
+        out_path = os.path.join(args.directory, '.elbe-in')
         try:
             os.makedirs(out_path)
         except OSError as e:
@@ -146,7 +139,7 @@ def run_command(argv):
              'elbe_version': elbe_version,
              'is_devel': is_devel,
              'defs': defs,
-             'opt': opt,
+             'args': args,
              'xml': xml,
              'prj': prj,
              'http_proxy': initvm_http_proxy,
@@ -177,8 +170,8 @@ def run_command(argv):
         templates = [
             ('init-elbe.sh.mako', out_path, True, False),
             ('preseed.cfg.mako', out_path, True, False),
-            ('Makefile.mako', opt.directory, False, True),
-            ('libvirt.xml.mako', opt.directory, False, True),
+            ('Makefile.mako', args.directory, False, True),
+            ('libvirt.xml.mako', args.directory, False, True),
             ('apt.conf.mako', out_path, False, False),
             ('default-init.xml', out_path, False, False),
         ]
@@ -197,16 +190,16 @@ def run_command(argv):
             if make_executable:
                 os.chmod(os.path.join(out_dir, o), 0o755)
 
-        shutil.copyfile(args[0],
+        shutil.copyfile(args.xmlfile,
                         os.path.join(out_path, 'source.xml'))
 
         keys = []
         for key in xml.all('.//initvm/mirror/url-list/url/raw-key'):
             keys.append(key.et.text)
 
-        if opt.cdrom:
+        if args.cdrom:
             keys.append(subprocess.run([
-                '7z', 'x', '-so', opt.cdrom, 'repo.pub',
+                '7z', 'x', '-so', args.cdrom, 'repo.pub',
             ], check=True, capture_output=True, encoding='utf-8').stdout)
 
         import_keyring = os.path.join(out_path, 'elbe-keyring')
@@ -275,10 +268,10 @@ def run_command(argv):
 
         buildrepo_opts = ''
 
-        if not opt.build_bin:
+        if not args.build_bin:
             buildrepo_opts += '--skip-build-bin '
 
-        if not opt.build_sources:
+        if not args.build_sources:
             buildrepo_opts += '--skip-build-source '
 
         cdrom_opts = ''
