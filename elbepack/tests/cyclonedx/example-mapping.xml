@@ -8,6 +8,7 @@
                 <mapping name='GPLv2+'>GPL-2.0-or-later</mapping>
                 <mapping name='GPL-2.0+'>GPL-2.0-or-later</mapping>
                 <mapping name='GPL-2.1+'>GPL-2.1-or-later</mapping>
+                <mapping name='GPL-3'>GPL-3.0-only</mapping>
                 <mapping name='GPL-3+'>GPL-3.0-or-later</mapping>
                 <mapping name='GPLv3+'>GPL-3.0-or-later</mapping>
                 <mapping name='GPL-3.0+'>GPL-3.0-or-later</mapping>

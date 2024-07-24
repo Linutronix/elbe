@@ -362,7 +362,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libcap-ng0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: LGPL-2.1-or-later AND GPL-2.0-or-later AND GPL-3.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libcap2
@@ -404,7 +404,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libdb5.3
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Sleepycat) AND BSD-3-Clause AND BSD-3-Clause AND UNKNOWN_MAPPING(Ms-PL) AND (UNKNOWN_MAPPING(GPL) OR Artistic-1.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(MIT-old) AND UNKNOWN_MAPPING(TCL-like) AND UNKNOWN_MAPPING(BSD-3-clause-fjord) AND UNKNOWN_MAPPING(GPL-3) AND UNKNOWN_MAPPING(zlib) AND (Artistic-1.0 OR BSD-3-Clause) AND UNKNOWN_MAPPING(GPL)
+PackageLicenseDeclared: UNKNOWN_MAPPING(Sleepycat) AND BSD-3-Clause AND BSD-3-Clause AND UNKNOWN_MAPPING(Ms-PL) AND (UNKNOWN_MAPPING(GPL) OR Artistic-1.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(MIT-old) AND UNKNOWN_MAPPING(TCL-like) AND UNKNOWN_MAPPING(BSD-3-clause-fjord) AND GPL-3.0-only AND UNKNOWN_MAPPING(zlib) AND (Artistic-1.0 OR BSD-3-Clause) AND UNKNOWN_MAPPING(GPL)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libdebconfclient0
@@ -656,28 +656,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libpam-modules
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-modules-bin
 PackageName: libpam-modules-bin
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-runtime
 PackageName: libpam-runtime
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam0g
 PackageName: libpam0g
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpcre2-8-0
@@ -705,7 +705,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libreadline8
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND GPL-3.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libseccomp2
@@ -978,7 +978,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: readline-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND GPL-3.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package sed

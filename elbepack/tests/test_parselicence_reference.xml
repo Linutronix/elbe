@@ -14866,9 +14866,8 @@ License: GPL-2+
 <spdx_licenses>
 <license>LGPL-2.1-or-later</license>
 <license>GPL-2.0-or-later</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
-</spdx_licenses><error>no mapping for "GPL-3" for pkg "libcap-ng0"</error>
-</pkglicense>
+<license>GPL-3.0-only</license>
+</spdx_licenses></pkglicense>
 <pkglicense name="libcap2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libcap
 Upstream-Contact: Andrew G. Morgan &lt;morgan@kernel.org&gt;
@@ -16905,7 +16904,7 @@ License: Sleepycat and BSD-3-clause
 <license>UNKNOWN_MAPPING(MIT-old)</license>
 <license>UNKNOWN_MAPPING(TCL-like)</license>
 <license>UNKNOWN_MAPPING(BSD-3-clause-fjord)</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 <license>UNKNOWN_MAPPING(zlib)</license>
 <license>Artistic-1.0 OR BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(GPL)</license>
@@ -16916,7 +16915,6 @@ License: Sleepycat and BSD-3-clause
 <error>no mapping for "MIT-old" for pkg "libdb5.3"</error>
 <error>no mapping for "TCL-like" for pkg "libdb5.3"</error>
 <error>no mapping for "BSD-3-clause-fjord" for pkg "libdb5.3"</error>
-<error>no mapping for "GPL-3" for pkg "libdb5.3"</error>
 <error>no mapping for "zlib" for pkg "libdb5.3"</error>
 <error>no mapping for "GPL" for pkg "libdb5.3"</error>
 </pkglicense>
@@ -36368,14 +36366,13 @@ License: Beerware
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
 <license>GPL-2.0-only</license>
 <license>GPL-2.0-or-later</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 <license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
 <license>LGPL-2.0-or-later</license>
 <license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-modules"</error>
-<error>no mapping for "GPL-3" for pkg "libpam-modules"</error>
 <error>no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules"</error>
 <error>no mapping for "Beerware" for pkg "libpam-modules"</error>
 </pkglicense>
@@ -36674,14 +36671,13 @@ License: Beerware
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
 <license>GPL-2.0-only</license>
 <license>GPL-2.0-or-later</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 <license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
 <license>LGPL-2.0-or-later</license>
 <license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-modules-bin"</error>
-<error>no mapping for "GPL-3" for pkg "libpam-modules-bin"</error>
 <error>no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules-bin"</error>
 <error>no mapping for "Beerware" for pkg "libpam-modules-bin"</error>
 </pkglicense>
@@ -36980,14 +36976,13 @@ License: Beerware
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
 <license>GPL-2.0-only</license>
 <license>GPL-2.0-or-later</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 <license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
 <license>LGPL-2.0-or-later</license>
 <license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-runtime"</error>
-<error>no mapping for "GPL-3" for pkg "libpam-runtime"</error>
 <error>no mapping for "BSD-tcp_wrappers" for pkg "libpam-runtime"</error>
 <error>no mapping for "Beerware" for pkg "libpam-runtime"</error>
 </pkglicense>
@@ -37286,14 +37281,13 @@ License: Beerware
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
 <license>GPL-2.0-only</license>
 <license>GPL-2.0-or-later</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 <license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
 <license>LGPL-2.0-or-later</license>
 <license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam0g"</error>
-<error>no mapping for "GPL-3" for pkg "libpam0g"</error>
 <error>no mapping for "BSD-tcp_wrappers" for pkg "libpam0g"</error>
 <error>no mapping for "Beerware" for pkg "libpam0g"</error>
 </pkglicense>
@@ -37858,10 +37852,9 @@ License: GPL-3
 <license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
 <license>UNKNOWN_MAPPING(ISC-no-attribution)</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 </spdx_licenses><error>no mapping for "GFDL-NIV-1.3+" for pkg "libreadline8"</error>
 <error>no mapping for "ISC-no-attribution" for pkg "libreadline8"</error>
-<error>no mapping for "GPL-3" for pkg "libreadline8"</error>
 </pkglicense>
 <pkglicense name="libseccomp2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libseccomp
@@ -55152,10 +55145,9 @@ License: GPL-3
 <license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
 <license>UNKNOWN_MAPPING(ISC-no-attribution)</license>
-<license>UNKNOWN_MAPPING(GPL-3)</license>
+<license>GPL-3.0-only</license>
 </spdx_licenses><error>no mapping for "GFDL-NIV-1.3+" for pkg "readline-common"</error>
 <error>no mapping for "ISC-no-attribution" for pkg "readline-common"</error>
-<error>no mapping for "GPL-3" for pkg "readline-common"</error>
 </pkglicense>
 <pkglicense name="sed"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: GNU sed
