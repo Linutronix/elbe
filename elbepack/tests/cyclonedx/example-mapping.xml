@@ -41,11 +41,11 @@
                 <mapping name='zlib'>Zlib</mapping>
                 <mapping name='MPL-2.0'>MPL-2.0</mapping>
                 <mapping name='Apache-2.0'>Apache-2.0</mapping>
-                <mapping name='GPL-3.0-with-GCC-exception'>GPL-3.0 WITH GCC-exception-3.1</mapping>
-                <mapping name='GPL-3+ with GCC-Runtime-3.1 exception'>GPL-3.0+ WITH GCC-exception-3.1</mapping>
+                <mapping name='GPL-3.0-with-GCC-exception'>GPL-3.0-only WITH GCC-exception-3.1</mapping>
+                <mapping name='GPL-3+ with GCC-Runtime-3.1 exception'>GPL-3.0-or-later WITH GCC-exception-3.1</mapping>
                 <mapping name='Artistic'>Artistic-1.0</mapping>
                 <mapping name='Artistic-2'>Artistic-2.0</mapping>
-                <mapping name='GPL-3+ with OpenSSL exception'>GPL-3.0+ WITH openvpn-openssl-exception</mapping>
+                <mapping name='GPL-3+ with OpenSSL exception'>GPL-3.0-or-later WITH openvpn-openssl-exception</mapping>
                 <mapping name='FTL'>FTL</mapping>
                 <mapping name='ISC'>ISC</mapping>
                 <mapping name='Gzip'>Zlib</mapping>
