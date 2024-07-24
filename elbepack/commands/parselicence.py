@@ -55,6 +55,10 @@ class license_dep5_to_spdx (dict):
         return None
 
     def map_one_license_with_exception(self, pkgname, lic, errors):
+        mapped_lic = self.map_one_license(pkgname, lic)
+        if mapped_lic is not None:
+            return mapped_lic
+
         with_split = lic.split(' with ')
 
         mapped_lic = self.map_one_license(pkgname, with_split[0])
