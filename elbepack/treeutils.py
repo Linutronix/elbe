@@ -99,6 +99,9 @@ class ebase:
     def append_treecopy(self, other):
         self.et.append(copy.deepcopy(other.et))
 
+    def tostring(self):
+        return tostring(self.et, encoding='utf-8').decode('utf-8')
+
 
 class elem(ebase):
 
@@ -142,9 +145,6 @@ class etree(ebase):
         # Make sure, that we end with a newline
         self.et.getroot().tail = '\n'
         self.et.write(fname, encoding=encoding)
-
-    def tostring(self):
-        return tostring(self.et, encoding='utf-8').decode('utf-8')
 
     def ensure_child(self, tag):
         retval = self.et.find('./' + tag)
