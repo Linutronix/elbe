@@ -16905,7 +16905,7 @@ License: Sleepycat and BSD-3-clause
 <license>UNKNOWN_MAPPING(TCL-like)</license>
 <license>UNKNOWN_MAPPING(BSD-3-clause-fjord)</license>
 <license>GPL-3.0-only</license>
-<license>UNKNOWN_MAPPING(zlib)</license>
+<license>Zlib</license>
 <license>Artistic-1.0 OR BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(GPL)</license>
 </spdx_licenses><error>no mapping for "Sleepycat" for pkg "libdb5.3"</error>
@@ -16915,7 +16915,6 @@ License: Sleepycat and BSD-3-clause
 <error>no mapping for "MIT-old" for pkg "libdb5.3"</error>
 <error>no mapping for "TCL-like" for pkg "libdb5.3"</error>
 <error>no mapping for "BSD-3-clause-fjord" for pkg "libdb5.3"</error>
-<error>no mapping for "zlib" for pkg "libdb5.3"</error>
 <error>no mapping for "GPL" for pkg "libdb5.3"</error>
 </pkglicense>
 <pkglicense name="libdebconfclient0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -46844,10 +46843,9 @@ License: BSD-3-clause
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause OR GPL-2.0-only</license>
-<license>UNKNOWN_MAPPING(zlib)</license>
+<license>Zlib</license>
 <license>MIT</license>
-</spdx_licenses><error>no mapping for "zlib" for pkg "libzstd1"</error>
-</pkglicense>
+</spdx_licenses></pkglicense>
 <pkglicense name="login"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Shadow
 Source: https://github.com/shadow-maint/shadow

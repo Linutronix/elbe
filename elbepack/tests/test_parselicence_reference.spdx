@@ -404,7 +404,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libdb5.3
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Sleepycat) AND BSD-3-Clause AND BSD-3-Clause AND UNKNOWN_MAPPING(Ms-PL) AND (UNKNOWN_MAPPING(GPL) OR Artistic-1.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(MIT-old) AND UNKNOWN_MAPPING(TCL-like) AND UNKNOWN_MAPPING(BSD-3-clause-fjord) AND GPL-3.0-only AND UNKNOWN_MAPPING(zlib) AND (Artistic-1.0 OR BSD-3-Clause) AND UNKNOWN_MAPPING(GPL)
+PackageLicenseDeclared: UNKNOWN_MAPPING(Sleepycat) AND BSD-3-Clause AND BSD-3-Clause AND UNKNOWN_MAPPING(Ms-PL) AND (UNKNOWN_MAPPING(GPL) OR Artistic-1.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(MIT-old) AND UNKNOWN_MAPPING(TCL-like) AND UNKNOWN_MAPPING(BSD-3-clause-fjord) AND GPL-3.0-only AND Zlib AND (Artistic-1.0 OR BSD-3-Clause) AND UNKNOWN_MAPPING(GPL)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libdebconfclient0
@@ -880,7 +880,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libzstd1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0-only) AND UNKNOWN_MAPPING(zlib) AND MIT
+PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0-only) AND Zlib AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package login
