@@ -3,10 +3,10 @@
 # SPDX-FileCopyrightText: 2016-2017 Linutronix GmbH
 
 import argparse
+import datetime
 import io
 import os
 import subprocess
-from datetime import datetime
 from tempfile import NamedTemporaryFile
 
 from elbepack.treeutils import etree
@@ -227,13 +227,14 @@ def run_command(argv):
             tree.root.remove_child(pkg)
 
     if args.tagvalue is not None:
+        created = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
         with io.open(args.tagvalue, 'wt', encoding='utf-8') as fp:
             fp.write('SPDXVersion: SPDX-1.2\n')
             fp.write('DataLicense: CC0-1.0\n')
             fp.write('\n')
             fp.write('## Creation Information\n')
             fp.write(f'Creator: Tool: elbe-{elbe_version}\n')
-            fp.write(f'Created: {datetime.now().isoformat()}\n')
+            fp.write(f'Created: {created}\n')
             fp.write('\n')
             fp.write('\n')
             fp.write('## Package Information\n')

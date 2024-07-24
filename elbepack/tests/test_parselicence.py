@@ -12,7 +12,7 @@ here = pathlib.Path(__file__).parent
 
 def _replace_changing_spdx_data(s):
     s = re.sub(r'\nCreator: Tool: .*\n', r'\nCreator: Tool: INVALID\n', s)
-    s = re.sub(r'\nCreated: .*\n', r'\nCreated: 0001-01-01T00:00:00.000000\n', s)
+    s = re.sub(r'\nCreated: .*\n', r'\nCreated: 0001-01-01T00:00:00+00:00\n', s)
     return s
 
 
