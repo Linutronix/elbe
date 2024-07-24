@@ -38,6 +38,9 @@ def test_validation_txt(build_dir):
             -----------------------
 
             No Errors found
+
+            Archive validation
+            ------------------
         """).strip(),
 
         textwrap.dedent("""
@@ -48,9 +51,13 @@ def test_validation_txt(build_dir):
             -----------------------
 
             No Errors found
+
+            Archive validation
+            ------------------
+
             Binary CD
             Source CD
-        """).strip(),
+        """).strip()
     ]
 
 
@@ -172,6 +179,16 @@ def _test_finetuning(root):
     assert root.joinpath('etc', 'hosts5').read_text().startswith('127.0.0.1\tlocalhost\n')
 
 
+def _test_archive(root):
+    archive_file = root.joinpath('opt', 'archive-file')
+    assert archive_file.is_file()
+
+    archive_file_stat = archive_file.stat()
+    assert archive_file_stat.st_mode & 0o777 == 0o644
+    assert archive_file_stat.st_uid == 0
+    assert archive_file_stat.st_gid == 0
+
+
 def _test_rfs_partition(build_dir, part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
@@ -220,6 +237,7 @@ def _test_rfs_partition(build_dir, part):
 
         _test_generated_elbe_files(build_dir, root)
         _test_finetuning(root)
+        _test_archive(root)
 
 
 def test_image(build_dir):
