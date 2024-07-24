@@ -38,6 +38,7 @@ usr/lib/python3.*/*-packages/elbepack/repodir.py
 usr/lib/python3.*/*-packages/elbepack/rfs.py
 usr/lib/python3.*/*-packages/elbepack/xmlpreprocess.py
 usr/lib/python3.*/*-packages/elbepack/shellhelper.py
+usr/lib/python3.*/*-packages/elbepack/spdx.py
 usr/lib/python3.*/*-packages/elbepack/templates.py
 usr/lib/python3.*/*-packages/elbepack/toolchain.py
 usr/lib/python3.*/*-packages/elbepack/treeutils.py
