@@ -70,25 +70,20 @@ def prepare_path(url):
     return re.sub(r'/$', '', path)
 
 
-def get_and_append_local(url, tararchive, keep):
-    if urlparse(url).netloc:
-        msg = f'Reject suspicious file:// URI \"{url}\". '
-        msg += 'Please use an absolute URI (file:///a/b/c) or a '
-        msg += 'relative URI (a/b/c) instead.'
-        raise ArchivedirError(msg)
-    collect(tararchive, prepare_path(url), keep)
+def _get_and_append(url, archive, keep):
+    urlparts = urlparse(url)
 
+    if urlparts.scheme not in {'', 'file'}:
+        raise NotImplementedError(f'unhandled scheme \"{urlparse(url).scheme}://\"')
 
-def get_and_append_unknown(url, _archive):
-    msg = f'unhandled scheme \"{urlparse(url).scheme}://\"'
-    raise NotImplementedError(msg)
+    if urlparts.netloc:
+        raise ArchivedirError(
+            f'Reject suspicious file:// URI \"{url}\". '
+            'Please use an absolute URI (file:///a/b/c) or a '
+            'relative URI (a/b/c) instead.'
+        )
 
-
-def get_and_append_method(url):
-    return {
-        '': get_and_append_local,
-        'file': get_and_append_local,
-    }.get(urlparse(url).scheme, get_and_append_unknown)
+    collect(archive, prepare_path(url), keep)
 
 
 def _combinearchivedir(xml, xpath, use_volume):
@@ -117,10 +112,8 @@ def _combinearchivedir(xml, xpath, use_volume):
                 arch = parent.ensure_child('archive')
                 fname_suffix = ''
 
-            get_and_append = get_and_append_method(archiveurl)
-
             archname = tmp.fname(f'archive{fname_suffix}.tar.bz2')
-            get_and_append(archiveurl, archname, keep)
+            _get_and_append(archiveurl, archname, keep)
             arch.set_text(enbase(archname, True))
 
             parent.remove_child(archivedir)
