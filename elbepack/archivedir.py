@@ -125,7 +125,7 @@ def _combinearchivedir(xml, xpath, use_volume):
 
             parent.remove_child(archivedir)
         except (CalledProcessError, OSError):
-            msg = 'Failure while processing \"' + archivedir.text + '\":\n'
+            msg = 'Failure while processing \"' + archivedir.tostring() + '\":\n'
             msg += str(sys.exc_info()[1])
             raise ArchivedirError(msg)
 
