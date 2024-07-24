@@ -46,29 +46,35 @@ class license_dep5_to_spdx (dict):
     def get_override(self, pkgname):
         return self.perpackage_override[pkgname]
 
-    def map_one_license(self, pkgname, lic, errors):
+    def map_one_license(self, pkgname, lic):
         if pkgname in self.perpackage_mapping:
             if lic in self.perpackage_mapping[pkgname]:
                 return self.perpackage_mapping[pkgname][lic]
         if lic in self:
             return self[lic]
-        errors.append(f'no mapping for "{lic}" for pkg "{pkgname}"')
         return None
+
+    def map_one_license_with_exception(self, pkgname, lic, errors):
+        with_split = lic.split(' with ')
+
+        mapped_lic = self.map_one_license(pkgname, with_split[0])
+        if mapped_lic is None:
+            errors.append(f'no mapping for "{with_split[0]}" for pkg "{pkgname}"')
+            if len(with_split) == 2:
+                return f'UNKNOWN_MAPPING({with_split[0]}) WITH {with_split[1]}'
+            else:
+                return f'UNKNOWN_MAPPING({with_split[0]})'
+        elif len(with_split) == 2:
+            return f'{mapped_lic} WITH {with_split[1]}'
+        else:
+            return mapped_lic
 
     def map_license_string(self, pkgname, l_string, errors):
         ors = []
         for one_or in l_string.split(' or '):
             ands = []
             for one_and in one_or.split(' and '):
-                with_split = one_and.split(' with ')
-                mapped_lic = self.map_one_license(
-                    pkgname, with_split[0], errors)
-                if mapped_lic is None:
-                    mapped_lic = f'UNKNOWN_MAPPING({with_split[0]})'
-                if len(with_split) == 2:
-                    ands.append(f'{mapped_lic} WITH {with_split[1]}')
-                else:
-                    ands.append(mapped_lic)
+                ands.append(self.map_one_license_with_exception(pkgname, one_and, errors))
             ors.append(' AND '.join(ands))
 
         retval = ' OR '.join(ors)
