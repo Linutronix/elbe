@@ -9,6 +9,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
+from elbepack.spdx import SPDX_LICENSE_IDENTIFIERS
 from elbepack.treeutils import etree
 from elbepack.version import elbe_version
 
@@ -52,6 +53,8 @@ class license_dep5_to_spdx (dict):
                 return self.perpackage_mapping[pkgname][lic]
         if lic in self:
             return self[lic]
+        if lic in SPDX_LICENSE_IDENTIFIERS:
+            return lic
         return None
 
     def map_one_license_with_exception(self, pkgname, lic, errors):
