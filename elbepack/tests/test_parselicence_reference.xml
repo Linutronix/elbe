@@ -649,7 +649,7 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="apt"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: apt
@@ -855,8 +855,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>MIT</license>
 </spdx_licenses></pkglicense>
@@ -1064,8 +1064,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>MIT</license>
 </spdx_licenses></pkglicense>
@@ -1149,8 +1149,8 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>CC-0</license>
+<license>GPL-2.0-only</license>
+<license>CC0-1.0</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="bash"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Contact: chet@po.cwru.edu
@@ -1476,9 +1476,9 @@ License: permissive
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>GPL-3.0+ WITH Bison exception</license>
-<license>GPL-2.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
 <license>UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(MIT-like)</license>
@@ -2376,18 +2376,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "bsdutils"</error>
 </pkglicense>
 <pkglicense name="coreutils"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -2571,9 +2571,9 @@ License: GFDL-NIV-1.3
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>GPL-3.0+ AND UNKNOWN_MAPPING(BSD-4-clause-UC)</license>
-<license>GPL-3.0+ AND ISC</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-3.0-or-later AND UNKNOWN_MAPPING(BSD-4-clause-UC)</license>
+<license>GPL-3.0-or-later AND ISC</license>
 <license>UNKNOWN_MAPPING(FSFULLR)</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3)</license>
 </spdx_licenses><error>no mapping for "BSD-4-clause-UC" for pkg "coreutils"</error>
@@ -2635,8 +2635,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="cron"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: vixie-cron
@@ -2764,8 +2764,8 @@ License: ISC
 </detailed>
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(Paul-Vixie's-license)</license>
-<license>UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0+ AND ISC</license>
-<license>GPL-2.0+</license>
+<license>UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0-or-later AND ISC</license>
+<license>GPL-2.0-or-later</license>
 <license>Artistic-1.0</license>
 </spdx_licenses><error>no mapping for "Paul-Vixie's-license" for pkg "cron"</error>
 <error>no mapping for "Paul-Vixie's-license" for pkg "cron"</error>
@@ -2896,8 +2896,8 @@ License: ISC
 </detailed>
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(Paul-Vixie's-license)</license>
-<license>UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0+ AND ISC</license>
-<license>GPL-2.0+</license>
+<license>UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0-or-later AND ISC</license>
+<license>GPL-2.0-or-later</license>
 <license>Artistic-1.0</license>
 </spdx_licenses><error>no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"</error>
 <error>no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"</error>
@@ -3027,8 +3027,8 @@ License: GPL-2+
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 <license>BSD-3-Clause</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="debconf"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -3560,8 +3560,8 @@ License: SMAIL-GPL
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(SMAIL-GPL)</license>
 </spdx_licenses><error>no mapping for "SMAIL-GPL" for pkg "debianutils"</error>
 </pkglicense>
@@ -4229,20 +4229,20 @@ License: GFDL-NIV-1.3
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(FSFULLR)</license>
-<license>GPL-3.0+ AND UNKNOWN_MAPPING(FSFULLR)</license>
-<license>LGPL-2.1+</license>
-<license>GPL-3.0+ WITH autoconf exception</license>
-<license>GPL-3.0+ WITH texinfo exception</license>
+<license>GPL-3.0-or-later AND UNKNOWN_MAPPING(FSFULLR)</license>
+<license>LGPL-2.1-or-later</license>
+<license>GPL-3.0-or-later WITH autoconf exception</license>
+<license>GPL-3.0-or-later WITH texinfo exception</license>
 <license>UNKNOWN_MAPPING(LGPL-2.0+)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(FSFAP)</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3)</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
-<license>CC-0</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "FSFULLR" for pkg "diffutils"</error>
 <error>no mapping for "FSFULLR" for pkg "diffutils"</error>
 <error>no mapping for "LGPL-2.0+" for pkg "diffutils"</error>
@@ -4303,7 +4303,7 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="dmsetup"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: lvm2
@@ -4480,10 +4480,10 @@ License: GPL-2.0+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.1</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.1-only</license>
 <license>BSD-2-Clause</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="dpkg"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: dpkg
@@ -4754,8 +4754,8 @@ License: BSD-2-clause
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
 <license>BSD-2-Clause</license>
 <license>UNKNOWN_MAPPING(public-domain-s-s-d)</license>
 </spdx_licenses><error>no mapping for "public-domain-s-s-d" for pkg "dpkg"</error>
@@ -5411,15 +5411,15 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.0</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(Apache-2)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)</license>
 <license>UNKNOWN_MAPPING(Kazlib)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
-<license>GPL-2.0+ WITH Texinfo exception</license>
+<license>GPL-2.0-or-later WITH Texinfo exception</license>
 </spdx_licenses><error>no mapping for "Apache-2" for pkg "e2fsprogs"</error>
 <error>no mapping for "GPL" for pkg "e2fsprogs"</error>
 <error>no mapping for "MIT-US-export" for pkg "e2fsprogs"</error>
@@ -6313,18 +6313,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "fdisk"</error>
 </pkglicense>
 <pkglicense name="findutils"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -7710,20 +7710,20 @@ License: LGPL-3+
 </detailed>
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(FSFAP)</license>
-<license>GPL-3.0+ WITH Autoconf-data exception</license>
+<license>GPL-3.0-or-later WITH Autoconf-data exception</license>
 <license>UNKNOWN_MAPPING(FSFULLR)</license>
-<license>GPL-2.0+ WITH Autoconf-data exception</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later WITH Autoconf-data exception</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(X11)</license>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(GPL) WITH automake exception</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(BSD-3-clause and/or GPL-3+)</license>
-<license>GPL-3.0+ WITH Bison-2.2 exception</license>
+<license>GPL-3.0-or-later WITH Bison-2.2 exception</license>
 <license>UNKNOWN_MAPPING(LGPL-3)</license>
 <license>UNKNOWN_MAPPING(ISC and/or LGPL-2.1+)</license>
 </spdx_licenses><error>no mapping for "GFDL-NIV-1.3+" for pkg "findutils"</error>
@@ -9594,12 +9594,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(permissive)</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>MIT</license>
-<license>GPL-3.0+ OR BSD-3-Clause</license>
-<license>LGPL-3.0+</license>
+<license>GPL-3.0-or-later OR BSD-3-Clause</license>
+<license>LGPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(RFC-Reference)</license>
 <license>UNKNOWN_MAPPING(TinySCHEME)</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
@@ -9675,7 +9675,7 @@ License: GPL-3+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="gzip"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: GNU Gzip
@@ -9777,7 +9777,7 @@ License: FSF-manpages
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-1.3+-no-invariant)</license>
 <license>UNKNOWN_MAPPING(FSF-manpages)</license>
 </spdx_licenses><error>no mapping for "GFDL-1.3+-no-invariant" for pkg "gzip"</error>
@@ -9838,7 +9838,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="ifupdown"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ifupdown
@@ -9883,7 +9883,7 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="init"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
@@ -9992,7 +9992,7 @@ License: BSD-3-clause
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="init-system-helpers"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
@@ -10102,7 +10102,7 @@ License: BSD-3-clause
 <have_override/>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="iproute2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: iproute2
@@ -10202,7 +10202,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="iputils-ping"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Comment:
@@ -10307,8 +10307,8 @@ License: public-domain
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>GPL-2.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="isc-dhcp-client"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://www.isc.org/downloads/dhcp
@@ -10362,7 +10362,7 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>MPL-2.0</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="isc-dhcp-common"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://www.isc.org/downloads/dhcp
@@ -10416,7 +10416,7 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>MPL-2.0</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="kmod"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://www.kernel.org/pub/linux/utils/kernel/kmod/
@@ -10513,8 +10513,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.1-or-later</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="less"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Comment:
@@ -10647,10 +10647,10 @@ License: public-domain
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+ OR UNKNOWN_MAPPING(Less)</license>
-<license>GPL-3.0+ OR UNKNOWN_MAPPING(Less,) AND UNKNOWN_MAPPING(X11)</license>
+<license>GPL-3.0-or-later OR UNKNOWN_MAPPING(Less)</license>
+<license>GPL-3.0-or-later OR UNKNOWN_MAPPING(Less,) AND UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(Spencer-86)</license>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "Less" for pkg "less"</error>
 <error>no mapping for "Less," for pkg "less"</error>
 <error>no mapping for "X11" for pkg "less"</error>
@@ -10738,8 +10738,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>LGPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
+<license>LGPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libapparmor1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: AppArmor
@@ -11014,10 +11014,10 @@ License: LGPL-2.1+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>BSD-3-Clause OR GPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>BSD-3-Clause OR GPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libapt-pkg6.0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: apt
@@ -11223,8 +11223,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>MIT</license>
 </spdx_licenses></pkglicense>
@@ -11486,8 +11486,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>LGPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
+<license>LGPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libaudit-common"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: auditd
@@ -11557,8 +11557,8 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.1</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.1-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libaudit1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: auditd
@@ -11628,8 +11628,8 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.1</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.1-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libblkid1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: util-linux
@@ -12518,18 +12518,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "libblkid1"</error>
 </pkglicense>
 <pkglicense name="libbpf1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -12722,10 +12722,10 @@ License:   GPL-2 with Linux-syscall-note exception
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1 OR BSD-2-Clause</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.1-only OR BSD-2-Clause</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libbsd0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
@@ -13643,7 +13643,7 @@ License: BSD-2-clause
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(ISC-Original)</license>
 <license>MIT</license>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "BSD-4-clause-Niels-Provos" for pkg "libbsd0"</error>
 <error>no mapping for "BSD-3-clause-Regents" for pkg "libbsd0"</error>
@@ -13727,7 +13727,7 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(BSD-variant)</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses><error>no mapping for "BSD-variant" for pkg "libbz2-1.0"</error>
 </pkglicense>
 <pkglicense name="libc-bin"><text>This is the Debian prepackaged version of the GNU C Library version 2.23.
@@ -14864,8 +14864,8 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.1-or-later</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
 </spdx_licenses><error>no mapping for "GPL-3" for pkg "libcap-ng0"</error>
 </pkglicense>
@@ -15033,8 +15033,8 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>BSD-3-Clause OR GPL-2.0</license>
-<license>BSD-3-Clause OR GPL-2.0+</license>
+<license>BSD-3-Clause OR GPL-2.0-only</license>
+<license>BSD-3-Clause OR GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libcap2-bin"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libcap
@@ -15200,8 +15200,8 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>BSD-3-Clause OR GPL-2.0</license>
-<license>BSD-3-Clause OR GPL-2.0+</license>
+<license>BSD-3-Clause OR GPL-2.0-only</license>
+<license>BSD-3-Clause OR GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libcom-err2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: e2fsprogs
@@ -15854,15 +15854,15 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.0</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(Apache-2)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)</license>
 <license>UNKNOWN_MAPPING(Kazlib)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
-<license>GPL-2.0+ WITH Texinfo exception</license>
+<license>GPL-2.0-or-later WITH Texinfo exception</license>
 </spdx_licenses><error>no mapping for "Apache-2" for pkg "libcom-err2"</error>
 <error>no mapping for "GPL" for pkg "libcom-err2"</error>
 <error>no mapping for "MIT-US-export" for pkg "libcom-err2"</error>
@@ -16461,13 +16461,13 @@ License: Apache-2.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+ WITH OpenSSL exception</license>
-<license>GPL-2.0+</license>
-<license>GPL-3.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-2.1+ WITH OpenSSL exception</license>
+<license>GPL-2.0-or-later WITH OpenSSL exception</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-2.1-or-later WITH OpenSSL exception</license>
 <license>UNKNOWN_MAPPING(CC0) OR Apache-2.0</license>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "CC0" for pkg "libcryptsetup12"</error>
 </pkglicense>
 <pkglicense name="libdb5.3"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -17161,7 +17161,7 @@ License: GPL-2+
 </detailed>
 <spdx_licenses>
 <license>BSD-2-Clause</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libdevmapper1.02.1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: lvm2
@@ -17338,10 +17338,10 @@ License: GPL-2.0+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.1</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.1-only</license>
 <license>BSD-2-Clause</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libedit2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: editline
@@ -17614,11 +17614,11 @@ Comment: GPL-3+
 <license>BSD-2-clause</license>
 </debian_licenses>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3)</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 <license>BSD-2-Clause</license>
 </spdx_licenses><error>no override for heuristics based package "libelf1"</error>
 <error>no mapping for "GFDL-NIV-1.3" for pkg "libelf1"</error>
@@ -18274,15 +18274,15 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.0</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(Apache-2)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)</license>
 <license>UNKNOWN_MAPPING(Kazlib)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
-<license>GPL-2.0+ WITH Texinfo exception</license>
+<license>GPL-2.0-or-later WITH Texinfo exception</license>
 </spdx_licenses><error>no mapping for "Apache-2" for pkg "libext2fs2"</error>
 <error>no mapping for "GPL" for pkg "libext2fs2"</error>
 <error>no mapping for "MIT-US-export" for pkg "libext2fs2"</error>
@@ -19176,18 +19176,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "libfdisk1"</error>
 </pkglicense>
 <pkglicense name="libffi8"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -19530,10 +19530,10 @@ License: GPL-3+
 <spdx_licenses>
 <license>MIT</license>
 <license>UNKNOWN_MAPPING(X11)</license>
-<license>GPL-2.0+</license>
-<license>GPL-3.0+</license>
-<license>UNKNOWN_MAPPING(MPL-1.1) OR GPL-2.0+ OR LGPL-2.1+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later</license>
+<license>UNKNOWN_MAPPING(MPL-1.1) OR GPL-2.0-or-later OR LGPL-2.1-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(GPL)</license>
 </spdx_licenses><error>no mapping for "X11" for pkg "libffi8"</error>
 <error>no mapping for "MPL-1.1" for pkg "libffi8"</error>
@@ -21815,9 +21815,9 @@ License: LGPL-3+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+ OR LGPL-3.0+</license>
-<license>GPL-3.0+</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>GPL-2.0-or-later OR LGPL-3.0-or-later</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libgnutls30"><text>This package was debianized by Ivo Timmermans &lt;ivo@debian.org&gt; on
 Fri,  3 Aug 2001 10:00:42 +0200.
@@ -23028,7 +23028,7 @@ Comment: https://github.com/benhoyt/inih
 <license>UNKNOWN_MAPPING(LGPLv3+_or_GPLv2+)</license>
 <license>MIT</license>
 <license>UNKNOWN_MAPPING(LGPLv2.1+)</license>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>Apache-2.0</license>
 </spdx_licenses><error>no override for heuristics based package "libgnutls30"</error>
 <error>no mapping for "CC0 license" for pkg "libgnutls30"</error>
@@ -23211,10 +23211,10 @@ License: BSD-3-clause
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
-<license>LGPL-2.1+ OR BSD-3-Clause</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-2.1-or-later OR BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(g10-permissive)</license>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "g10-permissive" for pkg "libgpg-error0"</error>
 </pkglicense>
 <pkglicense name="libgssapi-krb5-2"><text>This package was debianized by Sam Hartman &lt;hartmans@permabit.com&gt; on
@@ -25912,14 +25912,14 @@ License: Expat
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
-<license>LGPL-2.0+</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
+<license>LGPL-2.0-or-later</license>
 <license>MIT</license>
-<license>GPL-3.0+</license>
-<license>GPL-2.0+</license>
-<license>GPL-3.0+ WITH Autoconf exception</license>
-<license>CC-0</license>
-<license>GPL-2.0</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later WITH Autoconf exception</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(GAP)</license>
 </spdx_licenses><error>no mapping for "GAP" for pkg "libhogweed6"</error>
 </pkglicense>
@@ -26072,8 +26072,8 @@ License: Unicode
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(Unicode)</license>
 </spdx_licenses><error>no mapping for "Unicode" for pkg "libidn2-0"</error>
 </pkglicense>
@@ -26977,9 +26977,9 @@ License: Artistic
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>Artistic-1.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(custom)</license>
 </spdx_licenses><error>no mapping for "custom" for pkg "libip4tc2"</error>
 </pkglicense>
@@ -28575,8 +28575,8 @@ License: LGPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>LGPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
+<license>LGPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libkmod2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://www.kernel.org/pub/linux/utils/kernel/kmod/
@@ -28673,8 +28673,8 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.1-or-later</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libkrb5-3"><text>This package was debianized by Sam Hartman &lt;hartmans@permabit.com&gt; on
 Thu, 19 Oct 2000 16:05:06 -0400.
@@ -31653,8 +31653,8 @@ License: BSD-2-clause
 </detailed>
 <spdx_licenses>
 <license>BSD-2-Clause</license>
-<license>GPL-2.0+</license>
-<license>GPL-2.0+ OR BSD-2-Clause</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-or-later OR BSD-2-Clause</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="liblzma5"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: XZ Utils
@@ -32189,12 +32189,12 @@ License: permissive-nowarranty
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(PD)</license>
 <license>UNKNOWN_MAPPING(probably-PD)</license>
-<license>GPL-2.0+</license>
-<license>LGPL-2.1+</license>
+<license>GPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(permissive-fsf)</license>
 <license>UNKNOWN_MAPPING(Autoconf)</license>
 <license>UNKNOWN_MAPPING(permissive-nowarranty)</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(none)</license>
 <license>UNKNOWN_MAPPING(config-h)</license>
 <license>UNKNOWN_MAPPING(noderivs)</license>
@@ -32540,8 +32540,8 @@ License: LGPL-2.1
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.1-only</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libmount1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: util-linux
@@ -33430,18 +33430,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "libmount1"</error>
 </pkglicense>
 <pkglicense name="libncursesw6"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -34883,14 +34883,14 @@ License: Expat
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
-<license>LGPL-2.0+</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
+<license>LGPL-2.0-or-later</license>
 <license>MIT</license>
-<license>GPL-3.0+</license>
-<license>GPL-2.0+</license>
-<license>GPL-3.0+ WITH Autoconf exception</license>
-<license>CC-0</license>
-<license>GPL-2.0</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-3.0-or-later WITH Autoconf exception</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(GAP)</license>
 </spdx_licenses><error>no mapping for "GAP" for pkg "libnettle8"</error>
 </pkglicense>
@@ -35035,8 +35035,8 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libnftables1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nftables
@@ -35632,8 +35632,8 @@ License: CC-BY-SA-4.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(CC-BY-SA-4.0)</license>
 </spdx_licenses><error>no mapping for "CC-BY-SA-4.0" for pkg "libnftables1"</error>
 </pkglicense>
@@ -35765,8 +35765,8 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libp11-kit0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: p11-kit
@@ -36066,7 +36066,7 @@ License: Apache-2.0
 <license>UNKNOWN_MAPPING(permissive-like-automake-output)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(ISC+IBM)</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>Apache-2.0</license>
 <license>UNKNOWN_MAPPING(same-as-rest-of-p11kit)</license>
 </spdx_licenses><error>no mapping for "permissive-like-automake-output" for pkg "libp11-kit0"</error>
@@ -36366,13 +36366,13 @@ License: Beerware
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
-<license>LGPL-2.0+</license>
-<license>CC-0</license>
+<license>LGPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-modules"</error>
 <error>no mapping for "GPL-3" for pkg "libpam-modules"</error>
@@ -36672,13 +36672,13 @@ License: Beerware
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
-<license>LGPL-2.0+</license>
-<license>CC-0</license>
+<license>LGPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-modules-bin"</error>
 <error>no mapping for "GPL-3" for pkg "libpam-modules-bin"</error>
@@ -36978,13 +36978,13 @@ License: Beerware
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
-<license>LGPL-2.0+</license>
-<license>CC-0</license>
+<license>LGPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam-runtime"</error>
 <error>no mapping for "GPL-3" for pkg "libpam-runtime"</error>
@@ -37284,13 +37284,13 @@ License: Beerware
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause OR UNKNOWN_MAPPING(GPL)</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
-<license>GPL-3.0+ WITH Bison exception</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
 <license>UNKNOWN_MAPPING(BSD-tcp_wrappers)</license>
-<license>LGPL-2.0+</license>
-<license>CC-0</license>
+<license>LGPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 <license>UNKNOWN_MAPPING(Beerware)</license>
 </spdx_licenses><error>no mapping for "GPL" for pkg "libpam0g"</error>
 <error>no mapping for "GPL-3" for pkg "libpam0g"</error>
@@ -37453,7 +37453,7 @@ License: public-domain
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>BSD-2-Clause</license>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "BSD-3-clause-Cambridge" for pkg "libpcre2-8-0"</error>
 <error>no mapping for "X11" for pkg "libpcre2-8-0"</error>
 </pkglicense>
@@ -37534,7 +37534,7 @@ License: GPL-2+
 </detailed>
 <spdx_licenses>
 <license>UNKNOWN_MAPPING(expat)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "expat" for pkg "libpopt0"</error>
 </pkglicense>
 <pkglicense name="libproc2-0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -37697,9 +37697,9 @@ License: LGPL-2.1+
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(LGPL-2.0+)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "LGPL-2.0+" for pkg "libproc2-0"</error>
 </pkglicense>
 <pkglicense name="libreadline8"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -37854,8 +37854,8 @@ License: GPL-3
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>GPL-2.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
 <license>UNKNOWN_MAPPING(ISC-no-attribution)</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
@@ -37928,7 +37928,7 @@ License: LGPL-2.1
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1</license>
+<license>LGPL-2.1-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libselinux1"><text>This is the Debian package for libselinux, and it is built from sources obtained from:
 http://userspace.selinuxproject.org/trac/wiki/Releases
@@ -38202,10 +38202,10 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(Zlib)</license>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "Zlib" for pkg "libsepol2"</error>
 </pkglicense>
 <pkglicense name="libslang2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -38267,7 +38267,7 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libsmartcols1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: util-linux
@@ -39156,18 +39156,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "libsmartcols1"</error>
 </pkglicense>
 <pkglicense name="libss2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -39821,15 +39821,15 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.0</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(Apache-2)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)</license>
 <license>UNKNOWN_MAPPING(Kazlib)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
-<license>GPL-2.0+ WITH Texinfo exception</license>
+<license>GPL-2.0-or-later WITH Texinfo exception</license>
 </spdx_licenses><error>no mapping for "Apache-2" for pkg "libss2"</error>
 <error>no mapping for "GPL" for pkg "libss2"</error>
 <error>no mapping for "MIT-US-export" for pkg "libss2"</error>
@@ -41955,12 +41955,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "libsystemd-shared"</error>
 </pkglicense>
 <pkglicense name="libsystemd0"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -42445,12 +42445,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "libsystemd0"</error>
 </pkglicense>
 <pkglicense name="libtasn1-6"><text>This package was debianized by Ivo Timmermans &lt;ivo@debian.org&gt; on
@@ -43449,11 +43449,11 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(__AUTO_PERMISSIVE__)</license>
 <license>BSD-2-Clause</license>
 <license>BSD-4-Clause</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(PERMISSIVE)</license>
 </spdx_licenses><error>no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc-common"</error>
 <error>no mapping for "PERMISSIVE" for pkg "libtirpc-common"</error>
@@ -44094,11 +44094,11 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>BSD-3-Clause</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(__AUTO_PERMISSIVE__)</license>
 <license>BSD-2-Clause</license>
 <license>BSD-4-Clause</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(PERMISSIVE)</license>
 </spdx_licenses><error>no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc3"</error>
 <error>no mapping for "PERMISSIVE" for pkg "libtirpc3"</error>
@@ -44585,12 +44585,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "libudev1"</error>
 </pkglicense>
 <pkglicense name="libunistring2"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -44791,12 +44791,12 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-3.0+ OR GPL-2.0+</license>
+<license>LGPL-3.0-or-later OR GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(FreeSoftware)</license>
-<license>GPL-3.0+ OR GFDL-1.2+</license>
-<license>GPL-3.0+</license>
-<license>GPL-2.0+</license>
-<license>GPL-2.0+ WITH distribution exception</license>
+<license>GPL-3.0-or-later OR GFDL-1.2-or-later</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-or-later WITH distribution exception</license>
 <license>MIT</license>
 </spdx_licenses><error>no mapping for "FreeSoftware" for pkg "libunistring2"</error>
 </pkglicense>
@@ -45687,18 +45687,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "libuuid1"</error>
 </pkglicense>
 <pkglicense name="libxtables12"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -46601,9 +46601,9 @@ License: Artistic
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>Artistic-1.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(custom)</license>
 </spdx_licenses><error>no mapping for "custom" for pkg "libxtables12"</error>
 </pkglicense>
@@ -46687,7 +46687,7 @@ License: GPL-2
 </detailed>
 <spdx_licenses>
 <license>BSD-2-Clause</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="libzstd1"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Zstd
@@ -46850,7 +46850,7 @@ License: BSD-3-clause
 </files>
 </detailed>
 <spdx_licenses>
-<license>BSD-3-Clause OR GPL-2.0</license>
+<license>BSD-3-Clause OR GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(zlib)</license>
 <license>MIT</license>
 </spdx_licenses><error>no mapping for "zlib" for pkg "libzstd1"</error>
@@ -47253,8 +47253,8 @@ License: GPL-2+
 <spdx_licenses>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(GPL-1)</license>
-<license>GPL-2.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "GPL-1" for pkg "login"</error>
 </pkglicense>
 <pkglicense name="logrotate"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -48031,15 +48031,15 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>LGPL-2.0</license>
+<license>GPL-2.0-only</license>
+<license>LGPL-2.0-only</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(Apache-2)</license>
 <license>ISC</license>
 <license>UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)</license>
 <license>UNKNOWN_MAPPING(Kazlib)</license>
 <license>UNKNOWN_MAPPING(Latex2e)</license>
-<license>GPL-2.0+ WITH Texinfo exception</license>
+<license>GPL-2.0-or-later WITH Texinfo exception</license>
 </spdx_licenses><error>no mapping for "Apache-2" for pkg "logsave"</error>
 <error>no mapping for "GPL" for pkg "logsave"</error>
 <error>no mapping for "MIT-US-export" for pkg "logsave"</error>
@@ -48452,7 +48452,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(CC-BY-3.0)</license>
 </spdx_licenses><error>no mapping for "X11" for pkg "mawk"</error>
@@ -49345,18 +49345,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "mount"</error>
 </pkglicense>
 <pkglicense name="nano"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -49434,8 +49434,8 @@ License: GFDL-NIV+
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>UNKNOWN_MAPPING(GFDL-NIV+) OR GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>UNKNOWN_MAPPING(GFDL-NIV+) OR GPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "GFDL-NIV+" for pkg "nano"</error>
 </pkglicense>
 <pkglicense name="ncurses-base"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -49721,7 +49721,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="nftables"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nftables
@@ -50317,8 +50317,8 @@ License: CC-BY-SA-4.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(CC-BY-SA-4.0)</license>
 </spdx_licenses><error>no mapping for "CC-BY-SA-4.0" for pkg "nftables"</error>
 </pkglicense>
@@ -50720,8 +50720,8 @@ License: GPL-2+
 <spdx_licenses>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(GPL-1)</license>
-<license>GPL-2.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>CC0-1.0</license>
 </spdx_licenses><error>no mapping for "GPL-1" for pkg "passwd"</error>
 </pkglicense>
 <pkglicense name="perl-base"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -54795,7 +54795,7 @@ Comment:
 <license>UNKNOWN_MAPPING(BZIP)</license>
 <license>Zlib</license>
 <license>Artistic-1.0</license>
-<license>GPL-2.0+ OR Artistic-1.0</license>
+<license>GPL-2.0-or-later OR Artistic-1.0</license>
 <license>MIT OR GPL-1.0+ OR Artistic-1.0</license>
 <license>UNKNOWN_MAPPING(RRA-KEEP-THIS-NOTICE)</license>
 <license>UNKNOWN_MAPPING(BSD-3-clause-with-weird-numbering)</license>
@@ -54991,9 +54991,9 @@ License: LGPL-2.1+
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(LGPL-2.0+)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "LGPL-2.0+" for pkg "procps"</error>
 </pkglicense>
 <pkglicense name="readline-common"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -55148,8 +55148,8 @@ License: GPL-3
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>GPL-2.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
 <license>UNKNOWN_MAPPING(ISC-no-attribution)</license>
 <license>UNKNOWN_MAPPING(GPL-3)</license>
@@ -55374,10 +55374,10 @@ License: pcre
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(GFDL-NIV-1.3+)</license>
-<license>GPL-3.0+ AND ISC</license>
+<license>GPL-3.0-or-later AND ISC</license>
 <license>UNKNOWN_MAPPING(BSD-4-clause-UC)</license>
 <license>UNKNOWN_MAPPING(BSL-1)</license>
 <license>UNKNOWN_MAPPING(pcre)</license>
@@ -55656,7 +55656,7 @@ License: All-permissive
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(All-permissive)</license>
 <license>UNKNOWN_MAPPING(configure)</license>
 <license>UNKNOWN_MAPPING(installsh)</license>
@@ -56146,12 +56146,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "systemd"</error>
 </pkglicense>
 <pkglicense name="systemd-sysv"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -56636,12 +56636,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "systemd-sysv"</error>
 </pkglicense>
 <pkglicense name="sysvinit-utils"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -56796,9 +56796,9 @@ License: GPL-2.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>UNKNOWN_MAPPING(GPL-3.0)</license>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses><error>no mapping for "GPL-3.0" for pkg "sysvinit-utils"</error>
 </pkglicense>
 <pkglicense name="tar"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -56920,10 +56920,10 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-3.0+</license>
-<license>GPL-3.0+ WITH Bison exception</license>
-<license>LGPL-3.0+</license>
-<license>GPL-2.0+</license>
+<license>GPL-3.0-or-later</license>
+<license>GPL-3.0-or-later WITH Bison exception</license>
+<license>LGPL-3.0-or-later</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="tasksel"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
@@ -56945,7 +56945,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="tasksel-data"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
@@ -56967,7 +56967,7 @@ License: GPL-2
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0</license>
+<license>GPL-2.0-only</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="tzdata"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: https://www.iana.org/time-zones
@@ -56988,7 +56988,7 @@ License: public-domain
 </files>
 </detailed>
 <spdx_licenses>
-<license>CC-0</license>
+<license>CC0-1.0</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="udev"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: systemd
@@ -57472,12 +57472,12 @@ License: CC0-1.0
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(CC0-1.0)</license>
-<license>GPL-2.0 WITH Linux-syscall-note exception</license>
+<license>GPL-2.0-only WITH Linux-syscall-note exception</license>
 <license>MIT</license>
-<license>CC-0</license>
-<license>GPL-2.0+</license>
+<license>CC0-1.0</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses><error>no mapping for "CC0-1.0" for pkg "udev"</error>
 </pkglicense>
 <pkglicense name="usr-is-merged"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -57513,7 +57513,7 @@ Comment:
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="util-linux"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: util-linux
@@ -58402,18 +58402,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "util-linux"</error>
 </pkglicense>
 <pkglicense name="util-linux-extra"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -59303,18 +59303,18 @@ License: MIT
 </files>
 </detailed>
 <spdx_licenses>
-<license>GPL-2.0+</license>
-<license>GPL-2.0</license>
-<license>GPL-3.0+</license>
-<license>CC-0</license>
+<license>GPL-2.0-or-later</license>
+<license>GPL-2.0-only</license>
+<license>GPL-3.0-or-later</license>
+<license>CC0-1.0</license>
 <license>BSD-4-Clause</license>
 <license>MIT</license>
 <license>BSD-3-Clause</license>
 <license>UNKNOWN_MAPPING(BSLA)</license>
-<license>LGPL-2.0+</license>
-<license>LGPL-2.1+</license>
-<license>LGPL-3.0+</license>
-<license>LGPL-3.0+</license>
+<license>LGPL-2.0-or-later</license>
+<license>LGPL-2.1-or-later</license>
+<license>LGPL-3.0-or-later</license>
+<license>LGPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "BSLA" for pkg "util-linux-extra"</error>
 </pkglicense>
 <pkglicense name="vim-common"><text>Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -60115,17 +60115,17 @@ License: EDL-1
 <license>GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)</license>
 <license>UNKNOWN_MAPPING(Vim-Regexp)</license>
 <license>UNKNOWN_MAPPING(UC)</license>
-<license>CC-0</license>
-<license>MIT OR GPL-2.0</license>
+<license>CC0-1.0</license>
+<license>MIT OR GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(Compaq)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>MIT OR UNKNOWN_MAPPING(Vim)</license>
 <license>UNKNOWN_MAPPING(XPM)</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(EDL-1)</license>
 <license>UNKNOWN_MAPPING(Apache)</license>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "Vim" for pkg "vim-common"</error>
 <error>no mapping for "OPL-1+" for pkg "vim-common"</error>
 <error>no mapping for "Apache" for pkg "vim-common"</error>
@@ -60937,17 +60937,17 @@ License: EDL-1
 <license>GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)</license>
 <license>UNKNOWN_MAPPING(Vim-Regexp)</license>
 <license>UNKNOWN_MAPPING(UC)</license>
-<license>CC-0</license>
-<license>MIT OR GPL-2.0</license>
+<license>CC0-1.0</license>
+<license>MIT OR GPL-2.0-only</license>
 <license>UNKNOWN_MAPPING(X11)</license>
 <license>UNKNOWN_MAPPING(Compaq)</license>
-<license>GPL-2.0+</license>
+<license>GPL-2.0-or-later</license>
 <license>MIT OR UNKNOWN_MAPPING(Vim)</license>
 <license>UNKNOWN_MAPPING(XPM)</license>
-<license>LGPL-2.1+</license>
+<license>LGPL-2.1-or-later</license>
 <license>UNKNOWN_MAPPING(EDL-1)</license>
 <license>UNKNOWN_MAPPING(Apache)</license>
-<license>GPL-3.0+</license>
+<license>GPL-3.0-or-later</license>
 </spdx_licenses><error>no mapping for "Vim" for pkg "vim-tiny"</error>
 <error>no mapping for "OPL-1+" for pkg "vim-tiny"</error>
 <error>no mapping for "Apache" for pkg "vim-tiny"</error>
@@ -61102,8 +61102,8 @@ License: GPL-2+
 </files>
 </detailed>
 <spdx_licenses>
-<license>LGPL-2.0</license>
-<license>GPL-2.0+</license>
+<license>LGPL-2.0-only</license>
+<license>GPL-2.0-or-later</license>
 </spdx_licenses></pkglicense>
 <pkglicense name="zlib1g"><text>Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: zlib

@@ -12,21 +12,21 @@ Created: 0001-01-01T00:00:00+00:00
 PackageName: adduser
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package apt
 PackageName: apt
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND BSD-3-Clause AND MIT
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND BSD-3-Clause AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package apt-utils
 PackageName: apt-utils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND BSD-3-Clause AND MIT
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND BSD-3-Clause AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package base-files
@@ -40,56 +40,56 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: base-passwd
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND CC-0
+PackageLicenseDeclared: GPL-2.0-only AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package bash
 PackageName: bash
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND GPL-3.0+ WITH Bison exception AND GPL-2.0+ AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND UNKNOWN_MAPPING(Latex2e) AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(MIT-like) AND UNKNOWN_MAPPING(permissive)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND UNKNOWN_MAPPING(Latex2e) AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(MIT-like) AND UNKNOWN_MAPPING(permissive)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package bsdutils
 PackageName: bsdutils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package coreutils
 PackageName: coreutils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND GPL-3.0+ AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND GPL-3.0+ AND ISC AND UNKNOWN_MAPPING(FSFULLR) AND UNKNOWN_MAPPING(GFDL-NIV-1.3)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND GPL-3.0-or-later AND ISC AND UNKNOWN_MAPPING(FSFULLR) AND UNKNOWN_MAPPING(GFDL-NIV-1.3)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package cpio
 PackageName: cpio
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package cron
 PackageName: cron
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Paul-Vixie's-license) AND UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0+ AND ISC AND GPL-2.0+ AND Artistic-1.0
+PackageLicenseDeclared: UNKNOWN_MAPPING(Paul-Vixie's-license) AND UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0-or-later AND ISC AND GPL-2.0-or-later AND Artistic-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package cron-daemon-common
 PackageName: cron-daemon-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Paul-Vixie's-license) AND UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0+ AND ISC AND GPL-2.0+ AND Artistic-1.0
+PackageLicenseDeclared: UNKNOWN_MAPPING(Paul-Vixie's-license) AND UNKNOWN_MAPPING(Paul-Vixie's-license) AND GPL-2.0-or-later AND ISC AND GPL-2.0-or-later AND Artistic-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package dash
 PackageName: dash
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND CC-0 AND GPL-2.0+ AND BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-or-later AND BSD-3-Clause
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package debconf
@@ -117,56 +117,56 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: debianutils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND CC-0 AND UNKNOWN_MAPPING(SMAIL-GPL)
+PackageLicenseDeclared: GPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(SMAIL-GPL)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package diffutils
 PackageName: diffutils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND UNKNOWN_MAPPING(FSFULLR) AND GPL-3.0+ AND UNKNOWN_MAPPING(FSFULLR) AND LGPL-2.1+ AND GPL-3.0+ WITH autoconf exception AND GPL-3.0+ WITH texinfo exception AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0+ AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(FSFAP) AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-3.0+ AND (LGPL-3.0+ OR GPL-2.0+) AND CC-0
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(FSFULLR) AND GPL-3.0-or-later AND UNKNOWN_MAPPING(FSFULLR) AND LGPL-2.1-or-later AND GPL-3.0-or-later WITH autoconf exception AND GPL-3.0-or-later WITH texinfo exception AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0-or-later AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(FSFAP) AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-3.0-or-later AND (LGPL-3.0-or-later OR GPL-2.0-or-later) AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package dmidecode
 PackageName: dmidecode
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package dmsetup
 PackageName: dmsetup
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.1 AND BSD-2-Clause AND GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.1-only AND BSD-2-Clause AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package dpkg
 PackageName: dpkg
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND BSD-2-Clause AND UNKNOWN_MAPPING(public-domain-s-s-d)
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND BSD-2-Clause AND UNKNOWN_MAPPING(public-domain-s-s-d)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package e2fsprogs
 PackageName: e2fsprogs
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.0 AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0+ WITH Texinfo exception
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0-or-later WITH Texinfo exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package fdisk
 PackageName: fdisk
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package findutils
 PackageName: findutils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND GPL-3.0+ AND UNKNOWN_MAPPING(FSFAP) AND GPL-3.0+ WITH Autoconf-data exception AND UNKNOWN_MAPPING(FSFULLR) AND GPL-2.0+ WITH Autoconf-data exception AND GPL-2.0+ AND UNKNOWN_MAPPING(X11) AND CC-0 AND UNKNOWN_MAPPING(GPL) WITH automake exception AND LGPL-2.1+ AND LGPL-2.0+ AND LGPL-3.0+ AND UNKNOWN_MAPPING(BSD-3-clause and/or GPL-3+) AND GPL-3.0+ WITH Bison-2.2 exception AND UNKNOWN_MAPPING(LGPL-3) AND UNKNOWN_MAPPING(ISC and/or LGPL-2.1+)
+PackageLicenseDeclared: UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND GPL-3.0-or-later AND UNKNOWN_MAPPING(FSFAP) AND GPL-3.0-or-later WITH Autoconf-data exception AND UNKNOWN_MAPPING(FSFULLR) AND GPL-2.0-or-later WITH Autoconf-data exception AND GPL-2.0-or-later AND UNKNOWN_MAPPING(X11) AND CC0-1.0 AND UNKNOWN_MAPPING(GPL) WITH automake exception AND LGPL-2.1-or-later AND LGPL-2.0-or-later AND LGPL-3.0-or-later AND UNKNOWN_MAPPING(BSD-3-clause and/or GPL-3+) AND GPL-3.0-or-later WITH Bison-2.2 exception AND UNKNOWN_MAPPING(LGPL-3) AND UNKNOWN_MAPPING(ISC and/or LGPL-2.1+)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package gcc-12-base
@@ -180,48 +180,48 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: gpgv
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND UNKNOWN_MAPPING(permissive) AND LGPL-2.1+ AND MIT AND (GPL-3.0+ OR BSD-3-Clause) AND LGPL-3.0+ AND UNKNOWN_MAPPING(RFC-Reference) AND UNKNOWN_MAPPING(TinySCHEME) AND UNKNOWN_MAPPING(CC0-1.0)
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(permissive) AND LGPL-2.1-or-later AND MIT AND (GPL-3.0-or-later OR BSD-3-Clause) AND LGPL-3.0-or-later AND UNKNOWN_MAPPING(RFC-Reference) AND UNKNOWN_MAPPING(TinySCHEME) AND UNKNOWN_MAPPING(CC0-1.0)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package grep
 PackageName: grep
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+
+PackageLicenseDeclared: GPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package gzip
 PackageName: gzip
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND UNKNOWN_MAPPING(GFDL-1.3+-no-invariant) AND UNKNOWN_MAPPING(FSF-manpages)
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(GFDL-1.3+-no-invariant) AND UNKNOWN_MAPPING(FSF-manpages)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package hostname
 PackageName: hostname
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0
+PackageLicenseDeclared: GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package ifupdown
 PackageName: ifupdown
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package init
 PackageName: init
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0+
+PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package init-system-helpers
 PackageName: init-system-helpers
 PackageDownloadLocation: NOASSERTION
-PackageLicenseConcluded: BSD-3-Clause AND GPL-2.0+
+PackageLicenseConcluded: BSD-3-Clause AND GPL-2.0-or-later
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseInfoFromFiles: NOASSERTION
 
@@ -229,63 +229,63 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: iproute2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0
+PackageLicenseDeclared: GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package iputils-ping
 PackageName: iputils-ping
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0+ AND CC-0
+PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0-or-later AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package isc-dhcp-client
 PackageName: isc-dhcp-client
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: MPL-2.0 AND GPL-2.0
+PackageLicenseDeclared: MPL-2.0 AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package isc-dhcp-common
 PackageName: isc-dhcp-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: MPL-2.0 AND GPL-2.0
+PackageLicenseDeclared: MPL-2.0 AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package kmod
 PackageName: kmod
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package less
 PackageName: less
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (GPL-3.0+ OR UNKNOWN_MAPPING(Less)) AND (GPL-3.0+ OR UNKNOWN_MAPPING(Less,) AND UNKNOWN_MAPPING(X11)) AND UNKNOWN_MAPPING(Spencer-86) AND CC-0
+PackageLicenseDeclared: (GPL-3.0-or-later OR UNKNOWN_MAPPING(Less)) AND (GPL-3.0-or-later OR UNKNOWN_MAPPING(Less,) AND UNKNOWN_MAPPING(X11)) AND UNKNOWN_MAPPING(Spencer-86) AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libacl1
 PackageName: libacl1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND LGPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND LGPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libapparmor1
 PackageName: libapparmor1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND (BSD-3-Clause OR GPL-2.0+) AND LGPL-2.1+ AND GPL-2.0
+PackageLicenseDeclared: GPL-2.0-or-later AND (BSD-3-Clause OR GPL-2.0-or-later) AND LGPL-2.1-or-later AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libapt-pkg6.0
 PackageName: libapt-pkg6.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND BSD-3-Clause AND MIT
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND BSD-3-Clause AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libargon2-1
@@ -299,49 +299,49 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libattr1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND LGPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND LGPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libaudit-common
 PackageName: libaudit-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.1
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.1-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libaudit1
 PackageName: libaudit1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.1
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.1-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libblkid1
 PackageName: libblkid1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libbpf1
 PackageName: libbpf1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (LGPL-2.1 OR BSD-2-Clause) AND GPL-2.0 AND GPL-2.0 WITH Linux-syscall-note exception AND GPL-2.0+
+PackageLicenseDeclared: (LGPL-2.1-only OR BSD-2-Clause) AND GPL-2.0-only AND GPL-2.0-only WITH Linux-syscall-note exception AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libbsd0
 PackageName: libbsd0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(BSD-4-clause-Niels-Provos) AND UNKNOWN_MAPPING(BSD-3-clause-Regents) AND UNKNOWN_MAPPING(BSD-3-clause-Regents) AND UNKNOWN_MAPPING(BSD-2-clause-NetBSD) AND UNKNOWN_MAPPING(BSD-3-clause-author) AND UNKNOWN_MAPPING(BSD-3-clause-John-Birrell) AND UNKNOWN_MAPPING(libutil-David-Nugent) AND UNKNOWN_MAPPING(BSD-2-clause-NetBSD) AND BSD-2-Clause AND UNKNOWN_MAPPING(BSD-2-clause-verbatim) AND UNKNOWN_MAPPING(BSD-2-clause-author) AND ISC AND UNKNOWN_MAPPING(ISC-Original) AND MIT AND CC-0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(BSD-4-clause-Niels-Provos) AND UNKNOWN_MAPPING(BSD-3-clause-Regents) AND UNKNOWN_MAPPING(BSD-3-clause-Regents) AND UNKNOWN_MAPPING(BSD-2-clause-NetBSD) AND UNKNOWN_MAPPING(BSD-3-clause-author) AND UNKNOWN_MAPPING(BSD-3-clause-John-Birrell) AND UNKNOWN_MAPPING(libutil-David-Nugent) AND UNKNOWN_MAPPING(BSD-2-clause-NetBSD) AND BSD-2-Clause AND UNKNOWN_MAPPING(BSD-2-clause-verbatim) AND UNKNOWN_MAPPING(BSD-2-clause-author) AND ISC AND UNKNOWN_MAPPING(ISC-Original) AND MIT AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libbz2-1.0
 PackageName: libbz2-1.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(BSD-variant) AND GPL-2.0
+PackageLicenseDeclared: UNKNOWN_MAPPING(BSD-variant) AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libc-bin
@@ -362,28 +362,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libcap-ng0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: LGPL-2.1-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libcap2
 PackageName: libcap2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0) AND (BSD-3-Clause OR GPL-2.0+)
+PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0-only) AND (BSD-3-Clause OR GPL-2.0-or-later)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libcap2-bin
 PackageName: libcap2-bin
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0) AND (BSD-3-Clause OR GPL-2.0+)
+PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0-only) AND (BSD-3-Clause OR GPL-2.0-or-later)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libcom-err2
 PackageName: libcom-err2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.0 AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0+ WITH Texinfo exception
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0-or-later WITH Texinfo exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libcrypt1
@@ -397,7 +397,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libcryptsetup12
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ WITH OpenSSL exception AND GPL-2.0+ AND GPL-3.0+ AND LGPL-2.1+ AND LGPL-2.1+ WITH OpenSSL exception AND (UNKNOWN_MAPPING(CC0) OR Apache-2.0) AND CC-0
+PackageLicenseDeclared: GPL-2.0-or-later WITH OpenSSL exception AND GPL-2.0-or-later AND GPL-3.0-or-later AND LGPL-2.1-or-later AND LGPL-2.1-or-later WITH OpenSSL exception AND (UNKNOWN_MAPPING(CC0) OR Apache-2.0) AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libdb5.3
@@ -411,14 +411,14 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libdebconfclient0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0+
+PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libdevmapper1.02.1
 PackageName: libdevmapper1.02.1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.1 AND BSD-2-Clause AND GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.1-only AND BSD-2-Clause AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libedit2
@@ -432,28 +432,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libelf1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-2.1+ AND (LGPL-3.0+ OR GPL-2.0+) AND GPL-3.0+ WITH Bison exception AND BSD-2-Clause
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-2.1-or-later AND (LGPL-3.0-or-later OR GPL-2.0-or-later) AND GPL-3.0-or-later WITH Bison exception AND BSD-2-Clause
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libext2fs2
 PackageName: libext2fs2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.0 AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0+ WITH Texinfo exception
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0-or-later WITH Texinfo exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libfdisk1
 PackageName: libfdisk1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libffi8
 PackageName: libffi8
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: MIT AND UNKNOWN_MAPPING(X11) AND GPL-2.0+ AND GPL-3.0+ AND (UNKNOWN_MAPPING(MPL-1.1) OR GPL-2.0+ OR LGPL-2.1+) AND CC-0 AND UNKNOWN_MAPPING(GPL)
+PackageLicenseDeclared: MIT AND UNKNOWN_MAPPING(X11) AND GPL-2.0-or-later AND GPL-3.0-or-later AND (UNKNOWN_MAPPING(MPL-1.1) OR GPL-2.0-or-later OR LGPL-2.1-or-later) AND CC0-1.0 AND UNKNOWN_MAPPING(GPL)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libgcc-s1
@@ -474,21 +474,21 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libgmp10
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (GPL-2.0+ OR LGPL-3.0+) AND GPL-3.0+ AND GPL-3.0+ WITH Bison exception
+PackageLicenseDeclared: (GPL-2.0-or-later OR LGPL-3.0-or-later) AND GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libgnutls30
 PackageName: libgnutls30
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: Empty license AND BSD-3-Clause AND UNKNOWN_MAPPING(CC0 license) AND UNKNOWN_MAPPING(The main library is licensed under GNU Lesser) AND UNKNOWN_MAPPING(LGPLv3+_or_GPLv2+) AND MIT AND UNKNOWN_MAPPING(LGPLv2.1+) AND GPL-3.0+ AND Apache-2.0
+PackageLicenseDeclared: Empty license AND BSD-3-Clause AND UNKNOWN_MAPPING(CC0 license) AND UNKNOWN_MAPPING(The main library is licensed under GNU Lesser) AND UNKNOWN_MAPPING(LGPLv3+_or_GPLv2+) AND MIT AND UNKNOWN_MAPPING(LGPLv2.1+) AND GPL-3.0-or-later AND Apache-2.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libgpg-error0
 PackageName: libgpg-error0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND (LGPL-2.1+ OR BSD-3-Clause) AND UNKNOWN_MAPPING(g10-permissive) AND GPL-3.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND (LGPL-2.1-or-later OR BSD-3-Clause) AND UNKNOWN_MAPPING(g10-permissive) AND GPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libgssapi-krb5-2
@@ -502,21 +502,21 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libhogweed6
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (LGPL-3.0+ OR GPL-2.0+) AND LGPL-2.0+ AND MIT AND GPL-3.0+ AND GPL-2.0+ AND GPL-3.0+ WITH Autoconf exception AND CC-0 AND GPL-2.0 AND UNKNOWN_MAPPING(GAP)
+PackageLicenseDeclared: (LGPL-3.0-or-later OR GPL-2.0-or-later) AND LGPL-2.0-or-later AND MIT AND GPL-3.0-or-later AND GPL-2.0-or-later AND GPL-3.0-or-later WITH Autoconf exception AND CC0-1.0 AND GPL-2.0-only AND UNKNOWN_MAPPING(GAP)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libidn2-0
 PackageName: libidn2-0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND (LGPL-3.0+ OR GPL-2.0+) AND UNKNOWN_MAPPING(Unicode)
+PackageLicenseDeclared: GPL-3.0-or-later AND (LGPL-3.0-or-later OR GPL-2.0-or-later) AND UNKNOWN_MAPPING(Unicode)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libip4tc2
 PackageName: libip4tc2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND Artistic-1.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(custom)
+PackageLicenseDeclared: GPL-2.0-only AND Artistic-1.0 AND GPL-2.0-or-later AND UNKNOWN_MAPPING(custom)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libjansson4
@@ -544,14 +544,14 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libkeyutils1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND LGPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND LGPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libkmod2
 PackageName: libkmod2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libkrb5-3
@@ -579,14 +579,14 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: liblz4-1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0+ AND (GPL-2.0+ OR BSD-2-Clause)
+PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0-or-later AND (GPL-2.0-or-later OR BSD-2-Clause)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package liblzma5
 PackageName: liblzma5
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(PD) AND UNKNOWN_MAPPING(probably-PD) AND GPL-2.0+ AND LGPL-2.1+ AND UNKNOWN_MAPPING(permissive-fsf) AND UNKNOWN_MAPPING(Autoconf) AND UNKNOWN_MAPPING(permissive-nowarranty) AND GPL-2.0 AND UNKNOWN_MAPPING(none) AND UNKNOWN_MAPPING(config-h) AND UNKNOWN_MAPPING(noderivs) AND UNKNOWN_MAPPING(PD-debian)
+PackageLicenseDeclared: UNKNOWN_MAPPING(PD) AND UNKNOWN_MAPPING(probably-PD) AND GPL-2.0-or-later AND LGPL-2.1-or-later AND UNKNOWN_MAPPING(permissive-fsf) AND UNKNOWN_MAPPING(Autoconf) AND UNKNOWN_MAPPING(permissive-nowarranty) AND GPL-2.0-only AND UNKNOWN_MAPPING(none) AND UNKNOWN_MAPPING(config-h) AND UNKNOWN_MAPPING(noderivs) AND UNKNOWN_MAPPING(PD-debian)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libmd0
@@ -600,14 +600,14 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libmnl0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-only AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libmount1
 PackageName: libmount1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libncursesw6
@@ -621,98 +621,98 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libnettle8
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (LGPL-3.0+ OR GPL-2.0+) AND LGPL-2.0+ AND MIT AND GPL-3.0+ AND GPL-2.0+ AND GPL-3.0+ WITH Autoconf exception AND CC-0 AND GPL-2.0 AND UNKNOWN_MAPPING(GAP)
+PackageLicenseDeclared: (LGPL-3.0-or-later OR GPL-2.0-or-later) AND LGPL-2.0-or-later AND MIT AND GPL-3.0-or-later AND GPL-2.0-or-later AND GPL-3.0-or-later WITH Autoconf exception AND CC0-1.0 AND GPL-2.0-only AND UNKNOWN_MAPPING(GAP)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libnewt0.52
 PackageName: libnewt0.52
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.0-only AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libnftables1
 PackageName: libnftables1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(CC-BY-SA-4.0)
+PackageLicenseDeclared: GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(CC-BY-SA-4.0)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libnftnl11
 PackageName: libnftnl11
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libp11-kit0
 PackageName: libp11-kit0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(permissive-like-automake-output) AND ISC AND UNKNOWN_MAPPING(ISC+IBM) AND LGPL-2.1+ AND Apache-2.0 AND UNKNOWN_MAPPING(same-as-rest-of-p11kit)
+PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(permissive-like-automake-output) AND ISC AND UNKNOWN_MAPPING(ISC+IBM) AND LGPL-2.1-or-later AND Apache-2.0 AND UNKNOWN_MAPPING(same-as-rest-of-p11kit)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-modules
 PackageName: libpam-modules
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0+ WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0+ AND CC-0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-modules-bin
 PackageName: libpam-modules-bin
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0+ WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0+ AND CC-0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-runtime
 PackageName: libpam-runtime
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0+ WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0+ AND CC-0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam0g
 PackageName: libpam0g
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0+ WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0+ AND CC-0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3) AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpcre2-8-0
 PackageName: libpcre2-8-0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(BSD-3-clause-Cambridge) WITH BINARY LIBRARY-LIKE PACKAGES exception AND BSD-3-Clause AND UNKNOWN_MAPPING(X11) AND BSD-2-Clause AND CC-0
+PackageLicenseDeclared: UNKNOWN_MAPPING(BSD-3-clause-Cambridge) WITH BINARY LIBRARY-LIKE PACKAGES exception AND BSD-3-Clause AND UNKNOWN_MAPPING(X11) AND BSD-2-Clause AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpopt0
 PackageName: libpopt0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(expat) AND GPL-2.0+
+PackageLicenseDeclared: UNKNOWN_MAPPING(expat) AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libproc2-0
 PackageName: libproc2-0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libreadline8
 PackageName: libreadline8
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND GPL-2.0+ AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libseccomp2
 PackageName: libseccomp2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1
+PackageLicenseDeclared: LGPL-2.1-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libselinux1
@@ -740,28 +740,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libsepol2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(Zlib) AND GPL-2.0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(Zlib) AND GPL-2.0-only AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libslang2
 PackageName: libslang2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libsmartcols1
 PackageName: libsmartcols1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libss2
 PackageName: libss2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.0 AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0+ WITH Texinfo exception
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0-or-later WITH Texinfo exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libssl3
@@ -782,14 +782,14 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libsystemd-shared
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libsystemd0
 PackageName: libsystemd0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libtasn1-6
@@ -831,63 +831,63 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libtirpc-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0 AND UNKNOWN_MAPPING(__AUTO_PERMISSIVE__) AND BSD-2-Clause AND BSD-4-Clause AND LGPL-2.1+ AND UNKNOWN_MAPPING(PERMISSIVE)
+PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0-only AND UNKNOWN_MAPPING(__AUTO_PERMISSIVE__) AND BSD-2-Clause AND BSD-4-Clause AND LGPL-2.1-or-later AND UNKNOWN_MAPPING(PERMISSIVE)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libtirpc3
 PackageName: libtirpc3
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0 AND UNKNOWN_MAPPING(__AUTO_PERMISSIVE__) AND BSD-2-Clause AND BSD-4-Clause AND LGPL-2.1+ AND UNKNOWN_MAPPING(PERMISSIVE)
+PackageLicenseDeclared: BSD-3-Clause AND GPL-2.0-only AND UNKNOWN_MAPPING(__AUTO_PERMISSIVE__) AND BSD-2-Clause AND BSD-4-Clause AND LGPL-2.1-or-later AND UNKNOWN_MAPPING(PERMISSIVE)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libudev1
 PackageName: libudev1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libunistring2
 PackageName: libunistring2
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (LGPL-3.0+ OR GPL-2.0+) AND UNKNOWN_MAPPING(FreeSoftware) AND (GPL-3.0+ OR GFDL-1.2+) AND GPL-3.0+ AND GPL-2.0+ AND GPL-2.0+ WITH distribution exception AND MIT
+PackageLicenseDeclared: (LGPL-3.0-or-later OR GPL-2.0-or-later) AND UNKNOWN_MAPPING(FreeSoftware) AND (GPL-3.0-or-later OR GFDL-1.2-or-later) AND GPL-3.0-or-later AND GPL-2.0-or-later AND GPL-2.0-or-later WITH distribution exception AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libuuid1
 PackageName: libuuid1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libxtables12
 PackageName: libxtables12
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND Artistic-1.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(custom)
+PackageLicenseDeclared: GPL-2.0-only AND Artistic-1.0 AND GPL-2.0-or-later AND UNKNOWN_MAPPING(custom)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libxxhash0
 PackageName: libxxhash0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0
+PackageLicenseDeclared: BSD-2-Clause AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libzstd1
 PackageName: libzstd1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0) AND UNKNOWN_MAPPING(zlib) AND MIT
+PackageLicenseDeclared: (BSD-3-Clause OR GPL-2.0-only) AND UNKNOWN_MAPPING(zlib) AND MIT
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package login
 PackageName: login
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(GPL-1) AND GPL-2.0+ AND CC-0
+PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(GPL-1) AND GPL-2.0-or-later AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package logrotate
@@ -901,28 +901,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: logsave
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND LGPL-2.0 AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0+ WITH Texinfo exception
+PackageLicenseDeclared: GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND UNKNOWN_MAPPING(Apache-2) AND ISC AND (UNKNOWN_MAPPING(GPL) OR UNKNOWN_MAPPING(MIT-US-export)) AND UNKNOWN_MAPPING(Kazlib) AND UNKNOWN_MAPPING(Latex2e) AND GPL-2.0-or-later WITH Texinfo exception
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package mawk
 PackageName: mawk
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(CC-BY-3.0)
+PackageLicenseDeclared: GPL-2.0-only AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(CC-BY-3.0)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package mount
 PackageName: mount
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package nano
 PackageName: nano
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND (UNKNOWN_MAPPING(GFDL-NIV+) OR GPL-3.0+)
+PackageLicenseDeclared: GPL-3.0-or-later AND (UNKNOWN_MAPPING(GFDL-NIV+) OR GPL-3.0-or-later)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package ncurses-base
@@ -943,154 +943,154 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: netbase
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0
+PackageLicenseDeclared: GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package nftables
 PackageName: nftables
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0 AND GPL-2.0+ AND UNKNOWN_MAPPING(CC-BY-SA-4.0)
+PackageLicenseDeclared: GPL-2.0-only AND GPL-2.0-or-later AND UNKNOWN_MAPPING(CC-BY-SA-4.0)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package passwd
 PackageName: passwd
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(GPL-1) AND GPL-2.0+ AND CC-0
+PackageLicenseDeclared: BSD-3-Clause AND UNKNOWN_MAPPING(GPL-1) AND GPL-2.0-or-later AND CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package perl-base
 PackageName: perl-base
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (GPL-1.0+ OR Artistic-1.0) AND MIT AND (UNKNOWN_MAPPING(REGCOMP,) AND GPL-1.0+ OR Artistic-1.0) AND UNKNOWN_MAPPING(GPL-3+-WITH-BISON-EXCEPTION) AND UNKNOWN_MAPPING(Unicode) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(Unicode)) AND UNKNOWN_MAPPING(BZIP) AND Zlib AND Artistic-1.0 AND (GPL-2.0+ OR Artistic-1.0) AND (MIT OR GPL-1.0+ OR Artistic-1.0) AND UNKNOWN_MAPPING(RRA-KEEP-THIS-NOTICE) AND UNKNOWN_MAPPING(BSD-3-clause-with-weird-numbering) AND UNKNOWN_MAPPING(CC0-1.0) AND UNKNOWN_MAPPING(TEXT-TABS) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(BSD-4-clause-POWERDOG)) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(BSD-3-clause-GENERIC)) AND BSD-3-Clause AND UNKNOWN_MAPPING(SDBM-PUBLIC-DOMAIN) AND UNKNOWN_MAPPING(DONT-CHANGE-THE-GPL) AND (GPL-1.0+ OR Artistic-1.0 OR UNKNOWN_MAPPING(Artistic-dist)) AND UNKNOWN_MAPPING(Artistic-dist) AND (Artistic-1.0 OR GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-dist)) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND MIT)
+PackageLicenseDeclared: (GPL-1.0+ OR Artistic-1.0) AND MIT AND (UNKNOWN_MAPPING(REGCOMP,) AND GPL-1.0+ OR Artistic-1.0) AND UNKNOWN_MAPPING(GPL-3+-WITH-BISON-EXCEPTION) AND UNKNOWN_MAPPING(Unicode) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(Unicode)) AND UNKNOWN_MAPPING(BZIP) AND Zlib AND Artistic-1.0 AND (GPL-2.0-or-later OR Artistic-1.0) AND (MIT OR GPL-1.0+ OR Artistic-1.0) AND UNKNOWN_MAPPING(RRA-KEEP-THIS-NOTICE) AND UNKNOWN_MAPPING(BSD-3-clause-with-weird-numbering) AND UNKNOWN_MAPPING(CC0-1.0) AND UNKNOWN_MAPPING(TEXT-TABS) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(BSD-4-clause-POWERDOG)) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND UNKNOWN_MAPPING(BSD-3-clause-GENERIC)) AND BSD-3-Clause AND UNKNOWN_MAPPING(SDBM-PUBLIC-DOMAIN) AND UNKNOWN_MAPPING(DONT-CHANGE-THE-GPL) AND (GPL-1.0+ OR Artistic-1.0 OR UNKNOWN_MAPPING(Artistic-dist)) AND UNKNOWN_MAPPING(Artistic-dist) AND (Artistic-1.0 OR GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-dist)) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic,) AND MIT)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package procps
 PackageName: procps
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(LGPL-2.0+) AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package readline-common
 PackageName: readline-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND GPL-2.0+ AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND UNKNOWN_MAPPING(ISC-no-attribution) AND UNKNOWN_MAPPING(GPL-3)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package sed
 PackageName: sed
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND GPL-3.0+ AND ISC AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(BSL-1) AND UNKNOWN_MAPPING(pcre)
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(GFDL-NIV-1.3+) AND GPL-3.0-or-later AND ISC AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(BSL-1) AND UNKNOWN_MAPPING(pcre)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package sensible-utils
 PackageName: sensible-utils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND UNKNOWN_MAPPING(All-permissive) AND UNKNOWN_MAPPING(configure) AND UNKNOWN_MAPPING(installsh)
+PackageLicenseDeclared: GPL-2.0-or-later AND UNKNOWN_MAPPING(All-permissive) AND UNKNOWN_MAPPING(configure) AND UNKNOWN_MAPPING(installsh)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package systemd
 PackageName: systemd
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package systemd-sysv
 PackageName: systemd-sysv
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package sysvinit-utils
 PackageName: sysvinit-utils
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND UNKNOWN_MAPPING(GPL-3.0) AND GPL-2.0
+PackageLicenseDeclared: GPL-2.0-or-later AND UNKNOWN_MAPPING(GPL-3.0) AND GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package tar
 PackageName: tar
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0+ AND GPL-3.0+ WITH Bison exception AND LGPL-3.0+ AND GPL-2.0+
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception AND LGPL-3.0-or-later AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package tasksel
 PackageName: tasksel
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0
+PackageLicenseDeclared: GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package tasksel-data
 PackageName: tasksel-data
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0
+PackageLicenseDeclared: GPL-2.0-only
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package tzdata
 PackageName: tzdata
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: CC-0
+PackageLicenseDeclared: CC0-1.0
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package udev
 PackageName: udev
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.1+ AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0 WITH Linux-syscall-note exception AND MIT AND CC-0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.1-or-later AND UNKNOWN_MAPPING(CC0-1.0) AND GPL-2.0-only WITH Linux-syscall-note exception AND MIT AND CC0-1.0 AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package usr-is-merged
 PackageName: usr-is-merged
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+
+PackageLicenseDeclared: GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package util-linux
 PackageName: util-linux
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package util-linux-extra
 PackageName: util-linux-extra
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-2.0+ AND GPL-2.0 AND GPL-3.0+ AND CC-0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0+ AND LGPL-2.1+ AND LGPL-3.0+ AND LGPL-3.0+
+PackageLicenseDeclared: GPL-2.0-or-later AND GPL-2.0-only AND GPL-3.0-or-later AND CC0-1.0 AND BSD-4-Clause AND MIT AND BSD-3-Clause AND UNKNOWN_MAPPING(BSLA) AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND LGPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package vim-common
 PackageName: vim-common
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Vim) AND UNKNOWN_MAPPING(OPL-1+) AND BSD-3-Clause AND MIT AND BSD-2-Clause AND (UNKNOWN_MAPPING(Apache) OR MIT) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)) AND UNKNOWN_MAPPING(Vim-Regexp) AND UNKNOWN_MAPPING(UC) AND CC-0 AND (MIT OR GPL-2.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(Compaq) AND GPL-2.0+ AND (MIT OR UNKNOWN_MAPPING(Vim)) AND UNKNOWN_MAPPING(XPM) AND LGPL-2.1+ AND UNKNOWN_MAPPING(EDL-1) AND UNKNOWN_MAPPING(Apache) AND GPL-3.0+
+PackageLicenseDeclared: UNKNOWN_MAPPING(Vim) AND UNKNOWN_MAPPING(OPL-1+) AND BSD-3-Clause AND MIT AND BSD-2-Clause AND (UNKNOWN_MAPPING(Apache) OR MIT) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)) AND UNKNOWN_MAPPING(Vim-Regexp) AND UNKNOWN_MAPPING(UC) AND CC0-1.0 AND (MIT OR GPL-2.0-only) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(Compaq) AND GPL-2.0-or-later AND (MIT OR UNKNOWN_MAPPING(Vim)) AND UNKNOWN_MAPPING(XPM) AND LGPL-2.1-or-later AND UNKNOWN_MAPPING(EDL-1) AND UNKNOWN_MAPPING(Apache) AND GPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package vim-tiny
 PackageName: vim-tiny
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: UNKNOWN_MAPPING(Vim) AND UNKNOWN_MAPPING(OPL-1+) AND BSD-3-Clause AND MIT AND BSD-2-Clause AND (UNKNOWN_MAPPING(Apache) OR MIT) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)) AND UNKNOWN_MAPPING(Vim-Regexp) AND UNKNOWN_MAPPING(UC) AND CC-0 AND (MIT OR GPL-2.0) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(Compaq) AND GPL-2.0+ AND (MIT OR UNKNOWN_MAPPING(Vim)) AND UNKNOWN_MAPPING(XPM) AND LGPL-2.1+ AND UNKNOWN_MAPPING(EDL-1) AND UNKNOWN_MAPPING(Apache) AND GPL-3.0+
+PackageLicenseDeclared: UNKNOWN_MAPPING(Vim) AND UNKNOWN_MAPPING(OPL-1+) AND BSD-3-Clause AND MIT AND BSD-2-Clause AND (UNKNOWN_MAPPING(Apache) OR MIT) AND (GPL-1.0+ OR UNKNOWN_MAPPING(Artistic-1)) AND UNKNOWN_MAPPING(Vim-Regexp) AND UNKNOWN_MAPPING(UC) AND CC0-1.0 AND (MIT OR GPL-2.0-only) AND UNKNOWN_MAPPING(X11) AND UNKNOWN_MAPPING(Compaq) AND GPL-2.0-or-later AND (MIT OR UNKNOWN_MAPPING(Vim)) AND UNKNOWN_MAPPING(XPM) AND LGPL-2.1-or-later AND UNKNOWN_MAPPING(EDL-1) AND UNKNOWN_MAPPING(Apache) AND GPL-3.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package whiptail
 PackageName: whiptail
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: LGPL-2.0 AND GPL-2.0+
+PackageLicenseDeclared: LGPL-2.0-only AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package zlib1g
