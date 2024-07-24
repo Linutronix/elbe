@@ -33,7 +33,7 @@ def collect(tararchive, path, keep):
         'tar', 'rf', tararchive,
         *([] if keep else ['--owner=root',  '--group=root']),
         '-C', path, '.',
-    ])
+    ], check=True)
 
 
 def chg_archive(xml, path, keep):
