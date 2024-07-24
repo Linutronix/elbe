@@ -49,6 +49,7 @@
                 <mapping name='FTL'>FTL</mapping>
                 <mapping name='ISC'>ISC</mapping>
                 <mapping name='Gzip'>Zlib</mapping>
+                <mapping name='GPL-3+ with Bison exception'>GPL-3.0-or-later WITH Bison-exception-2.2</mapping>
 
                 <mapping name='X-Consortium'>X11</mapping>
 

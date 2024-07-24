@@ -47,7 +47,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: bash
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND UNKNOWN_MAPPING(Latex2e) AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(MIT-like) AND UNKNOWN_MAPPING(permissive)
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison-exception-2.2 AND GPL-2.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND UNKNOWN_MAPPING(Latex2e) AND UNKNOWN_MAPPING(BSD-4-clause-UC) AND UNKNOWN_MAPPING(MIT-like) AND UNKNOWN_MAPPING(permissive)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package bsdutils
@@ -432,7 +432,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libelf1
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-2.1-or-later AND (LGPL-3.0-or-later OR GPL-2.0-or-later) AND GPL-3.0-or-later WITH Bison exception AND BSD-2-Clause
+PackageLicenseDeclared: GPL-3.0-or-later AND UNKNOWN_MAPPING(GFDL-NIV-1.3) AND LGPL-2.1-or-later AND (LGPL-3.0-or-later OR GPL-2.0-or-later) AND GPL-3.0-or-later WITH Bison-exception-2.2 AND BSD-2-Clause
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libext2fs2
@@ -474,7 +474,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libgmp10
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (GPL-2.0-or-later OR LGPL-3.0-or-later) AND GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception
+PackageLicenseDeclared: (GPL-2.0-or-later OR LGPL-3.0-or-later) AND GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison-exception-2.2
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libgnutls30
@@ -656,28 +656,28 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: libpam-modules
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison-exception-2.2 AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-modules-bin
 PackageName: libpam-modules-bin
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison-exception-2.2 AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam-runtime
 PackageName: libpam-runtime
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison-exception-2.2 AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpam0g
 PackageName: libpam0g
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison exception AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
+PackageLicenseDeclared: (BSD-3-Clause OR UNKNOWN_MAPPING(GPL)) AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND GPL-3.0-or-later WITH Bison-exception-2.2 AND UNKNOWN_MAPPING(BSD-tcp_wrappers) AND LGPL-2.0-or-later AND CC0-1.0 AND UNKNOWN_MAPPING(Beerware)
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package libpcre2-8-0
@@ -1020,7 +1020,7 @@ PackageLicenseInfoFromFiles: NOASSERTION
 PackageName: tar
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison exception AND LGPL-3.0-or-later AND GPL-2.0-or-later
+PackageLicenseDeclared: GPL-3.0-or-later AND GPL-3.0-or-later WITH Bison-exception-2.2 AND LGPL-3.0-or-later AND GPL-2.0-or-later
 PackageLicenseInfoFromFiles: NOASSERTION
 
 ## Package tasksel
