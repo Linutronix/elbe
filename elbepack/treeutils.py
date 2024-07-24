@@ -100,7 +100,7 @@ class ebase:
         self.et.append(copy.deepcopy(other.et))
 
     def tostring(self):
-        return tostring(self.et, encoding='utf-8').decode('utf-8')
+        return tostring(self.et, encoding=str)
 
 
 class elem(ebase):
