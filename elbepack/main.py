@@ -3,10 +3,15 @@
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 
 import importlib
+import pkgutil
 import sys
 
-from elbepack.directories import get_cmdlist
+import elbepack.commands
 from elbepack.version import elbe_version
+
+
+def get_cmdlist():
+    return [x for _, x, _ in pkgutil.iter_modules(elbepack.commands.__path__)]
 
 
 def usage():

@@ -23,7 +23,7 @@ import sys
 sys.path.insert(0, os.path.abspath('ext'))
 sys.path.insert(0, os.path.abspath('..'))
 
-import elbepack.directories  # noqa: E402
+import elbepack.main  # noqa: E402
 from elbepack.version import elbe_version  # noqa: E402
 
 # -- General configuration ------------------------------------------------
@@ -158,7 +158,7 @@ man_pages = [
     ('elbe', 'elbe', '', [], 1),
 ] + [
     ('elbe-' + cmd, 'elbe-' + cmd, '', [], 1)
-    for cmd in elbepack.directories.get_cmdlist()
+    for cmd in elbepack.main.get_cmdlist()
     if cmd not in {'bootup-check', 'check-build', 'pin_versions'}
 ]
 
