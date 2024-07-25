@@ -2,21 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
-from elbepack.dbaction import DbAction
+import argparse
+
+from elbepack.cli import add_arguments_from_decorated_function
+from elbepack.dbaction import db_actions
 
 
 def run_command(argv):
+    aparser = argparse.ArgumentParser(prog='elbe db')
+    subparsers = aparser.add_subparsers(required=True)
 
-    if not argv:
-        print('elbe db - no action given')
-        DbAction.print_actions()
-        return
+    for action_name, do_action in db_actions.items():
+        action_parser = subparsers.add_parser(action_name)
+        action_parser.set_defaults(func=do_action)
+        add_arguments_from_decorated_function(action_parser, do_action)
 
-    try:
-        DbAction(argv[0]).execute(argv[1:])
-    except KeyError:
-        print('elbe db - unknown action given')
-        DbAction.print_actions()
-        return
+    args = aparser.parse_args(argv)
 
-    return
+    args.func(args)

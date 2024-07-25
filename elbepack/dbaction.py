@@ -4,383 +4,194 @@
 
 import sys
 from getpass import getpass
-from optparse import OptionParser
 from shutil import copyfileobj
 
+from elbepack.cli import add_argument
 from elbepack.db import ElbeDB, ElbeDBError
 
 
-class DbAction:
-
-    actiondict = {}
-
-    @classmethod
-    def register(cls, action):
-        cls.actiondict[action.tag] = action
-
-    @classmethod
-    def print_actions(cls):
-        print('available actions are:')
-        for a in cls.actiondict:
-            print(f'   {a}')
-
-    def __new__(cls, node):
-        action = cls.actiondict[node]
-        return object.__new__(action)
-
-    def __init__(self, node):
-        self.node = node
-
-    def execute(self, _args):
-        raise NotImplementedError('execute() not implemented')
+@add_argument('--name', default='root')
+@add_argument('--fullname', default='Admin')
+@add_argument('--password', default='foo')
+@add_argument('--email', default='root@localhost')
+@add_argument('--noadmin', dest='admin', default=True, action='store_false')
+def _init(args):
+    ElbeDB.init_db(args.name, args.fullname, args.password,
+                   args.email, args.admin)
 
 
-class InitAction(DbAction):
-    tag = 'init'
+@add_argument('--fullname')
+@add_argument('--password')
+@add_argument('--email')
+@add_argument('--admin', default=False, action='store_true')
+@add_argument('username')
+def _add_user(args):
+    if not args.password:
+        password = getpass('Password for the new user: ')
+    else:
+        password = args.password
 
-    def execute(self, args):
-        oparser = OptionParser(usage='usage: %prog db init [options]')
-        oparser.add_option('--name', dest='name', default='root')
-        oparser.add_option('--fullname', dest='fullname', default='Admin')
-        oparser.add_option('--password', dest='password', default='foo')
-        oparser.add_option('--email', dest='email', default='root@localhost')
-        oparser.add_option('--noadmin', dest='admin', default=True,
-                           action='store_false')
-
-        (opt, _) = oparser.parse_args(args)
-
-        ElbeDB.init_db(opt.name, opt.fullname, opt.password,
-                       opt.email, opt.admin)
+    db = ElbeDB()
+    db.add_user(args.username, args.fullname, password, args.email, args.admin)
 
 
-DbAction.register(InitAction)
+@add_argument('--delete-projects', dest='delete_projects',
+              default=False, action='store_true')
+@add_argument('--quiet', dest='quiet',
+              default=False, action='store_true')
+@add_argument('userid', type=int)
+def _del_user(args):
+    db = ElbeDB()
 
+    projects = db.del_user(args.userid)
 
-class AddUserAction(DbAction):
-    tag = 'add_user'
+    if projects:
+        if not args.opt.quiet:
+            if args.opt.delete_projects:
+                print('removing projects owned by the deleted user:')
+            else:
+                print('keeping projects owned by the deleted user:')
 
-    def execute(self, args):
-        oparser = OptionParser(
-            usage='usage: %prog db add_user [options] <username>')
-        oparser.add_option('--fullname', dest='fullname')
-        oparser.add_option('--password', dest='password')
-        oparser.add_option('--email', dest='email')
-        oparser.add_option('--admin', dest='admin', default=False,
-                           action='store_true')
-
-        (opt, arg) = oparser.parse_args(args)
-
-        if len(arg) != 1:
-            print('wrong number of arguments')
-            oparser.print_help()
-            return
-
-        if not opt.password:
-            password = getpass('Password for the new user: ')
-        else:
-            password = opt.password
-
-        db = ElbeDB()
-        db.add_user(arg[0], opt.fullname, password, opt.email, opt.admin)
-
-
-DbAction.register(AddUserAction)
-
-
-class DelUserAction(DbAction):
-    tag = 'del_user'
-
-    def execute(self, args):
-        oparser = OptionParser(
-            usage='usage: %prog db del_user [options] <userid>')
-        oparser.add_option('--delete-projects', dest='delete_projects',
-                           default=False, action='store_true')
-        oparser.add_option('--quiet', dest='quiet',
-                           default=False, action='store_true')
-
-        (opt, arg) = oparser.parse_args(args)
-
-        if len(arg) != 1:
-            print('usage: elbe db del_user <userid>')
-            return
-
-        try:
-            userid = int(arg[0])
-        except ValueError as E:
-            print(f'userid must be an integer - {E}')
-            return
-
-        db = ElbeDB()
-
-        projects = db.del_user(userid)
-
-        if projects:
-            if not opt.quiet:
-                if opt.delete_projects:
-                    print('removing projects owned by the deleted user:')
-                else:
-                    print('keeping projects owned by the deleted user:')
-
-        for p in projects:
-            if not opt.quiet:
-                print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
-            if opt.delete_projects:
-                try:
-                    db.del_project(p.builddir)
-                except ElbeDBError as e:
-                    print(f'  ==> {e} ')
-
-
-DbAction.register(DelUserAction)
-
-
-class ListProjectsAction(DbAction):
-
-    tag = 'list_projects'
-
-    def execute(self, _args):
-        db = ElbeDB()
-        projects = db.list_projects()
-
-        for p in projects:
+    for p in projects:
+        if not args.opt.quiet:
             print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
+        if args.opt.delete_projects:
+            try:
+                db.del_project(p.builddir)
+            except ElbeDBError as e:
+                print(f'  ==> {e} ')
+
 
+def _list_projects(args):
+    db = ElbeDB()
+    projects = db.list_projects()
+
+    for p in projects:
+        print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
 
-DbAction.register(ListProjectsAction)
 
+def _list_users(args):
+    db = ElbeDB()
+    users = db.list_users()
+
+    for u in users:
+        print(f'{u.name}: {u.fullname} <{u.email}>')
+
 
-class ListUsersAction(DbAction):
-
-    tag = 'list_users'
-
-    def execute(self, _args):
-        db = ElbeDB()
-        users = db.list_users()
-
-        for u in users:
-            print(f'{u.name}: {u.fullname} <{u.email}>')
-
-
-DbAction.register(ListUsersAction)
-
-
-class CreateProjectAction(DbAction):
-
-    tag = 'create_project'
-
-    def execute(self, args):
-        oparser = OptionParser(
-            usage='usage: %prog db create_project [options] <project_dir>')
-        oparser.add_option('--user', dest='user',
-                           help='user name of the designated project owner')
-        (opt, arg) = oparser.parse_args(args)
-
-        if len(arg) != 1:
-            oparser.print_help()
-            return
-
-        db = ElbeDB()
-        owner_id = db.get_user_id(opt.user)
-        db.create_project(arg[0], owner_id)
-
-
-DbAction.register(CreateProjectAction)
-
-
-class DeleteProjectAction(DbAction):
-
-    tag = 'del_project'
-
-    def execute(self, args):
-        if len(args) != 1:
-            print('usage: elbe db del_project <project_dir>')
-            return
-
-        db = ElbeDB()
-        db.del_project(args[0])
-
-
-DbAction.register(DeleteProjectAction)
-
-
-class SetXmlAction(DbAction):
-
-    tag = 'set_xml'
-
-    def execute(self, args):
-        if len(args) != 2:
-            print('usage: elbe db set_xml <project_dir> <xml>')
-            return
-
-        db = ElbeDB()
-        db.set_xml(args[0], args[1])
-
-
-DbAction.register(SetXmlAction)
-
-
-class BuildAction(DbAction):
-
-    tag = 'build'
-
-    def execute(self, args):
-        if len(args) != 1:
-            print('usage: elbe db build <project_dir>')
-            return
-
-        db = ElbeDB()
-        db.set_busy(args[0], ['empty_project', 'needs_build', 'has_changes',
-                              'build_done', 'build_failed'])
-        try:
-            ep = db.load_project(args[0])
-            ep.build()
-            db.update_project_files(ep)
-        except Exception as e:
-            db.update_project_files(ep)
-            db.reset_busy(args[0], 'build_failed')
-            print(str(e))
-            return
-        db.reset_busy(args[0], 'build_done')
-
-
-DbAction.register(BuildAction)
-
-
-class GetFilesAction(DbAction):
-
-    tag = 'get_files'
-
-    def execute(self, args):
-        if len(args) != 1:
-            print('usage: elbe db get_files <project_dir>')
-            return
-
-        db = ElbeDB()
-        files = db.get_project_files(args[0])
-        for f in files:
-            if f.description:
-                print(f'{f.name:40}  {f.description}')
-            else:
-                print(f.name)
-
-
-DbAction.register(GetFilesAction)
-
-
-class ResetProjectAction(DbAction):
-
-    tag = 'reset_project'
-
-    def execute(self, args):
-        oparser = OptionParser(
-            usage='usage: %prog db reset_project [options] <project_dir>')
-        oparser.add_option('--clean', dest='clean', default=False,
-                           action='store_true')
-
-        (opt, arg) = oparser.parse_args(args)
-
-        if len(arg) != 1:
-            print('wrong number of arguments')
-            oparser.print_help()
-            return
-
-        db = ElbeDB()
-        db.reset_project(arg[0], opt.clean)
-
-
-DbAction.register(ResetProjectAction)
-
-
-class SetProjectVersionAction(DbAction):
-
-    tag = 'set_project_version'
-
-    def execute(self, args):
-        if len(args) != 2:
-            print('usage: elbe db set_project_version <project_dir> <version>')
-            return
-
-        db = ElbeDB()
-        db.set_project_version(args[0], args[1])
-
-
-DbAction.register(SetProjectVersionAction)
-
-
-class ListVersionsAction(DbAction):
-
-    tag = 'list_versions'
-
-    def execute(self, args):
-        if len(args) != 1:
-            print('usage: elbe db list_versions <project_dir>')
-            return
-
-        db = ElbeDB()
-        versions = db.list_project_versions(args[0])
-
-        for v in versions:
-            if v.description:
-                print(f'{v.version}: {v.description}')
-            else:
-                print(v.version)
-
-
-DbAction.register(ListVersionsAction)
-
-
-class SaveVersionAction(DbAction):
-
-    tag = 'save_version'
-
-    def execute(self, args):
-        oparser = OptionParser(
-            usage='usage: %prog db save_version <project_dir>')
-        oparser.add_option('--description', dest='description')
-
-        (opt, arg) = oparser.parse_args(args)
-
-        if len(arg) != 1:
-            print('wrong number of arguments')
-            oparser.print_help()
-            return
-
-        db = ElbeDB()
-        db.save_version(arg[0], opt.description)
-
-
-DbAction.register(SaveVersionAction)
-
-
-class DelVersionAction(DbAction):
-
-    tag = 'del_version'
-
-    def execute(self, args):
-        if len(args) != 2:
-            print('usage: elbe db del_version <project_dir> <version>')
-            return
-
-        db = ElbeDB()
-        db.del_version(args[0], args[1])
-
-
-DbAction.register(DelVersionAction)
-
-
-class PrintVersionXMLAction(DbAction):
-
-    tag = 'print_version_xml'
-
-    def execute(self, args):
-        if len(args) != 2:
-            print('usage: elbe db print_version_xml <project_dir> <version>')
-            return
-
-        db = ElbeDB()
-        filename = db.get_version_xml(args[0], args[1])
-        with open(filename) as f:
-            copyfileobj(f, sys.stdout)
-
-
-DbAction.register(PrintVersionXMLAction)
+@add_argument('--user', dest='user',
+              help='user name of the designated project owner')
+@add_argument('project_dir')
+def _create_project(args):
+    db = ElbeDB()
+    owner_id = db.get_user_id(args.user)
+    db.create_project(args.project_dir, owner_id)
+
+
+@add_argument('project_dir')
+def _del_project(args):
+    db = ElbeDB()
+    db.del_project(args.project_dir)
+
+
+@add_argument('project_dir')
+@add_argument('xml')
+def _set_xml(args):
+    db = ElbeDB()
+    db.set_xml(args.project_dir, args.xml)
+
+
+@add_argument('project_dir')
+def _build(args):
+    db = ElbeDB()
+    db.set_busy(args.project_dir, ['empty_project', 'needs_build', 'has_changes',
+                                   'build_done', 'build_failed'])
+    try:
+        ep = db.load_project(args.project_dir)
+        ep.build()
+        db.update_project_files(ep)
+    except Exception as e:
+        db.update_project_files(ep)
+        db.reset_busy(args.project_dir, 'build_failed')
+        print(str(e))
+        return
+    db.reset_busy(args.project_dir, 'build_done')
+
+
+@add_argument('project_dir')
+def _get_files(args):
+    db = ElbeDB()
+    files = db.get_project_files(args.project_dir)
+    for f in files:
+        if f.description:
+            print(f'{f.name:40}  {f.description}')
+        else:
+            print(f.name)
+
+
+@add_argument('--clean', dest='clean', default=False, action='store_true')
+@add_argument('project_dir')
+def _reset_project(args):
+    db = ElbeDB()
+    db.reset_project(args.project_dir, args.clean)
+
+
+@add_argument('project_dir')
+@add_argument('version')
+def _set_project_version(args):
+    db = ElbeDB()
+    db.set_project_version(args.project_dir, args.version)
+
+
+@add_argument('project_dir')
+def _list_versions(args):
+    db = ElbeDB()
+    versions = db.list_project_versions(args.project_dir)
+
+    for v in versions:
+        if v.description:
+            print(f'{v.version}: {v.description}')
+        else:
+            print(v.version)
+
+
+@add_argument('--description', dest='description')
+@add_argument('project_dir')
+def _save_version(args):
+    db = ElbeDB()
+    db.save_version(args.project_dir, args.description)
+
+
+@add_argument('project_dir')
+@add_argument('version')
+def _del_version(args):
+    db = ElbeDB()
+    db.del_version(args.project_dir, args.version)
+
+
+@add_argument('project_dir')
+@add_argument('version')
+def _print_version_xml(args):
+    db = ElbeDB()
+    filename = db.get_version_xml(args.project_dir, args.version)
+    with open(filename) as f:
+        copyfileobj(f, sys.stdout)
+
+
+db_actions = {
+    'init':                _init,
+    'add_user':            _add_user,
+    'del_user':            _del_user,
+    'list_projects':       _list_projects,
+    'list_users':          _list_users,
+    'create_project':      _create_project,
+    'del_project':         _del_project,
+    'set_xml':             _set_xml,
+    'build':               _build,
+    'get_files':           _get_files,
+    'reset_project':       _reset_project,
+    'set_project_version': _set_project_version,
+    'list_versions':       _list_versions,
+    'save_version':        _save_version,
+    'del_versions':        _del_version,
+    'print_version_xml':   _print_version_xml,
+}
