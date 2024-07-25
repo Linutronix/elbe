@@ -5,7 +5,6 @@ usr/lib/python3.*/*-packages/elbepack/commands/gen_update.py
 usr/lib/python3.*/*-packages/elbepack/makofiles/environment-setup-elbe.mako
 usr/lib/python3.*/*-packages/elbepack/makofiles/toolchain-shar-extract.sh.mako
 usr/lib/python3.*/*-packages/elbepack/db.py
-usr/lib/python3.*/*-packages/elbepack/dbaction.py
 usr/lib/python3.*/*-packages/elbepack/dump.py
 usr/lib/python3.*/*-packages/elbepack/ziparchives.py
 usr/lib/python3.*/*-packages/elbepack/repomanager.py
