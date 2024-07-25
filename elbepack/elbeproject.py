@@ -747,11 +747,11 @@ class ElbeProject:
         formatfile = ''
 
         if os.path.exists(os.path.join(pdebuilder_current, 'debian', 'source', 'format')):
-            formatfile = open(os.path.join(pdebuilder_current,
-                              'debian', 'source', 'format'), 'r').read()
+            with open(os.path.join(pdebuilder_current, 'debian', 'source', 'format'), 'r') as f:
+                formatfile = f.read()
 
-        src_pkg_name = open(os.path.join(pdebuilder_current,
-                            'debian', 'changelog'), 'r').readline().split()[0]
+        with open(os.path.join(pdebuilder_current, 'debian', 'changelog'), 'r') as f:
+            src_pkg_name = f.readline().split()[0]
 
         if '3.0 (quilt)' in formatfile and not self.orig_files:
             do(['origtargz', '--download-only', '--tar-only'], cwd=pdebuilder_current)
