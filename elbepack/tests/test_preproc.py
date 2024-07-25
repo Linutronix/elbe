@@ -6,7 +6,7 @@ import pathlib
 
 import pytest
 
-from elbepack.directories import run_elbe
+from elbepack.directories import run_elbe_subcommand
 
 
 def _test_file_path(name):
@@ -23,12 +23,12 @@ def _test_file_path(name):
 ])
 def test_preproc(inp, out, variant, tmp_path):
     actual = tmp_path / (inp + '.out')
-    run_elbe([
+    run_elbe_subcommand([
         'preprocess',
         '-z', '0',
         *(['-v', variant] if variant else []),
         '-o', actual,
         _test_file_path(inp),
-    ], check=True)
+    ])
     with open(_test_file_path(out)) as expected, actual.open() as a:
         assert a.read() == expected.read()
