@@ -19,7 +19,7 @@ def _app(environ, respond):
     mime_type = mimetypes.guess_type(fn)[0] or 'application/octet-stream'
 
     # Return 200 OK if file exists, otherwise 404 Not Found
-    logger.warn('Serving as %s: "%s"', mime_type, fn)
+    logger.info('Serving as %s: "%s"', mime_type, fn)
     if os.path.exists(fn):
         respond('200 OK', [
             ('Content-Type', mime_type),
