@@ -60,7 +60,8 @@ def run_command(argv):
         logging.info('Passed %d tests ouf of %d',
                      total_cnt - fail_cnt, total_cnt)
 
-    os.sys.exit(fail_cnt)
+    if fail_cnt:
+        os.sys.exit(fail_cnt)
 
 
 class CheckException(Exception):
