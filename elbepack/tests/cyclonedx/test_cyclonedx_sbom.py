@@ -2,23 +2,26 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
+import contextlib
+import io
 import json
 import pathlib
 import uuid
 
 import jsonschema
 
-from elbepack.directories import run_elbe
+from elbepack.directories import run_elbe_subcommand
 
 here = pathlib.Path(__file__).parent
 
 
 def generate_test_bom():
     source_dir = here.joinpath('build-simple-example')
-    ps = run_elbe([
-        'cyclonedx-sbom', '-d', source_dir,
-    ], check=True, capture_output=True)
-    return json.loads(ps.stdout)
+    with contextlib.redirect_stdout(io.StringIO()) as stdout:
+        run_elbe_subcommand([
+            'cyclonedx-sbom', '-d', source_dir,
+        ])
+    return json.loads(stdout.getvalue())
 
 
 def test_schema():
