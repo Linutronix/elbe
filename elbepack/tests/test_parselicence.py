@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
+import contextlib
+import io
 import pathlib
 import re
 
-from elbepack.directories import run_elbe
+from elbepack.directories import run_elbe_subcommand
 
 here = pathlib.Path(__file__).parent
 
@@ -19,15 +21,16 @@ def _replace_changing_spdx_data(s):
 def test_parselicence(tmp_path):
     xml_output = tmp_path.joinpath('licences.xml')
     spdx_output = tmp_path.joinpath('licences.spdx')
-    ps = run_elbe([
-        'parselicence',
-        '--mapping', here.joinpath('cyclonedx', 'example-mapping.xml'),
-        '--output', xml_output,
-        '--tvout', spdx_output,
-        here.joinpath('cyclonedx', 'build-simple-example', 'licence-target.xml'),
-    ], check=True, capture_output=True)
+    with contextlib.redirect_stdout(io.StringIO()) as stdout:
+        run_elbe_subcommand([
+            'parselicence',
+            '--mapping', here.joinpath('cyclonedx', 'example-mapping.xml'),
+            '--output', xml_output,
+            '--tvout', spdx_output,
+            here.joinpath('cyclonedx', 'build-simple-example', 'licence-target.xml'),
+        ])
 
-    assert ps.stdout == b'statistics:\nnum:156 mr:137 hr:3 err_pkg:86\n'
+    assert stdout.getvalue() == 'statistics:\nnum:156 mr:137 hr:3 err_pkg:86\n'
 
     xml_reference = here.joinpath('test_parselicence_reference.xml')
     assert xml_output.read_text() == xml_reference.read_text()
