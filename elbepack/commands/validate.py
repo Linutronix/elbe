@@ -37,5 +37,3 @@ def run_command(argv):
         except ValidationError as e:
             print(e)
             sys.exit(61)
-
-    sys.exit(0)
