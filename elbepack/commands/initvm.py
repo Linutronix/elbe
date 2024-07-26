@@ -9,7 +9,7 @@ from optparse import OptionParser, SUPPRESS_HELP
 
 from elbepack.commands import add_deprecated_optparse_option
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_options
-from elbepack.initvmaction import InitVMAction, InitVMError
+from elbepack.initvmaction import InitVMAction
 
 
 def run_command(argv):
@@ -89,9 +89,4 @@ def run_command(argv):
         InitVMAction.print_actions()
         sys.exit(49)
 
-    try:
-        action.execute(directory, opt, args[1:])
-    except InitVMError as e:
-        print('InitVM Exception', file=sys.stderr)
-        print(e, file=sys.stderr)
-        sys.exit(50)
+    action.execute(directory, opt, args[1:])

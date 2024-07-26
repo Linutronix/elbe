@@ -29,10 +29,6 @@ def is_soap_local():
 prog = os.path.basename(sys.argv[0])
 
 
-class InitVMError(Exception):
-    pass
-
-
 class InitVMAction:
     actiondict = {}
     qemu_mode = False
