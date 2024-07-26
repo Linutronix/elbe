@@ -6,7 +6,7 @@ import sys
 from optparse import OptionParser
 
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_options
-from elbepack.pbuilderaction import PBuilderAction, PBuilderError
+from elbepack.pbuilderaction import PBuilderAction
 
 
 def run_command(argv):
@@ -73,9 +73,4 @@ def run_command(argv):
         PBuilderAction.print_actions()
         sys.exit(92)
 
-    try:
-        action.execute(opt, args[1:])
-    except PBuilderError as e:
-        print('PBuilder Exception', file=sys.stderr)
-        print(e, file=sys.stderr)
-        sys.exit(93)
+    action.execute(opt, args[1:])

@@ -10,14 +10,6 @@ from elbepack.filesystem import TmpdirFilesystem
 from elbepack.xmlpreprocess import preprocess_file
 
 
-# Create download directory with timestamp,
-# if necessary
-
-
-class PBuilderError(Exception):
-    pass
-
-
 class PBuilderAction:
     actiondict = {}
 
