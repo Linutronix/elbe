@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
+import argparse
 import os
 import subprocess
 import sys
@@ -10,6 +11,7 @@ import time
 
 import elbepack
 import elbepack.initvm
+from elbepack.cli import add_argument
 from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
@@ -22,75 +24,59 @@ from elbepack.xmlpreprocess import preprocess_file
 prog = os.path.basename(sys.argv[0])
 
 
-class InitVMAction:
-    actiondict = {}
+def _add_initvm_from_args_arguments(f):
+    f = add_argument('--qemu', action='store_true',
+                     dest='qemu_mode', default=False,
+                     help='Use QEMU direct instead of libvirtd.')(f)
 
-    @classmethod
-    def register(cls, tag):
-        def _register(action):
-            action.tag = tag
-            cls.actiondict[action.tag] = action
-            return action
-        return _register
-
-    @classmethod
-    def print_actions(cls):
-        print('available subcommands are:', file=sys.stderr)
-        for a in cls.actiondict:
-            print(f'   {a}', file=sys.stderr)
-
-    @classmethod
-    def get_action_class(cls, name):
-        return cls.actiondict[name]
-
-    def __init__(self, directory, opt):
-        self.directory = directory
-        if opt.qemu_mode:
-            self.initvm = elbepack.initvm.QemuInitVM(directory=directory)
-        else:
-            self.initvm = elbepack.initvm.LibvirtInitVM(directory=directory,
-                                                        domain=cfg['initvm_domain'])
-
-    def execute(self, opt, args):
-        raise NotImplementedError('execute() not implemented')
+    f = add_argument(
+        '--directory',
+        dest='directory',
+        type=os.path.abspath,
+        default=os.getcwd() + '/initvm',
+        help='directory, where the initvm resides, default is ./initvm')(f)
+    return f
 
 
-@InitVMAction.register('start')
-class StartAction(InitVMAction):
-    def execute(self, opt, args):
-        self.initvm.start()
+def _initvm_from_args(args):
+    if args.qemu_mode:
+        return elbepack.initvm.QemuInitVM(args.directory)
+    else:
+        return elbepack.initvm.LibvirtInitVM(directory=args.directory,
+                                             domain=cfg['initvm_domain'])
 
 
-@InitVMAction.register('ensure')
-class EnsureAction(InitVMAction):
-    def execute(self, opt, args):
-        self.initvm.ensure()
+@_add_initvm_from_args_arguments
+def _start(args):
+    _initvm_from_args(args).start()
 
 
-@InitVMAction.register('stop')
-class StopAction(InitVMAction):
-    def execute(self, opt, args):
-        self.initvm.stop()
+@_add_initvm_from_args_arguments
+def _ensure(args):
+    _initvm_from_args(args).ensure()
 
 
-@InitVMAction.register('destroy')
-class DestroyAction(InitVMAction):
-    def execute(self, opt, _args):
-        self.initvm.destroy()
+@_add_initvm_from_args_arguments
+def _stop(args):
+    _initvm_from_args(args).stop()
 
 
-@InitVMAction.register('attach')
-class AttachAction(InitVMAction):
-    def execute(self, opt, args):
-        self.initvm.attach()
+@_add_initvm_from_args_arguments
+def _destroy(args):
+    _initvm_from_args(args).destroy()
 
 
-def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
+@_add_initvm_from_args_arguments
+def _attach(args):
+    _initvm_from_args(args).attach()
+
+
+def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
     preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            submit_and_dl_result(preprocess_xmlfile, cdrom, opt)
+            _submit_and_dl_result(preprocess_xmlfile, cdrom, args)
     except RepodirError as err:
         print('elbe repodir failed', file=sys.stderr)
         print(err, file=sys.stderr)
@@ -99,9 +85,9 @@ def submit_with_repodir_and_dl_result(xmlfile, cdrom, opt):
         os.remove(preprocess_xmlfile)
 
 
-def submit_and_dl_result(xmlfile, cdrom, opt):
+def _submit_and_dl_result(xmlfile, cdrom, args):
 
-    with preprocess_file(xmlfile, opt.variants) as xmlfile:
+    with preprocess_file(xmlfile, args.variants) as xmlfile:
 
         ps = run_elbe(['control', 'create_project'], capture_output=True, encoding='utf-8')
         if ps.returncode != 0:
@@ -120,8 +106,8 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             print('Giving up', file=sys.stderr)
             sys.exit(129)
 
-    if opt.writeproject:
-        with open(opt.writeproject, 'w') as wpf:
+    if args.writeproject:
+        with open(args.writeproject, 'w') as wpf:
             wpf.write(prjdir)
 
     if cdrom is not None:
@@ -136,9 +122,9 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('Upload finished')
 
     build_opts = []
-    if opt.build_bin:
+    if args.build_bin:
         build_opts.append('--build-bin')
-    if opt.build_sources:
+    if args.build_sources:
         build_opts.append('--build-sources')
     if cdrom:
         build_opts.append('--skip-pbuilder')
@@ -162,7 +148,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('The files, that have been built, can be downloaded using:',
               file=sys.stderr)
         print(
-            f'{prog} control get_files --output "{opt.outdir}" "{prjdir}"',
+            f'{prog} control get_files --output "{args.outdir}" "{prjdir}"',
             file=sys.stderr)
         print('', file=sys.stderr)
         print('The project can then be removed using:',
@@ -176,7 +162,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
     print('Build finished !')
     print('')
 
-    if opt.build_sdk:
+    if args.build_sdk:
         try:
             run_elbe(['control', 'build_sdk', prjdir], check=True)
         except subprocess.CalledProcessError:
@@ -197,7 +183,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             print('The files, that have been built, can be downloaded using:',
                   file=sys.stderr)
             print(
-                f'{prog} control get_files --output "{opt.outdir}" '
+                f'{prog} control get_files --output "{args.outdir}" '
                 f'"{prjdir}"',
                 file=sys.stderr)
             print('', file=sys.stderr)
@@ -227,7 +213,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
             print('Giving up', file=sys.stderr)
         sys.exit(136)
 
-    if opt.skip_download:
+    if args.skip_download:
         print('')
         print('Listing available files:')
         print('')
@@ -245,16 +231,16 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
         print('Getting generated Files')
         print('')
 
-        print(f'Saving generated Files to {opt.outdir}')
+        print(f'Saving generated Files to {args.outdir}')
 
         try:
-            run_elbe(['control', 'get_files', '--output', opt.outdir, prjdir], check=True)
+            run_elbe(['control', 'get_files', '--output', args.outdir, prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control get_files Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
             sys.exit(138)
 
-        if not opt.keep_files:
+        if not args.keep_files:
             try:
                 run_elbe(['control', 'del_project', prjdir], check=True)
             except subprocess.CalledProcessError:
@@ -263,7 +249,7 @@ def submit_and_dl_result(xmlfile, cdrom, opt):
                 sys.exit(139)
 
 
-def extract_cdrom(cdrom):
+def _extract_cdrom(cdrom):
     """ Extract cdrom iso image
         returns a TmpdirFilesystem() object containing
         the source.xml, which is also validated.
@@ -316,151 +302,189 @@ def extract_cdrom(cdrom):
     return tmp
 
 
-@InitVMAction.register('create')
-class CreateAction(InitVMAction):
-    def execute(self, opt, args):
-        # Upgrade from older versions which used tmux
-        try:
-            subprocess.run(['tmux', 'has-session', '-t', 'ElbeInitVMSession'],
-                           stderr=subprocess.DEVNULL, check=True)
-            print('ElbeInitVMSession exists in tmux. '
-                  'It may belong to an old elbe version. '
-                  'Please stop it to prevent interfering with this version.', file=sys.stderr)
-            sys.exit(143)
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            pass
+def _add_submit_arguments(f):
+    f = add_argument('--skip-download', action='store_true',
+                     dest='skip_download', default=False,
+                     help='Skip downloading generated Files')(f)
 
-        # Init cdrom to None, if we detect it, we set it
-        cdrom = None
+    f = add_argument('--output', dest='outdir',
+                     type=os.path.abspath,
+                     help='directory where to save downloaded Files')(f)
 
-        if len(args) == 1:
-            if args[0].endswith('.xml'):
-                # We have an xml file, use that for elbe init
-                xmlfile = args[0]
-                try:
-                    xml = etree(xmlfile)
-                except ValidationError as e:
-                    print(f'XML file is invalid: {e}')
-                # Use default XML if no initvm was specified
-                if not xml.has('initvm'):
-                    xmlfile = os.path.join(
-                        elbepack.__path__[0], 'init/default-init.xml')
+    f = add_argument('--skip-build-bin', dest='build_bin', action='store_false', default=True,
+                     help='Skip building Binary Repository CDROM, for exact Reproduction')(f)
 
-            elif args[0].endswith('.iso'):
-                # We have an iso image, extract xml from there.
-                tmp = extract_cdrom(args[0])
+    f = add_argument('--skip-build-sources', action='store_false',
+                     dest='build_sources', default=True,
+                     help='Skip building Source CDROM')(f)
 
-                xmlfile = tmp.fname('source.xml')
-                cdrom = args[0]
-            else:
-                print(
-                    'Unknown file ending (use either xml or iso)',
-                    file=sys.stderr)
-                sys.exit(144)
+    f = add_argument('--keep-files', action='store_true',
+                     dest='keep_files', default=False,
+                     help="don't delete elbe project files in initvm")(f)
+
+    f = add_argument('--writeproject', dest='writeproject', default=None,
+                     help='write project name to file')(f)
+
+    f = add_argument('--build-sdk', dest='build_sdk', action='store_true', default=False,
+                     help="Also make 'initvm submit' build an SDK.")(f)
+
+    return f
+
+
+@_add_initvm_from_args_arguments
+@add_argument('--fail-on-warning', action='store_true',
+              dest='fail_on_warning', default=False,
+              help=argparse.SUPPRESS)
+@_add_submit_arguments
+@add_argument('input', nargs='?', metavar='<xmlfile> | <isoimage>')
+def _create(args):
+    # Upgrade from older versions which used tmux
+    try:
+        subprocess.run(['tmux', 'has-session', '-t', 'ElbeInitVMSession'],
+                       stderr=subprocess.DEVNULL, check=True)
+        print('ElbeInitVMSession exists in tmux. '
+              'It may belong to an old elbe version. '
+              'Please stop it to prevent interfering with this version.', file=sys.stderr)
+        sys.exit(143)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    # Init cdrom to None, if we detect it, we set it
+    cdrom = None
+
+    if args.input is not None:
+        if args.input.endswith('.xml'):
+            # We have an xml file, use that for elbe init
+            xmlfile = args.input
+            try:
+                xml = etree(xmlfile)
+            except ValidationError as e:
+                print(f'XML file is invalid: {e}')
+            # Use default XML if no initvm was specified
+            if not xml.has('initvm'):
+                xmlfile = os.path.join(
+                    elbepack.__path__[0], 'init/default-init.xml')
+
+        elif args.input.endswith('.iso'):
+            # We have an iso image, extract xml from there.
+            tmp = _extract_cdrom(args.input)
+
+            xmlfile = tmp.fname('source.xml')
+            cdrom = args.input
         else:
-            # No xml File was specified, build the default elbe-init-with-ssh
-            xmlfile = os.path.join(
-                elbepack.__path__[0],
-                'init/default-init.xml')
+            args.parser.error('Unknown file ending (use either xml or iso)')
+    else:
+        # No xml File was specified, build the default elbe-init-with-ssh
+        xmlfile = os.path.join(
+            elbepack.__path__[0],
+            'init/default-init.xml')
 
-        try:
-            init_opts = []
+    try:
+        init_opts = []
 
-            if not opt.build_bin:
-                init_opts.append('--skip-build-bin')
+        if not args.build_bin:
+            init_opts.append('--skip-build-bin')
 
-            if not opt.build_sources:
-                init_opts.append('--skip-build-source')
+        if not args.build_sources:
+            init_opts.append('--skip-build-source')
 
-            if opt.fail_on_warning:
-                init_opts.append('--fail-on-warning')
+        if args.fail_on_warning:
+            init_opts.append('--fail-on-warning')
 
-            if cdrom:
-                cdrom_opts = ['--cdrom', cdrom]
-            else:
-                cdrom_opts = []
+        if cdrom:
+            cdrom_opts = ['--cdrom', cdrom]
+        else:
+            cdrom_opts = []
 
-            with preprocess_file(xmlfile, opt.variants) as preproc:
-                run_elbe(['init', *init_opts, '--directory', self.directory, *cdrom_opts, preproc],
-                         check=True)
+        with preprocess_file(xmlfile, args.variants) as preproc:
+            run_elbe(['init', *init_opts, '--directory', args.directory, *cdrom_opts, preproc],
+                     check=True)
 
-        except subprocess.CalledProcessError:
-            print("'elbe init' Failed", file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(145)
+    except subprocess.CalledProcessError:
+        print("'elbe init' Failed", file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(145)
 
-        self.initvm._build()
-        self.initvm.start()
+    initvm = _initvm_from_args(args)
 
-        if len(args) == 1:
-            # If provided xml file has no initvm section xmlfile is set to a
-            # default initvm XML file. But we need the original file here.
-            if args[0].endswith('.xml'):
-                # Stop here if no project node was specified.
-                try:
-                    x = etree(args[0])
-                except ValidationError as e:
-                    print(f'XML file is invalid: {e}')
-                    sys.exit(149)
-                if not x.has('project'):
-                    print("elbe initvm ready: use 'elbe initvm submit "
-                          "myproject.xml' to build a project")
-                    sys.exit(0)
+    initvm._build()
+    initvm.start()
 
-                xmlfile = args[0]
-            elif cdrom is not None:
-                xmlfile = tmp.fname('source.xml')
+    if args.input is not None:
+        # If provided xml file has no initvm section xmlfile is set to a
+        # default initvm XML file. But we need the original file here.
+        if args.input.endswith('.xml'):
+            # Stop here if no project node was specified.
+            try:
+                x = etree(args.input)
+            except ValidationError as e:
+                print(f'XML file is invalid: {e}')
+                sys.exit(149)
+            if not x.has('project'):
+                print("elbe initvm ready: use 'elbe initvm submit "
+                      "myproject.xml' to build a project")
+                sys.exit(0)
 
-            submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
+            xmlfile = args.input
+        elif cdrom is not None:
+            xmlfile = tmp.fname('source.xml')
 
-
-@InitVMAction.register('submit')
-class SubmitAction(InitVMAction):
-
-    def execute(self, opt, args):
-        self.initvm.ensure()
-
-        # Init cdrom to None, if we detect it, we set it
-        cdrom = None
-
-        if len(args) == 1:
-            if args[0].endswith('.xml'):
-                # We have an xml file, use that for elbe init
-                xmlfile = args[0]
-            elif args[0].endswith('.iso'):
-                # We have an iso image, extract xml from there.
-                tmp = extract_cdrom(args[0])
-
-                xmlfile = tmp.fname('source.xml')
-                cdrom = args[0]
-            else:
-                print(
-                    'Unknown file ending (use either xml or iso)',
-                    file=sys.stderr)
-                sys.exit(151)
-
-            submit_with_repodir_and_dl_result(xmlfile, cdrom, opt)
+        _submit_with_repodir_and_dl_result(xmlfile, cdrom, args)
 
 
-@InitVMAction.register('sync')
-class SyncAction(InitVMAction):
+@_add_initvm_from_args_arguments
+@_add_submit_arguments
+@add_argument('input', metavar='<xmlfile> | <isoimage>')
+def _submit(args):
+    initvm = _initvm_from_args(args)
 
-    def execute(self, _opt, _args):
-        top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
-        ssh = ['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null']
-        try:
-            subprocess.run([
-                'rsync', '--info=name1,stats1', '--archive', '--times',
-                *[arg for e in excludes for arg in ('--exclude', e)],
-                '--rsh', ' '.join(ssh),
-                '--chown=root:root',
-                f'{top_dir}/elbe',
-                f'{top_dir}/elbepack',
-                'root@localhost:/var/cache/elbe/devel'
-            ], check=True)
-            subprocess.run([
-                *ssh, 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
-            ], check=True)
-        except subprocess.CalledProcessError as E:
-            print(E)
+    initvm.ensure()
+
+    # Init cdrom to None, if we detect it, we set it
+    cdrom = None
+
+    if args.input.endswith('.xml'):
+        # We have an xml file, use that for elbe init
+        xmlfile = args.input
+    elif args.input.endswith('.iso'):
+        # We have an iso image, extract xml from there.
+        tmp = _extract_cdrom(args.input)
+
+        xmlfile = tmp.fname('source.xml')
+        cdrom = args.input
+    else:
+        args.parser.error('Unknown file ending (use either xml or iso)')
+
+    _submit_with_repodir_and_dl_result(xmlfile, cdrom, args)
+
+
+def _sync(args):
+    top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
+    ssh = ['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null']
+    try:
+        subprocess.run([
+            'rsync', '--info=name1,stats1', '--archive', '--times',
+            *[arg for e in excludes for arg in ('--exclude', e)],
+            '--rsh', ' '.join(ssh),
+            '--chown=root:root',
+            f'{top_dir}/elbe',
+            f'{top_dir}/elbepack',
+            'root@localhost:/var/cache/elbe/devel'
+        ], check=True)
+        subprocess.run([
+            *ssh, 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
+        ], check=True)
+    except subprocess.CalledProcessError as E:
+        print(E)
+
+
+initvm_actions = {
+    'start':   _start,
+    'ensure':  _ensure,
+    'stop':    _stop,
+    'destroy': _destroy,
+    'create':  _create,
+    'submit':  _submit,
+    'sync':    _sync,
+}
