@@ -2,75 +2,26 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
-import sys
-from optparse import OptionParser
+import argparse
 
-from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_options
-from elbepack.pbuilderaction import PBuilderAction
+from elbepack.cli import add_arguments_from_decorated_function
+from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
+from elbepack.pbuilderaction import pbuilder_actions
 
 
 def run_command(argv):
-    oparser = OptionParser(usage='usage: elbe pbuilder [options] <command>')
+    aparser = argparse.ArgumentParser(prog='elbe pbuilder')
 
-    oparser.add_option('--project', dest='project', default=None,
-                       help='project directory on the initvm')
+    add_xmlpreprocess_passthrough_arguments(aparser)
 
-    oparser.add_option('--xmlfile', dest='xmlfile', default=None,
-                       help='xmlfile to use')
+    subparsers = aparser.add_subparsers(required=True)
 
-    oparser.add_option('--writeproject', dest='writeproject', default=None,
-                       help='write project name to file')
+    for action_name, do_action in pbuilder_actions.items():
+        action_parser = subparsers.add_parser(action_name)
+        action_parser.set_defaults(func=do_action)
+        add_arguments_from_decorated_function(action_parser, do_action)
 
-    oparser.add_option('--skip-download', action='store_true',
-                       dest='skip_download', default=False,
-                       help='Skip downloading generated Files')
+    args = aparser.parse_args(argv)
+    args.parser = aparser
 
-    oparser.add_option(
-        '--origfile',
-        dest='origfile',
-        default=[],
-        action='append',
-        help='upload orig file')
-
-    oparser.add_option('--source', dest='srcdir', default='.',
-                       help='directory containing sources')
-
-    oparser.add_option('--output', dest='outdir', default='..',
-                       help='directory where to save downloaded Files')
-
-    oparser.add_option('--profile', dest='profile', default='',
-                       help='profile that shall be built')
-
-    oparser.add_option('--cross', dest='cross', default=False,
-                       action='store_true',
-                       help='Creates an environment for crossbuilding if '
-                            'combined with create. Combined with build it'
-                            ' will use this environment.')
-
-    oparser.add_option('--no-ccache', dest='noccache', default=False,
-                       action='store_true',
-                       help="Deactivates the compiler cache 'ccache'")
-
-    oparser.add_option('--ccache-size', dest='ccachesize', default='10G',
-                       action='store', type='string',
-                       help='set a limit for the compiler cache size '
-                            '(should be a number followed by an optional '
-                            'suffix: k, M, G, T. Use 0 for no limit.)')
-
-    add_xmlpreprocess_passthrough_options(oparser)
-
-    (opt, args) = oparser.parse_args(argv)
-
-    if not args:
-        print('elbe pbuilder - no subcommand given', file=sys.stderr)
-        PBuilderAction.print_actions()
-        return
-
-    try:
-        action = PBuilderAction(args[0])
-    except KeyError:
-        print('elbe pbuilder - unknown subcommand', file=sys.stderr)
-        PBuilderAction.print_actions()
-        sys.exit(92)
-
-    action.execute(opt, args[1:])
+    args.func(args)

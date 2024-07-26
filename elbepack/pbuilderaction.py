@@ -5,271 +5,254 @@
 import subprocess
 import sys
 
+from elbepack.cli import add_argument
 from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.xmlpreprocess import preprocess_file
 
 
-class PBuilderAction:
-    actiondict = {}
+@add_argument('--writeproject', help='write project name to file')
+@add_argument('--ccache-size', dest='ccachesize', default='10G',
+              help='set a limit for the compiler cache size '
+                   '(should be a number followed by an optional '
+                   'suffix: k, M, G, T. Use 0 for no limit.)')
+@add_argument('--cross', dest='cross', default=False,
+              action='store_true',
+              help='Creates an environment for crossbuilding if '
+                   'combined with create. Combined with build it'
+                   ' will use this environment.')
+@add_argument('--no-ccache', dest='noccache', default=False,
+              action='store_true',
+              help="Deactivates the compiler cache 'ccache'")
+@add_argument('--xmlfile', help='xmlfile to use')
+@add_argument('--project', help='project directory on the initvm')
+def _create(args):
+    crossopt = []
+    if args.cross:
+        crossopt = ['--cross']
+    if args.noccache:
+        ccacheopt = ['--no-ccache']
+    else:
+        ccacheopt = ['--ccache-size', args.ccachesize]
 
-    @classmethod
-    def register(cls, action):
-        cls.actiondict[action.tag] = action
+    if args.xmlfile:
+        with preprocess_file(args.xmlfile, args.variants) as preproc:
+            ps = run_elbe(['control', 'create_project'],
+                          capture_output=True, encoding='utf-8')
+            if ps.returncode != 0:
+                print('elbe control create_project failed.',
+                      file=sys.stderr)
+                print(ps.stderr, file=sys.stderr)
+                print('Giving up', file=sys.stderr)
+                sys.exit(152)
 
-    @classmethod
-    def print_actions(cls):
-        print('available subcommands are:', file=sys.stderr)
-        for a in cls.actiondict:
-            print(f'   {a}', file=sys.stderr)
+            prjdir = ps.stdout.strip()
+            ps = run_elbe(['control', 'set_xml', prjdir, preproc],
+                          capture_output=True, encoding='utf-8')
 
-    def __new__(cls, node):
-        action = cls.actiondict[node]
-        return object.__new__(action)
+            if ps.returncode != 0:
+                print('elbe control set_xml failed.', file=sys.stderr)
+                print(ps.stderr, file=sys.stderr)
+                print('Giving up', file=sys.stderr)
+                sys.exit(153)
 
-    def __init__(self, node):
-        self.node = node
+        if args.writeproject:
+            wpf = open(args.writeproject, 'w')
+            wpf.write(prjdir)
+            wpf.close()
 
-    def execute(self, _opt, _args):
-        raise NotImplementedError('execute() not implemented')
+    elif args.project:
+        prjdir = args.project
+    else:
+        args.parser.error('you need to specify --project option')
+
+    print('Creating pbuilder')
+
+    try:
+        run_elbe(['control', 'build_pbuilder', prjdir, *crossopt, *ccacheopt],
+                 check=True)
+    except subprocess.CalledProcessError:
+        print('elbe control build_pbuilder Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(156)
+
+    try:
+        run_elbe(['control', 'wait_busy', prjdir], check=True)
+    except subprocess.CalledProcessError:
+        print('elbe control wait_busy Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(157)
+
+    print('')
+    print('Building Pbuilder finished !')
+    print('')
 
 
-class CreateAction(PBuilderAction):
+@add_argument('--project', required=True, help='project directory on the initvm')
+def _update(args):
+    prjdir = args.project
 
-    tag = 'create'
+    print('Updating pbuilder')
 
-    def execute(self, opt, _args):
-        crossopt = []
-        if opt.cross:
-            crossopt = ['--cross']
-        if opt.noccache:
-            ccacheopt = ['--no-ccache']
-        else:
-            ccacheopt = ['--ccache-size', opt.ccachesize]
+    try:
+        run_elbe(['control', 'update_pbuilder', prjdir], check=True)
+    except subprocess.CalledProcessError:
+        print('elbe control update_pbuilder Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(159)
 
-        if opt.xmlfile:
-            with preprocess_file(opt.xmlfile, opt.variants) as preproc:
-                ps = run_elbe(['control', 'create_project'],
-                              capture_output=True, encoding='utf-8')
-                if ps.returncode != 0:
-                    print('elbe control create_project failed.',
-                          file=sys.stderr)
-                    print(ps.stderr, file=sys.stderr)
-                    print('Giving up', file=sys.stderr)
-                    sys.exit(152)
+    print('')
+    print('Updating Pbuilder finished !')
+    print('')
 
-                prjdir = ps.stdout.strip()
-                ps = run_elbe(['control', 'set_xml', prjdir, preproc],
-                              capture_output=True, encoding='utf-8')
 
-                if ps.returncode != 0:
-                    print('elbe control set_xml failed.', file=sys.stderr)
-                    print(ps.stderr, file=sys.stderr)
-                    print('Giving up', file=sys.stderr)
-                    sys.exit(153)
+@add_argument('--origfile', default=[], action='append', help='upload orig file')
+@add_argument('--profile', default='', help='profile that shall be built')
+@add_argument('--skip-download', action='store_true', dest='skip_download', default=False,
+              help='Skip downloading generated Files')
+@add_argument('--source', dest='srcdir', default='.', help='directory containing sources')
+@add_argument('--cross', dest='cross', default=False,
+              action='store_true',
+              help='Creates an environment for crossbuilding if '
+                   'combined with create. Combined with build it'
+                   ' will use this environment.')
+@add_argument('--output', dest='outdir', default='..',
+              help='directory where to save downloaded Files')
+@add_argument('--xmlfile', help='xmlfile to use')
+@add_argument('--project', help='project directory on the initvm')
+def _build(args):
+    crossopt = []
+    if args.cross:
+        crossopt = ['--cross']
+    tmp = TmpdirFilesystem()
 
-            if opt.writeproject:
-                wpf = open(opt.writeproject, 'w')
-                wpf.write(prjdir)
-                wpf.close()
+    if args.xmlfile:
+        ps = run_elbe(['control', '--retries', '60', 'create_project', args.xmlfile],
+                      capture_output=True, encoding='utf-8')
+        if ps.returncode != 0:
+            print('elbe control create_project failed.', file=sys.stderr)
+            print(ps.stderr, file=sys.stderr)
+            print('Giving up', file=sys.stderr)
+            sys.exit(160)
 
-        elif opt.project:
-            prjdir = opt.project
-        else:
-            print('you need to specify --project option', file=sys.stderr)
-            sys.exit(155)
-
-        print('Creating pbuilder')
+        prjdir = ps.stdout.strip()
 
         try:
-            run_elbe(['control', 'build_pbuilder', prjdir, *crossopt, *ccacheopt],
-                     check=True)
+            run_elbe(['control', 'build_pbuilder', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control build_pbuilder Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
-            sys.exit(156)
+            sys.exit(161)
 
         try:
             run_elbe(['control', 'wait_busy', prjdir], check=True)
         except subprocess.CalledProcessError:
             print('elbe control wait_busy Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
-            sys.exit(157)
+            sys.exit(162)
 
         print('')
         print('Building Pbuilder finished !')
         print('')
+    elif args.project:
+        prjdir = args.project
+        run_elbe(['control', 'rm_log', prjdir], check=True)
+    else:
+        args.parser.error('you need to specify --project or --xmlfile option')
 
+    print('')
+    print('Packing Source into tmp archive')
+    print('')
+    try:
+        subprocess.run(['tar', '-C', args.srcdir, '-czf', tmp.fname('pdebuild.tar.gz'), '.'],
+                       check=True)
+    except subprocess.CalledProcessError:
+        print('tar Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(164)
 
-PBuilderAction.register(CreateAction)
-
-
-class UpdateAction(PBuilderAction):
-
-    tag = 'update'
-
-    def execute(self, opt, _args):
-
-        if not opt.project:
-            print('you need to specify --project option', file=sys.stderr)
-            sys.exit(158)
-
-        prjdir = opt.project
-
-        print('Updating pbuilder')
-
-        try:
-            run_elbe(['control', 'update_pbuilder', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control update_pbuilder Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(159)
-
+    for of in args.origfile:
         print('')
-        print('Updating Pbuilder finished !')
-        print('')
-
-
-PBuilderAction.register(CreateAction)
-
-
-class BuildAction(PBuilderAction):
-
-    tag = 'build'
-
-    def execute(self, opt, _args):
-
-        crossopt = []
-        if opt.cross:
-            crossopt = ['--cross']
-        tmp = TmpdirFilesystem()
-
-        if opt.xmlfile:
-            ps = run_elbe(['control', '--retries', '60', 'create_project', opt.xmlfile],
-                          capture_output=True, encoding='utf-8')
-            if ps.returncode != 0:
-                print('elbe control create_project failed.', file=sys.stderr)
-                print(ps.stderr, file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(160)
-
-            prjdir = ps.stdout.strip()
-
-            try:
-                run_elbe(['control', 'build_pbuilder', prjdir], check=True)
-            except subprocess.CalledProcessError:
-                print('elbe control build_pbuilder Failed', file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(161)
-
-            try:
-                run_elbe(['control', 'wait_busy', prjdir], check=True)
-            except subprocess.CalledProcessError:
-                print('elbe control wait_busy Failed', file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(162)
-
-            print('')
-            print('Building Pbuilder finished !')
-            print('')
-        elif opt.project:
-            prjdir = opt.project
-            run_elbe(['control', 'rm_log', prjdir], check=True)
-        else:
-            print(
-                'you need to specify --project or --xmlfile option',
-                file=sys.stderr)
-            sys.exit(163)
-
-        print('')
-        print('Packing Source into tmp archive')
+        print(f"Pushing orig file '{of}' into pbuilder")
         print('')
         try:
-            subprocess.run(['tar', '-C', opt.srcdir, '-czf', tmp.fname('pdebuild.tar.gz'), '.'],
-                           check=True)
+            run_elbe(['control', 'set_orig', prjdir, of], check=True)
         except subprocess.CalledProcessError:
-            print('tar Failed', file=sys.stderr)
+            print('elbe control set_orig Failed', file=sys.stderr)
             print('Giving up', file=sys.stderr)
-            sys.exit(164)
+            sys.exit(165)
 
-        for of in opt.origfile:
-            print('')
-            print(f"Pushing orig file '{of}' into pbuilder")
-            print('')
-            try:
-                run_elbe(['control', 'set_orig', prjdir, of], check=True)
-            except subprocess.CalledProcessError:
-                print('elbe control set_orig Failed', file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(165)
+    print('')
+    print('Pushing source into pbuilder')
+    print('')
 
+    try:
+        run_elbe([
+            'control', 'set_pdebuild',
+            '--profile', args.profile, *crossopt,
+            prjdir, tmp.fname('pdebuild.tar.gz'),
+        ], check=True)
+    except subprocess.CalledProcessError:
+        print('elbe control set_pdebuild Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(166)
+    try:
+        run_elbe(['control', 'wait_busy', prjdir], check=True)
+    except subprocess.CalledProcessError:
+        print('elbe control wait_busy Failed', file=sys.stderr)
+        print('Giving up', file=sys.stderr)
+        sys.exit(167)
+    print('')
+    print('Pdebuild finished !')
+    print('')
+
+    if args.skip_download:
         print('')
-        print('Pushing source into pbuilder')
+        print('Listing available files:')
         print('')
-
         try:
-            run_elbe([
-                'control', 'set_pdebuild',
-                '--profile', opt.profile, *crossopt,
-                prjdir, tmp.fname('pdebuild.tar.gz'),
-            ], check=True)
+            run_elbe(['control', 'get_files', '--pbuilder-only', prjdir], check=True)
         except subprocess.CalledProcessError:
-            print('elbe control set_pdebuild Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(166)
-        try:
-            run_elbe(['control', 'wait_busy', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control wait_busy Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(167)
-        print('')
-        print('Pdebuild finished !')
-        print('')
+            print('elbe control get_files Failed', file=sys.stderr)
+            print('', file=sys.stderr)
+            print('dumping logfile', file=sys.stderr)
 
-        if opt.skip_download:
-            print('')
-            print('Listing available files:')
-            print('')
             try:
-                run_elbe(['control', 'get_files', '--pbuilder-only', prjdir], check=True)
+                run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
             except subprocess.CalledProcessError:
-                print('elbe control get_files Failed', file=sys.stderr)
+                print('elbe control dump_file Failed', file=sys.stderr)
                 print('', file=sys.stderr)
-                print('dumping logfile', file=sys.stderr)
+                print('Giving up', file=sys.stderr)
 
-                try:
-                    run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
-                except subprocess.CalledProcessError:
-                    print('elbe control dump_file Failed', file=sys.stderr)
-                    print('', file=sys.stderr)
-                    print('Giving up', file=sys.stderr)
+            sys.exit(168)
 
-                sys.exit(168)
+        print('')
+        print(f"Get Files with: 'elbe control get_file {prjdir} <filename>'")
+    else:
+        print('')
+        print(f'Saving generated Files to {args.outdir}')
+        print('')
 
-            print('')
-            print(f"Get Files with: 'elbe control get_file {prjdir} <filename>'")
-        else:
-            print('')
-            print(f'Saving generated Files to {opt.outdir}')
-            print('')
+        try:
+            run_elbe(['control', 'get_files', '--pbuilder-only',
+                      '--output', args.outdir, prjdir], check=True)
+        except subprocess.CalledProcessError:
+            print('elbe control get_files Failed', file=sys.stderr)
+            print('', file=sys.stderr)
+            print('dumping logfile', file=sys.stderr)
 
             try:
-                run_elbe(['control', 'get_files', '--pbuilder-only',
-                          '--output', opt.outdir, prjdir], check=True)
+                run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
             except subprocess.CalledProcessError:
-                print('elbe control get_files Failed', file=sys.stderr)
+                print('elbe control dump_file Failed', file=sys.stderr)
                 print('', file=sys.stderr)
-                print('dumping logfile', file=sys.stderr)
+                print('Giving up', file=sys.stderr)
 
-                try:
-                    run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
-                except subprocess.CalledProcessError:
-                    print('elbe control dump_file Failed', file=sys.stderr)
-                    print('', file=sys.stderr)
-                    print('Giving up', file=sys.stderr)
-
-                sys.exit(169)
+            sys.exit(169)
 
 
-PBuilderAction.register(BuildAction)
+pbuilder_actions = {
+    'create': _create,
+    'update': _update,
+    'build':  _build,
+}
