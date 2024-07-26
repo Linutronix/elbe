@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2017 Linutronix GmbH
 
+import argparse
 import os
 import sys
-from optparse import OptionGroup, OptionParser
+from optparse import OptionGroup
 
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
@@ -39,25 +40,35 @@ def add_xmlpreprocess_passthrough_options(oparser):
     oparser.add_option_group(group)
 
 
+def _add_arguments(parser):
+    parser.add_argument('-v', '--variants',
+                        type=lambda v: v.split(','),
+                        help='enable only tags with empty or given variant')
+    parser.add_argument('-p', '--proxy', help='add proxy to mirrors')
+    parser.add_argument('-z', '--gzip', type=int, default=9,
+                        help='gzip compression level 1-9 (0: no compression)')
+
+
+def add_xmlpreprocess_passthrough_arguments(parser):
+    group = parser.add_argument_group('Elbe preprocess options',
+                                      'Options passed through to invocation of "elbe preprocess"')
+    _add_arguments(group)
+
+
 def run_command(argv):
-    oparser = OptionParser(usage='usage: %prog preprocess [options] <xmlfile>')
-    oparser.add_option('-o', '--output', dest='output',
-                       default='preprocess.xml',
-                       help='preprocessed output file', metavar='<xmlfile>')
-    _add_options(oparser)
-    (opt, args) = oparser.parse_args(argv)
+    aparser = argparse.ArgumentParser(prog='elbe preprocess')
+    aparser.add_argument('-o', '--output', default='preprocess.xml',
+                         help='preprocessed output file')
+    aparser.add_argument('xmlfile')
+    _add_arguments(aparser)
+    args = aparser.parse_args(argv)
 
-    if len(args) != 1:
-        print('Wrong number of arguments', file=sys.stderr)
-        oparser.print_help()
-        sys.exit(112)
-
-    if not os.path.isfile(args[0]):
+    if not os.path.isfile(args.xmlfile):
         print(f"{args[0]} doesn't exist", file=sys.stderr)
         sys.exit(113)
 
     try:
-        xmlpreprocess(args[0], opt.output, opt.variants, opt.proxy, opt.gzip)
+        xmlpreprocess(args.xmlfile, args.output, args.variants, args.proxy, args.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(114)
