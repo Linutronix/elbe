@@ -9,7 +9,6 @@ import logging
 import os
 import pathlib
 import shutil
-import stat
 import subprocess
 import time
 
@@ -183,10 +182,11 @@ class ElbeFilesystem(Filesystem):
         version_file.write(xml.text('/project/version'))
         version_file.close()
 
-        elbe_base = self.open('etc/elbe_base.xml', 'wb')
-        xml.xml.write(elbe_base)
-        elbe_base.close()
-        self.chmod('etc/elbe_base.xml', stat.S_IREAD)
+        def opener(path, flags):
+            return os.open(path, flags, mode=0o400)
+
+        with self.open('etc/elbe_base.xml', 'wb', opener=opener) as elbe_base:
+            xml.xml.write(elbe_base)
 
     def write_licenses(self, f, pkglist, xml_fname=None):
         licence_xml = copyright_xml()
