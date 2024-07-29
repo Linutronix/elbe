@@ -269,9 +269,6 @@ class Filesystem:
     def chown(self, path, uid, gid):
         os.chown(self.fname(path), uid, gid)
 
-    def chmod(self, path, mode):
-        os.chmod(self.fname(path), mode)
-
     def remove(self, path, noerr=False):
         """
         >>> this.remove("remove") # doctest: +ELLIPSIS
