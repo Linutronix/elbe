@@ -8,6 +8,7 @@ import os
 import pathlib
 import shutil
 import subprocess
+import sys
 import tempfile
 import traceback
 
@@ -61,7 +62,7 @@ def run_command(argv):
                      total_cnt - fail_cnt, total_cnt)
 
     if fail_cnt:
-        os.sys.exit(fail_cnt)
+        sys.exit(fail_cnt)
 
 
 class CheckException(Exception):

@@ -7,6 +7,7 @@ import collections
 import logging
 import os
 import re
+import sys
 import threading
 from contextlib import contextmanager
 
@@ -167,7 +168,7 @@ def add_file_handlers(files):
 
     for f in files:
         if f is None:
-            out = logging.StreamHandler(os.sys.stdout)
+            out = logging.StreamHandler(sys.stdout)
         else:
             out = logging.FileHandler(f)
         out.addFilter(ThreadFilter(['root',

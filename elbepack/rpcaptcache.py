@@ -39,14 +39,14 @@ class MyMan(BaseManager):
     @staticmethod
     def redirect_outputs(w):
         """Redirect all outputs to the writing end of a pipe 'w'"""
-        os.dup2(w, os.sys.stdout.fileno())
-        os.dup2(w, os.sys.stderr.fileno())
+        os.dup2(w, sys.stdout.fileno())
+        os.dup2(w, sys.stderr.fileno())
         # Buffering of 1 because in Python3 buffering of 0 is illegal
         # for non binary mode ..
-        os.sys.stdout = os.fdopen(os.sys.stdout.fileno(), 'w', 1)
-        os.sys.stderr = os.fdopen(os.sys.stderr.fileno(), 'w', 1)
-        os.sys.__stdout__ = os.sys.stdout
-        os.sys.__stderr__ = os.sys.stderr
+        sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1)
+        sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 1)
+        sys.__stdout__ = sys.stdout
+        sys.__stderr__ = sys.stderr
 
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
