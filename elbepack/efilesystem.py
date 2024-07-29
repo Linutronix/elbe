@@ -96,6 +96,11 @@ def dpkg_architecture():
     ).rstrip('\n')
 
 
+def _readlines(rfs, file):
+    with rfs.open(file) as f:
+        return f.readlines()
+
+
 def extract_target(src, xml, dst, cache):
 
     # create filelists describing the content of the target rfs
@@ -115,12 +120,11 @@ def extract_target(src, xml, dst, cache):
 
         file_list = []
         for line in pkglist:
-            file_list += src.cat_file(f'var/lib/dpkg/info/{line}.list')
-            file_list += src.cat_file(f'var/lib/dpkg/info/{line}.conffiles')
+            file_list += _readlines(src, f'var/lib/dpkg/info/{line}.list')
+            file_list += _readlines(src, f'var/lib/dpkg/info/{line}.conffiles')
 
-            file_list += src.cat_file(f'var/lib/dpkg/info/{line}:{arch}.list')
-            file_list += src.cat_file(
-                f'var/lib/dpkg/info/{line}:{arch}.conffiles')
+            file_list += _readlines(src, f'var/lib/dpkg/info/{line}:{arch}.list')
+            file_list += _readlines(src, f'var/lib/dpkg/info/{line}:{arch}.conffiles')
 
         file_list = sorted(set(file_list),
                            key=lambda k: k[4:] if k.startswith('/usr') else k)

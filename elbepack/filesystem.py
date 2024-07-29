@@ -275,16 +275,6 @@ class Filesystem:
     def utime(self, path, times=None):
         os.utime(self.fname(path), times)
 
-    def cat_file(self, inf):
-        content = []
-        try:
-            f = self.open(inf)
-            content = f.readlines()
-            f.close()
-        except IOError:
-            pass
-        return content
-
     def remove(self, path, noerr=False):
         """
         >>> this.remove("remove") # doctest: +ELLIPSIS
