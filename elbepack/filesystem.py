@@ -341,9 +341,9 @@ class Filesystem:
         path = self.realpath(path)
         self._write_file(path, open(path, 'w'), cont, mode)
 
-    def append_file(self, path, cont, mode=None):
-        path = self.realpath(path)
-        self._write_file(path, open(path, 'a'), cont, mode)
+    def append_file(self, path, cont):
+        with self.open(path, 'a') as f:
+            f.write(cont)
 
     def read_file(self, path, gz=False):
         path = self.realpath(path)
