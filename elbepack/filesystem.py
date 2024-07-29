@@ -330,16 +330,12 @@ class Filesystem:
 
         return flist
 
-    @staticmethod
-    def _write_file(path, f, cont, mode):
-        f.write(cont)
-        f.close()
-        if mode is not None:
-            os.chmod(path, mode)
-
     def write_file(self, path, mode, cont):
-        path = self.realpath(path)
-        self._write_file(path, open(path, 'w'), cont, mode)
+        def opener(path, flags):
+            return os.open(path, flags, mode)
+
+        with self.open(path, 'w', opener=opener if mode is not None else None) as f:
+            f.write(cont)
 
     def append_file(self, path, cont):
         with self.open(path, 'a') as f:
