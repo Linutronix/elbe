@@ -84,20 +84,6 @@ class Filesystem:
         """
         return open(self.fname(path), mode)
 
-    def open_gz(self, path, mode='r'):
-        """
-        >>> this.open_gz("open_gz") # doctest: +ELLIPSIS
-        Traceback (most recent call last):
-        ...
-        FileNotFoundError: [Errno 2] ...
-
-        >>> this.open_gz("open_gz", mode="w") # doctest: +ELLIPSIS
-        <gzip _io.BufferedWriter ...>
-
-        >>> _.close()
-        """
-        return gzip.open(self.fname(path), mode)
-
     def isdir(self, path):
         """
         >>> this.isdir("isdir")
