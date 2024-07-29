@@ -480,7 +480,3 @@ class TargetFs(ChRootFilesystem):
             packed = packer.pack_file(builddir, img)
             if packed:
                 self.images.append(packed)
-
-
-class BuildImgFs(ChRootFilesystem):
-    pass

@@ -8,7 +8,7 @@ import os
 import subprocess
 from urllib.parse import urlsplit
 
-from elbepack.efilesystem import BuildImgFs, dpkg_architecture
+from elbepack.efilesystem import ChRootFilesystem, dpkg_architecture
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
@@ -67,7 +67,7 @@ class BuildEnv:
         self.arch = arch
         self.hostsysroot = hostsysroot
 
-        self.rfs = BuildImgFs(path, xml.defs['userinterpr'])
+        self.rfs = ChRootFilesystem(path, xml.defs['userinterpr'])
 
         if clean:
             self.rfs.rmtree('')
