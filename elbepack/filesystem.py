@@ -70,7 +70,7 @@ class Filesystem:
             path = path[1:]
         return os.path.join(self.path, path)
 
-    def open(self, path, mode='r'):
+    def open(self, path, mode='r', *, opener=None):
         """
         >>> this.open("open") # doctest: +ELLIPSIS
         Traceback (most recent call last):
@@ -82,7 +82,7 @@ class Filesystem:
 
         >>> _.close()
         """
-        return open(self.fname(path), mode)
+        return open(self.fname(path), mode, opener=opener)
 
     def isdir(self, path):
         """
