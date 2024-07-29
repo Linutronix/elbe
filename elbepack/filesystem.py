@@ -272,9 +272,6 @@ class Filesystem:
     def chmod(self, path, mode):
         os.chmod(self.fname(path), mode)
 
-    def utime(self, path, times=None):
-        os.utime(self.fname(path), times)
-
     def remove(self, path, noerr=False):
         """
         >>> this.remove("remove") # doctest: +ELLIPSIS
@@ -388,10 +385,10 @@ class Filesystem:
 
     def touch_file(self, fname):
         if self.exists(fname):
-            self.utime(fname)
+            os.utime(self.fname(fname))
         else:
-            fp = self.open(fname, 'w')
-            fp.close()
+            with self.open(fname, 'w'):
+                pass
 
     def walk_files(self, directory='', exclude_dirs=None):
         if not exclude_dirs:
