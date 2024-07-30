@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 
+import argparse
 import importlib
 import pkgutil
 import sys
@@ -14,32 +15,19 @@ def get_cmdlist():
     return [x for _, x, _ in pkgutil.iter_modules(elbepack.commands.__path__)]
 
 
-def usage():
-    print('elbe v%s' % elbe_version)
-    print("need a subcommand: e.g. \'elbe initvm\'. \n\
-    Available subcommands are: \n")
-    for i in get_cmdlist():
-        print('        * %s' % i)
-
-
 def main(argv=sys.argv):
-    if len(argv) < 2:
-        usage()
-        sys.exit(20)
+    parser = argparse.ArgumentParser(prog='elbe')
+    parser.add_argument('--version', action='version', version=f'%(prog)s v{elbe_version}')
 
-    if argv[1] == '--version':
-        print('elbe v%s' % (elbe_version))
-        sys.exit(0)
+    subparsers = parser.add_subparsers(required=True, dest='cmd')
 
-    cmd_list = get_cmdlist()
+    for cmd in get_cmdlist():
+        subparsers.add_parser(cmd)
 
-    if argv[1] not in cmd_list:
-        print('Unknown subcommand !\n')
-        usage()
-        sys.exit(20)
+    args, cmd_argv = parser.parse_known_args(argv[1:])
 
-    modname = 'elbepack.commands.' + argv[1]
+    modname = 'elbepack.commands.' + args.cmd
 
     cmdmod = importlib.import_module(modname)
 
-    cmdmod.run_command(argv[2:])
+    cmdmod.run_command(cmd_argv)
