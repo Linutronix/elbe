@@ -26,8 +26,6 @@ def main(argv=sys.argv):
 
     args, cmd_argv = parser.parse_known_args(argv[1:])
 
-    modname = 'elbepack.commands.' + args.cmd
-
-    cmdmod = importlib.import_module(modname)
+    cmdmod = importlib.import_module('.' + args.cmd, elbepack.commands.__name__)
 
     cmdmod.run_command(cmd_argv)

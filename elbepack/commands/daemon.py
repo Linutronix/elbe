@@ -82,8 +82,7 @@ def run_command(argv):
 
         for d in daemons:
             print(f'enable {d}')
-            module = 'elbepack.daemons.' + str(d)
-            cmdmod = importlib.import_module(module)
+            cmdmod = importlib.import_module('.' + d, elbepack.daemons.__name__)
             app = cmdmod.get_app()
             if hasattr(app, 'stop'):
                 stack.callback(app.stop)
