@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2020-2021 Linutronix GmbH
 
 import pathlib
+import tarfile
 
 import pytest
 
@@ -32,3 +33,20 @@ def test_preproc(inp, out, variant, tmp_path):
     ])
     with open(_test_file_path(out)) as expected, actual.open() as a:
         assert a.read() == expected.read()
+
+
+def test_archive(tmp_path):
+    preprocessed = tmp_path / 'preprocessed.xml'
+    run_elbe_subcommand([
+        'preprocess', '-z', '0',
+        '-o', preprocessed,
+        _test_file_path('simple-validation-image.xml'),
+    ])
+
+    archive = tmp_path / 'archive.tar.bz2'
+    run_elbe_subcommand(['get_archive', preprocessed, archive])
+
+    with tarfile.open(archive) as tf:
+        assert tf.getnames() == [
+            '.', './opt', './opt/archive-file',
+        ]
