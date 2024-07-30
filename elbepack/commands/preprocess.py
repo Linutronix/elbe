@@ -5,39 +5,8 @@
 import argparse
 import os
 import sys
-from optparse import OptionGroup
 
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
-
-
-def _comma_separated_list(option, opt, value, parser):
-    if value is None:
-        return
-
-    setattr(parser.values, option.dest, value.split(','))
-
-
-def _add_options(oparser):
-    oparser.add_option('-v', '--variants', dest='variants',
-                       action='callback', callback=_comma_separated_list, type=str,
-                       help='enable only tags with empty or given variant')
-
-    oparser.add_option('-p', '--proxy', dest='proxy',
-                       default=None,
-                       help='add proxy to mirrors')
-
-    oparser.add_option('-z', '--gzip', dest='gzip', type='int',
-                       default=9,
-                       help='gzip compression level 1-9 (0: no compression)')
-
-
-def add_xmlpreprocess_passthrough_options(oparser):
-    group = OptionGroup(oparser,
-                        'Elbe preprocess options',
-                        'Options passed through to invocation of '
-                        '"elbe preprocess"')
-    _add_options(group)
-    oparser.add_option_group(group)
 
 
 def _add_arguments(parser):
