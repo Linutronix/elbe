@@ -23,10 +23,6 @@ def usage():
 
 
 def main(argv=sys.argv):
-    # with python -melbepack the optparse usage message would show __main__.py
-    if argv[0].endswith('__main__.py'):
-        argv[0] = 'elbe'
-
     if len(argv) < 2:
         usage()
         sys.exit(20)
