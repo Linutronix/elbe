@@ -77,6 +77,7 @@ def run_command(argv):
 
     with elbe_logging({'files': None}):
         create_initvm(
+            cfg['initvm_domain'],
             args.xmlfile,
             args.directory,
             skip_validation=args.skip_validation,
@@ -88,7 +89,7 @@ def run_command(argv):
         )
 
 
-def create_initvm(xmlfile, directory, *,
+def create_initvm(name, xmlfile, directory, *,
                   buildtype=None, skip_validation=False, cdrom=None, fail_on_warning=False,
                   build_bin=True, build_sources=True):
     if not skip_validation:
@@ -135,6 +136,7 @@ def create_initvm(xmlfile, directory, *,
          'defs': defs,
          'directory': directory,
          'fail_on_warning': fail_on_warning,
+         'initvm_domain': name,
          'xml': xml,
          'prj': prj,
          'http_proxy': initvm_http_proxy,

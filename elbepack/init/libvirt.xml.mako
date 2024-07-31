@@ -16,7 +16,6 @@ from elbepack.uuid7 import uuid7
 # Generate UUID
 uid = uuid7()
 
-name = cfg['initvm_domain']
 cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
 cpus = min(multiprocessing.cpu_count(), cpus)
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024
@@ -38,7 +37,7 @@ if cfg['sshport'] != '-1':
 
 %><domain type='qemu'
 xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-<name>${name}</name>
+<name>${initvm_domain}</name>
 <uuid>${uid}</uuid>
   <memory unit='KiB'>${memory}</memory>
   <currentMemory unit='KiB'>${memory}</currentMemory>
