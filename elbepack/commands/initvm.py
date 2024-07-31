@@ -37,12 +37,14 @@ def run_command(argv):
     args.parser = aparser
 
     if args.global_outdir is not None:
+        if not hasattr(args, 'outdir'):
+            aparser.error('unrecognized arguments: --output')
         if args.outdir is not None:
             aparser.error('Only one --output can be specified')
 
         args.outdir = args.global_outdir
 
-    if args.outdir is None:
+    if hasattr(args, 'outdir') and args.outdir is None:
         args.outdir = os.path.abspath(
             'elbe-build-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
         )
