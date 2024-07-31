@@ -16,7 +16,7 @@ import debian.deb822
 from suds import WebFault
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
-from elbepack.config import add_argument_soaptimeout, cfg
+from elbepack.config import add_arguments_soapclient
 from elbepack.soapclient import ElbeSoapClient
 
 
@@ -129,33 +129,7 @@ def run_command(argv):
 
     aparser = argparse.ArgumentParser(prog='elbe prjrepo')
 
-    aparser.add_argument('--host', dest='host', default=cfg['soaphost'],
-                         help='Ip or hostname of elbe-daemon.')
-
-    aparser.add_argument('--port', dest='port', default=cfg['soapport'],
-                         help='Port of soap itf on elbe-daemon.')
-
-    aparser.add_argument('--pass', dest='passwd', default=cfg['elbepass'],
-                         help='Password (default is foo).')
-
-    aparser.add_argument('--user', dest='user', default=cfg['elbeuser'],
-                         help='Username (default is root).')
-
-    add_argument_soaptimeout(aparser)
-
-    aparser.add_argument(
-        '--retries',
-        dest='retries',
-        type=int, default=10,
-        help='How many times to retry the connection to the server before\
-                giving up (default is 10 times, yielding 10 seconds).')
-
-    devel = aparser.add_argument_group(
-        'options for elbe developers',
-        "Caution: Don't use these options in a productive environment")
-    devel.add_argument('--debug', action='store_true',
-                       dest='debug', default=False,
-                       help='Enable debug mode.')
+    add_arguments_soapclient(aparser)
 
     subparsers = aparser.add_subparsers(required=True)
 
@@ -168,18 +142,10 @@ def run_command(argv):
 
     # Try to connect to initvm via SOAP
     try:
-        control = ElbeSoapClient(
-            args.host,
-            args.port,
-            args.user,
-            args.passwd,
-            args.soaptimeout,
-            debug=args.debug,
-            retries=args.retries,
-        )
+        control = ElbeSoapClient.from_args(args)
     except (URLError, socket.error, BadStatusLine):
         print(
-            f'Failed to connect to Soap server {args.host}:{args.port}\n',
+            f'Failed to connect to Soap server {args.soaphost}:{args.soapport}\n',
             file=sys.stderr)
         print('', file=sys.stderr)
         print('Check, wether the initvm is actually running.', file=sys.stderr)

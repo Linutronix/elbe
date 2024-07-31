@@ -81,6 +81,11 @@ class ElbeSoapClient:
         # We have a Connection, now login
         self.service.login(user, passwd)
 
+    @classmethod
+    def from_args(cls, args):
+        return cls(args.soaphost, args.soapport, args.soapuser, args.soappassword,
+                   args.soaptimeout, debug=args.debug, retries=args.retries)
+
     def download_file(self, builddir, filename, dst_fname):
         fp = open(dst_fname, 'wb')
         part = 0
