@@ -13,7 +13,7 @@ import time
 import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
-from elbepack.config import cfg
+from elbepack.config import add_argument_sshport, cfg
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
@@ -87,7 +87,7 @@ def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
 
 def _submit_and_dl_result(xmlfile, cdrom, args):
 
-    with preprocess_file(xmlfile, variants=args.variants) as xmlfile:
+    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport) as xmlfile:
 
         ps = run_elbe(['control', 'create_project'],
                       capture_output=True, encoding='utf-8', check=True)
@@ -320,11 +320,12 @@ def _create(args):
             elbepack.__path__[0],
             'init/default-init.xml')
 
-    with preprocess_file(xmlfile, variants=args.variants) as preproc:
+    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport) as preproc:
         create_initvm(
             cfg['initvm_domain'],
             preproc,
             args.directory,
+            sshport=args.sshport,
             cdrom=cdrom,
             build_bin=args.build_bin,
             build_sources=args.build_sources,
@@ -383,10 +384,11 @@ def _submit(args):
     _submit_with_repodir_and_dl_result(xmlfile, cdrom, args)
 
 
+@add_argument_sshport
 def _sync(args):
     top_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     excludes = ['.git*', '*.pyc', 'elbe-build*', 'initvm', '__pycache__', 'docs', 'examples']
-    ssh = ['ssh', '-p', cfg['sshport'], '-oUserKnownHostsFile=/dev/null']
+    ssh = ['ssh', '-p', str(args.sshport), '-oUserKnownHostsFile=/dev/null']
     subprocess.run([
         'rsync', '--info=name1,stats1', '--archive', '--times',
         *[arg for e in excludes for arg in ('--exclude', e)],

@@ -4,22 +4,20 @@
 
 import os
 
+from elbepack.cli import add_argument_to_parser_or_function
+
 
 class Config(dict):
     def __init__(self):
         dict.__init__(self)
         self['soaphost'] = 'localhost'
         self['soapport'] = '7587'
-        self['sshport'] = '5022'
         self['elbeuser'] = 'root'
         self['elbepass'] = 'foo'
         self['initvm_domain'] = 'initvm'
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
-
-        if 'ELBE_SSHPORT' in os.environ:
-            self['sshport'] = os.environ['ELBE_SSHPORT']
 
         if 'ELBE_SOAPHOST' in os.environ:
             self['soaphost'] = os.environ['ELBE_SOAPHOST']
@@ -42,4 +40,13 @@ def add_argument_soaptimeout(parser):
         '--soaptimeout',
         type=int,
         default=os.environ.get('ELBE_SOAPTIMEOUT_SECS', '90'),
+    )
+
+
+def add_argument_sshport(parser_or_func):
+    return add_argument_to_parser_or_function(
+        parser_or_func,
+        '--sshport',
+        type=int,
+        default=os.environ.get('ELBE_SSHPORT', '5022'),
     )

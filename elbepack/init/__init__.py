@@ -20,6 +20,7 @@ from elbepack.xmldefaults import ElbeDefaults
 
 
 def create_initvm(name, xmlfile, directory, *,
+                  sshport,
                   buildtype=None, skip_validation=False, cdrom=None, fail_on_warning=False,
                   build_bin=True, build_sources=True):
     if not skip_validation:
@@ -72,6 +73,7 @@ def create_initvm(name, xmlfile, directory, *,
          'http_proxy': initvm_http_proxy,
          'pkgs': xml.node('/initvm/pkg-list') or [],
          'preseed': get_initvm_preseed(xml),
+         'sshport': sshport,
          'cfg': cfg}
 
     if http_proxy != '':

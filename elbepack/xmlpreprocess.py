@@ -129,7 +129,7 @@ def preprocess_iso_option(xml):
         print(f'[WARN] {violation}')
 
 
-def preprocess_initvm_ports(xml):
+def preprocess_initvm_ports(xml, sshport):
     """Filters out the default port forwardings to prevent qemu conflict"""
 
     for forward in xml.iterfind('initvm/portforwarding/forward'):
@@ -139,7 +139,7 @@ def preprocess_initvm_ports(xml):
         if prot is None or benv is None or host is None:
             continue
         if prot.text == 'tcp' and (
-                host.text == cfg['sshport'] and benv.text == '22' or
+                host.text == sshport and benv.text == '22' or
                 host.text == cfg['soapport'] and benv.text == '7588'):
             forward.getparent().remove(forward)
 
@@ -323,7 +323,7 @@ def preprocess_passwd(xml):
                         'backwards compatibility reasons. This is considered insecure nowadays.')
 
 
-def xmlpreprocess(xml_input_file, xml_output_file, *, variants=None, proxy=None, gzip=9):
+def xmlpreprocess(xml_input_file, xml_output_file, *, sshport, variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
        `xml_input_file` is a path (str) to the input file.
@@ -405,7 +405,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, *, variants=None, proxy=None,
 
         preprocess_iso_option(xml)
 
-        preprocess_initvm_ports(xml)
+        preprocess_initvm_ports(xml, sshport)
 
         preprocess_mirrors(xml)
 
@@ -439,8 +439,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, *, variants=None, proxy=None,
 
 
 @contextlib.contextmanager
-def preprocess_file(xmlfile, *, variants):
+def preprocess_file(xmlfile, *, variants, sshport):
     with tempfile.NamedTemporaryFile(suffix='elbe.xml') as preproc:
-        xmlpreprocess(xmlfile, preproc, variants=variants)
+        xmlpreprocess(xmlfile, preproc, variants=variants, sshport=sshport)
         preproc.seek(0)
         yield preproc.name

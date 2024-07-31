@@ -8,6 +8,7 @@ import sys
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
+from elbepack.config import add_argument_sshport
 from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.xmlpreprocess import preprocess_file
@@ -28,6 +29,7 @@ from elbepack.xmlpreprocess import preprocess_file
               help="Deactivates the compiler cache 'ccache'")
 @add_argument('--xmlfile', help='xmlfile to use')
 @add_argument('--project', help='project directory on the initvm')
+@add_argument_sshport
 def _create(args):
     crossopt = []
     if args.cross:
@@ -38,7 +40,7 @@ def _create(args):
         ccacheopt = ['--ccache-size', args.ccachesize]
 
     if args.xmlfile:
-        with preprocess_file(args.xmlfile, variants=args.variants) as preproc:
+        with preprocess_file(args.xmlfile, variants=args.variants, sshport=args.sshport) as preproc:
             ps = run_elbe(['control', 'create_project'],
                           capture_output=True, encoding='utf-8')
             if ps.returncode != 0:
