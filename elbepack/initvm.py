@@ -172,18 +172,20 @@ class LibvirtInitVM(_InitVM):
         return domain_tree.tostring()
 
     def _build(self):
-        if self._get_domain() is not None:
+        domain = self._get_domain()
+        if domain is not None:
+            uri = self._conn.getURI()
             raise CliError(142, textwrap.dedent(f"""
-                Initvm is already defined for the libvirt domain '{cfg['initvm_domain']}'.
+                Initvm is already defined for the libvirt domain '{domain.name()}'.
                 If you want to build in your old initvm, use `elbe initvm submit <xml>`.')
                 If you want to remove your old initvm from libvirt run `elbe initvm destroy`.
                 You can specify another libvirt domain by setting the
                 ELBE_INITVM_DOMAIN environment variable to an unused domain name.
                 Note:
                 \t1) You can reimport your old initvm via
-                `virsh --connect qemu:///system define <file>`
+                `virsh --connect {uri} define <file>`
                 \t   where <file> is the corresponding libvirt.xml
-                \t2) virsh --connect qemu:///system undefine does not delete the image
+                \t2) virsh --connect {uri} undefine does not delete the image
                 of your old initvm."""))
 
         _build_initvm(self._directory)
@@ -279,11 +281,13 @@ class LibvirtInitVM(_InitVM):
         print('\nInitvm shutoff')
 
     def attach(self):
-        if self._state(self._get_domain()) != self._libvirt.VIR_DOMAIN_RUNNING:
+        domain = self._get_domain()
+
+        if self._state(domain) != self._libvirt.VIR_DOMAIN_RUNNING:
             raise CliError(126, 'Error: Initvm not running properly.')
 
         print('Attaching to initvm console.')
-        subprocess.run(['virsh', '--connect', 'qemu:///system', 'console', cfg['initvm_domain']],
+        subprocess.run(['virsh', '--connect', self._conn.getURI(), 'console', domain.name()],
                        check=True)
 
     def destroy(self):
