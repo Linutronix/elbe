@@ -31,7 +31,7 @@ for f in prj.node("portforwarding"):
     forward += ',hostfwd=%s::%s-:%s' % (
         f.text("proto"), f.text("host"), f.text("buildenv"))
 
-forward += ',hostfwd=%s::%s-:%s' % ("tcp", cfg['soapport'], "7588")
+forward += ',hostfwd=%s::%s-:%s' % ("tcp", soapport, "7588")
 if sshport != -1:
     forward += ',hostfwd=%s::%s-:%s' % ("tcp", sshport, "22")
 

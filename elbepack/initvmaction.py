@@ -13,7 +13,7 @@ import time
 import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
-from elbepack.config import add_argument_sshport
+from elbepack.config import add_argument_soapport, add_argument_sshport
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
@@ -44,15 +44,18 @@ def _add_initvm_from_args_arguments(f):
         default=os.environ.get('ELBE_INITVM_DOMAIN', 'initvm'),
         help='Name of the libvirt initvm')(f)
 
+    f = add_argument_soapport(f)
+
     return f
 
 
 def _initvm_from_args(args):
     if args.qemu_mode:
-        return elbepack.initvm.QemuInitVM(args.directory)
+        return elbepack.initvm.QemuInitVM(args.directory, soapport=args.soapport)
     else:
         return elbepack.initvm.LibvirtInitVM(directory=args.directory,
-                                             domain=args.domain)
+                                             domain=args.domain,
+                                             soapport=args.soapport)
 
 
 @_add_initvm_from_args_arguments
@@ -94,7 +97,8 @@ def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
 
 def _submit_and_dl_result(xmlfile, cdrom, args):
 
-    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport) as xmlfile:
+    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
+                         soapport=args.soapport) as xmlfile:
 
         ps = run_elbe(['control', 'create_project'],
                       capture_output=True, encoding='utf-8', check=True)
@@ -327,12 +331,14 @@ def _create(args):
             elbepack.__path__[0],
             'init/default-init.xml')
 
-    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport) as preproc:
+    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
+                         soapport=args.soapport) as preproc:
         create_initvm(
             args.domain,
             preproc,
             args.directory,
             sshport=args.sshport,
+            soapport=args.soapport,
             cdrom=cdrom,
             build_bin=args.build_bin,
             build_sources=args.build_sources,

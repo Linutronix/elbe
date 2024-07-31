@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 
-from elbepack.config import add_argument_sshport
+from elbepack.config import add_argument_soapport, add_argument_sshport
 from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
 
 
@@ -16,6 +16,7 @@ def _add_arguments(parser):
                         help='enable only tags with empty or given variant')
     parser.add_argument('-p', '--proxy', help='add proxy to mirrors')
     add_argument_sshport(parser)
+    add_argument_soapport(parser, '--soapport')
     parser.add_argument('-z', '--gzip', type=int, default=9,
                         help='gzip compression level 1-9 (0: no compression)')
 
@@ -41,7 +42,7 @@ def run_command(argv):
     try:
         xmlpreprocess(args.xmlfile, args.output,
                       variants=args.variants, proxy=args.proxy, gzip=args.gzip,
-                      sshport=args.sshport)
+                      sshport=args.sshport, soapport=args.soapport)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(114)

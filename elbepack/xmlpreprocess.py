@@ -23,7 +23,6 @@ with warnings.catch_warnings():
     from passlib.hash import sha512_crypt
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
-from elbepack.config import cfg
 from elbepack.isooptions import iso_option_valid
 from elbepack.treeutils import dbsfed_schema, xml_bool
 from elbepack.validate import error_log_to_strings
@@ -129,7 +128,7 @@ def preprocess_iso_option(xml):
         print(f'[WARN] {violation}')
 
 
-def preprocess_initvm_ports(xml, sshport):
+def preprocess_initvm_ports(xml, sshport, soapport):
     """Filters out the default port forwardings to prevent qemu conflict"""
 
     for forward in xml.iterfind('initvm/portforwarding/forward'):
@@ -140,7 +139,7 @@ def preprocess_initvm_ports(xml, sshport):
             continue
         if prot.text == 'tcp' and (
                 host.text == sshport and benv.text == '22' or
-                host.text == cfg['soapport'] and benv.text == '7588'):
+                host.text == soapport and benv.text == '7588'):
             forward.getparent().remove(forward)
 
 
@@ -323,7 +322,9 @@ def preprocess_passwd(xml):
                         'backwards compatibility reasons. This is considered insecure nowadays.')
 
 
-def xmlpreprocess(xml_input_file, xml_output_file, *, sshport, variants=None, proxy=None, gzip=9):
+def xmlpreprocess(xml_input_file, xml_output_file, *,
+                  sshport, soapport,
+                  variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
        `xml_input_file` is a path (str) to the input file.
@@ -405,7 +406,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, *, sshport, variants=None, pr
 
         preprocess_iso_option(xml)
 
-        preprocess_initvm_ports(xml, sshport)
+        preprocess_initvm_ports(xml, sshport, soapport)
 
         preprocess_mirrors(xml)
 
@@ -439,8 +440,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, *, sshport, variants=None, pr
 
 
 @contextlib.contextmanager
-def preprocess_file(xmlfile, *, variants, sshport):
+def preprocess_file(xmlfile, *, variants, sshport, soapport):
     with tempfile.NamedTemporaryFile(suffix='elbe.xml') as preproc:
-        xmlpreprocess(xmlfile, preproc, variants=variants, sshport=sshport)
+        xmlpreprocess(xmlfile, preproc, variants=variants, sshport=sshport, soapport=soapport)
         preproc.seek(0)
         yield preproc.name

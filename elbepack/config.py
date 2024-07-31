@@ -39,6 +39,16 @@ def add_argument_soaptimeout(parser):
     )
 
 
+def add_argument_soapport(parser_or_func, arg='--port'):
+    return add_argument_to_parser_or_function(
+        parser_or_func,
+        arg,
+        dest='soapport',
+        type=int,
+        default=os.environ.get('ELBE_SOAPPORT', '7587'),
+    )
+
+
 def add_argument_sshport(parser_or_func):
     return add_argument_to_parser_or_function(
         parser_or_func,
