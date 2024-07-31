@@ -31,6 +31,21 @@ def add_argument(*args, **kwargs):
     return decorator
 
 
+def add_argument_to_parser_or_function(parser_or_func, *args, **kwargs):
+    """
+    Add arguments either to an :py:meth:`argparse.ArgumentParser` and similar objects,
+    or to a decoracted function, the same as :py:meth:`add_argument`.
+    """
+    if hasattr(parser_or_func, 'add_argument'):
+        return parser_or_func.add_argument(*args, **kwargs)
+
+    elif callable(parser_or_func):
+        return add_argument(*args, **kwargs)(parser_or_func)
+
+    else:
+        raise ValueError(parser_or_func)
+
+
 def add_arguments_from_decorated_function(parser, f):
     """
     Apply calls to :py:meth:`argparse.ArgumentParser.add_argument` recorded by
