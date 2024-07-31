@@ -38,7 +38,7 @@ def _create(args):
         ccacheopt = ['--ccache-size', args.ccachesize]
 
     if args.xmlfile:
-        with preprocess_file(args.xmlfile, args.variants) as preproc:
+        with preprocess_file(args.xmlfile, variants=args.variants) as preproc:
             ps = run_elbe(['control', 'create_project'],
                           capture_output=True, encoding='utf-8')
             if ps.returncode != 0:

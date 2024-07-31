@@ -87,7 +87,7 @@ def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
 
 def _submit_and_dl_result(xmlfile, cdrom, args):
 
-    with preprocess_file(xmlfile, args.variants) as xmlfile:
+    with preprocess_file(xmlfile, variants=args.variants) as xmlfile:
 
         ps = run_elbe(['control', 'create_project'],
                       capture_output=True, encoding='utf-8', check=True)
@@ -320,7 +320,7 @@ def _create(args):
             elbepack.__path__[0],
             'init/default-init.xml')
 
-    with preprocess_file(xmlfile, args.variants) as preproc:
+    with preprocess_file(xmlfile, variants=args.variants) as preproc:
         create_initvm(
             cfg['initvm_domain'],
             preproc,

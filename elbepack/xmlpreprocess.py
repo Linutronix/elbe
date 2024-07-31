@@ -323,7 +323,7 @@ def preprocess_passwd(xml):
                         'backwards compatibility reasons. This is considered insecure nowadays.')
 
 
-def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gzip=9):
+def xmlpreprocess(xml_input_file, xml_output_file, *, variants=None, proxy=None, gzip=9):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
        `xml_input_file` is a path (str) to the input file.
@@ -439,7 +439,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, variants=None, proxy=None, gz
 
 
 @contextlib.contextmanager
-def preprocess_file(xmlfile, variants):
+def preprocess_file(xmlfile, *, variants):
     with tempfile.NamedTemporaryFile(suffix='elbe.xml') as preproc:
         xmlpreprocess(xmlfile, preproc, variants=variants)
         preproc.seek(0)

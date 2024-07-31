@@ -37,7 +37,8 @@ def run_command(argv):
         sys.exit(113)
 
     try:
-        xmlpreprocess(args.xmlfile, args.output, args.variants, args.proxy, args.gzip)
+        xmlpreprocess(args.xmlfile, args.output,
+                      variants=args.variants, proxy=args.proxy, gzip=args.gzip)
     except XMLPreprocessError as e:
         print(e, file=sys.stderr)
         sys.exit(114)
