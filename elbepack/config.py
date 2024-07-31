@@ -14,7 +14,6 @@ class Config(dict):
         self['soapport'] = '7587'
         self['elbeuser'] = 'root'
         self['elbepass'] = 'foo'
-        self['initvm_domain'] = 'initvm'
 
         if 'ELBE_SOAPPORT' in os.environ:
             self['soapport'] = os.environ['ELBE_SOAPPORT']
@@ -27,9 +26,6 @@ class Config(dict):
 
         if 'ELBE_PASS' in os.environ:
             self['elbepass'] = os.environ['ELBE_PASS']
-
-        if 'ELBE_INITVM_DOMAIN' in os.environ:
-            self['initvm_domain'] = os.environ['ELBE_INITVM_DOMAIN']
 
 
 cfg = Config()

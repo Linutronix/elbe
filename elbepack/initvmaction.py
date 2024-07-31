@@ -13,7 +13,7 @@ import time
 import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
-from elbepack.config import add_argument_sshport, cfg
+from elbepack.config import add_argument_sshport
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
@@ -37,6 +37,13 @@ def _add_initvm_from_args_arguments(f):
         type=os.path.abspath,
         default=os.getcwd() + '/initvm',
         help='directory, where the initvm resides, default is ./initvm')(f)
+
+    f = add_argument(
+        '--domain',
+        dest='domain',
+        default=os.environ.get('ELBE_INITVM_DOMAIN', 'initvm'),
+        help='Name of the libvirt initvm')(f)
+
     return f
 
 
@@ -45,7 +52,7 @@ def _initvm_from_args(args):
         return elbepack.initvm.QemuInitVM(args.directory)
     else:
         return elbepack.initvm.LibvirtInitVM(directory=args.directory,
-                                             domain=cfg['initvm_domain'])
+                                             domain=args.domain)
 
 
 @_add_initvm_from_args_arguments
@@ -322,7 +329,7 @@ def _create(args):
 
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport) as preproc:
         create_initvm(
-            cfg['initvm_domain'],
+            args.domain,
             preproc,
             args.directory,
             sshport=args.sshport,
