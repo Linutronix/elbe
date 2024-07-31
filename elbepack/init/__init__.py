@@ -9,7 +9,6 @@ import shutil
 import subprocess
 
 import elbepack.init
-from elbepack.config import cfg
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
 from elbepack.shellhelper import do
 from elbepack.templates import get_initvm_preseed, write_template
@@ -61,7 +60,8 @@ def create_initvm(name, xmlfile, directory, *,
         elbe_exe = '/var/cache/elbe/devel/elbe'
     prj = xml.node('/initvm')
 
-    d = {'elbe_exe': elbe_exe,
+    d = {
+         'elbe_exe': elbe_exe,
          'elbe_version': elbe_version,
          'is_devel': is_devel,
          'defs': defs,
@@ -75,7 +75,7 @@ def create_initvm(name, xmlfile, directory, *,
          'preseed': get_initvm_preseed(xml),
          'soapport': soapport,
          'sshport': sshport,
-         'cfg': cfg}
+    }
 
     if http_proxy != '':
         os.putenv('http_proxy', http_proxy)
