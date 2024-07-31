@@ -22,8 +22,8 @@ cpus = min(multiprocessing.cpu_count(), cpus)
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024
 
 imagetype = prj.text('img', default=defs, key='img')
-img = os.path.join(args.directory, 'initvm.img')
-img_base = os.path.join(args.directory, 'initvm-base.img')
+img = os.path.join(directory, 'initvm.img')
+img_base = os.path.join(directory, 'initvm-base.img')
 
 emulator = shutil.which(prj.text('interpreter', default=defs, key='interpreter'))
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')

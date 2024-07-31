@@ -51,7 +51,7 @@ in-target update-initramfs -u
    echo 'PermitRootLogin yes' >> /buildenv/etc/ssh/sshd_config
 % endif
 
-% if args.fail_on_warning:
+% if fail_on_warning:
    echo 'PYTHONWARNINGS="error"' >> /buildenv/etc/default/python3-elbe-daemon
 % endif
 
