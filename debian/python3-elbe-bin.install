@@ -9,7 +9,6 @@ usr/lib/python3.*/*-packages/elbepack/commands/chg_archive.py
 usr/lib/python3.*/*-packages/elbepack/commands/cyclonedx-sbom.py
 usr/lib/python3.*/*-packages/elbepack/commands/diff.py
 usr/lib/python3.*/*-packages/elbepack/commands/get_archive.py
-usr/lib/python3.*/*-packages/elbepack/commands/init.py
 usr/lib/python3.*/*-packages/elbepack/commands/parselicence.py
 usr/lib/python3.*/*-packages/elbepack/commands/pin_versions.py
 usr/lib/python3.*/*-packages/elbepack/commands/pkgdiff.py
