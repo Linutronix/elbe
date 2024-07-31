@@ -17,6 +17,7 @@ from elbepack.config import cfg
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
+from elbepack.init import create_initvm
 from elbepack.repodir import Repodir, RepodirError
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import preprocess_file
@@ -319,29 +320,16 @@ def _create(args):
             elbepack.__path__[0],
             'init/default-init.xml')
 
-        init_opts = []
-
-        if not args.build_bin:
-            init_opts.append('--skip-build-bin')
-
-        if not args.build_sources:
-            init_opts.append('--skip-build-source')
-
-        if args.fail_on_warning:
-            init_opts.append('--fail-on-warning')
-
-        if cdrom:
-            cdrom_opts = ['--cdrom', cdrom]
-        else:
-            cdrom_opts = []
-
-        with preprocess_file(xmlfile, args.variants) as preproc:
-            try:
-                run_elbe(['init', *init_opts, '--directory', args.directory, *cdrom_opts, preproc],
-                         check=True)
-
-            except subprocess.CalledProcessError as e:
-                raise with_cli_details(e, 145, 'elbe init failed')
+    with preprocess_file(xmlfile, args.variants) as preproc:
+        create_initvm(
+            cfg['initvm_domain'],
+            preproc,
+            args.directory,
+            cdrom=cdrom,
+            build_bin=args.build_bin,
+            build_sources=args.build_sources,
+            fail_on_warning=args.fail_on_warning,
+        )
 
     initvm = _initvm_from_args(args)
 
