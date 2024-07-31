@@ -31,7 +31,6 @@ from elbepack.aptprogress import (
     ElbeInstallProgress,
     ElbeOpProgress,
 )
-from elbepack.config import cfg
 from elbepack.egpg import unsign_file
 from elbepack.treeutils import etree
 
@@ -93,9 +92,10 @@ class UpdateStatus:
 
 
 class UpdateApplication (Application):
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, monitor_timeout, **kargs):
         Application.__init__(self, *args, **kargs)
         self.status = UpdateStatus()
+        self.monitor_timeout = monitor_timeout
 
 
 class UpdateService (ServiceBase):
@@ -139,7 +139,7 @@ class UpdateService (ServiceBase):
 
     @rpc(String)
     def register_monitor(self, wsdl_url):
-        self.app.status.monitor = Client(wsdl_url, timeout=cfg['soaptimeout'])
+        self.app.status.monitor = Client(wsdl_url, timeout=self.app.monitor_timeout)
         self.app.status.log('connection established')
 
 

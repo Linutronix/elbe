@@ -16,7 +16,7 @@ import debian.deb822
 from suds import WebFault
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
-from elbepack.config import cfg
+from elbepack.config import add_argument_soaptimeout, cfg
 from elbepack.soapclient import ElbeSoapClient
 
 
@@ -141,6 +141,8 @@ def run_command(argv):
     aparser.add_argument('--user', dest='user', default=cfg['elbeuser'],
                          help='Username (default is root).')
 
+    add_argument_soaptimeout(aparser)
+
     aparser.add_argument(
         '--retries',
         dest='retries',
@@ -171,6 +173,7 @@ def run_command(argv):
             args.port,
             args.user,
             args.passwd,
+            args.soaptimeout,
             debug=args.debug,
             retries=args.retries,
         )

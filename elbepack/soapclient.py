@@ -13,7 +13,6 @@ from urllib.error import URLError
 
 from suds.client import Client
 
-from elbepack.config import cfg
 from elbepack.version import elbe_version
 
 
@@ -45,7 +44,7 @@ def set_suds_debug(debug):
 
 
 class ElbeSoapClient:
-    def __init__(self, host, port, user, passwd, retries=10, debug=False):
+    def __init__(self, host, port, user, passwd, timeout, retries=10, debug=False):
 
         # Mess with suds logging, for debug, or squelch warnings
         set_suds_debug(debug)
@@ -59,7 +58,7 @@ class ElbeSoapClient:
         while control is None:
             current_retries += 1
             try:
-                control = Client(self.wsdl, timeout=cfg['soaptimeout'])
+                control = Client(self.wsdl, timeout=timeout)
             except URLError as e:
                 if current_retries > retries:
                     raise e

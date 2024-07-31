@@ -12,6 +12,7 @@ from wsgiref.simple_server import make_server
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
+from elbepack.config import add_argument_soaptimeout
 from elbepack.updated import UpdateApplication, UpdateService, UpdateStatus
 from elbepack.updated_monitors import FileMonitor
 
@@ -60,6 +61,8 @@ def run_command(argv):
                          default=False,
                          help='monitor USB devices')
 
+    add_argument_soaptimeout(aparser)
+
     args = aparser.parse_args(argv)
 
     status.nosign = args.nosign
@@ -98,6 +101,7 @@ def run_command(argv):
         mon.start()
 
     application = UpdateApplication([UpdateService], 'update',
+                                    monitor_timeout=args.soaptimeout,
                                     in_protocol=Soap11(validator='lxml'),
                                     out_protocol=Soap11())
     application.status = status

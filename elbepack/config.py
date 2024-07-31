@@ -10,7 +10,6 @@ class Config(dict):
         dict.__init__(self)
         self['soaphost'] = 'localhost'
         self['soapport'] = '7587'
-        self['soaptimeout'] = 90
         self['sshport'] = '5022'
         self['elbeuser'] = 'root'
         self['elbepass'] = 'foo'
@@ -25,9 +24,6 @@ class Config(dict):
         if 'ELBE_SOAPHOST' in os.environ:
             self['soaphost'] = os.environ['ELBE_SOAPHOST']
 
-        if 'ELBE_SOAPTIMEOUT_SECS' in os.environ:
-            self['soaptimeout'] = int(os.environ['ELBE_SOAPTIMEOUT_SECS'])
-
         if 'ELBE_USER' in os.environ:
             self['elbeuser'] = os.environ['ELBE_USER']
 
@@ -39,3 +35,11 @@ class Config(dict):
 
 
 cfg = Config()
+
+
+def add_argument_soaptimeout(parser):
+    parser.add_argument(
+        '--soaptimeout',
+        type=int,
+        default=os.environ.get('ELBE_SOAPTIMEOUT_SECS', '90'),
+    )
