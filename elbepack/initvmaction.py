@@ -484,6 +484,7 @@ initvm_actions = {
     'ensure':  _ensure,
     'stop':    _stop,
     'destroy': _destroy,
+    'attach':  _attach,
     'create':  _create,
     'submit':  _submit,
     'sync':    _sync,
