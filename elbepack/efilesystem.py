@@ -96,8 +96,11 @@ def dpkg_architecture():
 
 
 def _readlines(rfs, file):
-    with rfs.open(file) as f:
-        return f.readlines()
+    try:
+        with rfs.open(file) as f:
+            return f.readlines()
+    except FileNotFoundError:
+        return []
 
 
 def extract_target(src, xml, dst, cache):
