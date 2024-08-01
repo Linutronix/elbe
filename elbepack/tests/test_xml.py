@@ -68,6 +68,11 @@ def test_simple_build(simple_build, check_build):
     run_elbe_subcommand(['check-build', check_build, simple_build])
 
 
+@pytest.mark.slow
+def test_check_updates(simple_build):
+    run_elbe_subcommand(['check_updates', simple_build / 'source.xml'])
+
+
 def _prjrepo_list_packages(uuid):
     with contextlib.redirect_stdout(io.StringIO()) as stdout:
         run_elbe_subcommand(['prjrepo', 'list_packages', uuid])
