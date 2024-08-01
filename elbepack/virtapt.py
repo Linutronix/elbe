@@ -27,7 +27,7 @@ class VirtApt:
         suite = xml.text('project/suite')
 
         self.basefs = TmpdirFilesystem()
-        self.initialize_dirs()
+        self._initialize_dirs()
 
         create_apt_prefs(self.xml, self.basefs)
 
@@ -35,8 +35,8 @@ class VirtApt:
                                                   initvm=False)
         self.basefs.write_file('etc/apt/sources.list', 0o644, mirror)
 
-        self.setup_gpg()
-        self.import_keys()
+        self._setup_gpg()
+        self._import_keys()
 
         apt_pkg.config.set('APT::Architecture', arch)
         apt_pkg.config.set('APT::Architectures', arch)
@@ -95,7 +95,7 @@ class VirtApt:
         self.downloads = {}
         self.acquire = apt_pkg.Acquire(progress)
 
-    def add_key(self, key, keyname):
+    def _add_key(self, key, keyname):
         """
         Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
         with file name 'keyname'.
@@ -103,7 +103,7 @@ class VirtApt:
         with open(self.basefs.fname(f'/etc/apt/trusted.gpg.d/{keyname}'), 'wb') as outfile:
             outfile.write(key)
 
-    def import_keys(self):
+    def _import_keys(self):
         if self.xml.has('project/mirror/url-list'):
             # Should we use self.xml.prj.has("noauth")???
             #
@@ -115,9 +115,9 @@ class VirtApt:
                 if url.has('raw-key'):
                     key = '\n'.join(line.strip(' \t')
                                     for line in url.text('raw-key').splitlines()[1:-1])
-                    self.add_key(unarmor_openpgp_keyring(key), f'elbe-virtapt-raw-key{i}.gpg')
+                    self._add_key(unarmor_openpgp_keyring(key), f'elbe-virtapt-raw-key{i}.gpg')
 
-    def initialize_dirs(self):
+    def _initialize_dirs(self):
         self.basefs.mkdir_p('cache/archives/partial')
         self.basefs.mkdir_p('etc/apt/preferences.d')
         self.basefs.mkdir_p('etc/apt/trusted.gpg.d')
@@ -127,7 +127,7 @@ class VirtApt:
         self.basefs.mkdir_p('tmp')
         self.basefs.touch_file('state/status')
 
-    def setup_gpg(self):
+    def _setup_gpg(self):
         ring_path = self.basefs.fname('etc/apt/trusted.gpg')
         if not os.path.isdir('/etc/apt/trusted.gpg.d'):
             print("/etc/apt/trusted.gpg.d doesn't exist")
