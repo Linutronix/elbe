@@ -9,7 +9,7 @@ import sys
 
 # don't remove the apt import, it is really needed, due to some magic in
 # apt_pkg
-import apt  # noqa: F401
+import apt
 
 import apt_pkg
 
@@ -67,11 +67,13 @@ class VirtApt:
 
         apt_pkg.init_system()
 
+        progress = apt.progress.base.AcquireProgress()
+
         self.source = apt_pkg.SourceList()
         self.source.read_main_list()
         self.cache = apt_pkg.Cache()
         try:
-            self.cache.update(self, self.source)
+            self.cache.update(progress, self.source)
         except BaseException as e:
             print(e)
 
@@ -79,7 +81,7 @@ class VirtApt:
 
         self.cache = apt_pkg.Cache()
         try:
-            self.cache.update(self, self.source)
+            self.cache.update(progress, self.source)
         except BaseException as e:
             print(e)
 
@@ -91,7 +93,7 @@ class VirtApt:
             print(e)
 
         self.downloads = {}
-        self.acquire = apt_pkg.Acquire(self)
+        self.acquire = apt_pkg.Acquire(progress)
 
     def add_key(self, key, keyname):
         """
@@ -114,16 +116,6 @@ class VirtApt:
                     key = '\n'.join(line.strip(' \t')
                                     for line in url.text('raw-key').splitlines()[1:-1])
                     self.add_key(unarmor_openpgp_keyring(key), f'elbe-virtapt-raw-key{i}.gpg')
-
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    @staticmethod
-    def pulse(_obj):
-        return True
 
     def initialize_dirs(self):
         self.basefs.mkdir_p('cache/archives/partial')
