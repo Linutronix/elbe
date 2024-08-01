@@ -188,7 +188,7 @@ class VirtApt:
         if os.path.exists('/etc/apt/trusted.gpg'):
             shutil.copyfile('/etc/apt/trusted.gpg', ring_path)
 
-        shutil.copytree('/etc/apt/trusted.gpg.d', ring_path + '.d')
+        shutil.copytree('/etc/apt/trusted.gpg.d', ring_path + '.d', dirs_exist_ok=True)
 
     def mark_install(self, pkgname):
         self.depcache.mark_install(self.cache[pkgname])
