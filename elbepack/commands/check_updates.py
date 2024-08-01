@@ -50,7 +50,7 @@ def run_command(argv):
         '--changelogs',
         dest='changelogs',
         help='filename of changelog xml file')
-    aparser.add_argument('source-xmlfile')
+    aparser.add_argument('source_xmlfile')
     args = aparser.parse_args(argv)
 
     if not args.skip_validation:
