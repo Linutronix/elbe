@@ -80,6 +80,8 @@ def _last_frame_in_package(tb, package):
     while tb.tb_next is not None:
         tb = tb.tb_next
         mod = inspect.getmodule(tb)
+        if mod is None:
+            continue
         name = mod.__spec__.name
         if name and (name == package or name.startswith(package + '.')):
             frame = tb.tb_frame
