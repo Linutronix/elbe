@@ -72,25 +72,16 @@ class VirtApt:
         self.source = apt_pkg.SourceList()
         self.source.read_main_list()
         self.cache = apt_pkg.Cache()
-        try:
-            self.cache.update(progress, self.source)
-        except BaseException as e:
-            print(e)
+        self.cache.update(progress, self.source)
 
         apt_pkg.config.set('APT::Default-Release', suite)
 
         self.cache = apt_pkg.Cache()
-        try:
-            self.cache.update(progress, self.source)
-        except BaseException as e:
-            print(e)
+        self.cache.update(progress, self.source)
 
-        try:
-            self.depcache = apt_pkg.DepCache(self.cache)
-            prefs_name = self.basefs.fname('/etc/apt/preferences')
-            self.depcache.read_pinfile(prefs_name)
-        except BaseException as e:
-            print(e)
+        self.depcache = apt_pkg.DepCache(self.cache)
+        prefs_name = self.basefs.fname('/etc/apt/preferences')
+        self.depcache.read_pinfile(prefs_name)
 
         self.downloads = {}
         self.acquire = apt_pkg.Acquire(progress)
