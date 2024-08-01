@@ -175,15 +175,6 @@ class VirtApt:
     def do_downloads(self):
         return self.acquire.run()
 
-    def get_downloaded_files(self):
-        ret = []
-        for _, d in self.downloads.items():
-            if d.complete:
-                ret.append(d.destfile)
-            else:
-                print(f'incomplete download "{d.desc_uri}"')
-        return ret
-
     def get_downloaded_pkg(self, pkgname):
         d = self.downloads[pkgname]
 
