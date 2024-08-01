@@ -265,14 +265,6 @@ class BuildEnv:
             if cleanup:
                 self.rfs.rmtree('/')
 
-    def virtapt_init_dirs(self):
-        self.rfs.mkdir_p('/cache/archives/partial')
-        self.rfs.mkdir_p('/etc/apt/preferences.d')
-        self.rfs.mkdir_p('/db')
-        self.rfs.mkdir_p('/log')
-        self.rfs.mkdir_p('/state/lists/partial')
-        self.rfs.touch_file('/state/status')
-
     def add_key(self, key, keyname):
         """
         Adds the binary OpenPGP keyring 'key' as a trusted apt keyring
