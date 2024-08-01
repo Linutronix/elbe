@@ -278,3 +278,6 @@ class VirtApt:
                     togo.append(p)
 
         return list(set(deps))
+
+    def delete(self):
+        self.basefs.delete()

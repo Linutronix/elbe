@@ -123,3 +123,5 @@ def run_command(argv):
             subprocess.run([args.script, 'UPDATE', args.source_xmlfile])
     else:
         print('No Updates available')
+
+    v.delete()
