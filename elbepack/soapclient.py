@@ -124,6 +124,25 @@ class ElbeSoapClient:
             fp.write(binascii.a2b_base64(ret))
             part = part + 1
 
+    @staticmethod
+    def upload_file(append, build_dir, filename):
+        size = 1024 * 1024
+
+        with open(filename, 'rb') as f:
+
+            while True:
+
+                bin_data = f.read(size)
+                data = binascii.b2a_base64(bin_data)
+
+                if not isinstance(data, str):
+                    data = data.decode('ascii')
+
+                append(build_dir, data)
+
+                if len(bin_data) != size:
+                    break
+
     def wait_busy(self, project_dir):
         while True:
             try:

@@ -22,25 +22,6 @@ def _add_project_dir_argument(f):
     return add_argument('project_dir')(f)
 
 
-def _client_action_upload_file(append, build_dir, filename):
-    size = 1024 * 1024
-
-    with open(filename, 'rb') as f:
-
-        while True:
-
-            bin_data = f.read(size)
-            data = binascii.b2a_base64(bin_data)
-
-            if not isinstance(data, str):
-                data = data.decode('ascii')
-
-            append(build_dir, data)
-
-            if len(bin_data) != size:
-                break
-
-
 @_add_project_dir_argument
 def _remove_log(client, args):
     client.service.rm_log(args.project_dir)
@@ -214,7 +195,7 @@ def _wait_busy(client, args):
 @add_argument('cdrom_file')
 def _set_cdrom(client, args):
     client.service.start_cdrom(args.project_dir)
-    _client_action_upload_file(client.service.append_cdrom, args.project_dir, args.cdrom_file)
+    client.upload_file(client.service.append_cdrom, args.project_dir, args.cdrom_file)
     client.service.finish_cdrom(args.project_dir)
 
 
@@ -222,7 +203,7 @@ def _set_cdrom(client, args):
 @add_argument('orig_file')
 def _set_orig(client, args):
     client.service.start_upload_orig(args.project_dir, os.path.basename(args.orig_file))
-    _client_action_upload_file(client.service.append_upload_orig, args.project_dir, args.orig_file)
+    client.upload_file(client.service.append_upload_orig, args.project_dir, args.orig_file)
     client.service.finish_upload_orig(args.project_dir)
 
 
@@ -236,7 +217,7 @@ def _set_orig(client, args):
 @add_argument('pdebuild_file')
 def _set_pdebuild(client, args):
     client.service.start_pdebuild(args.project_dir)
-    _client_action_upload_file(client.service.append_pdebuild, args.project_dir, args.pdebuild_file)
+    client.upload_file(client.service.append_pdebuild, args.project_dir, args.pdebuild_file)
     client.service.finish_pdebuild(args.project_dir, args.profile, args.cross)
 
 
