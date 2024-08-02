@@ -87,12 +87,7 @@ def _update(control, args):
 
     print('Updating pbuilder')
 
-    try:
-        run_elbe(['control', 'update_pbuilder', prjdir], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control update_pbuilder Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(159)
+    control.service.update_pbuilder(prjdir)
 
     print('')
     print('Updating Pbuilder finished !')
