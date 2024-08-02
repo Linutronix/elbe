@@ -215,7 +215,7 @@ def _dump_file(client, args):
         part = part + 1
 
 
-@add_argument('--output', required=True, help='Output files to <directory>')
+@add_argument('--output', help='Output files to <directory>')
 @add_argument('--pbuilder-only', action='store_true', dest='pbuilder_only',
               help='Only list/download pbuilder Files')
 @add_argument('--matches', dest='matches', default=False,
@@ -240,10 +240,11 @@ def _get_files(client, args):
         except AttributeError:
             print(f'{f.name}')
 
-        dst = os.path.abspath(args.output)
-        os.makedirs(dst, exist_ok=True)
-        dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
-        client.download_file(args.project_dir, f.name, dst_fname)
+        if args.output:
+            dst = os.path.abspath(args.output)
+            os.makedirs(dst, exist_ok=True)
+            dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
+            client.download_file(args.project_dir, f.name, dst_fname)
 
     if nfiles == 0:
         sys.exit(189)
