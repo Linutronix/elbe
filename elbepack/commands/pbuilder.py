@@ -8,9 +8,10 @@ import sys
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
-from elbepack.config import add_argument_soapport, add_argument_sshport
+from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
+from elbepack.soapclient import ElbeSoapClient
 from elbepack.xmlpreprocess import preprocess_file
 
 
@@ -30,8 +31,7 @@ from elbepack.xmlpreprocess import preprocess_file
 @add_argument('--xmlfile', help='xmlfile to use')
 @add_argument('--project', help='project directory on the initvm')
 @add_argument_sshport
-@add_argument_soapport
-def _create(args):
+def _create(control, args):
     crossopt = []
     if args.cross:
         crossopt = ['--cross']
@@ -95,7 +95,7 @@ def _create(args):
 
 
 @add_argument('--project', required=True, help='project directory on the initvm')
-def _update(args):
+def _update(control, args):
     prjdir = args.project
 
     print('Updating pbuilder')
@@ -126,7 +126,7 @@ def _update(args):
               help='directory where to save downloaded Files')
 @add_argument('--xmlfile', help='xmlfile to use')
 @add_argument('--project', help='project directory on the initvm')
-def _build(args):
+def _build(control, args):
     crossopt = []
     if args.cross:
         crossopt = ['--cross']
@@ -268,6 +268,7 @@ def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe pbuilder')
 
     add_xmlpreprocess_passthrough_arguments(aparser)
+    add_arguments_soapclient(aparser)
 
     subparsers = aparser.add_subparsers(required=True)
 
@@ -279,4 +280,7 @@ def run_command(argv):
     args = aparser.parse_args(argv)
     args.parser = aparser
 
-    args.func(args)
+    control = ElbeSoapClient.from_args(args)
+    control.connect()
+
+    args.func(control, args)
