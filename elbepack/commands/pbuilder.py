@@ -9,7 +9,6 @@ import sys
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
-from elbepack.directories import run_elbe
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.soapclient import ElbeSoapClient
 from elbepack.xmlpreprocess import preprocess_file
@@ -139,21 +138,10 @@ def _build(control, args):
         print('')
         print('Listing available files:')
         print('')
-        try:
-            run_elbe(['control', 'get_files', '--pbuilder-only', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control get_files Failed', file=sys.stderr)
-            print('', file=sys.stderr)
-            print('dumping logfile', file=sys.stderr)
 
-            try:
-                run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
-            except subprocess.CalledProcessError:
-                print('elbe control dump_file Failed', file=sys.stderr)
-                print('', file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-
-            sys.exit(168)
+        files = control.get_files(prjdir, None, pbuilder_only=True)
+        for file in files:
+            print(f'{file.name}\t{file.description}')
 
         print('')
         print(f"Get Files with: 'elbe control get_file {prjdir} <filename>'")
@@ -162,22 +150,9 @@ def _build(control, args):
         print(f'Saving generated Files to {args.outdir}')
         print('')
 
-        try:
-            run_elbe(['control', 'get_files', '--pbuilder-only',
-                      '--output', args.outdir, prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control get_files Failed', file=sys.stderr)
-            print('', file=sys.stderr)
-            print('dumping logfile', file=sys.stderr)
-
-            try:
-                run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
-            except subprocess.CalledProcessError:
-                print('elbe control dump_file Failed', file=sys.stderr)
-                print('', file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-
-            sys.exit(169)
+        files = control.get_files(prjdir, args.outdir, pbuilder_only=True)
+        for file in files:
+            print(f'{file.name}\t{file.description}')
 
 
 _actions = {
