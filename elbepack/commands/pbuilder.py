@@ -32,14 +32,6 @@ from elbepack.xmlpreprocess import preprocess_file
 @add_argument('--project', help='project directory on the initvm')
 @add_argument_sshport
 def _create(control, args):
-    crossopt = []
-    if args.cross:
-        crossopt = ['--cross']
-    if args.noccache:
-        ccacheopt = ['--no-ccache']
-    else:
-        ccacheopt = ['--ccache-size', args.ccachesize]
-
     if args.xmlfile:
         with preprocess_file(args.xmlfile, variants=args.variants, sshport=args.sshport,
                              soapport=args.soapport) as preproc:
@@ -66,13 +58,7 @@ def _create(control, args):
 
     print('Creating pbuilder')
 
-    try:
-        run_elbe(['control', 'build_pbuilder', prjdir, *crossopt, *ccacheopt],
-                 check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control build_pbuilder Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(156)
+    control.service.build_pbuilder(prjdir, args.cross, args.noccache, args.ccachesize)
 
     control.wait_busy(prjdir)
 
@@ -117,12 +103,7 @@ def _build(control, args):
     if args.xmlfile:
         prjdir = control.service.new_project()
 
-        try:
-            run_elbe(['control', 'build_pbuilder', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control build_pbuilder Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(161)
+        control.service.build_pbuilder(prjdir, args.cross, False, '10G')
 
         control.wait_busy(prjdir)
 
