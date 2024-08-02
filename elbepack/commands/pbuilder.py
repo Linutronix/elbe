@@ -88,9 +88,6 @@ def _update(control, args):
 @add_argument('--xmlfile', help='xmlfile to use')
 @add_argument('--project', help='project directory on the initvm')
 def _build(control, args):
-    crossopt = []
-    if args.cross:
-        crossopt = ['--cross']
     tmp = TmpdirFilesystem()
 
     if args.xmlfile:
@@ -130,16 +127,7 @@ def _build(control, args):
     print('Pushing source into pbuilder')
     print('')
 
-    try:
-        run_elbe([
-            'control', 'set_pdebuild',
-            '--profile', args.profile, *crossopt,
-            prjdir, tmp.fname('pdebuild.tar.gz'),
-        ], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control set_pdebuild Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(166)
+    control.set_pdebuild(prjdir, tmp.fname('pdebuild.tar.gz'), args.profile, args.cross)
 
     control.wait_busy(prjdir)
 
