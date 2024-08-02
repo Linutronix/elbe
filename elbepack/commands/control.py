@@ -419,7 +419,7 @@ def run_command(argv):
             args.soaptimeout,
             debug=args.debug,
             retries=args.retries)
-    except URLError:
+    except (URLError, socket.error, BadStatusLine):
         print(
             f'Failed to connect to Soap server {args.host}:{args.port}\n',
             file=sys.stderr)
@@ -427,24 +427,6 @@ def run_command(argv):
         print('Check, whether the initvm is actually running.', file=sys.stderr)
         print("try 'elbe initvm start'", file=sys.stderr)
         sys.exit(13)
-    except socket.error:
-        print(
-            f'Failed to connect to Soap server {args.host}:{args.port}\n',
-            file=sys.stderr)
-        print('', file=sys.stderr)
-        print(
-            'Check, whether the Soap Server is running inside the initvm',
-            file=sys.stderr)
-        print("try 'elbe initvm attach'", file=sys.stderr)
-        sys.exit(14)
-    except BadStatusLine:
-        print(
-            f'Failed to connect to Soap server {args.host}:{args.port}\n',
-            file=sys.stderr)
-        print('', file=sys.stderr)
-        print('Check, whether the initvm is actually running.', file=sys.stderr)
-        print("try 'elbe initvm start'", file=sys.stderr)
-        sys.exit(15)
 
     try:
         args.func(control, args)
