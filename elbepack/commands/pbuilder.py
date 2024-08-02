@@ -37,14 +37,7 @@ def _create(control, args):
                              soapport=args.soapport) as preproc:
             prjdir = control.service.new_project()
 
-            ps = run_elbe(['control', 'set_xml', prjdir, preproc],
-                          capture_output=True, encoding='utf-8')
-
-            if ps.returncode != 0:
-                print('elbe control set_xml failed.', file=sys.stderr)
-                print(ps.stderr, file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(153)
+            control.set_xml(prjdir, preproc)
 
         if args.writeproject:
             wpf = open(args.writeproject, 'w')
