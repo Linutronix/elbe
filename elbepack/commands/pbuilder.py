@@ -43,16 +43,8 @@ def _create(control, args):
     if args.xmlfile:
         with preprocess_file(args.xmlfile, variants=args.variants, sshport=args.sshport,
                              soapport=args.soapport) as preproc:
-            ps = run_elbe(['control', 'create_project'],
-                          capture_output=True, encoding='utf-8')
-            if ps.returncode != 0:
-                print('elbe control create_project failed.',
-                      file=sys.stderr)
-                print(ps.stderr, file=sys.stderr)
-                print('Giving up', file=sys.stderr)
-                sys.exit(152)
+            prjdir = control.service.new_project()
 
-            prjdir = ps.stdout.strip()
             ps = run_elbe(['control', 'set_xml', prjdir, preproc],
                           capture_output=True, encoding='utf-8')
 
@@ -128,15 +120,7 @@ def _build(control, args):
     tmp = TmpdirFilesystem()
 
     if args.xmlfile:
-        ps = run_elbe(['control', '--retries', '60', 'create_project', args.xmlfile],
-                      capture_output=True, encoding='utf-8')
-        if ps.returncode != 0:
-            print('elbe control create_project failed.', file=sys.stderr)
-            print(ps.stderr, file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(160)
-
-        prjdir = ps.stdout.strip()
+        prjdir = control.service.new_project()
 
         try:
             run_elbe(['control', 'build_pbuilder', prjdir], check=True)
