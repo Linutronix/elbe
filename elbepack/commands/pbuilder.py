@@ -124,12 +124,7 @@ def _build(control, args):
         print('')
         print(f"Pushing orig file '{of}' into pbuilder")
         print('')
-        try:
-            run_elbe(['control', 'set_orig', prjdir, of], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control set_orig Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(165)
+        control.set_orig(prjdir, of)
 
     print('')
     print('Pushing source into pbuilder')
