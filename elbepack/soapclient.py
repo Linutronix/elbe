@@ -213,3 +213,8 @@ class ElbeSoapClient:
         self.service.start_upload_orig(builddir, os.path.basename(orig_file))
         self.upload_file(self.service.append_upload_orig, builddir, orig_file)
         self.service.finish_upload_orig(builddir)
+
+    def set_pdebuild(self, builddir, pdebuild_file, profile='', cross=False):
+        self.service.start_pdebuild(builddir)
+        self.upload_file(self.service.append_pdebuild, builddir, pdebuild_file)
+        self.service.finish_pdebuild(builddir, profile, cross)
