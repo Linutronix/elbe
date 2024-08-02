@@ -50,7 +50,13 @@ class ElbeSoapClient:
         set_suds_debug(debug)
 
         # Attributes
-        self.wsdl = 'http://' + host + ':' + str(port) + '/soap/?wsdl'
+        self._wsdl = 'http://' + host + ':' + str(port) + '/soap/?wsdl'
+        self._timeout = timeout
+        self._retries = retries
+        self._user = user
+        self._passwd = passwd
+
+    def connect(self):
         control = None
         current_retries = 0
 
@@ -58,9 +64,9 @@ class ElbeSoapClient:
         while control is None:
             current_retries += 1
             try:
-                control = Client(self.wsdl, timeout=timeout)
+                control = Client(self._wsdl, timeout=self._timeout)
             except (URLError, socket.error, BadStatusLine):
-                if current_retries > retries:
+                if current_retries > self._retries:
                     raise
                 time.sleep(1)
 
@@ -71,7 +77,7 @@ class ElbeSoapClient:
         ElbeVersionMismatch.check(elbe_version, self.service.get_version())
 
         # We have a Connection, now login
-        self.service.login(user, passwd)
+        self.service.login(self._user, self._passwd)
 
     @classmethod
     def from_args(cls, args):

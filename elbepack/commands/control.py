@@ -379,8 +379,10 @@ def run_command(argv):
     args = aparser.parse_args(argv)
     args.parser = aparser
 
+    control = ElbeSoapClient.from_args(args)
+
     try:
-        control = ElbeSoapClient.from_args(args)
+        control.connect()
     except (URLError, socket.error, BadStatusLine):
         print(
             f'Failed to connect to Soap server {args.soaphost}:{args.soapport}\n',
