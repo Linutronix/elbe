@@ -59,17 +59,9 @@ class ElbeSoapClient:
             current_retries += 1
             try:
                 control = Client(self.wsdl, timeout=timeout)
-            except URLError as e:
+            except (URLError, socket.error, BadStatusLine):
                 if current_retries > retries:
-                    raise e
-                time.sleep(1)
-            except socket.error as e:
-                if current_retries > retries:
-                    raise e
-                time.sleep(1)
-            except BadStatusLine as e:
-                if current_retries > retries:
-                    raise e
+                    raise
                 time.sleep(1)
 
         # Make sure, that client.service still maps
