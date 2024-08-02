@@ -4,7 +4,6 @@
 
 import argparse
 import subprocess
-import sys
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
@@ -108,13 +107,9 @@ def _build(control, args):
     print('')
     print('Packing Source into tmp archive')
     print('')
-    try:
-        subprocess.run(['tar', '-C', args.srcdir, '-czf', tmp.fname('pdebuild.tar.gz'), '.'],
-                       check=True)
-    except subprocess.CalledProcessError:
-        print('tar Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(164)
+
+    subprocess.run(['tar', '-C', args.srcdir, '-czf', tmp.fname('pdebuild.tar.gz'), '.'],
+                   check=True)
 
     for of in args.origfile:
         print('')
