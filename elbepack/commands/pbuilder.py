@@ -82,12 +82,7 @@ def _create(control, args):
         print('Giving up', file=sys.stderr)
         sys.exit(156)
 
-    try:
-        run_elbe(['control', 'wait_busy', prjdir], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control wait_busy Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(157)
+    control.wait_busy(prjdir)
 
     print('')
     print('Building Pbuilder finished !')
@@ -150,12 +145,7 @@ def _build(control, args):
             print('Giving up', file=sys.stderr)
             sys.exit(161)
 
-        try:
-            run_elbe(['control', 'wait_busy', prjdir], check=True)
-        except subprocess.CalledProcessError:
-            print('elbe control wait_busy Failed', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
-            sys.exit(162)
+        control.wait_busy(prjdir)
 
         print('')
         print('Building Pbuilder finished !')
@@ -202,12 +192,9 @@ def _build(control, args):
         print('elbe control set_pdebuild Failed', file=sys.stderr)
         print('Giving up', file=sys.stderr)
         sys.exit(166)
-    try:
-        run_elbe(['control', 'wait_busy', prjdir], check=True)
-    except subprocess.CalledProcessError:
-        print('elbe control wait_busy Failed', file=sys.stderr)
-        print('Giving up', file=sys.stderr)
-        sys.exit(167)
+
+    control.wait_busy(prjdir)
+
     print('')
     print('Pdebuild finished !')
     print('')
