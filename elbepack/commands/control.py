@@ -4,7 +4,6 @@
 
 import argparse
 import binascii
-import fnmatch
 import os
 import socket
 import sys
@@ -158,32 +157,13 @@ def _dump_file(client, args):
               help='Select files based on wildcard expression.')
 @_add_project_dir_argument
 def _get_files(client, args):
-    files = client.service.get_files(args.project_dir)
-
-    nfiles = 0
-
-    for f in files[0]:
-        if (args.pbuilder_only and not f.name.startswith('pbuilder_cross')
-                and not f.name.startswith('pbuilder')):
-            continue
-
-        if args.matches and not fnmatch.fnmatch(f.name, args.matches):
-            continue
-
-        nfiles += 1
-        try:
-            print(f'{f.name} \t({f.description})')
-        except AttributeError:
-            print(f'{f.name}')
-
-        if args.output:
-            dst = os.path.abspath(args.output)
-            os.makedirs(dst, exist_ok=True)
-            dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
-            client.download_file(args.project_dir, f.name, dst_fname)
-
-    if nfiles == 0:
+    files = client.get_files(args.project_dir, args.output,
+                             pbuilder_only=args.pbuilder_only, wildcard=args.matches)
+    if not files:
         sys.exit(189)
+
+    for file in files:
+        print(f'{file.name}\t{file.description}')
 
 
 @_add_project_dir_argument

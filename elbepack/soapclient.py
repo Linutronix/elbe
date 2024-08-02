@@ -4,6 +4,7 @@
 # SPDX-FileCopyrightText: 2016 Claudius Heine <ch@denx.de>
 
 import binascii
+import fnmatch
 import logging
 import os
 import socket
@@ -218,3 +219,26 @@ class ElbeSoapClient:
         self.service.start_pdebuild(builddir)
         self.upload_file(self.service.append_pdebuild, builddir, pdebuild_file)
         self.service.finish_pdebuild(builddir, profile, cross)
+
+    def get_files(self, builddir, outdir, *, pbuilder_only=False, wildcard=None):
+        files = self.service.get_files(builddir)
+
+        result = []
+
+        for f in files[0]:
+            if (pbuilder_only and not f.name.startswith('pbuilder_cross')
+                    and not f.name.startswith('pbuilder')):
+                continue
+
+            if wildcard and not fnmatch.fnmatch(f.name, wildcard):
+                continue
+
+            result.append(f)
+
+            if outdir:
+                dst = os.path.abspath(outdir)
+                os.makedirs(dst, exist_ok=True)
+                dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
+                self.download_file(builddir, f.name, dst_fname)
+
+        return result
