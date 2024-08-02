@@ -202,9 +202,7 @@ def _set_cdrom(client, args):
 @_add_project_dir_argument
 @add_argument('orig_file')
 def _set_orig(client, args):
-    client.service.start_upload_orig(args.project_dir, os.path.basename(args.orig_file))
-    client.upload_file(client.service.append_upload_orig, args.project_dir, args.orig_file)
-    client.service.finish_upload_orig(args.project_dir)
+    client.set_orig(args.project_dir, args.orig_file)
 
 
 @add_argument('--profile', dest='profile', default='',

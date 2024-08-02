@@ -5,6 +5,7 @@
 
 import binascii
 import logging
+import os
 import socket
 import sys
 import time
@@ -207,3 +208,8 @@ class ElbeSoapClient:
                 if part == -2:
                     _logger.debug('upload of xml finished')
                     return
+
+    def set_orig(self, builddir, orig_file):
+        self.service.start_upload_orig(builddir, os.path.basename(orig_file))
+        self.upload_file(self.service.append_upload_orig, builddir, orig_file)
+        self.service.finish_upload_orig(builddir)
