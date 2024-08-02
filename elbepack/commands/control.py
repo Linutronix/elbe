@@ -15,7 +15,6 @@ from suds import WebFault
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.config import add_arguments_soapclient
-from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.soapclient import ElbeSoapClient
 
 
@@ -102,50 +101,7 @@ def _delete_project(client, args):
 @_add_project_dir_argument
 @add_argument('xml')
 def _set_xml(client, args):
-    builddir = args.project_dir
-    filename = args.xml
-
-    try:
-        x = ElbeXML(
-            filename,
-            skip_validate=True,
-            url_validation=ValidationMode.NO_CHECK)
-    except IOError:
-        print(f'{filename} is not a valid elbe xml file')
-        sys.exit(177)
-
-    if not x.has('target'):
-        print("<target> is missing, this file can't be built in an initvm",
-              file=sys.stderr)
-        sys.exit(178)
-
-    size = 1024 * 1024
-    part = 0
-    with open(filename, 'rb') as fp:
-        while True:
-
-            xml_base64 = binascii.b2a_base64(fp.read(size))
-
-            if not isinstance(xml_base64, str):
-                xml_base64 = xml_base64.decode('ascii')
-
-            # finish upload
-            if len(xml_base64) == 1:
-                part = client.service.upload_file(builddir,
-                                                  'source.xml',
-                                                  xml_base64,
-                                                  -1)
-            else:
-                part = client.service.upload_file(builddir,
-                                                  'source.xml',
-                                                  xml_base64,
-                                                  part)
-            if part == -1:
-                print('project busy, upload not allowed')
-                return part
-            if part == -2:
-                print('upload of xml finished')
-                return 0
+    client.set_xml(args.project_dir, args.xml)
 
 
 @add_argument('--build-bin', action='store_true', dest='build_bin',

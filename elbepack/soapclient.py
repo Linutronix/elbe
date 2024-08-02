@@ -14,6 +14,7 @@ from urllib.error import URLError
 from suds.client import Client
 
 from elbepack.cli import CliError
+from elbepack.elbexml import ElbeXML, ValidationMode
 from elbepack.version import elbe_version
 
 
@@ -151,3 +152,39 @@ class ElbeSoapClient:
         prj = self.service.get_project(project_dir)
         if prj.status != 'build_done':
             raise CliError(191, f'Project build was not successful, current status: {prj.status}')
+
+    def set_xml(self, builddir, filename):
+        x = ElbeXML(
+            filename,
+            skip_validate=True,
+            url_validation=ValidationMode.NO_CHECK)
+
+        if not x.has('target'):
+            raise ValueError("<target> is missing, this file can't be built in an initvm")
+
+        size = 1024 * 1024
+        part = 0
+        with open(filename, 'rb') as fp:
+            while True:
+
+                xml_base64 = binascii.b2a_base64(fp.read(size))
+
+                if not isinstance(xml_base64, str):
+                    xml_base64 = xml_base64.decode('ascii')
+
+                # finish upload
+                if len(xml_base64) == 1:
+                    part = self.service.upload_file(builddir,
+                                                    'source.xml',
+                                                    xml_base64,
+                                                    -1)
+                else:
+                    part = self.service.upload_file(builddir,
+                                                    'source.xml',
+                                                    xml_base64,
+                                                    part)
+                if part == -1:
+                    raise RuntimeError('project busy, upload not allowed')
+                if part == -2:
+                    _logger.debug('upload of xml finished')
+                    return
