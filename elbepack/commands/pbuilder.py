@@ -112,7 +112,7 @@ def _build(control, args):
         print('')
     elif args.project:
         prjdir = args.project
-        run_elbe(['control', 'rm_log', prjdir], check=True)
+        control.service.rm_log(prjdir)
     else:
         args.parser.error('you need to specify --project or --xmlfile option')
 
