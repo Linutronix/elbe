@@ -309,9 +309,6 @@ def _set_orig(client, args):
               help='Creates an environment for crossbuilding if '
                    'combined with create. Combined with build it'
                    ' will use this environment.')
-@add_argument('--cpuset', default=-1, type=int,
-              help='Limit cpuset of pbuilder commands (bitmask)'
-                   '(defaults to -1 for all CPUs)')
 @_add_project_dir_argument
 @add_argument('pdebuild_file')
 def _set_pdebuild(client, args):
