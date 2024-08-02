@@ -8,7 +8,6 @@ import fnmatch
 import os
 import socket
 import sys
-import time
 from http.client import BadStatusLine
 from urllib.error import URLError
 
@@ -252,39 +251,7 @@ def _get_files(client, args):
 
 @_add_project_dir_argument
 def _wait_busy(client, args):
-    while True:
-        try:
-            msg = client.service.get_project_busy(args.project_dir)
-        # TODO the root cause of this problem is unclear. To enable a
-        # get more information print the exception and retry to see if
-        # the connection problem is just a temporary problem. This
-        # code should be reworked as soon as it's clear what is going on
-        # here
-        except socket.error as e:
-            print(str(e), file=sys.stderr)
-            print('socket error during wait busy occured, retry..',
-                  file=sys.stderr)
-            continue
-
-        if not msg:
-            time.sleep(0.1)
-            continue
-
-        if msg == 'ELBE-FINISH':
-            break
-
-        print(msg)
-
-    # exited the while loop -> the project is not busy anymore,
-    # check, whether everything is ok.
-
-    prj = client.service.get_project(args.project_dir)
-    if prj.status != 'build_done':
-        print(
-            'Project build was not successful, current status: '
-            f'{prj.status}',
-            file=sys.stderr)
-        sys.exit(191)
+    client.wait_busy(args.project_dir)
 
 
 @_add_project_dir_argument

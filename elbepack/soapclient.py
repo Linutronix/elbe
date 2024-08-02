@@ -13,7 +13,11 @@ from urllib.error import URLError
 
 from suds.client import Client
 
+from elbepack.cli import CliError
 from elbepack.version import elbe_version
+
+
+_logger = logging.getLogger(__name__)
 
 
 class ElbeVersionMismatch(RuntimeError):
@@ -118,3 +122,32 @@ class ElbeSoapClient:
 
             fp.write(binascii.a2b_base64(ret))
             part = part + 1
+
+    def wait_busy(self, project_dir):
+        while True:
+            try:
+                msg = self.service.get_project_busy(project_dir)
+            # TODO the root cause of this problem is unclear. To enable a
+            # get more information print the exception and retry to see if
+            # the connection problem is just a temporary problem. This
+            # code should be reworked as soon as it's clear what is going on
+            # here
+            except socket.error:
+                _logger.warn('socket error during wait busy occured, retry..', exc_info=True)
+                continue
+
+            if not msg:
+                time.sleep(0.1)
+                continue
+
+            if msg == 'ELBE-FINISH':
+                break
+
+            _logger.info(msg)
+
+        # exited the while loop -> the project is not busy anymore,
+        # check, whether everything is ok.
+
+        prj = self.service.get_project(project_dir)
+        if prj.status != 'build_done':
+            raise CliError(191, f'Project build was not successful, current status: {prj.status}')
