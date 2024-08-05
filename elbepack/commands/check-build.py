@@ -16,7 +16,7 @@ import pexpect
 
 from elbepack import qemu_firmware
 from elbepack.aptpkgutils import parse_built_using
-from elbepack.directories import run_elbe
+from elbepack.directories import run_elbe_subcommand
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
 from elbepack.shellhelper import env_add
@@ -107,7 +107,7 @@ class CheckBase:
 class CheckSchema(CheckBase):
 
     def run(self):
-        run_elbe(['validate', self.directory / 'source.xml'])
+        run_elbe_subcommand(['validate', self.directory / 'source.xml'])
 
 
 @CheckBase.register('cdrom')
@@ -680,5 +680,5 @@ exit 1
 class CheckRebuild(CheckBase):
 
     def run(self):
-        run_elbe(['initvm', 'submit', '--skip-build-source', self.directory / 'bin-cdrom.iso'],
-                 check=True)
+        run_elbe_subcommand(['initvm', 'submit', '--skip-build-source',
+                             self.directory / 'bin-cdrom.iso'])
