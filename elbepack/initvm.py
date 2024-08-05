@@ -169,6 +169,12 @@ class LibvirtInitVM(_InitVM):
 
         xml.root.et.attrib['type'] = 'kvm'
 
+    def _libvirt_set_vcpus(self, xml):
+        vcpu_elem = xml.et.find('.//vcpu')
+        cpus = min(int(vcpu_elem.text),
+                   self._conn.getMaxVcpus(xml.root.et.attrib['type']))
+        vcpu_elem.text = str(cpus)
+
     def _build(self):
         domain = self._get_domain()
         if domain is not None:
@@ -193,6 +199,7 @@ class LibvirtInitVM(_InitVM):
             xml = etree(f)
 
         self._libvirt_enable_kvm(xml)
+        self._libvirt_set_vcpus(xml)
 
         # Register initvm in libvirt.
         try:

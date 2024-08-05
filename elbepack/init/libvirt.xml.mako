@@ -7,7 +7,6 @@
 # TODO: Relativ file path for diskimage
 
 
-import multiprocessing
 import os
 import shutil
 from elbepack.filesystem import size_to_int
@@ -17,7 +16,6 @@ from elbepack.uuid7 import uuid7
 uid = uuid7()
 
 cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
-cpus = min(multiprocessing.cpu_count(), cpus)
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024
 
 imagetype = prj.text('img', default=defs, key='img')
