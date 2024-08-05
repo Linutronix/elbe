@@ -161,15 +161,13 @@ class LibvirtInitVM(_InitVM):
 
     def _libvirt_enable_kvm(self, xml):
         caps_tree = etree(io.StringIO(self._conn.getCapabilities()))
-        domain_tree = etree(io.StringIO(xml))
 
-        arch = domain_tree.et.find('.//os/type').attrib['arch']
+        arch = xml.et.find('.//os/type').attrib['arch']
 
         if caps_tree.et.find('.//guest/arch[@name="' + arch + '"]/domain[@type="kvm"]') is None:
             return xml
 
-        domain_tree.root.et.attrib['type'] = 'kvm'
-        return domain_tree.tostring()
+        xml.root.et.attrib['type'] = 'kvm'
 
     def _build(self):
         domain = self._get_domain()
@@ -192,13 +190,13 @@ class LibvirtInitVM(_InitVM):
 
         # Read xml file for libvirt.
         with open(os.path.join(self._directory, 'libvirt.xml')) as f:
-            xml = f.read()
+            xml = etree(f)
 
-        xml = self._libvirt_enable_kvm(xml)
+        self._libvirt_enable_kvm(xml)
 
         # Register initvm in libvirt.
         try:
-            self._conn.defineXML(xml)
+            self._conn.defineXML(xml.tostring())
         except Exception as e:
             raise with_cli_details(e, 146, textwrap.dedent("""
                 Registering initvm in libvirt failed.
