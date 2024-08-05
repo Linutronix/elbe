@@ -4,7 +4,6 @@
 ## SPDX-FileCopyrightText: 2017 Lukasz Walewski <lwalewski@s-can.at>
 
 <%
-import multiprocessing
 import os
 import subprocess
 from elbepack.filesystem import size_to_int
