@@ -18,18 +18,21 @@ here = pathlib.Path(__file__).parent
 
 @pytest.fixture(scope='module')
 def initvm(tmp_path_factory, request):
-    if request.config.getoption('--elbe-use-existing-initvm'):
-        yield
-        return
-
     initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
 
-    run_elbe_subcommand(['initvm', 'create', '--fail-on-warning', '--directory', initvm_dir])
+    def initvm_func(subcmd, *args):
+        run_elbe_subcommand(['initvm', subcmd, '--directory', initvm_dir, *args])
 
-    yield
+    if request.config.getoption('--elbe-use-existing-initvm'):
+        yield initvm_func
+        return
+
+    initvm_func('create', '--fail-on-warning')
+
+    yield initvm_func
 
     with contextlib.suppress(Exception):
-        run_elbe_subcommand(['initvm', 'destroy', '--directory', initvm_dir])
+        initvm_func('destroy')
 
 
 def _delete_project(uuid):
@@ -42,12 +45,12 @@ def simple_build(request, initvm, tmp_path_factory):
     build_dir = tmp_path_factory.mktemp('build_dir')
     prj = build_dir / 'uuid.prj'
 
-    run_elbe_subcommand([
-        'initvm', 'submit', request.param,
+    initvm(
+        'submit', request.param,
         '--output', build_dir,
         '--keep-files', '--build-sdk',
         '--writeproject', prj,
-    ])
+    )
 
     uuid = prj.read_text()
 
