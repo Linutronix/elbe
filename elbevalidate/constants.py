@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
-import enum
 
-
-class PartitionLabel(enum.StrEnum):
+class PartitionLabel(str):
     DOS = 'msdos'
     GPT = 'gpt'
 
