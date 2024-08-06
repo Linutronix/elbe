@@ -26,7 +26,7 @@ class FirmwareTarget:
         )
 
 
-class FirmwareFlashMode(enum.StrEnum):
+class FirmwareFlashMode(enum.Enum):
     SPLIT = 'split'
     COMBINED = 'combined'
     STATELESS = 'stateless'
