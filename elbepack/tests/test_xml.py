@@ -22,8 +22,15 @@ def initvm(tmp_path_factory, request):
     initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
     use_initvm = request.config.getoption('--elbe-use-initvm')
 
+    if use_initvm == 'libvirt':
+        qemu_arg = []
+    elif use_initvm == 'qemu':
+        qemu_arg = ['--qemu']
+    else:
+        raise ValueError(use_initvm)
+
     def initvm_func(subcmd, *args):
-        run_elbe_subcommand(['initvm', subcmd, '--directory', initvm_dir, *args])
+        run_elbe_subcommand(['initvm', subcmd, '--directory', initvm_dir, *qemu_arg, *args])
 
     def destroy_initvm():
         with contextlib.suppress(Exception):

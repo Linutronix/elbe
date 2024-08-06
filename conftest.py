@@ -14,7 +14,7 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         '--elbe-use-initvm', action='store', default='libvirt',
-        choices=('libvirt', 'existing'),
+        choices=('libvirt', 'qemu', 'existing'),
         help='use specific initvm',
     )
 
