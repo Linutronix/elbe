@@ -89,7 +89,7 @@ def create_initvm(name, xmlfile, directory, *,
             'Failure to download kernel/initrd debian Package\n'
             'Check Mirror configuration'
         )
-        if 'SHA256SUMS' in e.msg:
+        if 'SHA256SUMS' in str(e):
             msg += ('\nIf you use debmirror please read '
                     'https://github.com/Linutronix/elbe/issues/188 '
                     'on how to work around the issue')
