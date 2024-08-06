@@ -220,6 +220,11 @@ class ElbeSoapClient:
         self.upload_file(self.service.append_pdebuild, builddir, pdebuild_file)
         self.service.finish_pdebuild(builddir, profile, cross)
 
+    def set_cdrom(self, builddir, cdrom_file):
+        self.service.start_cdrom(builddir)
+        self.upload_file(self.service.append_cdrom, builddir, cdrom_file)
+        self.service.finish_cdrom(builddir)
+
     def get_files(self, builddir, outdir, *, pbuilder_only=False, wildcard=None):
         files = self.service.get_files(builddir)
 

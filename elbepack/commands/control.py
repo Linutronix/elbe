@@ -174,9 +174,7 @@ def _wait_busy(client, args):
 @_add_project_dir_argument
 @add_argument('cdrom_file')
 def _set_cdrom(client, args):
-    client.service.start_cdrom(args.project_dir)
-    client.upload_file(client.service.append_cdrom, args.project_dir, args.cdrom_file)
-    client.service.finish_cdrom(args.project_dir)
+    client.set_cdrom(args.project_dir, args.cdrom_file)
 
 
 @_add_project_dir_argument
