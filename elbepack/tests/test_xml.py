@@ -66,9 +66,20 @@ def simple_build(request, initvm, tmp_path_factory):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize('check_build', ('schema', 'cdrom', 'img', 'sdk', 'rebuild'))
+@pytest.mark.parametrize('check_build', ('schema', 'cdrom', 'img', 'sdk'))
 def test_simple_build(simple_build, check_build):
     run_elbe_subcommand(['check-build', check_build, simple_build])
+
+
+@pytest.mark.slow
+def test_rebuild(initvm, simple_build, tmp_path_factory):
+    build_dir = tmp_path_factory.mktemp('build_dir')
+
+    initvm(
+        'submit', '--skip-build-source',
+        '--output', build_dir,
+        simple_build / 'bin-cdrom.iso',
+    )
 
 
 @pytest.mark.slow
