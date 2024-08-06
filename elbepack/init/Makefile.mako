@@ -11,7 +11,7 @@ from elbepack.filesystem import size_to_int
 max_cpus = int(prj.text('max-cpus', default=defs, key='max-cpus'))
 memory = size_to_int(prj.text('mem', default=defs, key='mem')) // 1024 // 1024
 interpreter = prj.text('interpreter', default=defs, key='interpreter')
-use_kvm = os.path.exists('/dev/kvm') and b'kvm' in subprocess.check_output([interpreter, '-accel', 'help'])
+use_kvm = os.access('/dev/kvm', os.R_OK | os.W_OK) and b'kvm' in subprocess.check_output([interpreter, '-accel', 'help'])
 %>
 
 MEMSIZE?=${memory}
