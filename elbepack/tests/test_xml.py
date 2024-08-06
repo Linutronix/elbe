@@ -32,6 +32,8 @@ def initvm(tmp_path_factory, request):
     yield initvm_func
 
     with contextlib.suppress(Exception):
+        initvm_func('stop')
+    with contextlib.suppress(Exception):
         initvm_func('destroy')
 
 
