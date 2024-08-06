@@ -13,8 +13,9 @@ def pytest_addoption(parser):
         '--runslow', action='store_true', default=False, help='run slow tests'
     )
     parser.addoption(
-        '--elbe-use-existing-initvm', action='store_true', default=False,
-        help='reuse existing elbe initvm',
+        '--elbe-use-initvm', action='store', default='libvirt',
+        choices=('libvirt', 'existing'),
+        help='use specific initvm',
     )
 
 

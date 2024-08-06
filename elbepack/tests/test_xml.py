@@ -20,6 +20,7 @@ here = pathlib.Path(__file__).parent
 @pytest.fixture(scope='module')
 def initvm(tmp_path_factory, request):
     initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
+    use_initvm = request.config.getoption('--elbe-use-initvm')
 
     def initvm_func(subcmd, *args):
         run_elbe_subcommand(['initvm', subcmd, '--directory', initvm_dir, *args])
@@ -30,7 +31,7 @@ def initvm(tmp_path_factory, request):
         with contextlib.suppress(Exception):
             initvm_func('destroy')
 
-    if request.config.getoption('--elbe-use-existing-initvm'):
+    if use_initvm == 'existing':
         yield initvm_func
         return
 
