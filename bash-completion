@@ -125,7 +125,7 @@ _cmd_args_completion_elbe()
                 file_arg=true
                 disable_space=true
                 cmd_opt=$(_elbe_cmd_with_options '-h --help --skip-validation --directory= --cdrom= --buildtype= \
-                                                  --debug --nesting --skip-build-bin --skip-build-sources')
+                                                  --debug --skip-build-bin --skip-build-sources')
                 ;;
             initvm)
                 cmd_opt=$(_elbe_subcmd_with_opt 'attach create ensure start stop submit sync')

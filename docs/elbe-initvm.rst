@@ -62,10 +62,6 @@ OPTIONS
 --writeproject <file>
    Write project name to <file>.
 
---nesting
-   Allow initvm to support nested kvm. This makes /proc/cpuinfo inside
-   initvm differ per host.
-
 --build-sdk
    Also make *initvm submit* build an SDK.
 
