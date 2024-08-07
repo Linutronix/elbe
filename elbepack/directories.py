@@ -15,5 +15,5 @@ def run_elbe(args, **kwargs):
 
 def run_elbe_subcommand(args):
     return elbepack.main.main([
-        'elbe', *[os.fspath(arg) for arg in args],
+        'elbe', '--propagate-exception', *[os.fspath(arg) for arg in args],
     ])

@@ -20,6 +20,8 @@ def main(argv=sys.argv):
     parser = argparse.ArgumentParser(prog='elbe')
     parser.add_argument('--version', action='version', version=f'%(prog)s v{elbe_version}')
     parser.add_argument('--stacktrace-on-error', action='store_true', dest='stacktrace_on_error')
+    parser.add_argument('--propagate-exception', action='store_true', dest='propagate_exception',
+                        help=argparse.SUPPRESS)
 
     subparsers = parser.add_subparsers(required=True, dest='cmd')
 
@@ -33,6 +35,8 @@ def main(argv=sys.argv):
     try:
         cmdmod.run_command(cmd_argv)
     except Exception as e:
+        if args.propagate_exception:
+            raise e
         sys.exit(format_exception(e, output=sys.stderr,
                                   base_module=elbepack,
                                   verbose=args.stacktrace_on_error))
