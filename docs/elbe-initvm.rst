@@ -55,9 +55,6 @@ OPTIONS
 --skip-build-sources
    Skip building source CDROM.
 
---output <directory>
-   Output downloaded files to <directory>.
-
 --keep-files
    Don’t delete elbe project files after a build in the initvm use *elbe
    control list_projects* to get a list of available projects
