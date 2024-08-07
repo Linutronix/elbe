@@ -372,9 +372,7 @@ class QemuInitVM(_InitVM):
             pass
 
         if _is_soap_port_reachable(self._soapport):
-            print('\nstopping initvm failed!')
-        else:
-            print('\ninitvm stopped successfully')
+            raise RuntimeError('stopping initvm failed')
 
     def attach(self):
         """
