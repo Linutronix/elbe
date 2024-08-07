@@ -24,6 +24,12 @@ def initvm(tmp_path_factory, request):
     def initvm_func(subcmd, *args):
         run_elbe_subcommand(['initvm', subcmd, '--directory', initvm_dir, *args])
 
+    def destroy_initvm():
+        with contextlib.suppress(Exception):
+            initvm_func('stop')
+        with contextlib.suppress(Exception):
+            initvm_func('destroy')
+
     if request.config.getoption('--elbe-use-existing-initvm'):
         yield initvm_func
         return
@@ -35,14 +41,13 @@ def initvm(tmp_path_factory, request):
         # each test. This is very slow and unlikely to work, so remember the failure.
         def error_func(*args, _initvm_exception, **kwargs):
             raise RuntimeError('initvm setup failed') from _initvm_exception
+        destroy_initvm()
         yield functools.partial(error_func, _initvm_exception=e)
     else:
-        yield initvm_func
-
-    with contextlib.suppress(Exception):
-        initvm_func('stop')
-    with contextlib.suppress(Exception):
-        initvm_func('destroy')
+        try:
+            yield initvm_func
+        finally:
+            destroy_initvm()
 
 
 def _delete_project(uuid):
