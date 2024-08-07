@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2020 Linutronix GmbH
 
 import contextlib
+import functools
 import io
 import pathlib
 import subprocess
@@ -27,9 +28,16 @@ def initvm(tmp_path_factory, request):
         yield initvm_func
         return
 
-    initvm_func('create', '--fail-on-warning')
-
-    yield initvm_func
+    try:
+        initvm_func('create', '--fail-on-warning')
+    except Exception as e:
+        # If the fixture setup fails, pytest will try to create the fixture for
+        # each test. This is very slow and unlikely to work, so remember the failure.
+        def error_func(*args, _initvm_exception, **kwargs):
+            raise RuntimeError('initvm setup failed') from _initvm_exception
+        yield functools.partial(error_func, _initvm_exception=e)
+    else:
+        yield initvm_func
 
     with contextlib.suppress(Exception):
         initvm_func('stop')
