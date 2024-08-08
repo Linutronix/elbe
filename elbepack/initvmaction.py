@@ -117,8 +117,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
 
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')
-        run_elbe(['control', 'set_cdrom', prjdir, cdrom], check=True)
-
+        control.set_cdrom(prjdir, cdrom)
         print('Upload finished')
 
     build_opts = []
