@@ -26,27 +26,33 @@ from elbepack.xmlpreprocess import preprocess_file
 prog = os.path.basename(sys.argv[0])
 
 
-def _add_initvm_from_args_arguments(f):
-    f = add_argument('--qemu', action='store_true',
-                     dest='qemu_mode', default=False,
-                     help='Use QEMU direct instead of libvirtd.')(f)
+def _add_initvm_from_args_arguments(parser_or_func):
+    parser_or_func = add_argument(
+        parser_or_func,
+        '--qemu',
+        action='store_true',
+        dest='qemu_mode',
+        default=False,
+        help='Use QEMU direct instead of libvirtd.')
 
-    f = add_argument(
+    parser_or_func = add_argument(
+        parser_or_func,
         '--directory',
         dest='directory',
         type=os.path.abspath,
         default=os.getcwd() + '/initvm',
-        help='directory, where the initvm resides, default is ./initvm')(f)
+        help='directory, where the initvm resides, default is ./initvm')
 
-    f = add_argument(
+    parser_or_func = add_argument(
+        parser_or_func,
         '--domain',
         dest='domain',
         default=os.environ.get('ELBE_INITVM_DOMAIN', 'initvm'),
-        help='Name of the libvirt initvm')(f)
+        help='Name of the libvirt initvm')
 
-    f = add_argument_soapport(f)
+    parser_or_func = add_argument_soapport(parser_or_func)
 
-    return f
+    return parser_or_func
 
 
 def _initvm_from_args(args):
