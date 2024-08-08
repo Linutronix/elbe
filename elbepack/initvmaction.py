@@ -175,18 +175,20 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
         print('')
 
     try:
-        run_elbe(['control', 'dump_file', prjdir, 'validation.txt'], check=True)
-    except subprocess.CalledProcessError:
+        for chunk in control.dump_file(prjdir, 'validation.txt'):
+            sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
+    except Exception:
         print(
             'Project failed to generate validation.txt',
             file=sys.stderr)
         print('Getting log.txt', file=sys.stderr)
         try:
-            run_elbe(['control', 'dump_file', prjdir, 'log.txt'], check=True)
-        except subprocess.CalledProcessError:
-
-            print('Failed to dump log.txt', file=sys.stderr)
-            print('Giving up', file=sys.stderr)
+            for chunk in control.dump_file(prjdir, 'log.txt'):
+                sys.stdout.buffer.write(chunk)
+            sys.stdout.buffer.flush()
+        except Exception as e:
+            raise with_cli_details(e, 137, textwrap.dedent('Failed to dump log.txt'))
         sys.exit(136)
 
     if args.skip_download:
