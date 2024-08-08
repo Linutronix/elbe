@@ -143,7 +143,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
     print('')
 
     if args.build_sdk:
-        run_elbe(['control', 'build_sdk', prjdir], check=True)
+        control.service.build_sdk(prjdir)
 
         print('SDK Build started, waiting till it finishes')
 
