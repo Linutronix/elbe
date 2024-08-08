@@ -195,7 +195,9 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
         print('')
         print('Listing available files:')
         print('')
-        run_elbe(['control', 'get_files', prjdir], check=True)
+        files = control.get_files(prjdir, None)
+        for file in files:
+            print(f'{file.name}\t{file.description}')
 
         print('')
         print(f'Get Files with: elbe control get_file "{prjdir}" <filename>')
@@ -206,7 +208,9 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
 
         print(f'Saving generated Files to {args.outdir}')
 
-        run_elbe(['control', 'get_files', '--output', args.outdir, prjdir], check=True)
+        files = control.get_files(prjdir, args.outdir)
+        for file in files:
+            print(f'{file.name}\t{file.description}')
 
         if not args.keep_files:
             run_elbe(['control', 'del_project', prjdir], check=True)
