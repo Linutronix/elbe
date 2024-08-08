@@ -228,3 +228,13 @@ class ElbeSoapClient:
                 self.download_file(builddir, f.name, dst_fname)
 
         return result
+
+    def dump_file(self, builddir, file):
+        part = 0
+        while True:
+            ret = self.service.get_file(builddir, file, part)
+            if ret == 'EndOfFile':
+                return
+
+            yield binascii.a2b_base64(ret)
+            part = part + 1

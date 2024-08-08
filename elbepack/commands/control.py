@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import argparse
-import binascii
 import os
 import socket
 import sys
@@ -137,14 +136,9 @@ def _build_chroot(client, args):
 @_add_project_dir_argument
 @add_argument('file')
 def _dump_file(client, args):
-    part = 0
-    while True:
-        ret = client.service.get_file(args.project_dir, args.file, part)
-        if ret == 'EndOfFile':
-            return
-
-        os.write(sys.stdout.fileno(), binascii.a2b_base64(ret))
-        part = part + 1
+    for chunk in client.dump_file(args.project_dir, args.file):
+        sys.stdout.buffer.write(chunk)
+    sys.stdout.buffer.flush()
 
 
 @add_argument('--output', help='Output files to <directory>')
