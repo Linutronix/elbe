@@ -19,19 +19,19 @@ from elbepack.directories import run_elbe
 from elbepack.treeutils import etree
 
 
-def _is_soap_port_reachable(port):
+def _is_soap_port_reachable(control):
     """
     Test if a service is bound to the soap port.
     """
     try:
-        with socket.create_connection(('127.0.0.1', port)):
+        with socket.create_connection((control.host, control.port)):
             pass
     except Exception:
         return False
     return True
 
 
-def _test_soap_communication(port, sleep=10, wait=120):
+def _test_soap_communication(control, sleep=10, wait=120):
     """
     Test communication with soap service.
 
@@ -42,8 +42,9 @@ def _test_soap_communication(port, sleep=10, wait=120):
     """
     stop = time.time() + wait
     while True:
-        if _is_soap_port_reachable(port):
-            ps = run_elbe(['control', '--port', str(port), 'list_projects'],
+        if _is_soap_port_reachable(control):
+            control.connect()
+            ps = run_elbe(['control', '--port', str(control.port), 'list_projects'],
                           capture_output=True, encoding='utf-8')
             if ps.returncode == 0:
                 break
@@ -94,12 +95,12 @@ class _InitVM(abc.ABC):
 
 
 class LibvirtInitVM(_InitVM):
-    def __init__(self, /, domain, directory, soapport, uri='qemu:///system'):
+    def __init__(self, /, domain, directory, control, uri='qemu:///system'):
         self._uri = uri
         self._libvirt = importlib.import_module('libvirt', package=__name__)
         self._domain = domain
         self._directory = directory
-        self._soapport = soapport
+        self.control = control
         self._conn = None
 
         self._connect()
@@ -265,7 +266,7 @@ class LibvirtInitVM(_InitVM):
         else:
             raise CliError(124, 'Elbe initvm in bad state.')
 
-        _test_soap_communication(self._soapport)
+        _test_soap_communication(self.control)
 
     def stop(self):
         domain = self._get_domain()
@@ -315,9 +316,9 @@ class LibvirtInitVM(_InitVM):
 
 
 class QemuInitVM(_InitVM):
-    def __init__(self, /, directory, soapport):
+    def __init__(self, /, directory, control):
         self._directory = directory
-        self._soapport = soapport
+        self.control = control
 
     def _get_initvmdir(self):
         if not os.path.isdir(self._directory):
@@ -332,7 +333,7 @@ class QemuInitVM(_InitVM):
         initvmdir = self._get_initvmdir()
 
         # Test if there is already a process bound to the expected port.
-        if _is_soap_port_reachable(self._soapport):
+        if _is_soap_port_reachable(self.control):
             if os.path.exists(os.path.join(initvmdir, 'qemu-monitor-socket')):
                 # If the unix socket exists, assume this VM is bound to the soap port.
                 print('This initvm is already running.')
@@ -348,11 +349,11 @@ class QemuInitVM(_InitVM):
                 raise with_cli_details(e, 211, 'Running QEMU failed')
 
             # This will sys.exit on error.
-            _test_soap_communication(self._soapport, sleep=1, wait=60)
+            _test_soap_communication(self.control, sleep=1, wait=60)
             print('initvm started successfully')
 
     def ensure(self):
-        if not _is_soap_port_reachable(self._soapport):
+        if not _is_soap_port_reachable(self.control):
             raise CliError(206, 'Elbe initvm in bad state.\nNo process found on soap port.')
 
     def stop(self):
@@ -380,7 +381,7 @@ class QemuInitVM(_InitVM):
             # Shutting down the VM will break the connection.
             pass
 
-        if _is_soap_port_reachable(self._soapport):
+        if _is_soap_port_reachable(self.control):
             raise RuntimeError('stopping initvm failed')
 
     def attach(self):
@@ -404,7 +405,7 @@ class QemuInitVM(_InitVM):
                            cwd=initvmdir, check=False)
         else:
             msg = 'No unix socket found for the console of this vm!\nUnable to attach.'
-            if _is_soap_port_reachable(self._soapport):
+            if _is_soap_port_reachable(self.control):
                 msg += '\nThere seems to be another initvm running. The soap port is in use.'
             raise CliError(212, msg)
 

@@ -13,12 +13,13 @@ import time
 import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
-from elbepack.config import add_argument_soapport, add_argument_sshport
+from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.init import create_initvm
 from elbepack.repodir import Repodir, RepodirError
+from elbepack.soapclient import ElbeSoapClient
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import preprocess_file
 
@@ -50,18 +51,19 @@ def _add_initvm_from_args_arguments(parser_or_func):
         default=os.environ.get('ELBE_INITVM_DOMAIN', 'initvm'),
         help='Name of the libvirt initvm')
 
-    parser_or_func = add_argument_soapport(parser_or_func)
+    parser_or_func = add_arguments_soapclient(parser_or_func)
 
     return parser_or_func
 
 
 def _initvm_from_args(args):
+    control = ElbeSoapClient.from_args(args)
     if args.qemu_mode:
-        return elbepack.initvm.QemuInitVM(args.directory, soapport=args.soapport)
+        return elbepack.initvm.QemuInitVM(args.directory, control=control)
     else:
         return elbepack.initvm.LibvirtInitVM(directory=args.directory,
                                              domain=args.domain,
-                                             soapport=args.soapport)
+                                             control=control)
 
 
 @_add_initvm_from_args_arguments
@@ -89,19 +91,19 @@ def _attach(args):
     _initvm_from_args(args).attach()
 
 
-def _submit_with_repodir_and_dl_result(xmlfile, cdrom, args):
+def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, args):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
     preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            _submit_and_dl_result(preprocess_xmlfile, cdrom, args)
+            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, args)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
     finally:
         os.remove(preprocess_xmlfile)
 
 
-def _submit_and_dl_result(xmlfile, cdrom, args):
+def _submit_and_dl_result(control, xmlfile, cdrom, args):
 
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport) as xmlfile:
@@ -376,7 +378,7 @@ def _create(args):
         elif cdrom is not None:
             xmlfile = tmp.fname('source.xml')
 
-        _submit_with_repodir_and_dl_result(xmlfile, cdrom, args)
+        _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args)
 
 
 @_add_initvm_from_args_arguments
@@ -401,7 +403,7 @@ def _submit(args):
     else:
         args.parser.error('Unknown file ending (use either xml or iso)')
 
-    _submit_with_repodir_and_dl_result(xmlfile, cdrom, args)
+    _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args)
 
 
 @add_argument_sshport

@@ -44,6 +44,8 @@ class ElbeSoapClient:
         self._retries = retries
         self._user = user
         self._passwd = passwd
+        self.host = host
+        self.port = port
 
     def connect(self):
         control = None
