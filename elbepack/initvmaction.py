@@ -120,15 +120,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
         control.set_cdrom(prjdir, cdrom)
         print('Upload finished')
 
-    build_opts = []
-    if args.build_bin:
-        build_opts.append('--build-bin')
-    if args.build_sources:
-        build_opts.append('--build-sources')
-    if cdrom:
-        build_opts.append('--skip-pbuilder')
-
-    run_elbe(['control', 'build', prjdir, *build_opts], check=True)
+    control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom))
 
     print('Build started, waiting till it finishes')
 
