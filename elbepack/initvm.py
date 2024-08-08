@@ -53,6 +53,13 @@ def _test_soap_communication(port, sleep=10, wait=120):
         time.sleep(sleep)
 
 
+def _run_and_detach(*args, **kwargs):
+    ps = subprocess.Popen(*args, **kwargs)
+    # When a process object is not wait()ed for, the subprocess module raises a ResourceWarning.
+    # Inhibit this warning, as for our usecase it is not a problem.
+    ps.returncode = 0
+
+
 def _build_initvm(directory):
     try:
         subprocess.run(['make'], cwd=directory, check=True)
@@ -334,7 +341,7 @@ class QemuInitVM(_InitVM):
         else:
             # Try to start the QEMU VM for the given directory.
             try:
-                subprocess.Popen(['make', 'run_qemu'], cwd=initvmdir)
+                _run_and_detach(['make', 'run_qemu'], cwd=initvmdir)
             except Exception as e:
                 raise with_cli_details(e, 211, 'Running QEMU failed')
 
