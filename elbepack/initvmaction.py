@@ -108,10 +108,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport) as xmlfile:
 
-        ps = run_elbe(['control', 'create_project'],
-                      capture_output=True, encoding='utf-8', check=True)
-
-        prjdir = ps.stdout.strip()
+        prjdir = control.service.new_project()
 
         ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
                       capture_output=True, encoding='utf-8', check=True)
