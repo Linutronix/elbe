@@ -125,8 +125,9 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
     print('Build started, waiting till it finishes')
 
     try:
-        run_elbe(['control', 'wait_busy', prjdir], check=True)
-    except subprocess.CalledProcessError as e:
+        for msg in control.wait_busy(prjdir):
+            print(msg)
+    except Exception as e:
         raise with_cli_details(e, 133, textwrap.dedent(f"""
             elbe control wait_busy Failed
 
@@ -147,8 +148,9 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
         print('SDK Build started, waiting till it finishes')
 
         try:
-            run_elbe(['control', 'wait_busy', prjdir], check=True)
-        except subprocess.CalledProcessError:
+            for msg in control.wait_busy(prjdir):
+                print(msg)
+        except Exception:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
             print('', file=sys.stderr)
