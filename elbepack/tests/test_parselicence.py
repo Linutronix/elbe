@@ -7,7 +7,7 @@ import io
 import pathlib
 import re
 
-from elbepack.directories import run_elbe_subcommand
+from elbepack.main import run_elbe_subcommand
 
 here = pathlib.Path(__file__).parent
 

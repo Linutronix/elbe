@@ -16,9 +16,9 @@ import pexpect
 
 from elbepack import qemu_firmware
 from elbepack.aptpkgutils import parse_built_using
-from elbepack.directories import run_elbe_subcommand
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
+from elbepack.main import run_elbe_subcommand
 from elbepack.shellhelper import env_add
 from elbepack.treeutils import etree
 from elbepack.version import is_devel

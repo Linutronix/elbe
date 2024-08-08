@@ -7,7 +7,7 @@ import os
 
 import pytest
 
-from elbepack.directories import run_elbe_subcommand
+from elbepack.main import run_elbe_subcommand
 
 
 def _test_cases():

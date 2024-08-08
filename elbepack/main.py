@@ -5,6 +5,7 @@
 import argparse
 import importlib
 import logging
+import os
 import pkgutil
 import sys
 
@@ -43,3 +44,9 @@ def main(argv=sys.argv):
         sys.exit(format_exception(e, output=sys.stderr,
                                   base_module=elbepack,
                                   verbose=args.stacktrace_on_error))
+
+
+def run_elbe_subcommand(args):
+    return main([
+        'elbe', '--propagate-exception', *[os.fspath(arg) for arg in args],
+    ])
