@@ -15,7 +15,6 @@ import textwrap
 import time
 
 from elbepack.cli import CliError, with_cli_details
-from elbepack.directories import run_elbe
 from elbepack.treeutils import etree
 
 
@@ -44,9 +43,11 @@ def _test_soap_communication(control, sleep=10, wait=120):
     while True:
         if _is_soap_port_reachable(control):
             control.connect()
-            ps = run_elbe(['control', '--port', str(control.port), 'list_projects'],
-                          capture_output=True, encoding='utf-8')
-            if ps.returncode == 0:
+            try:
+                control.service.list_projects()
+            except Exception:
+                pass
+            else:
                 break
         if time.time() > stop:
             raise CliError(123, f'Waited for {wait/60} minutes and the daemon is still not active.')
