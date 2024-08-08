@@ -4,7 +4,7 @@
 
 import os
 
-from elbepack.cli import add_argument_to_parser_or_function
+from elbepack.cli import add_argument
 
 
 def add_argument_soaptimeout(parser):
@@ -16,7 +16,7 @@ def add_argument_soaptimeout(parser):
 
 
 def add_argument_soapport(parser_or_func, arg='--port'):
-    return add_argument_to_parser_or_function(
+    return add_argument(
         parser_or_func,
         arg,
         dest='soapport',
@@ -56,7 +56,7 @@ def add_arguments_soapclient(parser):
 
 
 def add_argument_sshport(parser_or_func):
-    return add_argument_to_parser_or_function(
+    return add_argument(
         parser_or_func,
         '--sshport',
         type=int,
