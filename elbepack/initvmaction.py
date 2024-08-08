@@ -109,9 +109,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
                          soapport=args.soapport) as xmlfile:
 
         prjdir = control.service.new_project()
-
-        ps = run_elbe(['control', 'set_xml', prjdir, xmlfile],
-                      capture_output=True, encoding='utf-8', check=True)
+        control.set_xml(prjdir, xmlfile)
 
     if args.writeproject:
         with open(args.writeproject, 'w') as wpf:
