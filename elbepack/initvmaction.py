@@ -14,7 +14,6 @@ import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
-from elbepack.directories import run_elbe
 from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.init import create_initvm
@@ -213,7 +212,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
             print(f'{file.name}\t{file.description}')
 
         if not args.keep_files:
-            run_elbe(['control', 'del_project', prjdir], check=True)
+            control.service.del_project(prjdir)
 
 
 def _extract_cdrom(cdrom):
