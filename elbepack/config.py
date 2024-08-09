@@ -54,13 +54,6 @@ def add_arguments_soapclient(parser):
         help='How many times to retry the connection to the server before '
              'giving up (default is 10 times, yielding 10 seconds).')
 
-    devel = parser.add_argument_group(
-        'options for elbe developers',
-        "Caution: Don't use these options in a productive environment")
-    devel.add_argument('--debug', action='store_true',
-                       dest='debug', default=False,
-                       help='Enable debug mode.')
-
 
 def add_argument_sshport(parser_or_func):
     return add_argument_to_parser_or_function(

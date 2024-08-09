@@ -35,26 +35,8 @@ class ElbeVersionMismatch(RuntimeError):
             raise cls(client_version, server_version)
 
 
-def set_suds_debug(debug):
-    if debug:
-        logging.basicConfig(level=logging.INFO)
-        logging.getLogger('suds.client').setLevel(logging.DEBUG)
-        logging.getLogger('suds.transport').setLevel(logging.DEBUG)
-        logging.getLogger('suds.xsd.schema').setLevel(logging.DEBUG)
-        logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
-        logging.getLogger('suds.resolver').setLevel(logging.DEBUG)
-        logging.getLogger('suds.umx.typed').setLevel(logging.DEBUG)
-    else:
-        logging.basicConfig(level=logging.CRITICAL)
-        logging.getLogger('suds.umx.typed').setLevel(logging.ERROR)
-        logging.getLogger('suds.client').setLevel(logging.CRITICAL)
-
-
 class ElbeSoapClient:
-    def __init__(self, host, port, user, passwd, timeout, retries=10, debug=False):
-
-        # Mess with suds logging, for debug, or squelch warnings
-        set_suds_debug(debug)
+    def __init__(self, host, port, user, passwd, timeout, retries=10):
 
         # Attributes
         self._wsdl = 'http://' + host + ':' + str(port) + '/soap/?wsdl'
@@ -89,7 +71,7 @@ class ElbeSoapClient:
     @classmethod
     def from_args(cls, args):
         return cls(args.soaphost, args.soapport, args.soapuser, args.soappassword,
-                   args.soaptimeout, debug=args.debug, retries=args.retries)
+                   args.soaptimeout, retries=args.retries)
 
     def download_file(self, builddir, filename, dst_fname):
         fp = open(dst_fname, 'wb')
