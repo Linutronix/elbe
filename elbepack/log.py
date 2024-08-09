@@ -19,8 +19,6 @@ msgonly_fmt = logging.Formatter('%(message)s')
 log = logging.getLogger('log')
 soap = logging.getLogger('soap')
 
-logging_methods = []
-
 
 class LoggingQueue(collections.deque):
     def __init__(self):
@@ -107,19 +105,16 @@ def with_list(func):
     return wrapper
 
 
-def logging_method(name):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            for handlers in func(*args, **kwargs):
-                for h in handlers:
-                    local.handlers.append(h)
-                    root.addHandler(h)
-        logging_methods.append((name, wrapper))
-        return wrapper
-    return decorator
+def logging_method(func):
+    def wrapper(*args, **kwargs):
+        for handlers in func(*args, **kwargs):
+            for h in handlers:
+                local.handlers.append(h)
+                root.addHandler(h)
+    return wrapper
 
 
-@logging_method('streams')
+@logging_method
 @with_list
 def add_stream_handlers(streams):
 
@@ -135,7 +130,7 @@ def add_stream_handlers(streams):
         yield [out]
 
 
-@logging_method('projects')
+@logging_method
 @with_list
 def add_project_handlers(projects):
 
@@ -161,6 +156,12 @@ def add_project_handlers(projects):
         yield [validation, report, log, echo, soap]
 
 
+_logging_methods = {
+    'streams': add_stream_handlers,
+    'projects': add_project_handlers,
+}
+
+
 @contextmanager
 def elbe_logging(*args, **kwargs):
     try:
@@ -174,9 +175,7 @@ def open_logging(targets):
 
     close_logging()
 
-    for method in logging_methods:
-        key = method[0]
-        call = method[1]
+    for key, call in _logging_methods.items():
         if key in targets:
             call(targets[key])
 
