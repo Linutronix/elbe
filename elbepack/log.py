@@ -7,7 +7,6 @@ import collections
 import logging
 import os
 import re
-import sys
 import threading
 from contextlib import contextmanager
 
@@ -160,26 +159,6 @@ def add_project_handlers(projects):
         soap.setFormatter(context_fmt)
 
         yield [validation, report, log, echo, soap]
-
-
-@logging_method('files')
-@with_list
-def add_file_handlers(files):
-
-    for f in files:
-        if f is None:
-            out = logging.StreamHandler(sys.stdout)
-        else:
-            out = logging.FileHandler(f)
-        out.addFilter(ThreadFilter(['root',
-                                    'log',
-                                    'report',
-                                    'validation',
-                                    'echo',
-                                    'soap']))
-        out.setFormatter(context_fmt)
-
-        yield [out]
 
 
 @contextmanager

@@ -43,7 +43,7 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
     >>> import os
     >>> import sys
     >>> from elbepack.log import open_logging
-    >>> open_logging({"files":os.devnull})
+    >>> open_logging({"streams":os.devnull})
 
     >>> run(['echo', 'ELBE'])
     CompletedProcess(args=['echo', 'ELBE'], returncode=0)
