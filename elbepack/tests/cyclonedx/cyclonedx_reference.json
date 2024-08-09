@@ -5018,38 +5018,6 @@
         },
         {
           "type": "application",
-          "name": "base-files",
-          "version": "12.4+deb12u5",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "c602d8cd4337f0e9e845e5f2b2345c4f"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "6c11268757a89f45c22d7a7a9e1153f1545016987531bf3068765a221e0af86c"
-            }
-          ],
-          "purl": "pkg:deb/debian/base-files@12.4+deb12u5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "bash",
-          "version": "5.2.15-2+b2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "d610fd7dab5e5a8bf29523543a418037"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "5325e63acaecb37f6636990328370774995bd9b3dce10abd0366c8a06877bd0d"
-            }
-          ],
-          "purl": "pkg:deb/debian/bash@5.2.15-2+b2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "binfmt-support",
           "version": "2.2.2-2",
           "hashes": [
@@ -5111,18 +5079,6 @@
             }
           ],
           "purl": "pkg:deb/debian/binutils-x86-64-linux-gnu@2.40-2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "bsdutils",
-          "version": "1:2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "bd036aa19f93ad75c312d6130653eb559e5eb4376bd82fde8653ac33732dfa3a"
-            }
-          ],
-          "purl": "pkg:deb/debian/bsdutils@1:2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
@@ -5302,30 +5258,6 @@
         },
         {
           "type": "application",
-          "name": "debathena-transform-lighttpd",
-          "version": "1.4+deb12+build1311",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "8fe68e0fca3411808a0f019427ca942b"
-            },
-            {
-              "alg": "SHA-1",
-              "content": "a0bd289ae689207a1d01badb93e89682201f91b5"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "17b0de177098ce3d77bd04d9fe932f0ae45b0678e572b287b6bea7da5a02e140"
-            },
-            {
-              "alg": "SHA-512",
-              "content": "041294f7ee2d9a4cf944362853af4cd388cf0f48b39f9aabc308cdae49036827f1023228e5c9e57d56a2d93153e8755ef94dbbb92e4b9eb68f3f069c572bc1f3"
-            }
-          ],
-          "purl": "pkg:deb/. bookworm/debathena-transform-lighttpd@1.4+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe-common"
-        },
-        {
-          "type": "application",
           "name": "debootstrap",
           "version": "1.0.128+nmu2+deb12u1",
           "hashes": [
@@ -5423,18 +5355,18 @@
         {
           "type": "application",
           "name": "distro-info-data",
-          "version": "0.58+deb12u1",
+          "version": "0.58+deb12u2",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "c8107d0ff60d0f08fb3b49eac5f4fc21"
+              "content": "d6693290222d0bb66cffbef288a7b574"
             },
             {
               "alg": "SHA-256",
-              "content": "5d2ef81de0d453fdcd1a77b8013576613f57295f881f5908ad7e39bdf7e5a8c9"
+              "content": "afd8d63b2bfba0ca96dbb9f11325ddfe15ddb35adb0953d806ac4744cf00013a"
             }
           ],
-          "purl": "pkg:deb/debian/distro-info-data@0.58+deb12u1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/distro-info-data@0.58+deb12u2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -5474,35 +5406,39 @@
           "version": "2.38.1-5+deb12u1",
           "hashes": [
             {
+              "alg": "MD5",
+              "content": "29db790682a40ea302ce3f91a01828c9"
+            },
+            {
               "alg": "SHA-256",
               "content": "436e2c98eaf4d92e80e2333a4b36440f343291d5ef999b8bc59479fe4ff6f4c9"
             }
           ],
-          "purl": "pkg:deb/debian/eject@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/eject@2.38.1-5+deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
           "name": "elbe-schema",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "9e8c4482eddd743e2325d924963a2a49"
+              "content": "7e7bf6b5c2dc2c68ae0cd71d2c1993d3"
             },
             {
               "alg": "SHA-1",
-              "content": "1afe65c71d33c7a784e2f54f386ae51c282f01c6"
+              "content": "f39dc34208124a19615ba94512e4972b7a40342a"
             },
             {
               "alg": "SHA-256",
-              "content": "56561ec39864d41b46c1d76f03ae8fea1f02aa094dae27b1864b1589ab8f01c6"
+              "content": "33d56477eefb1f5416f6f6466f38f4249836bc1b5576407074cf9ddcc7f8c934"
             },
             {
               "alg": "SHA-512",
-              "content": "182426c4b4bf6bb101b4fcc63a2b758426702b9bcfab0cbbc491432788fe1c7675b2175a153c079e3e93cc6357035f895dff4e1a494326e93f836e07daf9e4dd"
+              "content": "a45f38e9ad3f01cbba1a2b026177b62a53183f09902355d783489f74decb94b2da7c977997b4161cadd43ad9d2b9cbae7b3d8d77f6bc536fdc6819db29d3eed7"
             }
           ],
-          "purl": "pkg:deb/. bookworm/elbe-schema@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/elbe-schema@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
@@ -5522,6 +5458,22 @@
         },
         {
           "type": "application",
+          "name": "f2fs-tools",
+          "version": "1.15.0-1",
+          "hashes": [
+            {
+              "alg": "MD5",
+              "content": "6ce87e13269203255b379236002bdcd2"
+            },
+            {
+              "alg": "SHA-256",
+              "content": "bbc83b008e768ecc61ec1ff0e822891e1b179cbe7f76d82ed0c39022dd8f0518"
+            }
+          ],
+          "purl": "pkg:deb/debian/f2fs-tools@1.15.0-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+        },
+        {
+          "type": "application",
           "name": "fakeroot",
           "version": "1.31-1.2",
           "hashes": [
@@ -5535,18 +5487,6 @@
             }
           ],
           "purl": "pkg:deb/debian/fakeroot@1.31-1.2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "fdisk",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "ef49a1bfa24d22ac8b0f70f3ab2ddb7fa53cd5d1612fa1a01abc3be76717dfd2"
-            }
-          ],
-          "purl": "pkg:deb/debian/fdisk@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
@@ -5951,18 +5891,18 @@
         {
           "type": "application",
           "name": "intel-microcode",
-          "version": "3.20231114.1~deb12u1",
+          "version": "3.20240514.1~deb12u1",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "a92e2da88090758de35c9e52d02f87df"
+              "content": "51de5b30979fe2ad4056a8e3f81606c6"
             },
             {
               "alg": "SHA-256",
-              "content": "13f74b89ab6588752fb99bb09b70dbc3a30695e20a23ae13a6aa467d1073361b"
+              "content": "a97e0419a1262895a1567193ee36504fbe9933907eefcb3612614b432c598e1a"
             }
           ],
-          "purl": "pkg:deb/debian/intel-microcode@3.20231114.1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/intel-microcode@3.20240514.1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -6046,22 +5986,6 @@
         },
         {
           "type": "application",
-          "name": "kpartx",
-          "version": "0.9.4-3+deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "1dd8469aa4c6cd8c47a452a7f061ddef"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "f53bfadcd0d4a54cdca65e3e64b893e6ebe1cf1ba2e4b7a3112af66a322a755d"
-            }
-          ],
-          "purl": "pkg:deb/debian/kpartx@0.9.4-3+deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "laptop-detect",
           "version": "0.16",
           "hashes": [
@@ -6075,18 +5999,6 @@
             }
           ],
           "purl": "pkg:deb/debian/laptop-detect@0.16?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "less",
-          "version": "590-2.1~deb12u2",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "3c4ee8ce5e0f625e1169da9584e309c375a8a68e22de5821461d14446825cc1a"
-            }
-          ],
-          "purl": "pkg:deb/debian/less@590-2.1~deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -6142,11 +6054,15 @@
           "version": "3.6.2-1+deb12u1",
           "hashes": [
             {
+              "alg": "MD5",
+              "content": "0d2dca0057a1975e8bc9137747fba0a3"
+            },
+            {
               "alg": "SHA-256",
               "content": "0142827da6c7eb0e669628539fc516b0030b8a1503dcd45a6fee89e93ce9786b"
             }
           ],
-          "purl": "pkg:deb/debian/libarchive13@3.6.2-1+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/libarchive13@3.6.2-1+deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -6198,18 +6114,6 @@
         },
         {
           "type": "library",
-          "name": "libblkid1",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "151f59ca2b73ce8f85a576980f019dbbf9d44dd6ff4331f7954163e3704c1c06"
-            }
-          ],
-          "purl": "pkg:deb/debian/libblkid1@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "library",
           "name": "libbrotli1",
           "version": "1.0.9-2+b6",
           "hashes": [
@@ -6226,39 +6130,19 @@
         },
         {
           "type": "library",
-          "name": "libc-bin",
-          "version": "2.36-9+deb12u7",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "687687d1ace90565cc451b1be527914246123968b747c823e276cd7f8b57ba3d"
-            }
-          ],
-          "purl": "pkg:deb/debian/libc-bin@2.36-9+deb12u7?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "library",
           "name": "libc-l10n",
           "version": "2.36-9+deb12u7",
           "hashes": [
+            {
+              "alg": "MD5",
+              "content": "e75e55a85d9ba5704cb9c2a16e882970"
+            },
             {
               "alg": "SHA-256",
               "content": "4a4f346843515c985772b4111dd4b79b83e3e0e2c3abc4a1bcdd8f8f5b40647a"
             }
           ],
-          "purl": "pkg:deb/debian/libc-l10n@2.36-9+deb12u7?arch=all&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "library",
-          "name": "libc6",
-          "version": "2.36-9+deb12u7",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "eba944bd99c2f5142baf573e6294a70f00758083bc3c2dca4c9e445943a3f8e6"
-            }
-          ],
-          "purl": "pkg:deb/debian/libc6@2.36-9+deb12u7?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/libc-l10n@2.36-9+deb12u7?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -6359,18 +6243,18 @@
         {
           "type": "library",
           "name": "libcurl3-gnutls",
-          "version": "7.88.1-10+deb12u5",
+          "version": "7.88.1-10+deb12u6",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "eb875aaad97bfb68279c7ee0fc587c74"
+              "content": "af886083eb30f639c714aa56402ceb94"
             },
             {
               "alg": "SHA-256",
-              "content": "9751239757dcc218a3cd5a5772070e33d86a8a15506fe5af8a47793d61fa2abc"
+              "content": "191c3901ce79837c698fbd48a48687cc45e6af1db1d541ec31612c3323191496"
             }
           ],
-          "purl": "pkg:deb/debian/libcurl3-gnutls@7.88.1-10+deb12u5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/libcurl3-gnutls@7.88.1-10+deb12u6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -6550,18 +6434,6 @@
         },
         {
           "type": "library",
-          "name": "libfdisk1",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "a4d852a882d62d64561a9311821bc58cbf7de52d23f99da7086e442345ac1ac1"
-            }
-          ],
-          "purl": "pkg:deb/debian/libfdisk1@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "library",
           "name": "libfido2-1",
           "version": "1.12.0-2+b1",
           "hashes": [
@@ -6659,18 +6531,18 @@
         {
           "type": "library",
           "name": "libfreetype6",
-          "version": "2.12.1+dfsg-5",
+          "version": "2.12.1+dfsg-5+deb12u3",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "f456e7345d08a4b24889307d6e1c9c05"
+              "content": "eb341f0daf13de5754f791266a52816f"
             },
             {
               "alg": "SHA-256",
-              "content": "72ef03236f1936e72a0faf86a547425b0eff3c5fd0b43f8669012182cf376354"
+              "content": "f79b7088a7690b831c2494789d2d59248198b4ec49471f86f0cba9d6eb2db43a"
             }
           ],
-          "purl": "pkg:deb/debian/libfreetype6@2.12.1+dfsg-5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/libfreetype6@2.12.1+dfsg-5+deb12u3?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -6739,30 +6611,18 @@
         {
           "type": "library",
           "name": "libglib2.0-0",
-          "version": "2.74.6-2+deb12u2",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "8462c5d2350bcaa5f98aeaf40ef85d96260e4c48aa65a8e5c210d9d0f79788e5"
-            }
-          ],
-          "purl": "pkg:deb/debian/libglib2.0-0@2.74.6-2+deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "library",
-          "name": "libgnutls30",
-          "version": "3.7.9-2+deb12u2",
+          "version": "2.74.6-2+deb12u3",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "4b311b8de7875a2876d037475cffc32b"
+              "content": "f9b75999844eed7a79a0f57633f1eefb"
             },
             {
               "alg": "SHA-256",
-              "content": "b602f906a8de4488ab75434633524b71b8b12952272d4c3326bd6be8126832c4"
+              "content": "6af323c020a4dff3cfe81ecd742522b33cbd75309f5baa264605e6e179320639"
             }
           ],
-          "purl": "pkg:deb/debian/libgnutls30@3.7.9-2+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/libglib2.0-0@2.74.6-2+deb12u3?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -6795,6 +6655,18 @@
             }
           ],
           "purl": "pkg:deb/debian/libgprofng0@2.40-2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+        },
+        {
+          "type": "library",
+          "name": "libgssapi-krb5-2",
+          "version": "1.20.1-2+deb12u2",
+          "hashes": [
+            {
+              "alg": "SHA-256",
+              "content": "454eb2ecb79e03682b176f04a54b8820ccf8868c074995d96fb6f4736f546cec"
+            }
+          ],
+          "purl": "pkg:deb/debian/libgssapi-krb5-2@1.20.1-2+deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -7038,6 +6910,18 @@
         },
         {
           "type": "library",
+          "name": "libk5crypto3",
+          "version": "1.20.1-2+deb12u2",
+          "hashes": [
+            {
+              "alg": "SHA-256",
+              "content": "de8ae0c2bb31c926b24c374c1159e8b8d5f9817421f45dd29f22cd201982ee3d"
+            }
+          ],
+          "purl": "pkg:deb/debian/libk5crypto3@1.20.1-2+deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+        },
+        {
+          "type": "library",
           "name": "libklibc",
           "version": "2.0.12-1",
           "hashes": [
@@ -7051,6 +6935,30 @@
             }
           ],
           "purl": "pkg:deb/debian/libklibc@2.0.12-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+        },
+        {
+          "type": "library",
+          "name": "libkrb5-3",
+          "version": "1.20.1-2+deb12u2",
+          "hashes": [
+            {
+              "alg": "SHA-256",
+              "content": "9ce3d67db89417e1539f33a62ce85959dc96e3865ecad77606e2af1e6680d6da"
+            }
+          ],
+          "purl": "pkg:deb/debian/libkrb5-3@1.20.1-2+deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+        },
+        {
+          "type": "library",
+          "name": "libkrb5support0",
+          "version": "1.20.1-2+deb12u2",
+          "hashes": [
+            {
+              "alg": "SHA-256",
+              "content": "3bb1a8f9cfdd31f92e0cdd0a040c738a2de0d343afe7f830850e3ab7695e649c"
+            }
+          ],
+          "purl": "pkg:deb/debian/libkrb5support0@1.20.1-2+deb12u2?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -7195,18 +7103,6 @@
             }
           ],
           "purl": "pkg:deb/debian/libmoo-perl@2.005005-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
-          "name": "libmount1",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "a259d82ccbcfa230b492752d8d525d0a40d7938bf62fb90e83e16048ee88bf83"
-            }
-          ],
-          "purl": "pkg:deb/debian/libmount1@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -7451,34 +7347,34 @@
         {
           "type": "library",
           "name": "libpython3.11-minimal",
-          "version": "3.11.2-6",
+          "version": "3.11.2-6+deb12u2",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "4cecf893cdce6b18801f22fc49abd6c6"
+              "content": "8831aece65780fb2fb9ee42461efbba5"
             },
             {
               "alg": "SHA-256",
-              "content": "6fc5ab5858781ab90c68b4deea09f21871fd7b55dc1a0764ad7116ac4c86574d"
+              "content": "97abc912bde891d6b5e1e893c063070aba5bb4234df606193a8e998244e045ff"
             }
           ],
-          "purl": "pkg:deb/debian/libpython3.11-minimal@3.11.2-6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/libpython3.11-minimal@3.11.2-6+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
           "name": "libpython3.11-stdlib",
-          "version": "3.11.2-6",
+          "version": "3.11.2-6+deb12u2",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "be7a8b1a2a31df1975766ff1583d536f"
+              "content": "320b2694c052bfdc56c8bc65384c09ee"
             },
             {
               "alg": "SHA-256",
-              "content": "67eec0eb4df58b93e1bf97c402c2cbeb361bf9c5af44fa3a02ff1c723c791ca2"
+              "content": "690ebcebabc4c1c3558fc06e3266842f0f26f5d9c3ec0d37a6663d013ae78468"
             }
           ],
-          "purl": "pkg:deb/debian/libpython3.11-stdlib@3.11.2-6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/libpython3.11-stdlib@3.11.2-6+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -7562,22 +7458,6 @@
         },
         {
           "type": "library",
-          "name": "libseccomp2",
-          "version": "2.5.4-1+b3",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "bf939671dbe12f925ba0929509c97406"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "9e6305a100f5178cc321ee33b96933a6482d11fdc22b42c0e526d6151c0c6f0f"
-            }
-          ],
-          "purl": "pkg:deb/debian/libseccomp2@2.5.4-1+b3?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
           "name": "libserf-1-1",
           "version": "1.3.9-11",
           "hashes": [
@@ -7591,18 +7471,6 @@
             }
           ],
           "purl": "pkg:deb/debian/libserf-1-1@1.3.9-11?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
-          "name": "libsmartcols1",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "81c54dabc8ba03116f92c5412c9e0a7bafbde9533fc08e5dc4cba19b3f3a05d8"
-            }
-          ],
-          "purl": "pkg:deb/debian/libsmartcols1@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -7654,22 +7522,6 @@
         },
         {
           "type": "library",
-          "name": "libssl3",
-          "version": "3.0.11-1~deb12u2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "587a34e5ce31e331fbc0a1b7692ca489"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "6e129c5814812b3516a656ae5b664b9970e2f8823250cd5b98190f21c0de2bca"
-            }
-          ],
-          "purl": "pkg:deb/debian/libssl3@3.0.11-1~deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
           "name": "libsub-quote-perl",
           "version": "2.006008-1",
           "hashes": [
@@ -7702,38 +7554,6 @@
         },
         {
           "type": "library",
-          "name": "libsystemd-shared",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "0e87346bbe01017cb47cd0c7c68507ff"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "1300977950f590c6de8058e2be631c4e6d427e52dab982bf933e1487f1d0ba29"
-            }
-          ],
-          "purl": "pkg:deb/debian/libsystemd-shared@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
-          "name": "libsystemd0",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "67a1aaa293bc3b85f768ac3e6a945ad7"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "5565f137924447e0a37f72d22dee6b117a3d22c4b39474af45191072b48cebd0"
-            }
-          ],
-          "purl": "pkg:deb/debian/libsystemd0@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
           "name": "libtimedate-perl",
           "version": "2.3300-2",
           "hashes": [
@@ -7763,22 +7583,6 @@
             }
           ],
           "purl": "pkg:deb/debian/libtry-tiny-perl@0.31-2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
-          "name": "libudev1",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "b42a220bfe5b7515d332c2c5c264bfb0"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "c5c3eba9c8a3abe1e9988c89879ab912364544941b6f5863da5cf5e9ed78000e"
-            }
-          ],
-          "purl": "pkg:deb/debian/libudev1@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "library",
@@ -7843,18 +7647,6 @@
             }
           ],
           "purl": "pkg:deb/debian/libutf8proc2@2.8.0-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "library",
-          "name": "libuuid1",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "1ff16517fd1cfaa266de47255b98c44ff51e8a1653f7d8f1fe9c386ff0f1aa7e"
-            }
-          ],
-          "purl": "pkg:deb/debian/libuuid1@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "library",
@@ -7970,22 +7762,6 @@
         },
         {
           "type": "application",
-          "name": "lighttpd",
-          "version": "1.4.69-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "f3daff52c0929a5f7ec62e3b7bf8ae28"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "1c78f11e4c6cb2b14087f0b012baa8a60e441f6d563a9272c3d9f112c3e5f6e1"
-            }
-          ],
-          "purl": "pkg:deb/debian/lighttpd@1.4.69-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "linux-base",
           "version": "4.9",
           "hashes": [
@@ -8002,43 +7778,43 @@
         },
         {
           "type": "application",
-          "name": "linux-image-6.1.0-18-amd64",
-          "version": "6.1.76-1",
+          "name": "linux-image-6.1.0-22-amd64",
+          "version": "6.1.94-1",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "8ef496d662dbcb3b680b4824153c6216"
+              "content": "7e972e411c5a66d6a1a2486091ea87fb"
             },
             {
               "alg": "SHA-256",
-              "content": "d86ef1da21ce0fa3ab7aca434defb2764a1d8ece508ec8d6c89acfd6c2a6cebc"
+              "content": "99b9a1b7da718d235cb0073f82254c62ffe55aa5314477f302e26bf79d9092bf"
             }
           ],
-          "purl": "pkg:deb/debian/linux-image-6.1.0-18-amd64@6.1.76-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/linux-image-6.1.0-22-amd64@6.1.94-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
-          "name": "linux-image-6.1.0-21-amd64",
-          "version": "6.1.90-1",
+          "name": "linux-image-6.1.0-23-amd64",
+          "version": "6.1.99-1",
           "hashes": [
             {
               "alg": "SHA-256",
-              "content": "140060d7f847d0b3cf211f78fdee88cf8a6e557a32be6110a8f549a5e8e1afea"
+              "content": "e2c87e1ef1a967bb9ab5c943bb841f8faf7aec83daf117f3a956a98fc36e2b19"
             }
           ],
-          "purl": "pkg:deb/debian/linux-image-6.1.0-21-amd64@6.1.90-1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/linux-image-6.1.0-23-amd64@6.1.99-1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
           "name": "linux-image-amd64",
-          "version": "6.1.90-1",
+          "version": "6.1.99-1",
           "hashes": [
             {
               "alg": "SHA-256",
-              "content": "36a016324b7fe4cb8a2dcf36cbe585b294f27fcb0518a7e7ac05648fd720ec42"
+              "content": "197c72f3bf9032569fb7fde1c09ef1ce425f76c7dec6f19c2f95021849a40cf4"
             }
           ],
-          "purl": "pkg:deb/debian/linux-image-amd64@6.1.90-1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/linux-image-amd64@6.1.99-1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
@@ -8046,11 +7822,15 @@
           "version": "2.36-9+deb12u7",
           "hashes": [
             {
+              "alg": "MD5",
+              "content": "864a38e07fd1d0bf60c6a968f1d7d68a"
+            },
+            {
               "alg": "SHA-256",
               "content": "62fd9893812f61b0f431de6cd7882b52fd3e99778c1272afec579f6284a39b23"
             }
           ],
-          "purl": "pkg:deb/debian/locales@2.36-9+deb12u7?arch=all&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/locales@2.36-9+deb12u7?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -8086,18 +7866,6 @@
         },
         {
           "type": "application",
-          "name": "mount",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "f3fe9b80a2dcd2a7f464f3ada4d92b56999c32cd08e25da115cc3c3509e6a901"
-            }
-          ],
-          "purl": "pkg:deb/debian/mount@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "application",
           "name": "mtd-utils",
           "version": "1:2.1.5-1",
           "hashes": [
@@ -8114,83 +7882,55 @@
         },
         {
           "type": "application",
-          "name": "nano",
-          "version": "7.2-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "7e710ff1a00927816cd3b3209eab8a85"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "68fd9129e3a35f609aece98f0f0dba87ce1f39742ec849fa101ff96d1d3f8614"
-            }
-          ],
-          "purl": "pkg:deb/debian/nano@7.2-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "openssh-client",
-          "version": "1:9.2p1-2+deb12u2",
+          "version": "1:9.2p1-2+deb12u3",
           "hashes": [
             {
-              "alg": "MD5",
-              "content": "474b12508ea57859e86b30d8c6b426fc"
-            },
-            {
               "alg": "SHA-256",
-              "content": "17fc3fb0897b9d26f779d60d056d9a1ce68af50208118c4277cf18a0496f36a8"
+              "content": "a9a0600c9d8d2b2d40295ed0ca868a2d248920dc38a31351e334f62ea48ebf04"
             }
           ],
-          "purl": "pkg:deb/debian/openssh-client@1:9.2p1-2+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/openssh-client@1:9.2p1-2+deb12u3?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
           "name": "openssh-server",
-          "version": "1:9.2p1-2+deb12u2",
+          "version": "1:9.2p1-2+deb12u3",
           "hashes": [
             {
-              "alg": "MD5",
-              "content": "f0930c1b2118e1f0a3c541aa71ac591a"
-            },
-            {
               "alg": "SHA-256",
-              "content": "b923ffe6b52077d12d4572dd1bebbd88307441411e8464e6baf556ea7bd95c0e"
+              "content": "08ffb1599d05a815ce7d82e84570ab42b0b6152cba8e421a51ab1ba0709ed706"
             }
           ],
-          "purl": "pkg:deb/debian/openssh-server@1:9.2p1-2+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/openssh-server@1:9.2p1-2+deb12u3?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
           "name": "openssh-sftp-server",
-          "version": "1:9.2p1-2+deb12u2",
+          "version": "1:9.2p1-2+deb12u3",
           "hashes": [
             {
-              "alg": "MD5",
-              "content": "05ad2e2db45fc2eec521f3c3a29722e4"
-            },
-            {
               "alg": "SHA-256",
-              "content": "32c543d4cc265378b9701712d8e71f02a49875009cf0b96d0289a3987d4bf8c2"
+              "content": "c8de5562a1580d7dcbb20d67c350afd2c4d2880f77af8374a2ebd2f3fe9c62ab"
             }
           ],
-          "purl": "pkg:deb/debian/openssh-sftp-server@1:9.2p1-2+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/openssh-sftp-server@1:9.2p1-2+deb12u3?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
         },
         {
           "type": "application",
           "name": "openssl",
-          "version": "3.0.11-1~deb12u2",
+          "version": "3.0.13-1~deb12u1",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "39f5fd6f14670629fef1d45662355084"
+              "content": "d1fc3991831912ec9ded2ba2eda861c1"
             },
             {
               "alg": "SHA-256",
-              "content": "ea063646d4f70d15be5ed52b67b5ac95d68dda823c60d808c7c25439c6d14e4d"
+              "content": "262faebdc38b64e9e0553388e8608b0b6ae1b56871e7a8b09737ab0f2df11f8c"
             }
           ],
-          "purl": "pkg:deb/debian/openssl@3.0.11-1~deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/openssl@3.0.13-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -8402,22 +8142,6 @@
         },
         {
           "type": "application",
-          "name": "python3-autocommand",
-          "version": "2.2.2-2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "024d63b728369aacf20f6919f9aadd17"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "8463655c44cad97e76e512b26ff2df094962e819d07b446e4f4b7f9f86921892"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-autocommand@2.2.2-2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "python3-beaker",
           "version": "1.11.0-3",
           "hashes": [
@@ -8450,38 +8174,6 @@
         },
         {
           "type": "application",
-          "name": "python3-cheroot",
-          "version": "9.0.0+ds1-2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "1dd0978931fa09d8e7662c9f76972747"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "6c018b303b042dd012f0cbd88e2a24e906e3d82149fd7b9cfe58b1228bddaef1"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-cheroot@9.0.0+ds1-2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-cherrypy3",
-          "version": "18.8.0-2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "b5090e013410bb34474af4b7fcceea38"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "bc05768081ada16b646d09f5530850c8b797139dd3660c499313c66bec411939"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-cherrypy3@18.8.0-2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "python3-debian",
           "version": "0.1.49",
           "hashes": [
@@ -8499,122 +8191,122 @@
         {
           "type": "application",
           "name": "python3-elbe-bin",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "894bc5bf8bafa40111668106d44a2cc1"
+              "content": "91221339bdbf0109d979204e861eb7c0"
             },
             {
               "alg": "SHA-1",
-              "content": "2b40031d28c66e4f5329a696fd572c6c41133e14"
+              "content": "160bac4120c6ecab28a310265c95742655d01f7d"
             },
             {
               "alg": "SHA-256",
-              "content": "24c1dc17ef5909d4a3d6d997ea3662bc4195d521a57fa0855cb4d4b6f862c3e2"
+              "content": "2801bcd012079fcb4efc80fe3e9ec5ceb2db8e7fd815e381e8cfbce576990ad3"
             },
             {
               "alg": "SHA-512",
-              "content": "f7afba3ee172868f4cb97f4b7ddbbfa847c883846cbd038961e823fb2b36e112bb61165fd63733a1a6d2ece30953bd094c4c97b96d45c8471fd31930bdcb1e69"
+              "content": "de604a737650f995819c884c907925c5dab33167089bc16042f1db88c21681f51ce4bdc908d8f052a8a4ecc3d6924d7b5cd395f4b6475be97927986ff0c65055"
             }
           ],
-          "purl": "pkg:deb/. bookworm/python3-elbe-bin@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/python3-elbe-bin@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
           "name": "python3-elbe-buildenv",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "66327c362284d1d9e22bc1d3beb71477"
+              "content": "ed5f13085cd91ebe87c81ad17a02a1dd"
             },
             {
               "alg": "SHA-1",
-              "content": "d13e3ba202c9aa718ff7004a0f1a788df96ffad1"
+              "content": "178208bebfa0b7d51cdb6cbd1db5edc7c64b4a3b"
             },
             {
               "alg": "SHA-256",
-              "content": "b83311b6f0d688a866ca87347a576efa1550e24ce4d59dc5e812f9475b128be1"
+              "content": "987735857ce519de8fd4101f6ce6d511920b68d8a43eed878a2a302cd39959c8"
             },
             {
               "alg": "SHA-512",
-              "content": "adb2410ffc5ab6059756deaae38b3eb4fb807ab766506695b1f4cc96a6a902e32704d98e8afa55968e874c9d3bbb5a86abf4487161489d5a1a666f1a363d5946"
+              "content": "01e377fea84b26aebe833274a57c067e16e0de7fbc97bef1c55e618e4aadf72d4ca845b7c0c3f2b229454d956868c22bac7d632cc5f5b11f431b293ea8770525"
             }
           ],
-          "purl": "pkg:deb/. bookworm/python3-elbe-buildenv@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/python3-elbe-buildenv@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
           "name": "python3-elbe-common",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "a344e7508cd1a64da922763a4243e9c0"
+              "content": "4c3c0585744af41fb2d90347697d7779"
             },
             {
               "alg": "SHA-1",
-              "content": "eb5fd6099f28636adc9254ecce6395624f32d82a"
+              "content": "7315fd3ef6a47f54eb2da681e98ab4ad0d80e47e"
             },
             {
               "alg": "SHA-256",
-              "content": "3c12a7a50200be674bd90f5d7b3581101fe8a84da22e41bfcd386151eac671d5"
+              "content": "b8a5c9d939a9bc61dfe5c751596a38623f54c327ec5abb8252a9b64eda0f8fc9"
             },
             {
               "alg": "SHA-512",
-              "content": "9f584bef25d5cd166ac7282cb878b2096411ed05f2e92d6611a874541b14c9ff632893d738b94b8e7781d024143d7cb0039751959defc455ec7e634754aec126"
+              "content": "952de8cbdfd838e4df326cae28ef05f69a9199229edeb715752a65fb0b35a50c0dcd45bc3bb5f6518248ec08e2d7d3a2719ace15edc33a14d108edc2d7478ca2"
             }
           ],
-          "purl": "pkg:deb/. bookworm/python3-elbe-common@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/python3-elbe-common@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
           "name": "python3-elbe-daemon",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "5e8d9a42d698ce0bbc8d19d67f2e3884"
+              "content": "6ebecb6d0410351c9e3762c38fcb48ee"
             },
             {
               "alg": "SHA-1",
-              "content": "b726bf9fc9b0a46048383bc8015fbaf788e57cc3"
+              "content": "7d7852f240ab211d4c8f9fb517c3ab39b035b4f3"
             },
             {
               "alg": "SHA-256",
-              "content": "b665dae8cc38f39613bfb9b68314c96870219ac1f44ef058833a34a6e4059cd7"
+              "content": "10539918f2a26d44d67d4f1780a4bda7072eeacb957bb0a03d52bf623e3e0dfa"
             },
             {
               "alg": "SHA-512",
-              "content": "f8a8d346c0f4ad6ea0eb4025cb52b2023c6e2741d6bfcf6b7d8304d53f6fd8f7c8a72bda035141eba4310768a5ad43588fdee02f70e27555551d52552d67cf89"
+              "content": "edfc9bf820c7d11801e2adbf91b3067d2c44aeeada3c08633a45740cb2815a2d62373f6b39c090c2c8f8662a2fb674fa934cbf575f81f08290f31085cad932da"
             }
           ],
-          "purl": "pkg:deb/. bookworm/python3-elbe-daemon@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/python3-elbe-daemon@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
           "name": "python3-elbe-soap",
-          "version": "14.9.3+deb12+build1311",
+          "version": "15.0",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "a2181384eb7090a9bf52d18c79293b2f"
+              "content": "05b3e459f9b83e78aad6e47d52c9a184"
             },
             {
               "alg": "SHA-1",
-              "content": "0c8880bce221aead30e3024c8551d403559f0703"
+              "content": "f1d604ff70d10392537b018eef5adadd043b5a5d"
             },
             {
               "alg": "SHA-256",
-              "content": "534daa5eb0e95fcdfc83b92834d3561a32d562bc272aa26a350bb4dde6c0a293"
+              "content": "4521d797c52ec7eb57fc7d1235f29a7edf69fed9c319d74a8424ba5525d0763d"
             },
             {
               "alg": "SHA-512",
-              "content": "46d271c7daf9865ce2cc42deb3de535fb2a82baf56c42b1f9cd867768b556bd552c81d7fd81dbbb1ec90d3c0afbd6e7ec9b79cbe6208ec4db6b5c7d9b8b6dfea"
+              "content": "2510269989b1b79aa41fb158a81f33de4ff138e72b704a1c7e7f95de70face274a383d807eb0fc8d32b2477da0c8337025432ea343b1e15e071eee31b2ef4cf6"
             }
           ],
-          "purl": "pkg:deb/. bookworm/python3-elbe-soap@14.9.3+deb12+build1311?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
+          "purl": "pkg:deb/linutronix/python3-elbe-soap@15.0?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdebian.linutronix.de%2Felbe"
         },
         {
           "type": "application",
@@ -8647,118 +8339,6 @@
             }
           ],
           "purl": "pkg:deb/debian/python3-greenlet@2.0.2-1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-inflect",
-          "version": "2.1.0-4",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "308cf126c8a05bfe331085f3f17f8f8d"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "1b1cdd21cdd48c063e0602cfe72c996fd9ebc5f5f25d6f8ed97dca1a748d8d16"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-inflect@2.1.0-4?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-jaraco.classes",
-          "version": "3.2.1-3",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "5dbeb1bc2c397f8e5945a5c3324f84b4"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "2287dd17084211280d8e4645a743c09afa43baabb5f27b95075c78b4bda2abb1"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-jaraco.classes@3.2.1-3?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-jaraco.collections",
-          "version": "3.8.0-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "5212c324264b097d5cdf3b8872bfe164"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "28cc8f33e09bbd34f5f30fd8862f512637ba9bafe1df3b6d2b1b3e261c6ed65f"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-jaraco.collections@3.8.0-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-jaraco.context",
-          "version": "4.2.0-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "b2fc0c2f10eb7c04dec2fa847cbbb795"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "df499c5068f57a20626cbf723a99feadac7fe11ada8cd4795c07d871a1b0f47d"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-jaraco.context@4.2.0-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-jaraco.functools",
-          "version": "3.5.0-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "3c7cbb6229fdaeb7bfcad4f8b7894a9a"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "197bb29c5e0e914bc86347b224e7d1b2a16208fef86cd6c1fe0cae2d4a84ddff"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-jaraco.functools@3.5.0-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-jaraco.text",
-          "version": "3.11.1-1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "2209b156e166f8a088b938e49a5c829b"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "546fcaa139d9ca7d5ebbf4ec062b3e88ae6b94e909baa853b8c197a62438db66"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-jaraco.text@3.11.1-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-junit.xml",
-          "version": "1.9-4",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "d1f49fb5afed8538c14852183203602a"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "595af60edd0770a8cbdbf0ffc001d4d68b549360f9afebe42159a69c16fa73c0"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-junit.xml@1.9-4?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -8842,22 +8422,6 @@
         },
         {
           "type": "application",
-          "name": "python3-more-itertools",
-          "version": "8.10.0-2",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "b3fdab5a0257aae0fa13ac9b870eac24"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "bff817d7af710ffc87123f6bd581d5b50186a5ea0065d3d2c20445ce49a93412"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-more-itertools@8.10.0-2?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "python3-parted",
           "version": "3.12.0-4",
           "hashes": [
@@ -8906,19 +8470,19 @@
         },
         {
           "type": "application",
-          "name": "python3-portend",
-          "version": "3.1.0-1",
+          "name": "python3-pycdlib",
+          "version": "1.12.0+ds1-4",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "a00cca7ab822890a1423c644f50d3ef3"
+              "content": "32b72cd4a7d26ef6911a314cca97f596"
             },
             {
               "alg": "SHA-256",
-              "content": "23ddf1574c614cf594e94df1b53b022a9cf891761e026a2d7ba1ab62813b29f2"
+              "content": "955912922463b504833e50699576c0020823e3ab25d82a0ad45fd25fab68aa49"
             }
           ],
-          "purl": "pkg:deb/debian/python3-portend@3.1.0-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/python3-pycdlib@1.12.0+ds1-4?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -8935,22 +8499,6 @@
             }
           ],
           "purl": "pkg:deb/debian/python3-pyparsing@3.0.9-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "python3-six",
-          "version": "1.16.0-4",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "0ead10b921294fee78c3fbd4a3575dc4"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "fd189e9cecbcf17a1fc20aec30055c8afa9c1eec00cd6e7ab385087a2ab3b0d3"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-six@1.16.0-4?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -8986,19 +8534,19 @@
         },
         {
           "type": "application",
-          "name": "python3-tempora",
-          "version": "5.1.0-1",
+          "name": "python3-suds",
+          "version": "1.1.2-1",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "81c175a84f27d10d31c7a6c7f48238dc"
+              "content": "dd49cb912321e86521193248932ee80b"
             },
             {
               "alg": "SHA-256",
-              "content": "c16d8a0c71bc10dc1cac91304741b5411933ac0431e08cd353d2e6f1ca63e85d"
+              "content": "964ea07c02f85f36bbe4e18dc617dd826b0d5591646652778161c9ced9df1624"
             }
           ],
-          "purl": "pkg:deb/debian/python3-tempora@5.1.0-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/python3-suds@1.1.2-1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -9018,99 +8566,83 @@
         },
         {
           "type": "application",
-          "name": "python3-zc.lockfile",
-          "version": "2.0-4",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "707d8ce777101fbc13d235dd12b83cd3"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "cc1d6af201896b44443ee180a32b5b74bcad91e203795b0752273985a2174277"
-            }
-          ],
-          "purl": "pkg:deb/debian/python3-zc.lockfile@2.0-4?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "python3.11",
-          "version": "3.11.2-6",
+          "version": "3.11.2-6+deb12u2",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "eb003e0410ccd5d285a69236294065d9"
+              "content": "703a91bbd7a8a07712ce0e720f41eea4"
             },
             {
               "alg": "SHA-256",
-              "content": "9d1d4ba9ac38a7ae48567bfbd0bec88e02a5ccd941a48a76709a131197ea6570"
+              "content": "b04f4deeedd43858d3078b0dd27fbc23c662797a6f621019e4a89d842b7d38a3"
             }
           ],
-          "purl": "pkg:deb/debian/python3.11@3.11.2-6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/python3.11@3.11.2-6+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
           "name": "python3.11-minimal",
-          "version": "3.11.2-6",
+          "version": "3.11.2-6+deb12u2",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "6881d05e51cb8f3b7fd989c88c1de705"
+              "content": "59cbbefe8fd575f4b2877af1ba67126b"
             },
             {
               "alg": "SHA-256",
-              "content": "a72247ba64bcd1d0ace2ea8eefd7bcfaca84204def9495269526c25dd9fddc0c"
+              "content": "c54fa106f753553fa5026ddbaec6194d72bff0a0769936e0ac34e26159218996"
             }
           ],
-          "purl": "pkg:deb/debian/python3.11-minimal@3.11.2-6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/python3.11-minimal@3.11.2-6+deb12u2?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
           "name": "qemu-guest-agent",
-          "version": "1:7.2+dfsg-7+deb12u5",
+          "version": "1:7.2+dfsg-7+deb12u6",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "fcb3c68c6acc97d94e9a82b59d333edf"
+              "content": "ea426ef24284795cff0b0d8cf7a1bfbb"
             },
             {
               "alg": "SHA-256",
-              "content": "eb908ceb5897635b8eaf5a8016bef1e89c5c78e80e0d597818b62797a7ebc535"
+              "content": "20f41f5bebf1983d167d3366172b6f72d3b8604fddca12e9380dfd1c457787d7"
             }
           ],
-          "purl": "pkg:deb/debian/qemu-guest-agent@1:7.2+dfsg-7+deb12u5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/qemu-guest-agent@1:7.2+dfsg-7+deb12u6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
           "name": "qemu-user-static",
-          "version": "1:7.2+dfsg-7+deb12u5",
+          "version": "1:7.2+dfsg-7+deb12u6",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "0de6936de8c5c5cf4f7b874c9e0d7471"
+              "content": "b0c283231a9e1e91c7677833e6f54dd3"
             },
             {
               "alg": "SHA-256",
-              "content": "f4b69ac8d20d6947e3133173925af832e119477be3d1e3fa3a4011c27795451f"
+              "content": "d5554fdeeff9e2cf44ce40a9f4b659d23ae755c082349d954911a20ffb7cbc84"
             }
           ],
-          "purl": "pkg:deb/debian/qemu-user-static@1:7.2+dfsg-7+deb12u5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/qemu-user-static@1:7.2+dfsg-7+deb12u6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
           "name": "qemu-utils",
-          "version": "1:7.2+dfsg-7+deb12u5",
+          "version": "1:7.2+dfsg-7+deb12u6",
           "hashes": [
             {
               "alg": "MD5",
-              "content": "f22b28c5a51d9ecfc259cd6ecf3120ca"
+              "content": "a61ce9097e929da2290a9bd8366b7878"
             },
             {
               "alg": "SHA-256",
-              "content": "2ed0ede717c1eb70bf3a66ed1953c082e99f286490e111437c1a3edb24bf0a66"
+              "content": "7f2f0e8a1083a4912aab73a8d3d5cb439e599060d931fc0d85bc5832329ceff1"
             }
           ],
-          "purl": "pkg:deb/debian/qemu-utils@1:7.2+dfsg-7+deb12u5?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
+          "purl": "pkg:deb/debian/qemu-utils@1:7.2+dfsg-7+deb12u6?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
@@ -9242,38 +8774,6 @@
         },
         {
           "type": "application",
-          "name": "systemd",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "1eabc7000ba33dcf2017d1b7da391f20"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "0c971c39033481078058f2407d8c68234ea454ea168ba2a17649bb97242ec674"
-            }
-          ],
-          "purl": "pkg:deb/debian/systemd@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
-          "name": "systemd-sysv",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "f00a786f70ed333657bd2a421eb0e47d"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "d733335d37e52f72e03b87f6988a66784bc7f91fc4332bf0940e65d7180dae99"
-            }
-          ],
-          "purl": "pkg:deb/debian/systemd-sysv@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "task-english",
           "version": "3.73",
           "hashes": [
@@ -9306,22 +8806,6 @@
         },
         {
           "type": "application",
-          "name": "udev",
-          "version": "252.22-1~deb12u1",
-          "hashes": [
-            {
-              "alg": "MD5",
-              "content": "7040233eed92ec63e62cf0666fe9b54a"
-            },
-            {
-              "alg": "SHA-256",
-              "content": "b47f033470c663b63a179c761aad4b8f75fa1a775a8a44be06683679ef61f0eb"
-            }
-          ],
-          "purl": "pkg:deb/debian/udev@252.22-1~deb12u1?arch=amd64&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
-        },
-        {
-          "type": "application",
           "name": "usbutils",
           "version": "1:014-1+deb12u1",
           "hashes": [
@@ -9338,39 +8822,19 @@
         },
         {
           "type": "application",
-          "name": "util-linux",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "cc96c6e07db33c0422ff8945e13c004489c979f5e070daa67b9c6c219b22d980"
-            }
-          ],
-          "purl": "pkg:deb/debian/util-linux@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "application",
-          "name": "util-linux-extra",
-          "version": "2.38.1-5+deb12u1",
-          "hashes": [
-            {
-              "alg": "SHA-256",
-              "content": "45b08b5e928ceb229721ba13b4d8e7559957222d8c35b43b6413b81d9c2d06f8"
-            }
-          ],
-          "purl": "pkg:deb/debian/util-linux-extra@2.38.1-5+deb12u1?arch=amd64&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
-        },
-        {
-          "type": "application",
           "name": "util-linux-locales",
           "version": "2.38.1-5+deb12u1",
           "hashes": [
+            {
+              "alg": "MD5",
+              "content": "9a50f82a1e3fd47623e372a65e697fb1"
+            },
             {
               "alg": "SHA-256",
               "content": "b5beec5d0958339f04d88cdbdb4ca8042f700bb770eda8af76cf8c0c57bd6990"
             }
           ],
-          "purl": "pkg:deb/debian/util-linux-locales@2.38.1-5+deb12u1?arch=all&distro=bookworm-security&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian-security"
+          "purl": "pkg:deb/debian/util-linux-locales@2.38.1-5+deb12u1?arch=all&distro=bookworm&repository_url=http%3A%2F%2Fdeb.debian.org%2Fdebian"
         },
         {
           "type": "application",
