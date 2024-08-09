@@ -182,20 +182,6 @@ def add_file_handlers(files):
         yield [out]
 
 
-@logging_method('projectsQ')
-@with_list
-def add_projectQ_handlers(projects):
-
-    for proj in projects:
-        echo = QHandler(proj)
-        soap = QHandler(proj)
-        echo.addFilter(ThreadFilter(['root', 'report', 'validation']))
-        soap.addFilter(ThreadFilter(['soap']))
-        echo.setFormatter(context_fmt)
-        soap.setFormatter(context_fmt)
-        yield [echo, soap]
-
-
 @contextmanager
 def elbe_logging(*args, **kwargs):
     try:
