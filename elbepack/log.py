@@ -97,16 +97,6 @@ class ThreadFilter(logging.Filter):
         return retval
 
 
-def logging_method(func):
-    def wrapper(*args, **kwargs):
-        for handlers in func(*args, **kwargs):
-            for h in handlers:
-                local.handlers.append(h)
-                root.addHandler(h)
-    return wrapper
-
-
-@logging_method
 def add_stream_handlers(streams):
 
     for stream in streams:
@@ -121,7 +111,6 @@ def add_stream_handlers(streams):
         yield [out]
 
 
-@logging_method
 def add_project_handlers(projects):
 
     for proj in projects:
@@ -171,7 +160,10 @@ def open_logging(targets):
             if not isinstance(destinations, list):
                 destinations = [destinations]
 
-            call(destinations)
+            for handlers in call(destinations):
+                for h in handlers:
+                    local.handlers.append(h)
+                    root.addHandler(h)
 
 
 def close_logging():
