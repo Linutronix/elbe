@@ -165,7 +165,7 @@ class ElbeSoapClient:
             if msg == 'ELBE-FINISH':
                 break
 
-            _logger.info(msg)
+            yield msg
 
         # exited the while loop -> the project is not busy anymore,
         # check, whether everything is ok.

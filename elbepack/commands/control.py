@@ -168,7 +168,8 @@ def _get_files(client, args):
 
 @_add_project_dir_argument
 def _wait_busy(client, args):
-    client.wait_busy(args.project_dir)
+    for msg in client.wait_busy(args.project_dir):
+        print(msg)
 
 
 @_add_project_dir_argument

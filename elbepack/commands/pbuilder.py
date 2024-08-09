@@ -51,7 +51,8 @@ def _create(control, args):
 
     control.service.build_pbuilder(prjdir, args.cross, args.noccache, args.ccachesize)
 
-    control.wait_busy(prjdir)
+    for msg in control.wait_busy(prjdir):
+        print(msg)
 
     print('')
     print('Building Pbuilder finished !')
@@ -93,7 +94,8 @@ def _build(control, args):
 
         control.service.build_pbuilder(prjdir, args.cross, False, '10G')
 
-        control.wait_busy(prjdir)
+        for msg in control.wait_busy(prjdir):
+            print(msg)
 
         print('')
         print('Building Pbuilder finished !')
@@ -123,7 +125,8 @@ def _build(control, args):
 
     control.set_pdebuild(prjdir, tmp.fname('pdebuild.tar.gz'), args.profile, args.cross)
 
-    control.wait_busy(prjdir)
+    for msg in control.wait_busy(prjdir):
+        print(msg)
 
     print('')
     print('Pdebuild finished !')
