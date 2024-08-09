@@ -554,7 +554,7 @@ class AsyncWorker(Thread):
             job = self.queue.get()
             if job is not None:
                 with savecwd():
-                    with elbe_logging({'projects': job.project.builddir}):
+                    with elbe_logging(projects=job.project.builddir):
                         job.execute(self.db)
             else:
                 loop = False

@@ -46,7 +46,7 @@ def run_command(argv):
 
     directory = pathlib.Path(args.build_dir)
 
-    with elbe_logging({'streams': None}):
+    with elbe_logging(streams=None):
 
         for test in tests:
 

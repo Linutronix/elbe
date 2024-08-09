@@ -57,7 +57,7 @@ def run_command(argv):
     if not args.output:
         aparser.error('No output file specified')
 
-    with elbe_logging({'streams': sys.stdout}):
+    with elbe_logging(streams=sys.stdout):
         try:
             project = ElbeProject(args.target, name=args.name,
                                   override_buildtype=args.buildtype,
@@ -82,7 +82,7 @@ def run_command(argv):
     if len(args) >= 1:
         update_xml = args[0]
 
-    with elbe_logging({'projects': project.builddir}):
+    with elbe_logging(projects=project.builddir):
         try:
             gen_update_pkg(project, update_xml, args.output, args.uildtype,
                            args.skip_validation, args.debug,

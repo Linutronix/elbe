@@ -70,7 +70,7 @@ def run_command(argv):
         print('xml validation failed. Bailing out')
         sys.exit(47)
 
-    with elbe_logging({'streams': sys.stdout}), contextlib.ExitStack() as stack:
+    with elbe_logging(streams=sys.stdout), contextlib.ExitStack() as stack:
 
         if args.cdrom_path:
             if args.cdrom_device:

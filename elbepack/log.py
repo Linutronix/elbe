@@ -150,7 +150,7 @@ def elbe_logging(*args, **kwargs):
         close_logging()
 
 
-def open_logging(targets):
+def open_logging(**targets):
 
     close_logging()
 

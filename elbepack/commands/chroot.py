@@ -28,7 +28,7 @@ def run_command(argv):
 
     args = aparser.parse_args(argv)
 
-    with elbe_logging({'streams': sys.stdout}):
+    with elbe_logging(streams=sys.stdout):
         try:
             project = ElbeProject(args.builddir,
                                   override_buildtype=args.buildtype,
