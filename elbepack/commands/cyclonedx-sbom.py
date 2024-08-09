@@ -10,6 +10,7 @@ import os
 import urllib
 
 from elbepack.aptpkgutils import XMLPackage
+from elbepack.commands.parselicence import LicenseType, extract_licenses_from_report
 from elbepack.elbexml import ElbeXML
 from elbepack.uuid7 import uuid7
 from elbepack.version import elbe_version
@@ -21,6 +22,28 @@ class CycloneDXEncoder(json.JSONEncoder):
             if obj.tzinfo is not datetime.timezone.utc:
                 raise ValueError('only UTC datetimes are supported')
             return obj.isoformat()
+
+
+def _licence_from_pkg(pkg, licenses):
+    if pkg.name in licenses:
+        lics = []
+        for lic in licenses[pkg.name][0]:
+            if lic is None:
+                pass
+            elif lic.type == LicenseType.UNKNOWN:
+                lics.append({'license': {'name': lic.name,
+                                         'text': {'content': lic.text}}})
+            elif lic.type == LicenseType.SPDX:
+                lics.append({'license': {'id': lic.name}})
+            elif lic.type == LicenseType.SPDX_EXCEPTION:
+                lics.append({'license': {'name': lic.name}})
+            else:
+                raise ValueError(lic.type)
+        return lics
+
+
+def _remove_empty_fields(dict):
+    return {k: v for k, v in dict.items() if v is not None}
 
 
 def _repository_url(uri):
@@ -55,7 +78,7 @@ def _purl_from_pkg(pkg):
            )
 
 
-def _component_from_apt_pkg(pkg):
+def _component_from_apt_pkg(pkg, licenses):
     hash_name_mapping = {
             'md5': 'MD5',
             'sha1': 'SHA-1',
@@ -73,19 +96,21 @@ def _component_from_apt_pkg(pkg):
     else:
         type = 'application'
 
-    return {
+    return _remove_empty_fields({
         'type': type,
         'name': pkg.name,
         'version': pkg.installed_version,
         'hashes': hashes,
+        'licenses': _licence_from_pkg(pkg, licenses),
         'purl': _purl_from_pkg(pkg),
-    }
+    })
 
 
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe cyclonedx-sbom')
     aparser.add_argument('-o', '--output', type=argparse.FileType('w'), default='-')
     aparser.add_argument('-d', dest='elbe_build', required=True)
+    aparser.add_argument('-m', dest='mapping', nargs='?', default=None)
     args = aparser.parse_args(argv)
 
     ts = datetime.datetime.now(tz=datetime.timezone.utc)
@@ -95,6 +120,10 @@ def run_command(argv):
     project_name = source_file.text('/name').strip()
     project_version = source_file.text('/version').strip()
     project_description = source_file.text('/description').strip()
+    licenses = extract_licenses_from_report(
+                   os.path.join(project_dir, 'licence-target.xml'), args.mapping)
+    chroot_lics = extract_licenses_from_report(
+                   os.path.join(project_dir, 'licence-chroot.xml'), args.mapping)
 
     pkg_list = []
     for p in source_file.node('fullpkgs'):
@@ -103,7 +132,7 @@ def run_command(argv):
 
     components = []
     for pkg in pkg_list:
-        components.append(_component_from_apt_pkg(pkg))
+        components.append(_component_from_apt_pkg(pkg, licenses))
 
     formulation_components = []
     for p in itertools.chain(
@@ -111,7 +140,7 @@ def run_command(argv):
         source_file.node('initvmpkgs'),
     ):
         # Duplicates are disallowed by the schema
-        c = _component_from_apt_pkg(XMLPackage(p))
+        c = _component_from_apt_pkg(XMLPackage(p), chroot_lics)
         if c not in formulation_components:
             formulation_components.append(c)
 
