@@ -108,7 +108,7 @@ def add_stream_handlers(streams):
                                     'echo',
                                     'soap']))
         out.setFormatter(context_fmt)
-        yield [out]
+        yield out
 
 
 def add_project_handlers(projects):
@@ -132,7 +132,7 @@ def add_project_handlers(projects):
         echo.setFormatter(context_fmt)
         soap.setFormatter(context_fmt)
 
-        yield [validation, report, log, echo, soap]
+        yield from [validation, report, log, echo, soap]
 
 
 _logging_methods = {
@@ -160,10 +160,9 @@ def open_logging(targets):
             if not isinstance(destinations, list):
                 destinations = [destinations]
 
-            for handlers in call(destinations):
-                for h in handlers:
-                    local.handlers.append(h)
-                    root.addHandler(h)
+            for h in call(destinations):
+                local.handlers.append(h)
+                root.addHandler(h)
 
 
 def close_logging():
