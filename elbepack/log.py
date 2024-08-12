@@ -113,25 +113,25 @@ def add_stream_handlers(streams):
 def add_project_handlers(projects):
 
     for proj in projects:
-        validation = logging.FileHandler(os.path.join(proj, 'validation.txt'))
-        report = logging.FileHandler(os.path.join(proj, 'elbe-report.txt'))
-        log = logging.FileHandler(os.path.join(proj, 'log.txt'))
-        echo = QHandler(proj)
-        soap = QHandler(proj)
+        validation_handler = logging.FileHandler(os.path.join(proj, 'validation.txt'))
+        report_handler = logging.FileHandler(os.path.join(proj, 'elbe-report.txt'))
+        log_handler = logging.FileHandler(os.path.join(proj, 'log.txt'))
+        echo_handler = QHandler(proj)
+        soap_handler = QHandler(proj)
 
-        validation.addFilter(ThreadFilter(['validation']))
-        report.addFilter(ThreadFilter(['report']))
-        log.addFilter(ThreadFilter(['root', 'log', 'report', 'validation']))
-        echo.addFilter(ThreadFilter(['root', 'report', 'validation']))
-        soap.addFilter(ThreadFilter(['soap']))
+        validation_handler.addFilter(ThreadFilter(['validation']))
+        report_handler.addFilter(ThreadFilter(['report']))
+        log_handler.addFilter(ThreadFilter(['root', 'log', 'report', 'validation']))
+        echo_handler.addFilter(ThreadFilter(['root', 'report', 'validation']))
+        soap_handler.addFilter(ThreadFilter(['soap']))
 
-        validation.setFormatter(msgonly_fmt)
-        report.setFormatter(msgonly_fmt)
-        log.setFormatter(context_fmt)
-        echo.setFormatter(context_fmt)
-        soap.setFormatter(context_fmt)
+        validation_handler.setFormatter(msgonly_fmt)
+        report_handler.setFormatter(msgonly_fmt)
+        log_handler.setFormatter(context_fmt)
+        echo_handler.setFormatter(context_fmt)
+        soap_handler.setFormatter(context_fmt)
 
-        yield from [validation, report, log, echo, soap]
+        yield from [validation_handler, report_handler, log_handler, echo_handler, soap_handler]
 
 
 _logging_methods = {
