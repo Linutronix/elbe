@@ -84,7 +84,7 @@ class ThreadFilter(logging.Filter):
 
     def __init__(self, allowed, *args, **kwargs):
         super(ThreadFilter, self).__init__(*args, **kwargs)
-        self.allowed = allowed
+        self.allowed = {a.name for a in allowed}
         self.thread = threading.current_thread().ident
 
     def filter(self, record):
@@ -103,11 +103,7 @@ def add_stream_handlers(streams):
 
     for stream in streams:
         out = logging.StreamHandler(stream)
-        out.addFilter(ThreadFilter(['root',
-                                    'log',
-                                    'report',
-                                    'validation',
-                                    'soap']))
+        out.addFilter(ThreadFilter([root, log, report, validation, soap])),
         out.setFormatter(context_fmt)
         yield out
 
@@ -121,11 +117,11 @@ def add_project_handlers(projects):
         echo_handler = QHandler(proj)
         soap_handler = QHandler(proj)
 
-        validation_handler.addFilter(ThreadFilter(['validation']))
-        report_handler.addFilter(ThreadFilter(['report']))
-        log_handler.addFilter(ThreadFilter(['root', 'log', 'report', 'validation']))
-        echo_handler.addFilter(ThreadFilter(['root', 'report', 'validation']))
-        soap_handler.addFilter(ThreadFilter(['soap']))
+        validation_handler.addFilter(ThreadFilter([validation]))
+        report_handler.addFilter(ThreadFilter([report]))
+        log_handler.addFilter(ThreadFilter([root, log, report, validation]))
+        echo_handler.addFilter(ThreadFilter([root, report, validation]))
+        soap_handler.addFilter(ThreadFilter([soap]))
 
         validation_handler.setFormatter(msgonly_fmt)
         report_handler.setFormatter(msgonly_fmt)
