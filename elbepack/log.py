@@ -105,7 +105,6 @@ def add_stream_handlers(streams):
                                     'log',
                                     'report',
                                     'validation',
-                                    'echo',
                                     'soap']))
         out.setFormatter(context_fmt)
         yield out
