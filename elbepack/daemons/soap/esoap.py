@@ -21,7 +21,7 @@ from elbepack.elbexml import ValidationError, ValidationMode
 from elbepack.projectmanager import InvalidState, ProjectManagerError
 from elbepack.version import elbe_version
 
-from .authentication import SoapElbeNotAuthorized, authenticated_admin, authenticated_uid
+from .authentication import authenticated_uid
 from .datatypes import SoapFile, SoapProject
 
 
@@ -44,6 +44,14 @@ class SoapElbeInvalidState(Fault):
     def __init__(self):
         super().__init__(faultcode='ElbeInvalidState',
                          faultstring='Project is Busy ! Operation Invalid')
+
+
+class SoapElbeNotAuthorized(Fault):
+    def __init__(self):
+        Fault.__init__(
+            self,
+            faultcode='ElbeNotAuthorized',
+            faultstring='Not Authorized ! Cant let you perform this command.')
 
 
 class ESoap (ServiceBase):
@@ -85,8 +93,8 @@ class ESoap (ServiceBase):
         return True
 
     @rpc(_returns=Array(SoapProject))
-    @authenticated_admin
-    def list_projects(self):
+    @authenticated_uid
+    def list_projects(self, uid):
         return self.app.pm.db.list_projects()
 
     @rpc(String, _returns=SoapProject)

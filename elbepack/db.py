@@ -573,15 +573,6 @@ class ElbeDB:
             # Everything good, now return the user id to the caller
             return int(u.id)
 
-    def is_admin(self, userid):
-        with session_scope(self.session) as s:
-            try:
-                u = s.query(User).filter(User.id == userid).one()
-            except NoResultFound:
-                raise ElbeDBError(f'no user with id {userid}')
-
-            return bool(u.admin)
-
     def get_username(self, userid):
         with session_scope(self.session) as s:
             try:
