@@ -23,7 +23,6 @@ SYNOPSIS
       elbe control [options] set_orig <build-dir>
       elbe control [options] set_cdrom <build-dir> <iso-img>
       elbe control [options] reset_project <build-dir>
-      elbe control [options] list_users
       elbe control [options] wait_busy <build-dir>
       elbe control [options] set_xml <build-dir> <xmlfile>
       elbe control [options] del_project <build-dir>
@@ -150,9 +149,6 @@ a ./debian folder with a valid debianization.
    otherwise blocked project again.
 
    Use with care.
-
-*list_users*
-   List configured users. Only admins may use this command.
 
 *wait_busy* <build-dir>
    Wait, while <build-dir> is busy.

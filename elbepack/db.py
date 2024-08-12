@@ -112,14 +112,6 @@ class ElbeDB:
         smaker = sessionmaker(bind=engine)
         self.session = scoped_session(smaker)
 
-    def list_users(self):
-        with session_scope(self.session) as s:
-            res = s.query(User).all()
-            ret = []
-            for u in res:
-                ret.append(UserData(u))
-            return ret
-
     def list_projects(self):
         with session_scope(self.session) as s:
             res = s.query(Project).all()

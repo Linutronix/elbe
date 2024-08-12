@@ -26,14 +26,6 @@ def _list_projects(args):
         print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
 
 
-def _list_users(args):
-    db = ElbeDB()
-    users = db.list_users()
-
-    for u in users:
-        print(f'{u.name}: {u.fullname} <{u.email}>')
-
-
 @add_argument('--user', dest='user',
               help='user name of the designated project owner')
 @add_argument('project_dir')
@@ -94,7 +86,6 @@ def _reset_project(args):
 _actions = {
     'init':                _init,
     'list_projects':       _list_projects,
-    'list_users':          _list_users,
     'create_project':      _create_project,
     'del_project':         _del_project,
     'set_xml':             _set_xml,

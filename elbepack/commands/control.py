@@ -37,13 +37,6 @@ def _list_projects(client, args):
         print('No projects configured in initvm')
 
 
-def _list_users(client, args):
-    users = client.service.list_users()
-
-    for u in users.string:
-        print(u)
-
-
 def _create_project(client, args):
     uuid = client.service.new_project()
     print(uuid)
@@ -192,7 +185,6 @@ def _update_pbuilder(client, args):
 _client_actions = {
     'rm_log':               _remove_log,
     'list_projects':        _list_projects,
-    'list_users':           _list_users,
     'create_project':       _create_project,
     'reset_project':        _reset_project,
     'del_project':          _delete_project,

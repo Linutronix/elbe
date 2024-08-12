@@ -16,7 +16,6 @@ SYNOPSIS
       elbe db [options] create_project <project_dir>
       elbe db [options] get_files <project_dir>
       elbe db [options] reset_project <project_dir>
-      elbe db [options] list_users
       elbe db [options] set_xml <project_dir> <xml_file>
       elbe db [options] del_project <project_dir>
       elbe db [options] init
@@ -49,9 +48,6 @@ COMMANDS
 
 *list_projects*
    Lists all projects stored in the database.
-
-*list_users*
-   Lists all users registered in the ELBE database.
 
 *create_project* <project_dir>
    Creates a new project in directory <project_dir>. Options: user.
