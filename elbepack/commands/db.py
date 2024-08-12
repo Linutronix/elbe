@@ -3,9 +3,7 @@
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
 import argparse
-import sys
 from getpass import getpass
-from shutil import copyfileobj
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.db import ElbeDB, ElbeDBError
@@ -162,15 +160,6 @@ def _del_version(args):
     db.del_version(args.project_dir, args.version)
 
 
-@add_argument('project_dir')
-@add_argument('version')
-def _print_version_xml(args):
-    db = ElbeDB()
-    filename = db.get_version_xml(args.project_dir, args.version)
-    with open(filename) as f:
-        copyfileobj(f, sys.stdout)
-
-
 _actions = {
     'init':                _init,
     'add_user':            _add_user,
@@ -186,7 +175,6 @@ _actions = {
     'list_versions':       _list_versions,
     'save_version':        _save_version,
     'del_versions':        _del_version,
-    'print_version_xml':   _print_version_xml,
 }
 
 

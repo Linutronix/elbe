@@ -20,7 +20,6 @@ SYNOPSIS
       elbe db [options] save_version <project_dir>
       elbe db [options] set_xml <project_dir> <xml_file>
       elbe db [options] del_project <project_dir>
-      elbe db [options] print_version_xml <project_dir> <version>
       elbe db [options] init
       elbe db [options] del_user <userid>
       elbe db [options] add_user <username>
@@ -125,9 +124,6 @@ COMMANDS
 
 *del_versions* <project_dir> <version>
    Deletes the version <version> of project <project_dir>.
-
-*print_version_xml* <project_dir> <version>
-   Prints ELBE xml file in <project_dir> of version <version>.
 
 ELBE
 ====
