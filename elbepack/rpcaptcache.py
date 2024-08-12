@@ -45,8 +45,8 @@ class MyMan(BaseManager):
         # for non binary mode ..
         sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1)
         sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 1)
-        sys.__stdout__ = sys.stdout
-        sys.__stderr__ = sys.stderr
+        sys.__stdout__ = sys.stdout  # type: ignore
+        sys.__stderr__ = sys.stderr  # type: ignore
 
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
