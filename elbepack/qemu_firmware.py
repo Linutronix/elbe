@@ -178,7 +178,7 @@ class FirmwareSearcher:
         xdg_config_home = os.environ.get('XDG_CONFIG_HOME')
         if xdg_config_home is not None:
             search_dirs.append(
-                pathlib.Path(xdg_config_home.joinpath('qemu', 'firmware'))
+                pathlib.Path(xdg_config_home).joinpath('qemu', 'firmware')
             )
         else:
             search_dirs.append(
