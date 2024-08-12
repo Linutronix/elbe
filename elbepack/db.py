@@ -31,14 +31,24 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
+from sqlalchemy.orm import registry, relationship, scoped_session, sessionmaker
+from sqlalchemy.orm.decl_api import DeclarativeMeta
 from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationMode
 
 
-Base = declarative_base()
+mapper_registry = registry()
+
+
+class Base(metaclass=DeclarativeMeta):
+    __abstract__ = True
+
+    registry = mapper_registry
+    metadata = mapper_registry.metadata
+
+    __init__ = mapper_registry.constructor
 
 
 class ElbeDBError(Exception):
