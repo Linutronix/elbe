@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014, 2017 Linutronix GmbH
 
 import argparse
-from getpass import getpass
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.db import ElbeDB
@@ -17,21 +16,6 @@ from elbepack.db import ElbeDB
 def _init(args):
     ElbeDB.init_db(args.name, args.fullname, args.password,
                    args.email, args.admin)
-
-
-@add_argument('--fullname')
-@add_argument('--password')
-@add_argument('--email')
-@add_argument('--admin', default=False, action='store_true')
-@add_argument('username')
-def _add_user(args):
-    if not args.password:
-        password = getpass('Password for the new user: ')
-    else:
-        password = args.password
-
-    db = ElbeDB()
-    db.add_user(args.username, args.fullname, password, args.email, args.admin)
 
 
 def _list_projects(args):
@@ -109,7 +93,6 @@ def _reset_project(args):
 
 _actions = {
     'init':                _init,
-    'add_user':            _add_user,
     'list_projects':       _list_projects,
     'list_users':          _list_users,
     'create_project':      _create_project,

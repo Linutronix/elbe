@@ -89,12 +89,6 @@ class ESoap (ServiceBase):
     def list_users(self):
         return [u.name for u in self.app.pm.db.list_users()]
 
-    @rpc(String, String, String, String, Boolean)
-    @authenticated_admin
-    def add_user(self, name, fullname, password, email, admin):
-
-        self.app.pm.db.add_user(name, fullname, password, email, admin)
-
     @rpc(_returns=Array(SoapProject))
     @authenticated_admin
     def list_projects(self):

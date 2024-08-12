@@ -154,11 +154,6 @@ a ./debian folder with a valid debianization.
 *list_users*
    List configured users. Only admins may use this command.
 
-*add_user* <name> <fullname> <password> <email>
-   Create a user inside the initvm. The user is not an Admin user. When
-   the user already exists, nothing is done. Only admins may use this
-   command.
-
 *wait_busy* <build-dir>
    Wait, while <build-dir> is busy.
 

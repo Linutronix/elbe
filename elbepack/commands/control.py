@@ -44,24 +44,6 @@ def _list_users(client, args):
         print(u)
 
 
-@add_argument('name')
-@add_argument('fullname')
-@add_argument('password')
-@add_argument('email')
-def _add_user(client, args):
-    try:
-        client.service.add_user(args.name, args.fullname, args.password, args.email, False)
-    except WebFault as e:
-        if not hasattr(e.fault, 'faultstring'):
-            raise
-
-        if not e.fault.faultstring.endswith('already exists in the database'):
-            raise
-
-        # when we get here, the user we wanted to create already exists.
-        # that is fine, and we dont need to do anything now.
-
-
 def _create_project(client, args):
     uuid = client.service.new_project()
     print(uuid)
@@ -211,7 +193,6 @@ _client_actions = {
     'rm_log':               _remove_log,
     'list_projects':        _list_projects,
     'list_users':           _list_users,
-    'add_user':             _add_user,
     'create_project':       _create_project,
     'reset_project':        _reset_project,
     'del_project':          _delete_project,

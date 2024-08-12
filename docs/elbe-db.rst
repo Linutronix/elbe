@@ -20,7 +20,6 @@ SYNOPSIS
       elbe db [options] set_xml <project_dir> <xml_file>
       elbe db [options] del_project <project_dir>
       elbe db [options] init
-      elbe db [options] add_user <username>
       elbe db [options] build <project_dir>
 
 DESCRIPTION
@@ -33,25 +32,6 @@ OPTIONS
 
 -h, --help
    Displays help.
-
---name
-   Sets the name of the new user.
-
---fullname
-   Sets the full name of the new user.
-
---password
-   Sets the password of the new user.
-
---email
-   Sets the email address of the new user.
-
---noadmin
-   TODO!! MACHT MEINER MEINUNG NACH DAS GLEICHE WIE ADMIN.
-
---admin
-   Gives the new user admin privileges. (Boolean variable,
-   default=False).
 
 --user
    User name of the project owner.
@@ -66,9 +46,6 @@ COMMANDS
    Creates a new ELBE database and adds one new user. Options:
    name[=root], fullname[=Admin], password[=foo],
    email[=\ root@localhost], noadmin[=True].
-
-*add_user* <username>
-   Adds a new user. Options: fullname, password, email, admin=[False].
 
 *list_projects*
    Lists all projects stored in the database.
