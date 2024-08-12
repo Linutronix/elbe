@@ -566,30 +566,6 @@ class ElbeDB:
                 raise ElbeDBError(f'user {name} already exists in the database')
             s.add(u)
 
-    def modify_user(self, userid, name, fullname, email, admin,
-                    password=None):
-
-        with session_scope(self.session) as s:
-            try:
-                u = s.query(User).filter(User.id == userid).one()
-            except NoResultFound:
-                raise ElbeDBError(f'no user with id {userid}')
-
-            # If a user name change is requested, check for uniqueness
-            if name != u.name:
-                if s.query(User).filter(User.name == name).count() > 0:
-                    raise ElbeDBError(
-                        f'user {name} already exists in the database')
-
-            u.name = name
-            u.fullname = fullname
-            u.email = email
-            u.admin = admin
-
-            # Update password only if given
-            if password is not None:
-                u.pwhash = pbkdf2_sha512.hash(password)
-
     def validate_login(self, name, password):
         with session_scope(self.session) as s:
             # Find the user with the given name
