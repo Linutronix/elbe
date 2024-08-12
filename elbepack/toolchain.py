@@ -13,7 +13,7 @@ arch2triple = {'armhf': 'arm-linux-gnueabihf', 'armel': 'arm-linux-gnueabi'}
 class Toolchain:
     libc_path = '${triple}/libc'
     gcc_libpath = '${triple}/lib'
-    pkg_libs = {}
+    pkg_libs: dict[str, list[str]] = {}
 
     def __init__(self, path, arch, triple=None):
         self.path = path
