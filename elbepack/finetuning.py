@@ -35,11 +35,10 @@ class FinetuningAction:
     tag = None
 
     @classmethod
-    def register(cls, tag, register=True):
+    def register(cls, tag):
         def _register(action):
             action.tag = tag
-            if register is True:
-                cls.actiondict[tag] = action
+            cls.actiondict[tag] = action
             return action
         return _register
 
@@ -59,7 +58,6 @@ class FinetuningAction:
         self.execute(buildenv, target)
 
 
-@FinetuningAction.register('image_finetuning', False)
 class ImageFinetuningAction(FinetuningAction):
 
     def execute(self, _buildenv, _target):
