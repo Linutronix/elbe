@@ -34,7 +34,7 @@ class LoggingQueue(collections.deque):
 
 class QHandler(logging.Handler):
 
-    queues = {}
+    queues: dict[str, LoggingQueue] = {}
 
     def __init__(self, target, *args, **kwargs):
         super(QHandler, self).__init__(*args, **kwargs)
