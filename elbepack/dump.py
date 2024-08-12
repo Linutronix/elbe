@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import collections
-import logging
 import pathlib
 from datetime import datetime
 from fnmatch import fnmatchcase
@@ -13,11 +12,9 @@ from apt import Cache
 from elbepack.aptpkgutils import APTPackage, XMLPackage
 from elbepack.archivedir import archive_tmpfile
 from elbepack.finetuning import do_finetuning
+from elbepack.log import report, validation
 from elbepack.shellhelper import do
 from elbepack.version import elbe_version
-
-report = logging.getLogger('report')
-validation = logging.getLogger('validation')
 
 
 def get_initvm_pkglist():

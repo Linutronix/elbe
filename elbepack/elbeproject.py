@@ -25,6 +25,7 @@ from elbepack.efilesystem import TargetFs, extract_target
 from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError, ValidationMode
 from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
+from elbepack.log import validation
 from elbepack.pbuilder import (
     pbuilder_write_apt_conf,
     pbuilder_write_config,
@@ -36,8 +37,6 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import write_pack_template
-
-validation = logging.getLogger('validation')
 
 
 _xz_env = {

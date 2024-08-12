@@ -18,6 +18,8 @@ context_fmt = logging.Formatter('%(context)s%(message)s')
 msgonly_fmt = logging.Formatter('%(message)s')
 log = logging.getLogger('log')
 soap = logging.getLogger('soap')
+report = logging.getLogger('report')
+validation = logging.getLogger('validation')
 
 
 class LoggingQueue(collections.deque):
