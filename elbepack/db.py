@@ -498,31 +498,6 @@ class ElbeDB:
             copyfile(versionxmlpath, sourcexmlpath)
             v.project.version = version
 
-    def del_version(self, builddir, version, force=False):
-        with session_scope(self.session) as s:
-            try:
-                v = s.query(ProjectVersion).\
-                    filter(ProjectVersion.builddir == builddir).\
-                    filter(ProjectVersion.version == version).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'no such project version: {builddir} (version {version})')
-
-            if not force:
-                if v.project.status == 'busy':
-                    raise ElbeDBError(
-                        f'cannot delete version of project in {builddir} while '
-                        'it is busy')
-
-            xmlname = get_versioned_filename(v.project.name, version,
-                                             '.version.xml')
-            xmlpath = os.path.join(builddir, xmlname)
-            os.remove(xmlpath)
-            s.delete(v)
-
-            s.query(ProjectFile).filter(ProjectFile.builddir == builddir).\
-                filter(ProjectFile.name == xmlname).delete()
-
     def get_version_xml(self, builddir, version):
         with session_scope(self.session) as s:
             try:

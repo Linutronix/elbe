@@ -24,7 +24,6 @@ SYNOPSIS
       elbe db [options] del_user <userid>
       elbe db [options] add_user <username>
       elbe db [options] list_versions <project_dir>
-      elbe db [options] del_versions <project_dir> <version>
       elbe db [options] build <project_dir>
 
 DESCRIPTION
@@ -121,9 +120,6 @@ COMMANDS
 *save_version* <project_dir>
    Saves current state of project <project_dir> as version. Options:
    description.
-
-*del_versions* <project_dir> <version>
-   Deletes the version <version> of project <project_dir>.
 
 ELBE
 ====

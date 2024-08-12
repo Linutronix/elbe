@@ -153,13 +153,6 @@ def _save_version(args):
     db.save_version(args.project_dir, args.description)
 
 
-@add_argument('project_dir')
-@add_argument('version')
-def _del_version(args):
-    db = ElbeDB()
-    db.del_version(args.project_dir, args.version)
-
-
 _actions = {
     'init':                _init,
     'add_user':            _add_user,
@@ -174,7 +167,6 @@ _actions = {
     'reset_project':       _reset_project,
     'list_versions':       _list_versions,
     'save_version':        _save_version,
-    'del_versions':        _del_version,
 }
 
 
