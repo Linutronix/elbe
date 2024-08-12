@@ -430,17 +430,6 @@ class ElbeDB:
 
             return int(p.owner_id)
 
-    def list_project_versions(self, builddir):
-        with session_scope(self.session) as s:
-            try:
-                p = s.query(Project).filter(Project.builddir == builddir).\
-                    one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            return [ProjectVersionData(v) for v in p.versions]
-
     def checkout_version_xml(self, builddir, version):
         with session_scope(self.session) as s:
             try:
@@ -811,25 +800,6 @@ class ProjectVersion (Base):
     version = Column(String, primary_key=True)
     description = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
-
-
-class ProjectVersionData:
-    def __init__(self, pv):
-        self.builddir = str(pv.builddir)
-        self.version = str(pv.version)
-        if pv.description:
-            self.description = str(pv.description)
-        else:
-            self.description = None
-        self.timestamp = datetime(
-            pv.timestamp.year,
-            pv.timestamp.month,
-            pv.timestamp.day,
-            pv.timestamp.hour,
-            pv.timestamp.minute,
-            pv.timestamp.second,
-            pv.timestamp.microsecond,
-            pv.timestamp.tzinfo)
 
 
 class ProjectFile (Base):
