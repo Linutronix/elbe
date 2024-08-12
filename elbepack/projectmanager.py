@@ -206,10 +206,6 @@ class ProjectManager:
             raise InvalidState(f'project {ep.builddir} is busy')
 
     def _check_project_permission(self, userid, builddir):
-        if self.db.is_admin(userid):
-            # Admin may access all projects
-            return
-
         if self.db.get_owner_id(builddir) != userid:
             # Project of another user, deny access
             raise PermissionDenied(builddir)
