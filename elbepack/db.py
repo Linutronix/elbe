@@ -591,15 +591,6 @@ class ElbeDB:
 
             return str(u.name)
 
-    def get_user_data(self, userid):
-        with session_scope(self.session) as s:
-            try:
-                u = s.query(User).filter(User.id == userid).one()
-            except NoResultFound:
-                raise ElbeDBError(f'no user with id {userid}')
-
-            return UserData(u)
-
     def get_user_id(self, name):
         with session_scope(self.session) as s:
             try:
@@ -639,15 +630,6 @@ class User(Base):
     email = Column(String)
     admin = Column(Boolean)
     projects = relationship('Project', backref='owner')
-
-
-class UserData:
-    def __init__(self, user):
-        self.id = int(user.id)
-        self.name = str(user.name)
-        self.fullname = str(user.fullname)
-        self.email = str(user.email)
-        self.admin = bool(user.admin)
 
 
 class Project (Base):
