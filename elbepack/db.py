@@ -441,43 +441,6 @@ class ElbeDB:
 
             return [ProjectVersionData(v) for v in p.versions]
 
-    def save_version(self, builddir, description=None):
-        with session_scope(self.session) as s:
-            try:
-                p = s.query(Project).filter(Project.builddir == builddir).\
-                    one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            assert p.status == 'busy'
-
-            sourcexmlpath = os.path.join(builddir, 'source.xml')
-            sourcexml = ElbeXML(sourcexmlpath,
-                                url_validation=ValidationMode.NO_CHECK)
-
-            version = sourcexml.text('project/version')
-            if s.query(ProjectVersion).\
-                    filter(ProjectVersion.builddir == builddir).\
-                    filter(ProjectVersion.version == version).count() > 0:
-                raise ElbeDBError(
-                    f'Version {version} already exists for project in '
-                    f'{builddir}, please change version number first')
-
-            versionxmlname = get_versioned_filename(p.name, version,
-                                                    '.version.xml')
-            versionxmlpath = os.path.join(builddir, versionxmlname)
-            copyfile(sourcexmlpath, versionxmlpath)
-
-            v = ProjectVersion(builddir=builddir,
-                               version=version,
-                               description=description)
-            s.add(v)
-
-            _update_project_file(s, builddir, versionxmlname,
-                                 'application/xml',
-                                 f'source.xml for version {version}')
-
     def checkout_version_xml(self, builddir, version):
         with session_scope(self.session) as s:
             try:

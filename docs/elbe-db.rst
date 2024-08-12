@@ -17,7 +17,6 @@ SYNOPSIS
       elbe db [options] get_files <project_dir>
       elbe db [options] reset_project <project_dir>
       elbe db [options] list_users
-      elbe db [options] save_version <project_dir>
       elbe db [options] set_xml <project_dir> <xml_file>
       elbe db [options] del_project <project_dir>
       elbe db [options] init
@@ -68,10 +67,6 @@ OPTIONS
 --clean
    Deletes the target and chroot directory in <project-dir>.
 
---description
-   Description of the project version which shall be stored in the
-   database.
-
 COMMANDS
 ========
 
@@ -116,10 +111,6 @@ COMMANDS
 
 *list_versions* <project_dir>
    Lists all versions of project <project_dir>.
-
-*save_version* <project_dir>
-   Saves current state of project <project_dir> as version. Options:
-   description.
 
 ELBE
 ====
