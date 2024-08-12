@@ -20,7 +20,6 @@ SYNOPSIS
       elbe db [options] set_xml <project_dir> <xml_file>
       elbe db [options] del_project <project_dir>
       elbe db [options] init
-      elbe db [options] del_user <userid>
       elbe db [options] add_user <username>
       elbe db [options] build <project_dir>
 
@@ -54,12 +53,6 @@ OPTIONS
    Gives the new user admin privileges. (Boolean variable,
    default=False).
 
---delete-projects
-   Delete all projects owned by the user.
-
---quiet
-   TODO
-
 --user
    User name of the project owner.
 
@@ -76,10 +69,6 @@ COMMANDS
 
 *add_user* <username>
    Adds a new user. Options: fullname, password, email, admin=[False].
-
-*del_user* <userid>
-   Deletes user <userid>. Options: delete-projects[=False],
-   quiet=[False].
 
 *list_projects*
    Lists all projects stored in the database.

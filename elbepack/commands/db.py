@@ -6,7 +6,7 @@ import argparse
 from getpass import getpass
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
-from elbepack.db import ElbeDB, ElbeDBError
+from elbepack.db import ElbeDB
 
 
 @add_argument('--name', default='root')
@@ -32,33 +32,6 @@ def _add_user(args):
 
     db = ElbeDB()
     db.add_user(args.username, args.fullname, password, args.email, args.admin)
-
-
-@add_argument('--delete-projects', dest='delete_projects',
-              default=False, action='store_true')
-@add_argument('--quiet', dest='quiet',
-              default=False, action='store_true')
-@add_argument('userid', type=int)
-def _del_user(args):
-    db = ElbeDB()
-
-    projects = db.del_user(args.userid)
-
-    if projects:
-        if not args.opt.quiet:
-            if args.opt.delete_projects:
-                print('removing projects owned by the deleted user:')
-            else:
-                print('keeping projects owned by the deleted user:')
-
-    for p in projects:
-        if not args.opt.quiet:
-            print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
-        if args.opt.delete_projects:
-            try:
-                db.del_project(p.builddir)
-            except ElbeDBError as e:
-                print(f'  ==> {e} ')
 
 
 def _list_projects(args):
@@ -137,7 +110,6 @@ def _reset_project(args):
 _actions = {
     'init':                _init,
     'add_user':            _add_user,
-    'del_user':            _del_user,
     'list_projects':       _list_projects,
     'list_users':          _list_users,
     'create_project':      _create_project,
