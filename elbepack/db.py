@@ -251,9 +251,6 @@ class ElbeDB:
                 t = Thread(target=rmtree, args=[builddir])
                 t.start()
 
-            s.query(ProjectVersion).\
-                filter(ProjectVersion.builddir == builddir).delete()
-
             s.query(ProjectFile).\
                 filter(ProjectFile.builddir == builddir).delete()
 
@@ -725,7 +722,6 @@ class Project (Base):
     status = Column(String)
     edit = Column(DateTime, default=datetime.utcnow)
     owner_id = Column(Integer, ForeignKey('users.id'))
-    versions = relationship('ProjectVersion', backref='project')
     files = relationship('ProjectFile', backref='project')
 
 
@@ -740,16 +736,6 @@ class ProjectData:
                              project.edit.day, project.edit.hour,
                              project.edit.minute, project.edit.second,
                              project.edit.microsecond, project.edit.tzinfo)
-
-
-class ProjectVersion (Base):
-    __tablename__ = 'projectversions'
-
-    builddir = Column(String, ForeignKey('projects.builddir'),
-                      primary_key=True)
-    version = Column(String, primary_key=True)
-    description = Column(String)
-    timestamp = Column(DateTime, default=datetime.utcnow)
 
 
 class ProjectFile (Base):
