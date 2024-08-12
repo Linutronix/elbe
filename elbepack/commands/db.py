@@ -137,13 +137,6 @@ def _reset_project(args):
 
 
 @add_argument('project_dir')
-@add_argument('version')
-def _set_project_version(args):
-    db = ElbeDB()
-    db.set_project_version(args.project_dir, args.version)
-
-
-@add_argument('project_dir')
 def _list_versions(args):
     db = ElbeDB()
     versions = db.list_project_versions(args.project_dir)
@@ -190,7 +183,6 @@ _actions = {
     'build':               _build,
     'get_files':           _get_files,
     'reset_project':       _reset_project,
-    'set_project_version': _set_project_version,
     'list_versions':       _list_versions,
     'save_version':        _save_version,
     'del_versions':        _del_version,

@@ -23,7 +23,6 @@ SYNOPSIS
       elbe db [options] print_version_xml <project_dir> <version>
       elbe db [options] init
       elbe db [options] del_user <userid>
-      elbe db [options] set_project_version <project_dir> <version>
       elbe db [options] add_user <username>
       elbe db [options] list_versions <project_dir>
       elbe db [options] del_versions <project_dir> <version>
@@ -116,9 +115,6 @@ COMMANDS
    Resets the project state in the database. Can be useful if a build
    has been aborted and the project is set ``busy`` in in the database
    obstructing future actions on this project. Options: clean[=False].
-
-*set_project_version* <project_dir> <version>
-   Sets the project version of project <project_dir> to <version>.
 
 *list_versions* <project_dir>
    Lists all versions of project <project_dir>.

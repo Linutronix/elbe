@@ -6,7 +6,6 @@
 import errno
 import glob
 import os
-import re
 import warnings
 from contextlib import contextmanager
 from datetime import datetime
@@ -430,38 +429,6 @@ class ElbeDB:
                 return None
 
             return int(p.owner_id)
-
-    def set_project_version(self, builddir, new_version=None):
-        if new_version == '':
-            raise ElbeDBError('version number must not be empty')
-
-        if not re.match('^[A-Za-z0-9_.-]{1,25}$', new_version):
-            raise ElbeDBError(
-                'version number must contain valid characters [A-Za-z0-9_-.]')
-
-        with session_scope(self.session) as s:
-            try:
-                p = s.query(Project).filter(Project.builddir == builddir).\
-                    one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            if p.status == 'empty_project' or p.status == 'busy':
-                raise ElbeDBError(
-                    'project: ' +
-                    builddir +
-                    ' set_project_version: invalid status: ' +
-                    p.status)
-
-            xmlpath = os.path.join(builddir, 'source.xml')
-            xml = ElbeXML(xmlpath, url_validation=ValidationMode.NO_CHECK)
-
-            if new_version is not None:
-                xml.node('/project/version').set_text(new_version)
-                xml.xml.write(xmlpath)
-
-            p.version = xml.text('/project/version')
 
     def list_project_versions(self, builddir):
         with session_scope(self.session) as s:
