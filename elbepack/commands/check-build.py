@@ -26,18 +26,29 @@ from elbepack.version import is_devel
 import elbevalidate
 
 
+_checks = {}
+
+
+def _register_check(tag):
+    def _register(test):
+        _checks[tag] = test
+        return test
+
+    return _register
+
+
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe check-build')
-    aparser.add_argument('cmd', choices=['all', *CheckBase.tests],
+    aparser.add_argument('cmd', choices=['all', *_checks.keys()],
                          help='Check to run')
     aparser.add_argument('build_dir', help='Build directory')
 
     args = aparser.parse_args(argv)
 
     if args.cmd == 'all':
-        tests = [CheckBase.tests[tag] for tag in CheckBase.tests]
-    elif args.cmd in CheckBase.tests:
-        tests = [CheckBase.tests[args.cmd]]
+        tests = _checks.values()
+    elif args.cmd in _checks:
+        tests = [_checks[args.cmd]]
     else:
         raise ValueError(args.cmd)
 
@@ -71,8 +82,6 @@ class CheckException(Exception):
 
 class CheckBase:
 
-    tests = dict()
-
     def __init__(self, directory):
         self.directory = directory
         self.ret = 0
@@ -88,13 +97,6 @@ class CheckBase:
             self.ret = 1
         return self.ret
 
-    @classmethod
-    def register(cls, tag):
-        def _register(test):
-            cls.tests[tag] = test
-            return test
-        return _register
-
     def run(self):
         raise Exception('Check run method not implemented')
         return 0
@@ -103,14 +105,14 @@ class CheckBase:
         raise CheckException(reason)
 
 
-@CheckBase.register('schema')
+@_register_check('schema')
 class CheckSchema(CheckBase):
 
     def run(self):
         run_elbe_subcommand(['validate', self.directory / 'source.xml'])
 
 
-@CheckBase.register('cdrom')
+@_register_check('cdrom')
 class CheckCdroms(CheckBase):
 
     """Check for cdroms integrity"""
@@ -384,7 +386,7 @@ class CheckCdroms(CheckBase):
         return self.ret
 
 
-@CheckBase.register('img')
+@_register_check('img')
 class CheckImage(CheckBase):
 
     """Check if image can boot"""
@@ -597,7 +599,7 @@ def _append_to_path_variable(var, value, env):
         env[var] = value
 
 
-@CheckBase.register('sdk')
+@_register_check('sdk')
 class CheckSDK(CheckBase):
     """Check if SDK is working"""
 
@@ -676,7 +678,7 @@ exit 1
             self.do_sdk(sdk)
 
 
-@CheckBase.register('rebuild')
+@_register_check('rebuild')
 class CheckRebuild(CheckBase):
 
     def run(self):
