@@ -15,6 +15,7 @@ filterwarnings = 'error'
 
 [tool.mypy]
 packages = [
+  'elbepack',
   'elbevalidate',
 ]
 ignore_missing_imports = true
