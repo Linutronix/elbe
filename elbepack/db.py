@@ -11,7 +11,6 @@ from contextlib import contextmanager
 from datetime import datetime
 from shutil import copyfile, rmtree
 from threading import Thread
-from urllib.parse import quote
 
 with warnings.catch_warnings():
     # passlib has code to handle absence of the crypt module and will work just
@@ -73,10 +72,6 @@ def session_scope(session):
         raise
     finally:
         session.remove()
-
-
-def get_versioned_filename(name, version, suffix):
-    return quote(name, ' ') + '_' + quote(version, ' ') + suffix
 
 
 def _update_project_file(s, builddir, name, mime_type, description):
@@ -430,20 +425,6 @@ class ElbeDB:
 
             return int(p.owner_id)
 
-    def get_version_xml(self, builddir, version):
-        with session_scope(self.session) as s:
-            try:
-                v = s.query(ProjectVersion).\
-                    filter(ProjectVersion.builddir == builddir).\
-                    filter(ProjectVersion.version == version).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'no such project version: {builddir} (version {version})')
-
-            xmlname = get_versioned_filename(v.project.name, version,
-                                             '.version.xml')
-            return os.path.join(builddir, xmlname)
-
     def get_project_files(self, builddir):
         # Can throw: ElbeDBError
         with session_scope(self.session) as s:
@@ -486,17 +467,6 @@ class ElbeDB:
                     f'no file {name} in project {builddir} registered')
 
             return ProjectFileData(f)
-
-    def add_project_file(self, builddir, name, mime_type, description=None):
-        with session_scope(self.session) as s:
-            try:
-                s.query(Project).filter(Project.builddir == builddir).one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            _update_project_file(s, builddir, name, mime_type,
-                                 description)
 
     def update_project_files(self, ep):
         with session_scope(self.session) as s:

@@ -251,10 +251,6 @@ class RPCAPTCache(InChRootObject):
 
         return index
 
-    def get_changes(self):
-        changes = self.cache.get_changes()
-        return [APTPackage(p) for p in changes]
-
     def has_pkg(self, pkgname):
         return pkgname in self.cache
 

@@ -4,15 +4,13 @@
 
 import logging
 from contextlib import contextmanager
-from os import chdir, getcwd, path
+from os import chdir, getcwd
 from queue import Queue
 from threading import Thread
-from urllib.parse import quote
 
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
 from elbepack.rfs import DebootstrapException
-from elbepack.updatepkg import gen_update_pkg
 
 
 class AsyncWorkerJob:
@@ -279,53 +277,6 @@ class UpdatePbuilderJob(AsyncWorkerJob):
                 success = self.build_done
         finally:
             db.reset_busy(self.project.builddir, success)
-
-
-class GenUpdateJob(AsyncWorkerJob):
-    def __init__(self, project, base_version):
-        AsyncWorkerJob.__init__(self, project)
-        self.name = project.xml.text('/project/name')
-        self.base_version = base_version
-        self.current_version = project.xml.text('/project/version')
-        self.old_status = None
-        self.base_version_xml = None
-
-    def enqueue(self, queue, db):
-        self.old_status = db.set_busy(self.project.builddir,
-                                      ['build_done', 'has_changes'])
-        self.base_version_xml = db.get_version_xml(self.project.builddir,
-                                                   self.base_version)
-
-        logging.info('Enqueueing project for generating update package')
-        AsyncWorkerJob.enqueue(self, queue, db)
-
-    def execute(self, db):
-        upd_filename = self._gen_upd_filename()
-        upd_pathname = path.join(self.project.builddir, upd_filename)
-
-        logging.info('Generating update package')
-
-        try:
-            gen_update_pkg(self.project, self.base_version_xml, upd_pathname)
-            logging.info('Update package generated successfully')
-        except Exception:
-            logging.exception('Generating update package failed')
-        finally:
-            # Update generation does not change the project, so we always
-            # keep the old status
-            db.add_project_file(
-                self.project.builddir, upd_filename,
-                'application/octet-stream',
-                f'Update package from {self.base_version} to '
-                f'{self.current_version}')
-            db.reset_busy(self.project.builddir, self.old_status)
-
-    def _gen_upd_filename(self):
-        filename = quote(self.name, ' ') + '_'
-        filename += quote(self.base_version) + '_'
-        filename += quote(self.current_version) + '.upd'
-
-        return filename
 
 
 @contextmanager

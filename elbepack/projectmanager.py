@@ -14,7 +14,6 @@ from elbepack.asyncworker import (
     BuildSDKJob,
     BuildSysrootJob,
     CreatePbuilderJob,
-    GenUpdateJob,
     PdebuildJob,
     UpdatePbuilderJob,
 )
@@ -243,17 +242,6 @@ class ProjectManager:
             ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
-    def build_update_package(self, userid, base_version):
-        with self.lock:
-            c = self._get_current_project_apt_cache(userid)
-            if c.get_changes():
-                raise InvalidState(
-                    'project %s has uncommited package changes, '
-                    'please commit them first')
-
-            ep = self._get_current_project(userid)
-            self.worker.enqueue(GenUpdateJob(ep, base_version))
-
     def rm_log(self, userid):
         ep = self._get_current_project(userid)
         with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
@@ -320,14 +308,3 @@ class ProjectManager:
             raise PermissionDenied(builddir)
 
         # User is owner, so allow it
-
-    def _get_current_project_apt_cache(self, userid):
-        # Must be called with self.lock held
-        ep = self._get_current_project(userid, allow_busy=False)
-
-        if not ep.has_full_buildenv():
-            raise InvalidState(
-                f'project in directory {ep.builddir} does not have a '
-                'functional build environment')
-
-        return ep.get_rpcaptcache()
