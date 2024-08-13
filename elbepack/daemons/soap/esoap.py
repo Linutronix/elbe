@@ -174,8 +174,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def build_sysroot(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_sysroot(uid)
+        self.app.pm.build_sysroot(uid, builddir)
 
     @rpc(String)
     @authenticated_uid

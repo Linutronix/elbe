@@ -235,9 +235,9 @@ class ProjectManager:
         with self.lock:
             self.worker.enqueue(BuildChrootTarJob(ep))
 
-    def build_sysroot(self, userid):
+    def build_sysroot(self, userid, builddir):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildSysrootJob(ep))
 
     def build_sdk(self, userid):
