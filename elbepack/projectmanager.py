@@ -273,11 +273,12 @@ class ProjectManager:
 
         ep.repo.finalize()
 
-    def current_project_is_busy(self, userid):
+    def project_is_busy(self, userid, builddir):
+        self._check_project_permission(userid, builddir)
+
         with self.lock:
-            ep = self._get_current_project(userid)
-            msg = read_loggingQ(ep.builddir)
-            return self.db.is_busy(ep.builddir), msg
+            msg = read_loggingQ(builddir)
+            return self.db.is_busy(builddir), msg
 
     def _get_current_project(self, userid, allow_busy=True):
         # Must be called with self.lock held

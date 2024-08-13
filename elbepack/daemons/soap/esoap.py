@@ -313,8 +313,7 @@ class ESoap (ServiceBase):
     @rpc(String, _returns=String)
     @authenticated_uid
     def get_project_busy(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        ret, msg = self.app.pm.current_project_is_busy(uid)
+        ret, msg = self.app.pm.project_is_busy(uid, builddir)
         if not msg and not ret:
             return 'ELBE-FINISH'
         return msg
