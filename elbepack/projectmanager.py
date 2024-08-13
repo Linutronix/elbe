@@ -100,7 +100,8 @@ class ProjectManager:
             self,
             userid,
             builddir,
-            url_validation=ValidationMode.CHECK_ALL):
+            url_validation=ValidationMode.CHECK_ALL,
+            allow_busy=True):
         self._check_project_permission(userid, builddir)
 
         with self.lock:
@@ -108,7 +109,10 @@ class ProjectManager:
                 if self.builddir2userid[builddir] == userid:
                     # Same project selected again by the same user, don't do
                     # anything
-                    return self.userid2project[userid]
+                    ep = self.userid2project[userid]
+                    if not allow_busy:
+                        self._assert_not_busy(ep)
+                    return ep
 
                 # Already opened by a different user
                 raise AlreadyOpen(builddir,
@@ -125,6 +129,8 @@ class ProjectManager:
             self.userid2project[userid] = ep
             self.builddir2userid[builddir] = userid
 
+            if not allow_busy:
+                self._assert_not_busy(ep)
             return ep
 
     def close_current_project(self, userid):
