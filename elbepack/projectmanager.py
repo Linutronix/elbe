@@ -108,7 +108,7 @@ class ProjectManager:
                 if self.builddir2userid[builddir] == userid:
                     # Same project selected again by the same user, don't do
                     # anything
-                    return
+                    return self.userid2project[userid]
 
                 # Already opened by a different user
                 raise AlreadyOpen(builddir,
@@ -124,6 +124,8 @@ class ProjectManager:
             # Add project to our dictionaries
             self.userid2project[userid] = ep
             self.builddir2userid[builddir] = userid
+
+            return ep
 
     def close_current_project(self, userid):
         with self.lock:
