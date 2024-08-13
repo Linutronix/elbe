@@ -176,7 +176,7 @@ class ElbeDB:
     # TODO what about source.xml ? stored always in db ? version management ?
     #       build/needs_build state ? locking ?
 
-    def create_project(self, builddir, owner_id=None):
+    def create_project(self, builddir):
         # Throws: ElbeDBError, OSError
         directory_created = False
 
@@ -196,8 +196,7 @@ class ElbeDB:
                             f'project directory {builddir} already exists')
                     raise
 
-                p = Project(builddir=builddir, status='empty_project',
-                            owner_id=owner_id)
+                p = Project(builddir=builddir, status='empty_project')
                 s.add(p)
         except BaseException:
             # If we have created a project directory but could not add the
@@ -551,15 +550,6 @@ class ElbeDB:
             # Everything good, now return the user id to the caller
             return int(u.id)
 
-    def get_user_id(self, name):
-        with session_scope(self.session) as s:
-            try:
-                u = s.query(User).filter(User.name == name).one()
-            except NoResultFound:
-                raise ElbeDBError(f'no user with name {name}')
-
-            return int(u.id)
-
     @classmethod
     def init_db(cls, name, fullname, password, email):
 
@@ -600,7 +590,6 @@ class Project (Base):  # type: ignore
     xml = Column(String)
     status = Column(String)
     edit = Column(DateTime, default=datetime.utcnow)
-    owner_id = Column(Integer, ForeignKey('users.id'))
     files = relationship('ProjectFile', backref='project')
 
 

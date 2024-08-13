@@ -43,7 +43,7 @@ class ProjectManager:
     def new_project(self, userid):
         subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
-        self.db.create_project(builddir, owner_id=userid)
+        self.db.create_project(builddir)
         return builddir
 
     def create_project(
@@ -54,7 +54,7 @@ class ProjectManager:
         subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
 
-        self.db.create_project(builddir, owner_id=userid)
+        self.db.create_project(builddir)
 
         try:
             self.db.set_xml(builddir, xml_file)

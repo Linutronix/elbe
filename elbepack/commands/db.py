@@ -24,13 +24,10 @@ def _list_projects(args):
         print(f'{p.builddir}: {p.name} [{p.version}] {p.edit}')
 
 
-@add_argument('--user', dest='user',
-              help='user name of the designated project owner')
 @add_argument('project_dir')
 def _create_project(args):
     db = ElbeDB()
-    owner_id = db.get_user_id(args.user)
-    db.create_project(args.project_dir, owner_id)
+    db.create_project(args.project_dir)
 
 
 @add_argument('project_dir')

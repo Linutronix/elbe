@@ -32,9 +32,6 @@ OPTIONS
 -h, --help
    Displays help.
 
---user
-   User name of the project owner.
-
 --clean
    Deletes the target and chroot directory in <project-dir>.
 
