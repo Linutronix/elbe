@@ -417,17 +417,6 @@ class ElbeDB:
 
             p.status = new_status
 
-    def has_changes(self, builddir):
-        with session_scope(self.session) as s:
-            try:
-                p = s.query(Project).filter(Project.builddir == builddir). \
-                    one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            return p.status == 'has_changes'
-
     def get_owner_id(self, builddir):
         with session_scope(self.session) as s:
             try:

@@ -277,11 +277,6 @@ class ProjectManager:
 
         ep.repo.finalize()
 
-    def current_project_has_changes(self, userid):
-        with self.lock:
-            builddir = self._get_current_project(userid).builddir
-            return self.db.has_changes(builddir)
-
     def current_project_is_busy(self, userid):
         with self.lock:
             ep = self._get_current_project(userid)
