@@ -261,9 +261,11 @@ class LibvirtInitVM(_InitVM):
         if state == self._libvirt.VIR_DOMAIN_SHUTOFF:
             self.start()
         elif state == self._libvirt.VIR_DOMAIN_RUNNING:
-            _test_soap_communication(self._soapport)
+            pass
         else:
             raise CliError(124, 'Elbe initvm in bad state.')
+
+        _test_soap_communication(self._soapport)
 
     def stop(self):
         domain = self._get_domain()
