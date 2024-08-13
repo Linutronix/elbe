@@ -384,20 +384,6 @@ class ElbeDB:
 
             p.status = new_status
 
-    def get_owner_id(self, builddir):
-        with session_scope(self.session) as s:
-            try:
-                p = s.query(Project).filter(Project.builddir == builddir).\
-                    one()
-            except NoResultFound:
-                raise ElbeDBError(
-                    f'project {builddir} is not registered in the database')
-
-            if p.owner_id is None:
-                return None
-
-            return int(p.owner_id)
-
     def get_project_files(self, builddir):
         # Can throw: ElbeDBError
         with session_scope(self.session) as s:

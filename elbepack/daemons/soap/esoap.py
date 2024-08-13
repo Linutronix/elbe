@@ -100,13 +100,11 @@ class ESoap (ServiceBase):
     @rpc(String, _returns=SoapProject)
     @authenticated_uid
     def get_project(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
         return self.app.pm.db.get_project_data(builddir)
 
     @rpc(String, _returns=Array(SoapFile))
     @authenticated_uid
     def get_files(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
         files = self.app.pm.db.get_project_files(builddir)
         return files
 
@@ -130,8 +128,7 @@ class ESoap (ServiceBase):
                 fp.flush()
             self.app.pm.db.reset_busy(builddir, 'has_changes')
             if fname == 'source.xml':
-                self.app.pm.open_project(
-                    uid, builddir, url_validation=ValidationMode.NO_CHECK)
+                self.app.pm.open_project(builddir, url_validation=ValidationMode.NO_CHECK)
                 self.app.pm.set_project_xml(builddir, fn)
             return -2
 
@@ -179,9 +176,6 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def start_cdrom(self, uid, builddir):
-        self.app.pm.open_project(
-            uid, builddir, url_validation=ValidationMode.NO_CHECK)
-
         cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
         # Now write empty File
@@ -191,9 +185,6 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def append_cdrom(self, uid, builddir, data):
-        self.app.pm.open_project(
-            uid, builddir, url_validation=ValidationMode.NO_CHECK)
-
         cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
         # Now append data to cdrom_file
@@ -209,8 +200,6 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def start_pdebuild(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-
         pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
         # Now write empty File
@@ -220,8 +209,6 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def append_pdebuild(self, uid, builddir, data):
-        self.app.pm.open_project(uid, builddir)
-
         pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
         # Now write empty File
@@ -260,7 +247,6 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def reset_project(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
         self.app.pm.db.reset_project(builddir, True)
 
     @rpc(String)
@@ -300,7 +286,6 @@ class ESoap (ServiceBase):
     @rpc(String, _returns=String.customize(max_occurs='unbounded'))
     @authenticated_uid
     def list_packages(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
         r = []
         for _, _, filenames in os.walk(
                 os.path.join(builddir, 'repo/pool/main')):
@@ -311,7 +296,6 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def tar_prjrepo(self, uid, builddir, filename):
-        self.app.pm.open_project(uid, builddir)
         with tarfile.open(os.path.join(builddir, filename), 'w:gz') as tar:
             tar.add(
                 os.path.join(
