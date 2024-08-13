@@ -255,8 +255,8 @@ class ProjectManager:
         with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
             pass
 
-    def add_deb_package(self, userid, filename):
-        ep = self._get_current_project(userid)
+    def add_deb_package(self, userid, builddir, filename):
+        ep = self.open_project(userid, builddir)
 
         t = os.path.splitext(filename)[1]  # filetype of uploaded file
         pkg_name = filename.split('_')[0]

@@ -349,5 +349,4 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def include_package(self, uid, builddir, filename):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.add_deb_package(uid, filename)
+        self.app.pm.add_deb_package(uid, builddir, filename)
