@@ -140,9 +140,6 @@ def _dump_file(client, args):
     part = 0
     while True:
         ret = client.service.get_file(args.project_dir, args.file, part)
-        if ret == 'FileNotFound':
-            print(ret, file=sys.stderr)
-            sys.exit(187)
         if ret == 'EndOfFile':
             return
 

@@ -98,9 +98,6 @@ class ElbeSoapClient:
                     print('file transfer failed', file=sys.stderr)
                     sys.exit(170)
 
-            if ret == 'FileNotFound':
-                print(ret, file=sys.stderr)
-                sys.exit(171)
             if ret == 'EndOfFile':
                 fp.close()
                 return

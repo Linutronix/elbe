@@ -165,8 +165,6 @@ class ESoap (ServiceBase):
             return 'EndOfFile'
 
         with open(file_name, 'rb') as fp:
-            if not fp:
-                return 'FileNotFound'
             try:
                 fp.seek(pos)
                 data = fp.read(size)
