@@ -27,11 +27,6 @@ class ProjectManagerError(Exception):
     pass
 
 
-class AlreadyOpen(ProjectManagerError):
-    def __init__(self, builddir, username):
-        super().__init__(f'project in {builddir} is already opened by {username}')
-
-
 class PermissionDenied(ProjectManagerError):
     def __init__(self, builddir):
         super().__init__(f'permission denied for project in {builddir}')
@@ -47,9 +42,6 @@ class ProjectManager:
         self.basepath = basepath    # Base path for new projects
         self.db = ElbeDB()          # Database of projects and users
         self.worker = AsyncWorker(self.db)
-        # (userid, ElbeProject) map of open projects
-        self.userid2project = {}
-        self.builddir2userid = {}   # (builddir, userid) map of open projects
         self.lock = Lock()          # Lock protecting our data
 
     def stop(self):
@@ -70,9 +62,6 @@ class ProjectManager:
         builddir = path.join(self.basepath, subdir)
 
         with self.lock:
-            # Try to close old project, if any
-            self._close_current_project(userid)
-
             self.db.create_project(builddir, owner_id=userid)
 
             try:
@@ -81,13 +70,6 @@ class ProjectManager:
                 # Delete the project, if we cannot assign an XML file
                 self.db.del_project(builddir)
                 raise
-
-            # Open the new project
-            ep = self.db.load_project(builddir,
-                                      url_validation=url_validation)
-
-            self.userid2project[userid] = ep
-            self.builddir2userid[builddir] = userid
 
         return builddir
 
@@ -100,54 +82,16 @@ class ProjectManager:
         self._check_project_permission(userid, builddir)
 
         with self.lock:
-            if builddir in self.builddir2userid:
-                if self.builddir2userid[builddir] == userid:
-                    # Same project selected again by the same user, don't do
-                    # anything
-                    ep = self.userid2project[userid]
-                    if not allow_busy:
-                        self._assert_not_busy(ep)
-                    return ep
-
-                # Already opened by a different user
-                raise AlreadyOpen(builddir,
-                                  self.db.get_username(self.builddir2userid[builddir]))
-
-            # Try to close the old project of the user, if any
-            self._close_current_project(userid)
-
             # Load project from the database
             ep = self.db.load_project(builddir,
                                       url_validation=url_validation)
-
-            # Add project to our dictionaries
-            self.userid2project[userid] = ep
-            self.builddir2userid[builddir] = userid
 
             if not allow_busy:
                 self._assert_not_busy(ep)
             return ep
 
-    def close_current_project(self, userid):
-        with self.lock:
-            self._close_current_project(userid)
-
     def del_project(self, userid, builddir):
         self._check_project_permission(userid, builddir)
-
-        with self.lock:
-            # Does anyone have the project opened right now?
-            if builddir in self.builddir2userid:
-                if self.builddir2userid[builddir] == userid:
-                    # If the calling user has opened it, then close it and
-                    # proceed if closed sucessfully.
-                    self._close_current_project(userid)
-                else:
-                    # TODO: Admin should be allowed to delete projects
-                    # that are currently opened by other users
-                    raise AlreadyOpen(builddir,
-                                      self.db.get_username(
-                                          self.builddir2userid[builddir]))
 
         self.db.del_project(builddir)
 
@@ -278,20 +222,6 @@ class ProjectManager:
     def _assert_not_busy(self, ep):
         if self.db.is_busy(ep.builddir):
             raise InvalidState(f'project {ep.builddir} is busy')
-
-    def _close_current_project(self, userid):
-        # Must be called with self.lock held
-
-        if userid in self.userid2project:
-            builddir = self.userid2project[userid].builddir
-            if self.db.is_busy(builddir):
-                raise InvalidState(
-                    f'project in directory {builddir} of user '
-                    f'{self.db.get_username(userid)} is '
-                    'currently busy and cannot be closed')
-
-            del self.builddir2userid[builddir]
-            del self.userid2project[userid]
 
     def _check_project_permission(self, userid, builddir):
         if self.db.is_admin(userid):
