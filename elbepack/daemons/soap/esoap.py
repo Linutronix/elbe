@@ -238,9 +238,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def finish_cdrom(self, uid, builddir):
-        self.app.pm.open_project(
-            uid, builddir, url_validation=ValidationMode.NO_CHECK)
-        self.app.pm.set_current_project_upload_cdrom(uid)
+        self.app.pm.set_upload_cdrom(uid, builddir, ValidationMode.NO_CHECK)
 
     @rpc(String)
     @authenticated_uid

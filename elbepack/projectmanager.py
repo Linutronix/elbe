@@ -160,10 +160,9 @@ class ProjectManager:
         with self.lock:
             self.db.set_xml(builddir, xml_file)
 
-    def set_current_project_upload_cdrom(self, userid):
+    def set_upload_cdrom(self, userid, builddir, url_validation):
+        ep = self.open_project(userid, builddir, url_validation, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
             ep.xml.set_cdrom_mirror(
                 path.join(
                     ep.builddir,
