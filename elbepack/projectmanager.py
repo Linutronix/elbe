@@ -277,10 +277,13 @@ class ProjectManager:
         ep = self.userid2project[userid]
 
         if not allow_busy:
-            if self.db.is_busy(ep.builddir):
-                raise InvalidState(f'project {ep.builddir} is busy')
+            self._assert_not_busy(ep)
 
         return ep
+
+    def _assert_not_busy(self, ep):
+        if self.db.is_busy(ep.builddir):
+            raise InvalidState(f'project {ep.builddir} is busy')
 
     def _close_current_project(self, userid):
         # Must be called with self.lock held
