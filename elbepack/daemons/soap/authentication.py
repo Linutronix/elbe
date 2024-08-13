@@ -4,7 +4,24 @@
 
 from functools import wraps
 
-from .faults import SoapElbeNotAuthorized, SoapElbeNotLoggedIn
+from spyne.model.fault import Fault
+
+
+class SoapElbeNotLoggedIn(Fault):
+    def __init__(self):
+        Fault.__init__(
+            self,
+            faultcode='ElbeNotLoggedIn',
+            faultstring='Not authenticated ! '
+                        'Cant let you perform this command.')
+
+
+class SoapElbeNotAuthorized(Fault):
+    def __init__(self):
+        Fault.__init__(
+            self,
+            faultcode='ElbeNotAuthorized',
+            faultstring='Not Authorized ! Cant let you perform this command.')
 
 
 def authenticated_uid(func):

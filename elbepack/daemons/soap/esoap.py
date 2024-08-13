@@ -7,19 +7,49 @@ import binascii
 import fnmatch
 import os
 import tarfile
+import traceback
 from tempfile import NamedTemporaryFile
 
 from spyne.decorator import rpc
 from spyne.model.complex import Array
+from spyne.model.fault import Fault
 from spyne.model.primitive import Boolean, Integer, String
 from spyne.service import ServiceBase
 
-from elbepack.elbexml import ValidationMode
+from elbepack.db import ElbeDBError, InvalidLogin
+from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.projectmanager import InvalidState, ProjectManagerError
 from elbepack.version import elbe_version
 
-from .authentication import authenticated_admin, authenticated_uid
+from .authentication import SoapElbeNotAuthorized, authenticated_admin, authenticated_uid
 from .datatypes import SoapFile, SoapProject
-from .faults import soap_faults
+
+
+class SoapElbeDBError(Fault):
+    def __init__(self, dberr):
+        Fault.__init__(self, faultcode='ElbeDBError', faultstring=str(dberr))
+
+
+class SoapElbeProjectError(Fault):
+    def __init__(self, err):
+        Fault.__init__(
+            self,
+            faultcode='ElbeProjectError',
+            faultstring=str(err))
+
+
+class SoapElbeValidationError(Fault):
+    def __init__(self, exc):
+        Fault.__init__(
+            self,
+            faultcode='ElbeValidationError',
+            faultstring=exc.__repr__())
+
+
+class SoapElbeInvalidState(Fault):
+    def __init__(self):
+        Fault.__init__(self, faultcode='ElbeInvalidState',
+                       faultstring='Project is Busy ! Operation Invalid')
 
 
 class ESoap (ServiceBase):
@@ -30,13 +60,30 @@ class ESoap (ServiceBase):
         self.app = None
         self.transport = None
 
+    @classmethod
+    def call_wrapper(cls, ctx):
+        try:
+            return super().call_wrapper(ctx)
+        except InvalidState:
+            raise SoapElbeInvalidState()
+        except ProjectManagerError as e:
+            raise SoapElbeProjectError(str(e))
+        except ElbeDBError as e:
+            raise SoapElbeDBError(str(e))
+        except OSError as e:
+            raise SoapElbeProjectError('OSError: ' + str(e))
+        except ValidationError as e:
+            raise SoapElbeValidationError(e)
+        except InvalidLogin:
+            raise SoapElbeNotAuthorized()
+        except Exception:
+            raise SoapElbeProjectError(traceback.format_exc())
+
     @rpc(_returns=String)
-    @soap_faults
     def get_version(self):
         return elbe_version
 
     @rpc(String, String, _returns=Boolean)
-    @soap_faults
     def login(self, user, passwd):
         s = self.transport.req_env['beaker.session']
         s['userid'] = self.app.pm.db.validate_login(user, passwd)
@@ -44,26 +91,22 @@ class ESoap (ServiceBase):
         return True
 
     @rpc(_returns=Array(String))
-    @soap_faults
     @authenticated_admin
     def list_users(self):
         return [u.name for u in self.app.pm.db.list_users()]
 
     @rpc(String, String, String, String, Boolean)
-    @soap_faults
     @authenticated_admin
     def add_user(self, name, fullname, password, email, admin):
 
         self.app.pm.db.add_user(name, fullname, password, email, admin)
 
     @rpc(_returns=Array(SoapProject))
-    @soap_faults
     @authenticated_admin
     def list_projects(self):
         return self.app.pm.db.list_projects()
 
     @rpc(String, _returns=SoapProject)
-    @soap_faults
     @authenticated_uid
     def get_project(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
@@ -71,7 +114,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, _returns=Array(SoapFile))
     @authenticated_uid
-    @soap_faults
     def get_files(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         files = self.app.pm.db.get_project_files(builddir)
@@ -79,7 +121,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String, String, Integer, _returns=Integer)
     @authenticated_uid
-    @soap_faults
     def upload_file(self, uid, builddir, fname, blob, part):
 
         fn = os.path.join(builddir, fname)
@@ -112,7 +153,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String, Integer, _returns=String)
     @authenticated_uid
-    @soap_faults
     def get_file(self, uid, builddir, filename, part):
         self.app.pm.open_project(uid, builddir)
 
@@ -136,35 +176,30 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def build_chroot_tarball(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_chroot_tarball(uid)
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def build_sysroot(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_sysroot(uid)
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def build_sdk(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_sdk(uid)
 
     @rpc(String, Boolean, Boolean)
     @authenticated_uid
-    @soap_faults
     def build_cdroms(self, uid, builddir, build_bin, build_src):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_cdroms(uid, build_bin, build_src)
 
     @rpc(String, Boolean, Boolean, Boolean)
     @authenticated_uid
-    @soap_faults
     def build(self, uid, builddir, build_bin, build_src, skip_pbuilder):
 
         self.app.pm.open_project(uid, builddir)
@@ -173,21 +208,18 @@ class ESoap (ServiceBase):
 
     @rpc(String, Boolean, Boolean, String)
     @authenticated_uid
-    @soap_faults
     def build_pbuilder(self, uid, builddir, cross, noccache, ccachesize):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_pbuilder(uid, cross, noccache, ccachesize)
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def update_pbuilder(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.update_pbuilder(uid)
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def start_cdrom(self, uid, builddir):
         self.app.pm.open_project(
             uid, builddir, url_validation=ValidationMode.NO_CHECK)
@@ -200,7 +232,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def append_cdrom(self, uid, builddir, data):
         self.app.pm.open_project(
             uid, builddir, url_validation=ValidationMode.NO_CHECK)
@@ -214,7 +245,6 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def finish_cdrom(self, uid, builddir):
         self.app.pm.open_project(
             uid, builddir, url_validation=ValidationMode.NO_CHECK)
@@ -222,7 +252,6 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def start_pdebuild(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
 
@@ -234,7 +263,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def append_pdebuild(self, uid, builddir, data):
         self.app.pm.open_project(uid, builddir)
 
@@ -247,14 +275,12 @@ class ESoap (ServiceBase):
 
     @rpc(String, String, Boolean)
     @authenticated_uid
-    @soap_faults
     def finish_pdebuild(self, uid, builddir, profile, cross):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.build_current_pdebuild(uid, profile, cross)
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def start_upload_orig(self, uid, builddir, fname):
         self.app.pm.open_project(uid, builddir)
 
@@ -268,7 +294,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def append_upload_orig(self, uid, builddir, data):
         self.app.pm.open_project(uid, builddir)
 
@@ -281,7 +306,6 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def finish_upload_orig(self, uid, builddir):
         # If we support more than one orig, we need to put the orig_files into
         # some list here.
@@ -290,20 +314,17 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def reset_project(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.db.reset_project(builddir, True)
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def del_project(self, uid, builddir):
         self.app.pm.del_project(uid, builddir)
 
     @rpc(String, String, _returns=String)
     @authenticated_uid
-    @soap_faults
     def create_project(self, uid, xml, url_validation):
         with NamedTemporaryFile() as fp:
             fp.write(binascii.a2b_base64(xml))
@@ -315,13 +336,11 @@ class ESoap (ServiceBase):
 
     @rpc(_returns=String)
     @authenticated_uid
-    @soap_faults
     def new_project(self, uid):
         return self.app.pm.new_project(uid)
 
     @rpc(String, _returns=String)
     @authenticated_uid
-    @soap_faults
     def get_project_busy(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         ret, msg = self.app.pm.current_project_is_busy(uid)
@@ -331,14 +350,12 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     @authenticated_uid
-    @soap_faults
     def rm_log(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.rm_log(uid)
 
     @rpc(String, _returns=String.customize(max_occurs='unbounded'))
     @authenticated_uid
-    @soap_faults
     def list_packages(self, uid, builddir):
         self.app.pm.open_project(uid, builddir)
         r = []
@@ -350,7 +367,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def tar_prjrepo(self, uid, builddir, filename):
         self.app.pm.open_project(uid, builddir)
         with tarfile.open(os.path.join(builddir, filename), 'w:gz') as tar:
@@ -362,7 +378,6 @@ class ESoap (ServiceBase):
 
     @rpc(String, String)
     @authenticated_uid
-    @soap_faults
     def include_package(self, uid, builddir, filename):
         self.app.pm.open_project(uid, builddir)
         self.app.pm.add_deb_package(uid, filename)

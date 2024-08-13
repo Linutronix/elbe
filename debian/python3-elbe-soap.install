@@ -1,5 +1,4 @@
 usr/lib/python3.*/*-packages/elbepack/daemons/soap/__init__.py
 usr/lib/python3.*/*-packages/elbepack/daemons/soap/authentication.py
 usr/lib/python3.*/*-packages/elbepack/daemons/soap/datatypes.py
-usr/lib/python3.*/*-packages/elbepack/daemons/soap/faults.py
 usr/lib/python3.*/*-packages/elbepack/daemons/soap/esoap.py
