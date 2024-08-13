@@ -199,8 +199,7 @@ class ESoap (ServiceBase):
     @rpc(String, Boolean, Boolean, String)
     @authenticated_uid
     def build_pbuilder(self, uid, builddir, cross, noccache, ccachesize):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_pbuilder(uid, cross, noccache, ccachesize)
+        self.app.pm.build_pbuilder(uid, builddir, cross, noccache, ccachesize)
 
     @rpc(String)
     @authenticated_uid
