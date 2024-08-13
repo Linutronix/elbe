@@ -254,17 +254,6 @@ class ProjectManager:
             ep = self._get_current_project(userid)
             self.worker.enqueue(GenUpdateJob(ep, base_version))
 
-    def read_current_project_log(self, userid):
-        with self.lock:
-            ep = self._get_current_project(userid)
-            logpath = path.join(ep.builddir, 'log.txt')
-            f = open(logpath, 'r')
-        try:
-            data = f.read()
-        finally:
-            f.close()
-        return data
-
     def rm_log(self, userid):
         ep = self._get_current_project(userid)
         with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
