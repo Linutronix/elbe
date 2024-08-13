@@ -37,11 +37,6 @@ class PermissionDenied(ProjectManagerError):
         super().__init__(f'permission denied for project in {builddir}')
 
 
-class NoOpenProject(ProjectManagerError):
-    def __init__(self):
-        super().__init__(self, 'must open a project first')
-
-
 class InvalidState(ProjectManagerError):
     pass
 
@@ -279,18 +274,6 @@ class ProjectManager:
         with self.lock:
             msg = read_loggingQ(builddir)
             return self.db.is_busy(builddir), msg
-
-    def _get_current_project(self, userid, allow_busy=True):
-        # Must be called with self.lock held
-        if userid not in self.userid2project:
-            raise NoOpenProject()
-
-        ep = self.userid2project[userid]
-
-        if not allow_busy:
-            self._assert_not_busy(ep)
-
-        return ep
 
     def _assert_not_busy(self, ep):
         if self.db.is_busy(ep.builddir):
