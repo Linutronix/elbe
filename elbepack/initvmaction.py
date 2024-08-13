@@ -355,6 +355,7 @@ def _create(args):
 
     initvm._build()
     initvm.start()
+    initvm.ensure()
 
     if args.input is not None:
         # If provided xml file has no initvm section xmlfile is set to a
