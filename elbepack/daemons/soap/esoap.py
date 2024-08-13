@@ -205,8 +205,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def update_pbuilder(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.update_pbuilder(uid)
+        self.app.pm.update_pbuilder(uid, builddir)
 
     @rpc(String)
     @authenticated_uid

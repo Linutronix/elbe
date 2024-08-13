@@ -184,9 +184,9 @@ class ProjectManager:
             self.worker.enqueue(BuildJob(ep, build_bin, build_src,
                                          skip_pbuilder))
 
-    def update_pbuilder(self, userid):
+    def update_pbuilder(self, userid, builddir):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(UpdatePbuilderJob(ep))
 
     def build_pbuilder(self, userid, cross, noccache, ccachesize):
