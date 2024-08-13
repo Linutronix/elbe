@@ -12,10 +12,8 @@ from elbepack.db import ElbeDB
 @add_argument('--fullname', default='Admin')
 @add_argument('--password', default='foo')
 @add_argument('--email', default='root@localhost')
-@add_argument('--noadmin', dest='admin', default=True, action='store_false')
 def _init(args):
-    ElbeDB.init_db(args.name, args.fullname, args.password,
-                   args.email, args.admin)
+    ElbeDB.init_db(args.name, args.fullname, args.password, args.email)
 
 
 def _list_projects(args):

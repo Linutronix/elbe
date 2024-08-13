@@ -19,7 +19,6 @@ with warnings.catch_warnings():
     from passlib.hash import pbkdf2_sha512
 
 from sqlalchemy import (
-    Boolean,
     Column,
     DateTime,
     ForeignKey,
@@ -543,15 +542,14 @@ class ElbeDB:
                                          'application/octet-stream',
                                          'Pbuilder artifact')
 
-    def add_user(self, name, fullname, password, email, admin):
+    def add_user(self, name, fullname, password, email):
 
         pwhash = pbkdf2_sha512.hash(password)
 
         u = User(name=name,
                  fullname=fullname,
                  pwhash=pwhash,
-                 email=email,
-                 admin=admin)
+                 email=email)
 
         with session_scope(self.session) as s:
             if s.query(User).filter(User.name == name).count() > 0:
@@ -592,7 +590,7 @@ class ElbeDB:
             return int(u.id)
 
     @classmethod
-    def init_db(cls, name, fullname, password, email, admin):
+    def init_db(cls, name, fullname, password, email):
 
         if not os.path.exists(cls.db_path):
             try:
@@ -604,7 +602,7 @@ class ElbeDB:
         db = ElbeDB()
 
         try:
-            db.add_user(name, fullname, password, email, admin)
+            db.add_user(name, fullname, password, email)
         except ElbeDBError as e:
             print(str(e))
 
@@ -619,7 +617,6 @@ class User(Base):
     fullname = Column(String)
     pwhash = Column(String)
     email = Column(String)
-    admin = Column(Boolean)
     projects = relationship('Project', backref='owner')
 
 
