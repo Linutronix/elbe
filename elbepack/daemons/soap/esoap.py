@@ -179,8 +179,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def build_sdk(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_sdk(uid)
+        self.app.pm.build_sdk(uid, builddir)
 
     @rpc(String, Boolean, Boolean)
     @authenticated_uid
