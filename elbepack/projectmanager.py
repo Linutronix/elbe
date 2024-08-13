@@ -250,8 +250,8 @@ class ProjectManager:
         with self.lock:
             self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
-    def rm_log(self, userid):
-        ep = self._get_current_project(userid)
+    def rm_log(self, userid, builddir):
+        ep = self.open_project(userid, builddir)
         with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
             pass
 

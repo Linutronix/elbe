@@ -322,8 +322,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def rm_log(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.rm_log(uid)
+        self.app.pm.rm_log(uid, builddir)
 
     @rpc(String, _returns=String.customize(max_occurs='unbounded'))
     @authenticated_uid
