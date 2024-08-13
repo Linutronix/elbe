@@ -267,15 +267,7 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def start_upload_orig(self, uid, builddir, fname):
-        self.app.pm.open_project(uid, builddir)
-
-        orig_fname = os.path.join(builddir, fname)
-
-        # Now write empty File
-        fp = open(orig_fname, 'w')
-        fp.close()
-
-        self.app.pm.set_orig_fname(uid, fname)
+        self.app.pm.set_orig_fname(uid, builddir, fname)
 
     @rpc(String, String)
     @authenticated_uid
