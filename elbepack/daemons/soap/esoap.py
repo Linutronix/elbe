@@ -184,8 +184,7 @@ class ESoap (ServiceBase):
     @rpc(String, Boolean, Boolean)
     @authenticated_uid
     def build_cdroms(self, uid, builddir, build_bin, build_src):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_cdroms(uid, build_bin, build_src)
+        self.app.pm.build_cdroms(uid, builddir, build_bin, build_src)
 
     @rpc(String, Boolean, Boolean, Boolean)
     @authenticated_uid

@@ -245,9 +245,9 @@ class ProjectManager:
         with self.lock:
             self.worker.enqueue(BuildSDKJob(ep))
 
-    def build_cdroms(self, userid, build_bin, build_src):
+    def build_cdroms(self, userid, builddir, build_bin, build_src):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
     def rm_log(self, userid):
