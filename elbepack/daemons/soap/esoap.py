@@ -272,9 +272,7 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def append_upload_orig(self, uid, builddir, data):
-        self.app.pm.open_project(uid, builddir)
-
-        orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(uid))
+        orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(uid, builddir))
 
         # Now append to File
         fp = open(orig_fname, 'ab')

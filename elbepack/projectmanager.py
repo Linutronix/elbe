@@ -220,9 +220,9 @@ class ProjectManager:
             ep.orig_fname = fname
             ep.orig_files.append(fname)
 
-    def get_orig_fname(self, userid):
+    def get_orig_fname(self, userid, builddir):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
                     not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
