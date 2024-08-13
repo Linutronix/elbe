@@ -156,11 +156,9 @@ class ProjectManager:
 
         self.db.del_project(builddir)
 
-    def set_current_project_xml(self, userid, xml_file):
+    def set_project_xml(self, builddir, xml_file):
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
-
-            self.db.set_xml(ep.builddir, xml_file)
+            self.db.set_xml(builddir, xml_file)
 
     def set_current_project_upload_cdrom(self, userid):
         with self.lock:

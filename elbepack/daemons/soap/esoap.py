@@ -137,7 +137,7 @@ class ESoap (ServiceBase):
                 self.app.pm.close_current_project(uid)
                 self.app.pm.open_project(
                     uid, builddir, url_validation=ValidationMode.NO_CHECK)
-                self.app.pm.set_current_project_xml(uid, fn)
+                self.app.pm.set_project_xml(builddir, fn)
             return -2
 
         with open(fn, 'ab') as fp:
