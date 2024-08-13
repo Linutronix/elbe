@@ -172,14 +172,15 @@ class ProjectManager:
             # Make db reload the xml file
             self.db.set_xml(ep.builddir, None)
 
-    def build_current_project(
+    def build_project(
             self,
             userid,
+            builddir,
             build_bin,
             build_src,
             skip_pbuilder):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildJob(ep, build_bin, build_src,
                                          skip_pbuilder))
 
