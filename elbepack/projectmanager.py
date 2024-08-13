@@ -230,9 +230,9 @@ class ProjectManager:
 
             return ep.orig_fname
 
-    def build_chroot_tarball(self, userid):
+    def build_chroot_tarball(self, userid, builddir):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             self.worker.enqueue(BuildChrootTarJob(ep))
 
     def build_sysroot(self, userid):

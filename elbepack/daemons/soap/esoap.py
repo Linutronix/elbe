@@ -169,8 +169,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def build_chroot_tarball(self, uid, builddir):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_chroot_tarball(uid)
+        self.app.pm.build_chroot_tarball(uid, builddir)
 
     @rpc(String)
     @authenticated_uid
