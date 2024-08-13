@@ -12,7 +12,6 @@ from contextlib import contextmanager
 
 
 root = logging.getLogger()
-root.setLevel(logging.DEBUG)
 local = threading.local()
 context_fmt = logging.Formatter('%(context)s%(message)s')
 msgonly_fmt = logging.Formatter('%(message)s')
@@ -150,6 +149,7 @@ def elbe_logging(*args, **kwargs):
 def open_logging(**targets):
 
     close_logging()
+    root.setLevel(logging.DEBUG)
 
     for key, call in _logging_methods.items():
         if key in targets:
