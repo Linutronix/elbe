@@ -262,8 +262,7 @@ class ESoap (ServiceBase):
     @rpc(String, String, Boolean)
     @authenticated_uid
     def finish_pdebuild(self, uid, builddir, profile, cross):
-        self.app.pm.open_project(uid, builddir)
-        self.app.pm.build_current_pdebuild(uid, profile, cross)
+        self.app.pm.build_pdebuild(uid, builddir, profile, cross)
 
     @rpc(String, String)
     @authenticated_uid

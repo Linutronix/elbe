@@ -195,9 +195,9 @@ class ProjectManager:
             self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross,
                                                   noccache))
 
-    def build_current_pdebuild(self, userid, profile, cross):
+    def build_pdebuild(self, userid, builddir, profile, cross):
+        ep = self.open_project(userid, builddir, allow_busy=False)
         with self.lock:
-            ep = self._get_current_project(userid, allow_busy=False)
             if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
                     not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
                 raise InvalidState('No pbuilder exists: run "elbe pbuilder '
