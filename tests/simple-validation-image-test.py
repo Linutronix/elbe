@@ -218,6 +218,9 @@ def _test_rfs_partition(build_dir, part):
         assert root.joinpath('etc', 'hostname').read_text() == 'validation-image'
         assert root.joinpath('etc', 'mailname').read_text() == 'validation-image.elbe-ci'
         assert not root.joinpath('etc', 'resolv.conf').exists()
+        assert root.joinpath('etc', 'fstab').read_text().strip() == textwrap.dedent("""
+        LABEL=rfs / ext4 defaults 0 0
+        """).strip()
         assert root.joinpath('etc', 'os-release').read_text().strip() == textwrap.dedent("""
             PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
             NAME="Debian GNU/Linux"
