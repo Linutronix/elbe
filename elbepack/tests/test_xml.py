@@ -22,7 +22,7 @@ def initvm(tmp_path_factory, request):
     initvm_dir = tmp_path_factory.mktemp('initvm-') / 'initvm'
     use_initvm = request.config.getoption('--elbe-use-initvm')
 
-    if use_initvm == 'libvirt':
+    if use_initvm in {'libvirt', 'existing'}:
         qemu_arg = []
     elif use_initvm == 'qemu':
         qemu_arg = ['--qemu']
