@@ -304,13 +304,12 @@ class AsyncWorker(Thread):
         job.enqueue(self.queue, self.db)
 
     def run(self):
-        loop = True
-        while loop:
+        while True:
             job = self.queue.get()
-            if job is not None:
-                with savecwd():
-                    with elbe_logging(projects=job.project.builddir):
-                        job.execute(self.db)
-            else:
-                loop = False
+            if job is None:
+                break
+
+            with savecwd():
+                with elbe_logging(projects=job.project.builddir):
+                    job.execute(self.db)
             self.queue.task_done()
