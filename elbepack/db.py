@@ -129,14 +129,6 @@ class ElbeDB:
                 ret.append(ProjectData(p))
             return ret
 
-    def list_projects_of(self, userid):
-        with session_scope(self.session) as s:
-            res = s.query(Project).filter(Project.owner_id == userid).all()
-            ret = []
-            for p in res:
-                ret.append(ProjectData(p))
-            return ret
-
     def get_project_data(self, builddir):
         # Can throw: ElbeDBError
         if not os.path.exists(builddir):
