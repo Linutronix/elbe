@@ -4,6 +4,7 @@
 
 import argparse
 import importlib
+import logging
 import pkgutil
 import sys
 
@@ -29,6 +30,8 @@ def main(argv=sys.argv):
         subparsers.add_parser(cmd)
 
     args, cmd_argv = parser.parse_known_args(argv[1:])
+
+    logging.getLogger('suds').setLevel(logging.WARNING)
 
     cmdmod = importlib.import_module('.' + args.cmd, elbepack.commands.__name__)
 
