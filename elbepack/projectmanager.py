@@ -4,7 +4,6 @@
 
 import os
 from os import path
-from threading import Lock
 
 from elbepack.asyncworker import (
     AsyncWorker,
@@ -42,7 +41,6 @@ class ProjectManager:
         self.basepath = basepath    # Base path for new projects
         self.db = ElbeDB()          # Database of projects and users
         self.worker = AsyncWorker(self.db)
-        self.lock = Lock()          # Lock protecting our data
 
     def stop(self):
         self.worker.stop()
@@ -61,15 +59,14 @@ class ProjectManager:
         subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
 
-        with self.lock:
-            self.db.create_project(builddir, owner_id=userid)
+        self.db.create_project(builddir, owner_id=userid)
 
-            try:
-                self.db.set_xml(builddir, xml_file)
-            except BaseException:
-                # Delete the project, if we cannot assign an XML file
-                self.db.del_project(builddir)
-                raise
+        try:
+            self.db.set_xml(builddir, xml_file)
+        except BaseException:
+            # Delete the project, if we cannot assign an XML file
+            self.db.del_project(builddir)
+            raise
 
         return builddir
 
@@ -81,14 +78,13 @@ class ProjectManager:
             allow_busy=True):
         self._check_project_permission(userid, builddir)
 
-        with self.lock:
-            # Load project from the database
-            ep = self.db.load_project(builddir,
-                                      url_validation=url_validation)
+        # Load project from the database
+        ep = self.db.load_project(builddir,
+                                  url_validation=url_validation)
 
-            if not allow_busy:
-                self._assert_not_busy(ep)
-            return ep
+        if not allow_busy:
+            self._assert_not_busy(ep)
+        return ep
 
     def del_project(self, userid, builddir):
         self._check_project_permission(userid, builddir)
@@ -96,20 +92,18 @@ class ProjectManager:
         self.db.del_project(builddir)
 
     def set_project_xml(self, builddir, xml_file):
-        with self.lock:
-            self.db.set_xml(builddir, xml_file)
+        self.db.set_xml(builddir, xml_file)
 
     def set_upload_cdrom(self, userid, builddir, url_validation):
         ep = self.open_project(userid, builddir, url_validation, allow_busy=False)
-        with self.lock:
-            ep.xml.set_cdrom_mirror(
-                path.join(
-                    ep.builddir,
-                    'uploaded_cdrom.iso'))
-            ep.sync_xml_to_disk()
+        ep.xml.set_cdrom_mirror(
+            path.join(
+                ep.builddir,
+                'uploaded_cdrom.iso'))
+        ep.sync_xml_to_disk()
 
-            # Make db reload the xml file
-            self.db.set_xml(ep.builddir, None)
+        # Make db reload the xml file
+        self.db.set_xml(ep.builddir, None)
 
     def build_project(
             self,
@@ -119,75 +113,64 @@ class ProjectManager:
             build_src,
             skip_pbuilder):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(BuildJob(ep, build_bin, build_src,
-                                         skip_pbuilder))
+        self.worker.enqueue(BuildJob(ep, build_bin, build_src,
+                                     skip_pbuilder))
 
     def update_pbuilder(self, userid, builddir):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(UpdatePbuilderJob(ep))
+        self.worker.enqueue(UpdatePbuilderJob(ep))
 
     def build_pbuilder(self, userid, builddir, cross, noccache, ccachesize):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross,
-                                                  noccache))
+        self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross, noccache))
 
     def build_pdebuild(self, userid, builddir, profile, cross):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
-                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
-                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   f'create --project {ep.builddir}" first')
+        if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
+            raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                               f'create --project {ep.builddir}" first')
 
-            self.worker.enqueue(PdebuildJob(ep, profile, cross))
+        self.worker.enqueue(PdebuildJob(ep, profile, cross))
 
     def set_orig_fname(self, userid, builddir, fname):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            # Write empty File
-            with open(os.path.join(builddir, fname), 'w'):
-                pass
+        # Write empty File
+        with open(os.path.join(builddir, fname), 'w'):
+            pass
 
-            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
-                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
-                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   f'create --project {ep.builddir}" first')
+        if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
+            raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                               f'create --project {ep.builddir}" first')
 
-            ep.orig_fname = fname
-            ep.orig_files.append(fname)
+        ep.orig_fname = fname
+        ep.orig_files.append(fname)
 
     def get_orig_fname(self, userid, builddir):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
-                    not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
-                raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                                   f'create --project {ep.builddir}" first')
+        if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
+                not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
+            raise InvalidState('No pbuilder exists: run "elbe pbuilder '
+                               f'create --project {ep.builddir}" first')
 
-            return ep.orig_fname
+        return ep.orig_fname
 
     def build_chroot_tarball(self, userid, builddir):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(BuildChrootTarJob(ep))
+        self.worker.enqueue(BuildChrootTarJob(ep))
 
     def build_sysroot(self, userid, builddir):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(BuildSysrootJob(ep))
+        self.worker.enqueue(BuildSysrootJob(ep))
 
     def build_sdk(self, userid, builddir):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(BuildSDKJob(ep))
+        self.worker.enqueue(BuildSDKJob(ep))
 
     def build_cdroms(self, userid, builddir, build_bin, build_src):
         ep = self.open_project(userid, builddir, allow_busy=False)
-        with self.lock:
-            self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
+        self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
     def rm_log(self, userid, builddir):
         ep = self.open_project(userid, builddir)
@@ -215,9 +198,8 @@ class ProjectManager:
     def project_is_busy(self, userid, builddir):
         self._check_project_permission(userid, builddir)
 
-        with self.lock:
-            msg = read_loggingQ(builddir)
-            return self.db.is_busy(builddir), msg
+        msg = read_loggingQ(builddir)
+        return self.db.is_busy(builddir), msg
 
     def _assert_not_busy(self, ep):
         if self.db.is_busy(ep.builddir):
