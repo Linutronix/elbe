@@ -6,6 +6,8 @@ import logging
 import os
 from shutil import copyfile, copytree, rmtree
 
+import apt_pkg
+
 from elbepack.dump import dump_fullpkgs
 from elbepack.elbexml import ElbeXML
 from elbepack.repomanager import UpdateRepo
@@ -68,7 +70,7 @@ def gen_update_pkg(project, xml_filename, upd_filename,
                 continue
 
             ipkg = instindex[name]
-            comp = cache.compare_versions(ipkg.installed_version, ver)
+            comp = apt_pkg.version_compare(ipkg.installed_version, ver)
 
             pfname = ipkg.installed_deb
 

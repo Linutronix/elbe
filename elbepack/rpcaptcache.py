@@ -10,7 +10,7 @@ from multiprocessing.util import Finalize
 
 from apt import Cache
 
-from apt_pkg import config, version_compare
+from apt_pkg import config
 
 from elbepack.aptpkgutils import (
     APTPackage,
@@ -264,10 +264,6 @@ class RPCAPTCache(InChRootObject):
 
     def get_corresponding_source_packages(self, pkg_lst=None):
         return get_corresponding_source_packages(self.cache, pkg_lst)
-
-    @staticmethod
-    def compare_versions(self, ver1, ver2):
-        return version_compare(ver1, ver2)
 
     def download_binary(self, pkgname, path, version=None):
         p = self.cache[pkgname]
