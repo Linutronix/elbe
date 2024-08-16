@@ -30,52 +30,40 @@ class LoggingQueue(collections.deque):
             self.max_level = level
 
 
+_queues = {}
+
+
 class QHandler(logging.Handler):
-
-    queues: dict[str, LoggingQueue] = {}
-
     def __init__(self, target, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if target not in QHandler.queues:
-            QHandler.queues[target] = LoggingQueue()
-        self.Q = QHandler.queues[target]
+        if target not in _queues:
+            _queues[target] = LoggingQueue()
+        self.Q = _queues[target]
 
     def emit(self, record):
         self.Q.append(self.format(record))
         self.Q.note_level(record.levelno)
 
-    @classmethod
-    def pop(cls, target):
-        try:
-            return cls.queues[target].popleft()
-        except (IndexError, KeyError):
-            return ''
-
-    @classmethod
-    def max_level(cls, target):
-        try:
-            return cls.queues[target].max_level
-        except (IndexError, KeyError):
-            return logging.NOTSET
-
-    @classmethod
-    def reset_level(cls, target):
-        try:
-            cls.queues[target].max_level = logging.NOTSET
-        except (IndexError, KeyError):
-            pass
-
 
 def read_loggingQ(proj):
-    return QHandler.pop(proj)
+    try:
+        return _queues[proj].popleft()
+    except (IndexError, KeyError):
+        return ''
 
 
 def read_maxlevel(proj):
-    return QHandler.max_level(proj)
+    try:
+        return _queues[proj].max_level
+    except (IndexError, KeyError):
+        return logging.NOTSET
 
 
 def reset_level(proj):
-    QHandler.reset_level(proj)
+    try:
+        _queues[proj].max_level = logging.NOTSET
+    except (IndexError, KeyError):
+        pass
 
 
 class ThreadFilter(logging.Filter):
