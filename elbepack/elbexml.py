@@ -85,6 +85,17 @@ class ElbeXML:
         if not skip_validate and url_validation != ValidationMode.NO_CHECK:
             self.validate_apt_sources(url_validation, self.defs['arch'])
 
+    def __getstate__(self):
+        state = super().__getstate__().copy()
+        state['xml'] = state['xml'].tostring()
+        state.pop('prj', None)
+        state.pop('tgt', None)
+        return state
+
+    def __setstate__(self, state):
+        state['xml'] = etree(None, string=state['xml'])
+        self.__dict__.update(state)
+
     def text(self, txt, key=None):
         if key:
             return self.xml.text(txt, default=self.defs, key=key)
