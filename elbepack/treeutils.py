@@ -5,7 +5,7 @@
 import copy
 
 from lxml.etree import Element, ElementTree, SubElement
-from lxml.etree import Resolver, XMLParser, XMLSchema, parse, tostring
+from lxml.etree import Resolver, XMLParser, XMLSchema, fromstring, parse, tostring
 
 from elbepack.schema import xml_schema_file
 
@@ -132,10 +132,12 @@ class elem(ebase):
 
 
 class etree(ebase):
-    def __init__(self, fname):
+    def __init__(self, fname, string=None):
+        parser = XMLParser(huge_tree=True, remove_comments=False)
         if fname is not None:
-            parser = XMLParser(huge_tree=True, remove_comments=False)
             et = parse(fname, parser=parser)
+        elif string is not None:
+            et = fromstring(string, parser=parser).getroottree()
         else:
             et = ElementTree(file=None)
 
