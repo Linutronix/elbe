@@ -16,7 +16,7 @@ from elbepack.version import elbe_version
 
 class license_dep5_to_spdx (dict):
     def __init__(self, xml_fname=None):
-        dict.__init__(self)
+        super().__init__()
 
         self.perpackage_mapping = {}
         self.perpackage_override = {}

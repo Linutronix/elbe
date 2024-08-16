@@ -52,7 +52,7 @@ class MyMan(BaseManager):
         """Redirect outputs of the process to an async logging thread"""
         alog = async_logging()
         self.log_finalizer = Finalize(self, alog.shutdown)
-        super(MyMan, self).start(MyMan.redirect_outputs, [alog.write_fd])
+        super().start(MyMan.redirect_outputs, [alog.write_fd])
 
 
 class InChRootObject:
@@ -68,7 +68,7 @@ class RPCAPTCache(InChRootObject):
     def __init__(self, rfs, arch,
                  notifier=None, norecommend=False, noauth=True):
 
-        InChRootObject.__init__(self, rfs)
+        super().__init__(rfs)
 
         self.notifier = notifier
         config.set('APT::Architecture', arch)

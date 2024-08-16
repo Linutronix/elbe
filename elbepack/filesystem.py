@@ -426,7 +426,7 @@ class Filesystem:
 class TmpdirFilesystem (Filesystem):
     def __init__(self, debug=False):
         tmpdir = mkdtemp()
-        Filesystem.__init__(self, tmpdir)
+        super().__init__(tmpdir)
         self.debug = debug
 
     def __del__(self):

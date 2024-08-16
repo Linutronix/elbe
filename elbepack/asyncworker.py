@@ -37,7 +37,7 @@ class BuildSysrootJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for building sysroot')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -65,7 +65,7 @@ class BuildSDKJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for building SDK')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -87,7 +87,7 @@ class BuildSDKJob(AsyncWorkerJob):
 
 class BuildCDROMsJob(AsyncWorkerJob):
     def __init__(self, project, build_bin, build_src):
-        AsyncWorkerJob.__init__(self, project)
+        super().__init__(project)
         self.build_bin = build_bin
         self.build_src = build_src
 
@@ -96,7 +96,7 @@ class BuildCDROMsJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for building CDROMs')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -123,7 +123,7 @@ class BuildChrootTarJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for building croot tar')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -145,7 +145,7 @@ class BuildChrootTarJob(AsyncWorkerJob):
 
 class BuildJob(AsyncWorkerJob):
     def __init__(self, project, build_bin, build_src, skip_pbuilder):
-        AsyncWorkerJob.__init__(self, project)
+        super().__init__(project)
         self.build_bin = build_bin
         self.build_src = build_src
         self.skip_pbuilder = skip_pbuilder
@@ -155,7 +155,7 @@ class BuildJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for build')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
 
@@ -193,7 +193,7 @@ class BuildJob(AsyncWorkerJob):
 
 class PdebuildJob(AsyncWorkerJob):
     def __init__(self, project, profile='', cross=False):
-        AsyncWorkerJob.__init__(self, project)
+        super().__init__(project)
         self.profile = profile
         self.cross = cross
 
@@ -202,7 +202,7 @@ class PdebuildJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project for pdebuild')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -224,7 +224,7 @@ class PdebuildJob(AsyncWorkerJob):
 
 class CreatePbuilderJob(AsyncWorkerJob):
     def __init__(self, project, ccachesize, cross=False, noccache=False):
-        AsyncWorkerJob.__init__(self, project)
+        super().__init__(project)
         self.cross = cross
         self.noccache = noccache
         self.ccachesize = ccachesize
@@ -234,7 +234,7 @@ class CreatePbuilderJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project to have the pbuilder built')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_failed
@@ -259,7 +259,7 @@ class UpdatePbuilderJob(AsyncWorkerJob):
                     ['empty_project', 'needs_build', 'has_changes',
                      'build_done', 'build_failed'])
         logging.info('Enqueueing project to update the pbuilder')
-        AsyncWorkerJob.enqueue(self, queue, db)
+        super().enqueue(queue, db)
 
     def execute(self, db):
         success = self.build_done
@@ -290,7 +290,7 @@ def savecwd():
 
 class AsyncWorker(Thread):
     def __init__(self, db):
-        Thread.__init__(self, name='AsyncWorker')
+        super().__init__(name='AsyncWorker')
         self.db = db
         self.queue = Queue()
         self.start()

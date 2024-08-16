@@ -93,7 +93,7 @@ class UpdateStatus:
 
 class UpdateApplication (Application):
     def __init__(self, *args, monitor_timeout, **kargs):
-        Application.__init__(self, *args, **kargs)
+        super().__init__(*args, **kargs)
         self.status = UpdateStatus()
         self.monitor_timeout = monitor_timeout
 

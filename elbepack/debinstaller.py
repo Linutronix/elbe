@@ -29,7 +29,7 @@ class NoKinitrdException(Exception):
 class ReleaseFile(HashValidator):
     def __init__(self, base_url, fname, fname_list):
 
-        HashValidator.__init__(self, base_url)
+        super().__init__(base_url)
 
         header_re = re.compile(r'(\w+):(.*)')
         hash_re = re.compile(r' ([0-9a-f]+)\s+([0-9]+)\s+(\S+)')
@@ -57,7 +57,7 @@ class ReleaseFile(HashValidator):
 class SHA256SUMSFile(HashValidator):
     def __init__(self, base_url, fname, fname_list):
 
-        HashValidator.__init__(self, base_url)
+        super().__init__(base_url)
 
         hash_re = re.compile(r'([0-9a-f]+)\s+(\S+)')
 

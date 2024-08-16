@@ -54,7 +54,7 @@ def create_apt_prefs(xml, rfs):
 
 class DebootstrapException (Exception):
     def __init__(self):
-        Exception.__init__(self, 'Debootstrap Failed')
+        super().__init__('Debootstrap Failed')
 
 
 class BuildEnv:

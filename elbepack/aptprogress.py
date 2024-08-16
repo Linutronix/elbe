@@ -12,7 +12,7 @@ from apt_pkg import size_to_str
 class ElbeInstallProgress (InstallProgress):
 
     def __init__(self, cb=None, fileno=2):
-        InstallProgress.__init__(self)
+        super().__init__()
         self.cb = cb
         self.fileno = fileno
 
@@ -65,7 +65,7 @@ class ElbeInstallProgress (InstallProgress):
 class ElbeAcquireProgress (AcquireProgress):
 
     def __init__(self, cb=None):
-        AcquireProgress.__init__(self)
+        super().__init__()
         self._id = 1
         self.cb = cb
 
@@ -105,7 +105,7 @@ class ElbeAcquireProgress (AcquireProgress):
 class ElbeOpProgress (OpProgress):
 
     def __init__(self, cb=None):
-        OpProgress.__init__(self)
+        super().__init__()
         self._id = 1
         self.cb = cb
 

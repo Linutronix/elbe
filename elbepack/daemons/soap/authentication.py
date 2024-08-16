@@ -9,8 +9,7 @@ from spyne.model.fault import Fault
 
 class SoapElbeNotLoggedIn(Fault):
     def __init__(self):
-        Fault.__init__(
-            self,
+        super().__init__(
             faultcode='ElbeNotLoggedIn',
             faultstring='Not authenticated ! '
                         'Cant let you perform this command.')
@@ -18,8 +17,7 @@ class SoapElbeNotLoggedIn(Fault):
 
 class SoapElbeNotAuthorized(Fault):
     def __init__(self):
-        Fault.__init__(
-            self,
+        super().__init__(
             faultcode='ElbeNotAuthorized',
             faultstring='Not Authorized ! Cant let you perform this command.')
 

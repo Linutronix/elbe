@@ -139,7 +139,7 @@ class etree(ebase):
         else:
             et = ElementTree(file=None)
 
-        ebase.__init__(self, et)
+        super().__init__(et)
 
     def write(self, fname, encoding=None):
         # Make sure, that we end with a newline

@@ -23,7 +23,7 @@ from elbepack.xmldefaults import ElbeDefaults
 
 class ValidationError(Exception):
     def __init__(self, validation):
-        Exception.__init__(self)
+        super().__init__()
         self.validation = validation
 
     def __repr__(self):

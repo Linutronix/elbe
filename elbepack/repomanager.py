@@ -355,12 +355,7 @@ class UpdateRepo(RepoBase):
 
         repo_attrs = RepoAttributes(codename, arch, 'main')
 
-        RepoBase.__init__(self,
-                          path,
-                          None,
-                          repo_attrs,
-                          'Update',
-                          'Update')
+        super().__init__(path, None, repo_attrs, 'Update', 'Update')
 
 
 class CdromInitRepo(RepoBase):
@@ -371,12 +366,7 @@ class CdromInitRepo(RepoBase):
             init_codename, 'amd64', [
                 'main', 'main/debian-installer'], mirror)
 
-        RepoBase.__init__(self,
-                          path,
-                          None,
-                          init_attrs,
-                          'Elbe',
-                          'Elbe InitVM Cdrom Repo')
+        super().__init__(path, None, init_attrs, 'Elbe', 'Elbe InitVM Cdrom Repo')
 
 
 class CdromBinRepo(RepoBase):
@@ -396,12 +386,7 @@ class CdromBinRepo(RepoBase):
         else:
             init_attrs = None
 
-        RepoBase.__init__(self,
-                          path,
-                          init_attrs,
-                          repo_attrs,
-                          'Elbe',
-                          'Elbe Binary Cdrom Repo')
+        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Binary Cdrom Repo')
 
 
 class CdromSrcRepo(RepoBase):
@@ -425,32 +410,16 @@ class CdromSrcRepo(RepoBase):
         else:
             init_attrs = None
 
-        RepoBase.__init__(self,
-                          path,
-                          init_attrs,
-                          repo_attrs,
-                          'Elbe',
-                          'Elbe Source Cdrom Repo',
-                          maxsize)
+        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Source Cdrom Repo', maxsize)
 
 
 class ToolchainRepo(RepoBase):
     def __init__(self, arch, codename, path):
         repo_attrs = RepoAttributes(codename, arch, 'main')
-        RepoBase.__init__(self,
-                          path,
-                          None,
-                          repo_attrs,
-                          'toolchain',
-                          'Toolchain binary packages Repo')
+        super().__init__(path, None, repo_attrs, 'toolchain', 'Toolchain binary packages Repo')
 
 
 class ProjectRepo(RepoBase):
     def __init__(self, arch, codename, path):
         repo_attrs = RepoAttributes(codename, [arch, 'amd64', 'source'], 'main')
-        RepoBase.__init__(self,
-                          path,
-                          None,
-                          repo_attrs,
-                          'Local',
-                          'Self build packages Repo')
+        super().__init__(path, None, repo_attrs, 'Local', 'Self build packages Repo')

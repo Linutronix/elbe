@@ -27,7 +27,7 @@ logging.getLogger('spyne').setLevel(logging.INFO)
 
 class EsoapApp(Application):
     def __init__(self, *args, **kargs):
-        Application.__init__(self, *args, **kargs)
+        super().__init__(*args, **kargs)
         self.pm = ProjectManager('/var/cache/elbe')
 
 

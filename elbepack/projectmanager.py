@@ -29,19 +29,17 @@ class ProjectManagerError(Exception):
 
 class AlreadyOpen(ProjectManagerError):
     def __init__(self, builddir, username):
-        ProjectManagerError.__init__(
-            self, f'project in {builddir} is already opened by {username}')
+        super().__init__(f'project in {builddir} is already opened by {username}')
 
 
 class PermissionDenied(ProjectManagerError):
     def __init__(self, builddir):
-        ProjectManagerError.__init__(
-            self, f'permission denied for project in {builddir}')
+        super().__init__(f'permission denied for project in {builddir}')
 
 
 class NoOpenProject(ProjectManagerError):
     def __init__(self):
-        ProjectManagerError.__init__(self, 'must open a project first')
+        super().__init__(self, 'must open a project first')
 
 
 class InvalidState(ProjectManagerError):

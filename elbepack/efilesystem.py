@@ -301,7 +301,7 @@ class Excursion:
 class ChRootFilesystem(ElbeFilesystem):
 
     def __init__(self, path, interpreter=None, clean=False):
-        ElbeFilesystem.__init__(self, path, clean)
+        super().__init__(path, clean)
         self.interpreter = interpreter
         self.cwd = os.open('/', os.O_RDONLY)
         self.inchroot = False
@@ -387,7 +387,7 @@ class ChRootFilesystem(ElbeFilesystem):
 
 class TargetFs(ChRootFilesystem):
     def __init__(self, path, xml, clean=True):
-        ChRootFilesystem.__init__(self, path, xml.defs['userinterpr'], clean)
+        super().__init__(path, xml.defs['userinterpr'], clean)
         self.xml = xml
         self.images = []
         self.image_packers = {}

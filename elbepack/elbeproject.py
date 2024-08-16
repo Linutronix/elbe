@@ -46,25 +46,23 @@ _xz_env = {
 
 class IncompatibleArchitectureException(Exception):
     def __init__(self, oldarch, newarch):
-        Exception.__init__(
-            self,
-            f'Cannot change architecture from {oldarch} to {newarch} in '
-            'existing project')
+        super().__init__(f'Cannot change architecture from {oldarch} to {newarch} in '
+                         'existing project')
 
 
 class AptCacheUpdateError(Exception):
     def __init__(self, e):
-        Exception.__init__(self, f'Error Updating rpcaptcache: {e}')
+        super().__init__(f'Error Updating rpcaptcache: {e}')
 
 
 class AptCacheCommitError(Exception):
     def __init__(self, msg=''):
-        Exception.__init__(self, f'Error Committing rpcaptcache {msg}')
+        super().__init__(f'Error Committing rpcaptcache {msg}')
 
 
 class UnsupportedSDKException(Exception):
     def __init__(self, triplet):
-        Exception.__init__(self, f'SDK for {triplet} currently unsupported')
+        super().__init__(f'SDK for {triplet} currently unsupported')
 
 
 def test_gen_sdk_scripts():

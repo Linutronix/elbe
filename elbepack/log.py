@@ -23,7 +23,7 @@ validation = logging.getLogger('validation')
 
 class LoggingQueue(collections.deque):
     def __init__(self):
-        super(LoggingQueue, self).__init__(maxlen=1024)
+        super().__init__(maxlen=1024)
         self.max_level = logging.NOTSET
 
     def note_level(self, level):
@@ -36,7 +36,7 @@ class QHandler(logging.Handler):
     queues: dict[str, LoggingQueue] = {}
 
     def __init__(self, target, *args, **kwargs):
-        super(QHandler, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if target not in QHandler.queues:
             QHandler.queues[target] = LoggingQueue()
         self.Q = QHandler.queues[target]
@@ -82,7 +82,7 @@ def reset_level(proj):
 class ThreadFilter(logging.Filter):
 
     def __init__(self, allowed, *args, **kwargs):
-        super(ThreadFilter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.allowed = {a.name for a in allowed}
         self.thread = threading.current_thread().ident
 

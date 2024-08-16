@@ -27,29 +27,23 @@ from .datatypes import SoapFile, SoapProject
 
 class SoapElbeDBError(Fault):
     def __init__(self, dberr):
-        Fault.__init__(self, faultcode='ElbeDBError', faultstring=str(dberr))
+        super().__init__(faultcode='ElbeDBError', faultstring=str(dberr))
 
 
 class SoapElbeProjectError(Fault):
     def __init__(self, err):
-        Fault.__init__(
-            self,
-            faultcode='ElbeProjectError',
-            faultstring=str(err))
+        super().__init__(faultcode='ElbeProjectError', faultstring=str(err))
 
 
 class SoapElbeValidationError(Fault):
     def __init__(self, exc):
-        Fault.__init__(
-            self,
-            faultcode='ElbeValidationError',
-            faultstring=exc.__repr__())
+        super().__init__(faultcode='ElbeValidationError', faultstring=exc.__repr__())
 
 
 class SoapElbeInvalidState(Fault):
     def __init__(self):
-        Fault.__init__(self, faultcode='ElbeInvalidState',
-                       faultstring='Project is Busy ! Operation Invalid')
+        super().__init__(faultcode='ElbeInvalidState',
+                         faultstring='Project is Busy ! Operation Invalid')
 
 
 class ESoap (ServiceBase):

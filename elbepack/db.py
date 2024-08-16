@@ -50,13 +50,12 @@ class Base(metaclass=DeclarativeMeta):
 
 
 class ElbeDBError(Exception):
-    def __init__(self, message):
-        Exception.__init__(self, message)
+    pass
 
 
 class InvalidLogin(Exception):
     def __init__(self):
-        Exception.__init__(self, 'Invalid login')
+        super().__init__('Invalid login')
 
 
 @contextmanager

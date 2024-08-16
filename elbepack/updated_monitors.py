@@ -29,7 +29,7 @@ class UpdateMonitor:
 
 class USBMonitor (UpdateMonitor):
     def __init__(self, status, recursive=False):
-        super(USBMonitor, self).__init__(status)
+        super().__init__(status)
         self.recursive = recursive
         self.context = pyudev.Context()
         self.monitor = pyudev.Monitor.from_netlink(self.context)
@@ -91,7 +91,7 @@ class FileMonitor (UpdateMonitor):
 
     class EventHandler (pyinotify.ProcessEvent):
         def __init__(self, status):
-            pyinotify.ProcessEvent.__init__(self)
+            super().__init__()
             self.status = status
 
         def process_IN_CLOSE_WRITE(self, event):
@@ -99,7 +99,7 @@ class FileMonitor (UpdateMonitor):
 
     class ObserverThread (threading.Thread):
         def __init__(self, status, monitor):
-            threading.Thread.__init__(self, name='ObserverThread')
+            super().__init__(name='ObserverThread')
             self.status = status
             self.monitor = monitor
 
@@ -117,7 +117,7 @@ class FileMonitor (UpdateMonitor):
                     return
 
     def __init__(self, status, update_dir):
-        super(FileMonitor, self).__init__(status)
+        super().__init__(status)
         self.wm = pyinotify.WatchManager()
         self.notifier = pyinotify.Notifier(self.wm)
 

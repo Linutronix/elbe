@@ -68,8 +68,7 @@ def get_dsc_size(fname):
 
 class ChangelogNeedsDependency(Exception):
     def __init__(self, pkgname):
-        Exception.__init__(
-            self, f'Changelog extraction depends on "{pkgname}"')
+        super().__init__(f'Changelog extraction depends on "{pkgname}"')
         self.pkgname = pkgname
 
 

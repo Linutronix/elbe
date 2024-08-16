@@ -26,7 +26,7 @@ class MonitorService (ServiceBase):
 
 class MonitorThread (threading.Thread):
     def __init__(self, port):
-        threading.Thread.__init__(self, name='MonitorThread')
+        super().__init__(name='MonitorThread')
         self.port = port
         self.server = None
 

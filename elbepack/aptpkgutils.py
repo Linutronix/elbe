@@ -265,13 +265,13 @@ class APTPackage(PackageBase):
         else:
             self.installed_deb = None
 
-        PackageBase.__init__(self, pkg.name,
-                             iver, cver,
-                             ihashes, chashes,
-                             iprio, cprio,
-                             iarch, carch,
-                             pkgstate(pkg), pkg.is_auto_installed,
-                             origin)
+        super().__init__(pkg.name,
+                         iver, cver,
+                         ihashes, chashes,
+                         iprio, cprio,
+                         iarch, carch,
+                         pkgstate(pkg), pkg.is_auto_installed,
+                         origin)
 
 
 class XMLPackage(PackageBase):
@@ -288,10 +288,10 @@ class XMLPackage(PackageBase):
                         site=None,
                         component=None)
 
-        PackageBase.__init__(self, node.et.text,
-                             node.et.get('version'), None,
-                             hashes, None,
-                             node.et.get('prio'), None,
-                             node.et.get('arch'), None,
-                             INSTALLED, node.et.get('auto') == 'true',
-                             origin)
+        super().__init__(node.et.text,
+                         node.et.get('version'), None,
+                         hashes, None,
+                         node.et.get('prio'), None,
+                         node.et.get('arch'), None,
+                         INSTALLED, node.et.get('auto') == 'true',
+                         origin)
