@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Ferdinand Schwenk <ferdinand.schwenk@emtrion.de>
 
+import functools
 import os
 import re
 import socket
@@ -72,8 +73,6 @@ class ElbeXML:
                 raise ValidationError(validation)
 
         self.xml = etree(fname)
-        self.prj = self.xml.node('/project')
-        self.tgt = self.xml.node('/target')
 
         if buildtype:
             pass
@@ -99,6 +98,14 @@ class ElbeXML:
 
     def all(self, path):
         return self.xml.all(path)
+
+    @functools.cached_property
+    def prj(self):
+        return self.xml.node('/project')
+
+    @functools.cached_property
+    def tgt(self):
+        return self.xml.node('/target')
 
     def is_cross(self, host_arch):
 
