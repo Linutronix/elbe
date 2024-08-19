@@ -4,8 +4,7 @@
 
 import logging
 import multiprocessing
-from contextlib import contextmanager
-from os import chdir, getcwd
+import os
 
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
@@ -278,15 +277,6 @@ class UpdatePbuilderJob(AsyncWorkerJob):
             db.reset_busy(self.project.builddir, success)
 
 
-@contextmanager
-def savecwd():
-    oldcwd = getcwd()
-    try:
-        yield
-    finally:
-        chdir(oldcwd)
-
-
 class AsyncWorker(multiprocessing.Process):
     def __init__(self, db):
         super().__init__(name='AsyncWorker')
@@ -308,7 +298,7 @@ class AsyncWorker(multiprocessing.Process):
             if job is None:
                 break
 
-            with savecwd():
-                with elbe_logging(projects=job.project.builddir):
-                    job.execute(self.db)
+            os.chdir('/')
+            with elbe_logging(projects=job.project.builddir):
+                job.execute(self.db)
             self.queue.task_done()
