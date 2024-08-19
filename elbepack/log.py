@@ -23,11 +23,17 @@ validation = logging.getLogger('validation')
 class LoggingQueue(collections.deque):
     def __init__(self):
         super().__init__(maxlen=1024)
-        self.max_level = logging.NOTSET
+        self._max_level = logging.NOTSET
 
     def note_level(self, level):
-        if level > self.max_level:
-            self.max_level = level
+        if level > self._max_level:
+            self._max_level = level
+
+    def reset_level(self):
+        self._max_level = logging.NOTSET
+
+    def max_level(self):
+        return self._max_level
 
 
 _queues = {}
@@ -54,14 +60,14 @@ def read_loggingQ(proj):
 
 def read_maxlevel(proj):
     try:
-        return _queues[proj].max_level
+        return _queues[proj].max_level()
     except (IndexError, KeyError):
         return logging.NOTSET
 
 
 def reset_level(proj):
     try:
-        _queues[proj].max_level = logging.NOTSET
+        _queues[proj].reset_level()
     except (IndexError, KeyError):
         pass
 
