@@ -3,10 +3,9 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 import logging
+import multiprocessing
 from contextlib import contextmanager
 from os import chdir, getcwd
-from queue import Queue
-from threading import Thread
 
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
@@ -288,11 +287,11 @@ def savecwd():
         chdir(oldcwd)
 
 
-class AsyncWorker(Thread):
+class AsyncWorker(multiprocessing.Process):
     def __init__(self, db):
         super().__init__(name='AsyncWorker')
         self.db = db
-        self.queue = Queue()
+        self.queue = multiprocessing.JoinableQueue()
         self.start()
 
     def stop(self):

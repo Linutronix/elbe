@@ -5,6 +5,8 @@
 
 import collections
 import logging
+import multiprocessing
+import multiprocessing.managers
 import os
 import re
 import threading
@@ -36,14 +38,23 @@ class LoggingQueue(collections.deque):
         return self._max_level
 
 
-_queues = {}
+class _LoggingManager(multiprocessing.managers.BaseManager):
+    pass
+
+
+_LoggingManager.register('dict', dict, multiprocessing.managers.DictProxy)
+_LoggingManager.register('LoggingQueue', LoggingQueue)
+
+_manager = _LoggingManager()
+_manager.start()
+_queues = _manager.dict()  # type: ignore
 
 
 class QHandler(logging.Handler):
     def __init__(self, target, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if target not in _queues:
-            _queues[target] = LoggingQueue()
+            _queues[target] = _manager.LoggingQueue()
         self.Q = _queues[target]
 
     def emit(self, record):
