@@ -94,14 +94,11 @@ def setup_apt_keyring(gpg_home, keyring_fname):
 
     trustkeys = os.listdir('/etc/apt/trusted.gpg.d')
     for key in trustkeys:
-        print(f'Import {key}: ')
-        try:
-            subprocess.run([
-                'gpg', *gpg_options,
-                '--import', os.path.join('/etc/apt/trusted.gpg.d', key),
-            ], check=True)
-        except subprocess.CalledProcessError:
-            print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
+        print(f'Import {key}')
+        subprocess.run([
+            'gpg', *gpg_options,
+            '--import', os.path.join('/etc/apt/trusted.gpg.d', key),
+        ], check=True, capture_output=True)
 
 
 def verify_release(tmp, base_url):
