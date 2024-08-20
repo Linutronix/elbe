@@ -89,7 +89,7 @@ def check_signature(ctx, signature):
 
     # there should be a key
     key = ctx.get_key(signature.fpr, 0)
-    print(f'{key.uids[0].name} <{key.uids[0].email}> ({signature.fpr}):')
+    print(f'{key.uids[0].name} <{key.uids[0].email}> ({signature.fpr}): ', end='')
 
     if signature.summary & sigsum.VALID == sigsum.VALID:
         # signature fully valid and trusted
