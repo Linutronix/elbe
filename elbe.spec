@@ -18,7 +18,7 @@ BuildRequires: python3-setuptools
 BuildRequires: asciidoc
 BuildRequires: xmlto
 
-requires: qemu-kvm, python3-lxml, python3-mako, wget, python3-suds, libvirt-python
+requires: qemu-kvm, python3-lxml, python3-mako, python3-suds, libvirt-python
 
 %description
 ELBE (Embedded Linux Build Environment)

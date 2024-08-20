@@ -73,7 +73,6 @@ Depends: ${misc:Depends}, ${python3:Depends},
   python3-gpg,
   python3-libvirt,
   python3-passlib,
-  wget,
   cpio
 Description: common files
  Common files for ELBE (embedded Linux build environment). These

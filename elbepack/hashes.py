@@ -3,7 +3,8 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 import hashlib
-import subprocess
+import shutil
+import urllib.request
 
 
 class HashValidationFailed(Exception):
@@ -43,8 +44,9 @@ class HashValidator:
     def download_and_validate_file(self, upstream_fname, local_fname):
         url = self.base_url + upstream_fname
         try:
-            subprocess.run(['wget', '-O', local_fname, url], check=True)
-        except subprocess.CalledProcessError as e:
+            with urllib.request.urlopen(url) as src, open(local_fname, 'wb') as dest:
+                shutil.copyfileobj(src, dest)
+        except Exception as e:
             raise HashValidationFailed(f'Failed to download {url}') from e
 
         self.validate_file(upstream_fname, local_fname)

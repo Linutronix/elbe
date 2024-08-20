@@ -104,13 +104,6 @@ def setup_apt_keyring(gpg_home, keyring_fname):
             print(f'adding keyring "{key}" to keyring "{ring_path}" failed')
 
 
-def download(url, local_fname):
-    try:
-        subprocess.run(['wget', '-O', local_fname, url], check=True)
-    except subprocess.CalledProcessError:
-        raise NoKinitrdException(f'Failed to download {url}')
-
-
 def verify_release(tmp, base_url):
 
     # setup gpg context, for verifying
@@ -154,7 +147,9 @@ def download_kinitrd(tmp, suite, mirror, skip_signature=False):
     setup_apt_keyring(tmp.fname('/'), 'pubring.gpg')
 
     # download release file
-    download(base_url + 'Release', tmp.fname('Release'))
+    with urlopen(base_url + 'Release') as src, tmp.open('Release', 'wb') as dest:
+        shutil.copyfileobj(src, dest)
+
     if not skip_signature:
         verify_release(tmp, base_url)
 
