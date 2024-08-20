@@ -63,8 +63,9 @@ def _run_and_detach(*args, **kwargs):
 
 
 def _build_initvm(directory):
+    print('Build initvm')
     try:
-        subprocess.run(['make'], cwd=directory, check=True)
+        subprocess.run(['make'], cwd=directory, check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
         raise with_cli_details(e, 147, 'Building the initvm failed')
 
