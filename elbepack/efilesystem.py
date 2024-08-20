@@ -316,11 +316,11 @@ class ChRootFilesystem(ElbeFilesystem):
             Excursion('/usr/sbin/policy-rc.d'),
         ]
 
-        if self.interpreter:
-            if not self.exists('usr/bin'):
-                if self.islink('usr/bin'):
-                    self._excursions.append(Excursion('/usr/bin'))
+        self.mkdir_p('usr/bin')
+        self.mkdir_p('usr/sbin')
+        self.write_file('usr/sbin/policy-rc.d', 0o755, '#!/bin/sh\nexit 101\n')
 
+        if self.interpreter:
             ui = '/usr/share/elbe/qemu-elbe/' + self.interpreter
             if not os.path.exists(ui):
                 ui = '/usr/bin/' + self.interpreter
@@ -329,10 +329,6 @@ class ChRootFilesystem(ElbeFilesystem):
 
         for excursion in self._excursions:
             excursion.do(self)
-
-        self.mkdir_p('usr/bin')
-        self.mkdir_p('usr/sbin')
-        self.write_file('usr/sbin/policy-rc.d', 0o755, '#!/bin/sh\nexit 101\n')
 
         self._exitstack = contextlib.ExitStack()
         if self.path != '/':
