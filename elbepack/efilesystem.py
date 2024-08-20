@@ -107,8 +107,7 @@ def extract_target(src, xml, dst, cache):
 
     # create filelists describing the content of the target rfs
     if xml.tgt.has('tighten') or xml.tgt.has('diet'):
-        pkglist = [n.et.text for n in xml.node(
-            'target/pkg-list') if n.tag == 'pkg']
+        pkglist = xml.get_target_packages()
         arch = xml.text('project/buildimage/arch', key='arch')
 
         if xml.tgt.has('diet'):
@@ -150,8 +149,7 @@ def extract_target(src, xml, dst, cache):
         pass
 
     if xml.tgt.has('setsel'):
-        pkglist = [n.et.text for n in xml.node(
-            'target/pkg-list') if n.tag == 'pkg']
+        pkglist = xml.get_target_packages()
         psel = 'var/cache/elbe/pkg-selections'
 
         with open(dst.fname(psel), 'w+') as f:
