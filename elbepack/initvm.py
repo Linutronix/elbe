@@ -175,6 +175,7 @@ class LibvirtInitVM(_InitVM):
         arch = xml.et.find('.//os/type').attrib['arch']
 
         if caps_tree.et.find('.//guest/arch[@name="' + arch + '"]/domain[@type="kvm"]') is None:
+            print('KVM accelerated emulation is not available for the initvm, builds will be slow')
             return xml
 
         xml.root.et.attrib['type'] = 'kvm'
