@@ -128,6 +128,10 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
     uuid = prj.read_text()
     request.addfinalizer(lambda: _delete_project(uuid))
 
+    # Not necessary, to test the command.
+    run_elbe_subcommand(['pbuilder', 'update', '--project', uuid])
+    run_elbe_subcommand(['control', 'wait_busy', uuid])
+
     assert _prjrepo_list_packages(uuid) == ''
 
     for package in ['libgpio', 'gpiotest']:
