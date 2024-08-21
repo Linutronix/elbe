@@ -269,7 +269,7 @@ EOT = 4294967295
 
 def generate_elbe_internal_key():
     gpg_agent_conf = pathlib.Path('/var/cache/elbe/gnupg/gpg-agent.conf')
-    gpg_agent_conf.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+    gpg_agent_conf.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     gpg_agent_conf.write_text('allow-preset-passphrase\n'
                               f'default-cache-ttl {EOT}\n'
                               f'max-cache-ttl {EOT}\n')
