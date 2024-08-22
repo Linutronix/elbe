@@ -98,9 +98,17 @@ class ThreadFilter(logging.Filter):
         return retval
 
 
+class _NullStream:
+    def write(self, data):
+        pass
+
+
 def add_stream_handlers(streams):
 
     for stream in streams:
+        if stream == os.devnull:
+            stream = _NullStream()
+
         out = logging.StreamHandler(stream)
         out.addFilter(ThreadFilter([root, log, report, validation, soap])),
         out.setFormatter(context_fmt)
