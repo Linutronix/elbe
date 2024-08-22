@@ -22,7 +22,7 @@ class _ElbeValidationPlugin:
         self.test_script = test_script
 
     def pytest_collect_file(self, file_path, parent):
-        if os.fspath(file_path) == os.fspath(self.test_script):
+        if not file_path.suffix == '.py' and os.fspath(file_path) == os.fspath(self.test_script):
             return _MainModule.from_parent(parent, path=file_path)
 
     @pytest.hookimpl
