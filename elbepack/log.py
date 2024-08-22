@@ -12,7 +12,6 @@ from contextlib import contextmanager
 
 
 root = logging.getLogger()
-local = threading.local()
 context_fmt = logging.Formatter('%(context)s%(message)s')
 msgonly_fmt = logging.Formatter('%(message)s')
 log = logging.getLogger('log')
@@ -147,17 +146,17 @@ _logging_methods = {
 
 @contextmanager
 def elbe_logging(*args, **kwargs):
+    cleanup = open_logging(*args, **kwargs)
     try:
-        open_logging(*args, **kwargs)
         yield
     finally:
-        close_logging()
+        cleanup()
 
 
 def open_logging(**targets):
-
-    close_logging()
     root.setLevel(logging.DEBUG)
+
+    handlers = []
 
     for key, call in _logging_methods.items():
         if key in targets:
@@ -166,16 +165,15 @@ def open_logging(**targets):
                 destinations = [destinations]
 
             for h in call(destinations):
-                local.handlers.append(h)
+                handlers.append(h)
                 root.addHandler(h)
 
-
-def close_logging():
-    if hasattr(local, 'handlers'):
-        for h in local.handlers:
+    def _cleanup():
+        for h in handlers:
             root.removeHandler(h)
             h.close()
-    local.handlers = []
+
+    return _cleanup
 
 
 class AsyncLogging(threading.Thread):

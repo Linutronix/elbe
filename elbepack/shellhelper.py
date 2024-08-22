@@ -43,8 +43,7 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
     >>> import os
     >>> import sys
     >>> from elbepack.log import open_logging
-    >>> open_logging(streams=os.devnull)
-
+    >>> cleanup = open_logging(streams=os.devnull)
     >>> run(['echo', 'ELBE'])
     CompletedProcess(args=['echo', 'ELBE'], returncode=0)
 
@@ -64,12 +63,12 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
 
     >>> run(['echo', 'ELBE'], stdout=ELBE_LOGGING)
     CompletedProcess(args=['echo', 'ELBE'], returncode=0)
+    >>> cleanup()
 
     Let's redirect the loggers to current stdout
 
     >>> from elbepack.log import open_logging
-    >>> open_logging(streams=sys.stdout)
-
+    >>> cleanup = open_logging(streams=sys.stdout)
     >>> run(['echo', 'ELBE'], stdout=ELBE_LOGGING)
     [CMD] echo ELBE
     ELBE
@@ -78,6 +77,7 @@ def run(cmd, /, *, check=True, log_cmd=None, **kwargs):
 
     >>> run(['echo', 'ELBE'], capture_output=True)
     CompletedProcess(args=['echo', 'ELBE'], returncode=0, stdout=b'ELBE\\n', stderr=b'')
+    >>> cleanup()
     """
     stdout = kwargs.pop('stdout', None)
     stderr = kwargs.pop('stderr', None)
@@ -105,8 +105,7 @@ def do(cmd, /, *, env_add=None, **kwargs):
     Let's redirect the loggers to current stdout
     >>> import sys
     >>> from elbepack.log import open_logging
-    >>> open_logging(streams=sys.stdout)
-
+    >>> cleanup = open_logging(streams=sys.stdout)
     >>> do("true")
     [CMD] true
 
@@ -125,6 +124,7 @@ def do(cmd, /, *, env_add=None, **kwargs):
     Traceback (most recent call last):
     ...
     subprocess.CalledProcessError: ...
+    >>> cleanup()
     """
 
     new_env = os.environ.copy()
@@ -144,12 +144,12 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
 
     >>> import sys
     >>> from elbepack.log import open_logging
-    >>> open_logging(streams=sys.stdout)
-
+    >>> cleanup = open_logging(streams=sys.stdout)
     >>> chroot("/", "true") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
     subprocess.CalledProcessError: ...
+    >>> cleanup()
     """
 
     new_env = {'LANG': 'C',
