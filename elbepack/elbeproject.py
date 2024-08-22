@@ -427,8 +427,10 @@ class ElbeProject:
             apt_args = ['--yes', '-q', '--download-only']
             if self.xml.prj.has('noauth'):
                 apt_args.append('--allow-unauthenticated')
-            chroot(self.chrootpath, ['/usr/bin/apt-get', 'update'])
-            chroot(self.chrootpath, ['/usr/bin/apt-get', 'source', *apt_args, src_uri])
+
+            with self.buildenv:
+                chroot(self.chrootpath, ['/usr/bin/apt-get', 'update'])
+                chroot(self.chrootpath, ['/usr/bin/apt-get', 'source', *apt_args, src_uri])
 
             do(f'dpkg-source -x {self.chrootpath}/*.dsc "{src_path}"; rm {self.chrootpath}/*.dsc')
         else:
