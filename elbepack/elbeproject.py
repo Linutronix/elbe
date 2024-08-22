@@ -436,6 +436,8 @@ class ElbeProject:
         else:
             logging.info('Unknown pbuild source: %s', p.tag)
 
+        self.pdebuild_build(profile='', cross=False)
+
     def build_cdroms(self, build_bin=True,
                      build_sources=False, cdrom_size=None,
                      tgt_pkg_lst=None):
