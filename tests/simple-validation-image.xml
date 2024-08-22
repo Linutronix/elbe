@@ -53,6 +53,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		</fstab>
 
 		<pkg-list>
+			<pkg>unzip</pkg>
 		</pkg-list>
 
 		<finetuning>

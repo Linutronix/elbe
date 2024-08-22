@@ -249,6 +249,8 @@ def _test_rfs_partition(build_dir, part):
         assert getty_service.is_symlink()
         assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
 
+        assert root.joinpath('usr', 'bin', 'unzip').is_file()
+
         _test_generated_elbe_files(build_dir, root)
         _test_finetuning(root)
         _test_archive(root)
