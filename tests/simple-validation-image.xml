@@ -52,8 +52,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			</bylabel>
 		</fstab>
 
+		<pbuilder>
+			<git>https://github.com/Linutronix/libgpio.git</git>
+		</pbuilder>
+
 		<pkg-list>
 			<pkg>unzip</pkg>
+			<pkg>libgpio1</pkg>
 		</pkg-list>
 
 		<finetuning>

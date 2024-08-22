@@ -103,6 +103,11 @@ def test_elbe_report_txt(build_dir):
         Installed Packages List
         -----------------------
 
+        Local
+        ~~~~~
+
+        |libgpio1|3.0.0| bookworm main
+
         Debian
         ~~~~~~
 
@@ -250,6 +255,7 @@ def _test_rfs_partition(build_dir, part):
         assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
 
         assert root.joinpath('usr', 'bin', 'unzip').is_file()
+        assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.0.so.3.0.0').is_file()
 
         _test_generated_elbe_files(build_dir, root)
         _test_finetuning(root)
