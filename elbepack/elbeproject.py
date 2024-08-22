@@ -418,10 +418,9 @@ class ElbeProject:
         logging.info('Retrieve pbuild sources: %s',  src_uri)
         if p.tag == 'git':
             do(['git', 'clone', src_uri, src_path])
-            try:
-                do(['git', 'reset', '--hard', p.et.attrib['revision']], cwd=src_path)
-            except IndexError:
-                pass
+            revision = p.et.get('revision')
+            if revision is not None:
+                do(['git', 'reset', '--hard', revision], cwd=src_path)
         elif p.tag == 'svn':
             do(['svn', 'co', '--non-interactive', src_uri, src_path])
         elif p.tag == 'src-pkg':
