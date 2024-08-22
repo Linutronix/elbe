@@ -173,7 +173,7 @@ class ElbeXML:
 
             poptions = goptions + poptions
 
-            if build_sources:
+            if build_sources or self.tgt.has('pbuilder/src-pkg'):
                 mirrors.append(
                     f"deb-src [{' '.join(poptions)}] {pmirror} {suite} main")
 
