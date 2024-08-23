@@ -18,12 +18,14 @@ def get_cmdlist():
     return [x for _, x, _ in pkgutil.iter_modules(elbepack.commands.__path__)]
 
 
+def _import_cmd_module(cmd):
+    return importlib.import_module('.' + cmd, elbepack.commands.__name__)
+
+
 def main(argv=sys.argv):
     parser = argparse.ArgumentParser(prog='elbe')
     parser.add_argument('--version', action='version', version=f'%(prog)s v{elbe_version}')
     parser.add_argument('--stacktrace-on-error', action='store_true', dest='stacktrace_on_error')
-    parser.add_argument('--propagate-exception', action='store_true', dest='propagate_exception',
-                        help=argparse.SUPPRESS)
 
     subparsers = parser.add_subparsers(required=True, dest='cmd')
 
@@ -34,19 +36,16 @@ def main(argv=sys.argv):
 
     logging.getLogger('suds').setLevel(logging.WARNING)
 
-    cmdmod = importlib.import_module('.' + args.cmd, elbepack.commands.__name__)
+    cmdmod = _import_cmd_module(args.cmd)
 
     try:
         cmdmod.run_command(cmd_argv)
     except Exception as e:
-        if args.propagate_exception:
-            raise e
         sys.exit(format_exception(e, output=sys.stderr,
                                   base_module=elbepack,
                                   verbose=args.stacktrace_on_error))
 
 
-def run_elbe_subcommand(args):
-    return main([
-        'elbe', '--propagate-exception', *[os.fspath(arg) for arg in args],
-    ])
+def run_elbe_subcommand(argv):
+    cmdmod = _import_cmd_module(argv[0])
+    return cmdmod.run_command([os.fspath(arg) for arg in argv[1:]])
