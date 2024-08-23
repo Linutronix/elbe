@@ -34,6 +34,7 @@ def main(argv=sys.argv):
 
     args, cmd_argv = parser.parse_known_args(argv[1:])
 
+    logging.basicConfig()
     logging.getLogger('suds').setLevel(logging.WARNING)
 
     cmdmod = _import_cmd_module(args.cmd)
