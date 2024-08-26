@@ -110,6 +110,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
     if not fullpkgs:
         return
 
+    validation.info('')
     validation.info('Full Packagelist validation')
     validation.info('---------------------------')
     validation.info('')
