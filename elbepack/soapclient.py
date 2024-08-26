@@ -5,6 +5,7 @@
 
 import binascii
 import fnmatch
+import functools
 import logging
 import os
 import socket
@@ -47,7 +48,8 @@ class ElbeSoapClient:
         self.host = host
         self.port = port
 
-    def connect(self):
+    @functools.cached_property
+    def service(self):
         control = None
         current_retries = 0
 
@@ -61,14 +63,16 @@ class ElbeSoapClient:
                     raise
                 time.sleep(1)
 
-        # Make sure, that client.service still maps
-        # to the service object.
-        self.service = control.service
-
-        ElbeVersionMismatch.check(elbe_version, self.service.get_version())
+        ElbeVersionMismatch.check(elbe_version, control.service.get_version())
 
         # We have a Connection, now login
-        self.service.login(self._user, self._passwd)
+        control.service.login(self._user, self._passwd)
+
+        return control.service
+
+    def connect(self):
+        # Make the implicit connection explicit
+        self.service
 
     @classmethod
     def from_args(cls, args):
