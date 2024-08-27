@@ -571,15 +571,6 @@ class ElbeDB:
             # Everything good, now return the user id to the caller
             return int(u.id)
 
-    def get_username(self, userid):
-        with session_scope(self.session) as s:
-            try:
-                u = s.query(User).filter(User.id == userid).one()
-            except NoResultFound:
-                raise ElbeDBError(f'no user with id {userid}')
-
-            return str(u.name)
-
     def get_user_id(self, name):
         with session_scope(self.session) as s:
             try:
