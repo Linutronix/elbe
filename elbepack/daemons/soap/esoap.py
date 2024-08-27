@@ -110,7 +110,7 @@ class ESoap (ServiceBase):
 
     @rpc(String, String, String, Integer, _returns=Integer)
     @authenticated_uid
-    def upload_file(self, uid, builddir, fname, blob, part):
+    def upload_file(self, builddir, fname, blob, part):
 
         fn = os.path.join(builddir, fname)
         if part == 0:
@@ -140,38 +140,38 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def build_chroot_tarball(self, uid, builddir):
-        self.app.pm.build_chroot_tarball(uid, builddir)
+        self.app.pm.build_chroot_tarball(builddir)
 
     @rpc(String)
     @authenticated_uid
     def build_sysroot(self, uid, builddir):
-        self.app.pm.build_sysroot(uid, builddir)
+        self.app.pm.build_sysroot(builddir)
 
     @rpc(String)
     @authenticated_uid
     def build_sdk(self, uid, builddir):
-        self.app.pm.build_sdk(uid, builddir)
+        self.app.pm.build_sdk(builddir)
 
     @rpc(String, Boolean, Boolean)
     @authenticated_uid
     def build_cdroms(self, uid, builddir, build_bin, build_src):
-        self.app.pm.build_cdroms(uid, builddir, build_bin, build_src)
+        self.app.pm.build_cdroms(builddir, build_bin, build_src)
 
     @rpc(String, Boolean, Boolean, Boolean)
     @authenticated_uid
     def build(self, uid, builddir, build_bin, build_src, skip_pbuilder):
 
-        self.app.pm.build_project(uid, builddir, build_bin, build_src, skip_pbuilder)
+        self.app.pm.build_project(builddir, build_bin, build_src, skip_pbuilder)
 
     @rpc(String, Boolean, Boolean, String)
     @authenticated_uid
     def build_pbuilder(self, uid, builddir, cross, noccache, ccachesize):
-        self.app.pm.build_pbuilder(uid, builddir, cross, noccache, ccachesize)
+        self.app.pm.build_pbuilder(builddir, cross, noccache, ccachesize)
 
     @rpc(String)
     @authenticated_uid
     def update_pbuilder(self, uid, builddir):
-        self.app.pm.update_pbuilder(uid, builddir)
+        self.app.pm.update_pbuilder(builddir)
 
     @rpc(String)
     @authenticated_uid
@@ -195,7 +195,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def finish_cdrom(self, uid, builddir):
-        self.app.pm.set_upload_cdrom(uid, builddir, ValidationMode.NO_CHECK)
+        self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
 
     @rpc(String)
     @authenticated_uid
@@ -219,17 +219,17 @@ class ESoap (ServiceBase):
     @rpc(String, String, Boolean)
     @authenticated_uid
     def finish_pdebuild(self, uid, builddir, profile, cross):
-        self.app.pm.build_pdebuild(uid, builddir, profile, cross)
+        self.app.pm.build_pdebuild(builddir, profile, cross)
 
     @rpc(String, String)
     @authenticated_uid
     def start_upload_orig(self, uid, builddir, fname):
-        self.app.pm.set_orig_fname(uid, builddir, fname)
+        self.app.pm.set_orig_fname(builddir, fname)
 
     @rpc(String, String)
     @authenticated_uid
     def append_upload_orig(self, uid, builddir, data):
-        orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(uid, builddir))
+        orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(builddir))
 
         # Now append to File
         fp = open(orig_fname, 'ab')
@@ -252,7 +252,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def del_project(self, uid, builddir):
-        self.app.pm.del_project(uid, builddir)
+        self.app.pm.del_project(builddir)
 
     @rpc(String, String, _returns=String)
     @authenticated_uid
@@ -261,19 +261,19 @@ class ESoap (ServiceBase):
             fp.write(binascii.a2b_base64(xml))
             fp.flush()
             prjid = self.app.pm.create_project(
-                uid, fp.name, url_validation=url_validation)
+                fp.name, url_validation=url_validation)
 
         return prjid
 
     @rpc(_returns=String)
     @authenticated_uid
     def new_project(self, uid):
-        return self.app.pm.new_project(uid)
+        return self.app.pm.new_project()
 
     @rpc(String, _returns=String)
     @authenticated_uid
     def get_project_busy(self, uid, builddir):
-        ret, msg = self.app.pm.project_is_busy(uid, builddir)
+        ret, msg = self.app.pm.project_is_busy(builddir)
         if not msg and not ret:
             return 'ELBE-FINISH'
         return msg
@@ -281,7 +281,7 @@ class ESoap (ServiceBase):
     @rpc(String)
     @authenticated_uid
     def rm_log(self, uid, builddir):
-        self.app.pm.rm_log(uid, builddir)
+        self.app.pm.rm_log(builddir)
 
     @rpc(String, _returns=String.customize(max_occurs='unbounded'))
     @authenticated_uid
@@ -306,4 +306,4 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     @authenticated_uid
     def include_package(self, uid, builddir, filename):
-        self.app.pm.add_deb_package(uid, builddir, filename)
+        self.app.pm.add_deb_package(builddir, filename)

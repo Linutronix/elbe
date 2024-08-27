@@ -40,7 +40,7 @@ class ProjectManager:
     def stop(self):
         self.worker.stop()
 
-    def new_project(self, userid):
+    def new_project(self):
         subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
         self.db.create_project(builddir)
@@ -48,7 +48,6 @@ class ProjectManager:
 
     def create_project(
             self,
-            userid,
             xml_file,
             url_validation=ValidationMode.CHECK_ALL):
         subdir = str(uuid7())
@@ -79,13 +78,13 @@ class ProjectManager:
             self._assert_not_busy(ep)
         return ep
 
-    def del_project(self, userid, builddir):
+    def del_project(self, builddir):
         self.db.del_project(builddir)
 
     def set_project_xml(self, builddir, xml_file):
         self.db.set_xml(builddir, xml_file)
 
-    def set_upload_cdrom(self, userid, builddir, url_validation):
+    def set_upload_cdrom(self, builddir, url_validation):
         ep = self.open_project(builddir, url_validation, allow_busy=False)
         ep.xml.set_cdrom_mirror(
             path.join(
@@ -98,7 +97,6 @@ class ProjectManager:
 
     def build_project(
             self,
-            userid,
             builddir,
             build_bin,
             build_src,
@@ -107,15 +105,15 @@ class ProjectManager:
         self.worker.enqueue(BuildJob(ep, build_bin, build_src,
                                      skip_pbuilder))
 
-    def update_pbuilder(self, userid, builddir):
+    def update_pbuilder(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(UpdatePbuilderJob(ep))
 
-    def build_pbuilder(self, userid, builddir, cross, noccache, ccachesize):
+    def build_pbuilder(self, builddir, cross, noccache, ccachesize):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(CreatePbuilderJob(ep, ccachesize, cross, noccache))
 
-    def build_pdebuild(self, userid, builddir, profile, cross):
+    def build_pdebuild(self, builddir, profile, cross):
         ep = self.open_project(builddir, allow_busy=False)
         if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
                 not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
@@ -124,7 +122,7 @@ class ProjectManager:
 
         self.worker.enqueue(PdebuildJob(ep, profile, cross))
 
-    def set_orig_fname(self, userid, builddir, fname):
+    def set_orig_fname(self, builddir, fname):
         ep = self.open_project(builddir, allow_busy=False)
         # Write empty File
         with open(os.path.join(builddir, fname), 'w'):
@@ -138,7 +136,7 @@ class ProjectManager:
         ep.orig_fname = fname
         ep.orig_files.append(fname)
 
-    def get_orig_fname(self, userid, builddir):
+    def get_orig_fname(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
                 not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
@@ -147,28 +145,28 @@ class ProjectManager:
 
         return ep.orig_fname
 
-    def build_chroot_tarball(self, userid, builddir):
+    def build_chroot_tarball(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildChrootTarJob(ep))
 
-    def build_sysroot(self, userid, builddir):
+    def build_sysroot(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildSysrootJob(ep))
 
-    def build_sdk(self, userid, builddir):
+    def build_sdk(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildSDKJob(ep))
 
-    def build_cdroms(self, userid, builddir, build_bin, build_src):
+    def build_cdroms(self, builddir, build_bin, build_src):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildCDROMsJob(ep, build_bin, build_src))
 
-    def rm_log(self, userid, builddir):
+    def rm_log(self, builddir):
         ep = self.open_project(builddir)
         with open(os.path.join(ep.builddir, 'log.txt'), 'wb', 0):
             pass
 
-    def add_deb_package(self, userid, builddir, filename):
+    def add_deb_package(self, builddir, filename):
         ep = self.open_project(builddir)
 
         t = os.path.splitext(filename)[1]  # filetype of uploaded file
@@ -186,7 +184,7 @@ class ProjectManager:
 
         ep.repo.finalize()
 
-    def project_is_busy(self, userid, builddir):
+    def project_is_busy(self, builddir):
         msg = read_loggingQ(builddir)
         return self.db.is_busy(builddir), msg
 
