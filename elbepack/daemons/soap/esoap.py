@@ -21,7 +21,6 @@ from elbepack.elbexml import ValidationError, ValidationMode
 from elbepack.projectmanager import InvalidState, ProjectManagerError
 from elbepack.version import elbe_version
 
-from .authentication import authenticated
 from .datatypes import SoapFile, SoapProject
 
 
@@ -93,23 +92,19 @@ class ESoap (ServiceBase):
         return True
 
     @rpc(_returns=Array(SoapProject))
-    @authenticated
     def list_projects(self):
         return self.app.pm.db.list_projects()
 
     @rpc(String, _returns=SoapProject)
-    @authenticated
     def get_project(self, builddir):
         return self.app.pm.db.get_project_data(builddir)
 
     @rpc(String, _returns=Array(SoapFile))
-    @authenticated
     def get_files(self, builddir):
         files = self.app.pm.db.get_project_files(builddir)
         return files
 
     @rpc(String, String, String, Integer, _returns=Integer)
-    @authenticated
     def upload_file(self, builddir, fname, blob, part):
 
         fn = os.path.join(builddir, fname)
@@ -138,43 +133,35 @@ class ESoap (ServiceBase):
         return part + 1
 
     @rpc(String)
-    @authenticated
     def build_chroot_tarball(self, builddir):
         self.app.pm.build_chroot_tarball(builddir)
 
     @rpc(String)
-    @authenticated
     def build_sysroot(self, builddir):
         self.app.pm.build_sysroot(builddir)
 
     @rpc(String)
-    @authenticated
     def build_sdk(self, builddir):
         self.app.pm.build_sdk(builddir)
 
     @rpc(String, Boolean, Boolean)
-    @authenticated
     def build_cdroms(self, builddir, build_bin, build_src):
         self.app.pm.build_cdroms(builddir, build_bin, build_src)
 
     @rpc(String, Boolean, Boolean, Boolean)
-    @authenticated
     def build(self, builddir, build_bin, build_src, skip_pbuilder):
 
         self.app.pm.build_project(builddir, build_bin, build_src, skip_pbuilder)
 
     @rpc(String, Boolean, Boolean, String)
-    @authenticated
     def build_pbuilder(self, builddir, cross, noccache, ccachesize):
         self.app.pm.build_pbuilder(builddir, cross, noccache, ccachesize)
 
     @rpc(String)
-    @authenticated
     def update_pbuilder(self, builddir):
         self.app.pm.update_pbuilder(builddir)
 
     @rpc(String)
-    @authenticated
     def start_cdrom(self, builddir):
         cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
@@ -183,7 +170,6 @@ class ESoap (ServiceBase):
         fp.close()
 
     @rpc(String, String)
-    @authenticated
     def append_cdrom(self, builddir, data):
         cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
 
@@ -193,12 +179,10 @@ class ESoap (ServiceBase):
         fp.close()
 
     @rpc(String)
-    @authenticated
     def finish_cdrom(self, builddir):
         self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
 
     @rpc(String)
-    @authenticated
     def start_pdebuild(self, builddir):
         pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
@@ -207,7 +191,6 @@ class ESoap (ServiceBase):
         fp.close()
 
     @rpc(String, String)
-    @authenticated
     def append_pdebuild(self, builddir, data):
         pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
 
@@ -217,17 +200,14 @@ class ESoap (ServiceBase):
         fp.close()
 
     @rpc(String, String, Boolean)
-    @authenticated
     def finish_pdebuild(self, builddir, profile, cross):
         self.app.pm.build_pdebuild(builddir, profile, cross)
 
     @rpc(String, String)
-    @authenticated
     def start_upload_orig(self, builddir, fname):
         self.app.pm.set_orig_fname(builddir, fname)
 
     @rpc(String, String)
-    @authenticated
     def append_upload_orig(self, builddir, data):
         orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(builddir))
 
@@ -237,7 +217,6 @@ class ESoap (ServiceBase):
         fp.close()
 
     @rpc(String)
-    @authenticated
     def finish_upload_orig(self, builddir):
         # If we support more than one orig, we need to put the orig_files into
         # some list here.
@@ -245,17 +224,14 @@ class ESoap (ServiceBase):
         pass
 
     @rpc(String)
-    @authenticated
     def reset_project(self, builddir):
         self.app.pm.db.reset_project(builddir, True)
 
     @rpc(String)
-    @authenticated
     def del_project(self, builddir):
         self.app.pm.del_project(builddir)
 
     @rpc(String, String, _returns=String)
-    @authenticated
     def create_project(self, xml, url_validation):
         with NamedTemporaryFile() as fp:
             fp.write(binascii.a2b_base64(xml))
@@ -266,12 +242,10 @@ class ESoap (ServiceBase):
         return prjid
 
     @rpc(_returns=String)
-    @authenticated
     def new_project(self):
         return self.app.pm.new_project()
 
     @rpc(String, _returns=String)
-    @authenticated
     def get_project_busy(self, builddir):
         ret, msg = self.app.pm.project_is_busy(builddir)
         if not msg and not ret:
@@ -279,12 +253,10 @@ class ESoap (ServiceBase):
         return msg
 
     @rpc(String)
-    @authenticated
     def rm_log(self, builddir):
         self.app.pm.rm_log(builddir)
 
     @rpc(String, _returns=String.customize(max_occurs='unbounded'))
-    @authenticated
     def list_packages(self, builddir):
         r = []
         for _, _, filenames in os.walk(
@@ -294,7 +266,6 @@ class ESoap (ServiceBase):
         return sorted(r)
 
     @rpc(String, String)
-    @authenticated
     def tar_prjrepo(self, builddir, filename):
         with tarfile.open(os.path.join(builddir, filename), 'w:gz') as tar:
             tar.add(
@@ -304,6 +275,5 @@ class ESoap (ServiceBase):
                         builddir, 'repo')))
 
     @rpc(String, String)
-    @authenticated
     def include_package(self, builddir, filename):
         self.app.pm.add_deb_package(builddir, filename)
