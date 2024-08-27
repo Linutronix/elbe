@@ -38,14 +38,12 @@ class ElbeVersionMismatch(RuntimeError):
 
 
 class ElbeSoapClient:
-    def __init__(self, host, port, user, passwd, timeout, retries=10):
+    def __init__(self, host, port, timeout, retries=10):
 
         # Attributes
         self._wsdl = 'http://' + host + ':' + str(port) + '/soap/?wsdl'
         self._timeout = timeout
         self._retries = retries
-        self._user = user
-        self._passwd = passwd
         self.host = host
         self.port = port
 
@@ -66,9 +64,6 @@ class ElbeSoapClient:
 
         ElbeVersionMismatch.check(elbe_version, control.service.get_version())
 
-        # We have a Connection, now login
-        control.service.login(self._user, self._passwd)
-
         return control.service
 
     def connect(self):
@@ -77,8 +72,7 @@ class ElbeSoapClient:
 
     @classmethod
     def from_args(cls, args):
-        return cls(args.soaphost, args.soapport, args.soapuser, args.soappassword,
-                   args.soaptimeout, retries=args.retries)
+        return cls(args.soaphost, args.soapport, args.soaptimeout, retries=args.retries)
 
     def _file_download_url(self, builddir, filename):
         return f'http://{self.host}:{self.port}/repo/{builddir}/{filename}'

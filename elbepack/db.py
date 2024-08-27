@@ -535,21 +535,6 @@ class ElbeDB:
                 raise ElbeDBError(f'user {name} already exists in the database')
             s.add(u)
 
-    def validate_login(self, name, password):
-        with session_scope(self.session) as s:
-            # Find the user with the given name
-            try:
-                u = s.query(User).filter(User.name == name).one()
-            except NoResultFound:
-                raise InvalidLogin()
-
-            # Check password, throw an exception if invalid
-            if not pbkdf2_sha512.verify(password, u.pwhash):
-                raise InvalidLogin()
-
-            # Everything good, now return the user id to the caller
-            return int(u.id)
-
     @classmethod
     def init_db(cls, name, fullname, password, email):
 

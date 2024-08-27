@@ -84,13 +84,6 @@ class ESoap (ServiceBase):
     def get_version(self):
         return elbe_version
 
-    @rpc(String, String, _returns=Boolean)
-    def login(self, user, passwd):
-        s = self.transport.req_env['beaker.session']
-        s['userid'] = self.app.pm.db.validate_login(user, passwd)
-        s.save()
-        return True
-
     @rpc(_returns=Array(SoapProject))
     def list_projects(self):
         return self.app.pm.db.list_projects()

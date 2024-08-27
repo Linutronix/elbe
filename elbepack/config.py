@@ -4,7 +4,7 @@
 
 import os
 
-from elbepack.cli import add_argument
+from elbepack.cli import add_argument, add_deprecated_argparse_argument
 
 
 def add_argument_soaptimeout(parser_or_func):
@@ -36,19 +36,8 @@ def add_arguments_soapclient(parser_or_func):
     parser_or_func = add_argument_soapport(parser_or_func)
     parser_or_func = add_argument_soaptimeout(parser_or_func)
 
-    parser_or_func = add_argument(
-        parser_or_func,
-        '--user',
-        dest='soapuser',
-        default=os.environ.get('ELBE_USER', 'root'),
-    )
-
-    parser_or_func = add_argument(
-        parser_or_func,
-        '--pass',
-        dest='soappassword',
-        default=os.environ.get('ELBE_USER', 'foo'),
-    )
+    parser_or_func = add_deprecated_argparse_argument(parser_or_func, '--user', nargs=1)
+    parser_or_func = add_deprecated_argparse_argument(parser_or_func, '--pass', nargs=1)
 
     parser_or_func = add_argument(
         parser_or_func,
