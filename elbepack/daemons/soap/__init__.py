@@ -5,8 +5,6 @@
 import logging
 import warnings
 
-from beaker.middleware import SessionMiddleware
-
 # spyne uses a bundled version of six, which triggers warnings in spyne version 2.14.0.
 # As the warnings can happen during any import, a scoped .catch_warnings() is not enough.
 if True:  # avoid flake8 errors for the following imports
@@ -30,12 +28,6 @@ class EsoapApp(Application):
         super().__init__(*args, **kargs)
         self.pm = ProjectManager('/var/cache/elbe')
 
-
-class MySession(SessionMiddleware):
-    def __init__(self, app, pm):
-        self.pm = pm
-        super().__init__(app)
-
     def stop(self):
         self.pm.stop()
 
@@ -46,5 +38,4 @@ def get_app():
                    in_protocol=Soap11(validator='lxml'),
                    out_protocol=Soap11())
 
-    wsgi = WsgiApplication(app)
-    return MySession(wsgi, app.pm)
+    return WsgiApplication(app)
