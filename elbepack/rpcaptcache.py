@@ -65,12 +65,10 @@ class InChRootObject:
 @MyMan.register('RPCAPTCache')
 class RPCAPTCache(InChRootObject):
 
-    def __init__(self, rfs, arch,
-                 notifier=None, norecommend=False, noauth=True):
+    def __init__(self, rfs, arch, norecommend=False, noauth=True):
 
         super().__init__(rfs)
 
-        self.notifier = notifier
         config.set('APT::Architecture', arch)
         if norecommend:
             config.set('APT::Install-Recommends', '0')
@@ -278,8 +276,7 @@ class RPCAPTCache(InChRootObject):
         return self.rfs.fname(fetch_source(src_name, src_version, dest_dir, ElbeAcquireProgress()))
 
 
-def get_rpcaptcache(rfs, arch,
-                    notifier=None, norecommend=False, noauth=True):
+def get_rpcaptcache(rfs, arch, norecommend=False, noauth=True):
 
     mm = MyMan()
     mm.start()
@@ -288,4 +285,4 @@ def get_rpcaptcache(rfs, arch,
     # see the creation of MyMan.RPCAPTCache by
     # MyMan.register()
     #
-    return mm.RPCAPTCache(rfs, arch, notifier, norecommend, noauth)
+    return mm.RPCAPTCache(rfs, arch, norecommend, noauth)

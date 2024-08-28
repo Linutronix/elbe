@@ -117,7 +117,6 @@ class ElbeProject:
             override_buildtype=None,
             skip_validate=False,
             url_validation=ValidationMode.CHECK_ALL,
-            rpcaptcache_notifier=None,
             postbuild_file=None,
             presh_file=None,
             postsh_file=None,
@@ -139,10 +138,8 @@ class ElbeProject:
         self.postsh_file = postsh_file
         self.savesh_file = savesh_file
 
-        # Apt-Cache will be created on demand with the specified notifier by
-        # the get_rpcaptcache method
+        # Apt-Cache will be created on demand by the get_rpcaptcache method
         self._rpcaptcache = None
-        self.rpcaptcache_notifier = rpcaptcache_notifier
 
         # Initialise Repo Images to Empty list.
         self.repo_images = []
@@ -886,7 +883,6 @@ class ElbeProject:
 
         if env.rpcaptcache is None:
             env.rpcaptcache = get_rpcaptcache(env.rfs, arch,
-                                              self.rpcaptcache_notifier,
                                               norecommend,
                                               self.xml.prj.has('noauth'))
         return env.rpcaptcache
