@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2016 Linutronix GmbH
 
-import base64
 import os
 import pathlib
 import shutil
@@ -295,8 +294,8 @@ def unarmor_openpgp_keyring(armored):
     """
     Unarmors one ascii-armored (string) OpenPGP keyring.
     """
-    b64 = armored.strip()                                              \
-                 .removeprefix('-----BEGIN PGP PUBLIC KEY BLOCK-----') \
-                 .removesuffix('-----END PGP PUBLIC KEY BLOCK-----')   \
-                 .strip()
-    return base64.b64decode(b64)
+    ctx = core.Context()
+    data = core.Data(string=armored)
+    ret = ctx.key_import(data)
+    key_id = ret.imports[0].fpr
+    return ctx.key_export(key_id)
