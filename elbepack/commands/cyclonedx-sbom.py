@@ -111,8 +111,9 @@ def run_command(argv):
         source_file.node('initvmpkgs'),
     ):
         # Duplicates are disallowed by the schema
-        if _component_from_apt_pkg(XMLPackage(p)) not in formulation_components:
-            formulation_components.append(_component_from_apt_pkg(XMLPackage(p)))
+        c = _component_from_apt_pkg(XMLPackage(p))
+        if c not in formulation_components:
+            formulation_components.append(c)
 
     output = {
         'bomFormat': 'CycloneDX',
