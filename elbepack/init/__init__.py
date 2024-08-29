@@ -14,7 +14,7 @@ from elbepack.shellhelper import do
 from elbepack.templates import get_initvm_preseed, write_template
 from elbepack.treeutils import etree
 from elbepack.validate import validate_xml
-from elbepack.version import elbe_version, is_devel
+from elbepack.version import is_devel
 from elbepack.xmldefaults import ElbeDefaults
 
 
@@ -61,8 +61,6 @@ def create_initvm(name, xmlfile, directory, *,
     prj = xml.node('/initvm')
 
     d = {
-         'elbe_exe': elbe_exe,
-         'elbe_version': elbe_version,
          'is_devel': is_devel,
          'defs': defs,
          'directory': directory,
