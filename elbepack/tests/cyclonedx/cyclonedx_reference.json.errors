@@ -1,0 +1,658 @@
+
+The following target-packages have errors:
+
+bash
+  no mapping for "GFDL-NIV-1.3" for pkg "bash"
+  no mapping for "BSD-4-clause-UC" for pkg "bash"
+  no mapping for "MIT-like" for pkg "bash"
+  no mapping for "permissive" for pkg "bash"
+
+bsdutils
+  no mapping for "BSLA" for pkg "bsdutils"
+
+coreutils
+  no mapping for "BSD-4-clause-UC" for pkg "coreutils"
+  no mapping for "GFDL-NIV-1.3" for pkg "coreutils"
+
+cron
+  no mapping for "Paul-Vixie's-license" for pkg "cron"
+
+cron-daemon-common
+  no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"
+
+debianutils
+  no mapping for "SMAIL-GPL" for pkg "debianutils"
+
+diffutils
+  no mapping for "LGPL-2.0+" for pkg "diffutils"
+  no mapping for "GFDL-NIV-1.3" for pkg "diffutils"
+
+dpkg
+  no mapping for "public-domain-s-s-d" for pkg "dpkg"
+
+e2fsprogs
+  no mapping for "Apache-2" for pkg "e2fsprogs"
+  no mapping for "GPL" for pkg "e2fsprogs"
+  no mapping for "MIT-US-export" for pkg "e2fsprogs"
+
+fdisk
+  no mapping for "BSLA" for pkg "fdisk"
+
+findutils
+  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
+  no mapping for "GPL" for pkg "findutils"
+  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
+  no mapping for "LGPL-3" for pkg "findutils"
+  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+
+gcc-12-base
+  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
+  no mapping for "GPL" for pkg "findutils"
+  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
+  no mapping for "LGPL-3" for pkg "findutils"
+  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+
+gpgv
+  no mapping for "permissive" for pkg "gpgv"
+  no mapping for "RFC-Reference" for pkg "gpgv"
+  no mapping for "TinySCHEME" for pkg "gpgv"
+
+gzip
+  no mapping for "GFDL-1.3+-no-invariant" for pkg "gzip"
+  no mapping for "FSF-manpages" for pkg "gzip"
+
+less
+  no mapping for "Less" for pkg "less"
+  no mapping for "Less," for pkg "less"
+
+libargon2-1
+  no mapping for "CC0" for pkg "libargon2-1"
+
+libblkid1
+  no mapping for "BSLA" for pkg "libblkid1"
+
+libbsd0
+  no mapping for "BSD-4-clause-Niels-Provos" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-Regents" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-NetBSD" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-author" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-John-Birrell" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-verbatim" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-author" for pkg "libbsd0"
+  no mapping for "ISC-Original" for pkg "libbsd0"
+
+libbz2-1.0
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libc-bin
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libc6
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libcom-err2
+  no mapping for "Apache-2" for pkg "libcom-err2"
+  no mapping for "GPL" for pkg "libcom-err2"
+  no mapping for "MIT-US-export" for pkg "libcom-err2"
+
+libcrypt1
+  no mapping for "Apache-2" for pkg "libcom-err2"
+  no mapping for "GPL" for pkg "libcom-err2"
+  no mapping for "MIT-US-export" for pkg "libcom-err2"
+
+libcryptsetup12
+  no mapping for "CC0" for pkg "libcryptsetup12"
+
+libdb5.3
+  no mapping for "Ms-PL" for pkg "libdb5.3"
+  no mapping for "GPL" for pkg "libdb5.3"
+  no mapping for "MIT-old" for pkg "libdb5.3"
+  no mapping for "TCL-like" for pkg "libdb5.3"
+  no mapping for "BSD-3-clause-fjord" for pkg "libdb5.3"
+
+libelf1
+  no override for heuristics based package "libelf1"
+  no mapping for "GFDL-NIV-1.3" for pkg "libelf1"
+
+libext2fs2
+  no mapping for "Apache-2" for pkg "libext2fs2"
+  no mapping for "GPL" for pkg "libext2fs2"
+  no mapping for "MIT-US-export" for pkg "libext2fs2"
+
+libfdisk1
+  no mapping for "BSLA" for pkg "libfdisk1"
+
+libffi8
+  no mapping for "GPL" for pkg "libffi8"
+
+libgcc-s1
+  no mapping for "GPL" for pkg "libffi8"
+
+libgcrypt20
+  no override for heuristics based package "libgcrypt20"
+
+libgnutls30
+  no override for heuristics based package "libgnutls30"
+  no mapping for "The main library is licensed under GNU Lesser" for pkg "libgnutls30"
+  no mapping for "CC0 license" for pkg "libgnutls30"
+  no mapping for "LGPLv2.1+" for pkg "libgnutls30"
+  no mapping for "LGPLv3+_or_GPLv2+" for pkg "libgnutls30"
+
+libgpg-error0
+  no mapping for "g10-permissive" for pkg "libgpg-error0"
+
+libgssapi-krb5-2
+  no mapping for "g10-permissive" for pkg "libgpg-error0"
+
+libhogweed6
+  no mapping for "GAP" for pkg "libhogweed6"
+
+libidn2-0
+  no mapping for "Unicode" for pkg "libidn2-0"
+
+libip4tc2
+  no mapping for "custom" for pkg "libip4tc2"
+
+liblzma5
+  no mapping for "PD" for pkg "liblzma5"
+  no mapping for "probably-PD" for pkg "liblzma5"
+  no mapping for "permissive-fsf" for pkg "liblzma5"
+  no mapping for "Autoconf" for pkg "liblzma5"
+  no mapping for "permissive-nowarranty" for pkg "liblzma5"
+  no mapping for "none" for pkg "liblzma5"
+  no mapping for "config-h" for pkg "liblzma5"
+  no mapping for "noderivs" for pkg "liblzma5"
+  no mapping for "PD-debian" for pkg "liblzma5"
+
+libmd0
+  no mapping for "BSD-3-clause-Aaron-D-Gifford" for pkg "libmd0"
+  no mapping for "BSD-2-clause-NetBSD" for pkg "libmd0"
+  no mapping for "public-domain-md4" for pkg "libmd0"
+  no mapping for "public-domain-md5" for pkg "libmd0"
+  no mapping for "public-domain-sha1" for pkg "libmd0"
+
+libmount1
+  no mapping for "BSLA" for pkg "libmount1"
+
+libncursesw6
+  no mapping for "MIT/X11" for pkg "libncursesw6"
+
+libnettle8
+  no mapping for "GAP" for pkg "libnettle8"
+
+libp11-kit0
+  no mapping for "permissive-like-automake-output" for pkg "libp11-kit0"
+  no mapping for "ISC+IBM" for pkg "libp11-kit0"
+  no mapping for "same-as-rest-of-p11kit" for pkg "libp11-kit0"
+
+libpam-modules
+  no mapping for "GPL" for pkg "libpam-modules"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules"
+
+libpam-modules-bin
+  no mapping for "GPL" for pkg "libpam-modules-bin"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules-bin"
+
+libpam-runtime
+  no mapping for "GPL" for pkg "libpam-runtime"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-runtime"
+
+libpam0g
+  no mapping for "GPL" for pkg "libpam0g"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam0g"
+
+libpcre2-8-0
+  no mapping for "BSD-3-clause-Cambridge" for pkg "libpcre2-8-0"
+
+libpopt0
+  no mapping for "expat" for pkg "libpopt0"
+
+libproc2-0
+  no mapping for "LGPL-2.0+" for pkg "libproc2-0"
+
+libreadline8
+  no mapping for "GFDL-NIV-1.3+" for pkg "libreadline8"
+  no mapping for "ISC-no-attribution" for pkg "libreadline8"
+
+libsmartcols1
+  no mapping for "BSLA" for pkg "libsmartcols1"
+
+libss2
+  no mapping for "Apache-2" for pkg "libss2"
+  no mapping for "GPL" for pkg "libss2"
+  no mapping for "MIT-US-export" for pkg "libss2"
+
+libtinfo6
+  no mapping for "MIT/X11" for pkg "libtinfo6"
+
+libtirpc-common
+  no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc-common"
+  no mapping for "PERMISSIVE" for pkg "libtirpc-common"
+
+libtirpc3
+  no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc3"
+  no mapping for "PERMISSIVE" for pkg "libtirpc3"
+
+libunistring2
+  no mapping for "FreeSoftware" for pkg "libunistring2"
+
+libuuid1
+  no mapping for "BSLA" for pkg "libuuid1"
+
+libxtables12
+  no mapping for "custom" for pkg "libxtables12"
+
+login
+  no mapping for "GPL-1" for pkg "login"
+
+logsave
+  no mapping for "Apache-2" for pkg "logsave"
+  no mapping for "GPL" for pkg "logsave"
+  no mapping for "MIT-US-export" for pkg "logsave"
+
+mount
+  no mapping for "BSLA" for pkg "mount"
+
+nano
+  no mapping for "GFDL-NIV+" for pkg "nano"
+
+ncurses-base
+  no mapping for "MIT/X11" for pkg "ncurses-base"
+
+ncurses-bin
+  no mapping for "MIT/X11" for pkg "ncurses-bin"
+
+passwd
+  no mapping for "GPL-1" for pkg "passwd"
+
+perl-base
+  no mapping for "REGCOMP," for pkg "perl-base"
+  no mapping for "GPL-3+-WITH-BISON-EXCEPTION" for pkg "perl-base"
+  no mapping for "Unicode" for pkg "perl-base"
+  no mapping for "Artistic," for pkg "perl-base"
+  no mapping for "BZIP" for pkg "perl-base"
+  no mapping for "RRA-KEEP-THIS-NOTICE" for pkg "perl-base"
+  no mapping for "BSD-3-clause-with-weird-numbering" for pkg "perl-base"
+  no mapping for "TEXT-TABS" for pkg "perl-base"
+  no mapping for "BSD-4-clause-POWERDOG" for pkg "perl-base"
+  no mapping for "BSD-3-clause-GENERIC" for pkg "perl-base"
+  no mapping for "SDBM-PUBLIC-DOMAIN" for pkg "perl-base"
+  no mapping for "DONT-CHANGE-THE-GPL" for pkg "perl-base"
+  no mapping for "Artistic-dist" for pkg "perl-base"
+
+procps
+  no mapping for "LGPL-2.0+" for pkg "procps"
+
+readline-common
+  no mapping for "GFDL-NIV-1.3+" for pkg "readline-common"
+  no mapping for "ISC-no-attribution" for pkg "readline-common"
+
+sed
+  no mapping for "GFDL-NIV-1.3+" for pkg "sed"
+  no mapping for "BSD-4-clause-UC" for pkg "sed"
+  no mapping for "BSL-1" for pkg "sed"
+  no mapping for "pcre" for pkg "sed"
+
+sensible-utils
+  no mapping for "All-permissive" for pkg "sensible-utils"
+  no mapping for "configure" for pkg "sensible-utils"
+  no mapping for "installsh" for pkg "sensible-utils"
+
+sysvinit-utils
+  no mapping for "GPL-3.0" for pkg "sysvinit-utils"
+
+util-linux
+  no mapping for "BSLA" for pkg "util-linux"
+
+util-linux-extra
+  no mapping for "BSLA" for pkg "util-linux-extra"
+
+vim-common
+  no mapping for "OPL-1+" for pkg "vim-common"
+  no mapping for "Apache" for pkg "vim-common"
+  no mapping for "Artistic-1" for pkg "vim-common"
+  no mapping for "Vim-Regexp" for pkg "vim-common"
+  no mapping for "UC" for pkg "vim-common"
+  no mapping for "Compaq" for pkg "vim-common"
+  no mapping for "XPM" for pkg "vim-common"
+  no mapping for "EDL-1" for pkg "vim-common"
+
+vim-tiny
+  no mapping for "OPL-1+" for pkg "vim-tiny"
+  no mapping for "Apache" for pkg "vim-tiny"
+  no mapping for "Artistic-1" for pkg "vim-tiny"
+  no mapping for "Vim-Regexp" for pkg "vim-tiny"
+  no mapping for "UC" for pkg "vim-tiny"
+  no mapping for "Compaq" for pkg "vim-tiny"
+  no mapping for "XPM" for pkg "vim-tiny"
+  no mapping for "EDL-1" for pkg "vim-tiny"
+
+
+The following chroot-packages have errors:
+
+bash
+  no mapping for "GFDL-NIV-1.3" for pkg "bash"
+  no mapping for "BSD-4-clause-UC" for pkg "bash"
+  no mapping for "MIT-like" for pkg "bash"
+  no mapping for "permissive" for pkg "bash"
+
+bsdutils
+  no mapping for "BSLA" for pkg "bsdutils"
+
+coreutils
+  no mapping for "BSD-4-clause-UC" for pkg "coreutils"
+  no mapping for "GFDL-NIV-1.3" for pkg "coreutils"
+
+cron
+  no mapping for "Paul-Vixie's-license" for pkg "cron"
+
+cron-daemon-common
+  no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"
+
+debianutils
+  no mapping for "SMAIL-GPL" for pkg "debianutils"
+
+diffutils
+  no mapping for "LGPL-2.0+" for pkg "diffutils"
+  no mapping for "GFDL-NIV-1.3" for pkg "diffutils"
+
+dpkg
+  no mapping for "public-domain-s-s-d" for pkg "dpkg"
+
+e2fsprogs
+  no mapping for "Apache-2" for pkg "e2fsprogs"
+  no mapping for "GPL" for pkg "e2fsprogs"
+  no mapping for "MIT-US-export" for pkg "e2fsprogs"
+
+fdisk
+  no mapping for "BSLA" for pkg "fdisk"
+
+findutils
+  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
+  no mapping for "GPL" for pkg "findutils"
+  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
+  no mapping for "LGPL-3" for pkg "findutils"
+  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+
+gcc-12-base
+  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
+  no mapping for "GPL" for pkg "findutils"
+  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
+  no mapping for "LGPL-3" for pkg "findutils"
+  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+
+gpgv
+  no mapping for "permissive" for pkg "gpgv"
+  no mapping for "RFC-Reference" for pkg "gpgv"
+  no mapping for "TinySCHEME" for pkg "gpgv"
+
+gzip
+  no mapping for "GFDL-1.3+-no-invariant" for pkg "gzip"
+  no mapping for "FSF-manpages" for pkg "gzip"
+
+less
+  no mapping for "Less" for pkg "less"
+  no mapping for "Less," for pkg "less"
+
+libargon2-1
+  no mapping for "CC0" for pkg "libargon2-1"
+
+libblkid1
+  no mapping for "BSLA" for pkg "libblkid1"
+
+libbsd0
+  no mapping for "BSD-4-clause-Niels-Provos" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-Regents" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-NetBSD" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-author" for pkg "libbsd0"
+  no mapping for "BSD-3-clause-John-Birrell" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-verbatim" for pkg "libbsd0"
+  no mapping for "BSD-2-clause-author" for pkg "libbsd0"
+  no mapping for "ISC-Original" for pkg "libbsd0"
+
+libbz2-1.0
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libc-bin
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libc6
+  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+
+libcom-err2
+  no mapping for "Apache-2" for pkg "libcom-err2"
+  no mapping for "GPL" for pkg "libcom-err2"
+  no mapping for "MIT-US-export" for pkg "libcom-err2"
+
+libcrypt1
+  no mapping for "Apache-2" for pkg "libcom-err2"
+  no mapping for "GPL" for pkg "libcom-err2"
+  no mapping for "MIT-US-export" for pkg "libcom-err2"
+
+libcryptsetup12
+  no mapping for "CC0" for pkg "libcryptsetup12"
+
+libdb5.3
+  no mapping for "Ms-PL" for pkg "libdb5.3"
+  no mapping for "GPL" for pkg "libdb5.3"
+  no mapping for "MIT-old" for pkg "libdb5.3"
+  no mapping for "TCL-like" for pkg "libdb5.3"
+  no mapping for "BSD-3-clause-fjord" for pkg "libdb5.3"
+
+libelf1
+  no override for heuristics based package "libelf1"
+  no mapping for "GFDL-NIV-1.3" for pkg "libelf1"
+
+libext2fs2
+  no mapping for "Apache-2" for pkg "libext2fs2"
+  no mapping for "GPL" for pkg "libext2fs2"
+  no mapping for "MIT-US-export" for pkg "libext2fs2"
+
+libfdisk1
+  no mapping for "BSLA" for pkg "libfdisk1"
+
+libffi8
+  no mapping for "GPL" for pkg "libffi8"
+
+libgcc-s1
+  no mapping for "GPL" for pkg "libffi8"
+
+libgcrypt20
+  no override for heuristics based package "libgcrypt20"
+
+libgnutls30
+  no override for heuristics based package "libgnutls30"
+  no mapping for "The main library is licensed under GNU Lesser" for pkg "libgnutls30"
+  no mapping for "CC0 license" for pkg "libgnutls30"
+  no mapping for "LGPLv2.1+" for pkg "libgnutls30"
+  no mapping for "LGPLv3+_or_GPLv2+" for pkg "libgnutls30"
+
+libgpg-error0
+  no mapping for "g10-permissive" for pkg "libgpg-error0"
+
+libgssapi-krb5-2
+  no mapping for "g10-permissive" for pkg "libgpg-error0"
+
+libhogweed6
+  no mapping for "GAP" for pkg "libhogweed6"
+
+libidn2-0
+  no mapping for "Unicode" for pkg "libidn2-0"
+
+libip4tc2
+  no mapping for "custom" for pkg "libip4tc2"
+
+liblzma5
+  no mapping for "PD" for pkg "liblzma5"
+  no mapping for "probably-PD" for pkg "liblzma5"
+  no mapping for "permissive-fsf" for pkg "liblzma5"
+  no mapping for "Autoconf" for pkg "liblzma5"
+  no mapping for "permissive-nowarranty" for pkg "liblzma5"
+  no mapping for "none" for pkg "liblzma5"
+  no mapping for "config-h" for pkg "liblzma5"
+  no mapping for "noderivs" for pkg "liblzma5"
+  no mapping for "PD-debian" for pkg "liblzma5"
+
+libmd0
+  no mapping for "BSD-3-clause-Aaron-D-Gifford" for pkg "libmd0"
+  no mapping for "BSD-2-clause-NetBSD" for pkg "libmd0"
+  no mapping for "public-domain-md4" for pkg "libmd0"
+  no mapping for "public-domain-md5" for pkg "libmd0"
+  no mapping for "public-domain-sha1" for pkg "libmd0"
+
+libmount1
+  no mapping for "BSLA" for pkg "libmount1"
+
+libncursesw6
+  no mapping for "MIT/X11" for pkg "libncursesw6"
+
+libnettle8
+  no mapping for "GAP" for pkg "libnettle8"
+
+libp11-kit0
+  no mapping for "permissive-like-automake-output" for pkg "libp11-kit0"
+  no mapping for "ISC+IBM" for pkg "libp11-kit0"
+  no mapping for "same-as-rest-of-p11kit" for pkg "libp11-kit0"
+
+libpam-modules
+  no mapping for "GPL" for pkg "libpam-modules"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules"
+
+libpam-modules-bin
+  no mapping for "GPL" for pkg "libpam-modules-bin"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-modules-bin"
+
+libpam-runtime
+  no mapping for "GPL" for pkg "libpam-runtime"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam-runtime"
+
+libpam0g
+  no mapping for "GPL" for pkg "libpam0g"
+  no mapping for "BSD-tcp_wrappers" for pkg "libpam0g"
+
+libpcre2-8-0
+  no mapping for "BSD-3-clause-Cambridge" for pkg "libpcre2-8-0"
+
+libpopt0
+  no mapping for "expat" for pkg "libpopt0"
+
+libproc2-0
+  no mapping for "LGPL-2.0+" for pkg "libproc2-0"
+
+libreadline8
+  no mapping for "GFDL-NIV-1.3+" for pkg "libreadline8"
+  no mapping for "ISC-no-attribution" for pkg "libreadline8"
+
+libsmartcols1
+  no mapping for "BSLA" for pkg "libsmartcols1"
+
+libss2
+  no mapping for "Apache-2" for pkg "libss2"
+  no mapping for "GPL" for pkg "libss2"
+  no mapping for "MIT-US-export" for pkg "libss2"
+
+libtinfo6
+  no mapping for "MIT/X11" for pkg "libtinfo6"
+
+libtirpc-common
+  no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc-common"
+  no mapping for "PERMISSIVE" for pkg "libtirpc-common"
+
+libtirpc3
+  no mapping for "__AUTO_PERMISSIVE__" for pkg "libtirpc3"
+  no mapping for "PERMISSIVE" for pkg "libtirpc3"
+
+libunistring2
+  no mapping for "FreeSoftware" for pkg "libunistring2"
+
+libuuid1
+  no mapping for "BSLA" for pkg "libuuid1"
+
+libxtables12
+  no mapping for "custom" for pkg "libxtables12"
+
+login
+  no mapping for "GPL-1" for pkg "login"
+
+logsave
+  no mapping for "Apache-2" for pkg "logsave"
+  no mapping for "GPL" for pkg "logsave"
+  no mapping for "MIT-US-export" for pkg "logsave"
+
+mount
+  no mapping for "BSLA" for pkg "mount"
+
+nano
+  no mapping for "GFDL-NIV+" for pkg "nano"
+
+ncurses-base
+  no mapping for "MIT/X11" for pkg "ncurses-base"
+
+ncurses-bin
+  no mapping for "MIT/X11" for pkg "ncurses-bin"
+
+passwd
+  no mapping for "GPL-1" for pkg "passwd"
+
+perl-base
+  no mapping for "REGCOMP," for pkg "perl-base"
+  no mapping for "GPL-3+-WITH-BISON-EXCEPTION" for pkg "perl-base"
+  no mapping for "Unicode" for pkg "perl-base"
+  no mapping for "Artistic," for pkg "perl-base"
+  no mapping for "BZIP" for pkg "perl-base"
+  no mapping for "RRA-KEEP-THIS-NOTICE" for pkg "perl-base"
+  no mapping for "BSD-3-clause-with-weird-numbering" for pkg "perl-base"
+  no mapping for "TEXT-TABS" for pkg "perl-base"
+  no mapping for "BSD-4-clause-POWERDOG" for pkg "perl-base"
+  no mapping for "BSD-3-clause-GENERIC" for pkg "perl-base"
+  no mapping for "SDBM-PUBLIC-DOMAIN" for pkg "perl-base"
+  no mapping for "DONT-CHANGE-THE-GPL" for pkg "perl-base"
+  no mapping for "Artistic-dist" for pkg "perl-base"
+
+procps
+  no mapping for "LGPL-2.0+" for pkg "procps"
+
+readline-common
+  no mapping for "GFDL-NIV-1.3+" for pkg "readline-common"
+  no mapping for "ISC-no-attribution" for pkg "readline-common"
+
+sed
+  no mapping for "GFDL-NIV-1.3+" for pkg "sed"
+  no mapping for "BSD-4-clause-UC" for pkg "sed"
+  no mapping for "BSL-1" for pkg "sed"
+  no mapping for "pcre" for pkg "sed"
+
+sensible-utils
+  no mapping for "All-permissive" for pkg "sensible-utils"
+  no mapping for "configure" for pkg "sensible-utils"
+  no mapping for "installsh" for pkg "sensible-utils"
+
+sysvinit-utils
+  no mapping for "GPL-3.0" for pkg "sysvinit-utils"
+
+util-linux
+  no mapping for "BSLA" for pkg "util-linux"
+
+util-linux-extra
+  no mapping for "BSLA" for pkg "util-linux-extra"
+
+vim-common
+  no mapping for "OPL-1+" for pkg "vim-common"
+  no mapping for "Apache" for pkg "vim-common"
+  no mapping for "Artistic-1" for pkg "vim-common"
+  no mapping for "Vim-Regexp" for pkg "vim-common"
+  no mapping for "UC" for pkg "vim-common"
+  no mapping for "Compaq" for pkg "vim-common"
+  no mapping for "XPM" for pkg "vim-common"
+  no mapping for "EDL-1" for pkg "vim-common"
+
+vim-tiny
+  no mapping for "OPL-1+" for pkg "vim-tiny"
+  no mapping for "Apache" for pkg "vim-tiny"
+  no mapping for "Artistic-1" for pkg "vim-tiny"
+  no mapping for "Vim-Regexp" for pkg "vim-tiny"
+  no mapping for "UC" for pkg "vim-tiny"
+  no mapping for "Compaq" for pkg "vim-tiny"
+  no mapping for "XPM" for pkg "vim-tiny"
+  no mapping for "EDL-1" for pkg "vim-tiny"
+

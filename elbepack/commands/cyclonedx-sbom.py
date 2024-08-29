@@ -3,10 +3,12 @@
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
 import argparse
+import contextlib
 import datetime
 import itertools
 import json
 import os
+import sys
 import urllib
 
 from elbepack.aptpkgutils import XMLPackage
@@ -106,9 +108,17 @@ def _component_from_apt_pkg(pkg, licenses):
     })
 
 
+def _errorreport(val):
+    if val == '-':
+        return contextlib.nullcontext(sys.stderr)
+    else:
+        return argparse.FileType('w')(val)
+
+
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe cyclonedx-sbom')
     aparser.add_argument('-o', '--output', type=argparse.FileType('w'), default='-')
+    aparser.add_argument('-e', '--errors', type=_errorreport, default='-')
     aparser.add_argument('-d', dest='elbe_build', required=True)
     aparser.add_argument('-m', dest='mapping', nargs='?', default=None)
     args = aparser.parse_args(argv)
@@ -176,3 +186,24 @@ def run_command(argv):
     with args.output:
         json.dump(output, args.output, indent=2, cls=CycloneDXEncoder)
         args.output.write('\n')
+
+    def _print_error_report(dest, pkg_errors):
+        if pkg_errors is not None:
+            print(f'{pkg.name}', file=errors)
+            for error in pkg_errors:
+                print(f'  {error}', file=errors)
+            print('', file=errors)
+
+    def _errors_from_pkg(pkg, licenses):
+        if pkg.name in licenses:
+            if licenses[pkg.name][1]:
+                return licenses[pkg.name][1]
+
+    with args.errors as errors:
+        errors.write('\nThe following target-packages have errors:\n\n')
+        for pkg in pkg_list:
+            _print_error_report(errors, _errors_from_pkg(pkg, licenses))
+
+        errors.write('\nThe following chroot-packages have errors:\n\n')
+        for pkg in pkg_list:
+            _print_error_report(errors, _errors_from_pkg(pkg, chroot_lics))

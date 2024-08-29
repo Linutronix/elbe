@@ -41,17 +41,19 @@ here = pathlib.Path(__file__).parent
 def generate_test_bom():
     source_dir = here.joinpath('build-simple-example')
     mapping_file = here.joinpath('example-mapping.xml')
-    with tempfile.NamedTemporaryFile() as output:
+    with tempfile.NamedTemporaryFile() as output, \
+         tempfile.NamedTemporaryFile('r') as errors:
         run_elbe_subcommand([
             'cyclonedx-sbom', '--output', output.name,
+            '--errors', errors.name,
             '-m', mapping_file, '-d', source_dir,
         ])
         output.seek(0)
-        return json.load(output)
+        return json.load(output), errors.read()
 
 
 def test_schema():
-    test_bom = generate_test_bom()
+    test_bom, _ = generate_test_bom()
     with here.joinpath('bom-1.6.schema.json').open() as f:
         bom_schema = json.load(f)
     with here.joinpath('spdx.schema.json').open() as f:
@@ -63,10 +65,14 @@ def test_schema():
 
 
 def test_reference_data():
-    test_bom = generate_test_bom()
+    test_bom, error_report = generate_test_bom()
     test_bom['metadata']['timestamp'] = '0001-01-01T00:00:00+00:00'
     test_bom['serialNumber'] = uuid.UUID(int=0).urn
     test_bom['metadata']['tools'][0]['version'] = 'INVALID'
     with here.joinpath('cyclonedx_reference.json').open() as f:
         reference_data = json.load(f)
+
     assert test_bom == reference_data
+
+    reference_errors = here.joinpath('cyclonedx_reference.json.errors').read_text()
+    assert error_report == reference_errors
