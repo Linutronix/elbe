@@ -7,7 +7,6 @@ import datetime
 import itertools
 import json
 import os
-import sys
 import urllib
 
 from elbepack.aptpkgutils import XMLPackage
@@ -85,6 +84,7 @@ def _component_from_apt_pkg(pkg):
 
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe cyclonedx-sbom')
+    aparser.add_argument('-o', '--output', type=argparse.FileType('w'), default='-')
     aparser.add_argument('-d', dest='elbe_build', required=True)
     args = aparser.parse_args(argv)
 
@@ -144,5 +144,6 @@ def run_command(argv):
         ],
     }
 
-    json.dump(output, sys.stdout, indent=2, cls=CycloneDXEncoder)
-    sys.stdout.write('\n')
+    with args.output:
+        json.dump(output, args.output, indent=2, cls=CycloneDXEncoder)
+        args.output.write('\n')
