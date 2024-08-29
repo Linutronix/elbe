@@ -1,0 +1,33 @@
+elbe 15.1 (2024-08-30)
+======================
+
+Features
+--------
+
+- The `elbe cyclonedx-sbom` subcommand is not considered experimental anymore.
+- Many internal cleanups and bugfixes.
+- More automated testcases.
+- Restored compatibility with Debian bullseye, bullseye package will be provided again.
+
+
+Bugfixes
+--------
+
+- Execute `<raw_cmd>` without a shell.
+- Remove unnecessary dep on `python3-parted` from `python3-elbe-bin`.
+
+
+Deprecations and Removals
+-------------------------
+
+- Drop the elbe-common repository.
+- The *internal* command `elbe adjustpkgs`.
+- The *internal* command `elbe buildchroot`.
+- The *internal* command `elbe buildsdk`.
+- The *internal* command `elbe buildsysroot`.
+- The *internal* command `elbe genlicence`.
+- The *internal* command `elbe hdimg`.
+- The *internal* command `elbe mkcdrom`.
+- The *internal* command `elbe toolchainextract`.
+- The `--cpuset` argument of `elbe pbuilder`.
+- The `elbe init` command has been removed.
