@@ -6,24 +6,15 @@
 import errno
 import glob
 import os
-import warnings
 from contextlib import contextmanager
 from datetime import datetime
 from shutil import copyfile, rmtree
 from threading import Thread
 
-with warnings.catch_warnings():
-    # passlib has code to handle absence of the crypt module and will work just
-    # fine for our usecase without it.
-    warnings.filterwarnings('ignore', "'crypt' is deprecated", DeprecationWarning)
-    from passlib.hash import pbkdf2_sha512
-
 from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
-    Integer,
-    Sequence,
     String,
     create_engine,
 )
@@ -521,20 +512,6 @@ class ElbeDB:
                                          'application/octet-stream',
                                          'Pbuilder artifact')
 
-    def add_user(self, name, fullname, password, email):
-
-        pwhash = pbkdf2_sha512.hash(password)
-
-        u = User(name=name,
-                 fullname=fullname,
-                 pwhash=pwhash,
-                 email=email)
-
-        with session_scope(self.session) as s:
-            if s.query(User).filter(User.name == name).count() > 0:
-                raise ElbeDBError(f'user {name} already exists in the database')
-            s.add(u)
-
     @classmethod
     def init_db(cls, name, fullname, password, email):
 
@@ -545,25 +522,7 @@ class ElbeDB:
                 print(str(e))
                 return
 
-        db = ElbeDB()
-
-        try:
-            db.add_user(name, fullname, password, email)
-        except ElbeDBError as e:
-            print(str(e))
-
-
-class User(Base):  # type: ignore
-    __tablename__ = 'users'
-
-    id = Column(Integer, Sequence('article_aid_seq', start=1001, increment=1),
-                primary_key=True)
-
-    name = Column(String, unique=True)
-    fullname = Column(String)
-    pwhash = Column(String)
-    email = Column(String)
-    projects = relationship('Project', backref='owner')
+        ElbeDB()
 
 
 class Project (Base):  # type: ignore
