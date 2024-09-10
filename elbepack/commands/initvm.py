@@ -6,8 +6,7 @@ import argparse
 import datetime
 import os
 
-from elbepack.cli import add_arguments_from_decorated_function
-from elbepack.commands import add_deprecated_argparse_argument
+from elbepack.cli import add_arguments_from_decorated_function, add_deprecated_argparse_argument
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
 from elbepack.initvmaction import initvm_actions
 

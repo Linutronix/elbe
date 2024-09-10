@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
+import argparse
 import dataclasses
 import inspect
 import os.path
+import sys
 import traceback
 import types
 import typing
@@ -51,6 +53,17 @@ def add_arguments_from_decorated_function(parser, f):
     """
     for args, kwargs in getattr(f, _decorator_argparse_attr, []):
         parser.add_argument(*args, **kwargs)
+
+
+class _DeprecatedArgumentAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string):
+        print(f'Deprecated option "{option_string}" was used. This option is a NOOP.',
+              file=sys.stderr)
+
+
+def add_deprecated_argparse_argument(parser_or_func, *args, **kwargs):
+    return add_argument(parser_or_func, *args, **kwargs,
+                        action=_DeprecatedArgumentAction, help=argparse.SUPPRESS)
 
 
 @dataclasses.dataclass
