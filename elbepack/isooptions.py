@@ -45,6 +45,6 @@ def get_iso_options(xml):
             continue
         option = iso_options[node.tag]
         logging.info('Adding option %s\n%s', node.tag, option[2])
-        text = node.et.text[:option[1]]
-        options.append('%s "%s"' % (option[0], text.replace('"', '\\"')))
+        options.append(option[0])
+        options.append(node.et.text[:option[1]])
     return options
