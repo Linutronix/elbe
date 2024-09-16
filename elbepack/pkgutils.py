@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 
-from apt_pkg import TagFile
+import apt.debfile
 
 from elbepack.filesystem import TmpdirFilesystem
 
@@ -52,16 +52,11 @@ def get_key_list(prj):
 
 
 def get_dsc_size(fname):
-    tf = TagFile(fname)
-
     sz = os.path.getsize(fname)
-    for sect in tf:
-        if 'Files' in sect:
-            files = sect['Files'].split('\n')
-            files = [f.strip().split(' ') for f in files]
-            for f in files:
-                sz += int(f[1])
-            break
+
+    dsc = apt.debfile.DscSrcPackage(fname)
+    filesizes = map(int, dsc._sections['Files'].split()[1::3])
+    sz += sum(filesizes)
 
     return sz
 
