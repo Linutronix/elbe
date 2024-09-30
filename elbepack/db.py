@@ -28,24 +28,14 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import registry, relationship, scoped_session, sessionmaker
-from sqlalchemy.orm.decl_api import DeclarativeMeta
+from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML, ValidationMode
 
 
-mapper_registry = registry()
-
-
-class Base(metaclass=DeclarativeMeta):
-    __abstract__ = True
-
-    registry = mapper_registry
-    metadata = mapper_registry.metadata
-
-    __init__ = mapper_registry.constructor
+Base = declarative_base()
 
 
 class ElbeDBError(Exception):
@@ -598,7 +588,7 @@ class ElbeDB:
             print(str(e))
 
 
-class User(Base):
+class User(Base):  # type: ignore
     __tablename__ = 'users'
 
     id = Column(Integer, Sequence('article_aid_seq', start=1001, increment=1),
@@ -611,7 +601,7 @@ class User(Base):
     projects = relationship('Project', backref='owner')
 
 
-class Project (Base):
+class Project (Base):  # type: ignore
     __tablename__ = 'projects'
 
     builddir = Column(String, primary_key=True)
@@ -637,7 +627,7 @@ class ProjectData:
                              project.edit.microsecond, project.edit.tzinfo)
 
 
-class ProjectFile (Base):
+class ProjectFile (Base):  # type: ignore
     __tablename__ = 'files'
 
     name = Column(String, primary_key=True)
