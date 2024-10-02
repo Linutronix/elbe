@@ -234,6 +234,8 @@ class LibvirtInitVM(_InitVM):
         disk = xml.et.find('.//devices/disk')
 
         for source in disk.findall('.//source'):
+            if 'fdgroup' not in source.attrib:
+                continue
             flags = os.O_RDWR if source.getparent() is disk else os.O_RDONLY
             # Use raw unmanaged FDs as libvirt will take full ownership of them.
             domain.FDAssociate(source.attrib['fdgroup'], [
