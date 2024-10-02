@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2013-2017 Linutronix GmbH
 
 import copy
+import os
 
 from lxml.etree import Element, ElementTree, SubElement
 from lxml.etree import Resolver, XMLParser, XMLSchema, fromstring, parse, tostring
@@ -146,6 +147,8 @@ class etree(ebase):
     def write(self, fname, encoding=None):
         # Make sure, that we end with a newline
         self.et.getroot().tail = '\n'
+        if isinstance(fname, os.PathLike):
+            fname = os.fspath(fname)
         self.et.write(fname, encoding=encoding)
 
     def ensure_child(self, tag):
