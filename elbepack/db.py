@@ -28,7 +28,11 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
+try:
+    from sqlalchemy.orm import declarative_base
+except ImportError:
+    from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
