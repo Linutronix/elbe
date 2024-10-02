@@ -86,7 +86,7 @@ class ElbeXML:
             self.validate_apt_sources(url_validation, self.defs['arch'])
 
     def __getstate__(self):
-        state = super().__getstate__().copy()
+        state = self.__dict__.copy()
         state['xml'] = state['xml'].tostring()
         state.pop('prj', None)
         state.pop('tgt', None)
