@@ -4,11 +4,13 @@
 
 
 import collections
+import functools
 import logging
 import multiprocessing
 import multiprocessing.managers
 import os
 import re
+import sys
 import threading
 from contextlib import contextmanager
 
@@ -20,6 +22,22 @@ log = logging.getLogger('log')
 soap = logging.getLogger('soap')
 report = logging.getLogger('report')
 validation = logging.getLogger('validation')
+
+
+def _swallow_kwargs(func, *names):
+    @functools.wraps(func)
+    def _wrapper(*args, **kwargs):
+        for name in names:
+            kwargs.pop(name, None)
+        return func(*args, **kwargs)
+
+    return _wrapper
+
+
+if sys.version_info < (3, 9, 7) and hasattr(multiprocessing.managers, 'AutoProxy'):
+    # See https://bugs.python.org/issue30256 and linked issues
+    multiprocessing.managers.AutoProxy = _swallow_kwargs(
+            multiprocessing.managers.AutoProxy, 'manager_owned')
 
 
 class LoggingQueue(collections.deque):
