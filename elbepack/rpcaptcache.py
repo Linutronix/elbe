@@ -80,6 +80,10 @@ class RPCAPTCache(InChRootObject):
         else:
             config.set('APT::Get::AllowUnauthenticated', '0')
 
+        config.set('Acquire::Retries', '10')
+        config.set('Acquire::Retries::Delay', 'true')
+        config.set('Acquire::Retries::Delay::Maximum', '30')
+
         self.cache = Cache(progress=ElbeOpProgress())
         self.cache.open(progress=ElbeOpProgress())
 
