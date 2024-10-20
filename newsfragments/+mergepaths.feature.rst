@@ -1,0 +1,1 @@
+Extend mergepaths list to allow multiple hostsdk-pkg-list and url-list elements.

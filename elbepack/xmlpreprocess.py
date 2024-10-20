@@ -31,7 +31,9 @@ from elbepack.validate import error_log_to_strings
 # list of sections that are allowed to exists multiple times before
 # preprocess and that childrens are merge into one section during preprocess
 mergepaths = ['//target/finetuning',
+              '//target/hostsdk-pkg-list',
               '//target/pkg-list',
+              '//project/mirror/url-list',
               '//project/buildimage/pkg-list']
 
 
