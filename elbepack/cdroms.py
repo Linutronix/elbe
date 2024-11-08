@@ -22,6 +22,7 @@ CDROM_SIZE = 640 * 1000 * 1000
 
 def add_source_pkg(repo, component, cache, pkg, version, forbid):
     if pkg in forbid:
+        logging.info('Ignoring source package %s', pkg)
         return
     pkg_id = f'{pkg}-{version}'
     try:
@@ -42,12 +43,12 @@ def mk_source_cdrom(components, codename,
 
     os.makedirs('/var/cache/elbe/sources', exist_ok=True)
 
-    forbiddenPackages = []
+    forbidden_packages = []
     if xml is not None and xml.has('target/pkg-list'):
         for i in xml.node('target/pkg-list'):
             try:
                 if i.tag == 'pkg' and i.et.attrib['on_src_cd'] == 'False':
-                    forbiddenPackages.append(i.text('.').strip())
+                    forbidden_packages.append(i.text('.').strip())
             except KeyError:
                 pass
 
@@ -56,6 +57,12 @@ def mk_source_cdrom(components, codename,
     for component in components.keys():
         rfs, cache, pkg_lst = components[component]
         logging.info('Adding %s component', component)
+
+        forbidden_src_packages = set()
+        for name, _ in cache.get_corresponding_source_packages(forbidden_packages,
+                                                               include_built_using=False):
+            forbidden_src_packages.add(name)
+
         rfs.mkdir_p('/var/cache/elbe/sources')
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
@@ -64,14 +71,15 @@ def mk_source_cdrom(components, codename,
         for pkg, version in pkg_lst:
             add_source_pkg(repo, component,
                            cache, pkg, version,
-                           forbiddenPackages)
+                           forbidden_src_packages)
 
         if component == 'main' and xml is not None:
             for p in xml.node('debootstrappkgs'):
                 pkg = XMLPackage(p)
                 srcpkgs = cache.get_corresponding_source_packages([pkg])
                 for srcpkg, srcpkg_ver in srcpkgs:
-                    add_source_pkg(repo, component, cache, srcpkg, srcpkg_ver, forbiddenPackages)
+                    add_source_pkg(repo, component, cache, srcpkg, srcpkg_ver,
+                                   forbidden_src_packages)
 
     # elbe fetch_initvm_pkgs has downloaded all sources to
     # /var/cache/elbe/sources
