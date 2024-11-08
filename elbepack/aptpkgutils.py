@@ -188,7 +188,7 @@ def parse_built_using(value):
         yield package, version
 
 
-def get_corresponding_source_packages(cache, pkg_lst=None):
+def get_corresponding_source_packages(cache, pkg_lst=None, include_built_using=True):
 
     if pkg_lst is None:
         pkg_lst = {p.name for p in cache if p.is_installed}
@@ -203,8 +203,9 @@ def get_corresponding_source_packages(cache, pkg_lst=None):
 
         src_set.add((version.source_name, version.source_version))
 
-        for name, ver in parse_built_using(version.record.get('Built-Using')):
-            src_set.add((name, ver))
+        if include_built_using:
+            for name, ver in parse_built_using(version.record.get('Built-Using')):
+                src_set.add((name, ver))
 
     return list(src_set)
 

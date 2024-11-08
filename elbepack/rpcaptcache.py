@@ -260,8 +260,8 @@ class RPCAPTCache(InChRootObject):
     def get_pkg(self, pkgname):
         return APTPackage(self.cache[pkgname])
 
-    def get_corresponding_source_packages(self, pkg_lst=None):
-        return get_corresponding_source_packages(self.cache, pkg_lst)
+    def get_corresponding_source_packages(self, pkg_lst=None, *, include_built_using=True):
+        return get_corresponding_source_packages(self.cache, pkg_lst, include_built_using)
 
     def download_binary(self, pkgname, path, version=None):
         p = self.cache[pkgname]
