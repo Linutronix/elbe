@@ -242,16 +242,16 @@ def _compute_statistics(licenses):
 
 def extract_licenses_from_report(licence_file, mapping_file):
     extracted_licenses = {}
-    licenses = etree(licence_file)
+    licence_tree = etree(licence_file)
     mapping = license_dep5_to_spdx(mapping_file)
-    _apply_mapping(licenses, mapping)
-    for pkg in list(licenses.root):
-
+    _apply_mapping(licence_tree, mapping)
+    for pkg in list(licence_tree.root):
         pkg_name = pkg.et.attrib['name']
+        errors = []
+        licenses = []
 
         if pkg.has('spdx_licenses'):
 
-            licenses = []
             for ll in pkg.node('spdx_licenses'):
                 if ll.et.text.find('UNKNOWN_MAPPING') != -1:
                     license = License(name=ll.et.text.replace(
@@ -281,7 +281,6 @@ def extract_licenses_from_report(licence_file, mapping_file):
 
                 licenses.append(license)
 
-        errors = []
         if pkg.has('error'):
             for error in pkg.all('error'):
                 if error.et.text not in errors:
