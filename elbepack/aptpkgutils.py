@@ -232,7 +232,7 @@ class PackageBase:
         self.origin = origin
 
     def __repr__(self):
-        return (f'<APTPackage {self.name}-{self.installed_version} state: '
+        return (f'<{type(self).__name__} {self.name}-{self.installed_version} state: '
                 f'{statestring[self.state]}>')
 
     def __eq__(self, other):
