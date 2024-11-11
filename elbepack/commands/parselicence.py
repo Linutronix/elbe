@@ -281,11 +281,11 @@ def extract_licenses_from_report(licence_file, mapping_file):
 
                 licenses.append(license)
 
-            errors = []
-            if pkg.has('error'):
-                for error in pkg.all('error'):
-                    if error.et.text not in errors:
-                        errors.append(error.et.text)
+        errors = []
+        if pkg.has('error'):
+            for error in pkg.all('error'):
+                if error.et.text not in errors:
+                    errors.append(error.et.text)
 
         extracted_licenses[pkg_name] = (licenses, errors)
 

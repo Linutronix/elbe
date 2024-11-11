@@ -1,6 +1,9 @@
 
 The following target-packages have errors:
 
+base-files
+  no debian_licenses and no override in package "base-files"
+
 bash
   no mapping for "GFDL-NIV-1.3" for pkg "bash"
   no mapping for "BSD-4-clause-UC" for pkg "bash"
@@ -19,6 +22,9 @@ cron
 
 cron-daemon-common
   no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"
+
+debian-archive-keyring
+  no debian_licenses and no override in package "debian-archive-keyring"
 
 debianutils
   no mapping for "SMAIL-GPL" for pkg "debianutils"
@@ -46,11 +52,7 @@ findutils
   no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
 
 gcc-12-base
-  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
-  no mapping for "GPL" for pkg "findutils"
-  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
-  no mapping for "LGPL-3" for pkg "findutils"
-  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+  no debian_licenses and no override in package "gcc-12-base"
 
 gpgv
   no mapping for "permissive" for pkg "gpgv"
@@ -85,10 +87,10 @@ libbz2-1.0
   no mapping for "BSD-variant" for pkg "libbz2-1.0"
 
 libc-bin
-  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+  no debian_licenses and no override in package "libc-bin"
 
 libc6
-  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+  no debian_licenses and no override in package "libc6"
 
 libcom-err2
   no mapping for "Apache-2" for pkg "libcom-err2"
@@ -96,9 +98,7 @@ libcom-err2
   no mapping for "MIT-US-export" for pkg "libcom-err2"
 
 libcrypt1
-  no mapping for "Apache-2" for pkg "libcom-err2"
-  no mapping for "GPL" for pkg "libcom-err2"
-  no mapping for "MIT-US-export" for pkg "libcom-err2"
+  no debian_licenses and no override in package "libcrypt1"
 
 libcryptsetup12
   no mapping for "CC0" for pkg "libcryptsetup12"
@@ -126,7 +126,7 @@ libffi8
   no mapping for "GPL" for pkg "libffi8"
 
 libgcc-s1
-  no mapping for "GPL" for pkg "libffi8"
+  no debian_licenses and no override in package "libgcc-s1"
 
 libgcrypt20
   no override for heuristics based package "libgcrypt20"
@@ -142,7 +142,7 @@ libgpg-error0
   no mapping for "g10-permissive" for pkg "libgpg-error0"
 
 libgssapi-krb5-2
-  no mapping for "g10-permissive" for pkg "libgpg-error0"
+  no debian_licenses and no override in package "libgssapi-krb5-2"
 
 libhogweed6
   no mapping for "GAP" for pkg "libhogweed6"
@@ -152,6 +152,15 @@ libidn2-0
 
 libip4tc2
   no mapping for "custom" for pkg "libip4tc2"
+
+libk5crypto3
+  no debian_licenses and no override in package "libk5crypto3"
+
+libkrb5-3
+  no debian_licenses and no override in package "libkrb5-3"
+
+libkrb5support0
+  no debian_licenses and no override in package "libkrb5support0"
 
 liblzma5
   no mapping for "PD" for pkg "liblzma5"
@@ -214,6 +223,15 @@ libreadline8
   no mapping for "GFDL-NIV-1.3+" for pkg "libreadline8"
   no mapping for "ISC-no-attribution" for pkg "libreadline8"
 
+libselinux1
+  no debian_licenses and no override in package "libselinux1"
+
+libsemanage-common
+  no debian_licenses and no override in package "libsemanage-common"
+
+libsemanage2
+  no debian_licenses and no override in package "libsemanage2"
+
 libsmartcols1
   no mapping for "BSLA" for pkg "libsmartcols1"
 
@@ -221,6 +239,12 @@ libss2
   no mapping for "Apache-2" for pkg "libss2"
   no mapping for "GPL" for pkg "libss2"
   no mapping for "MIT-US-export" for pkg "libss2"
+
+libstdc++6
+  no debian_licenses and no override in package "libstdc++6"
+
+libtasn1-6
+  no debian_licenses and no override in package "libtasn1-6"
 
 libtinfo6
   no mapping for "MIT/X11" for pkg "libtinfo6"
@@ -330,6 +354,9 @@ vim-tiny
 
 The following chroot-packages have errors:
 
+base-files
+  no debian_licenses and no override in package "base-files"
+
 bash
   no mapping for "GFDL-NIV-1.3" for pkg "bash"
   no mapping for "BSD-4-clause-UC" for pkg "bash"
@@ -348,6 +375,9 @@ cron
 
 cron-daemon-common
   no mapping for "Paul-Vixie's-license" for pkg "cron-daemon-common"
+
+debian-archive-keyring
+  no debian_licenses and no override in package "debian-archive-keyring"
 
 debianutils
   no mapping for "SMAIL-GPL" for pkg "debianutils"
@@ -375,11 +405,7 @@ findutils
   no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
 
 gcc-12-base
-  no mapping for "GFDL-NIV-1.3+" for pkg "findutils"
-  no mapping for "GPL" for pkg "findutils"
-  no mapping for "BSD-3-clause and/or GPL-3+" for pkg "findutils"
-  no mapping for "LGPL-3" for pkg "findutils"
-  no mapping for "ISC and/or LGPL-2.1+" for pkg "findutils"
+  no debian_licenses and no override in package "gcc-12-base"
 
 gpgv
   no mapping for "permissive" for pkg "gpgv"
@@ -414,10 +440,10 @@ libbz2-1.0
   no mapping for "BSD-variant" for pkg "libbz2-1.0"
 
 libc-bin
-  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+  no debian_licenses and no override in package "libc-bin"
 
 libc6
-  no mapping for "BSD-variant" for pkg "libbz2-1.0"
+  no debian_licenses and no override in package "libc6"
 
 libcom-err2
   no mapping for "Apache-2" for pkg "libcom-err2"
@@ -425,9 +451,7 @@ libcom-err2
   no mapping for "MIT-US-export" for pkg "libcom-err2"
 
 libcrypt1
-  no mapping for "Apache-2" for pkg "libcom-err2"
-  no mapping for "GPL" for pkg "libcom-err2"
-  no mapping for "MIT-US-export" for pkg "libcom-err2"
+  no debian_licenses and no override in package "libcrypt1"
 
 libcryptsetup12
   no mapping for "CC0" for pkg "libcryptsetup12"
@@ -455,7 +479,7 @@ libffi8
   no mapping for "GPL" for pkg "libffi8"
 
 libgcc-s1
-  no mapping for "GPL" for pkg "libffi8"
+  no debian_licenses and no override in package "libgcc-s1"
 
 libgcrypt20
   no override for heuristics based package "libgcrypt20"
@@ -471,7 +495,7 @@ libgpg-error0
   no mapping for "g10-permissive" for pkg "libgpg-error0"
 
 libgssapi-krb5-2
-  no mapping for "g10-permissive" for pkg "libgpg-error0"
+  no debian_licenses and no override in package "libgssapi-krb5-2"
 
 libhogweed6
   no mapping for "GAP" for pkg "libhogweed6"
@@ -481,6 +505,15 @@ libidn2-0
 
 libip4tc2
   no mapping for "custom" for pkg "libip4tc2"
+
+libk5crypto3
+  no debian_licenses and no override in package "libk5crypto3"
+
+libkrb5-3
+  no debian_licenses and no override in package "libkrb5-3"
+
+libkrb5support0
+  no debian_licenses and no override in package "libkrb5support0"
 
 liblzma5
   no mapping for "PD" for pkg "liblzma5"
@@ -543,6 +576,15 @@ libreadline8
   no mapping for "GFDL-NIV-1.3+" for pkg "libreadline8"
   no mapping for "ISC-no-attribution" for pkg "libreadline8"
 
+libselinux1
+  no debian_licenses and no override in package "libselinux1"
+
+libsemanage-common
+  no debian_licenses and no override in package "libsemanage-common"
+
+libsemanage2
+  no debian_licenses and no override in package "libsemanage2"
+
 libsmartcols1
   no mapping for "BSLA" for pkg "libsmartcols1"
 
@@ -550,6 +592,12 @@ libss2
   no mapping for "Apache-2" for pkg "libss2"
   no mapping for "GPL" for pkg "libss2"
   no mapping for "MIT-US-export" for pkg "libss2"
+
+libstdc++6
+  no debian_licenses and no override in package "libstdc++6"
+
+libtasn1-6
+  no debian_licenses and no override in package "libtasn1-6"
 
 libtinfo6
   no mapping for "MIT/X11" for pkg "libtinfo6"
