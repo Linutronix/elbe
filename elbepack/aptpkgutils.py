@@ -253,10 +253,6 @@ class APTPackage(PackageBase):
         iarch = pkg.installed and pkg.installed.architecture
         carch = pkg.candidate and pkg.candidate.architecture
 
-        self.state = pkgstate(pkg)
-        self.is_auto_installed = pkg.is_auto_installed
-        origin = pkgorigin(pkg)
-
         if pkg.installed:
             self.installed_deb = os.path.basename(pkg.installed.filename)
         else:
@@ -267,8 +263,9 @@ class APTPackage(PackageBase):
                          ihashes, chashes,
                          iprio, cprio,
                          iarch, carch,
-                         pkgstate(pkg), pkg.is_auto_installed,
-                         origin)
+                         pkgstate(pkg),
+                         pkg.is_auto_installed,
+                         pkgorigin(pkg))
 
 
 class XMLPackage(PackageBase):
