@@ -6,10 +6,6 @@
 import dataclasses
 import os
 
-import apt
-
-import apt_pkg
-
 MARKED_INSTALL = 0
 MARKED_UPGRADE = 1
 MARKED_DELETE = 2
@@ -110,6 +106,8 @@ def pkgorigin(pkg):
 
 
 def fetch_source(name, version, destdir, progress=None):
+    import apt
+    import apt_pkg
 
     allow_untrusted = apt_pkg.config.find_b('APT::Get::AllowUnauthenticated', False)
 
@@ -174,6 +172,7 @@ def parse_built_using(value):
     >>> list(parse_built_using('grub2 (= 1.99-9), loadlin (= 1.6e-1)'))
     [('grub2', '1.99-9'), ('loadlin', '1.6e-1')]
     """
+    import apt_pkg
 
     if value is None:
         return
