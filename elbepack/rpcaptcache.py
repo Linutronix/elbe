@@ -225,7 +225,7 @@ class RPCAPTCache(InChRootObject):
 
     def get_dependencies(self, pkgname):
         deps = getalldeps(self.cache, pkgname)
-        return [APTPackage(p, cache=self.cache) for p in deps]
+        return [APTPackage(self.cache[p]) for p in deps]
 
     def get_installed_pkgs(self, section='all'):
         if section == 'all':

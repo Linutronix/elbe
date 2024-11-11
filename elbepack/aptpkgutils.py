@@ -243,10 +243,7 @@ class PackageBase:
 
 
 class APTPackage(PackageBase):
-    def __init__(self, pkg, cache=None):
-        if isinstance(pkg, str):
-            pkg = cache[pkg]
-
+    def __init__(self, pkg):
         iver = pkg.installed and pkg.installed.version
         cver = pkg.candidate and pkg.candidate.version
         ihashes = pkg.installed and _apt_pkg_hashes(pkg.installed)
