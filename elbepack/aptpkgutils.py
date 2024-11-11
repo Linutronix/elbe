@@ -7,7 +7,6 @@ import dataclasses
 import os
 
 import apt
-from apt.package import FetchError
 
 import apt_pkg
 
@@ -130,7 +129,7 @@ def fetch_source(name, version, destdir, progress=None):
     # We don't allow untrusted package and the package is not
     # marks as trusted
     if not (allow_untrusted or rec.index.is_trusted):
-        raise FetchError(
+        raise apt.package.FetchError(
             f"Can't fetch source {name}_{version}; "
             f'Source {rec.index.describe} is not trusted')
 
@@ -145,7 +144,7 @@ def fetch_source(name, version, destdir, progress=None):
             dsc = dst
 
         if not (allow_untrusted or _file.hashes.usable):
-            raise FetchError(
+            raise apt.package.FetchError(
                 f"Can't fetch file {dst}. No trusted hash found.")
 
         # acq is accumlating the AcquireFile, the files list only
@@ -161,7 +160,7 @@ def fetch_source(name, version, destdir, progress=None):
 
     for item in acq.items:
         if item.STAT_DONE != item.status:
-            raise FetchError(
+            raise apt.package.FetchError(
                 f"Can't fetch item {item.destfile}: {item.error_text}")
 
     return os.path.abspath(dsc)
