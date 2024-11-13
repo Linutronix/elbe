@@ -140,27 +140,6 @@ class ESoap (ServiceBase):
 
         return part + 1
 
-    @rpc(String, String, Integer, _returns=String)
-    @authenticated_uid
-    def get_file(self, uid, builddir, filename, part):
-        self.app.pm.open_project(uid, builddir)
-
-        size = 1024 * 1024 * 5
-        pos = size * part
-        file_name = builddir + '/' + filename
-        file_stat = os.stat(file_name)
-
-        if pos >= file_stat.st_size:
-            return 'EndOfFile'
-
-        with open(file_name, 'rb') as fp:
-            try:
-                fp.seek(pos)
-                data = fp.read(size)
-                return binascii.b2a_base64(data)
-            except BaseException:
-                return 'EndOfFile'
-
     @rpc(String)
     @authenticated_uid
     def build_chroot_tarball(self, uid, builddir):

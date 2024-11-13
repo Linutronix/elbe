@@ -13,6 +13,7 @@ import sys
 import time
 from http.client import BadStatusLine
 from urllib.error import URLError
+from urllib.request import urlopen, urlretrieve
 
 from suds.client import Client
 
@@ -79,10 +80,10 @@ class ElbeSoapClient:
         return cls(args.soaphost, args.soapport, args.soapuser, args.soappassword,
                    args.soaptimeout, retries=args.retries)
 
-    def download_file(self, builddir, filename, dst_fname):
-        fp = open(dst_fname, 'wb')
-        part = 0
+    def _file_download_url(self, builddir, filename):
+        return f'http://{self.host}:{self.port}/repo/{builddir}/{filename}'
 
+    def download_file(self, builddir, filename, dst_fname):
         # XXX the retry logic might get removed in the future, if the error
         # doesn't occur in real world. If it occurs, we should think about
         # the root cause instead of stupid retrying.
@@ -90,26 +91,19 @@ class ElbeSoapClient:
 
         while True:
             try:
-                ret = self.service.get_file(builddir, filename, part)
+                urlretrieve(self._file_download_url(builddir, filename), dst_fname)
+                return
             except BadStatusLine as e:
                 retry = retry - 1
 
-                print(f'get_file part {part} failed, retry {retry} times',
+                print(f'get_file {filename} failed, retry {retry} times',
                       file=sys.stderr)
                 print(str(e), file=sys.stderr)
                 print(repr(e.line), file=sys.stderr)
 
                 if not retry:
-                    fp.close()
                     print('file transfer failed', file=sys.stderr)
                     sys.exit(170)
-
-            if ret == 'EndOfFile':
-                fp.close()
-                return
-
-            fp.write(binascii.a2b_base64(ret))
-            part = part + 1
 
     @staticmethod
     def _upload_file(append, build_dir, filename):
@@ -234,11 +228,6 @@ class ElbeSoapClient:
         return result
 
     def dump_file(self, builddir, file):
-        part = 0
-        while True:
-            ret = self.service.get_file(builddir, file, part)
-            if ret == 'EndOfFile':
-                return
-
-            yield binascii.a2b_base64(ret)
-            part = part + 1
+        with urlopen(self._file_download_url(builddir, file)) as r:
+            for chunk in r:
+                yield chunk
