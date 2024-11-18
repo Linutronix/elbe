@@ -22,6 +22,7 @@ from elbepack.packers import default_packer, packers
 from elbepack.repomanager import UpdateRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do
+from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
 class FinetuningException(Exception):
@@ -244,8 +245,7 @@ class AddFileAction(FinetuningAction):
     @staticmethod
     def decode(text, encoding):
         if encoding == 'plain':
-            msg = '\n'.join([line.lstrip(' \t')
-                             for line in text.splitlines()[1:-1]])
+            msg = strip_leading_whitespace_from_lines(text)
         elif encoding == 'raw':
             msg = '\n'.join(text.splitlines()[1:-1])
         elif encoding == 'base64':
@@ -309,9 +309,7 @@ class CmdAction(ImageFinetuningAction):
 
     def execute_img(self, _buildenv, _target, builddir, loop_dev):
 
-        script = '\n'.join(line.lstrip(' \t')
-                           for line
-                           in self.node.et.text.strip('\n').splitlines())
+        script = strip_leading_whitespace_from_lines(self.node.et.text)
 
         mnt = os.path.join(builddir, 'imagemnt')
         dev = f"{loop_dev}p{self.node.et.attrib['part']}"
