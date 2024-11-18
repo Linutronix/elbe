@@ -246,36 +246,6 @@ class ElbeDB:
             if os.path.exists(chrootpath):
                 rmtree(chrootpath)      # OSError
 
-    def save_project(self, ep):
-        # TODO: Recover in case writing the XML file or commiting the
-        # database entry fails
-        project = None
-
-        with session_scope(self.session) as s:
-            try:
-                project = s.query(Project).filter(
-                    Project.builddir == ep.builddir).one()
-            except NoResultFound:
-                pass
-
-            if not os.path.exists(ep.builddir):
-                os.makedirs(ep.builddir)
-            if not os.path.isfile(ep.builddir + '/source.xml') and ep.xml:
-                ep.xml.xml.write(ep.builddir + '/source.xml')
-
-            with open(ep.builddir + '/source.xml') as xml_file:
-                xml_str = xml_file.read()
-                if not project:
-                    project = Project(name=ep.xml.text('project/name'),
-                                      version=ep.xml.text('project/version'),
-                                      builddir=ep.builddir,
-                                      xml=xml_str)
-                    s.add(project)
-                else:
-                    project.edit = datetime.utcnow()
-                    project.version = ep.xml.text('project/version')
-                    project.xml = xml_str
-
     def load_project(
             self,
             builddir,
