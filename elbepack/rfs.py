@@ -12,6 +12,7 @@ from elbepack.efilesystem import ChRootFilesystem, dpkg_architecture
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
+from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
 def create_apt_prefs(xml, rfs):
@@ -283,7 +284,7 @@ class BuildEnv:
             # I could make a none global 'noauth' flag for mirrors
             for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
-                    key = '\n'.join(line.strip(' \t') for line in url.text('raw-key').splitlines())
+                    key = strip_leading_whitespace_from_lines(url.text('raw-key'))
                     self.add_key(unarmor_openpgp_keyring(key), f'elbe-xml-raw-key{i}.gpg')
 
     def initialize_dirs(self, build_sources=False):

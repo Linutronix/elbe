@@ -6,6 +6,8 @@ import os
 import pathlib
 from urllib.request import urlopen
 
+from elbepack.treeutils import strip_leading_whitespace_from_lines
+
 
 def _write_env(fp, k, v):
     fp.write(f'{k}="{v}"\n')
@@ -180,11 +182,7 @@ def get_apt_keys(builddir, xml):
                 continue
 
             if url.has('raw-key'):
-
-                key = '\n'.join(line.strip(' \t')
-                                for line
-                                in url.text('raw-key').splitlines()[1:-1])
-
-                keys.append((f'elbe-xml-raw-key{i}', key))
+                keys.append((f'elbe-xml-raw-key{i}',
+                             strip_leading_whitespace_from_lines(url.text('raw-key'))))
 
     return keys

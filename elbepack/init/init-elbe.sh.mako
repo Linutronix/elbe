@@ -4,6 +4,8 @@
 ##
 #! /bin/sh
 <%
+from elbepack.treeutils import strip_leading_whitespace_from_lines
+
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 %>
 
@@ -64,7 +66,7 @@ in-target haveged
 %   for node in prj.all("./finetuning/"):
 %     if "command" == node.tag:
 	cat <<ELBE_INITVM_FINETUNING_EOF > /buildenv/tmp/elbe-initvm
-${"\n".join(line.lstrip(" \t") for line in node.et.text.strip("\n").splitlines())}
+${split_leading_whitespace_from_lines(node.et.text)}
 ELBE_INITVM_FINETUNING_EOF
 	in-target sh /tmp/elbe-initvm
 %     endif

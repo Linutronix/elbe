@@ -37,6 +37,10 @@ def dbsfed_schema():
     return XMLSchema(schema_tree)
 
 
+def strip_leading_whitespace_from_lines(s):
+    return '\n'.join(line.strip(' \t') for line in s.strip().splitlines())
+
+
 class eiter:
     def __init__(self, it):
         self.it = it

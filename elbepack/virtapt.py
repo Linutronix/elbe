@@ -16,6 +16,7 @@ import apt_pkg
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.rfs import create_apt_prefs
+from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
 class VirtApt:
@@ -104,9 +105,9 @@ class VirtApt:
             # I could make a none global 'noauth' flag for mirrors
             for i, url in enumerate(self.xml.node('project/mirror/url-list')):
                 if url.has('raw-key'):
-                    key = '\n'.join(line.strip(' \t')
-                                    for line in url.text('raw-key').splitlines()[1:-1])
-                    self._add_key(unarmor_openpgp_keyring(key), f'elbe-virtapt-raw-key{i}.gpg')
+                    key = strip_leading_whitespace_from_lines(url.text('raw-key'))
+                    self._add_key(unarmor_openpgp_keyring(key),
+                                  f'elbe-virtapt-raw-key{i}.gpg')
 
     def _initialize_dirs(self):
         self.basefs.mkdir_p('cache/archives/partial')
