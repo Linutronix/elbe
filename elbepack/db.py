@@ -100,7 +100,7 @@ class ElbeDB:
 
     def __init__(self):
         engine = create_engine(self.__class__.db_location,
-                               connect_args={'timeout': 30})
+                               connect_args={'timeout': 60})
         Base.metadata.create_all(engine)
         smaker = sessionmaker(bind=engine)
         self.session = scoped_session(smaker)
