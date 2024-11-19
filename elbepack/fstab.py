@@ -152,4 +152,6 @@ class fstabentry(hdpart):
             return '-L ' + self.label
         if self.fstype == 'vfat':
             return '-n ' + self.label
+        if self.fstype == 'f2fs':
+            return '-l ' + self.label
         return ''
