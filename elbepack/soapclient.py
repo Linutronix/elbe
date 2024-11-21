@@ -125,7 +125,9 @@ class ElbeSoapClient:
                     break
 
     def wait_busy(self, project_dir):
+        current_retries = 0
         while True:
+            current_retries += 1
             try:
                 msg = self.service.get_project_busy(project_dir)
             # TODO the root cause of this problem is unclear. To enable a
@@ -134,7 +136,10 @@ class ElbeSoapClient:
             # code should be reworked as soon as it's clear what is going on
             # here
             except socket.error:
+                if current_retries > self._retries:
+                    raise
                 _logger.warn('socket error during wait busy occured, retry..', exc_info=True)
+                time.sleep(1)
                 continue
 
             if not msg:
