@@ -1,0 +1,102 @@
+#!/bin/bash
+
+set +e
+
+sdk=0
+image=""
+result="/build/results/images"
+
+usage(){
+>&2 cat << EOF
+Usage: build_image
+   [ -c | --build-sdk ]
+   [ -r | --result-path ]
+   -i | --image path/to/image/xml
+EOF
+exit 1
+}
+
+args=$(getopt -a -o c,h,r:,i: --long build-sdk,help,result-path:,image: -- "$@")
+if [[ $? -gt 0 ]]; then
+  usage
+fi
+
+eval set -- "${args}"
+while [ : ]; do
+  case "$1" in
+    -c | --build-sdk)
+      sdk=1
+      shift
+      ;;
+    -r | --result-path)
+      result=$2
+      shift 2
+      ;;
+    -i | --image)
+      image=$2
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      ;;
+    --)
+      shift
+      break 
+      ;;
+    ?)
+      echo "Unsupported option: $1"
+      shift
+      ;;
+  esac
+done
+
+echo "Build SDK: $sdk"
+echo "IMAGE: $image"
+
+if [ ! -f $image ]; then
+  echo "Image $image doesn't exist!"
+  exit 1
+fi
+
+# stop on error during build preparation
+set -e
+
+IMAGE=$(realpath $image)
+IMAGE_NAME=$(basename $IMAGE)
+RESULT_FOLDER="${result}/${IMAGE_NAME}"
+PROJECT="${RESULT_FOLDER}/elbe.prj"
+PRE_XML="${RESULT_FOLDER}/${IMAGE_NAME}.gz"
+
+mkdir -p $RESULT_FOLDER
+
+PROJECT_ID=$(elbe control create_project)
+echo $PROJECT_ID > ${PROJECT}
+elbe preprocess --output=${PRE_XML} $IMAGE
+rm -f "${RESULT_FOLDER}/${IMAGE_NAME}" || true
+gzip -dk ${PRE_XML}
+elbe control set_xml ${PROJECT_ID} ${PRE_XML}
+elbe control build ${PROJECT_ID}
+
+# ignore build errors and complete script
+set +e 
+
+elbe control wait_busy ${PROJECT_ID}
+if [ $sdk -eq 1 ]; then
+    elbe control build_sdk ${PROJECT_ID}
+    elbe control wait_busy ${PROJECT_ID}
+fi
+elbe control get_files --output ${RESULT_FOLDER} ${PROJECT_ID}
+elbe control del_project ${PROJECT_ID}
+
+echo "The build result was written to ${RESULT_FOLDER}."
+
+set +e
+ERROR=$(cat "${RESULT_FOLDER}/log.txt" | grep "\[ERROR\]")
+if [ $? -eq 0 ]; then 
+    echo "ERROR: Build failed, see log.txt!"
+    cat "${RESULT_FOLDER}/log.txt" | grep "\[ERROR\]"
+    exit 1
+else
+    echo "SUCCESS: Build was successful!"
+    exit 0
+fi
