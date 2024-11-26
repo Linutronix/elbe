@@ -40,7 +40,7 @@ from elbepack.templates import write_pack_template
 
 
 _xz_env = {
-    'XZ_OPT': '-T0 -M80%',
+    'XZ_OPT': '-T0 -M40%',
 }
 
 
