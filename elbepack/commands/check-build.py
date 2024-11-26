@@ -12,8 +12,6 @@ import sys
 import tempfile
 import traceback
 
-import apt_pkg
-
 import pexpect
 
 from elbepack import qemu_firmware
@@ -138,6 +136,12 @@ class CheckCdroms(CheckBase):
                 f"Failed to get debian infos ({'|'.join(fmt)}) "
                 f'for {path}:\n{E}')
 
+    @staticmethod
+    def cmp_version(v1, v2):
+        return subprocess.run([
+            'dpkg', '--compare-versions', v1, 'eq', v2,
+        ]).returncode
+
     def do_src(self, sources, src_total):
         """Check for sources in src-cdrom*"""
 
@@ -176,7 +180,7 @@ class CheckCdroms(CheckBase):
                         for version in sources[src_name]:
 
                             # Found a matching version; prune it
-                            if apt_pkg.version_compare(version, src_version) == 0:
+                            if self.cmp_version(version, src_version) == 0:
 
                                 logging.info('Validating source %s_%s',
                                              src_name, version)
