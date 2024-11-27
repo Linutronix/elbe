@@ -1,3 +1,10 @@
+elbe (15.2) bookworm; urgency=medium
+
+  * Team upload
+  * Release notes in docs/news/2024-11-27-v15.2.rst
+
+ -- Thomas Weißschuh <thomas.weissschuh@linutronix.de>  Wed, 27 Nov 2024 09:36:26 +0100
+
 elbe (15.1) bookworm; urgency=medium
 
   * Team upload

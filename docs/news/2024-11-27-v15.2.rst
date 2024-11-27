@@ -1,0 +1,16 @@
+elbe 15.2 (2024-11-27)
+======================
+
+Features
+--------
+
+- Extend mergepaths list to allow multiple hostsdk-pkg-list and url-list elements.
+- Improve file download speed through usage of urllib.
+- Ship static libraries as part of SDK.
+
+
+Bugfixes
+--------
+
+- Resolve corresponding source package names for exclude source CD.
+- Restore compatibility for Debian bullseye initvms.
