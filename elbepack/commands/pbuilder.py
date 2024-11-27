@@ -137,8 +137,7 @@ def _build(control, args):
         print('Listing available files:')
         print('')
 
-        files = control.get_files(prjdir, None, pbuilder_only=True)
-        for file in files:
+        for file in control.get_files(prjdir, None, pbuilder_only=True):
             print(f'{file.name}\t{file.description}')
 
         print('')
@@ -148,8 +147,7 @@ def _build(control, args):
         print(f'Saving generated Files to {args.outdir}')
         print('')
 
-        files = control.get_files(prjdir, args.outdir, pbuilder_only=True)
-        for file in files:
+        for file in control.get_files(prjdir, args.outdir, pbuilder_only=True):
             print(f'{file.name}\t{file.description}')
 
 

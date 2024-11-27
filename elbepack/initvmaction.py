@@ -207,8 +207,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
 
         print(f'Saving generated Files to {args.outdir}')
 
-        files = control.get_files(prjdir, args.outdir)
-        for file in files:
+        for file in control.get_files(prjdir, args.outdir):
             print(f'{file.name}\t{file.description}')
 
         if not args.keep_files:

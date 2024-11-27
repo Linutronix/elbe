@@ -212,8 +212,6 @@ class ElbeSoapClient:
     def get_files(self, builddir, outdir, *, pbuilder_only=False, wildcard=None):
         files = self.service.get_files(builddir)
 
-        result = []
-
         for f in files[0]:
             if (pbuilder_only and not f.name.startswith('pbuilder_cross')
                     and not f.name.startswith('pbuilder')):
@@ -222,15 +220,13 @@ class ElbeSoapClient:
             if wildcard and not fnmatch.fnmatch(f.name, wildcard):
                 continue
 
-            result.append(f)
+            yield f
 
             if outdir:
                 dst = os.path.abspath(outdir)
                 os.makedirs(dst, exist_ok=True)
                 dst_fname = str(os.path.join(dst, os.path.basename(f.name)))
                 self.download_file(builddir, f.name, dst_fname)
-
-        return result
 
     def dump_file(self, builddir, file):
         with urlopen(self._file_download_url(builddir, file)) as r:
