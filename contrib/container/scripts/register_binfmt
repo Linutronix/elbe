@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+CONF_FILE=/usr/local/etc/binfmt.conf
+BASEDIR=/proc/sys/fs/binfmt_misc
+KERNEL=$(cat /proc/sys/kernel/osrelease)
+
+if [ ! -d $BASEDIR ]; then
+    echo "No binfmt support in the kernel."
+    exit 1
+fi
+
+if [ ! -f ${BASEDIR}/register ]; then
+    sudo mount binfmt_misc -t binfmt_misc $BASEDIR
+fi
+
+update-binfmts --display 2>&1 | grep arm > /dev/null
+if [ $? -ne 0 ]; then
+    echo "Enabling binfmts ..."
+    sudo update-binfmts --enable  2>&1 1>/dev/null
+fi
+
+update-binfmts --display 2>&1 | grep arm > /dev/null
+if [ $? -eq 0 ]; then
+    echo "Cross-builds for ARM using binfmt is enabled."
+else
+    echo "Cross-building seems to be not enabled!"
+    echo "Please make sure the binfmt_misc kernel module is loaded."
+    exit 1
+fi
