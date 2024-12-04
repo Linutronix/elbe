@@ -132,6 +132,7 @@ def create_initvm(name, xmlfile, directory, *,
 
     do(f'gpg --no-options \
              --no-default-keyring \
+             --no-autostart \
              --keyring {import_keyring} --import',
        input=''.join(keys).encode('ascii'),
        check=False,
@@ -141,6 +142,7 @@ def create_initvm(name, xmlfile, directory, *,
 
     do(f'gpg --no-options \
             --no-default-keyring \
+            --no-autostart \
             --keyring {import_keyring} \
             --export \
             --output {export_keyring}',
