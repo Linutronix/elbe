@@ -30,7 +30,7 @@ class InPlacePacker(Packer):
     def pack_file(self, builddir, fname):
         try:
             fpath = os.path.join(builddir, fname)
-            do(f'{self.cmd} "{fpath}"')
+            do([*self.cmd, fpath])
         except subprocess.CalledProcessError:
             # in case of an error, we just return None
             # which means, that the orig file does not
@@ -52,10 +52,11 @@ class TarArchiver(Packer):
             dirname = os.path.dirname(fpath)
             basename = os.path.basename(fpath)
             archname = fpath + self.suffix
-            do(
-                f'tar --create --verbose --sparse {self.flag} '
-                f'--file "{archname}" --directory "{dirname}" "{basename}"')
-            do(f'rm -f "{fpath}"')
+            do([
+                'tar', '--create', '--verbose', '--sparse', self.flag,
+                '--file', archname, '--directory', dirname, basename,
+            ])
+            do(['rm', '-f', fpath])
         except subprocess.CalledProcessError:
             # in case of an error, we just return None
             # which means, that the orig file does not
@@ -70,8 +71,8 @@ class TarArchiver(Packer):
 
 
 packers = {'none': NoPacker(),
-           'gzip': InPlacePacker('gzip -f', '.gz'),
-           'zstd': InPlacePacker('zstd -T0', '.zst'),
+           'gzip': InPlacePacker(['gzip', '-f'], '.gz'),
+           'zstd': InPlacePacker(['zstd', '-T0'], '.zst'),
            'tar':  TarArchiver('--auto-compress', '.tar'),
            'tarxz': TarArchiver('--use-compress-program="xz -T0 -M40%"', '.tar.xz'),
            'targz': TarArchiver('--auto-compress', '.tar.gz'),
