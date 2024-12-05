@@ -70,6 +70,20 @@ class TarArchiver(Packer):
         return fname + self.suffix
 
 
+class AndroidSparsePacker(Packer):
+    def pack_file(self, builddir, fname):
+        try:
+            fpath = os.path.join(builddir, fname)
+            do(['img2simg', fpath, fpath + '.simg'])
+            do(['rm', '-f', fpath])
+            return fname + '.simg'
+        except subprocess.CalledProcessError:
+            # in case of an error, we just return None
+            # which means, that the orig file does not
+            # exist anymore
+            return None
+
+
 packers = {'none': NoPacker(),
            'gzip': InPlacePacker(['gzip', '-f'], '.gz'),
            'zstd': InPlacePacker(['zstd', '-T0'], '.zst'),
@@ -77,6 +91,7 @@ packers = {'none': NoPacker(),
            'tarxz': TarArchiver('--use-compress-program="xz -T0 -M40%"', '.tar.xz'),
            'targz': TarArchiver('--auto-compress', '.tar.gz'),
            'tarzstd': TarArchiver('--use-compress-program="zstd -T0"', '.tar.zst'),
+           'android-sparse': AndroidSparsePacker(),
            }
 
 default_packer = packers['targz']

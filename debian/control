@@ -111,6 +111,7 @@ Package: python3-elbe-buildenv
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends},
   python3,
+  android-sdk-libsparse-utils,
   binfmt-support,
   btrfs-progs,
   debootstrap,
