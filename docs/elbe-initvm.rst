@@ -13,13 +13,13 @@ SYNOPSIS
 
    ::
 
-      elbe initvm [options] attach
-      elbe initvm [options] create [<xmlfile> | <isoimage>]
-      elbe initvm [options] submit [<xmlfile> | <isoimage>]
-      elbe initvm [options] start
-      elbe initvm [options] stop
-      elbe initvm [options] ensure
-      elbe initvm [options] destroy
+      elbe initvm [xmloptions] attach  [options]
+      elbe initvm [xmloptions] create  [options] [<xmlfile> | <isoimage>]
+      elbe initvm [xmloptions] submit  [options] [<xmlfile> | <isoimage>]
+      elbe initvm [xmloptions] start   [options]
+      elbe initvm [xmloptions] stop    [options]
+      elbe initvm [xmloptions] ensure  [options]
+      elbe initvm [xmloptions] destroy [options]
 
 DESCRIPTION
 ===========
