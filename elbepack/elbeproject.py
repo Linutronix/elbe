@@ -228,7 +228,9 @@ class ElbeProject:
             './usr/lib/*.a',
             './usr/lib/*.so',
             './usr/lib/*.so.*',
-            './usr/lib/' + triplet]
+            './usr/lib/' + triplet,
+            './usr/lib64/*.so.*',
+            ]
 
         return paths
 
@@ -289,6 +291,7 @@ class ElbeProject:
 
         with self.sysrootenv.rfs:
             chroot(self.sysrootpath, ['/usr/bin/symlinks', '-cr', '/usr/lib'])
+            chroot(self.sysrootpath, ['/usr/bin/symlinks', '-cr', '/usr/lib64'])
 
         paths = self.get_sysroot_paths()
 
@@ -300,6 +303,9 @@ class ElbeProject:
         if os.path.islink(self.sysrootpath + '/lib'):
             with open(sysrootfilelist, 'a') as filelist_fd:
                 filelist_fd.write('./lib\n')
+        if os.path.islink(self.sysrootpath + '/lib64'):
+            with open(sysrootfilelist, 'a') as filelist_fd:
+                filelist_fd.write('./lib64\n')
         if os.path.islink(self.sysrootpath + '/sbin'):
             with open(sysrootfilelist, 'a') as filelist_fd:
                 filelist_fd.write('./sbin\n')
