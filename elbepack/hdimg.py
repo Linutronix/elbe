@@ -51,9 +51,8 @@ def mkfs_mtd(mtd, fslabel, target):
                 fslabel[label].mkfsopt])
             # only append the ubifs file if creation didn't fail
             img_files.append(f'{label}.ubifs')
-        except subprocess.CalledProcessError:
-            # continue creating further ubifs filesystems
-            pass
+        except subprocess.CalledProcessError as e:
+            logging.error('mkfs.ubifs failed: %s', e, exc_info=e)
 
     return img_files
 
@@ -121,9 +120,8 @@ def build_image_mtd(mtd, target):
         # only add file to list if ubinize command was successful
         img_files.append(mtd.text('name'))
 
-    except subprocess.CalledProcessError:
-        # continue with generating further images
-        pass
+    except subprocess.CalledProcessError as e:
+        logging.error('ubinize failed: %s', e, exc_info=e)
 
     return img_files
 
