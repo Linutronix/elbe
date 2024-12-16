@@ -108,12 +108,12 @@ def build_image_mtd(mtd, target):
     fp.close()
 
     if ubivg.has('subpagesize'):
-        subp = '-s ' + ubivg.text('subpagesize')
+        subp = ['-s', ubivg.text('subpagesize')]
     else:
-        subp = ''
+        subp = []
 
     try:
-        do(['ubinize', subp,
+        do(['ubinize', *subp,
             '-o', os.path.join(target, mtd.text('name')),
             '-p', ubivg.text('physicaleraseblocksize'),
             '-m', ubivg.text('miniosize'),
