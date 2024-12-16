@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 import contextlib
+import glob
 import logging
 import os
 import pathlib
@@ -57,6 +58,14 @@ def mkfs_mtd(mtd, fslabel, target):
     return img_files
 
 
+def _glob_single(*args, **kwargs):
+    matches = glob.glob(*args, **kwargs)
+    if len(matches) != 1:
+        raise ValueError('not exactly one match', matches)
+
+    return matches[0]
+
+
 def build_image_mtd(mtd, target):
 
     img_files = []
@@ -82,6 +91,7 @@ def build_image_mtd(mtd, target):
                     # copy from project directory
                     else:
                         tmp = target + '/' + vol.text('binary')
+                    tmp = _glob_single(tmp)
                     do(['cp', tmp, target + '/' + vol.text('label') + '.ubibin'])
                     img_files.append(vol.text('label') + '.ubibin')
                     fp.write(
@@ -330,6 +340,7 @@ def create_binary(disk, part, ppart, target):
         else:
             tmp = target + '/' + part.text('binary')
 
+        tmp = _glob_single(tmp)
         dd({'if': tmp, 'of': loopdev})
 
 
