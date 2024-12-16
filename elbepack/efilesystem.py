@@ -257,18 +257,14 @@ class Excursion:
     def __init__(self, path, restore=True, dst=None):
         self.origin = path
         self.restore = restore
-        self.dst = dst
+        self.dst = dst or self.origin
 
     def do(self, rfs):
         if rfs.lexists(self.origin) and self.restore is True:
             save_to = self._saved_to()
             shutil.move(rfs.fname(self.origin), rfs.fname(save_to))
         if os.path.exists(self.origin):
-            if self.dst is not None:
-                dst = self.dst
-            else:
-                dst = self.origin
-            shutil.copy2(self.origin, rfs.fname(dst))
+            shutil.copy2(self.origin, rfs.fname(self.dst))
 
     def end(self, rfs):
         self._undo_excursion(rfs)
