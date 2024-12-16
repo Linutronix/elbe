@@ -285,13 +285,13 @@ class Excursion:
     def _undo_excursion(self, rfs):
         saved_to = self._saved_to()
 
-        if not _file_or_directory_seem_equal(rfs.fname(self.origin), self.origin):
+        if not _file_or_directory_seem_equal(rfs.fname(self.dst), self.origin):
             # Excursed file was modified, keep the changes.
             return
 
-        self._del_rfs_file(self.origin, rfs)
+        self._del_rfs_file(self.dst, rfs)
         if self.restore is True and rfs.lexists(saved_to):
-            shutil.move(rfs.fname(saved_to), rfs.fname(self.origin))
+            shutil.move(rfs.fname(saved_to), rfs.fname(self.dst))
 
 
 class ChRootFilesystem(ElbeFilesystem):
