@@ -105,26 +105,6 @@ directory.
 ::
 
     $ elbe initvm create
-    Import debian-archive-buster-automatic.gpg:
-    gpg: key DC30D7C23CBBABEE: 4 Beglaubigungen wegen fehlender Schlüssel nicht geprüft
-    gpg: Schlüssel DC30D7C23CBBABEE: Öffentlicher Schlüssel "Debian Archive Automatic Signing Key (10/buster) <ftpmaster@debian.org>" importiert
-    gpg: Anzahl insgesamt bearbeiteter Schlüssel: 1
-    gpg:                              importiert: 1
-    ...
-
-    Installing the base system  ... 17%... 20%... 30%... 40%... 50%... 60%... 70%... 83%... 91%
-               ... 100%
-    Configuring apt  ... 14%... 21%... 35%... 40%... 50%... 64%... 71%... 85%... 92%... 100%
-    Select and install software
-                                 ... 10%... 20%... 30%... 40%... 50%... 61%... 71%... 81%... 78%... 80%... 90%
-                              ... 100%
-    Installing GRUB boot loader  ... 16%... 33%... 50%... 66%... 83%... 100%
-    The system is going down NOW!.. 12%... 20%... 33%... 41%... 50%... 62%... 70%... 83%... 91%
-    Sent SIGKILL to all processes
-    Requesting system reboot
-    [  656.391904] reboot: Restarting system
-    mkdir -p .stamps
-    touch .stamps/stamp-install-initial-image
     *****
 
 Submitting an XML file
