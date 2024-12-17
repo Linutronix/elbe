@@ -25,8 +25,8 @@ Steps 1,2 and 3 need only be performed once.
 
 .. note::
 
-   When Debian is running inside a VM (vmware etc), you need to make
-   sure, that nested KVM is working.
+   When Debian is running inside a VM (vmware etc), you should make
+   sure, that nested KVM is working. Otherwise builds will be slow.
 
 Customization of the build
 ==========================
