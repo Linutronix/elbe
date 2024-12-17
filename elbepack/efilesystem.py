@@ -325,7 +325,7 @@ class ChRootFilesystem(ElbeFilesystem):
             if not os.path.exists(ui):
                 ui = '/usr/bin/' + self.interpreter
 
-            self._excursions.append(Excursion(ui, False, '/usr/bin'))
+            self._excursions.append(Excursion(ui, False, '/usr/bin/' + self.interpreter))
 
         for excursion in self._excursions:
             excursion.do(self)
