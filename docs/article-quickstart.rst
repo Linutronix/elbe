@@ -28,6 +28,11 @@ Steps 1,2 and 3 need only be performed once.
    When Debian is running inside a VM (vmware etc), you should make
    sure, that nested KVM is working. Otherwise builds will be slow.
 
+.. note::
+
+   As of Windows 11 version 24H2 ELBE can be used with the Windows Subsystem
+   for Linux 2 (WSL2) by installing Debian bookworm through the Microsoft Store.
+
 Customization of the build
 ==========================
 
