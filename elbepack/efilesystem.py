@@ -10,6 +10,7 @@ import os
 import pathlib
 import shutil
 import subprocess
+import tempfile
 import time
 
 from elbepack.filesystem import Filesystem
@@ -313,6 +314,23 @@ class _ExcursionContext:
             self._ended = True
 
 
+class _SimpleTmpFile:
+    def __init__(self, contents, mode):
+        self.contents = contents
+        self.mode = mode
+
+    def __enter__(self):
+        handle, path = tempfile.mkstemp()
+        self.path = pathlib.Path(path)
+        self.path.write_text(self.contents)
+        self.path.chmod(self.mode)
+
+        return self.path
+
+    def __exit__(self, typ, value, traceback):
+        self.path.unlink()
+
+
 class ChRootFilesystem(ElbeFilesystem):
 
     def __init__(self, path, interpreter=None, clean=False):
@@ -327,15 +345,17 @@ class ChRootFilesystem(ElbeFilesystem):
     def __enter__(self):
         self._exitstack = contextlib.ExitStack()
 
+        policy_rc_d = self._exitstack.enter_context(
+                _SimpleTmpFile('#!/bin/sh\nexit 101\n', 0o755))
+
         excursions = [
             Excursion('/etc/resolv.conf'),
             Excursion('/etc/apt/apt.conf'),
-            Excursion('/usr/sbin/policy-rc.d'),
+            Excursion(str(policy_rc_d), dst='/usr/sbin/policy-rc.d'),
         ]
 
         self.mkdir_p('usr/bin')
         self.mkdir_p('usr/sbin')
-        self.write_file('usr/sbin/policy-rc.d', 0o755, '#!/bin/sh\nexit 101\n')
 
         if self.interpreter:
             ui = '/usr/share/elbe/qemu-elbe/' + self.interpreter

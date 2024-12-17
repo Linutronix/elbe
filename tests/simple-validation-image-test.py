@@ -205,6 +205,18 @@ def _test_archive(root):
     assert archive_file_stat.st_gid == 0
 
 
+def _test_excursions(root):
+    assert not root.joinpath('usr', 'sbin', 'policy-rc.d').exists()
+
+    copy = root.joinpath('usr', 'sbin', 'policy-rc.d.copy')
+    assert copy.exists()
+    assert copy.stat().st_mode & 0o777 == 0o755
+    assert copy.read_text().strip() == textwrap.dedent("""
+    #!/bin/sh
+    exit 101
+    """).strip()
+
+
 def _test_rfs_partition(build_dir, part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
@@ -273,6 +285,7 @@ def _test_rfs_partition(build_dir, part):
         _test_generated_elbe_files(build_dir, root)
         _test_finetuning(root)
         _test_archive(root)
+        _test_excursions(root)
 
 
 def test_image(build_dir):
