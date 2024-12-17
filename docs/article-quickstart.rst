@@ -12,7 +12,7 @@ root-filesystem from the XML file and to simple modifications.
 Steps necessary
 ===============
 
-1. install Debian 10 (buster) or later on your Host. The latest version
+1. install Debian 12 (bookworm) or later on your Host. The latest version
    of elbe should be compatible with this system.
 
 2. install ELBE on Host Linux
@@ -49,7 +49,7 @@ Installing ELBE
 
 There are several possibilities to install ELBE. The simplest method is
 by installing prebuilt binary packages via Linutronix package repository
-on a Debian 10 (Buster) system.
+on a Debian 12 (bookworm) system.
 
 But ELBE can also be installed from git.
 
@@ -72,7 +72,7 @@ Add the following content to the file ``/etc/apt/sources.list``
 
 ::
 
-   # echo "deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe buster main" >> /etc/apt/sources.list
+   # echo "deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bookworm main" >> /etc/apt/sources.list
 
 Then run (as root):
 
@@ -486,8 +486,8 @@ use the following to access the repository:
 
    <url-list>
            <url>
-                   <binary>http://LOCALMACHINE/repo/ buster main</binary>
-                   <source>http://LOCALMACHINE/repo/ buster main</source>
+                   <binary>http://LOCALMACHINE/repo/ bookworm main</binary>
+                   <source>http://LOCALMACHINE/repo/ bookworm main</source>
                    <key>http://LOCALMACHINE/repo/repo.pub</key>
            </url>
    </url-list>

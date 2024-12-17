@@ -178,7 +178,7 @@ environment and it will be saved as ``nfsroot.tar.gz``
                                    <option>trusted=yes</option>
                            </options>
                    </mirror>
-                   <suite>buster</suite>
+                   <suite>bookworm</suite>
            </project>
            <target>
                    <hostname>myARM</hostname>
@@ -589,8 +589,8 @@ After this header follows the project description.
                            </options>
                            <url-list>                                      
                                    <url>
-                                           <binary>http://debian.linutronix.de/elbe buster main</binary>
-                                           <source>http://debian.linutronix.de/elbe buster main</source>
+                                           <binary>http://debian.linutronix.de/elbe bookworm main</binary>
+                                           <source>http://debian.linutronix.de/elbe bookworm main</source>
                                            <options>
                                                    <option>trusted=yes</option> 
                                            </options>
@@ -598,7 +598,7 @@ After this header follows the project description.
                            </url-list>
 
                    </mirror>
-                   <suite>buster</suite>                                   
+                   <suite>bookworm</suite>
 
 -  The *mirror* tag contains *primary_host*, *primary_path*,
    *primary_proto* and *host* *host* is optional, used in case of a

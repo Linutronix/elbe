@@ -45,7 +45,7 @@ The source …
 .. code:: xml
 
    <repodir>PATH1 bullseye main contrib</repodir>
-   <repodir signed-by="relative-path.asc">PATH2 buster main</repodir>
+   <repodir signed-by="relative-path.asc">PATH2 bookworm main</repodir>
 
 i. is preprocessed to:
 
@@ -59,8 +59,8 @@ i. is preprocessed to:
      </options>
    </url>
    <url>
-     <binary>http://LOCALMACHINE:33187 buster main</binary>
-     <source>http://LOCALMACHINE:33187 buster main</source>
+     <binary>http://LOCALMACHINE:33187 bookworm main</binary>
+     <source>http://LOCALMACHINE:33187 bookworm main</source>
      <raw-key>
        CONTENT OF KEYRING FILE "PATH2/relative-path.asc"
      </raw-key>
