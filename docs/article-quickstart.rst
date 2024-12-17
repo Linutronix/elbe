@@ -56,11 +56,26 @@ But ELBE can also be installed from git.
 Binary Debian packages
 ----------------------
 
+Repository
+~~~~~~~~~~
+
 The latest packages for elbe reside in the following repository
 
 ::
 
    http://debian.linutronix.de/elbe
+
+It can be enabled conveniently with the ``extrepo`` utility.
+
+::
+
+   # apt install extrepo
+   # extrepo enable elbe
+
+Repository (manual)
+~~~~~~~~~~~~~~~~~~~
+
+If ``extrepo`` does not work for you, set up the repository manually.
 
 Install the repository key to a known place (as root):
 
@@ -73,6 +88,9 @@ Add the following content to the file ``/etc/apt/sources.list``
 ::
 
    # echo "deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bookworm main" >> /etc/apt/sources.list
+
+Setup
+~~~~~
 
 Then run (as root):
 
