@@ -294,6 +294,25 @@ class Excursion:
             shutil.move(rfs.fname(saved_to), rfs.fname(self.dst))
 
 
+class _ExcursionContext:
+    def __init__(self, rfs, excursion):
+        self.rfs = rfs
+        self.excursion = excursion
+        self._ended = False
+
+    def __enter__(self):
+        self.excursion.do(self.rfs)
+        return self
+
+    def __exit__(self, typ, value, traceback):
+        self.end()
+
+    def end(self):
+        if not self._ended:
+            self.excursion.end(self.rfs)
+            self._ended = True
+
+
 class ChRootFilesystem(ElbeFilesystem):
 
     def __init__(self, path, interpreter=None, clean=False):
@@ -308,7 +327,7 @@ class ChRootFilesystem(ElbeFilesystem):
     def __enter__(self):
         self._exitstack = contextlib.ExitStack()
 
-        self._excursions = [
+        excursions = [
             Excursion('/etc/resolv.conf'),
             Excursion('/etc/apt/apt.conf'),
             Excursion('/usr/sbin/policy-rc.d'),
@@ -323,10 +342,12 @@ class ChRootFilesystem(ElbeFilesystem):
             if not os.path.exists(ui):
                 ui = '/usr/bin/' + self.interpreter
 
-            self._excursions.append(Excursion(ui, False, '/usr/bin/' + self.interpreter))
+            excursions.append(Excursion(ui, False, '/usr/bin/' + self.interpreter))
 
-        for excursion in self._excursions:
-            excursion.do(self)
+        self._excursions = [
+            self._exitstack.enter_context(_ExcursionContext(self, excursion))
+            for excursion in excursions
+        ]
 
         if self.path != '/':
             self._exitstack.enter_context(
@@ -345,14 +366,10 @@ class ChRootFilesystem(ElbeFilesystem):
             self.leave_chroot()
         self._exitstack.__exit__(typ, value, traceback)
 
-        for excursion in self._excursions:
-            excursion.end(self)
-
     def end_excursion(self, origin):
-        for excursion in self._excursions:
-            if origin == excursion.origin:
-                self._excursions.remove(excursion)
-                excursion.end(self)
+        for excursion_context in self._excursions:
+            if origin == excursion_context.excursion.origin:
+                excursion_context.end()
                 return
 
     def enter_chroot(self):
