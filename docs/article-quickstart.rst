@@ -49,6 +49,8 @@ ELBE allows manipulating the generated root filesystem through a set of
 user, change directory permissions, and remove files from the root
 filesystem.
 
+.. _installation:
+
 Installing ELBE
 ===============
 
