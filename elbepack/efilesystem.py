@@ -306,6 +306,8 @@ class ChRootFilesystem(ElbeFilesystem):
         os.close(self.cwd)
 
     def __enter__(self):
+        self._exitstack = contextlib.ExitStack()
+
         self._excursions = [
             Excursion('/etc/resolv.conf'),
             Excursion('/etc/apt/apt.conf'),
@@ -326,7 +328,6 @@ class ChRootFilesystem(ElbeFilesystem):
         for excursion in self._excursions:
             excursion.do(self)
 
-        self._exitstack = contextlib.ExitStack()
         if self.path != '/':
             self._exitstack.enter_context(
                     mount(None, self.fname('/proc'), type='proc', log_output=False))
