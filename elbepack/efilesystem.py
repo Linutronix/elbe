@@ -363,7 +363,8 @@ class ChRootFilesystem(ElbeFilesystem):
 
     def __exit__(self, typ, value, traceback):
         if self.inchroot:
-            self.leave_chroot()
+            self._exitstack.callback(self.leave_chroot)
+
         self._exitstack.__exit__(typ, value, traceback)
 
     def end_excursion(self, origin):
