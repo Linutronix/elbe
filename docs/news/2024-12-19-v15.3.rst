@@ -1,0 +1,22 @@
+elbe 15.3 (2024-12-19)
+======================
+
+Features
+--------
+
+- Add support for Android sparse images.
+  Example:
+
+  .. code-block:: xml
+
+          <project-finetuning>
+                  <set_packer packer="android-sparse">sda.img</set_packer>
+          </project-finetuning>
+- The key for the primary mirror can be specified with `primary_key` and `host_key`.
+
+
+Bugfixes
+--------
+
+- Remove /usr/sbin/policy-rc.d which is used at build time from final image.
+- Various bugfixes for UBI volume creation.
