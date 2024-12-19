@@ -1,3 +1,10 @@
+elbe (15.3~bpo11) bullseye; urgency=medium
+
+  * Team upload.
+  * Rebuild for bullseye.
+
+ -- Thomas Weißschuh <thomas.weissschuh@linutronix.de>  Thu, 19 Dec 2024 13:25:29 +0100
+
 elbe (15.3) bookworm; urgency=medium
 
   * Team upload.
