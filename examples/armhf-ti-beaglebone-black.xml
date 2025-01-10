@@ -49,14 +49,15 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<!-- name of the image file -->
 				<name>sdcard.img</name>
 				<size>1500MiB</size>
+				<!-- move boot files to the path where the bootloader expects them to be 
+				     see /usr/share/doc/u-boot-omap/README.Debian -->
 				<first_partition_sector>8192</first_partition_sector>
-				<!-- move boot files to the path where the bootloader expects them to be -->
 				<binary offset="256" blocksize="512">/usr/lib/u-boot/am335x_boneblack/MLO</binary>
 				<binary offset="768" blocksize="512">/usr/lib/u-boot/am335x_boneblack/u-boot.img</binary>
 				<!-- partition layout -->
 				<partition>
-					<!-- This partition is used for the boot script and storing the env -->
-					<size>4MiB</size>
+					<!-- This partition is used for the boot files and storing the env -->
+					<size>50MiB</size>
 					<!-- label needs to match with the fstab entry below -->
 					<label>boot</label>
 				</partition>
@@ -81,19 +82,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			</bylabel>
 			<bylabel>
 				<label>boot</label>
-				<mountpoint>/boot/u-boot</mountpoint>
+				<mountpoint>/boot</mountpoint>
 				<fs>
 					<type>vfat</type>
 				</fs>
 			</bylabel>
 		</fstab>
 		<finetuning>
-			<!-- set a proper u-boot environment to boot -->
-			<file dst="/boot/u-boot/boot.txt">setenv bootargs 'console=ttyO0,115200 root=/dev/mmcblk0p2';load mmc 0:2 0x84000000 vmlinuz;load mmc 0:2 0x82000000 boot/am335x-boneblack.dtb;load mmc 0:2 0x88000000 initrd.img;bootz 0x84000000 0x88000000:${filesize} 0x82000000</file>
-			<command>apt install -y u-boot-tools</command>
-			<command>mkimage -A arm -T script -O linux -d /boot/u-boot/boot.txt /boot/u-boot/boot.scr</command>
-			<command>apt autoremove -y --purge u-boot-tools</command>
-			<!-- linux boot file (2nd partion) - other files and links are created by postinst.sh -->
 			<cp path="/usr/lib/linux-image-*-armmp/am335x-boneblack.dtb">/boot/am335x-boneblack.dtb</cp>
 			<file dst="/etc/systemd/network/20-eth.network">
 				[Match]
@@ -102,6 +97,12 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				DHCP=ipv4
 			</file>
 			<command>systemctl enable systemd-networkd</command>
+			<file dst="/etc/default/u-boot">
+				U_BOOT_FDT="am335x-boneblack.dtb"
+				U_BOOT_ALTERNATIVES="default"
+				U_BOOT_TIMEOUT="1"
+				U_BOOT_PARAMETERS=" "
+			</file>
 			<!-- shrink target image -->
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
@@ -131,6 +132,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>minicoredumper</pkg>
 			<pkg>busybox</pkg>
 			<pkg>systemd-resolved</pkg>
+			<pkg>u-boot-menu</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
