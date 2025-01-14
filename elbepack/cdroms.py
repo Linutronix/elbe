@@ -31,9 +31,9 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
                                     '/var/cache/elbe/sources')
         repo.includedsc(dsc, components=component, force=True)
     except ValueError as e:
-        logging.error("No sources for package '%s': %s", pkg_id, str(e))
+        logging.exception("No sources for package '%s': %s", pkg_id, str(e))
     except FetchError as e:
-        logging.error("Source for package '%s' could not be downloaded: %s", pkg_id, str(e))
+        logging.exception("Source for package '%s' could not be downloaded: %s", pkg_id, str(e))
 
 
 def mk_source_cdrom(components, codename,
@@ -172,11 +172,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
                                             pkg.installed_version)
                 target_repo.includedeb(deb, 'main', prio=pkg.installed_prio)
             except ValueError:
-                logging.error("No package '%s'", pkg_id)
+                logging.exception("No package '%s'", pkg_id)
             except FetchError:
-                logging.error("Package '%s' could not be downloaded", pkg_id)
+                logging.exception("Package '%s' could not be downloaded", pkg_id)
             except TypeError:
-                logging.error("Package '%s' missing name or version", pkg_id)
+                logging.exception("Package '%s' missing name or version", pkg_id)
 
     cache = get_rpcaptcache(rfs, arch)
     pkglist = cache.get_installed_pkgs()
@@ -188,13 +188,13 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
                                         pkg.installed_version)
             target_repo.includedeb(deb, 'added', pkg.name, prio=pkg.installed_prio, force=True)
         except KeyError as ke:
-            logging.error(str(ke))
+            logging.exception(str(ke))
         except ValueError:
-            logging.error("No package '%s'", pkg_id)
+            logging.exception("No package '%s'", pkg_id)
         except FetchError:
-            logging.error("Package '%s' could not be downloaded", pkg_id)
+            logging.exception("Package '%s' could not be downloaded", pkg_id)
         except TypeError:
-            logging.error("Package '%s' missing name or version", pkg_id)
+            logging.exception("Package '%s' missing name or version", pkg_id)
 
     target_repo.finalize()
 
