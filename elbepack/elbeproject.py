@@ -38,6 +38,7 @@ from elbepack.rfs import BuildEnv
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import write_pack_template
+from elbepack.version import elbe_version
 
 
 _xz_env = {
@@ -965,8 +966,11 @@ class ElbeProject:
     def write_log_header(self):
 
         logging.info('ELBE Report for Project %s\n'
-                     'Report timestamp: %s', self.name,
-                     datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+                     'Report timestamp: %s\n'
+                     'elbe: %s',
+                     self.name,
+                     datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
+                     str(elbe_version))
 
     def copy_initvmnode(self):
         source_path = '/var/cache/elbe/source.xml'
