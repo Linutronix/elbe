@@ -24,15 +24,14 @@ For Barebox, there is no alternative currently. However, Debian bug
 #900958 asks for a barebox package. When that is resolved, please refer
 to that package.
 
-Linux has a built-in deb-pkg make target for a long time. The problem
-with using it as *elbe debianize* alternative is that it builds the
-source and binary packages directly after inserting the debian directory
-into the source. To build only the source package, one must set the make
-variable DPKG_FLAGS=-S on the deb-pkg call. Just be sure to configure
-the kernel so that a .config file is available, and to set the variables
-that are evaluated by the script. See this man page’s EXAMPLES section.
-After the source package is built, there is one generated file that does
-not belong to an unbuilt debian directory: debian/files.
+Linux >= 6.4 provides a built-in make target 'srcdeb-pkg' to debianize the
+kernel. Just be sure to configure the kernel so that a .config file is
+available, and to set the variables that are evaluated by the script. See this
+man page’s EXAMPLES section. After the source package is built, there is one
+generated file that does not belong to an unbuilt debian directory:
+debian/files. For older Linux versions without 'srcdeb-pkg' one can instead use
+the long existing 'deb-pkg' target, but must set the make variable
+DPKG_FLAGS=-S to skip the binary package build.
 
 Instead of specifying a specific defconfig the .config will end up being
 used. There is no compiler prefix embedded in debian/rules for cross
@@ -66,8 +65,8 @@ fields.
    $ export DEBEMAIL="`git config user.name` <`git config user.email`>"
    $ export KDEB_CHANGELOG_DIST=unstable
    $ make ARCH=arm64 defconfig
-   $ make ARCH=arm64 DPKG_FLAGS=-S KERNELRELEASE=6.2-elbe deb-pkg
+   $ make ARCH=arm64 KERNELRELEASE=6.12-elbe srcdeb-pkg
    $ rm debian/files
    $ git add -f debian
-   $ git commit -sm 'add the deb-pkg generated debianization'
+   $ git commit -sm 'add the srcdeb-pkg generated debianization'
    $ CC=aarch64-linux-gnu-gcc dpkg-buildpackage -b -aarm64
