@@ -249,7 +249,7 @@ class AddFileAction(FinetuningAction):
         elif encoding == 'raw':
             msg = '\n'.join(text.splitlines()[1:-1])
         elif encoding == 'base64':
-            msg = base64.standard_b64decode(text)
+            msg = base64.standard_b64decode(text).decode('ascii')
         else:
             raise FinetuningException(f'Invalid encoding {encoding}')
         return msg
