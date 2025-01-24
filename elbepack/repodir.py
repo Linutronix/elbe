@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2022 Linutronix GmbH
 
+import contextlib
 import functools
 import os
 import sys
@@ -96,11 +97,18 @@ class Repodir:
             return self
 
         except XMLSyntaxError:
+            self._remove_output()
             raise RepodirError(f'XML Parse error\n{sys.exc_info()[1]}')
         except BaseException:
+            self._remove_output()
             raise RepodirError(
                 f'Unknown Exception during validation\n{str(sys.exc_info()[1])}')
 
     def __exit__(self, _typ, _value, _traceback):
+        self._remove_output()
         for httpd in self.httpds:
             httpd.shutdown()
+
+    def _remove_output(self):
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(self.output)

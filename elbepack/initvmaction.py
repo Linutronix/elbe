@@ -98,8 +98,6 @@ def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, args):
             _submit_and_dl_result(control, preprocess_xmlfile, cdrom, args)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
-    finally:
-        os.remove(preprocess_xmlfile)
 
 
 def _submit_and_dl_result(control, xmlfile, cdrom, args):
