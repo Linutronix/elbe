@@ -8,6 +8,7 @@ import logging
 import os
 import shlex
 import subprocess
+import textwrap
 from shutil import rmtree
 
 from gpg import core
@@ -241,7 +242,7 @@ class AddFileAction(FinetuningAction):
     @staticmethod
     def decode(text, encoding):
         if encoding == 'plain':
-            msg = strip_leading_whitespace_from_lines(text)
+            msg = textwrap.dedent(text.removeprefix('\n').removesuffix('\n'))
         elif encoding == 'raw':
             msg = '\n'.join(text.splitlines()[1:-1])
         elif encoding == 'base64':

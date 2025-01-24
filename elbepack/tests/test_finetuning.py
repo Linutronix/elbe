@@ -108,7 +108,7 @@ def test_file_plain(target):
 
 </file>
     """)
-    assert target.read_file('foo') == 'baz'
+    assert target.read_file('foo') == '\nbaz\n'
 
 
 def test_file_raw(target):
