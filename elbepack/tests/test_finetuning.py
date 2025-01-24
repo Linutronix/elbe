@@ -86,3 +86,78 @@ def test_ln(target):
     assert target.exists('foo')
     assert target.islink('bar')
     assert target.readlink('bar') == 'foo'
+
+
+def test_file_plain(target):
+    finetune(target, """
+    <file encoding="plain" dst="foo">bar</file>
+    """)
+    assert target.read_file('foo') == 'bar'
+
+    finetune(target, """
+<file encoding="plain" dst="foo">
+    bar
+</file>
+    """)
+    assert target.read_file('foo') == 'bar'
+
+    finetune(target, """
+<file encoding="plain" dst="foo">
+
+    baz
+
+</file>
+    """)
+    assert target.read_file('foo') == 'baz'
+
+
+def test_file_raw(target):
+    finetune(target, """
+    <file encoding="raw" dst="foo">
+bar
+    </file>
+    """)
+    assert target.read_file('foo') == 'bar'
+
+    finetune(target, """
+    <file encoding="raw" dst="foo">
+
+baz
+
+    </file>
+    """)
+    assert target.read_file('foo') == '\nbaz\n'
+
+    # This is probably unintentional
+    finetune(target, """
+    <file encoding="raw" dst="foo">foo
+baz
+    </file>
+    """)
+    assert target.read_file('foo') == 'baz'
+
+
+def test_file_base64(target):
+    finetune(target, """
+    <file encoding="base64" dst="foo">YmFyCg==</file>
+    """)
+    assert target.read_file('foo') == 'bar\n'
+
+    finetune(target, """
+    <file encoding="base64" dst="foo">
+         YmFyCg==
+    </file>
+    """)
+    assert target.read_file('foo') == 'bar\n'
+
+
+def test_file_append(target):
+    finetune(target, """
+    <file encoding="plain" dst="foo">bar</file>
+    """)
+    assert target.read_file('foo') == 'bar'
+
+    finetune(target, """
+    <file encoding="plain" dst="foo" append="true">baz</file>
+    """)
+    assert target.read_file('foo') == 'barbaz'
