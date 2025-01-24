@@ -10,8 +10,6 @@ import shlex
 import subprocess
 from shutil import rmtree
 
-from apt.package import FetchError
-
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
 
@@ -19,8 +17,6 @@ from elbepack.egpg import unlock_key
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
-from elbepack.repomanager import UpdateRepo
-from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
@@ -350,6 +346,9 @@ class PurgeAction(FinetuningAction):
 class UpdatedAction(FinetuningAction):
 
     def execute(self, buildenv, target):
+        from apt.package import FetchError
+        from elbepack.repomanager import UpdateRepo
+        from elbepack.rpcaptcache import get_rpcaptcache
 
         if self.node.et.text:
             fp = self.node.et.text
