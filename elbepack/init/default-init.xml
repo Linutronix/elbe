@@ -87,6 +87,7 @@ lffHf8U7HFvRg+zm
 		<suite>bookworm</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
+			<pkg>ubuntu-keyring</pkg>
 			<pkg>debootstrap</pkg>
 			<pkg>reprepro</pkg>
 		</pkg-list>
