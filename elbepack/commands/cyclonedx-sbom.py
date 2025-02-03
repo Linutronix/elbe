@@ -51,15 +51,18 @@ def _remove_empty_fields(dict):
 def _repository_url(uri):
     uri_parts = uri.split('/')
     if len(uri_parts) < 6:
-        raise ValueError('URI needs to be in pool layout, and pool being the 5th or 6th segment')
-    if uri_parts[-5] == 'pool':
+        raise ValueError('URI needs to be in pool layout')
+    if uri_parts[-4] == 'pool':
+        # http://deb.debian.org/debian/pool/a/adduser/adduser_3.134_all.deb
+        return '/'.join(uri_parts[:-4])
+    elif uri_parts[-5] == 'pool':
         # http://deb.debian.org/debian/pool/main/a/adduser/adduser_3.134_all.deb
         return '/'.join(uri_parts[:-5])
     elif uri_parts[-6] == 'pool':
         # http://deb.debian.org/debian-security/pool/updates/main/u/util-linux/bsdutils_2.38.1-5%2bdeb12u1_amd64.deb
         return '/'.join(uri_parts[:-6])
     else:
-        raise ValueError('URI needs to be in pool layout, and pool being the 5th or 6th segment')
+        raise ValueError('URI needs to be in pool layout')
 
 
 def _purl_from_pkg(pkg):
