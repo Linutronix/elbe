@@ -159,39 +159,37 @@ class BuildEnv:
             self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
 
         keyring = False
-        strapcmd = 'debootstrap'
+        strapcmd = ['debootstrap']
 
         # Should we use a special bootstrap variant?
         if self.xml.has('target/debootstrap/variant'):
-            strapcmd += f" --variant={self.xml.text('target/debootstrap/variant')}"
+            strapcmd.extend(['--variant', self.xml.text('target/debootstrap/variant')])
 
         # Should we include additional packages into bootstrap?
         if self.xml.has('target/debootstrap/include'):
-            strapcmd += f" --include=\"{self.xml.text('target/debootstrap/include')}\""
+            strapcmd.extend(['--include', self.xml.text('target/debootstrap/include')])
 
         # Should we exclude some packages from bootstrap?
         if self.xml.has('target/debootstrap/exclude'):
-            strapcmd += f" --exclude=\"{self.xml.text('target/debootstrap/exclude')}\""
+            strapcmd.extend(['--exclude', self.xml.text('target/debootstrap/exclude')])
 
         if cross:
-            strapcmd += ' --foreign'
+            strapcmd.append('--foreign')
 
         if self.xml.has('project/noauth'):
-            strapcmd += ' --no-check-gpg'
+            strapcmd.append('--no-check-gpg')
         elif self.xml.has('project/mirror/cdrom'):
-            keyring_file = self.rfs.fname('/elbe.keyring')
-            strapcmd += f' --keyring="{keyring_file}"'
+            strapcmd.extend(['--keyring', self.rfs.fname('/elbe.keyring')])
             keyring = True
         else:
             primary_key = self.xml.get_primary_key(self.rfs.fname('/cdrom/targetrepo'),
                                                    hostsysroot=self.hostsysroot)
             debootstrap_key_path = self.import_debootstrap_key(primary_key)
             if debootstrap_key_path:
-                strapcmd += f' --keyring="{debootstrap_key_path}"'
+                strapcmd.extend(['--keyring', debootstrap_key_path])
                 keyring = True
 
-        strapcmd += f' --arch={arch}'
-        strapcmd += f' "{suite}" "{self.rfs.path}" "{primary_mirror}"'
+        strapcmd.extend(['--arch', arch, suite, self.rfs.path, primary_mirror])
 
         return strapcmd, keyring
 
