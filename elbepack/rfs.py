@@ -154,12 +154,24 @@ class BuildEnv:
             k = strip_leading_whitespace_from_lines(key)
             return self.add_key(unarmor_openpgp_keyring(k), 'elbe-xml-primary-key.gpg')
 
-    def _strapcmd(self, arch, suite, cross):
+    def _strapcmd(self, arch, suite, cross, mmdebstrap):
         primary_mirror = self.xml.get_primary_mirror(
             self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
 
         keyring = False
-        strapcmd = ['debootstrap']
+
+        if mmdebstrap:
+            strapcmd = [
+                'mmdebstrap',
+                # Verbose output instead of progress bars.
+                '--verbose',
+                # ELBE might populate the chroot before running strapcmd.
+                '--skip=check/empty',
+                # Will this rootfs have a merged usr?
+                '--hook-dir=/usr/share/mmdebstrap/hooks/maybe-merged-usr',
+            ]
+        else:
+            strapcmd = ['debootstrap']
 
         # Should we use a special bootstrap variant?
         if self.xml.has('target/debootstrap/variant'):
@@ -173,11 +185,12 @@ class BuildEnv:
         if self.xml.has('target/debootstrap/exclude'):
             strapcmd.extend(['--exclude', self.xml.text('target/debootstrap/exclude')])
 
-        if cross:
+        if cross and not mmdebstrap:
             strapcmd.append('--foreign')
 
         if self.xml.has('project/noauth'):
-            strapcmd.append('--no-check-gpg')
+            if not mmdebstrap:
+                strapcmd.append('--no-check-gpg')
         elif self.xml.has('project/mirror/cdrom'):
             strapcmd.extend(['--keyring', self.rfs.fname('/elbe.keyring')])
             keyring = True
@@ -189,7 +202,12 @@ class BuildEnv:
                 strapcmd.extend(['--keyring', debootstrap_key_path])
                 keyring = True
 
-        strapcmd.extend(['--arch', arch, suite, self.rfs.path, primary_mirror])
+        strapcmd.extend(['--arch', arch, suite, self.rfs.path])
+        if mmdebstrap:
+            trusted = '[trusted=yes]' if self.xml.has('project/noauth') else ''
+            strapcmd.append(f'deb {trusted} {primary_mirror} {suite} main')
+        else:
+            strapcmd.append(primary_mirror)
 
         return strapcmd, keyring
 
@@ -222,15 +240,17 @@ class BuildEnv:
 
         host_arch = dpkg_architecture()
         cross = self.xml.is_cross(host_arch)
+        mmdebstrap = self.xml.has('target/debootstrap/type') and \
+            self.xml.text('target/debootstrap/type') == 'mmdebstrap'
 
         try:
             self.cdrom_mount()
-            cmd, keyring = self._strapcmd(arch, suite, cross)
+            cmd, keyring = self._strapcmd(arch, suite, cross, mmdebstrap)
             if keyring and self.xml.has('project/mirror/cdrom'):
                 self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
             do(cmd)
 
-            if cross:
+            if cross and not mmdebstrap:
                 ui = '/usr/share/elbe/qemu-elbe/' + self.xml.defs['userinterpr']
 
                 if not os.path.exists(ui):

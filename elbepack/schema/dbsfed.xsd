@@ -1211,8 +1211,22 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="type" type="rfs:bootstrap_type" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Bootstrapper type. Either debootstrap (the default) or mmdebstrap.
+          </documentation>
+        </annotation>
+      </element>
     </all>
   </complexType>
+
+  <simpleType name="bootstrap_type">
+    <restriction base="string">
+      <enumeration value="debootstrap" />
+      <enumeration value="mmdebstrap" />
+    </restriction>
+  </simpleType>
 
   <complexType name="ubi_type">
     <annotation>
