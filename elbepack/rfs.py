@@ -154,17 +154,51 @@ class BuildEnv:
             k = strip_leading_whitespace_from_lines(key)
             return self.add_key(unarmor_openpgp_keyring(k), 'elbe-xml-primary-key.gpg')
 
+    def _strapcmd(self, arch, suite, cross):
+        primary_mirror = self.xml.get_primary_mirror(
+            self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
+
+        keyring = False
+        strapcmd = 'debootstrap'
+
+        # Should we use a special bootstrap variant?
+        if self.xml.has('target/debootstrap/variant'):
+            strapcmd += f" --variant={self.xml.text('target/debootstrap/variant')}"
+
+        # Should we include additional packages into bootstrap?
+        if self.xml.has('target/debootstrap/include'):
+            strapcmd += f" --include=\"{self.xml.text('target/debootstrap/include')}\""
+
+        # Should we exclude some packages from bootstrap?
+        if self.xml.has('target/debootstrap/exclude'):
+            strapcmd += f" --exclude=\"{self.xml.text('target/debootstrap/exclude')}\""
+
+        if cross:
+            strapcmd += ' --foreign'
+
+        if self.xml.has('project/noauth'):
+            strapcmd += ' --no-check-gpg'
+        elif self.xml.has('project/mirror/cdrom'):
+            keyring_file = self.rfs.fname('/elbe.keyring')
+            strapcmd += f' --keyring="{keyring_file}"'
+            keyring = True
+        else:
+            primary_key = self.xml.get_primary_key(self.rfs.fname('/cdrom/targetrepo'),
+                                                   hostsysroot=self.hostsysroot)
+            debootstrap_key_path = self.import_debootstrap_key(primary_key)
+            if debootstrap_key_path:
+                strapcmd += f' --keyring="{debootstrap_key_path}"'
+                keyring = True
+
+        strapcmd += f' --arch={arch}'
+        strapcmd += f' "{suite}" "{self.rfs.path}" "{primary_mirror}"'
+
+        return strapcmd, keyring
+
     def debootstrap(self, arch='default'):
 
         cleanup = False
         suite = self.xml.prj.text('suite')
-
-        primary_mirror = self.xml.get_primary_mirror(
-            self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
-        primary_key = self.xml.get_primary_key(
-            self.rfs.fname('/cdrom/targetrepo'), hostsysroot=self.hostsysroot)
-
-        debootstrap_key_path = self.import_debootstrap_key(primary_key)
 
         if self.xml.prj.has('mirror/primary_proxy'):
             os.environ['no_proxy'] = '10.0.2.2,localhost,127.0.0.1'
@@ -189,87 +223,34 @@ class BuildEnv:
             arch = self.xml.text('project/buildimage/arch', key='arch')
 
         host_arch = dpkg_architecture()
-
-        strapcmd = 'debootstrap'
-
-        # Should we use a special bootstrap variant?
-        if self.xml.has('target/debootstrap/variant'):
-            strapcmd += f" --variant={self.xml.text('target/debootstrap/variant')}"
-
-        # Should we include additional packages into bootstrap?
-        if self.xml.has('target/debootstrap/include'):
-            strapcmd += f" --include=\"{self.xml.text('target/debootstrap/include')}\""
-
-        # Should we exclude some packages from bootstrap?
-        if self.xml.has('target/debootstrap/exclude'):
-            strapcmd += f" --exclude=\"{self.xml.text('target/debootstrap/exclude')}\""
-
-        keyring = ''
-        keyring_file = self.rfs.fname('/elbe.keyring')
-
-        if not self.xml.is_cross(host_arch):
-            if self.xml.has('project/noauth'):
-                cmd = (f'{strapcmd} --no-check-gpg --arch={arch} '
-                       f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
-            else:
-                if self.xml.has('project/mirror/cdrom'):
-                    keyring = f' --keyring="{keyring_file}"'
-                elif debootstrap_key_path:
-                    keyring = f' --keyring="{debootstrap_key_path}"'
-
-                cmd = (f'{strapcmd} --arch={arch} '
-                       f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
-
-            try:
-                self.cdrom_mount()
-                if keyring and self.xml.has('project/mirror/cdrom'):
-                    self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
-                do(cmd)
-                self._cleanup_bootstrap()
-            except subprocess.CalledProcessError as e:
-                cleanup = True
-                raise DebootstrapException() from e
-            finally:
-                self.cdrom_umount()
-                if cleanup:
-                    self.rfs.rmtree('/')
-
-            return
-
-        if self.xml.has('project/noauth'):
-            cmd = (f'{strapcmd} --no-check-gpg --foreign --arch={arch} '
-                   f'"{suite}" "{self.rfs.path}" "{primary_mirror}"')
-        else:
-            if self.xml.has('project/mirror/cdrom'):
-                keyring = f' --keyring="{keyring_file}"'
-            elif debootstrap_key_path:
-                keyring = f' --keyring="{debootstrap_key_path}"'
-
-            cmd = (f'{strapcmd} --foreign --arch={arch} '
-                   f'{keyring} "{suite}" "{self.rfs.path}" "{primary_mirror}"')
+        cross = self.xml.is_cross(host_arch)
 
         try:
             self.cdrom_mount()
+            cmd, keyring = self._strapcmd(arch, suite, cross)
             if keyring and self.xml.has('project/mirror/cdrom'):
                 self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
             do(cmd)
 
-            ui = '/usr/share/elbe/qemu-elbe/' + self.xml.defs['userinterpr']
+            if cross:
+                ui = '/usr/share/elbe/qemu-elbe/' + self.xml.defs['userinterpr']
 
-            if not os.path.exists(ui):
-                ui = '/usr/bin/' + self.xml.defs['userinterpr']
+                if not os.path.exists(ui):
+                    ui = '/usr/bin/' + self.xml.defs['userinterpr']
 
-            do(['cp', ui, self.rfs.fname('usr/bin')])
+                do(['cp', ui, self.rfs.fname('usr/bin')])
 
-            if self.xml.has('project/noauth'):
-                chroot(self.rfs.path,
-                       ['/debootstrap/debootstrap', '--no-check-gpg', '--second-stage'])
-            else:
-                chroot(self.rfs.path,
-                       ['/debootstrap/debootstrap', '--second-stage'])
+                if self.xml.has('project/noauth'):
+                    chroot(self.rfs.path,
+                           ['/debootstrap/debootstrap', '--no-check-gpg', '--second-stage'])
+                else:
+                    chroot(self.rfs.path,
+                           ['/debootstrap/debootstrap', '--second-stage'])
 
             self._cleanup_bootstrap()
-            chroot(self.rfs.path, ['dpkg', '--configure', '-a'])
+
+            if cross:
+                chroot(self.rfs.path, ['dpkg', '--configure', '-a'])
 
         except subprocess.CalledProcessError as e:
             cleanup = True
