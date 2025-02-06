@@ -94,4 +94,4 @@ packers = {'none': NoPacker(),
            'android-sparse': AndroidSparsePacker(),
            }
 
-default_packer = packers['targz']
+default_packer = packers['tarxz']
