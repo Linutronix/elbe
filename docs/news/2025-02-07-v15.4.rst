@@ -1,0 +1,19 @@
+elbe 15.4 (2025-02-07)
+======================
+
+Features
+--------
+
+- Add support for mmdebstrap instead of debootstrap.
+  Add `<type>mmdebstrap</type>` to the `<debootstrap>` element.
+- Build artifacts are compressed with xz instead of gzip by default.
+  To switch back, explicitly use the finetuning `<set_packer packer="targz">...</set_packer>`.
+
+
+Bugfixes
+--------
+
+- Fix `tarxz` and `tarzstd` packers.
+- Fix finetuning `<file encoding="base64">`.
+- Handle repositories without component subdirectory in `cyclonedx-sbom`.
+- Preserve trailing whitespace in finetuning `<file encoding="plain">`.
