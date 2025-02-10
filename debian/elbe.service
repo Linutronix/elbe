@@ -5,8 +5,8 @@ Documentation=man:elbe-initvm(1)
 [Service]
 Type=forking
 EnvironmentFile=/etc/default/elbe
-ExecStart=/usr/bin/elbe initvm --directory ${INITVMDIR} start
-ExecStop=/usr/bin/elbe initvm --directory ${INITVMDIR} stop
+ExecStart=/usr/bin/elbe initvm start --directory ${INITVMDIR}
+ExecStop=/usr/bin/elbe initvm stop --directory ${INITVMDIR}
 
 [Install]
 WantedBy=multi-user.target
