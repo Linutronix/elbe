@@ -181,7 +181,6 @@ Depends: ${misc:Depends}, ${python3:Depends},
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
 
-
 Package: python3-elbe-updated
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends},
