@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
 import contextlib
+import fcntl
 import subprocess
 
 from elbepack.shellhelper import ELBE_LOGGING, do, run
@@ -16,7 +17,10 @@ def losetup(dev, extra_args=[]):
     ).stdout.decode('ascii').rstrip('\n')
 
     try:
-        yield loopdev
+        with open(loopdev) as f:
+            # protect against races with udev
+            fcntl.flock(f, fcntl.LOCK_EX)
+            yield loopdev
     finally:
         do(['losetup', '--detach', loopdev], check=False)
 
