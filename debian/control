@@ -13,16 +13,12 @@ Build-Depends: debhelper-compat (= 13),
   python3-passlib,
   flake8,
   graphviz,
-  python3-flake8-import-order <!dist.bullseye>,
-  python3-flake8-noqa <!dist.bullseye>,
-  python3-flake8-quotes <!dist.bullseye>,
   python3-lxml,
   python3-apt,
   python3-gpg,
   python3-guestfs,
   python3-jsonschema,
   python3-libvirt,
-  python3-mypy <!dist.bullseye>,
   python3-passlib,
   python3-pytest,
   python3-sphinx,
@@ -183,7 +179,6 @@ Depends: ${misc:Depends}, ${python3:Depends},
   libvirt-daemon-system
 Description: Commandline Tool to control an elbe buildenv
  The SOAP Interface is used to control an elbe buildenv.
-
 
 Package: python3-elbe-updated
 Architecture: all
