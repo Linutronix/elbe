@@ -1,0 +1,14 @@
+elbe 15.5 (2025-02-19)
+======================
+
+Features
+--------
+
+- Install ubuntu-keyring into initvm for creation of Ubuntu images.
+
+
+Bugfixes
+--------
+
+- Avoid races between losetup and udev.
+- Fix elbe.service in Debian package.
