@@ -154,6 +154,11 @@ class grubinstaller202(grubinstaller_base):
         if '/' not in self.fs:
             return
 
+        # Extract environnement variable from user_args
+        env = {var.split('=')[0]: var.split('=')[1]
+               for var in user_args if "=" in var}
+        user_args = [item for item in user_args if "=" not in item]
+
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
         with contextlib.ExitStack() as stack:
@@ -172,7 +177,7 @@ class grubinstaller202(grubinstaller_base):
                 imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {loopdev}\n')
                 stack.callback(imagemntfs.remove, 'boot/grub/device.map')
 
-                chroot(imagemnt, ['update-grub2'])
+                chroot(imagemnt, ['update-grub2'], env_add=env)
 
                 if 'efi' in self.fw_type:
                     grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
