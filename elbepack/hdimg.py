@@ -60,8 +60,10 @@ def mkfs_mtd(mtd, fslabel, target):
 
 def _glob_single(*args, **kwargs):
     matches = glob.glob(*args, **kwargs)
-    if len(matches) != 1:
-        raise ValueError('not exactly one match', matches)
+    if not matches:
+        raise ValueError('no match', args)
+    elif len(matches) != 1:
+        raise ValueError('not exactly one match', matches, args)
 
     return matches[0]
 
