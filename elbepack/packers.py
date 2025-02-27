@@ -15,10 +15,17 @@ class Packer(abc.ABC):
     def pack_file(self, _builddir, _fname):
         ...
 
+    @abc.abstractmethod
+    def packed_filename(self, fname):
+        ...
+
 
 class NoPacker(Packer):
 
     def pack_file(self, _builddir, fname):
+        return fname
+
+    def packed_filename(self, fname):
         return fname
 
 
@@ -39,6 +46,9 @@ class InPlacePacker(Packer):
             # exist anymore
             return None
 
+        return self.packed_filename(fname)
+
+    def packed_filename(self, fname):
         return fname + self.suffix
 
 
@@ -69,6 +79,9 @@ class TarArchiver(Packer):
             # the sparsity.
             return None
 
+        return self.packed_filename(fname)
+
+    def packed_filename(self, fname):
         return fname + self.suffix
 
 
@@ -78,12 +91,15 @@ class AndroidSparsePacker(Packer):
             fpath = os.path.join(builddir, fname)
             do(['img2simg', fpath, fpath + '.simg'])
             do(['rm', '-f', fpath])
-            return fname + '.simg'
+            return self.packed_filename(fname)
         except subprocess.CalledProcessError:
             # in case of an error, we just return None
             # which means, that the orig file does not
             # exist anymore
             return None
+
+    def packed_filename(self, fname):
+        return fname + '.simg'
 
 
 packers = {'none': NoPacker(),
@@ -97,3 +113,11 @@ packers = {'none': NoPacker(),
            }
 
 default_packer = packers['tarxz']
+
+
+def find_packed_image(directory, image):
+    for packer in packers.values():
+        packed_filename = packer.packed_filename(image)
+        img_name = directory / packed_filename
+        if img_name.exists():
+            return img_name
