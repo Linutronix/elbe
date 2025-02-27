@@ -19,6 +19,7 @@ from elbepack.aptpkgutils import parse_built_using
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.log import elbe_logging
 from elbepack.main import run_elbe_subcommand
+from elbepack.packers import find_packed_image
 from elbepack.shellhelper import env_add
 from elbepack.treeutils import etree
 from elbepack.version import is_devel
@@ -454,7 +455,11 @@ class CheckImage(CheckBase):
 
     def do_img(self, tag):
 
-        img_name = self.directory / tag.text('./img')
+        img = tag.text('./img')
+        img_name = find_packed_image(self.directory, img)
+        if img_name is None:
+            raise ValueError(f'Could not find image file: {img}')
+
         qemu = tag.text('./interpreter')
 
         fw_opts = ''
