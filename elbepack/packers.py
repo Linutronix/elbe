@@ -2,16 +2,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2019 Linutronix GmbH
 
+import abc
 import os
 import subprocess
 
 from elbepack.shellhelper import do
 
 
-class Packer:
+class Packer(abc.ABC):
 
+    @abc.abstractmethod
     def pack_file(self, _builddir, _fname):
-        raise NotImplementedError('abstract method called')
+        ...
 
 
 class NoPacker(Packer):
