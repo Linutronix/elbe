@@ -217,7 +217,13 @@ def _test_excursions(root):
     """).strip()
 
 
-def _test_rfs_partition(build_dir, part):
+def _test_grub(img, root, root_uuid):
+    grub_cfg = root.joinpath('boot', 'grub', 'grub.cfg').read_text()
+    assert f'root=UUID={root_uuid}' in grub_cfg
+    assert b'GRUB' in img.read_at(512, 0)  # GRUB in MBR
+
+
+def _test_rfs_partition(build_dir, img, part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
     assert part.size == 999 * 1024 * 1024
@@ -230,7 +236,7 @@ def _test_rfs_partition(build_dir, part):
 
     with part.files() as root:
         statvfs = elbevalidate.statvfs(root)
-        assert statvfs.f_bfree * statvfs.f_bsize > 300 * 1024 * 1024
+        assert statvfs.f_bfree * statvfs.f_bsize > 100 * 1024 * 1024
 
         assert root.joinpath('etc', 'hostname').read_text() == 'validation-image'
         assert root.joinpath('etc', 'mailname').read_text() == 'validation-image.elbe-ci'
@@ -286,6 +292,7 @@ def _test_rfs_partition(build_dir, part):
         _test_finetuning(root)
         _test_archive(root)
         _test_excursions(root)
+        _test_grub(img, root, blkid['UUID'])
 
 
 def test_image(build_dir):
@@ -298,7 +305,7 @@ def test_image(build_dir):
         partitions = img.partitions
         assert len(partitions) == 1
 
-        _test_rfs_partition(build_dir, partitions[0])
+        _test_rfs_partition(build_dir, img, partitions[0])
 
 
 if __name__ == '__main__':

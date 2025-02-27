@@ -49,6 +49,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<msdoshd>
 				<name>sda.img</name>
 				<size>1000MiB</size>
+				<grub-install />
 				<partition>
 					<size>remain</size>
 					<label>rfs</label>
@@ -71,6 +72,8 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<pkg-list>
 			<pkg>unzip</pkg>
 			<pkg>libgpio1</pkg>
+			<pkg>linux-image-amd64</pkg>
+			<pkg>grub-pc</pkg>
 		</pkg-list>
 
 		<finetuning>
