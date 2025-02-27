@@ -220,7 +220,7 @@ def _test_excursions(root):
 def _test_rfs_partition(build_dir, part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
-    assert part.size == 799 * 1024 * 1024
+    assert part.size == 999 * 1024 * 1024
     assert part.type == '83'
 
     blkid = part.blkid()
@@ -290,7 +290,7 @@ def _test_rfs_partition(build_dir, part):
 
 def test_image(build_dir):
     with elbevalidate.Image.from_file(build_dir / 'sda.img') as img:
-        assert img.size == 800 * 1024 * 1024
+        assert img.size == 1000 * 1024 * 1024
 
         blkid = img.blkid()
         assert blkid['PTTYPE'] == 'dos'

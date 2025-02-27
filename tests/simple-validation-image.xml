@@ -48,7 +48,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		<images>
 			<msdoshd>
 				<name>sda.img</name>
-				<size>800MiB</size>
+				<size>1000MiB</size>
 				<partition>
 					<size>remain</size>
 					<label>rfs</label>
