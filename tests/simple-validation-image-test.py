@@ -184,7 +184,7 @@ def _test_finetuning(root):
     # 	Some cöntent wíth spe©ial characters
     # </file>
     assert root.joinpath('testfile').is_file()
-    assert root.joinpath('testfile').read_text() == 'Some cöntent wíth spe©ial characters'
+    assert root.joinpath('testfile').read_text() == 'Some cöntent wíth spe©ial characters\n'
 
     # <command>cat /etc/hosts | cat -n > /etc/hosts4</command>
     assert root.joinpath('etc', 'hosts4').is_file()
