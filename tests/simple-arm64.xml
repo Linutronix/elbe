@@ -72,11 +72,12 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		</finetuning>
 
 		<project-finetuning>
+			<set_packer packer="none">sda.img</set_packer>
 		</project-finetuning>
 	</target>
 	<check-image-list>
 		<check>
-			<img>sda.img.tar.gz</img>
+			<img>sda.img</img>
 			<interpreter>qemu-system-aarch64</interpreter>
 			<interpreter-opts>-m 2G -M virt -drive format=raw,file=$ELBE_IMG,id=hd1,if=none -device virtio-blk-pci,drive=hd1 -kernel vmlinuz -initrd initrd.img -cpu cortex-a53 -append "root=/dev/vda1" -nographic</interpreter-opts>
 			<action> <login /> </action>

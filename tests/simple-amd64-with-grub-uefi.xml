@@ -78,10 +78,14 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>shim-signed</pkg>
 			<pkg>linux-image-amd64</pkg>
 		</pkg-list>
+
+		<project-finetuning>
+			<set_packer packer="none">sda.img</set_packer>
+		</project-finetuning>
 	</target>
 	<check-image-list>
 		<check>
-			<img>sda.img.tar.gz</img>
+			<img>sda.img</img>
 			<interpreter>qemu-system-x86_64</interpreter>
 			<interpreter-opts>-m 2G -enable-kvm -cpu host -drive format=raw,file=$ELBE_IMG -nographic</interpreter-opts>
 			<interpreter-firmware
