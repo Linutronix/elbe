@@ -81,7 +81,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	</target>
 	<check-image-list>
 		<check>
-			<img>sda.img.tar.gz</img>
+			<img>sda.img</img>
 			<interpreter>qemu-system-x86_64</interpreter>
 			<interpreter-opts>-m 2G -enable-kvm -cpu host -drive format=raw,file=$ELBE_IMG -nographic</interpreter-opts>
 
