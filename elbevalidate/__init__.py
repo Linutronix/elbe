@@ -223,6 +223,10 @@ class Image(BlockDevice):
         finally:
             self._gfs.umount_all()
 
+    def read_at(self, count: int, offset: int) -> bytes:
+        """ Read count bytes at offset. """
+        return self._gfs.pread_device(self._gfs_blockdev, count=count, offset=offset)
+
 
 # This is a module-level API in the stdlib, so we do the same here.
 def statvfs(path: ImagePath):

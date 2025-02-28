@@ -118,6 +118,7 @@ def test_elbevalidate(elbevalidate, tmp_path):
         part0 = image.partitions[0]
         assert part0.type == '83'
         assert part0.size == len(part1) + 512
+        assert image.read_at(4, part0.start) == b'hsqs'  # SquashFS superblock
 
         part0_blkid = part0.blkid()
         assert part0_blkid['TYPE'] == 'squashfs'
