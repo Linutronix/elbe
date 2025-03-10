@@ -1454,8 +1454,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Installs grub on this harddisk. The text content will be used as
-            additional command line arguments to Elbe's grub-install call.
+            Installs grub on this harddisk. The text content will be split
+            between additional command line arguments given to Elbe's
+            grub-install call and environment variables will be given to
+            update-grub2.
           </documentation>
         </annotation>
       </element>
@@ -1536,8 +1538,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="grub-install" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Installs grub on this harddisk. The text content will be used as
-            additional command line arguments to Elbe's grub-install call.
+            Installs grub on this harddisk. The text content will be split
+            between additional command line arguments given to Elbe's
+            grub-install call and environment variables will be given to
+            update-grub2.
           </documentation>
         </annotation>
       </element>
