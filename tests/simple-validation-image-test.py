@@ -4,8 +4,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
+import pathlib
+import subprocess
 import sys
+import tempfile
 import textwrap
+import unittest
 
 import elbevalidate
 import elbevalidate.pytest
@@ -306,6 +310,36 @@ def test_image(build_dir):
         assert len(partitions) == 1
 
         _test_rfs_partition(build_dir, img, partitions[0])
+
+
+def _test_sdk_host_sysroot(sysroot):
+    assert sysroot.joinpath('usr', 'bin', 'gcc').is_file()
+    assert sysroot.joinpath('usr', 'bin', 'ld').is_file()
+
+
+def _test_sdk_target_sysroot(sysroot):
+    assert sysroot.joinpath('usr', 'include', 'syscall.h').is_file()
+    assert sysroot.joinpath('usr', 'include', 'gpio.h').is_file()
+    assert sysroot.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'pkgconfig', 'libgpio.pc').is_file()
+    assert sysroot.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio.so').is_symlink()
+
+
+def test_sdk(build_dir):
+    sdk = build_dir / 'setup-elbe-sdk-x86_64-linux-gnu-simple-validation-image-1.0.sh'
+
+    if not sdk.is_file():
+        raise unittest.SkipTest('no sdk has been built')
+
+    # The script is self extracting; it needs to be executable
+    sdk.chmod(0o755)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = pathlib.Path(tmp)
+
+        subprocess.check_call([sdk, '-y', '-d', tmp])
+
+        _test_sdk_host_sysroot(tmp / 'sysroots' / 'host')
+        _test_sdk_target_sysroot(tmp / 'sysroots' / 'target')
 
 
 if __name__ == '__main__':
