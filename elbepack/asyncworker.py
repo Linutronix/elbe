@@ -3,8 +3,9 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 import logging
-import multiprocessing
 import os
+from queue import Queue
+from threading import Thread
 
 from elbepack.elbeproject import AptCacheCommitError, AptCacheUpdateError
 from elbepack.log import elbe_logging, read_maxlevel, reset_level
@@ -277,11 +278,11 @@ class UpdatePbuilderJob(AsyncWorkerJob):
             db.reset_busy(self.project.builddir, success)
 
 
-class AsyncWorker(multiprocessing.Process):
+class AsyncWorker(Thread):
     def __init__(self, db):
         super().__init__(name='AsyncWorker')
         self.db = db
-        self.queue = multiprocessing.JoinableQueue()
+        self.queue = Queue()
         self.start()
 
     def stop(self):

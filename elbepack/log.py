@@ -6,11 +6,8 @@
 import collections
 import functools
 import logging
-import multiprocessing
-import multiprocessing.managers
 import os
 import re
-import sys
 import threading
 from contextlib import contextmanager
 
@@ -34,12 +31,6 @@ def _swallow_kwargs(func, *names):
     return _wrapper
 
 
-if sys.version_info < (3, 9, 7) and hasattr(multiprocessing.managers, 'AutoProxy'):
-    # See https://bugs.python.org/issue30256 and linked issues
-    multiprocessing.managers.AutoProxy = _swallow_kwargs(
-            multiprocessing.managers.AutoProxy, 'manager_owned')
-
-
 class LoggingQueue(collections.deque):
     def __init__(self):
         super().__init__(maxlen=1024)
@@ -56,23 +47,14 @@ class LoggingQueue(collections.deque):
         return self._max_level
 
 
-class _LoggingManager(multiprocessing.managers.BaseManager):
-    pass
-
-
-_LoggingManager.register('dict', dict, multiprocessing.managers.DictProxy)
-_LoggingManager.register('LoggingQueue', LoggingQueue)
-
-_manager = _LoggingManager()
-_manager.start()
-_queues = _manager.dict()  # type: ignore
+_queues = {}
 
 
 class QHandler(logging.Handler):
     def __init__(self, target, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if target not in _queues:
-            _queues[target] = _manager.LoggingQueue()
+            _queues[target] = LoggingQueue()
         self.Q = _queues[target]
 
     def emit(self, record):
