@@ -1,0 +1,23 @@
+name: pytest
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo apt install mypy python3-pytest \
+                flake8 python3-flake8-quotes python3-flake8-import-order \
+                python3-gpg python3-passlib
+    - name: Test with pytest
+      run: |
+        pytest
