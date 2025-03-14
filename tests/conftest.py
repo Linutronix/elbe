@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
-import elbevalidate.pytest
-
-pytest_plugins = elbevalidate.pytest.plugin
+try:
+    import elbevalidate.pytest
+    pytest_plugins = elbevalidate.pytest.plugin
+except ModuleNotFoundError as e:
+    if e.name != 'guestfs':
+        raise
