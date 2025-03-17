@@ -89,7 +89,9 @@ todo_include_todos = False
 manpages_url = 'https://man.archlinux.org/search?q={path}'
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
+    'python': ('https://docs.python.org/3', (
+        '/usr/share/doc/python3/html/objects.inv' if 'DEB_BUILD_ARCH' in os.environ else None,
+    )),
 }
 
 # -- Options for HTML output ----------------------------------------------
