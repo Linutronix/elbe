@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2017 Linutronix GmbH
 
 import argparse
-import os
 import sys
 
 from elbepack.config import add_argument_soapport, add_argument_sshport
@@ -34,10 +33,6 @@ def run_command(argv):
     aparser.add_argument('xmlfile')
     _add_arguments(aparser)
     args = aparser.parse_args(argv)
-
-    if not os.path.isfile(args.xmlfile):
-        print(f"{args[0]} doesn't exist", file=sys.stderr)
-        sys.exit(113)
 
     try:
         xmlpreprocess(args.xmlfile, args.output,
