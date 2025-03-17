@@ -3,10 +3,9 @@
 # SPDX-FileCopyrightText: 2017 Linutronix GmbH
 
 import argparse
-import sys
 
 from elbepack.config import add_argument_soapport, add_argument_sshport
-from elbepack.xmlpreprocess import XMLPreprocessError, xmlpreprocess
+from elbepack.xmlpreprocess import xmlpreprocess
 
 
 def _add_arguments(parser):
@@ -34,10 +33,6 @@ def run_command(argv):
     _add_arguments(aparser)
     args = aparser.parse_args(argv)
 
-    try:
-        xmlpreprocess(args.xmlfile, args.output,
-                      variants=args.variants, proxy=args.proxy, gzip=args.gzip,
-                      sshport=args.sshport, soapport=args.soapport)
-    except XMLPreprocessError as e:
-        print(e, file=sys.stderr)
-        sys.exit(114)
+    xmlpreprocess(args.xmlfile, args.output,
+                  variants=args.variants, proxy=args.proxy, gzip=args.gzip,
+                  sshport=args.sshport, soapport=args.soapport)
