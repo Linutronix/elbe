@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2013-2014, 2017-2018 Linutronix GmbH
 
 import importlib
+import os
 import pathlib
 import struct
 import subprocess
@@ -14,6 +15,10 @@ import pytest
 
 @pytest.fixture
 def elbevalidate():
+    for image in pathlib.Path('/boot').glob('vmlinuz-*'):
+        if not os.access(image, os.R_OK):
+            pytest.skip(f'Kernel image {image} is not readable')
+
     try:
         return importlib.import_module('elbevalidate', package=__name__)
     except ModuleNotFoundError as e:
