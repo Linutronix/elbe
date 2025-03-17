@@ -80,9 +80,12 @@ def test_mv(target):
 
 @requires_root
 def test_ln(target):
+    root = elbepack.filesystem.Filesystem('/')
     target.touch_file('foo')
 
-    finetune(target, '<ln path="foo">bar</ln>')
+    finetune(root, '<ln path="foo">{}</ln>'.format(
+        target.fname('bar'),
+    ))
     assert target.exists('foo')
     assert target.islink('bar')
     assert target.readlink('bar') == 'foo'
