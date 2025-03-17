@@ -145,7 +145,7 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     >>> import sys
     >>> from elbepack.log import open_logging
     >>> cleanup = open_logging(streams=sys.stdout)
-    >>> chroot("/", "true") # doctest: +ELLIPSIS
+    >>> chroot("/", "false") # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
     subprocess.CalledProcessError: ...
