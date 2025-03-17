@@ -27,7 +27,7 @@ Build-Depends: debhelper-compat (= 13),
   python3-pytest,
   python3-sphinx,
   python3-sphinx-rtd-theme,
-  linux-image-amd64 [amd64]
+  linux-image-amd64 [amd64] | linux-image-generic
 Standards-Version: 3.9.6
 Rules-Requires-Root: no
 Homepage: https://elbe-rfs.org
