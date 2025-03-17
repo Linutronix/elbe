@@ -4,6 +4,7 @@
 
 import itertools
 import os
+import socket
 
 import pytest
 
@@ -28,8 +29,22 @@ def _examples():
     ]
 
 
+def _root_cause(e):
+    while True:
+        if e.__context__ is None:
+            return e
+
+        e = e.__context__
+
+
 @pytest.mark.parametrize('f', itertools.chain(_test_cases(), _examples()))
 def test_validate(f, tmp_path):
     p = tmp_path / 'preprocessed.xml'
-    run_elbe_subcommand(['preprocess', '-o', p, f])
+    try:
+        run_elbe_subcommand(['preprocess', '-o', p, f])
+    except Exception as e:
+        root_cause = _root_cause(e)
+        if isinstance(root_cause, socket.gaierror) and root_cause.errno == socket.EAI_AGAIN:
+            pytest.skip('Network is unavailable')
+        raise
     run_elbe_subcommand(['validate', p])
