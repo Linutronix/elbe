@@ -126,7 +126,7 @@ class RPCAPTCache(InChRootObject):
                 src_name = pkg.candidate.source_name
                 src_name_lst.append(src_name)
                 version_dict[pkg.name] = pkg.candidate.version
-                version_dict[src_name] = pkg.candidate.version
+                version_dict[src_name] = pkg.candidate.source_version
 
         def mark_install(pkg_lst, suffix):
 
