@@ -1,0 +1,20 @@
+elbe 15.6 (2025-03-31)
+======================
+
+Features
+--------
+
+- Multiple GitHub Actions have been added to improve the contributor experience.
+
+
+Bugfixes
+--------
+
+- Fix binary to source package correlation. This fixes missing packages from the SDKs.
+- Fix synchronization between losetup and udev (2nd try).
+
+
+Deprecations and Removals
+-------------------------
+
+- The authentication of the SOAP interface has been removed.
