@@ -122,7 +122,7 @@ def test_elbe_report_txt(build_dir):
         File List
         ---------
 
-        |+//testfile+|added in finetuning
+        |+//vmlinuz.old+|postinst generated
     """) in elbe_report
 
     assert '\n|+/usr/bin/mount+|mount\n' in elbe_report
