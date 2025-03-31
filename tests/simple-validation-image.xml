@@ -95,6 +95,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<command>cat /etc/hosts | cat -n > /etc/hosts4</command>
 			<raw_cmd>cp /etc/hosts /etc/hosts5</raw_cmd>
 			<command>cp /usr/sbin/policy-rc.d /usr/sbin/policy-rc.d.copy</command>
+			<command>rm -r /var/lib/apt/lists/</command>
 		</finetuning>
 
 		<project-finetuning>
