@@ -72,7 +72,7 @@ def run_command(argv):
     for p in fullp:
         pname = p.et.text
 
-        if p.bool_attr('auto'):
+        if not p.bool_attr('auto'):
             v.mark_install(pname)
 
     errors = 0
