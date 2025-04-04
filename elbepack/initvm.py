@@ -158,12 +158,15 @@ class LibvirtInitVM(_InitVM):
                 # In case we get here, the exception is unknown, and we want to see it
                 raise
 
-    def _get_domain(self):
+    def _get_domain(self, allow_missing=False):
         doms = self._conn.listAllDomains()
 
         for d in doms:
             if d.name() == self._domain:
                 return d
+
+        if not allow_missing:
+            raise RuntimeError(f'no libvirt domain "{self._domain}" in "{self._conn.getURI()}"')
 
     @staticmethod
     def _state(domain):
@@ -187,7 +190,7 @@ class LibvirtInitVM(_InitVM):
         vcpu_elem.text = str(cpus)
 
     def _build(self):
-        domain = self._get_domain()
+        domain = self._get_domain(allow_missing=True)
         if domain is not None:
             uri = self._conn.getURI()
             raise CliError(142, textwrap.dedent(f"""
@@ -311,7 +314,7 @@ class LibvirtInitVM(_InitVM):
                        check=True)
 
     def destroy(self):
-        domain = self._get_domain()
+        domain = self._get_domain(allow_missing=True)
         if domain is not None:
             with contextlib.suppress(self._libvirt.libvirtError):
                 domain.destroy()
