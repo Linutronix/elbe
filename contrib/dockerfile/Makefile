@@ -8,6 +8,18 @@ CONTAINERNAME ?= elbe-devel
 KVMGID ?= $(shell ls -n /dev/kvm | awk '{ print $$4 }')
 UID ?= $(shell id -u)
 
+# Common docker run options
+DOCKER_RUN_OPTS = \
+	--cap-add SYS_ADMIN \
+	--security-opt seccomp:unconfined \
+	--security-opt apparmor:unconfined \
+	--group-add kvm \
+	--device /dev/kvm \
+	--device /dev/fuse \
+	--rm \
+	--interactive \
+	--tty
+
 # docker commands
 build:
 	test -c /dev/kvm  || ( echo "/dev/kvm not found" && false )
@@ -23,21 +35,23 @@ build:
 	             -t $(IMAGENAME) .
 	rm Dockerfile
 
-start:
+start-devel:
 	docker ps | grep $(CONTAINERNAME)$$ || \
-	docker run --name $(CONTAINERNAME) -d \
-		-e container=docker \
+	docker run --name $(CONTAINERNAME) \
 		-e http_proxy=$(http_proxy) \
 		-e https_proxy=$(https_proxy) \
 		-e no_proxy=$(no_proxy) \
-		-v $(realpath ../../.):/elbe -w /elbe\
-		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-		--cap-add SYS_ADMIN \
-		--security-opt seccomp:unconfined \
-		--security-opt apparmor:unconfined \
-		--group-add kvm \
-		--device /dev/kvm \
-		--device /dev/fuse \
+		-v $(realpath ../../.):/var/cache/elbe/devel -w /var/cache/elbe/devel \
+		$(DOCKER_RUN_OPTS) \
+		$(IMAGENAME)
+
+start:
+	docker ps | grep $(CONTAINERNAME)$$ || \
+	docker run --name $(CONTAINERNAME) \
+		-e http_proxy=$(http_proxy) \
+		-e https_proxy=$(https_proxy) \
+		-e no_proxy=$(no_proxy) \
+		$(DOCKER_RUN_OPTS) \
 		$(IMAGENAME)
 
 stop:
