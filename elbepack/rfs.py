@@ -183,6 +183,13 @@ class BuildEnv:
             include.extend([
                 i.strip() for i in self.xml.text('target/debootstrap/include').split(',')
             ])
+
+        # If the target uses trixie it won't have gpgv installed by default, using sqv instead.
+        # The apt process from the (bookworm) initvm however does not support sqv.
+        # Explicitly install gpgv (for now).
+        if suite == 'trixie':
+            include.append('gpgv')
+
         if include:
             strapcmd.extend(['--include', ','.join(include)])
 
