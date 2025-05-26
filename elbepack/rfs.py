@@ -178,8 +178,13 @@ class BuildEnv:
             strapcmd.extend(['--variant', self.xml.text('target/debootstrap/variant')])
 
         # Should we include additional packages into bootstrap?
+        include = []
         if self.xml.has('target/debootstrap/include'):
-            strapcmd.extend(['--include', self.xml.text('target/debootstrap/include')])
+            include.extend([
+                i.strip() for i in self.xml.text('target/debootstrap/include').split(',')
+            ])
+        if include:
+            strapcmd.extend(['--include', ','.join(include)])
 
         # Should we exclude some packages from bootstrap?
         if self.xml.has('target/debootstrap/exclude'):
