@@ -50,6 +50,12 @@ def _delete_project(client, args):
     client.service.del_project(args.project_dir)
 
 
+def _delete_all_projects(client, args):
+    for project in client.list_projects():
+        print(f'Deleting {project.builddir} {project.name}')
+        client.service.del_project(project.builddir)
+
+
 @_add_project_dir_argument
 @add_argument('xml')
 def _set_xml(client, args):
@@ -186,6 +192,7 @@ _client_actions = {
     'create_project':       _create_project,
     'reset_project':        _reset_project,
     'del_project':          _delete_project,
+    'del_all_projects':     _delete_all_projects,
     'set_xml':              _set_xml,
     'build':                _build,
     'build_sysroot':        _build_sysroot,

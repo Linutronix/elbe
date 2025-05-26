@@ -26,6 +26,7 @@ SYNOPSIS
       elbe control [options] wait_busy <build-dir>
       elbe control [options] set_xml <build-dir> <xmlfile>
       elbe control [options] del_project <build-dir>
+      elbe control [options] del_all_projects
       elbe control [options] build_pbuilder <build-dir>
       elbe control [options] build <build-dir>
       elbe control [options] rm_log <build-dir>
@@ -159,6 +160,9 @@ a ./debian folder with a valid debianization.
 
 *del_project* <build-dir>
    Delete project in <build-dir>
+
+*del_all_projects*
+   Delete all projects
 
 *build_pbuilder* <build-dir>
    Build a pbuilder environment for the given project <build-dir>.
