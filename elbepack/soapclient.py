@@ -226,3 +226,9 @@ class ElbeSoapClient:
         with urlopen(self._file_download_url(builddir, file)) as r:
             for chunk in r:
                 yield chunk
+
+    def list_projects(self):
+        projects = self.service.list_projects()
+        if not projects:
+            return []
+        return projects.SoapProject

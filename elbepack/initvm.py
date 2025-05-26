@@ -44,7 +44,7 @@ def _test_soap_communication(control, sleep=10, wait=120):
         if _is_soap_port_reachable(control):
             control.connect()
             try:
-                control.service.list_projects()
+                control.list_projects()
             except Exception:
                 pass
             else:

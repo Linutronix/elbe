@@ -26,15 +26,13 @@ def _remove_log(client, args):
 
 
 def _list_projects(client, args):
-    projects = client.service.list_projects()
-
-    try:
-        for p in projects.SoapProject:
-            print(
-                f'{p.builddir}\t{p.name}\t{p.version}\t{p.status}\t'
-                f'{p.edit}')
-    except AttributeError:
+    projects = client.list_projects()
+    if not projects:
         print('No projects configured in initvm')
+        return
+
+    for p in projects:
+        print(f'{p.builddir}\t{p.name}\t{p.version}\t{p.status}\t' f'{p.edit}')
 
 
 def _create_project(client, args):
