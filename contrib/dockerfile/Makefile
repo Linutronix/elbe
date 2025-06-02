@@ -23,21 +23,41 @@ build:
 	             -t $(IMAGENAME) .
 	rm Dockerfile
 
-start:
+start-devel:
 	docker ps | grep $(CONTAINERNAME)$$ || \
-	docker run --name $(CONTAINERNAME) -d \
+	docker run --name $(CONTAINERNAME) \
 		-e container=docker \
 		-e http_proxy=$(http_proxy) \
 		-e https_proxy=$(https_proxy) \
 		-e no_proxy=$(no_proxy) \
-		-v $(realpath ../../.):/elbe -w /elbe\
-		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		-v $(shell git rev-parse --show-toplevel):/usr/elbe -w /usr/elbe\
 		--cap-add SYS_ADMIN \
 		--security-opt seccomp:unconfined \
 		--security-opt apparmor:unconfined \
 		--group-add kvm \
 		--device /dev/kvm \
 		--device /dev/fuse \
+		--rm \
+		--interactive \
+		--tty \
+		$(IMAGENAME)
+
+start:
+	docker ps | grep $(CONTAINERNAME)$$ || \
+	docker run --name $(CONTAINERNAME) \
+		-e container=docker \
+		-e http_proxy=$(http_proxy) \
+		-e https_proxy=$(https_proxy) \
+		-e no_proxy=$(no_proxy) \
+		--cap-add SYS_ADMIN \
+		--security-opt seccomp:unconfined \
+		--security-opt apparmor:unconfined \
+		--group-add kvm \
+		--device /dev/kvm \
+		--device /dev/fuse \
+		--rm \
+		--interactive \
+		--tty \
 		$(IMAGENAME)
 
 stop:
