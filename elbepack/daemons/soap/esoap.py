@@ -301,4 +301,5 @@ class ESoap (ServiceBase):
             storage_free_bytes=self.app.pm.storage_free_bytes(),
             memory_total_bytes=meminfo['MemTotal'],
             memory_available_bytes=meminfo['MemAvailable'],
+            orphan_project_directories=self.app.pm.orphan_project_directories(),
         )

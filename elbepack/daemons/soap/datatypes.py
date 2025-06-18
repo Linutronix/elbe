@@ -31,3 +31,4 @@ class ServerStatus(ComplexModel):
     storage_free_bytes = UnsignedInteger()
     memory_total_bytes = UnsignedInteger()
     memory_available_bytes = UnsignedInteger()
+    orphan_project_directories = Unicode().customize(max_occurs='unbounded')

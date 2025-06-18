@@ -4,6 +4,7 @@
 
 import os
 import shutil
+import uuid
 from os import path
 
 from elbepack.asyncworker import (
@@ -17,7 +18,7 @@ from elbepack.asyncworker import (
     PdebuildJob,
     UpdatePbuilderJob,
 )
-from elbepack.db import ElbeDB
+from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.elbexml import ValidationMode
 from elbepack.log import read_loggingQ
 from elbepack.uuid7 import uuid7
@@ -29,6 +30,15 @@ class ProjectManagerError(Exception):
 
 class InvalidState(ProjectManagerError):
     pass
+
+
+def _is_uuid(s):
+    try:
+        uuid.UUID(hex=s)
+    except ValueError:
+        return False
+
+    return True
 
 
 class ProjectManager:
@@ -191,6 +201,20 @@ class ProjectManager:
 
     def storage_free_bytes(self):
         return shutil.disk_usage(self.basepath).free
+
+    def orphan_project_directories(self):
+        def _is_db_project(builddir):
+            try:
+                self.db.get_project_data(builddir)
+                return True
+            except ElbeDBError:
+                return False
+
+        return [
+            child
+            for child in os.listdir(self.basepath)
+            if _is_uuid(child) and not _is_db_project(os.path.join(self.basepath, child))
+        ]
 
     def _assert_not_busy(self, ep):
         if self.db.is_busy(ep.builddir):
