@@ -415,6 +415,13 @@ def _sync(args):
     ], check=True)
 
 
+@add_argument_sshport
+def _ssh(args):
+    subprocess.run([
+        'ssh', '-p', str(args.sshport), '-oUserKnownHostsFile=/dev/null', 'root@localhost',
+    ], check=False)
+
+
 initvm_actions = {
     'start':   _start,
     'ensure':  _ensure,
@@ -424,4 +431,5 @@ initvm_actions = {
     'create':  _create,
     'submit':  _submit,
     'sync':    _sync,
+    'ssh':     _ssh,
 }

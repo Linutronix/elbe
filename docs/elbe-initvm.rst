@@ -20,6 +20,7 @@ SYNOPSIS
       elbe initvm [xmloptions] stop    [options]
       elbe initvm [xmloptions] ensure  [options]
       elbe initvm [xmloptions] destroy [options]
+      elbe initvm [xmloptions] ssh     [options]
 
 DESCRIPTION
 ===========
@@ -122,6 +123,11 @@ COMMANDS
 
 *destroy*
    Clean up resources used by the initvm. initvm should be stopped before.
+
+*ssh*
+   Connect to the initvm console via SSH.
+
+   Password *root*.
 
 Examples
 ========
