@@ -53,6 +53,26 @@ class SoapElbeNotAuthorized(Fault):
             faultstring='Not Authorized ! Cant let you perform this command.')
 
 
+def _linux_meminfo():
+    r = {}
+
+    with open('/proc/meminfo', 'r') as f:
+        for line in f.readlines():
+            k, v = line.split(':', maxsplit=1)
+            v = v.strip()
+
+            if v.endswith(' kB'):
+                v = v[:-3]
+                v = int(v)
+                v *= 1024
+            else:
+                v = int(v)
+
+            r[k] = v
+
+    return r
+
+
 class ESoap (ServiceBase):
 
     __name__ = 'soap'
@@ -273,8 +293,12 @@ class ESoap (ServiceBase):
 
     @rpc(_returns=ServerStatus)
     def status(self):
+        meminfo = _linux_meminfo()
+
         return ServerStatus(
             version=elbe_version,
             is_devel=is_devel,
             storage_free_bytes=self.app.pm.storage_free_bytes(),
+            memory_total_bytes=meminfo['MemTotal'],
+            memory_available_bytes=meminfo['MemAvailable'],
         )

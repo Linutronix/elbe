@@ -29,3 +29,5 @@ class ServerStatus(ComplexModel):
     version = Unicode()
     is_devel = Boolean()
     storage_free_bytes = UnsignedInteger()
+    memory_total_bytes = UnsignedInteger()
+    memory_available_bytes = UnsignedInteger()
