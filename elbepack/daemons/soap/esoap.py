@@ -19,9 +19,9 @@ from spyne.service import ServiceBase
 from elbepack.db import ElbeDBError, InvalidLogin
 from elbepack.elbexml import ValidationError, ValidationMode
 from elbepack.projectmanager import InvalidState, ProjectManagerError
-from elbepack.version import elbe_version
+from elbepack.version import elbe_version, is_devel
 
-from .datatypes import SoapFile, SoapProject
+from .datatypes import ServerStatus, SoapFile, SoapProject
 
 
 class SoapElbeDBError(Fault):
@@ -270,3 +270,10 @@ class ESoap (ServiceBase):
     @rpc(String, String)
     def include_package(self, builddir, filename):
         self.app.pm.add_deb_package(builddir, filename)
+
+    @rpc(_returns=ServerStatus)
+    def status(self):
+        return ServerStatus(
+            version=elbe_version,
+            is_devel=is_devel,
+        )

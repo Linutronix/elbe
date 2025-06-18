@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2014-2017 Linutronix GmbH
 
 import argparse
+import json
 import os
 import socket
 import sys
@@ -186,6 +187,15 @@ def _update_pbuilder(client, args):
     client.service.update_pbuilder(args.project_dir)
 
 
+def _python_dict_from_spyne_model(d):
+    return {k: getattr(d, k) for k in d.__keylist__}
+
+
+def _status(client, args):
+    json.dump(_python_dict_from_spyne_model(client.service.status()), sys.stdout, indent=2)
+    sys.stdout.write('\n')
+
+
 _client_actions = {
     'rm_log':               _remove_log,
     'list_projects':        _list_projects,
@@ -208,6 +218,7 @@ _client_actions = {
     'set_pdebuild':         _set_pdebuild,
     'build_pbuilder':       _build_pbuilder,
     'update_pbuilder':      _update_pbuilder,
+    'status':               _status,
 }
 
 

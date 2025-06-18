@@ -32,6 +32,7 @@ SYNOPSIS
       elbe control [options] rm_log <build-dir>
       elbe control [options] get_file <build-dir> <filename>
       elbe control [options] dump_file <build-dir> <filename>
+      elbe control [options] status
 
 DESCRIPTION
 ===========

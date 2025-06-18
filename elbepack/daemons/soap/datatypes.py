@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 from spyne.model.complex import ComplexModel
-from spyne.model.primitive import DateTime, Unicode
+from spyne.model.primitive import Boolean, DateTime, Unicode
 
 
 class SoapProject (ComplexModel):
@@ -21,3 +21,10 @@ class SoapFile (ComplexModel):
 
     name = Unicode()
     description = Unicode()
+
+
+class ServerStatus(ComplexModel):
+    __namespace__ = 'soap'
+
+    version = Unicode()
+    is_devel = Boolean()
