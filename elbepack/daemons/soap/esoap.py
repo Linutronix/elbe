@@ -276,4 +276,5 @@ class ESoap (ServiceBase):
         return ServerStatus(
             version=elbe_version,
             is_devel=is_devel,
+            storage_free_bytes=self.app.pm.storage_free_bytes(),
         )

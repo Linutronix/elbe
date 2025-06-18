@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 from spyne.model.complex import ComplexModel
-from spyne.model.primitive import Boolean, DateTime, Unicode
+from spyne.model.primitive import Boolean, DateTime, Unicode, UnsignedInteger
 
 
 class SoapProject (ComplexModel):
@@ -28,3 +28,4 @@ class ServerStatus(ComplexModel):
 
     version = Unicode()
     is_devel = Boolean()
+    storage_free_bytes = UnsignedInteger()

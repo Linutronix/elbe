@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
 import os
+import shutil
 from os import path
 
 from elbepack.asyncworker import (
@@ -187,6 +188,9 @@ class ProjectManager:
     def project_is_busy(self, builddir):
         msg = read_loggingQ(builddir)
         return self.db.is_busy(builddir), msg
+
+    def storage_free_bytes(self):
+        return shutil.disk_usage(self.basepath).free
 
     def _assert_not_busy(self, ep):
         if self.db.is_busy(ep.builddir):
