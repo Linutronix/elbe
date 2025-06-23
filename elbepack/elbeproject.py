@@ -786,7 +786,8 @@ class ElbeProject:
                     '--configfile', os.path.join(self.builddir, 'cross_pbuilderrc'),
                     '--basetgz', os.path.join(self.builddir, 'pbuilder_cross', 'base.tgz'),
                     '--buildresult', os.path.join(self.builddir, 'pbuilder_cross', 'result'),
-                    *glob.glob('*.dsc', root_dir=os.path.join(self.builddir, 'pdebuilder'))],
+                    *glob.glob('../*.dsc',
+                               root_dir=os.path.join(self.builddir, 'pdebuilder', 'current'))],
                    cwd=os.path.join(self.builddir, 'pdebuilder', 'current'),
                    env_add=debuild_env)
                 pbuilderdir = 'pbuilder_cross'
