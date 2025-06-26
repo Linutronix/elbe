@@ -736,7 +736,7 @@ class ElbeProject:
             git_file.write(f'\tdirectory = {git_safe_dir}\n')
 
         # Untar current_pdebuild.tar.gz into pdebuilder/current
-        do(['tar', 'xfz',
+        do(['tar', '--no-same-owner', '--no-same-permissions', '-xzf',
             os.path.join(self.builddir, 'current_pdebuild.tar.gz'),
             '-C', pbdir])
 
