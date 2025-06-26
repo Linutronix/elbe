@@ -777,6 +777,7 @@ class ElbeProject:
                    env_add=debuild_env)
                 do(['pbuilder', 'build', '--host-arch', self.arch,
                     '--configfile', os.path.join(self.builddir, 'cross_pbuilderrc'),
+                    '--debbuildopts', '-sa',
                     '--basetgz', os.path.join(self.builddir, 'pbuilder_cross', 'base.tgz'),
                     '--buildresult', os.path.join(self.builddir, 'pbuilder_cross', 'result'),
                     *glob.glob('../*.dsc',
@@ -787,6 +788,7 @@ class ElbeProject:
             else:
                 do(['pdebuild',
                     '--configfile', os.path.join(self.builddir, 'pbuilderrc'),
+                    '--debbuildopts', '-sa',
                     '--use-pdebuild-internal',
                     '--buildresult', os.path.join(self.builddir, 'pbuilder', 'result')],
                    cwd=os.path.join(self.builddir, 'pdebuilder', 'current'),
