@@ -83,6 +83,7 @@ class RPCAPTCache(InChRootObject):
         config.set('Acquire::Retries', '10')
         config.set('Acquire::Retries::Delay', 'true')
         config.set('Acquire::Retries::Delay::Maximum', '30')
+        config.set('Debug::pkgProblemResolver', '1')
 
         self.cache = Cache(progress=ElbeOpProgress())
         self.cache.open(progress=ElbeOpProgress())
