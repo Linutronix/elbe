@@ -198,6 +198,11 @@ def _test_finetuning(root):
     assert root.joinpath('etc', 'hosts5').is_file()
     assert root.joinpath('etc', 'hosts5').read_text().startswith('127.0.0.1\tlocalhost\n')
 
+    # <command>ln /etc/hosts /etc/hosts6</command>
+    assert root.joinpath('etc', 'hosts6').is_file()
+    assert root.joinpath('etc', 'hosts').stat().st_ino == \
+           root.joinpath('etc', 'hosts6').stat().st_ino
+
 
 def _test_archive(root):
     archive_file = root.joinpath('opt', 'archive-file')
