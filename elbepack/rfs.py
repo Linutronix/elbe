@@ -149,6 +149,9 @@ class BuildEnv:
         for f in {'/etc/resolv.conf', '/etc/hostname'}:
             self.rfs.remove(f)
 
+        # create an empty /etc/machine-id, so that systemd-first-boot triggers
+        self.rfs.write_file('/etc/machine-id', 0o444, '')
+
     def import_debootstrap_key(self, key):
         if key:
             k = strip_leading_whitespace_from_lines(key)

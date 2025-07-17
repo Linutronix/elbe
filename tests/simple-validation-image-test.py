@@ -245,6 +245,8 @@ def _test_rfs_partition(build_dir, img, part):
         assert root.joinpath('etc', 'hostname').read_text() == 'validation-image'
         assert root.joinpath('etc', 'mailname').read_text() == 'validation-image.elbe-ci'
         assert not root.joinpath('etc', 'resolv.conf').exists()
+        assert root.joinpath('etc', 'machine-id').is_file()
+        assert root.joinpath('etc', 'machine-id').stat().st_size == 0
         assert root.joinpath('etc', 'fstab').read_text().strip() == textwrap.dedent("""
         LABEL=rfs / ext4 defaults 0 0
         """).strip()
