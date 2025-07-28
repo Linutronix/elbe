@@ -66,7 +66,7 @@ in-target haveged
 %   for node in prj.all("./finetuning/"):
 %     if "command" == node.tag:
 	cat <<ELBE_INITVM_FINETUNING_EOF > /buildenv/tmp/elbe-initvm
-${split_leading_whitespace_from_lines(node.et.text)}
+${strip_leading_whitespace_from_lines(node.et.text)}
 ELBE_INITVM_FINETUNING_EOF
 	in-target sh /tmp/elbe-initvm
 %     endif
