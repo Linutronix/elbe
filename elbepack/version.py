@@ -3,10 +3,12 @@
 # SPDX-FileCopyrightText: 2013-2018 Linutronix GmbH
 
 import pathlib
+import site
 import sys
 
 
-is_devel = not pathlib.Path(__file__).is_relative_to(sys.prefix)
+_filepath = pathlib.Path(__file__)
+is_devel = not _filepath.is_relative_to(sys.prefix) and not _filepath.is_relative_to(site.USER_SITE)
 elbe_version = '15.6'
 elbe_version_debian = elbe_version
 if is_devel:
