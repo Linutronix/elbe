@@ -82,7 +82,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<rm>/usr/share</rm>
 		</finetuning>
 		<pkg-list>
-			<pkg>busybox</pkg>
+			<pkg>busybox-static</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
