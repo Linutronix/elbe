@@ -7,8 +7,18 @@ import site
 import sys
 
 
+def _is_devel(p):
+    if p.is_relative_to(sys.prefix):
+        return False
+
+    if site.USER_SITE is not None and p.is_relative_to(site.USER_SITE):
+        return False
+
+    return True
+
+
 _filepath = pathlib.Path(__file__)
-is_devel = not _filepath.is_relative_to(sys.prefix) and not _filepath.is_relative_to(site.USER_SITE)
+is_devel = _is_devel(_filepath)
 elbe_version = '15.6'
 elbe_version_debian = elbe_version
 if is_devel:
