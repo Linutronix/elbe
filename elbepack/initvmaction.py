@@ -411,7 +411,7 @@ def _sync(args):
         'root@localhost:/var/cache/elbe/devel'
     ], check=True)
     subprocess.run([
-        *ssh, 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
+        *ssh, '-n', 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',
     ], check=True)
 
 
