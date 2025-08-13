@@ -97,10 +97,11 @@ $(BASE): $(INITRD)
 		)
 
 $(INITRD): $(INITRD_FILES)
-	mkdir -p $(IN)/initrd-tree/usr/lib/base-installer.d $(IN)/initrd-tree/lib/debian-installer-startup.d
+	mkdir -p $(IN)/initrd-tree/usr/lib/base-installer.d
 	echo 'mkdir -p /target/etc/apt/trusted.gpg.d/; cp /usr/share/keyrings/elbe-keyring.gpg /target/etc/apt/trusted.gpg.d/' > $(IN)/initrd-tree/usr/lib/base-installer.d/10copyelbekeyring
-	echo "echo 'ttyS1::respawn:/usr/bin/tail -n +0 -f /var/log/syslog' >> /etc/inittab; kill -HUP 1" > $(IN)/initrd-tree/lib/debian-installer-startup.d/S10serial-log
-	chmod 755 $(IN)/initrd-tree/usr/lib/base-installer.d/* $(IN)/initrd-tree/lib/debian-installer-startup.d/*
+	zcat $(IN)/initrd.gz | (cd $(IN)/initrd-tree && cpio --quiet --extract etc/inittab)
+	echo 'ttyS1::respawn:/usr/bin/tail -n +0 -f /var/log/syslog' >> $(IN)/initrd-tree/etc/inittab
+	chmod 755 $(IN)/initrd-tree/usr/lib/base-installer.d/*
 	mkdir -p $(GEN)
 	gzip -cd $(IN)/initrd.gz > $(GEN)/initrd-preseeded
 	cd $(IN)/initrd-tree && find . | cpio -H newc -o --append -F ../../$(GEN)/initrd-preseeded
