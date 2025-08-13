@@ -236,7 +236,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
 
     tgt_pkg_list = set()
 
-    for fpath, _ in targetfs.walk_files():
+    for fpath, _ in targetfs.walk_files(sort=True):
         unprefixed = fpath[len('/usr'):] if fpath.startswith('/usr') else fpath
         if unprefixed in index:
             pkg = index[unprefixed]

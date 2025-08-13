@@ -383,7 +383,7 @@ class Filesystem:
             with self.open(fname, 'w'):
                 pass
 
-    def walk_files(self, directory='', exclude_dirs=None):
+    def walk_files(self, directory='', exclude_dirs=None, sort=False):
         if not exclude_dirs:
             exclude_dirs = []
 
@@ -393,6 +393,10 @@ class Filesystem:
         else:
             striplen = len(dirname)
         for dirpath, dirnames, filenames in os.walk(dirname):
+            if sort:
+                dirnames.sort()
+                filenames.sort()
+
             subpath = dirpath[striplen:]
             if not subpath:
                 subpath = '/'
