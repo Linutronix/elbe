@@ -59,7 +59,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <controller type='pci' index='0' model='pci-root' />
     <input type='mouse' bus='ps2' />
     <input type='keyboard' bus='ps2' />
-    <graphics type='spice' autoport='yes' />
     <rng model='virtio'>
       <backend model='random' />
     </rng>
@@ -79,11 +78,6 @@ xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
     <console type='pty'>
       <target type='serial' port='0' />
     </console>
-    <channel type='spicevmc'>
-      <target type='virtio' name='com.redhat.spice.0' />
-      <address type='virtio-serial' controller='0' bus='0'
-      port='1' />
-    </channel>
   </devices>
   <qemu:commandline>
     <qemu:arg value='-netdev' />
