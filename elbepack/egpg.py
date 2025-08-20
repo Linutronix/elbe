@@ -16,6 +16,8 @@ from elbepack.shellhelper import env_add
 
 elbe_internal_key_param = """
 <GnupgKeyParms format="internal">
+  %no-ask-passphrase
+  %no-protection
   Key-Type: RSA
   Key-Usage: sign
   Key-Length: 2048
@@ -23,7 +25,6 @@ elbe_internal_key_param = """
   Name-Comment: Automatically generated
   Name-Email: root@elbe-daemon.de
   Expire-Date: 0
-  Passphrase: requiredToAvoidUserInput
 </GnupgKeyParms>
 """
 
@@ -183,19 +184,6 @@ def unsign_file(fname):
     return None
 
 
-def unlock_key(fingerprint):
-    ctx = core.Context()
-    ctx.set_engine_info(PROTOCOL_OpenPGP,
-                        None,
-                        '/var/cache/elbe/gnupg')
-    key = ctx.get_key(fingerprint, secret=True)
-    keygrip = key.subkeys[0].keygrip
-    subprocess.run([
-        '/usr/lib/gnupg/gpg-preset-passphrase',
-        '--preset', '-P', 'requiredToAvoidUserInput', keygrip,
-    ], check=True, env=env_add({'GNUPGHOME': '/var/cache/elbe/gnupg'}))
-
-
 def sign(infile, outfile, fingerprint):
 
     ctx = core.Context()
@@ -216,7 +204,6 @@ def sign(infile, outfile, fingerprint):
         print(f'Error: No key with fingerprint {fingerprint} - {E}')
         return
     else:
-        unlock_key(key.fpr)
         ctx.signers_add(key)
         ctx.set_armor(False)
 

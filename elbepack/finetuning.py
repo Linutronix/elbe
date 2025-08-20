@@ -14,7 +14,6 @@ from shutil import rmtree
 from gpg import core
 from gpg.constants import PROTOCOL_OpenPGP
 
-from elbepack.egpg import unlock_key
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
@@ -362,7 +361,6 @@ class UpdatedAction(FinetuningAction):
                                 None,
                                 '/var/cache/elbe/gnupg')
             ctx.set_armor(True)
-            unlock_key(fp)
             ctx.op_export(fp, 0, gpgdata)
             gpgdata.seek(0, os.SEEK_SET)
             key = gpgdata.read()
