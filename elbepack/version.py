@@ -19,10 +19,8 @@ def _is_devel(p):
 
 _filepath = pathlib.Path(__file__)
 is_devel = _is_devel(_filepath)
-elbe_version = '15.6'
+elbe_version = '15.7~rc1'
 elbe_version_debian = elbe_version
-if is_devel:
-    elbe_version += '.dev0'
 
 elbe_initvm_packagelist = ['python3-elbe-buildenv',
                            'python3-elbe-soap',

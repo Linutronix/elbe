@@ -1,0 +1,19 @@
+elbe 15.7~rc1 (2025-08-27)
+==========================
+
+Features
+--------
+
+- Add `elbe initvm ssh` to open a SSH connection to the initvm.
+- Add the `elbe control status` subcommand to get information about the ELBE daemon and initvm.
+- Introduce `elbe control del_all_projects` to delete all projects at once.
+
+
+Bugfixes
+--------
+
+- Correctly detect `version.is_devel` if installed in user directory.
+- Don't create the initvm with a SPICE channel.
+- Fix building of Debian trixie images.
+- Fix error in finetuning when building initvm.
+- Print better errors if the initvm libvirt domain is missing.
