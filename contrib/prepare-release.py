@@ -281,14 +281,19 @@ def create_commit(message):
 def create_release_tags(version, debian_release=None):
     # public, backwards compatible tag
     v = f'v{version}' if debian_release is None else f'v{version}_{debian_release}'
-    subprocess.check_call(['git', 'tag', '--sign', '-m', f'release: {v}', f'{v}'])
+    release_tag = v.replace('~', '_')
+    subprocess.check_call(['git', 'tag', '--sign', '-m', f'release: {v}', release_tag])
 
     # structured tag for Linutronix automation
     v = debian_version(version, debian_release).replace('~', '_')
     subprocess.check_call(['git', 'tag', '--sign', '-m', f'release: {v}', f'releases/rebase/{v}'])
 
+    return release_tag
+
 
 def create_release_branch(version, debian_release=None):
+    version = version.replace('~', '_')
+
     if debian_release is None:
         branch = f'releases/v{version}'
     else:
@@ -327,11 +332,11 @@ if __name__ == '__main__':
     release_notes = create_release_notes(version)
     update_changelog(version, release, release_notes)
     create_commit(f'release: v{version}')
-    create_release_tags(version)
+    release_tag = create_release_tags(version)
     create_release_branch(version)
 
     for backport in args.backports:
-        subprocess.check_call(['git', 'checkout', f'v{version}'])
+        subprocess.check_call(['git', 'checkout', release_tag])
         create_release_branch(version, backport)
         update_changelog_backport(backport)
         update_control(backport)
