@@ -174,60 +174,42 @@ class ESoap (ServiceBase):
     def update_pbuilder(self, builddir):
         self.app.pm.update_pbuilder(builddir)
 
-    @rpc(String)
+    @rpc(String, String, String)
+    def append_to_file(self, builddir, filename, data):
+        with open(os.path.join(builddir, filename), 'ab') as f:
+            f.write(binascii.a2b_base64(data))
+
+    @rpc(String, _returns=String)
     def start_cdrom(self, builddir):
-        cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
+        fname = 'uploaded_cdrom.iso'
 
-        # Now write empty File
-        fp = open(cdrom_fname, 'w')
-        fp.close()
+        with open(os.path.join(builddir, fname), 'w'):
+            # Now write empty File
+            pass
 
-    @rpc(String, String)
-    def append_cdrom(self, builddir, data):
-        cdrom_fname = os.path.join(builddir, 'uploaded_cdrom.iso')
-
-        # Now append data to cdrom_file
-        fp = open(cdrom_fname, 'ab')
-        fp.write(binascii.a2b_base64(data))
-        fp.close()
+        return fname
 
     @rpc(String)
     def finish_cdrom(self, builddir):
         self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
 
-    @rpc(String)
+    @rpc(String, _returns=String)
     def start_pdebuild(self, builddir):
-        pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
+        fname = 'current_pdebuild.tar.gz'
+        with open(os.path.join(builddir, fname), 'w'):
+            # Now write empty File
+            pass
 
-        # Now write empty File
-        fp = open(pdebuild_fname, 'w')
-        fp.close()
-
-    @rpc(String, String)
-    def append_pdebuild(self, builddir, data):
-        pdebuild_fname = os.path.join(builddir, 'current_pdebuild.tar.gz')
-
-        # Now write empty File
-        fp = open(pdebuild_fname, 'ab')
-        fp.write(binascii.a2b_base64(data))
-        fp.close()
+        return fname
 
     @rpc(String, String, Boolean)
     def finish_pdebuild(self, builddir, profile, cross):
         self.app.pm.build_pdebuild(builddir, profile, cross)
 
-    @rpc(String, String)
+    @rpc(String, String, _returns=String)
     def start_upload_orig(self, builddir, fname):
         self.app.pm.set_orig_fname(builddir, fname)
-
-    @rpc(String, String)
-    def append_upload_orig(self, builddir, data):
-        orig_fname = os.path.join(builddir, self.app.pm.get_orig_fname(builddir))
-
-        # Now append to File
-        fp = open(orig_fname, 'ab')
-        fp.write(binascii.a2b_base64(data))
-        fp.close()
+        return fname
 
     @rpc(String)
     def finish_upload_orig(self, builddir):
