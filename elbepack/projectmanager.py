@@ -135,14 +135,15 @@ class ProjectManager:
 
     def add_orig_fname(self, builddir, fname):
         ep = self.open_project(builddir, allow_busy=False)
-        # Write empty File
-        with open(os.path.join(builddir, fname), 'w'):
-            pass
 
         if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
                 not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
             raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                f'create --project {ep.builddir}" first')
+
+        # Write empty File
+        with open(os.path.join(ep.builddir, fname), 'w'):
+            pass
 
         ep.orig_files.append(fname)
 
