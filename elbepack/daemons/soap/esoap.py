@@ -208,7 +208,7 @@ class ESoap (ServiceBase):
 
     @rpc(String, String, _returns=String)
     def start_upload_orig(self, builddir, fname):
-        self.app.pm.set_orig_fname(builddir, fname)
+        self.app.pm.add_orig_fname(builddir, fname)
         return fname
 
     @rpc(String)

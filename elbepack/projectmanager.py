@@ -133,7 +133,7 @@ class ProjectManager:
 
         self.worker.enqueue(PdebuildJob(ep, profile, cross))
 
-    def set_orig_fname(self, builddir, fname):
+    def add_orig_fname(self, builddir, fname):
         ep = self.open_project(builddir, allow_busy=False)
         # Write empty File
         with open(os.path.join(builddir, fname), 'w'):
