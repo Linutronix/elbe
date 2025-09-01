@@ -99,11 +99,10 @@ class ElbeSoapClient:
                     print('file transfer failed', file=sys.stderr)
                     sys.exit(170)
 
-    @staticmethod
-    def _upload_file(append, build_dir, filename):
+    def _upload_file(self, build_dir, fname, source):
         size = 1024 * 1024
 
-        with open(filename, 'rb') as f:
+        with open(source, 'rb') as f:
 
             while True:
 
@@ -113,7 +112,7 @@ class ElbeSoapClient:
                 if not isinstance(data, str):
                     data = data.decode('ascii')
 
-                append(build_dir, data)
+                self.service.append_to_file(build_dir, fname, data)
 
                 if len(bin_data) != size:
                     break
@@ -189,18 +188,18 @@ class ElbeSoapClient:
                     return
 
     def set_orig(self, builddir, orig_file):
-        self.service.start_upload_orig(builddir, os.path.basename(orig_file))
-        self._upload_file(self.service.append_upload_orig, builddir, orig_file)
+        fname = self.service.start_upload_orig(builddir, os.path.basename(orig_file))
+        self._upload_file(builddir, fname, orig_file)
         self.service.finish_upload_orig(builddir)
 
     def set_pdebuild(self, builddir, pdebuild_file, profile='', cross=False):
-        self.service.start_pdebuild(builddir)
-        self._upload_file(self.service.append_pdebuild, builddir, pdebuild_file)
+        fname = self.service.start_pdebuild(builddir)
+        self._upload_file(builddir, fname, pdebuild_file)
         self.service.finish_pdebuild(builddir, profile, cross)
 
     def set_cdrom(self, builddir, cdrom_file):
-        self.service.start_cdrom(builddir)
-        self._upload_file(self.service.append_cdrom, builddir, cdrom_file)
+        fname = self.service.start_cdrom(builddir)
+        self._upload_file(builddir, fname, cdrom_file)
         self.service.finish_cdrom(builddir)
 
     def get_files(self, builddir, outdir, *, pbuilder_only=False, wildcard=None):
