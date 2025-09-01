@@ -148,7 +148,6 @@ class ElbeProject:
         # Initialise Repo Images to Empty list.
         self.repo_images = []
 
-        self.orig_fname = None
         self.orig_files = []
 
         # Use supplied XML file, if given, otherwise use the source.xml
@@ -763,7 +762,6 @@ class ElbeProject:
                     ofname = os.path.join(self.builddir, orig_fname)
                     do(['mv', ofname, os.path.join(self.builddir, 'pdebuilder')])
             finally:
-                self.orig_fname = None
                 self.orig_files = []
 
         try:
@@ -812,7 +810,6 @@ class ElbeProject:
                               'Please make sure, that the submitted package '
                               'builds in pbuilder')
         finally:
-            self.orig_fname = None
             self.orig_files = []
 
     def update_pbuilder(self):
