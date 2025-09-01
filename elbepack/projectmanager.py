@@ -147,15 +147,6 @@ class ProjectManager:
         ep.orig_fname = fname
         ep.orig_files.append(fname)
 
-    def get_orig_fname(self, builddir):
-        ep = self.open_project(builddir, allow_busy=False)
-        if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
-                not path.isdir(path.join(ep.builddir, 'pbuilder_cross'))):
-            raise InvalidState('No pbuilder exists: run "elbe pbuilder '
-                               f'create --project {ep.builddir}" first')
-
-        return ep.orig_fname
-
     def build_chroot_tarball(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildChrootTarJob(ep))
