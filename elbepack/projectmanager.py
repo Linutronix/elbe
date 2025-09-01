@@ -144,7 +144,6 @@ class ProjectManager:
             raise InvalidState('No pbuilder exists: run "elbe pbuilder '
                                f'create --project {ep.builddir}" first')
 
-        ep.orig_fname = fname
         ep.orig_files.append(fname)
 
     def build_chroot_tarball(self, builddir):
