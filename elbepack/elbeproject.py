@@ -148,8 +148,6 @@ class ElbeProject:
         # Initialise Repo Images to Empty list.
         self.repo_images = []
 
-        self.orig_files = []
-
         # Use supplied XML file, if given, otherwise use the source.xml
         # file of the project
         if xmlpath:
@@ -752,17 +750,13 @@ class ElbeProject:
         with open(os.path.join(pdebuilder_current, 'debian', 'changelog'), 'r') as f:
             src_pkg_name = Changelog(f).get_package()
 
-        if '3.0 (quilt)' in formatfile and not self.orig_files:
+        orig_files = glob.glob(os.path.join(self.builddir, f'{src_pkg_name}*.orig.*'))
+
+        if '3.0 (quilt)' in formatfile and not orig_files:
             do(['origtargz', '--download-only', '--tar-only'], cwd=pdebuilder_current)
-            self.orig_files = glob.glob(
-                f'{pdebuilder_current}/../{src_pkg_name}*.orig.*')
         else:
-            try:
-                for orig_fname in self.orig_files:
-                    ofname = os.path.join(self.builddir, orig_fname)
-                    do(['mv', ofname, os.path.join(self.builddir, 'pdebuilder')])
-            finally:
-                self.orig_files = []
+            for orig_fname in orig_files:
+                do(['mv', orig_fname, os.path.join(self.builddir, 'pdebuilder')])
 
         try:
             debuild_env = {
@@ -809,8 +803,6 @@ class ElbeProject:
             logging.exception('Package fails to build.\n'
                               'Please make sure, that the submitted package '
                               'builds in pbuilder')
-        finally:
-            self.orig_files = []
 
     def update_pbuilder(self):
         do(['pbuilder', '--update',

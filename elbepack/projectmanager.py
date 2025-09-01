@@ -134,6 +134,9 @@ class ProjectManager:
         self.worker.enqueue(PdebuildJob(ep, profile, cross))
 
     def add_orig_fname(self, builddir, fname):
+        if '.orig.' not in fname:
+            raise ValueError('Invalid orig filename', fname)
+
         ep = self.open_project(builddir, allow_busy=False)
 
         if (not path.isdir(path.join(ep.builddir, 'pbuilder')) and
@@ -144,8 +147,6 @@ class ProjectManager:
         # Write empty File
         with open(os.path.join(ep.builddir, fname), 'w'):
             pass
-
-        ep.orig_files.append(fname)
 
     def build_chroot_tarball(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
