@@ -213,9 +213,6 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     def finish_upload_orig(self, builddir):
-        # If we support more than one orig, we need to put the orig_files into
-        # some list here.
-        # We still need the notion of a "current" orig during file upload.
         pass
 
     @rpc(String)
