@@ -12,6 +12,8 @@ import shutil
 import subprocess
 import sys
 
+from debian.changelog import Changelog
+
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.cdroms import mk_binary_cdrom, mk_source_cdrom
 from elbepack.dump import (
@@ -749,7 +751,7 @@ class ElbeProject:
                 formatfile = f.read()
 
         with open(os.path.join(pdebuilder_current, 'debian', 'changelog'), 'r') as f:
-            src_pkg_name = f.readline().split()[0]
+            src_pkg_name = Changelog(f).get_package()
 
         if '3.0 (quilt)' in formatfile and not self.orig_files:
             do(['origtargz', '--download-only', '--tar-only'], cwd=pdebuilder_current)
