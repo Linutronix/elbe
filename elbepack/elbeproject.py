@@ -384,13 +384,12 @@ class ElbeProject:
             for p in self.xml.tgt.node('hostsdk-pkg-list'):
                 if p.tag == 'pkg':
                     host_pkglist.append(p.et.text.strip())
-        else:
-            try:
-                host_pkglist.append(self.xml.defs['sdkgccpkg'])
-            except KeyError:
-                raise UnsupportedSDKException(triplet)
+        try:
+            host_pkglist.append(self.xml.defs['sdkgccpkg'])
+        except KeyError:
+            raise UnsupportedSDKException(triplet)
 
-            host_pkglist.append('gdb-multiarch')
+        host_pkglist.append('gdb-multiarch')
 
         # build target sysroot including libs and headers for the target
         self.build_sysroot()
