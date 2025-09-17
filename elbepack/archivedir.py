@@ -129,5 +129,6 @@ def combinearchivedir(xml):
 
     _combinearchivedir(xml, 'archivedir', False)
     _combinearchivedir(xml, 'src-cdrom/archivedir', True)
+    _combinearchivedir(xml, 'target/pbuilder/archivedir', False)
 
     return xml
