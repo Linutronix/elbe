@@ -1,0 +1,13 @@
+Source: example-configuration
+Section: misc
+Priority: optional
+Maintainer: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Build-Depends: debhelper (>= 13.0), debhelper-compat (= 13)
+Standards-Version: 4.7.2.0
+
+Package: example-configuration
+Architecture: all
+Depends: ${misc:Depends}
+Description: Example configuration package
+ Package showing how to package system configuration in a Debian package as
+ part of an ELBE build.
