@@ -11,8 +11,10 @@ import os
 import shutil
 import subprocess
 import sys
+import tarfile
 
 from elbepack.aptpkgutils import XMLPackage
+from elbepack.archivedir import archive_tmpfile
 from elbepack.cdroms import mk_binary_cdrom, mk_source_cdrom
 from elbepack.dump import (
     check_full_pkgs,
@@ -422,8 +424,10 @@ class ElbeProject:
         os.mkdir(os.path.join(self.builddir, 'pdebuilder'))
         src_path = os.path.join(self.builddir, 'pdebuilder', 'current')
 
-        src_uri = p.text('.').replace('LOCALMACHINE', '10.0.2.2').strip()
-        logging.info('Retrieve pbuild sources: %s',  src_uri)
+        if p.tag != 'archive':
+            src_uri = p.text('.').replace('LOCALMACHINE', '10.0.2.2').strip()
+            logging.info('Retrieve pbuild sources: %s',  src_uri)
+
         if p.tag == 'git':
             do(['git', 'clone', src_uri, src_path])
             revision = p.et.get('revision')
@@ -441,6 +445,11 @@ class ElbeProject:
                 chroot(self.chrootpath, ['/usr/bin/apt-get', 'source', *apt_args, src_uri])
 
             do(f'dpkg-source -x {self.chrootpath}/*.dsc "{src_path}"; rm {self.chrootpath}/*.dsc')
+        elif p.tag == 'archive':
+            logging.info('Retrieve pbuild sources from archive')
+            with archive_tmpfile(p.text('.')) as archive_file:
+                with tarfile.open(archive_file.name) as archive:
+                    archive.extractall(path=src_path)
         else:
             logging.info('Unknown pbuild source: %s', p.tag)
 
