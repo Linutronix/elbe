@@ -3042,6 +3042,14 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="archive" type="base64Binary" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>
+            embedded Debian source package.
+            The source will be built with a pbuilder before the image generation.
+          </documentation>
+        </annotation>
+      </element>
     </sequence>
     <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
