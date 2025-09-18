@@ -16,20 +16,6 @@ armel_defaults = {
     'elfcode': 'ARM',
 }
 
-armel_linaro48_defaults = {
-    'arch': 'armel',
-    'interpreter': 'qemu-system-arm',
-    'userinterpr': 'qemu-arm-static',
-    'console': 'ttyAMA0,115200n1',
-    'machine': 'versatilepb',
-    'nicmodel': 'smc91c111',
-    'triplet': 'arm-linux-gnueabi',
-    'sdkgccpkg': 'g++-arm-linux-gnueabi',
-    'toolchaintype': 'linaro_armel',
-    'toolchainver': '4.8.3',
-    'elfcode': 'ARM',
-}
-
 armhf_defaults = {
     'arch': 'armhf',
     'interpreter': 'qemu-system-arm',
@@ -39,19 +25,6 @@ armhf_defaults = {
     'nicmodel': 'smc91c111',
     'triplet': 'arm-linux-gnueabihf',
     'sdkgccpkg': 'g++-arm-linux-gnueabihf',
-    'elfcode': 'ARM',
-}
-
-armhf_linaro48_defaults = {
-    'arch': 'armhf',
-    'interpreter': 'qemu-system-arm',
-    'userinterpr': 'qemu-arm-static',
-    'console': 'ttyAMA0,115200n1',
-    'machine': 'versatilepb -cpu cortex-a9',
-    'nicmodel': 'smc91c111',
-    'triplet': 'arm-linux-gnueabihf',
-    'toolchaintype': 'linaro',
-    'toolchainver': '4.8.3',
     'elfcode': 'ARM',
 }
 
@@ -146,9 +119,7 @@ archindep_defaults = {
 }
 
 defaults = {'armel': armel_defaults,
-            'armel-linaro48': armel_linaro48_defaults,
             'armhf': armhf_defaults,
-            'armhf-linaro48': armhf_linaro48_defaults,
             'aarch64': aarch64_defaults,
             'ppc': ppc_defaults,
             'ppcspe': ppcspe_defaults,
