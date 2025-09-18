@@ -30,18 +30,6 @@ armel_linaro48_defaults = {
     'elfcode': 'ARM',
 }
 
-armel_virtio_defaults = {
-    'arch': 'armel',
-    'interpreter': 'qemu-system-arm-virtio',
-    'userinterpr': 'qemu-arm-static',
-    'console': 'ttyAMA0,115200n1',
-    'machine': 'versatilepb',
-    'nicmodel': 'smc91c111',
-    'triplet': 'arm-linux-gnueabi',
-    'sdkgccpkg': 'g++-arm-linux-gnueabi',
-    'elfcode': 'ARM',
-}
-
 armhf_defaults = {
     'arch': 'armhf',
     'interpreter': 'qemu-system-arm',
@@ -65,18 +53,6 @@ armhf_linaro48_defaults = {
     'toolchaintype': 'linaro',
     'toolchainver': '4.8.3',
     'elfcode': 'ARM',
-}
-
-armhf_virtio_defaults = {
-    'arch': 'armhf',
-    'interpreter': 'qemu-system-arm-virtio',
-    'userinterpr': 'qemu-arm-static',
-    'console': 'ttyAMA0,115200n1',
-    'machine': 'versatilepb -cpu cortex-a9',
-    'nicmodel': 'virtio',
-    'triplet': 'arm-linux-gnueabihf',
-    'sdkgccpkg': 'g++-arm-linux-gnueabihf',
-    'elfcode': 'ARM'
 }
 
 aarch64_defaults = {
@@ -171,10 +147,8 @@ archindep_defaults = {
 
 defaults = {'armel': armel_defaults,
             'armel-linaro48': armel_linaro48_defaults,
-            'armel-virtio': armel_virtio_defaults,
             'armhf': armhf_defaults,
             'armhf-linaro48': armhf_linaro48_defaults,
-            'armhf-virtio': armhf_virtio_defaults,
             'aarch64': aarch64_defaults,
             'ppc': ppc_defaults,
             'ppcspe': ppcspe_defaults,

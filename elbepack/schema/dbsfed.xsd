@@ -358,7 +358,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Default buildtype like armel, ppc, and in the future armel-virtio
+            Default buildtype like armel, ppc, ...
           </documentation>
         </annotation>
       </element>
@@ -499,7 +499,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            Default buildtype like armel, ppc, and in the future armel-virtio
+            Default buildtype like armel, ppc, ...
           </documentation>
         </annotation>
       </element>
