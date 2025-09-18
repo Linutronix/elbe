@@ -52,16 +52,6 @@ ppc_defaults = {
     'elfcode': 'PowerPC or cisco 4500',
 }
 
-ppcspe_defaults = {
-    'arch': 'powerpcspe',
-    'interpreter': 'qemu-system-ppc',
-    'userinterpr': 'qemu-ppc-static',
-    'console': 'ttyS0,115200n1',
-    'machine': 'mpc8544ds',
-    'nicmodel': 'rtl8139',
-    'triplet': 'powerpc-linux-gnuspe',
-}
-
 ppc64el_defaults = {
     'arch': 'ppc64el',
     'interpreter': 'qemu-system-ppc64',
@@ -122,7 +112,6 @@ defaults = {'armel': armel_defaults,
             'armhf': armhf_defaults,
             'aarch64': aarch64_defaults,
             'ppc': ppc_defaults,
-            'ppcspe': ppcspe_defaults,
             'ppc64el': ppc64el_defaults,
             'amd64': amd64_defaults,
             'i386': i386_defaults,
