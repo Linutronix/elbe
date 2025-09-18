@@ -382,7 +382,12 @@ class ElbeProject:
                 if p.tag == 'pkg':
                     host_pkglist.append(p.et.text.strip())
         else:
-            host_pkglist.append(self.xml.defs['sdkgccpkg'])
+            if triplet == 'x86_64-linux-gnu':
+                compiler_package = 'g++'
+            else:
+                compiler_package = f'g++-{triplet}'
+
+            host_pkglist.append(compiler_package)
             host_pkglist.append('gdb-multiarch')
 
         # build target sysroot including libs and headers for the target
