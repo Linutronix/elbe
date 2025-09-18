@@ -64,11 +64,6 @@ class AptCacheCommitError(Exception):
         super().__init__(f'Error Committing rpcaptcache {msg}')
 
 
-class UnsupportedSDKException(Exception):
-    def __init__(self, triplet):
-        super().__init__(f'SDK for {triplet} currently unsupported')
-
-
 def test_gen_sdk_scripts():
     os.makedirs('/tmp/test/sdk')
     gen_sdk_scripts('armhf-linux-gnueabihf',
@@ -387,11 +382,7 @@ class ElbeProject:
                 if p.tag == 'pkg':
                     host_pkglist.append(p.et.text.strip())
         else:
-            try:
-                host_pkglist.append(self.xml.defs['sdkgccpkg'])
-            except KeyError:
-                raise UnsupportedSDKException(triplet)
-
+            host_pkglist.append(self.xml.defs['sdkgccpkg'])
             host_pkglist.append('gdb-multiarch')
 
         # build target sysroot including libs and headers for the target
