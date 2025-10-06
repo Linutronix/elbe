@@ -13,6 +13,10 @@ from elbepack.schema import xml_schema_file
 # ElementTree helpers
 
 
+def create_xml_parser(**kwargs):
+    return XMLParser(**kwargs)
+
+
 def xml_bool(value):
     if value is None:
         return None
@@ -30,7 +34,7 @@ class _ElbepackSchemaResolver(Resolver):
 
 
 def dbsfed_schema():
-    parser = XMLParser(no_network=True)
+    parser = create_xml_parser(no_network=True)
     parser.resolvers.add(_ElbepackSchemaResolver())
     with xml_schema_file('dbsfed.xsd') as schema_file:
         schema_tree = parse(schema_file, parser=parser)
@@ -138,7 +142,7 @@ class elem(ebase):
 
 class etree(ebase):
     def __init__(self, fname, string=None):
-        parser = XMLParser(huge_tree=True, remove_comments=False)
+        parser = create_xml_parser(huge_tree=True, remove_comments=False)
         if fname is not None:
             et = parse(fname, parser=parser)
         elif string is not None:

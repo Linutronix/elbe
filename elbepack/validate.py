@@ -6,9 +6,9 @@ import os
 import sys
 
 from lxml import etree
-from lxml.etree import XMLParser, parse
+from lxml.etree import parse
 
-from elbepack.treeutils import dbsfed_schema
+from elbepack.treeutils import create_xml_parser, dbsfed_schema
 
 
 def error_log_to_strings(error_log):
@@ -39,7 +39,7 @@ def validate_xml(fname):
         return [f'{fname} is greater than 1 GiB. '
                 'Elbe does not support files of this size.']
 
-    parser = XMLParser(huge_tree=True)
+    parser = create_xml_parser(huge_tree=True)
     schema = dbsfed_schema()
 
     try:

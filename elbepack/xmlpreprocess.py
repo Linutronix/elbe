@@ -14,7 +14,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from lxml import etree
-from lxml.etree import Element, SubElement, XMLParser
+from lxml.etree import Element, SubElement
 
 with warnings.catch_warnings():
     # passlib has code to handle absence of the crypt module and will work just
@@ -24,7 +24,7 @@ with warnings.catch_warnings():
 
 from elbepack.archivedir import ArchivedirError, combinearchivedir
 from elbepack.isooptions import iso_option_valid
-from elbepack.treeutils import dbsfed_schema, xml_bool
+from elbepack.treeutils import create_xml_parser, dbsfed_schema, xml_bool
 from elbepack.validate import error_log_to_strings
 
 
@@ -339,7 +339,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, *,
     else:
         variants = set(variants)
 
-    parser = XMLParser(huge_tree=True)
+    parser = create_xml_parser(huge_tree=True)
     schema = dbsfed_schema()
 
     try:

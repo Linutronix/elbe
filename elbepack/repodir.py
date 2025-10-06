@@ -9,7 +9,9 @@ import sys
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from threading import Thread
 
-from lxml.etree import Element, XMLParser, XMLSyntaxError, parse
+from lxml.etree import Element, XMLSyntaxError, parse
+
+from elbepack.treeutils import create_xml_parser
 
 
 class RepodirError(Exception):
@@ -78,7 +80,7 @@ class Repodir:
         self.httpds = []
 
     def __enter__(self):
-        parser = XMLParser(huge_tree=True)
+        parser = create_xml_parser(huge_tree=True)
 
         try:
             xml = parse(self.input, parser=parser)
