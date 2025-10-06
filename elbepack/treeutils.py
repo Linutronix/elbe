@@ -5,6 +5,7 @@
 import copy
 import os
 
+import lxml
 from lxml.etree import Element, ElementTree, SubElement
 from lxml.etree import Resolver, XMLParser, XMLSchema, fromstring, parse, tostring
 
@@ -13,8 +14,16 @@ from elbepack.schema import xml_schema_file
 # ElementTree helpers
 
 
+_xml_parser_extra_args = {}
+
+# lxml 6.0 added a new parameter 'decompress' which defaults to False.
+# We need it to be true. inspect.signature() does not work through CPython.
+if lxml.__version__.split('.')[0] >= '6':
+    _xml_parser_extra_args['decompress'] = True
+
+
 def create_xml_parser(**kwargs):
-    return XMLParser(**kwargs)
+    return XMLParser(**kwargs, **_xml_parser_extra_args)
 
 
 def xml_bool(value):
