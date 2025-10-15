@@ -15,7 +15,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>sid</suite>
+		<suite>trixie</suite>
 	</project>
 	<target>
 		<hostname>elbe-riscv64</hostname>
