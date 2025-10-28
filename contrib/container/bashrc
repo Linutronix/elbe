@@ -1,0 +1,10 @@
+export PATH=/scripts:$PATH:/var/cache/elbe/devel
+export PYTHONPATH=$PYTHONPATH:/var/cache/elbe/devel
+
+# Register binfmt
+register_binfmt
+
+# Start elbe service
+start_elbe_service
+
+echo "Welcome to the elbe container"

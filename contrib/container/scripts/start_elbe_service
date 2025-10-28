@@ -1,0 +1,12 @@
+#!/bin/bash
+
+port=7587
+
+sudo lsof -i :$port > /dev/null
+if [ $? -eq 0 ]; then
+    echo "Elbe port is already in use."
+    exit 0
+else
+    sudo bash -c "PATH=$PATH PYTHONPATH=$PYTHONPATH elbe daemon --port=$port --soap > /tmp/elbe_service.log 2>&1" &
+    echo "Elbe service started."
+fi
