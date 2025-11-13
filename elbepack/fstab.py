@@ -120,7 +120,7 @@ class fstabentry(hdpart):
         self.options = entry.text('options', default='defaults')
         if entry.has('fs'):
             self.fstype = entry.text('fs/type')
-            self.mkfsopt = entry.text('fs/mkfs', default='')
+            self.mkfsopts = entry.text('fs/mkfs', default='').split()
             self.passno = entry.text('fs/passno', default='0')
 
             self.fs_device_commands = []

@@ -49,7 +49,7 @@ def mkfs_mtd(mtd, fslabel, target):
                 '-m', ubivg.text('miniosize'),
                 '-e', ubivg.text('logicaleraseblocksize'),
                 '-c', ubivg.text('maxlogicaleraseblockcount'),
-                fslabel[label].mkfsopt])
+                *fslabel[label].mkfsopts])
             # only append the ubifs file if creation didn't fail
             img_files.append(f'{label}.ubifs')
         except subprocess.CalledProcessError as e:
@@ -301,7 +301,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     with entry.losetup() as loopdev:
         do(
-            f'mkfs.{entry.fstype} {entry.mkfsopt} {entry.get_label_opt()} '
+            f'mkfs.{entry.fstype} {" ".join(entry.mkfsopts)} {entry.get_label_opt()} '
             f'{loopdev}')
 
         _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
