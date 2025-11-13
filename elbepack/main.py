@@ -30,7 +30,7 @@ def main(argv=sys.argv):
     subparsers = parser.add_subparsers(required=True, dest='cmd')
 
     for cmd in get_cmdlist():
-        subparsers.add_parser(cmd)
+        subparsers.add_parser(cmd, add_help=False)
 
     args, cmd_argv = parser.parse_known_args(argv[1:])
 
