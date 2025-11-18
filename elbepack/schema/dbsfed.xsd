@@ -3007,6 +3007,20 @@ SPDX-FileCopyrightText: Linutronix GmbH
             </documentation>
           </annotation>
         </attribute>
+        <attribute name="source-name" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Name of the package's source package.
+            </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="source-version" type="string" use="optional">
+          <annotation>
+            <documentation>
+              Version of the package's source package.
+            </documentation>
+          </annotation>
+        </attribute>
       </extension>
     </simpleContent>
   </complexType>

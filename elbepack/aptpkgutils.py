@@ -41,6 +41,12 @@ class Origin:
     uri: str
 
 
+@dataclasses.dataclass
+class Source:
+    name: str
+    version: str
+
+
 def _apt_pkg_hashes(pkg):
     r = {}
 
@@ -103,6 +109,16 @@ def pkgorigin(pkg):
         origin = None
 
     return origin
+
+
+def pkgsource(pkg):
+    if pkg.installed:
+        i = pkg.installed
+        source = Source(name=i.source_name, version=i.source_version)
+    else:
+        source = None
+
+    return source
 
 
 def fetch_source(name, version, destdir, progress=None):
@@ -215,7 +231,7 @@ class PackageBase:
                  installed_hashes, candidate_hashes,
                  installed_prio, candidate_prio,
                  installed_arch, candidate_arch,
-                 state, is_auto_installed, origin):
+                 state, is_auto_installed, origin, source):
 
         self.name = name
         self.installed_version = installed_version
@@ -229,6 +245,7 @@ class PackageBase:
         self.state = state
         self.is_auto_installed = is_auto_installed
         self.origin = origin
+        self.source = source
 
     def __repr__(self):
         return (f'<{type(self).__name__} {self.name}-{self.installed_version} state: '
@@ -264,7 +281,8 @@ class APTPackage(PackageBase):
                          iarch, carch,
                          pkgstate(pkg),
                          pkg.is_auto_installed,
-                         pkgorigin(pkg))
+                         pkgorigin(pkg),
+                         pkgsource(pkg))
 
 
 class XMLPackage(PackageBase):
@@ -281,10 +299,18 @@ class XMLPackage(PackageBase):
                         site=None,
                         component=None)
 
+        source_name = node.et.get('source-name')
+        source_version = node.et.get('source-version')
+
+        if source_name is not None and source_version is not None:
+            source = Source(name=source_name, version=source_version)
+        else:
+            source = None
+
         super().__init__(node.et.text,
                          node.et.get('version'), None,
                          hashes, None,
                          node.et.get('prio'), None,
                          node.et.get('arch'), None,
                          INSTALLED, node.et.get('auto') == 'true',
-                         origin)
+                         origin, source)

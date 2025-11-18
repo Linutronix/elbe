@@ -434,6 +434,10 @@ class ElbeXML:
         pak.et.set('release-name', aptpkg.origin.codename)
         pak.et.set('uri', aptpkg.origin.uri)
 
+        if aptpkg.source is not None:
+            pak.et.set('source-name', aptpkg.source.name)
+            pak.et.set('source-version', aptpkg.source.version)
+
         if aptpkg.is_auto_installed:
             pak.et.set('auto', 'true')
         else:
