@@ -211,6 +211,8 @@ class ElbeProject:
             './usr/include/' + triplet,
             './usr/bin/gdbserver',
             './usr/sbin/ldconfig',
+            './usr/share/pkgconfig',
+            './usr/share/cmake',
             './etc/ld.so.conf*',
             './opt/*/lib/*.a',
             './opt/*/lib/*.so',
@@ -227,6 +229,7 @@ class ElbeProject:
             './usr/lib/*.so',
             './usr/lib/*.so.*',
             './usr/lib/' + triplet,
+            './usr/lib/pkgconfig',
             './usr/lib64/*.so.*',
         ]
 
