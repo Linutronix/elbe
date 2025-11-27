@@ -206,7 +206,7 @@ class ElbeProject:
     def get_sysroot_paths(self):
         triplet = self.xml.defs['triplet']
 
-        paths = [
+        return [
             './usr/include',
             './usr/include/' + triplet,
             './usr/bin/gdbserver',
@@ -229,8 +229,6 @@ class ElbeProject:
             './usr/lib/' + triplet,
             './usr/lib64/*.so.*',
         ]
-
-        return paths
 
     def build_sysroot(self):
 
