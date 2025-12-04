@@ -298,15 +298,15 @@ class ElbeProject:
         os.chdir(self.sysrootpath)
         for p in paths:
             do(f'find -path "{p}" >> {sysrootfilelist}')
-        # include /lib if it is a symlink (buster and later)
-        if os.path.islink(self.sysrootpath + '/lib'):
-            with open(sysrootfilelist, 'a') as filelist_fd:
+        with open(sysrootfilelist, 'a') as filelist_fd:
+            # include /lib if it is a symlink (buster and later)
+            if os.path.islink(self.sysrootpath + '/lib'):
                 filelist_fd.write('./lib\n')
-        if os.path.islink(self.sysrootpath + '/lib64'):
-            with open(sysrootfilelist, 'a') as filelist_fd:
+
+            if os.path.islink(self.sysrootpath + '/lib64'):
                 filelist_fd.write('./lib64\n')
-        if os.path.islink(self.sysrootpath + '/sbin'):
-            with open(sysrootfilelist, 'a') as filelist_fd:
+
+            if os.path.islink(self.sysrootpath + '/sbin'):
                 filelist_fd.write('./sbin\n')
 
         do(['tar', 'cfJ', os.path.join(self.builddir, 'sysroot.tar.xz'),
