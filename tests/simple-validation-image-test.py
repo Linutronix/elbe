@@ -329,6 +329,7 @@ def _test_sdk_target_sysroot(sysroot):
     assert sysroot.joinpath('usr', 'include', 'gpio.h').is_file()
     assert sysroot.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'pkgconfig', 'libgpio.pc').is_file()
     assert sysroot.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio.so').is_symlink()
+    assert sysroot.joinpath('usr', 'share', 'doc', 'libc6-dev', 'copyright').is_file()
 
 
 def test_sdk(build_dir):

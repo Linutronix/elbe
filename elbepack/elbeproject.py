@@ -233,6 +233,29 @@ class ElbeProject:
             './usr/lib64/*.so.*',
         ]
 
+    def get_sysroot_dev_packages_files(self):
+        def _dpkg_query(*args):
+            return subprocess.check_output(['/usr/bin/dpkg-query',
+                                            '--root', self.sysrootpath,
+                                            '--no-pager',
+                                            *args])
+
+        dev_packages = _dpkg_query('--showformat', '${db:Status-Status}|${Package}\n',
+                                   '--show', '*-dev').splitlines()
+        for line in dev_packages:
+            status, package = line.split(b'|')
+            if status != b'installed':
+                continue
+
+            for file in _dpkg_query('--listfiles', package).splitlines():
+                file = file.decode('ascii')
+
+                # The package technically also contains parent directories up to the root.
+                if not os.path.isfile(os.path.join(self.sysrootpath, './' + file)):
+                    continue
+
+                yield file
+
     def build_sysroot(self):
 
         do(['rm', '-rf', self.sysrootpath])
@@ -308,6 +331,9 @@ class ElbeProject:
 
             if os.path.islink(self.sysrootpath + '/sbin'):
                 filelist_fd.write('./sbin\n')
+
+            for file in self.get_sysroot_dev_packages_files():
+                filelist_fd.write(f'.{file}\n')
 
         do(['tar', 'cfJ', os.path.join(self.builddir, 'sysroot.tar.xz'),
             '-C', self.sysrootpath, '-T', sysrootfilelist],
