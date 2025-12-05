@@ -142,7 +142,7 @@ run_qemu:
 		-device virtio-net-pci,netdev=user.0 \
 		-drive file=$(INITVM),if=$(HD_TYPE),bus=1,unit=0 \
 		-no-reboot \
-		-netdev user,ipv4=on,id=user.0,hostfwd=tcp::7587-:7588${fwd} \
+		-netdev user,ipv4=on,id=user.0,hostfwd=tcp::7587-:7588,hostfwd=tcp::5022-:22${fwd} \
 		-m $(MEMSIZE) \
 		-usb \
 		-smp $(SMP)
