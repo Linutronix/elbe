@@ -3094,6 +3094,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
       </documentation>
     </annotation>
     <sequence>
+        <element name="target" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>
+              avoid installing the specified packages into the target (only works in diet mode)
+            </documentation>
+          </annotation>
+        </element>
         <element name="sysroot" type="rfs:pkg-list" minOccurs="0" maxOccurs="unbounded">
           <annotation>
             <documentation>
