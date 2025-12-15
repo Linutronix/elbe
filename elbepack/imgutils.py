@@ -58,7 +58,7 @@ class _Mount:
             cmd.append('--bind')
 
         if options is not None:
-            cmd.extend(['-o', ','.join(options)])
+            cmd.extend(['-o', options])
 
         if type is not None:
             cmd.extend(['-t', type])
