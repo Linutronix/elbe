@@ -61,7 +61,7 @@ jobs:
       run: ARCH="$(dpkg-architecture -q DEB_BUILD_ARCH)" DIST="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" git-pbuilder create
 
     - name: Build E.L.B.E. packages
-      run: gbp buildpackage -nc --git-debian-branch="$(git branch --show-current)" --git-pbuilder --git-dist="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" --git-arch="$(dpkg-architecture -q DEB_BUILD_ARCH)"
+      run: gbp buildpackage -nc --git-ignore-branch --git-debian-branch="$(git branch --show-current)" --git-pbuilder --git-dist="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" --git-arch="$(dpkg-architecture -q DEB_BUILD_ARCH)"
 
     - name: Build Repo
       run: ./.github/scripts/setup_repo.sh
