@@ -72,7 +72,7 @@ def update_changelog_backport(debian_release):
             changes=[
                 '',
                 '  * Team upload',
-                f'  * Rebuild for {release}',
+                f'  * Rebuild for {debian_release}',
                 '',
                 ],
             author=cl.author,
