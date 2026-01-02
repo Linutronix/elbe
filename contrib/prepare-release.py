@@ -16,7 +16,6 @@ import textwrap
 
 from debian.changelog import Changelog
 from debian.deb822 import Deb822, PkgRelation, _PkgRelationMixin
-from debian.debian_support import Release
 
 
 def debian_version(base, debian_release=None):
@@ -195,7 +194,7 @@ def test_strip_release_restriction_include():
     """)
 
     relations = PkgRelation.parse_relations(test_data)
-    relations = strip_release_restrictions(relations, Release.releases['bullseye'])
+    relations = strip_release_restrictions(relations, 'bullseye')
     assert PkgRelation.str(relations) == 'dep1, dep2 <dep2profile>, dep4'
 
 
@@ -207,7 +206,7 @@ def test_strip_release_restriction_exclude():
     """)
 
     relations = PkgRelation.parse_relations(test_data)
-    relations = strip_release_restrictions(relations, Release.releases['buster'])
+    relations = strip_release_restrictions(relations, 'buster')
     assert PkgRelation.str(relations) == 'dep1, dep2 <dep2profile>, dep3'
 
 
@@ -302,16 +301,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description=__doc__)
 
-    def _get_release(s):
-        try:
-            return Release.releases[s]
-        except KeyError as e:
-            raise argparse.ArgumentTypeError(f'Invalid release: {s}') from e
-
     parser.add_argument('version', help='New version to release')
-    parser.add_argument('release', type=_get_release,
-                        help='Primary targeted Debian release')
-    parser.add_argument('backports', nargs='+', type=_get_release,
+    parser.add_argument('release', help='Primary targeted Debian release')
+    parser.add_argument('backports', nargs='+',
                         help='Additional Debian releases to create backports for')
     args = parser.parse_args()
 
