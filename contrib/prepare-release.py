@@ -296,17 +296,7 @@ def create_release_branch(version, debian_release=None):
     subprocess.check_call(['git', 'checkout', '-b', branch])
 
 
-if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser(description=__doc__)
-
-    parser.add_argument('version', help='New version to release')
-    parser.add_argument('release', help='Primary targeted Debian release')
-    parser.add_argument('backports', nargs='+',
-                        help='Additional Debian releases to create backports for')
-    args = parser.parse_args()
-
+def do_prepare_release(args):
     # Make sure the repository is clean
     subprocess.check_call(['git', 'diff', '--exit-code'])
     subprocess.check_call(['git', 'checkout', 'for-master'])
@@ -333,3 +323,21 @@ if __name__ == '__main__':
     subprocess.check_call(['git', 'checkout', 'for-master'])
     update_version_py_add_dev0(new_version_py)
     create_commit('release: back to development')
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(required=True)
+
+    prepare_release = subparsers.add_parser('prepare-release',
+                                            help='Prepare the repository for a new release')
+    prepare_release.set_defaults(func=do_prepare_release)
+    prepare_release.add_argument('version', help='New version to release')
+    prepare_release.add_argument('release', help='Primary targeted Debian release')
+    prepare_release.add_argument('backports', nargs='+',
+                                 help='Additional Debian releases to create backports for')
+
+    args = parser.parse_args()
+    args.func(args)
