@@ -19,6 +19,7 @@ jobs:
       with:
         docker-image: debian:stable
         artifacts-dir: stable
+        setup-hook: apt-get update && apt-get install --yes python3 python3-debian && ./contrib/prepare-release.py update-control
 
     - name: Retrieve results
       if: ${{ always() }}
@@ -39,6 +40,7 @@ jobs:
       with:
         docker-image: debian:unstable
         artifacts-dir: unstable
+        setup-hook: apt-get update && apt-get install --yes python3 python3-debian && ./contrib/prepare-release.py update-control
 
     - name: Retrieve results
       if: ${{ always() }}
@@ -60,8 +62,11 @@ jobs:
     - name: Create build environment
       run: ARCH="$(dpkg-architecture -q DEB_BUILD_ARCH)" DIST="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" git-pbuilder create
 
+    - name: Update control
+      run: ./contrib/prepare-release.py update-control
+
     - name: Build E.L.B.E. packages
-      run: gbp buildpackage -nc --git-ignore-branch --git-debian-branch="$(git branch --show-current)" --git-pbuilder --git-dist="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" --git-arch="$(dpkg-architecture -q DEB_BUILD_ARCH)"
+      run: gbp buildpackage -nc --git-ignore-new --git-ignore-branch --git-debian-branch="$(git branch --show-current)" --git-pbuilder --git-dist="$(. /etc/os-release; echo ${VERSION_CODENAME/*, /})" --git-arch="$(dpkg-architecture -q DEB_BUILD_ARCH)"
 
     - name: Build Repo
       run: ./.github/scripts/setup_repo.sh
