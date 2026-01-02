@@ -11,6 +11,7 @@ import datetime
 import enum
 import functools
 import pathlib
+import platform
 import subprocess
 import textwrap
 
@@ -325,6 +326,10 @@ def do_prepare_release(args):
     create_commit('release: back to development')
 
 
+def do_update_control(args):
+    update_control(args.release or platform.freedesktop_os_release()['VERSION_CODENAME'])
+
+
 if __name__ == '__main__':
     import argparse
 
@@ -338,6 +343,12 @@ if __name__ == '__main__':
     prepare_release.add_argument('release', help='Primary targeted Debian release')
     prepare_release.add_argument('backports', nargs='+',
                                  help='Additional Debian releases to create backports for')
+
+    prepare_release = subparsers.add_parser('update-control',
+                                            help='Update debian/control file')
+    prepare_release.set_defaults(func=do_update_control)
+    prepare_release.add_argument('release', nargs='?',
+                                 help='Primary targeted Debian release')
 
     args = parser.parse_args()
     args.func(args)
