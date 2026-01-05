@@ -1133,7 +1133,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <element name="pkg-blacklist" type="rfs:blacklist" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
-            avoid installation of packages into sysroot
+            avoid installation of packages into sysroot or target
           </documentation>
         </annotation>
       </element>
