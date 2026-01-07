@@ -17,6 +17,7 @@ import textwrap
 
 from debian.changelog import Changelog
 from debian.deb822 import Deb822, PkgRelation, _PkgRelationMixin
+from debian.debian_support import Release
 
 
 def debian_version(base, debian_release=None):
@@ -195,7 +196,7 @@ def test_strip_release_restriction_include():
     """)
 
     relations = PkgRelation.parse_relations(test_data)
-    relations = strip_release_restrictions(relations, 'bullseye')
+    relations = strip_release_restrictions(relations, Release.releases['bullseye'])
     assert PkgRelation.str(relations) == 'dep1, dep2 <dep2profile>, dep4'
 
 
@@ -207,7 +208,7 @@ def test_strip_release_restriction_exclude():
     """)
 
     relations = PkgRelation.parse_relations(test_data)
-    relations = strip_release_restrictions(relations, 'buster')
+    relations = strip_release_restrictions(relations, Release.releases['buster'])
     assert PkgRelation.str(relations) == 'dep1, dep2 <dep2profile>, dep3'
 
 
@@ -336,12 +337,19 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(required=True)
 
+    def _get_release(s):
+        try:
+            return Release.releases[s]
+        except KeyError as e:
+            raise argparse.ArgumentTypeError(f'Invalid release: {s}') from e
+
     prepare_release = subparsers.add_parser('prepare-release',
                                             help='Prepare the repository for a new release')
     prepare_release.set_defaults(func=do_prepare_release)
     prepare_release.add_argument('version', help='New version to release')
-    prepare_release.add_argument('release', help='Primary targeted Debian release')
-    prepare_release.add_argument('backports', nargs='+',
+    prepare_release.add_argument('release', type=_get_release,
+                                 help='Primary targeted Debian release')
+    prepare_release.add_argument('backports', nargs='+', type=_get_release,
                                  help='Additional Debian releases to create backports for')
 
     prepare_release = subparsers.add_parser('update-control',
