@@ -35,7 +35,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build E.L.B.E. Debian stable packages
+    - name: Build E.L.B.E. Debian unstable packages
       uses: jtdor/build-deb-action@v1
       with:
         docker-image: debian:unstable
