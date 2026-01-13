@@ -1,0 +1,29 @@
+elbe 15.8-rc1 (2026-01-13)
+==========================
+
+Features
+--------
+
+- Allow `<archive>` and `<archivedir>` in pbuilder source specification.
+- Install more cmake and pkgconfig configuration files to the SDK.
+- Record source package information in `source.xml`.
+
+
+Bugfixes
+--------
+
+- Add all files from -dev packages to the SDK.
+- Always use custom mount options when mounting. These might be necessary for compression for example.
+- Be compatible with lxml >= 6.0.
+- Fix `--help` of subcommands.
+- Fix builds with custom `.orig.tar.gz`.
+- Fix custom mkfs options for ubifs.
+- Forward SSH port for QEMU initvm.
+
+
+Deprecations and Removals
+-------------------------
+
+- Drop support for obsolete 'linaro' architectures.
+- Drop support for obsolete 'virtio' architectures.
+- Drop support for the obsolete ppcspe architecture.
