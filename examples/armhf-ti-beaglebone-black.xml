@@ -56,14 +56,15 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				<binary offset="768" blocksize="512">/usr/lib/u-boot/am335x_boneblack/u-boot.img</binary>
 				<!-- partition layout -->
 				<partition>
-					<!-- This partition is used for the boot files and storing the env -->
-					<size>50MiB</size>
+					<!-- This partition is only used for storing the env -->
+					<size>4MiB</size>
 					<!-- label needs to match with the fstab entry below -->
-					<label>boot</label>
+					<label>u-boot</label>
 				</partition>
 				<partition>
 					<size>remain</size>
 					<label>rfs</label>
+					<bootable />
 				</partition>
 			</msdoshd>
 		</images>
@@ -81,15 +82,14 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				</fs>
 			</bylabel>
 			<bylabel>
-				<label>boot</label>
-				<mountpoint>/boot</mountpoint>
+				<label>u-boot</label>
+				<mountpoint>/boot/u-boot</mountpoint>
 				<fs>
 					<type>vfat</type>
 				</fs>
 			</bylabel>
 		</fstab>
 		<finetuning>
-			<cp path="/usr/lib/linux-image-*-armmp/am335x-boneblack.dtb">/boot/am335x-boneblack.dtb</cp>
 			<file dst="/etc/systemd/network/20-eth.network">
 				[Match]
 				Name=eth0
@@ -103,11 +103,11 @@ SPDX-FileCopyrightText: Linutronix GmbH
 				U_BOOT_TIMEOUT="1"
 				U_BOOT_PARAMETERS=" "
 			</file>
+			<command>u-boot-update</command>
 			<!-- shrink target image -->
 			<rm>/var/cache/apt/archives/*.deb</rm>
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
-			<artifact>/boot/am335x-boneblack.dtb</artifact>
 		</finetuning>
 		<!-- generate a pbuilder environment (before image will be built) -->
 		<pbuilder>
@@ -133,6 +133,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<pkg>busybox</pkg>
 			<pkg>systemd-resolved</pkg>
 			<pkg>u-boot-menu</pkg>
+			<pkg>zstd</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
