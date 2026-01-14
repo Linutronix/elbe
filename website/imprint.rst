@@ -14,11 +14,10 @@ Information in accordance with §5 TMG (German Telecommunications Service Law)
 Represented by Managing Directors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| Heinz Egger
-| Thomas Gleixner
-| Sean Fennelly
-| Jeffrey Schneiderman
-| Tiffany Silva
+| Dr. Wilfried Wessner
+| Candice Christine More
+| Ramachandran Sitaraman
+| Jeffrey Ross Schneiderman
 
 Contact Information
 ^^^^^^^^^^^^^^^^^^^
