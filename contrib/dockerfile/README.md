@@ -27,14 +27,15 @@ You need docker installed, a running docker service and `make` installed.
 ## usage
 
 A `Makefile` with some handy targets are provided. Per default the image name
-is `elbe-image` and a started container name is `elbe`. This names are
+is `elbe-devel-image` and a started container name is `elbe-devel`. This names are
 changeable via `IMAGENAME` and `CONTAINERNAME` environment variables.
 
 * `build`: build the image
-* `start` start a container, mounts the elbe git-archive to `/elbe`
+* `start` start a container, and use packaged elbe
+* `start-devel` start a container, mounts the elbe git-archive to `/var/cache/elbe`
 * `stop`: stop a running container
 * `stoprm`: stop and remove the container
-* `connect`: attach to a running container
+* `connect`: attach a new terminal to a running container
 
 After `connect` you can find the elbe git repository under `/elbe`.
 
