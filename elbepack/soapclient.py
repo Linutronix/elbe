@@ -11,6 +11,7 @@ import os
 import socket
 import sys
 import time
+from base64 import b85decode
 from http.client import BadStatusLine
 from urllib.error import URLError
 from urllib.request import urlopen, urlretrieve
@@ -142,7 +143,7 @@ class ElbeSoapClient:
             if msg == 'ELBE-FINISH':
                 break
 
-            yield msg
+            yield b85decode(msg).decode('utf-8')
 
         # exited the while loop -> the project is not busy anymore,
         # check, whether everything is ok.

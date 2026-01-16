@@ -8,6 +8,7 @@ import fnmatch
 import os
 import tarfile
 import traceback
+from base64 import b85encode
 from tempfile import NamedTemporaryFile
 
 from spyne.decorator import rpc
@@ -242,7 +243,7 @@ class ESoap (ServiceBase):
         ret, msg = self.app.pm.project_is_busy(builddir)
         if not msg and not ret:
             return 'ELBE-FINISH'
-        return msg
+        return b85encode(msg.encode('utf-8'))
 
     @rpc(String)
     def rm_log(self, builddir):
