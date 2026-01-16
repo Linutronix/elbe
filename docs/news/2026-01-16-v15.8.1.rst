@@ -1,0 +1,8 @@
+elbe 15.8.1 (2026-01-16)
+========================
+
+Bugfixes
+--------
+
+- Correctly handle binary data in command output.
+- Rerelease to fix brownbag v15.8 release.
