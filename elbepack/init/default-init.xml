@@ -12,26 +12,26 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<url-list>
 				<url>
 					<binary>
-						http://deb.debian.org/debian-security bookworm-security main
+						http://deb.debian.org/debian-security trixie-security main
 					</binary>
 					<source>
-						http://deb.debian.org/debian-security bookworm-security main
+						http://deb.debian.org/debian-security trixie-security main
 					</source>
 				</url>
 				<url>
 					<binary>
-						http://deb.debian.org/debian bookworm-backports main
+						http://deb.debian.org/debian trixie-backports main
 					</binary>
 					<source>
-						http://deb.debian.org/debian bookworm-backports main
+						http://deb.debian.org/debian trixie-backports main
 					</source>
 				</url>
 				<url>
 					<binary>
-						http://debian.linutronix.de/elbe bookworm main
+						http://debian.linutronix.de/elbe trixie main
 					</binary>
 					<source>
-						http://debian.linutronix.de/elbe bookworm main
+						http://debian.linutronix.de/elbe trixie main
 					</source>
 					<raw-key>
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -84,7 +84,7 @@ lffHf8U7HFvRg+zm
 				</url>
 			</url-list>
 		</mirror>
-		<suite>bookworm</suite>
+		<suite>trixie</suite>
 		<pkg-list>
 			<pkg>openssh-server</pkg>
 			<pkg>ubuntu-keyring</pkg>
