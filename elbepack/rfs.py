@@ -336,7 +336,10 @@ class BuildEnv:
             chroot(self.rfs.path, ['debconf-set-selections', '/var/cache/elbe/preseed.txt'])
 
     def seed_etc(self):
-        passwd = self.xml.text('target/passwd_hashed')
+        if self.xml.has('target/passwd_hashed'):
+            passwd = self.xml.text('target/passwd_hashed')
+        else:
+            passwd = '!'
         chroot(self.rfs.path, ['chpasswd', '--encrypted'], input=b'root:' + passwd.encode('ascii'))
 
         hostname = self.xml.text('target/hostname')

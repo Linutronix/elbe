@@ -1018,7 +1018,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
-      <element name="passwd_hashed" type="rfs:string" minOccurs="1" maxOccurs="1">
+      <element name="passwd_hashed" type="rfs:string" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>
             Hashed root password. The method must be supported by the target system.
