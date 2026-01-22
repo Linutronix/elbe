@@ -896,6 +896,9 @@ class ElbeProject:
                 '--aptconfdir', os.path.join(self.builddir, 'aptconfdir'),
                 '--debootstrapopts', '--include=git,gnupg', *no_check_gpg, *keyring])
 
+        if debootstrap_key_path:
+            os.remove(debootstrap_key_path)
+
     def sync_xml_to_disk(self):
         try:
             sourcexmlpath = os.path.join(self.builddir, 'source.xml')
