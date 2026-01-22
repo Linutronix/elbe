@@ -4,25 +4,19 @@
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
 # This Dockerfile generate a image for the elbe buildsystem
-FROM debian:bullseye
+FROM debian:trixie-slim
 
 USER root
 ENV DEBIAN_FRONTEND noninteractive
 
-# use a sources.list including backports and security
-RUN echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list; \
-    echo "deb http://deb.debian.org/debian-security bullseye-security main"   >> /etc/apt/sources.list
-
 # update, upgrade and install elbe runtime-dependencies
-RUN apt-get update -y ;\
-    apt-get install -y --no-install-recommends \
+RUN apt-get update -y
+RUN apt-get install -y --no-install-recommends \
                     -o Dpkg::Options::="--force-confnew" \
-        systemd \
         ca-certificates \
         sudo \
         vim-nox \
         elbe-archive-keyring \
-        software-properties-common \
         gnupg \
         python3-setuptools \
         python3-yaml \
@@ -61,14 +55,6 @@ RUN useradd -d /home/elbe -l -U -G kvm-elbe,libvirt -m -s /bin/bash -u @USERID@ 
 RUN echo "root:elbe" | chpasswd
 RUN echo "elbe:elbe" | chpasswd
 
-RUN rm -f /lib/systemd/system/multi-user.target.wants/*;\
-    rm -f /etc/systemd/system/*.wants/*;\
-    rm -f /lib/systemd/system/local-fs.target.wants/*; \
-    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
-    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
-    rm -f /lib/systemd/system/basic.target.wants/*;\
-    rm -f /lib/systemd/system/anaconda.target.wants/*;
-
 VOLUME [ "/sys/fs/cgroup" ]
 VOLUME [ "/elbe" ]
 VOLUME [ "/var/cache/elbe" ]
@@ -77,11 +63,5 @@ VOLUME [ "/var/cache/elbe" ]
 RUN echo "%elbe  ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/elbegrp
 RUN chmod 0440 /etc/sudoers.d/elbegrp
 
-# run qemu as root
-RUN echo 'user = "root"' >> /etc/libvirt/qemu.conf
-RUN echo 'group = "root"' >> /etc/libvirt/qemu.conf
 
-# run libvirt in systemd on startup
-RUN systemctl enable libvirtd
-
-CMD [ "/lib/systemd/systemd" ]
+CMD [ "/bin/bash" ]
