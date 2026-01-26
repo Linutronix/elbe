@@ -5,8 +5,18 @@
 ELBE docs
 ==========
 
+Welcome to the ELBE documentation.
+
+This documentation covers how to use ELBE to build root-filesystem images for
+embedded devices, define your build projects via XML, and includes a reference
+to ELBEs commands and schema.
+
+If you are new to ELBE, we recommend starting with the
+:doc:`Quickstart <article-quickstart>` and afterwards
+:doc:`Overview <article-elbeoverview-en>`.
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    article-quickstart
    article-elbeoverview-en
