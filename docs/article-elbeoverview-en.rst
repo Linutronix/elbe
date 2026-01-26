@@ -380,7 +380,6 @@ to get a smaller target image.
 
            <rm>lib/modules/2.6.32-5-versatile/</rm>        
            <rm>var/cache/man/*</rm>                        
-           <rm>var/cache/elbe</rm>                         
            <rm>var/cache/debconf/*</rm>                    
    </finetuning>
 
@@ -394,8 +393,6 @@ to get a smaller target image.
 -  The kernel modules for the standard Debian kernel.
 
 -  The man page cache
-
--  The full copy mode also copies the preseed.txt from the ELBE cache.
 
 -  debconf cache is also not necessary
 

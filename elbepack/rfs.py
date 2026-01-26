@@ -327,13 +327,10 @@ class BuildEnv:
 
         self.rfs.write_file('etc/apt/sources.list', 0o644, mirror)
 
-        self.rfs.mkdir_p('var/cache/elbe')
-
         preseed = get_preseed(self.xml)
         preseed_txt = preseed_to_text(preseed)
-        self.rfs.write_file('var/cache/elbe/preseed.txt', 0o644, preseed_txt)
         with self.rfs:
-            chroot(self.rfs.path, ['debconf-set-selections', '/var/cache/elbe/preseed.txt'])
+            chroot(self.rfs.path, ['debconf-set-selections'], input=preseed_txt.encode('ascii'))
 
     def seed_etc(self):
         if self.xml.has('target/passwd_hashed'):
