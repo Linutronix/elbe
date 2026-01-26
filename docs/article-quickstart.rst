@@ -2,18 +2,14 @@
 ELBE Quickstart
 ************************
 
-You have probably received a root filesystem, which has been built with
-ELBE. Additionally, you should have an XML file describing the root
-filesystem.
-
-This quickstart guide describes the steps necessary to rebuild the
-root-filesystem from the XML file and to simple modifications.
+This guide explains how to build a root filesystem using ELBE from an XML
+file, and how to make basic customizations.
 
 Steps necessary
 ===============
 
-1. install Debian 12 (bookworm) or later on your Host. The latest version
-   of elbe should be compatible with this system.
+1. If not installed already, install Debian 12 (bookworm) or later on your Host.
+   The latest version of ELBE should be compatible with this system.
 
 2. install ELBE on Host Linux
 
@@ -33,21 +29,6 @@ Steps 1,2 and 3 need only be performed once.
    As of Windows 11 version 24H2 ELBE can be used with the Windows Subsystem
    for Linux 2 (WSL2) by installing Debian bookworm through the Microsoft Store.
 
-Customization of the build
-==========================
-
-The ELBE XML can contain an archive, which can contain configuration
-files, and additional software. This archive is extracted onto the
-target-image during the buildprocess. It allows you to override any
-file, which needs to be different from the default Debian Install.
-
-This guide also explains how the archive can be extracted from the XML
-file, and vice versa.
-
-ELBE allows manipulating the generated root filesystem through a set of
-``<finetuning>`` rules. We also describe, how these can be used to add a
-user, change directory permissions, and remove files from the root
-filesystem.
 
 .. _installation:
 
@@ -66,7 +47,7 @@ Binary Debian packages
 Repository
 ~~~~~~~~~~
 
-The latest packages for elbe reside in the following repository
+The latest packages for ELBE reside in the following repository
 
 ::
 
@@ -106,15 +87,14 @@ Then run (as root):
    # apt update
    # apt install elbe
 
-Create initvm and submit XML files
-==================================
+Creating the initvm
+===================
 
 The first thing you need to do is set up a virtual-machine for
 generating root-filesystems.
 
-This virtual-machine is referred to as ``initvm``. You will want your
-initvm to be the same architecture as your workstation. This allows
-using hardware accelerated virtualization implemented by kvm.
+This virtual-machine is referred to as ``initvm``. It should match the
+host architecture so that hardwarevirtualization (KVM) can be used.
 
 To work with virtual machines as a regular user, the user needs to be
 added to kvm and libvirt groups:
@@ -124,7 +104,7 @@ added to kvm and libvirt groups:
    # adduser <youruser> kvm
    # adduser <youruser> libvirt
 
-Now create an ``initvm`` subdirectory and builds the initvm inside this
+Now create an ``initvm`` subdirectory and build the initvm inside this
 directory.
 
 ::
@@ -137,7 +117,7 @@ Submitting an XML file
 
 Submitting an XML file triggers an image build inside the initvm. Once
 the initvm has been created and is running, you can submit XML files
-using
+using:
 
 ::
 
@@ -216,7 +196,7 @@ current working directory.
 Ports opened by initvm
 ======================
 
-The initvm will open port 7587 on localhost. This is used by the elbe
+The initvm will open port 7587 on localhost. This is used by the ELBE
 tools on your host to communicate with the initvm.
 
 Advanced usage
@@ -225,8 +205,10 @@ Advanced usage
 ELBE Archive
 ------------
 
-The ELBE XML file can contain an archivedir which is copied into the
-root-filesystem during the image generation phase.
+
+The ELBE XML file can contain an archivedir which is unpacked onto the target
+image during the image generation. It allows to override or add files to the
+default Debian Install.
 
 It is done with the following XML node:
 
@@ -237,7 +219,7 @@ It is done with the following XML node:
 archivedir
 ----------
 
-The new XML element ‘archivedir’ points to a local directory and adds
+The XML element ‘archivedir’ points to a local directory and adds
 the content into a newly created archive. ‘archivedir’ can be specified
 more than once. The content of the directories is copied in order of
 appearance. Existing files are overwritten by the later ones.
@@ -336,7 +318,7 @@ is installed at ``/usr/share/doc/elbe-doc/elbeoverview-en.html``
 Using the Elbe Pbuilder Feature
 ===============================
 
-Since Version 1.9.2, elbe is able to create a pbuilder Environment. You
+Since Version 1.9.2, ELBE is able to create a pbuilder Environment. You
 can create a pbuilder for a specific xml File inside the initvm.
 
 The repositories and architecture specified in the xml File will be used
