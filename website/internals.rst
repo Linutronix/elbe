@@ -2,13 +2,13 @@
 ELBE technical Details
 ======================
 
-This article describes the qemu features ELBE is using.
+This article describes the QEMU features used by ELBE.
 
-One essential point to understand is that qemu combines two
+One essential point to understand is that QEMU combines two
 fundamentally different functionalities, which can also be used
-independently and that ELBE uses both of them separately:
+independently. ELBE uses both of these features separately:
 
--  Virtualization (running a machine-in-a-machine)
+-  Virtualization (running a machine inside a machine)
 -  Emulation (running foreign machine-code)
 
 Both are traditionally used in combination (to run, for example, a full
@@ -16,15 +16,25 @@ ARM-based Android mobile device on an x86-based development machine).
 ELBE, however, uses both functionalities separately, each one without
 the other:
 
+QEMU Virtualization in ELBE
+===========================
+This virtual machine must be booted before it can be used. Communication
+with the VM happens either through its virtual console or through virtual
+network connections.
+
 At the outside, ‘elbe initvm’ runs a full virtual machine with the host
-system’s architecture, using the kvm technology. On a typical x86-based
+system’s architecture, using KVM technology. On a typical x86-based
 host, this VM still runs x86 code at full efficiency, but does so in a
 fully encapsulated environment, running its own kernel with virtualized
 devices in it own root-file resides in a single file (buildenv.img) on
-the hosts file system. This virtual machine must be booted before it can
-be used and communication happens through its virtual console or through
+the hosts file system.
+
+This virtual machine must be booted before it can be used and
+communication happens through its virtual console or through
 virtual network connections.
 
+QEMU Emulation in ELBE
+======================
 At the inside, ‘elbe chroot’ runs a CPU emulation environment without
 machine virtualization. This command actually does two separate things
 at once:

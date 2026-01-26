@@ -5,8 +5,8 @@ elbe-diff
 NAME
 ====
 
-elbe-diff - Looks at 2 directories and makes Suggestions to modify the
-xml file.
+elbe-diff - Looks at 2 directories and makes suggestions to modify the
+XML file.
 
 SYNOPSIS
 ========

@@ -9,7 +9,7 @@ General Notes
 
 Generally, root filesystem creation faces the following requirements:
 
--  Creation of root filesystem for a specific architecture.
+-  Creation of a root filesystem for a specific architecture.
 
 -  Generation of a development environment for the specific
    architecture.
@@ -61,11 +61,11 @@ example:
 
 An Elbe project consists of an XML file that describes the project.
 
-This xml File is processed inside a virtual machine because we need root
-privileges to create the Rootfilesystem. This virtual machine is called
-*initvm* in the following text.
+This XML file is processed inside a virtual machine because root
+privileges are required to create the root filesystem. This virtual
+machine is called *initvm* in the following text.
 
-When an xml File is now submitted into the initvm, the following
+When an XML file is submitted to the initvm, the following
 happens:
 
 -  Debian’s *debootstrap* utility is used to setup a Debian base system.
@@ -111,10 +111,10 @@ will cause problems during installation. This typically includes
 database application packages, which set up a database in their postinst
 script and rely on the database server to be already running.
 
-Create initvm and build a first xml file from the examples
-==========================================================
+Create the initvm and build a first XML file from the examples
+==============================================================
 
-In order to use elbe, a user needs to be member of the ``libvirt``
+In order to use ELBE, the user needs to be member of the ``libvirt``
 system group.
 
 To create an initvm and make that initvm build a first Rootfilesystem,
@@ -129,7 +129,7 @@ This will take quite a while.
 Only one initvm may run on a single computer. If an initvm is already
 running in the background, this command will exit with a failure notice.
 
-The initvm will keep on running, after this command. Further xml Files
+The initvm will keep on running, after this command. Further XML Files
 may be built using
 
 ::
@@ -149,7 +149,7 @@ Example XML Files
 
 A root-filesystem-project is described with a XML file.
 
-Elbe ships with a set of example XML files.
+ELBE ships with a set of example XML files.
 
 The following XML file describes a simple system in the default full
 copy mode. The root filesystem is essentially identical to the build
@@ -292,8 +292,9 @@ Finetuning
 ----------
 
 The finetuning section allows to copy, move and delete files in the
-root-filesystem. Additionally it is possible to run commands. Here is an
-example finetuning section:
+root-filesystem. Additionally it is possible to run commands. The
+following is an example finetuning section:
+
 
 .. code:: xml
 
@@ -394,7 +395,7 @@ to get a smaller target image.
 
 -  The man page cache
 
--  The full copy mode will also copy elbe onto the root-filesystem.
+-  The full copy mode also copies the preseed.txt from the ELBE cache.
 
 -  debconf cache is also not necessary
 
@@ -519,7 +520,7 @@ tighten
 
 Tighten mode only extracts the files referenced by the packages in
 *pkg-list*. No dependencies are resolved. This mode is intended for
-compatibility with old XML files, do not use in new elbe projects.
+compatibility with old XML files, do not use in new ELBE projects.
 
 CDROM Functionality
 ===================
@@ -671,7 +672,7 @@ debian-installer is executed and custom packages can be built.
    (optional)
 
 The optional parameters are normally set to defaults by the buildtype
-tag. The tags can be used for advanced use of elbe; to override the
+tag. The tags can be used for advanced use of ELBE; to override the
 defaults.
 
 If the optional parameters are not set, the buildtype can even be
@@ -922,7 +923,7 @@ partitions and mountpoints. Lets look at an example *target* section.
 A complete reference that is automatically generated from the schema
 file is also available.
 
-Elbe init (detailed Explanation)
+elbe init (detailed Explanation)
 ================================
 
 ``elbe init`` is now considered a low-level command for advanced Users.

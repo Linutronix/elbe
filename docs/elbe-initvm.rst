@@ -6,7 +6,7 @@ NAME
 ====
 
 elbe-initvm - High Level Interface to the ELBE System. Allows one to
-create an initvm and directly build Rootfilesystems using ELBE.
+create an initvm and directly build root filesystems using ELBE.
 
 SYNOPSIS
 ========

@@ -24,7 +24,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-*elbe-parselicence* parses an xml file with licence information. This
+*elbe-parselicence* parses an XML file with licence information. This
 xml file is generated during an elbe build. SPDX Licenses information is
 generated using mappings and overrides found in the mapping file.
 
@@ -40,14 +40,14 @@ OPTIONS
    explained in the chapter MAPPING FILE.
 
 --output <filename>
-   Write the xml result to <filename>.
+   Write the XML result to <filename>.
 
 --tvout <filename>
    Write the tagvalue result to <filename>.
 
 --use-nomos
-   Also pipe licence text through nomos, and add this info to xml
-   Datastructures.
+   Also pipe licence text through nomos, and add this info to XML
+   datastructures.
 
 --errors-only
    Only Output Packages with errors. This is useful during the Phase
@@ -94,7 +94,7 @@ When elbe builds an image, it will look at all
 contains meta-data extracted from machine-readable copyright files, or
 generated via heuristics.
 
-There are 3 possibitlities per Package:
+There are 3 possibilities per package:
 
 Copyright File is machine-readable
 ----------------------------------

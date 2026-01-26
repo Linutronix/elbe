@@ -38,7 +38,7 @@ DESCRIPTION
 ===========
 
 Low Level interface to control an elbe daemon running inside an initvm.
-It allows one to submit xml files etc.
+It allows one to submit XML files etc.
 
 For the high level interface, see *elbe initvm*
 
@@ -156,7 +156,7 @@ a ./debian folder with a valid debianization.
    Wait, while <build-dir> is busy.
 
 *set_xml* <build-dir> <xmlfile>
-   Upload a new xml File into the given <build-dir>. This is most likely
+   Upload a new XML file into the given <build-dir>. This is most likely
    going to change the status of the project to *needs_rebuild*.
 
 *del_project* <build-dir>

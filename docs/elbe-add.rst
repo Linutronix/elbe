@@ -26,7 +26,7 @@ OPTIONS
 =======
 
 <xmlfile>
-   The xmlfile to be modified.
+   The XML file to be modified.
 
 EXAMPLES
 ========

@@ -6,7 +6,7 @@ NAME
 ====
 
 elbe-check_updates - Check whether package updates are available for an
-Elbe project.
+ELBE project.
 
 SYNOPSIS
 ========
@@ -22,7 +22,7 @@ DESCRIPTION
 ===========
 
 *elbe check_updates* checks if package updates are available for a given
-Elbe project. The command will also detect package names that are
+ELBE project. The command will also detect package names that are
 specified in the package list of the project but missing in the package
 repositories.
 

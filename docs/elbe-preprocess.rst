@@ -18,7 +18,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Typically elbe preprocess is used to generate an elbe XML file from a
+Typically elbe preprocess is used to generate an ELBE XML file from a
 XML file that uses Xincludes, or other XML features. It can be also used
 for variant management with the *variant=* attribute.
 

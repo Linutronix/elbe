@@ -46,7 +46,7 @@ OPTIONS
    directory where the src repo should reside
 
 --skip-validation
-   Skip xml schema validation
+   Skip XML schema validation
 
 --cdrom-mount-path <path>
    path where cdrom is mounted

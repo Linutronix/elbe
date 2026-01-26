@@ -5,7 +5,7 @@ elbe-validate
 NAME
 ====
 
-elbe-validate - validate xml file.
+elbe-validate - validate XML file.
 
 SYNOPSIS
 ========
@@ -17,13 +17,13 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This command validates the xmlfile provided, and prints out errors.
+This command validates the XML file provided, and prints out errors.
 
 OPTIONS
 =======
 
 <xmlfile>
-   The xml file to validate.
+   The XML file to validate.
 
 EXAMPLES
 ========

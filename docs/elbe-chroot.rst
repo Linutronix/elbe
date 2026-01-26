@@ -5,7 +5,7 @@ elbe-chroot
 NAME
 ====
 
-elbe-chroot - Enter an Elbe root filesystem using chroot.
+elbe-chroot - Enter an ELBE root filesystem using chroot.
 
 SYNOPSIS
 ========
@@ -18,8 +18,8 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Enters buildenv of a previously built Elbe root filesystem using chroot.
-The command has to be run as root **inside the Elbe build VM** (created
+Enters buildenv of a previously built ELBE root filesystem using chroot.
+The command has to be run as root **inside the ELBE build VM** (created
 with ``elbe-init(1)``).
 
 OPTIONS

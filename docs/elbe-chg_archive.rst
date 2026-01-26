@@ -17,11 +17,11 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This command exchanges the archive file inside the xml file with the one
+This command exchanges the archive file inside the XML file with the one
 specified.
 
 The archive tbz is used to insert configuration files into the
-root-filesystem.
+root filesystem.
 
 OPTIONS
 =======
@@ -33,7 +33,7 @@ OPTIONS
    and group root.
 
 <xmlfile>
-   The xmlfile to be modified.
+   The XML file to be modified.
 
 <archive.tar.bz2>
    The archive which must be a tar.bz2. The archive is uuencoded and

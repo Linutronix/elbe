@@ -17,16 +17,16 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Elbe is a system to build Rootfilesystems from XML description files. It
-also includes tools to modify xml files.
+ELBE is a system to build root filesystems from XML description files. It
+also includes tools to modify XML files.
 
-The *<command>* is a name of an Elbe command (see below).
+The *<command>* is a name of an ELBE command (see below).
 
 Elbe COMMANDS
 =============
 
 ``elbe-initvm(1)``
-   build and manage initvm. Also allows one to submit xml Files into the
+   build and manage initvm. Also allows one to submit XML files into the
    initvm
 
 ``elbe-control(1)``
@@ -75,7 +75,7 @@ Elbe COMMANDS
    start the Elbe update daemon.
 
 ``elbe-validate(1)``
-   validate the given XML file against the Elbe XML Schema.
+   validate the given XML file against the ELBE XML Schema.
 
 SEE ALSO
 ========

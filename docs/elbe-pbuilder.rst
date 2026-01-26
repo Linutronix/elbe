@@ -67,7 +67,7 @@ COMMANDS
 ========
 
 *create*
-   A pbuilder environment for the given project or xml File will be
+   A pbuilder environment for the given project or XML File will be
    created. If --cross is given the pbuilder environment will be created
    to crossbuild packages. (If --cross is given with the create command
    you have to use --cross with the build command also.) The compiler
@@ -89,7 +89,7 @@ COMMANDS
 NOTES
 =====
 
-In this benchmark all opportunitys for creating a pbuilder environment
+In this benchmark all opportunities for creating a pbuilder environment
 and building a package with it were tested. All environments were
 created with the *armhf-ti-beaglebone-black.xml* example and with cross,
 ccache, no-cross or no-ccache in all possible variations. The build

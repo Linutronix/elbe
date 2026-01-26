@@ -5,7 +5,7 @@ elbe-updated
 NAME
 ====
 
-elbe-updated - Elbe update daemon.
+elbe-updated - ELBE update daemon.
 
 SYNOPSIS
 ========
@@ -22,7 +22,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-*elbe updated* is the Elbe update daemon, which runs on the target
+*elbe updated* is the ELBE update daemon, which runs on the target
 system. It watches a directory for incoming update packages (which have
 been created with ``elbe-gen_update(1)`` in the build VM) and applies
 them to the system. By default, only signed update packages are allowed.

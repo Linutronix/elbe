@@ -27,10 +27,10 @@ OPTIONS
 
 --verbose
    Give more information, e.g. the package list of the target
-   root-filesystem.
+   root filesystem.
 
 <xmlfile>
-   The xmlfile to be shown.
+   The  XML file to be shown.
 
 EXAMPLES
 ========

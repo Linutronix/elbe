@@ -17,7 +17,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This command controls the ELBE daemon and is run inside the inivm.
+This command controls the ELBE daemon and is run inside the initvm.
 
 OPTIONS
 =======

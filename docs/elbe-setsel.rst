@@ -5,7 +5,7 @@ elbe-setsel
 NAME
 ====
 
-elbe-setsel - Replace the package list of an Elbe XML file by a list
+elbe-setsel - Replace the package list of an ELBE XML file by a list
 obtained from *dpkg-getselections*.
 
 SYNOPSIS
@@ -18,9 +18,9 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-*elbe setsel* replaces the package list of an Elbe XML file by a package
+*elbe setsel* replaces the package list of an ELBE XML file by a package
 list obtained from *dpkg --get-selections*. Together with the setsel
-mode of Elbe, this offers a more fine-grained control on which packages
+mode of ELBE, this offers a more fine-grained control on which packages
 are installed (even apt and aptitude can be excluded from the root
 filesystem). The recommended usage is as follows:
 
@@ -38,7 +38,7 @@ filesystem). The recommended usage is as follows:
 6. Use *elbe setsel <xmlfile> selections.list* to import the package
    list into the XML file.
 
-7. Rebuild using the setsel mode of Elbe.
+7. Rebuild using the setsel mode of ELBE.
 
 OPTIONS
 =======
