@@ -49,7 +49,8 @@ class _Mount:
     # This is not using contextlib.contextmanager as it will be pass to our
     # RPCAPTCache which uses the pickle serialization.
     # The generator by contextlib.contextmanager is not compatible with pickle.
-    def __init__(self, device, target, *, bind=False, type=None, options=None, log_output=True):
+    def __init__(self, device, target, *, bind=False, type=None, options=None, log_output=True,
+                 force_writable=False):
         self.log_output = log_output
         self.target = target
 
@@ -59,6 +60,9 @@ class _Mount:
 
         if options is not None:
             cmd.extend(['-o', options])
+
+        if force_writable:
+            cmd.append('--rw')
 
         if type is not None:
             cmd.extend(['-t', type])

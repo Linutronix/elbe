@@ -166,7 +166,7 @@ class grubinstaller202(grubinstaller_base):
                     stack.enter_context(
                         mount(f'{loopdev}p{entry.partnum}',
                               imagemntfs.fname(entry.mountpoint),
-                              options=entry.options))
+                              options=entry.options, force_writable=True))
 
                 for bindmnt in ['/dev', '/proc', '/sys']:
                     stack.enter_context(
@@ -219,7 +219,7 @@ class grubinstaller97(grubinstaller_base):
                     stack.enter_context(
                         mount(f'{loopdev}p{entry.partnum}',
                               imagemntfs.fname(entry.mountpoint),
-                              options=entry.options))
+                              options=entry.options, force_writable=True))
 
                 if not bootentry:
                     bootentry_label = entry.label
@@ -312,7 +312,7 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
         mount_path = Path(target, 'imagemnt')
 
-        with mount(loopdev, mount_path, options=entry.options):
+        with mount(loopdev, mount_path, options=entry.options, force_writable=True):
             _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
             do([
                 'cp', '-a',
