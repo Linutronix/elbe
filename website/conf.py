@@ -96,6 +96,10 @@ html_theme_options = {
 
 html_favicon = '_static/favicon.ico'
 
+html_extra_path = [
+        'robots.txt',
+]
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
