@@ -47,7 +47,7 @@ scripting language that is used, the format keeping the build
 instructions and the user’s ability to understand it and make changes.
 
 Adding Debugging Tools is not that easy
-======================================
+=======================================
 
 Adding a debug version of a package to the root file system means a
 rebuild or restart of the build process to create this piece of the
