@@ -1,3 +1,10 @@
+elbe (15.8.3~bpo12) bookworm; urgency=medium
+
+  * Team upload
+  * Rebuild for bookworm
+
+ -- Thomas Weißschuh <thomas.weissschuh@linutronix.de>  Fri, 07 Feb 2025 17:40:25 +0100
+
 elbe (15.8.3) trixie; urgency=medium
 
   * Team upload
