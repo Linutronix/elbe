@@ -1,0 +1,15 @@
+elbe 15.8.3 (2026-02-20)
+========================
+
+Features
+--------
+
+- Make the root password optional. If not set, an invalid password is used.
+- Reword some of the documentation for more clarity.
+- Stop copying /var/cache/elbe/preseed.txt into the root filesystem.
+
+
+Bugfixes
+--------
+
+- Ignore read-only mount option during image creation.
