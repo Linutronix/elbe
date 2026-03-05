@@ -15,9 +15,8 @@ Represented by Managing Directors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | Dr. Wilfried Wessner
-| Candice Christine More
-| Ramachandran Sitaraman
-| Jeffrey Ross Schneiderman
+| Katharina Kopp
+| Alexander Gieringer
 
 Contact Information
 ^^^^^^^^^^^^^^^^^^^
