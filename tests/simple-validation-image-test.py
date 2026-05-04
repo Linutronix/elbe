@@ -208,8 +208,13 @@ def _test_archive(root):
     archive_file = root.joinpath('opt', 'archive-file')
     assert archive_file.is_file()
 
+    orig_file = pathlib.Path(__file__).parent.joinpath(
+        'simple-validation-image-archive1', 'opt', 'archive-file')
+    assert orig_file.is_file()
+
     archive_file_stat = archive_file.stat()
-    assert archive_file_stat.st_mode & 0o777 == 0o644
+    orig_file_stat = orig_file.stat()
+    assert archive_file_stat.st_mode & 0o777 == orig_file_stat.st_mode & 0o777
     assert archive_file_stat.st_uid == 0
     assert archive_file_stat.st_gid == 0
 
