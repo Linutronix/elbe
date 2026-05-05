@@ -155,3 +155,29 @@ class fstabentry(hdpart):
         if self.fstype == 'f2fs':
             return '-l ' + self.label
         return ''
+
+    def mkfs(self, target, filesystem_tree):
+        mkfs_fs_copy_argument_dict = {
+            'ext2': f'-d {filesystem_tree}',
+            'ext3': f'-d {filesystem_tree}',
+            'ext4': f'-d {filesystem_tree}',
+            'btrfs': f'-r {filesystem_tree}',
+            'xfs': f'-p {filesystem_tree}',
+        }
+        mkfs_fs_copy_extra_cmd_dict = {
+            'f2fs': f'sload.f2fs -f {filesystem_tree} {target}',
+        }
+
+        mkfs_supports_fs_copy = self.fstype in mkfs_fs_copy_argument_dict or \
+            self.fstype in mkfs_fs_copy_extra_cmd_dict
+
+        mkfs_fs_copy_argument = mkfs_fs_copy_argument_dict.get(self.fstype, '')
+        do(
+            f'mkfs.{self.fstype} {" ".join(self.mkfsopts)} {self.get_label_opt()} '
+            f'{mkfs_fs_copy_argument} '
+            f'{target}')
+
+        if self.fstype in mkfs_fs_copy_extra_cmd_dict:
+            do(mkfs_fs_copy_extra_cmd_dict[self.fstype])
+
+        return not mkfs_supports_fs_copy

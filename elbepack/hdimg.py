@@ -304,9 +304,8 @@ def create_label(disk, part, ppart, fslabel, target, grub):
     grub.add_fs_entry(entry)
 
     with entry.losetup() as loopdev:
-        do(
-            f'mkfs.{entry.fstype} {" ".join(entry.mkfsopts)} {entry.get_label_opt()} '
-            f'{loopdev}')
+        filesystem_tree = os.path.join(target, 'filesystems', entry.id) + '/.'
+        needs_cp = entry.mkfs(loopdev, filesystem_tree)
 
         _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
 
@@ -314,11 +313,8 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
         with mount(loopdev, mount_path, options=entry.options, force_writable=True):
             _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-            do([
-                'cp', '-a',
-                os.path.join(target, 'filesystems', entry.id) + '/.',
-                str(mount_path) + '/',
-            ])
+            if needs_cp:
+                do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
 
     return ppart
 
