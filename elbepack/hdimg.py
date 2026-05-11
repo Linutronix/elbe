@@ -311,10 +311,11 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
         mount_path = Path(target, 'imagemnt')
 
-        with mount(loopdev, mount_path, options=entry.options, force_writable=True):
-            _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-            if needs_cp:
-                do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
+        if entry.fs_path_commands or needs_cp:
+            with mount(loopdev, mount_path, options=entry.options, force_writable=True):
+                _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
+                if needs_cp:
+                    do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
 
     return ppart
 
