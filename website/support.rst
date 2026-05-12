@@ -6,7 +6,7 @@ There is community and commercial support available.
 Community support
 =================
 
-mail: `elbe-users Mailinglist <https://lists.linutronix.de/mailman/listinfo/elbe-users>`_
+mail: `elbe-users Mailinglist <https://lists.linutronix.de/elbe-users>`_
 
 Commercial support
 ==================
