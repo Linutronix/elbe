@@ -442,7 +442,7 @@ class TargetFs(ChRootFilesystem):
                     f.write(fstab.get_str())
             f.close()
 
-    def part_target(self, targetdir, grub_version, grub_fw_type=None):
+    def part_target(self, targetdir, grub_version, grub_fw_type):
         from elbepack.hdimg import do_hdimg
 
         # create target images and copy the rfs into them

@@ -377,7 +377,7 @@ def create_logical_partitions(disk,
         current_sector += lpart.getLength()
 
 
-def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type=None):
+def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type):
 
     sector_size = 512
     s = size_to_int(hd.text('size'))
@@ -471,7 +471,7 @@ def add_binary_blob(hd, target):
         dd({'if': bf, 'of': imagename, 'seek': offset, 'bs': bs, 'conv': 'notrunc'})
 
 
-def do_hdimg(xml, target, rfs, grub_version, grub_fw_type=None):
+def do_hdimg(xml, target, rfs, grub_version, grub_fw_type):
 
     # list of created files
     img_files = []
