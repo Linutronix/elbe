@@ -82,8 +82,7 @@ class ProjectManager:
             allow_busy=True):
 
         # Load project from the database
-        ep = self.db.load_project(builddir,
-                                  url_validation=url_validation)
+        ep = self.db.load_project(builddir)
 
         if not allow_busy:
             self._assert_not_busy(ep)

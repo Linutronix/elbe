@@ -27,7 +27,7 @@ from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import ElbeXML, ValidationMode
+from elbepack.elbexml import ElbeXML
 
 
 Base = declarative_base()
@@ -244,10 +244,7 @@ class ElbeDB:
             if os.path.exists(chrootpath):
                 rmtree(chrootpath)      # OSError
 
-    def load_project(
-            self,
-            builddir,
-            url_validation=ValidationMode.CHECK_ALL):
+    def load_project(self, builddir):
 
         # pass exceptions if hook-scripts can't be loaded (they're optional)
         postbuild_file = None
