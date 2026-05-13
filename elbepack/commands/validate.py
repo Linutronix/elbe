@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 
-from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
+from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.validate import validate_xml
 
 
@@ -33,7 +33,7 @@ def run_command(argv):
 
     if args.validate_urls:
         try:
-            ElbeXML(args.xmlfile, url_validation=ValidationMode.CHECK_ALL)
+            ElbeXML(args.xmlfile)
         except ValidationError as e:
             print(e)
             sys.exit(61)

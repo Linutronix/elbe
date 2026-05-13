@@ -142,9 +142,7 @@ class ElbeDB:
                 raise ElbeDBError(
                     f'cannot set XML file while project {builddir} is busy')
 
-            xml = ElbeXML(
-                xml_file,
-                url_validation=ValidationMode.NO_CHECK)  # ValidationError
+            xml = ElbeXML(xml_file)
 
             p.name = xml.text('project/name')
             p.version = xml.text('project/version')

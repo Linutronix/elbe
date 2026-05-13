@@ -9,7 +9,7 @@ import apt
 
 import apt_pkg
 
-from elbepack.elbexml import ElbeXML, ValidationMode
+from elbepack.elbexml import ElbeXML
 
 
 def run_command(argv):
@@ -29,10 +29,7 @@ def run_command(argv):
     fix_rfs = args.rfs2
 
     x = os.path.join(gen_rfs, 'etc/elbe_base.xml')
-    xml = ElbeXML(
-        x,
-        skip_validate=True,
-        url_validation=ValidationMode.NO_CHECK)
+    xml = ElbeXML(x, skip_validate=True)
     arch = xml.text('project/arch', key='arch')
 
     apt_pkg.init_config()

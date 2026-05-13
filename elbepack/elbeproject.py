@@ -151,15 +151,13 @@ class ElbeProject:
             self.xml = ElbeXML(
                 xmlpath,
                 buildtype=override_buildtype,
-                skip_validate=skip_validate,
-                url_validation=url_validation)
+                skip_validate=skip_validate)
         else:
             sourcexmlpath = os.path.join(self.builddir, 'source.xml')
             self.xml = ElbeXML(
                 sourcexmlpath,
                 buildtype=override_buildtype,
-                skip_validate=skip_validate,
-                url_validation=url_validation)
+                skip_validate=skip_validate)
 
         self.arch = self.xml.text('project/arch', key='arch')
         self.codename = self.xml.text('project/suite')
@@ -939,8 +937,7 @@ class ElbeProject:
             xmlpath = os.path.join(self.builddir, 'source.xml')
 
         newxml = ElbeXML(xmlpath, buildtype=self.override_buildtype,
-                         skip_validate=self.skip_validate,
-                         url_validation=self.url_validation)
+                         skip_validate=self.skip_validate)
 
         # New XML file has to have the same architecture
         oldarch = self.xml.text('project/arch', key='arch')
@@ -988,8 +985,7 @@ class ElbeProject:
         source_path = '/var/cache/elbe/source.xml'
         try:
             initxml = ElbeXML(source_path,
-                              skip_validate=self.skip_validate,
-                              url_validation=ValidationMode.NO_CHECK)
+                              skip_validate=self.skip_validate)
             self.xml.get_initvmnode_from(initxml)
         except ValidationError:
             logging.exception('%s validation failed.  '
@@ -1034,8 +1030,7 @@ class ElbeProject:
                 sourcepath = os.path.join(self.builddir, 'source.xml')
                 source = ElbeXML(sourcepath,
                                  buildtype=self.override_buildtype,
-                                 skip_validate=self.skip_validate,
-                                 url_validation=self.url_validation)
+                                 skip_validate=self.skip_validate)
 
                 self.xml.get_debootstrappkgs_from(source)
                 try:

@@ -19,7 +19,7 @@ from urllib.request import urlopen, urlretrieve
 from suds.client import Client
 
 from elbepack.cli import CliError
-from elbepack.elbexml import ElbeXML, ValidationMode
+from elbepack.elbexml import ElbeXML
 from elbepack.version import elbe_version
 
 
@@ -155,8 +155,7 @@ class ElbeSoapClient:
     def set_xml(self, builddir, filename):
         x = ElbeXML(
             filename,
-            skip_validate=True,
-            url_validation=ValidationMode.NO_CHECK)
+            skip_validate=True)
 
         if not x.has('target'):
             raise ValueError("<target> is missing, this file can't be built in an initvm")

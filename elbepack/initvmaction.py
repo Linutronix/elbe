@@ -14,7 +14,7 @@ import elbepack
 import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
-from elbepack.elbexml import ElbeXML, ValidationError, ValidationMode
+from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.init import create_initvm
 from elbepack.repodir import Repodir, RepodirError
@@ -245,9 +245,7 @@ def _extract_cdrom(cdrom):
             This is not supported by 'elbe initvm'."""))
 
     try:
-        exml = ElbeXML(
-            tmp.fname('source.xml'),
-            url_validation=ValidationMode.NO_CHECK)
+        exml = ElbeXML(tmp.fname('source.xml'))
     except ValidationError as e:
         raise with_cli_details(e, 141, textwrap.dedent("""
             Iso image does contain a source.xml file.

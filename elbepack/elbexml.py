@@ -54,8 +54,7 @@ class ElbeXML:
             self,
             fname,
             buildtype=None,
-            skip_validate=False,
-            url_validation=ValidationMode.NO_CHECK):
+            skip_validate=False):
         if not skip_validate:
             validation = validate_xml(fname)
             if validation:
