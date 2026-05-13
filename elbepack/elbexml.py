@@ -82,9 +82,6 @@ class ElbeXML:
             buildtype = 'nodefaults'
         self.defs = ElbeDefaults(buildtype)
 
-        if not skip_validate and url_validation != ValidationMode.NO_CHECK:
-            self.validate_apt_sources(url_validation, self.defs['arch'])
-
     def __getstate__(self):
         state = self.__dict__.copy()
         state['xml'] = state['xml'].tostring()

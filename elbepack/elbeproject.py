@@ -582,14 +582,6 @@ class ElbeProject:
         # Write the log header
         self.write_log_header()
 
-        # Validate Apt Sources
-        if build_sources:
-            m = ValidationMode.CHECK_ALL
-        else:
-            m = ValidationMode.CHECK_BINARIES
-
-        self.xml.validate_apt_sources(m, self.arch)
-
         # Create the build environment, if it does not a valid one
         # self.buildenv might be set when we come here.
         # However, if its not a full_buildenv, we specify clean here,
