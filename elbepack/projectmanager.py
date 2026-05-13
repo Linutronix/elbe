@@ -19,7 +19,6 @@ from elbepack.asyncworker import (
     UpdatePbuilderJob,
 )
 from elbepack.db import ElbeDB, ElbeDBError
-from elbepack.elbexml import ValidationMode
 from elbepack.log import read_loggingQ
 from elbepack.uuid7 import uuid7
 
@@ -59,8 +58,7 @@ class ProjectManager:
 
     def create_project(
             self,
-            xml_file,
-            url_validation=ValidationMode.CHECK_ALL):
+            xml_file):
         subdir = str(uuid7())
         builddir = path.join(self.basepath, subdir)
 
@@ -78,7 +76,6 @@ class ProjectManager:
     def open_project(
             self,
             builddir,
-            url_validation=ValidationMode.CHECK_ALL,
             allow_busy=True):
 
         # Load project from the database
@@ -94,8 +91,8 @@ class ProjectManager:
     def set_project_xml(self, builddir, xml_file):
         self.db.set_xml(builddir, xml_file)
 
-    def set_upload_cdrom(self, builddir, url_validation):
-        ep = self.open_project(builddir, url_validation, allow_busy=False)
+    def set_upload_cdrom(self, builddir):
+        ep = self.open_project(builddir, allow_busy=False)
         ep.xml.set_cdrom_mirror(
             path.join(
                 ep.builddir,

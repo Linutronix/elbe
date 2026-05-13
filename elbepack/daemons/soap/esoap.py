@@ -18,7 +18,7 @@ from spyne.model.primitive import Boolean, Integer, String
 from spyne.service import ServiceBase
 
 from elbepack.db import ElbeDBError, InvalidLogin
-from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.elbexml import ValidationError
 from elbepack.projectmanager import InvalidState, ProjectManagerError
 from elbepack.version import elbe_version, is_devel
 
@@ -137,7 +137,7 @@ class ESoap (ServiceBase):
                 fp.flush()
             self.app.pm.db.reset_busy(builddir, 'has_changes')
             if fname == 'source.xml':
-                self.app.pm.open_project(builddir, url_validation=ValidationMode.NO_CHECK)
+                self.app.pm.open_project(builddir)
                 self.app.pm.set_project_xml(builddir, fn)
             return -2
 
@@ -192,7 +192,7 @@ class ESoap (ServiceBase):
 
     @rpc(String)
     def finish_cdrom(self, builddir):
-        self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
+        self.app.pm.set_upload_cdrom(builddir)
 
     @rpc(String, _returns=String)
     def start_base_image(self, builddir):
@@ -238,13 +238,12 @@ class ESoap (ServiceBase):
     def del_project(self, builddir):
         self.app.pm.del_project(builddir)
 
-    @rpc(String, String, _returns=String)
-    def create_project(self, xml, url_validation):
+    @rpc(String, _returns=String)
+    def create_project(self, xml):
         with NamedTemporaryFile() as fp:
             fp.write(binascii.a2b_base64(xml))
             fp.flush()
-            prjid = self.app.pm.create_project(
-                fp.name, url_validation=url_validation)
+            prjid = self.app.pm.create_project(fp.name)
 
         return prjid
 
