@@ -33,12 +33,6 @@ class NoInitvmNode(Exception):
     pass
 
 
-class ValidationMode:
-    NO_CHECK = 1
-    CHECK_BINARIES = 2
-    CHECK_ALL = 0
-
-
 def replace_localmachine(mirror, initvm=True):
     if initvm:
         localmachine = '10.0.2.2'
