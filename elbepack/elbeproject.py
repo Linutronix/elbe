@@ -26,7 +26,7 @@ from elbepack.dump import (
     elbe_report,
 )
 from elbepack.efilesystem import TargetFs, extract_target
-from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError, ValidationMode
+from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
 from elbepack.log import validation
@@ -117,7 +117,6 @@ class ElbeProject:
             name=None,
             override_buildtype=None,
             skip_validate=False,
-            url_validation=ValidationMode.CHECK_ALL,
             postbuild_file=None,
             presh_file=None,
             postsh_file=None,
@@ -133,7 +132,6 @@ class ElbeProject:
         self.name = name
         self.override_buildtype = override_buildtype
         self.skip_validate = skip_validate
-        self.url_validation = url_validation
         self.postbuild_file = postbuild_file
         self.presh_file = presh_file
         self.postsh_file = postsh_file

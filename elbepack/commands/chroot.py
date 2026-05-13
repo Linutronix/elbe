@@ -9,7 +9,7 @@ import subprocess
 import sys
 
 from elbepack.elbeproject import ElbeProject
-from elbepack.elbexml import ValidationError, ValidationMode
+from elbepack.elbexml import ValidationError
 from elbepack.log import elbe_logging
 
 
@@ -32,8 +32,7 @@ def run_command(argv):
         try:
             project = ElbeProject(args.builddir,
                                   override_buildtype=args.buildtype,
-                                  skip_validate=args.skip_validation,
-                                  url_validation=ValidationMode.NO_CHECK)
+                                  skip_validate=args.skip_validation)
         except ValidationError:
             logging.exception('XML validation failed.  Bailing out')
             sys.exit(73)

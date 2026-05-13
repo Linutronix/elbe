@@ -287,8 +287,7 @@ class ElbeDB:
                                    postbuild_file=postbuild_file,
                                    presh_file=presh_file,
                                    postsh_file=postsh_file,
-                                   savesh_file=savesh_file,
-                                   url_validation=url_validation)
+                                   savesh_file=savesh_file)
             except NoResultFound:
                 raise ElbeDBError(
                     f'project {builddir} is not registered in the database')
