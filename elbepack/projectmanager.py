@@ -106,6 +106,17 @@ class ProjectManager:
         # Make db reload the xml file
         self.db.set_xml(ep.builddir, None)
 
+    def set_upload_base_image(self, builddir, url_validation):
+        ep = self.open_project(builddir, url_validation, allow_busy=False)
+        ep.xml.set_base_image(
+            path.join(
+                ep.builddir,
+                'uploaded_base_image.img'))
+        ep.sync_xml_to_disk()
+
+        # Make db reload the xml file
+        self.db.set_xml(ep.builddir, None)
+
     def build_project(
             self,
             builddir,
