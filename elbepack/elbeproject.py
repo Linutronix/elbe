@@ -577,7 +577,7 @@ class ElbeProject:
                     validation.error(str(e))
 
     def build(self, build_bin=False, build_sources=False, cdrom_size=None,
-              skip_pkglist=False, skip_pbuild=False):
+              skip_pkglist=False, skip_pbuild=False, base_image_path=None):
 
         # Write the log header
         self.write_log_header()

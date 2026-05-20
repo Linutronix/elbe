@@ -111,10 +111,11 @@ class ProjectManager:
             builddir,
             build_bin,
             build_src,
-            skip_pbuilder):
+            skip_pbuilder,
+            base_image_path):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildJob(ep, build_bin, build_src,
-                                     skip_pbuilder))
+                                     skip_pbuilder, base_image_path))
 
     def update_pbuilder(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)

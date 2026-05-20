@@ -203,6 +203,12 @@ class ElbeSoapClient:
         self._upload_file(builddir, fname, cdrom_file)
         self.service.finish_cdrom(builddir)
 
+    def set_base_image(self, builddir, base_image_file):
+        fname = self.service.start_base_image(builddir)
+        self._upload_file(builddir, fname, base_image_file)
+        self.service.finish_base_image(builddir)
+        return os.path.join(builddir, fname)
+
     def get_files(self, builddir, outdir, *, pbuilder_only=False, wildcard=None):
         files = self.service.get_files(builddir)
 
