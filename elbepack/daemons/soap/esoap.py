@@ -162,10 +162,10 @@ class ESoap (ServiceBase):
     def build_cdroms(self, builddir, build_bin, build_src):
         self.app.pm.build_cdroms(builddir, build_bin, build_src)
 
-    @rpc(String, Boolean, Boolean, Boolean)
-    def build(self, builddir, build_bin, build_src, skip_pbuilder):
+    @rpc(String, Boolean, Boolean, Boolean, String)
+    def build(self, builddir, build_bin, build_src, skip_pbuilder, base_image_path):
 
-        self.app.pm.build_project(builddir, build_bin, build_src, skip_pbuilder)
+        self.app.pm.build_project(builddir, build_bin, build_src, skip_pbuilder, base_image_path)
 
     @rpc(String, Boolean, Boolean, String)
     def build_pbuilder(self, builddir, cross, noccache, ccachesize):
@@ -193,6 +193,20 @@ class ESoap (ServiceBase):
     @rpc(String)
     def finish_cdrom(self, builddir):
         self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
+
+    @rpc(String, _returns=String)
+    def start_base_image(self, builddir):
+        fname = 'uploaded_base_image.img'
+
+        with open(os.path.join(builddir, fname), 'w'):
+            # Now write empty File
+            pass
+
+        return fname
+
+    @rpc(String)
+    def finish_base_image(self, builddir):
+        pass
 
     @rpc(String, _returns=String)
     def start_pdebuild(self, builddir):
