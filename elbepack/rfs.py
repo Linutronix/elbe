@@ -6,6 +6,8 @@
 import logging
 import os
 import subprocess
+import sys
+import tarfile
 from urllib.parse import urlsplit
 
 from elbepack.efilesystem import ChRootFilesystem, dpkg_architecture
@@ -60,7 +62,8 @@ class DebootstrapException (Exception):
 
 class BuildEnv:
     def __init__(self, xml, path, build_sources=False,
-                 clean=False, arch='default', hostsysroot=False):
+                 clean=False, arch='default', hostsysroot=False,
+                 base_image_path=None):
 
         self.xml = xml
         self.path = path
@@ -77,7 +80,20 @@ class BuildEnv:
         self.need_dumpdebootstrap = False
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile('etc/elbe_version'):
-            self.prepare_and_run_debootstrap()
+            use_base_image = self.xml.has('target/debootstrap/type') and \
+                self.xml.text('target/debootstrap/type') == 'base-image'
+            if use_base_image:
+                if base_image_path:
+                    self.copy_base_image(base_image_path)
+                else:
+                    raise Exception('XML specifies the use of base image, '
+                                    'but none has been provided on the command line '
+                                    '(use --base-image "path/to/image")')
+            else:
+                if base_image_path:
+                    raise Exception('Base image was provided on the command line,'
+                                    ' but XML file specifies the use of debootstap')
+                self.prepare_and_run_debootstrap()
 
         self.initialize_dirs(build_sources=build_sources)
         create_apt_prefs(self.xml, self.rfs)
@@ -94,6 +110,21 @@ class BuildEnv:
         self.debootstrap(self.arch)
         self.fresh_debootstrap = True
         self.need_dumpdebootstrap = True
+
+    def copy_base_image(self, base_image_file):
+        def abspath_filter(member, path):
+            if os.path.isabs(member.name):
+                raise Exception('The base image archive contains a member with an absolute path:'
+                                f' {member.name}. All members must be relative paths.')
+            return member
+
+        with tarfile.open(base_image_file) as tar:
+            logging.info(f'Extracting {base_image_file} into {self.path}')
+            if not hasattr(tarfile, 'data_filter'):
+                raise Exception(f'This python installation ({sys.version}) does not support tar'
+                                ' filters (available starting from 3.12 and backported to latest'
+                                ' point releases in 3.8 to 3.11)')
+            tar.extractall(path=self.path, numeric_owner=True, filter=abspath_filter)
 
     def cdrom_umount(self):
         if self.xml.prj.has('mirror/cdrom'):
