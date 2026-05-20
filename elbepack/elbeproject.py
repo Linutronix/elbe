@@ -597,7 +597,8 @@ class ElbeProject:
         if not self.has_full_buildenv():
             do(['mkdir', '-p', self.chrootpath])
             self.buildenv = BuildEnv(self.xml, self.chrootpath,
-                                     build_sources=build_sources, clean=True)
+                                     build_sources=build_sources, clean=True,
+                                     base_image_path=base_image_path)
             skip_pkglist = False
 
         # Import keyring
