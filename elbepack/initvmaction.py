@@ -90,17 +90,17 @@ def _attach(args):
     _initvm_from_args(args).attach()
 
 
-def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, args):
+def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
     preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, args)
+            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, base_image, args)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
 
 
-def _submit_and_dl_result(control, xmlfile, cdrom, args):
+def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args):
 
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport) as xmlfile:
@@ -115,6 +115,11 @@ def _submit_and_dl_result(control, xmlfile, cdrom, args):
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')
         control.set_cdrom(prjdir, cdrom)
+        print('Upload finished')
+
+    if base_image is not None:
+        print('Uploading base image. This might take a while')
+        control.set_base_image(prjdir, base_image)
         print('Upload finished')
 
     control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom))
@@ -278,6 +283,9 @@ def _add_submit_arguments(f):
     f = add_argument('--build-sdk', dest='build_sdk', action='store_true', default=False,
                      help="Also make 'initvm submit' build an SDK.")(f)
 
+    f = add_argument('--base-image', dest='base_image', default=None,
+                     help='Use a base image instead of debootstrap')(f)
+
     return f
 
 
@@ -368,7 +376,7 @@ def _create(args):
         elif cdrom is not None:
             xmlfile = tmp.fname('source.xml')
 
-        _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args)
+        _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args.base_image, args)
 
 
 @_add_initvm_from_args_arguments
@@ -393,7 +401,7 @@ def _submit(args):
     else:
         args.parser.error('Unknown file ending (use either xml or iso)')
 
-    _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args)
+    _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args.base_image, args)
 
 
 @add_argument_sshport

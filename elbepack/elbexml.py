@@ -498,6 +498,10 @@ class ElbeXML:
         cdrom = mirror.ensure_child('cdrom')
         cdrom.set_text(abspath)
 
+    def set_base_image(self, base_image_path):
+        base_image = self.xml.ensure_child('base_image')
+        base_image.set_text(base_image_path)
+
     def dump_elbe_version(self):
         version = self.xml.ensure_child('elbe_version')
         version.set_text(elbe_version)

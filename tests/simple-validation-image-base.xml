@@ -1,0 +1,107 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-FileCopyrightText: Linutronix GmbH
+-->
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    created="2009-05-20T08:50:56" revision="6"
+		    xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+
+	<project>
+		<name>simple-validation-image</name>
+		<version>1.0</version>
+		<suite>bookworm</suite>
+		<buildtype>amd64</buildtype>
+
+		<description>
+			Image used to test ELBE features
+		</description>
+
+		<mirror>
+			<primary_host>deb.debian.org</primary_host>
+			<primary_path>/debian</primary_path>
+			<primary_proto>http</primary_proto>
+			<primary_key>
+				-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+				mDMEY865UxYJKwYBBAHaRw8BAQdAd7Z0srwuhlB6JKFkcf4HU4SSS/xcRfwEQWzr
+				crf6AEq0SURlYmlhbiBTdGFibGUgUmVsZWFzZSBLZXkgKDEyL2Jvb2t3b3JtKSA8
+				ZGViaWFuLXJlbGVhc2VAbGlzdHMuZGViaWFuLm9yZz6IlgQTFggAPhYhBE1k/sEZ
+				wgKQZ9bnkfjSWFuHg9SBBQJjzrlTAhsDBQkPCZwABQsJCAcCBhUKCQgLAgQWAgMB
+				Ah4BAheAAAoJEPjSWFuHg9SBSgwBAP9qpeO5z1s5m4D4z3TcqDo1wez6DNya27QW
+				WoG/4oBsAQCEN8Z00DXagPHbwrvsY2t9BCsT+PgnSn9biobwX7bDDg==
+				=5NZE
+				-----END PGP PUBLIC KEY BLOCK-----
+			</primary_key>
+		</mirror>
+
+	</project>
+
+	<archivedir>simple-validation-image-archive1</archivedir>
+
+	<target>
+		<hostname>validation-image</hostname>
+		<domain>elbe-ci</domain>
+		<passwd_hashed>!invalid</passwd_hashed>
+		<console>ttyS0,115200</console>
+
+		<images>
+			<msdoshd>
+				<name>sda.img</name>
+				<size>1000MiB</size>
+				<grub-install />
+				<partition>
+					<size>remain</size>
+					<label>rfs</label>
+				</partition>
+			</msdoshd>
+		</images>
+
+		<fstab>
+			<bylabel>
+				<label>rfs</label>
+				<mountpoint>/</mountpoint>
+				<fs><type>ext4</type></fs>
+			</bylabel>
+		</fstab>
+
+		<pbuilder>
+			<git>https://github.com/Linutronix/libgpio.git</git>
+		</pbuilder>
+
+		<pkg-list>
+			<pkg>unzip</pkg>
+			<pkg>linux-image-amd64</pkg>
+			<pkg>grub-pc</pkg>
+		</pkg-list>
+
+		<finetuning>
+			<rm>var/cache/apt/archives/*.deb</rm>
+			<mkdir>/var/cache/test-dir</mkdir>
+			<mknod opts="c 0 5">/dev/null2</mknod>
+			<cp path="/etc/hosts">/etc/hosts2</cp>
+			<mv path="/etc/issue">/etc/issue2</mv>
+			<ln path="/etc/hosts">/etc/hosts3</ln>
+
+			<adduser groups="nogroup,staff" shell="/bin/sh" uid="2000"
+				 home="/home/nottestuser" system="true" create_home="true" create_group="true">testuser</adduser>
+			<addgroup gid="2001" system="false">testgroup</addgroup>
+
+			<file dst="/testfile" encoding="plain" owner="nobody" group="nogroup" mode="640">
+				Some cöntent wíth spe©ial characters
+			</file>
+
+			<command>cat /etc/hosts | cat -n > /etc/hosts4</command>
+			<raw_cmd>cp /etc/hosts /etc/hosts5</raw_cmd>
+			<command>ln /etc/hosts /etc/hosts6</command>
+			<command>cp /usr/sbin/policy-rc.d /usr/sbin/policy-rc.d.copy</command>
+		</finetuning>
+
+		<project-finetuning>
+			<set_packer packer="none">sda.img</set_packer>
+		</project-finetuning>
+	</target>
+	<check-image-list>
+		<check-script location="simple-validation-image-test.py" />
+	</check-image-list>
+</ns0:RootFileSystem>

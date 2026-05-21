@@ -195,6 +195,20 @@ class ESoap (ServiceBase):
         self.app.pm.set_upload_cdrom(builddir, ValidationMode.NO_CHECK)
 
     @rpc(String, _returns=String)
+    def start_base_image(self, builddir):
+        fname = 'uploaded_base_image.img'
+
+        with open(os.path.join(builddir, fname), 'w'):
+            # Now write empty File
+            pass
+
+        return fname
+
+    @rpc(String)
+    def finish_base_image(self, builddir):
+        self.app.pm.set_upload_base_image(builddir, ValidationMode.NO_CHECK)
+
+    @rpc(String, _returns=String)
     def start_pdebuild(self, builddir):
         fname = 'current_pdebuild.tar.gz'
         with open(os.path.join(builddir, fname), 'w'):

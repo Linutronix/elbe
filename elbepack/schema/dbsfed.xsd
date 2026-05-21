@@ -124,6 +124,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="base_image" type="rfs:string" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>
+            Base image file to be used instead of debootstrap as initial root filesystem.
+          </documentation>
+        </annotation>
+      </element>
       <element name="src-cdrom" type="rfs:src-cdrom" minOccurs="0" maxOccurs="1">
         <annotation>
           <documentation>

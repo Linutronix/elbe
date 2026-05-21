@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 
 from elbepack.efilesystem import ChRootFilesystem, dpkg_architecture
 from elbepack.egpg import unarmor_openpgp_keyring
+from elbepack.imgutils import losetup, mount
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 from elbepack.treeutils import strip_leading_whitespace_from_lines
@@ -73,25 +74,35 @@ class BuildEnv:
         if clean:
             self.rfs.rmtree('')
 
+        self.fresh_debootstrap = False
+        self.need_dumpdebootstrap = False
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile('etc/elbe_version'):
-            # avoid starting daemons inside the buildenv
-            self.rfs.mkdir_p('usr/sbin')
-            # grub-legacy postinst will fail if /boot/grub does not exist
-            self.rfs.mkdir_p('boot/grub')
-            self.rfs.write_file(
-                'usr/sbin/policy-rc.d',
-                0o755,
-                '#!/bin/sh\nexit 101\n')
-            self.debootstrap(arch)
-            self.fresh_debootstrap = True
-            self.need_dumpdebootstrap = True
-        else:
-            self.fresh_debootstrap = False
-            self.need_dumpdebootstrap = False
+            if self.xml.has('base_image'):
+                self.copy_base_image(self.xml.text('base_image'))
+            else:
+                # avoid starting daemons inside the buildenv
+                self.rfs.mkdir_p('usr/sbin')
+                # grub-legacy postinst will fail if /boot/grub does not exist
+                self.rfs.mkdir_p('boot/grub')
+                self.rfs.write_file(
+                    'usr/sbin/policy-rc.d',
+                    0o755,
+                    '#!/bin/sh\nexit 101\n')
+                self.debootstrap(arch)
+                self.fresh_debootstrap = True
+                self.need_dumpdebootstrap = True
 
         self.initialize_dirs(build_sources=build_sources)
         create_apt_prefs(self.xml, self.rfs)
+
+    def copy_base_image(self, base_image_file):
+        import os.path
+        base_image_mount = os.path.join(os.path.dirname(base_image_file), 'base_image_mount')
+        do(['mkdir', '-p', base_image_mount])
+        with losetup(base_image_file) as loopdev:
+            with mount(loopdev+'p1', base_image_mount):
+                do(['cp', '-a', base_image_mount, self.path])
 
     def cdrom_umount(self):
         if self.xml.prj.has('mirror/cdrom'):
