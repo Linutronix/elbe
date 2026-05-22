@@ -73,25 +73,27 @@ class BuildEnv:
         if clean:
             self.rfs.rmtree('')
 
+        self.fresh_debootstrap = False
+        self.need_dumpdebootstrap = False
         # TODO think about reinitialization if elbe_version differs
         if not self.rfs.isfile('etc/elbe_version'):
-            # avoid starting daemons inside the buildenv
-            self.rfs.mkdir_p('usr/sbin')
-            # grub-legacy postinst will fail if /boot/grub does not exist
-            self.rfs.mkdir_p('boot/grub')
-            self.rfs.write_file(
-                'usr/sbin/policy-rc.d',
-                0o755,
-                '#!/bin/sh\nexit 101\n')
-            self.debootstrap(arch)
-            self.fresh_debootstrap = True
-            self.need_dumpdebootstrap = True
-        else:
-            self.fresh_debootstrap = False
-            self.need_dumpdebootstrap = False
+            self.prepare_and_run_debootstrap()
 
         self.initialize_dirs(build_sources=build_sources)
         create_apt_prefs(self.xml, self.rfs)
+
+    def prepare_and_run_debootstrap(self):
+        # avoid starting daemons inside the buildenv
+        self.rfs.mkdir_p('usr/sbin')
+        # grub-legacy postinst will fail if /boot/grub does not exist
+        self.rfs.mkdir_p('boot/grub')
+        self.rfs.write_file(
+            'usr/sbin/policy-rc.d',
+            0o755,
+            '#!/bin/sh\nexit 101\n')
+        self.debootstrap(self.arch)
+        self.fresh_debootstrap = True
+        self.need_dumpdebootstrap = True
 
     def cdrom_umount(self):
         if self.xml.prj.has('mirror/cdrom'):
