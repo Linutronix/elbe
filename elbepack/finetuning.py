@@ -25,7 +25,21 @@ class FinetuningException(Exception):
     pass
 
 
-_actions = {}
+class FinetuningAction:
+
+    tag = None
+
+    def __init__(self, node):
+        self.node = node
+
+    def execute(self, _buildenv, _target):
+        raise NotImplementedError('execute() not implemented')
+
+    def execute_prj(self, buildenv, target, _builddir):
+        self.execute(buildenv, target)
+
+
+_actions: dict[str, FinetuningAction] = {}
 
 
 def _register_action(tag):
@@ -42,20 +56,6 @@ def _action_for_node(node):
         raise FinetuningException(f'Invalid finetuning action {node.tag}')
 
     return _actions[node.tag](node)
-
-
-class FinetuningAction:
-
-    tag = None
-
-    def __init__(self, node):
-        self.node = node
-
-    def execute(self, _buildenv, _target):
-        raise NotImplementedError('execute() not implemented')
-
-    def execute_prj(self, buildenv, target, _builddir):
-        self.execute(buildenv, target)
 
 
 class ImageFinetuningAction(FinetuningAction):
