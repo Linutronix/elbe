@@ -47,7 +47,7 @@ class LoggingQueue(collections.deque):
         return self._max_level
 
 
-_queues = {}
+_queues: dict[str, LoggingQueue] = {}
 
 
 class QHandler(logging.Handler):

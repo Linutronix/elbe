@@ -27,17 +27,6 @@ from elbepack.version import is_devel
 import elbevalidate
 
 
-_checks = {}
-
-
-def _register_check(tag):
-    def _register(test):
-        _checks[tag] = test
-        return test
-
-    return _register
-
-
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe check-build')
     aparser.add_argument('cmd', choices=['all', *_checks.keys()],
@@ -104,6 +93,17 @@ class CheckBase:
 
     def fail(self, reason):
         raise CheckException(reason)
+
+
+_checks: dict[str, CheckBase] = {}
+
+
+def _register_check(tag):
+    def _register(test):
+        _checks[tag] = test
+        return test
+
+    return _register
 
 
 @_register_check('schema')
