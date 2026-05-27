@@ -111,17 +111,25 @@ def _component_from_apt_pkg(pkg, licenses):
     })
 
 
-def _errorreport(val):
-    if val == '-':
-        return contextlib.nullcontext(sys.stderr)
-    else:
-        return argparse.FileType('w')(val)
+class _FileStream:
+    def __init__(self, mode, default):
+        self.mode = mode
+        self.default = default
+
+    def __call__(self, path):
+        self.path = path
+        return self
+
+    def open(self):
+        if self.path == '-':
+            return contextlib.nullcontext(self.default)
+        return open(self.path, self.mode)
 
 
 def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe cyclonedx-sbom')
-    aparser.add_argument('-o', '--output', type=argparse.FileType('w'), default='-')
-    aparser.add_argument('-e', '--errors', type=_errorreport, default='-')
+    aparser.add_argument('-o', '--output', type=_FileStream('w', sys.stdout), default='-')
+    aparser.add_argument('-e', '--errors', type=_FileStream('w', sys.stderr), default='-')
     aparser.add_argument('-d', dest='elbe_build', required=True)
     aparser.add_argument('-m', dest='mapping', nargs='?', default=None)
     args = aparser.parse_args(argv)
@@ -186,9 +194,9 @@ def run_command(argv):
         ],
     }
 
-    with args.output:
-        json.dump(output, args.output, indent=2, cls=CycloneDXEncoder)
-        args.output.write('\n')
+    with args.output.open() as out:
+        json.dump(output, out, indent=2, cls=CycloneDXEncoder)
+        out.write('\n')
 
     def _print_error_report(dest, pkg_errors):
         if pkg_errors is not None:
@@ -202,7 +210,7 @@ def run_command(argv):
             if licenses[pkg.name][1]:
                 return licenses[pkg.name][1]
 
-    with args.errors as errors:
+    with args.errors.open() as errors:
         errors.write('\nThe following target-packages have errors:\n\n')
         for pkg in pkg_list:
             _print_error_report(errors, _errors_from_pkg(pkg, licenses))
