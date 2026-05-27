@@ -51,6 +51,27 @@ jobs:
           unstable/
         if-no-files-found: warn
 
+  oldstable:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build E.L.B.E. Debian unstable packages
+      uses: jtdor/build-deb-action@v1
+      with:
+        docker-image: debian:oldstable
+        artifacts-dir: oldstable
+        setup-hook: apt-get update && apt-get install --yes python3 python3-debian && ./contrib/prepare-release.py update-control
+
+    - name: Retrieve results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: oldstable
+        path: |
+          oldstable/
+        if-no-files-found: warn
+
   ubuntu:
     runs-on: ubuntu-latest
     steps:
