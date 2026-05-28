@@ -1802,7 +1802,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
   <complexType name="package">
     <annotation>
       <documentation>
-         list of packages, each contains the hole rootfilesystem
+         list of packages, each contains the whole rootfilesystem
       </documentation>
     </annotation>
     <all>
@@ -1810,6 +1810,13 @@ SPDX-FileCopyrightText: Linutronix GmbH
         <annotation>
           <documentation>
              tar package of the rootfilesystem
+          </documentation>
+        </annotation>
+      </element>
+      <element name="base-image" type="rfs:base-image" minOccurs="0">
+        <annotation>
+          <documentation>
+             base image package of the rootfilesystem (experimental)
           </documentation>
         </annotation>
       </element>
@@ -1849,6 +1856,24 @@ SPDX-FileCopyrightText: Linutronix GmbH
         <annotation>
           <documentation>
              options passed to the tar command
+          </documentation>
+        </annotation>
+      </element>
+    </all>
+    <attributeGroup ref="xml:specialAttrs"/>
+  </complexType>
+
+  <complexType name="base-image">
+    <annotation>
+      <documentation>
+         describes a base image package
+      </documentation>
+    </annotation>
+    <all>
+      <element name="name" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+             filename of the base image package
           </documentation>
         </annotation>
       </element>
