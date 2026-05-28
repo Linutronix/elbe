@@ -480,6 +480,10 @@ class TargetFs(ChRootFilesystem):
                 options = self.xml.text('target/package/tar/options')
             _make_tarball(options, targz_name)
 
+        if self.xml.has('target/package/base-image'):
+            targz_name = self.xml.text('target/package/base-image/name')
+            _make_tarball('', targz_name)
+
         if self.xml.has('target/package/cpio'):
             oldwd = os.getcwd()
             cpio_name = self.xml.text('target/package/cpio/name')
