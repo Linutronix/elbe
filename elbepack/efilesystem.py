@@ -443,6 +443,23 @@ class TargetFs(ChRootFilesystem):
             f.close()
 
     def part_target(self, targetdir, grub_version, grub_fw_type):
+
+        def _make_tarball(options, targz_name):
+            try:
+                cmd = 'tar cfz %(dest)s/%(fname)s -C %(sdir)s %(options)s .'
+                args = dict(
+                    options=options,
+                    dest=targetdir,
+                    fname=targz_name,
+                    sdir=self.fname('')
+                )
+                do(cmd % args)
+                # only append filename if creating tarball was successful
+                self.images.append(targz_name)
+            except subprocess.CalledProcessError:
+                # error was logged; continue creating cpio image
+                pass
+
         from elbepack.hdimg import do_hdimg
 
         # create target images and copy the rfs into them
@@ -458,23 +475,10 @@ class TargetFs(ChRootFilesystem):
 
         if self.xml.has('target/package/tar'):
             targz_name = self.xml.text('target/package/tar/name')
-            try:
-                options = ''
-                if self.xml.has('target/package/tar/options'):
-                    options = self.xml.text('target/package/tar/options')
-                cmd = 'tar cfz %(dest)s/%(fname)s -C %(sdir)s %(options)s .'
-                args = dict(
-                    options=options,
-                    dest=targetdir,
-                    fname=targz_name,
-                    sdir=self.fname('')
-                )
-                do(cmd % args)
-                # only append filename if creating tarball was successful
-                self.images.append(targz_name)
-            except subprocess.CalledProcessError:
-                # error was logged; continue creating cpio image
-                pass
+            options = ''
+            if self.xml.has('target/package/tar/options'):
+                options = self.xml.text('target/package/tar/options')
+            _make_tarball(options, targz_name)
 
         if self.xml.has('target/package/cpio'):
             oldwd = os.getcwd()
