@@ -13,7 +13,7 @@ def replace_repo(doc, old_repo_url, new_repo_url, key):
 
     for url in doc.findall('./initvm/mirror/url-list/url'):
         binary = url.find('binary')
-        if binary.text.strip() != old_repo_url:
+        if binary.text.strip().split(' ')[0] != old_repo_url.split(' ')[0]:
             continue
         binary.text = new_repo_url
         url.find('source').text = new_repo_url
