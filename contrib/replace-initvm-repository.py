@@ -9,6 +9,8 @@ import xml.etree.ElementTree as ET
 
 
 def replace_repo(doc, old_repo_url, new_repo_url, key):
+    did_change = False
+
     for url in doc.findall('./initvm/mirror/url-list/url'):
         binary = url.find('binary')
         if binary.text.strip() != old_repo_url:
@@ -16,6 +18,10 @@ def replace_repo(doc, old_repo_url, new_repo_url, key):
         binary.text = new_repo_url
         url.find('source').text = new_repo_url
         url.find('raw-key').text = '\n' + key + '\n'
+        did_change = True
+
+    if not did_change:
+        raise Exception('No repository to change was found')
 
 
 if __name__ == '__main__':
