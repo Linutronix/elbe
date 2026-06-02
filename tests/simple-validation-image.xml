@@ -71,7 +71,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 
 		<pkg-list>
 			<pkg>unzip</pkg>
-			<pkg>libgpio1</pkg>
+			<pkg>libgpio3</pkg>
 			<pkg>linux-image-amd64</pkg>
 			<pkg>grub-pc</pkg>
 		</pkg-list>

@@ -110,7 +110,7 @@ def test_elbe_report_txt(build_dir):
         Local
         ~~~~~
 
-        |libgpio1|3.0.0| bookworm main
+        |libgpio3|3.0.1| bookworm main
 
         Debian
         ~~~~~~
@@ -304,7 +304,7 @@ def _test_rfs_partition(build_dir, img, part):
         assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
 
         assert root.joinpath('usr', 'bin', 'unzip').is_file()
-        assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.0.so.3.0.0').is_file()
+        assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.1.so.3.0.0').is_file()
 
         assert not root.joinpath('var', 'cache', 'elbe').exists()
 
