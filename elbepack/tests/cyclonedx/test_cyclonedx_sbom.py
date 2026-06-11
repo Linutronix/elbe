@@ -94,6 +94,10 @@ def test_reference_data():
         'bsdutils_2.38.1-5%2bdeb12u1_amd64.deb',
         'http://deb.debian.org/debian-security',
     ),
+    (
+        'https://deb.corporate.com/corp/foo/ethtool_6.14.2-1%7edeb13u1_arm64.deb',
+        'https://deb.corporate.com/corp/foo',
+    ),
 ])
 def test_repository_url_examples(uri, expected_repository_url):
     cyclonedx_sbom = import_cmd_module('cyclonedx-sbom')

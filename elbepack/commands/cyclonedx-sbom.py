@@ -49,20 +49,23 @@ def _remove_empty_fields(dict):
 
 
 def _repository_url(uri):
-    uri_parts = uri.split('/')
-    if len(uri_parts) < 6:
-        raise ValueError('URI needs to be in pool layout')
-    if uri_parts[-4] == 'pool':
-        # http://deb.debian.org/debian/pool/a/adduser/adduser_3.134_all.deb
-        return '/'.join(uri_parts[:-4])
-    elif uri_parts[-5] == 'pool':
-        # http://deb.debian.org/debian/pool/main/a/adduser/adduser_3.134_all.deb
-        return '/'.join(uri_parts[:-5])
-    elif uri_parts[-6] == 'pool':
-        # http://deb.debian.org/debian-security/pool/updates/main/u/util-linux/bsdutils_2.38.1-5%2bdeb12u1_amd64.deb
-        return '/'.join(uri_parts[:-6])
-    else:
-        raise ValueError('URI needs to be in pool layout')
+    parsed = urllib.parse.urlsplit(uri)
+    path_parts = parsed.path.split('/')
+
+    if path_parts[-1].endswith('.deb'):
+        # Standard Debian layout: repository root is everything before /pool/.
+        if 'pool' in path_parts:
+            repo_path = '/'.join(path_parts[:path_parts.index('pool')])
+        else:
+            # Flat repository: repo URL is everything before the filename.
+            repo_path = '/'.join(path_parts[:-1])
+
+        if not repo_path:
+            repo_path = '/'
+
+        return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, repo_path, '', ''))
+
+    raise ValueError(f'Unexpected URI format: {uri}')
 
 
 def _purl_from_pkg(pkg):
