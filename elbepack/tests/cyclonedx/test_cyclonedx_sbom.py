@@ -10,6 +10,8 @@ import warnings
 
 import jsonschema
 
+import pytest
+
 try:
     import jsonschema._validators
 
@@ -33,7 +35,7 @@ with warnings.catch_warnings():
     from jsonschema.validators import RefResolver
 
 
-from elbepack.main import run_elbe_subcommand
+from elbepack.main import import_cmd_module, run_elbe_subcommand
 
 here = pathlib.Path(__file__).parent
 
@@ -76,3 +78,24 @@ def test_reference_data():
 
     reference_errors = here.joinpath('cyclonedx_reference.json.errors').read_text()
     assert error_report == reference_errors
+
+
+@pytest.mark.parametrize('uri, expected_repository_url', [
+    (
+        'http://deb.debian.org/debian/pool/a/adduser/adduser_3.134_all.deb',
+        'http://deb.debian.org/debian',
+    ),
+    (
+        'http://deb.debian.org/debian/pool/main/a/adduser/adduser_3.134_all.deb',
+        'http://deb.debian.org/debian',
+    ),
+    (
+        'http://deb.debian.org/debian-security/pool/updates/main/u/util-linux/'
+        'bsdutils_2.38.1-5%2bdeb12u1_amd64.deb',
+        'http://deb.debian.org/debian-security',
+    ),
+])
+def test_repository_url_examples(uri, expected_repository_url):
+    cyclonedx_sbom = import_cmd_module('cyclonedx-sbom')
+
+    assert cyclonedx_sbom._repository_url(uri) == expected_repository_url
