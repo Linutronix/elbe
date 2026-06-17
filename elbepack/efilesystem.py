@@ -112,13 +112,20 @@ def extract_target(src, xml, dst, cache):
         arch = xml.text('project/buildimage/arch', key='arch')
 
         if xml.tgt.has('diet'):
+            if xml.has('target/pkg-blacklist/'):
+                blacklist = [p.et.text for p in xml.node('target/pkg-blacklist/target')]
             withdeps = []
             for p in pkglist:
-                deps = cache.get_dependencies(p)
+                if p in blacklist:
+                    continue
+                deps = cache.get_dependencies(p, blacklist)
                 withdeps += [d.name for d in deps]
                 withdeps += [p]
 
             pkglist = list(set(withdeps))
+        elif xml.has('target/pkg-blacklist/'):
+            logging.error(
+                'Impossible to blacklist packages outside of diet mode')
 
         file_list = []
         for line in pkglist:
@@ -133,6 +140,9 @@ def extract_target(src, xml, dst, cache):
         copy_filelist(src, file_list, dst)
     else:
         # first copy most diretories
+        if xml.has('target/pkg-blacklist/'):
+            logging.error(
+                'Impossible to blacklist packages outside of diet mode')
         for f in src.listdir():
             subprocess.call(['cp', '-a', '--reflink=auto', f, dst.fname('')])
 
