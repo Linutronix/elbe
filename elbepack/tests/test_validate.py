@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
-import itertools
 import os
 import socket
 
@@ -37,7 +36,7 @@ def _root_cause(e):
         e = e.__context__
 
 
-@pytest.mark.parametrize('f', itertools.chain(_test_cases(), _examples()))
+@pytest.mark.parametrize('f', [*_test_cases(), *_examples()])
 def test_validate(f, tmp_path):
     p = tmp_path / 'preprocessed.xml'
     try:
