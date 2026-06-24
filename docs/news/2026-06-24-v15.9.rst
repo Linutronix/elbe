@@ -1,0 +1,15 @@
+elbe 15.9 (2026-06-24)
+======================
+
+Features
+--------
+
+- (experimental) Add support for producing base images and using them to build extended images without relying on debootstrap.
+- Create filesystems without mounting where possible.
+
+
+Bugfixes
+--------
+
+- Do not use hardcoded umask for archive content in simple-validation-image-test.
+- Fix the docker container and migrate it to Debian trixie.
