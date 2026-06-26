@@ -18,7 +18,7 @@ def get_cmdlist():
     return [x for _, x, _ in pkgutil.iter_modules(elbepack.commands.__path__)]
 
 
-def _import_cmd_module(cmd):
+def import_cmd_module(cmd):
     return importlib.import_module('.' + cmd, elbepack.commands.__name__)
 
 
@@ -37,7 +37,7 @@ def main(argv=sys.argv):
     logging.basicConfig()
     logging.getLogger('suds').setLevel(logging.WARNING)
 
-    cmdmod = _import_cmd_module(args.cmd)
+    cmdmod = import_cmd_module(args.cmd)
 
     try:
         cmdmod.run_command(cmd_argv)
@@ -48,5 +48,5 @@ def main(argv=sys.argv):
 
 
 def run_elbe_subcommand(argv):
-    cmdmod = _import_cmd_module(argv[0])
+    cmdmod = import_cmd_module(argv[0])
     return cmdmod.run_command([os.fspath(arg) for arg in argv[1:]])
