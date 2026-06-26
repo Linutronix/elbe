@@ -6,6 +6,7 @@ Features
 
 - (experimental) Add support for producing base images and using them to build extended images without relying on debootstrap.
 - Create filesystems without mounting where possible.
+- Use Debian trixie in the initvm.
 
 
 Bugfixes
