@@ -35,7 +35,7 @@ def extract_cdrom(cdrom):
     if not tmp.isfile('source.xml'):
         raise CliError(140, textwrap.dedent("""
             Iso image does not contain a source.xml file.
-            This is not supported by 'elbe initvm'."""))
+            This is not supported."""))
 
     try:
         exml = ElbeXML(tmp.fname('source.xml'))
@@ -68,13 +68,13 @@ def add_submit_arguments(f):
 
     f = add_argument('--keep-files', action='store_true',
                      dest='keep_files', default=False,
-                     help="don't delete elbe project files in initvm")(f)
+                     help="don't delete elbe project files after build")(f)
 
     f = add_argument('--writeproject', dest='writeproject', default=None,
                      help='write project name to file')(f)
 
     f = add_argument('--build-sdk', dest='build_sdk', action='store_true', default=False,
-                     help="Also make 'initvm submit' build an SDK.")(f)
+                     help='Also build an SDK.')(f)
 
     f = add_argument('--base-image', dest='base_image',
                      help='Use a base image instead of debootstrap (experimental)')(f)
