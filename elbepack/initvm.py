@@ -15,44 +15,8 @@ import textwrap
 import time
 
 from elbepack.cli import CliError, with_cli_details
+from elbepack.soaphelper import is_soap_port_reachable, test_soap_communication
 from elbepack.treeutils import etree
-
-
-def _is_soap_port_reachable(control):
-    """
-    Test if a service is bound to the soap port.
-    """
-    try:
-        with socket.create_connection((control.host, control.port)):
-            pass
-    except Exception:
-        return False
-    return True
-
-
-def _test_soap_communication(control, sleep=10, wait=120):
-    """
-    Test communication with soap service.
-
-    In case of error, this fuction terminates the command with exit code 123.
-
-    Tests the soap service communication by requesting the list of projects.
-    If this works, the communication is ok and the service is up and seems to be healty.
-    """
-    stop = time.time() + wait
-    while True:
-        if _is_soap_port_reachable(control):
-            control.connect()
-            try:
-                control.list_projects()
-            except Exception:
-                pass
-            else:
-                break
-        if time.time() > stop:
-            raise CliError(123, f'Waited for {wait/60} minutes and the daemon is still not active.')
-        print('*', end='', flush=True)
-        time.sleep(sleep)
 
 
 def _run_and_detach(*args, **kwargs):
@@ -274,7 +238,7 @@ class LibvirtInitVM(_InitVM):
         else:
             raise CliError(124, 'Elbe initvm in bad state.')
 
-        _test_soap_communication(self.control)
+        test_soap_communication(self.control)
 
     def stop(self):
         domain = self._get_domain()
@@ -341,7 +305,7 @@ class QemuInitVM(_InitVM):
         initvmdir = self._get_initvmdir()
 
         # Test if there is already a process bound to the expected port.
-        if _is_soap_port_reachable(self.control):
+        if is_soap_port_reachable(self.control):
             if os.path.exists(os.path.join(initvmdir, 'qemu-monitor-socket')):
                 # If the unix socket exists, assume this VM is bound to the soap port.
                 print('This initvm is already running.')
@@ -357,11 +321,11 @@ class QemuInitVM(_InitVM):
                 raise with_cli_details(e, 211, 'Running QEMU failed')
 
             # This will sys.exit on error.
-            _test_soap_communication(self.control, sleep=1, wait=60)
+            test_soap_communication(self.control, sleep=1, wait=60)
             print('initvm started successfully')
 
     def ensure(self):
-        if not _is_soap_port_reachable(self.control):
+        if not is_soap_port_reachable(self.control):
             raise CliError(206, 'Elbe initvm in bad state.\nNo process found on soap port.')
 
     def stop(self):
@@ -389,7 +353,7 @@ class QemuInitVM(_InitVM):
             # Shutting down the VM will break the connection.
             pass
 
-        if _is_soap_port_reachable(self.control):
+        if is_soap_port_reachable(self.control):
             raise RuntimeError('stopping initvm failed')
 
     def attach(self):
@@ -413,7 +377,7 @@ class QemuInitVM(_InitVM):
                            cwd=initvmdir, check=False)
         else:
             msg = 'No unix socket found for the console of this vm!\nUnable to attach.'
-            if _is_soap_port_reachable(self.control):
+            if is_soap_port_reachable(self.control):
                 msg += '\nThere seems to be another initvm running. The soap port is in use.'
             raise CliError(212, msg)
 
