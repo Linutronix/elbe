@@ -73,10 +73,21 @@ These options are passed through to an implicit invocation of
 -p <proxy>, --proxy <proxy>
    add proxy to mirrors
 
+
+Container Usage
+===============
+
+Since the build command does not provide any isolation of the build
+environment itself, it is useful to encapsulate the build into a container.
+See :doc:`article-container` for how to prepare the container image and how
+to run builds in a rootful container.
+
+
 SEE ALSO
 ========
 
-``elbe-initvm(1)``, ``elbe-preprocess(1)``
+``elbe-initvm(1)``, ``elbe-preprocess(1)``,
+:doc:`article-container`
 
 ELBE
 ====
