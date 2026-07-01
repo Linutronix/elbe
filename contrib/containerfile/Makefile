@@ -27,13 +27,14 @@ build:
 	test -n "$(KVMGID)" || ( echo "detecting groupid of /dev/kvm failed" && false )
 	sed -e "s#@KVMGID@#$(KVMGID)#g" \
 	    -e "s#@USERID@#$(UID)#g" \
-	    Dockerfile.in > Dockerfile
+	    Containerfile.in > Containerfile
 	docker build --build-arg http_proxy=$(http_proxy) \
 	             --build-arg https_proxy=$(https_proxy) \
 	             --build-arg no_proxy=$(no_proxy) \
 	             --no-cache \
+                     -f Containerfile \
 	             -t $(IMAGENAME) .
-	rm Dockerfile
+	rm Containerfile
 
 start-devel:
 	docker ps | grep $(CONTAINERNAME)$$ || \

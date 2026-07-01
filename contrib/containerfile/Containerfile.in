@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2014-2015 Silvio Fricke <silvio.fricke@gmail.com>
 # SPDX-FileCopyrightText: 2018 Linutronix GmbH
 
-# This Dockerfile generate a image for the elbe buildsystem
+# This Containerfile generates an image for the elbe buildsystem
 FROM debian:trixie-slim
 
 USER root
