@@ -22,6 +22,7 @@ If you are new to ELBE, we recommend starting with the
    article-elbeoverview-en
    article-base-extended
    article-testing
+   article-container
    article-elbe-schema-reference
    elbevalidate
    news/index
