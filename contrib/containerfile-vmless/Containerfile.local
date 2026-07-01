@@ -1,0 +1,52 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Linutronix GmbH
+
+FROM debian:trixie-slim AS builder
+
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates
+
+WORKDIR /usr/src/elbe
+COPY . .
+
+RUN apt-get update -y && \
+    apt-get build-dep -y . && \
+    DEB_BUILD_OPTIONS=nocheck sphinxflags= dpkg-buildpackage -us -uc -b && \
+    mkdir -p /out && mv ../*.deb /out/
+
+FROM debian:trixie-slim
+
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates
+
+COPY --from=builder /out/*.deb /tmp/local-debs/
+RUN apt-get update -y && apt-get upgrade -y
+
+RUN apt-get install -y --no-install-recommends \
+        locales \
+        /tmp/local-debs/elbe-schema_*.deb \
+        /tmp/local-debs/python3-elbe-common_*.deb \
+        /tmp/local-debs/python3-elbe-bin_*.deb \
+        /tmp/local-debs/python3-elbe-buildenv_*.deb \
+        /tmp/local-debs/python3-elbe-daemon_*.deb \
+        /tmp/local-debs/python3-elbe-soap_*.deb \
+        /tmp/local-debs/python3-elbe-control_*.deb && \
+    rm -rf /tmp/local-debs && \
+    apt-get clean -y
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
+
+VOLUME [ "/build" ]
+
+USER root
+WORKDIR /build

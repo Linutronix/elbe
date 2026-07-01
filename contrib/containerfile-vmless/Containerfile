@@ -1,0 +1,31 @@
+# ELBE - Debian Based Embedded Rootfilesystem Builder
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Linutronix GmbH
+
+FROM debian:trixie-slim
+
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        elbe-archive-keyring
+
+RUN echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bullseye main' \
+        > /etc/apt/sources.list.d/elbe.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        python3-elbe-daemon \
+        python3-elbe-soap \
+        python3-elbe-control \
+        locales && \
+    apt-get clean -y
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
+
+VOLUME [ "/build" ]
+
+USER root
+WORKDIR /build
