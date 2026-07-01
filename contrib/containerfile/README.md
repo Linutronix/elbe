@@ -10,19 +10,21 @@
 [elbe][elb] is a debian based system to generate root-filesystems for embedded
 devices.
 
-[docker][doc] is an open-source project to easily create lightweight, portable,
-self-sufficient containers from any application.
+[docker][doc] and [podman][pod] are open-source projects to easily create
+lightweight, portable, self-sufficient containers from any application.
 
-This is a Dockerfile to generate a elbe development and runtime environment for
-systems other than debian based.
+This is a Containerfile to generate an ELBE development and runtime environment for
+systems that are not Debian based or where you prefer a clean separation.
 
 [doc]: https://www.docker.io "Docker Homepage"
+[pod]: https://podman.io     "Podman Homepage"
 [elb]: http://elbe-rfs.org   "ELBE Homepage"
 
 ## Dependencies
 
-You need docker installed, a running docker service and `make` installed.
-
+You need `podman` or `docker` installed, plus `make`. `podman` is used by
+default if it is found on the `PATH`; set `ENGINE=docker` to force Docker
+instead (e.g. `make ENGINE=docker build`).
 
 ## usage
 

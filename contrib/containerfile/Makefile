@@ -8,11 +8,14 @@ CONTAINERNAME ?= elbe-devel
 KVMGID ?= $(shell ls -n /dev/kvm | awk '{ print $$4 }')
 UID ?= $(shell id -u)
 
-# Common docker run options
-DOCKER_RUN_OPTS = \
+# Container engine to use. Defaults to podman if installed, else docker.
+ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docker)
+
+# Common container run options
+RUN_OPTS = \
 	--cap-add SYS_ADMIN \
-	--security-opt seccomp:unconfined \
-	--security-opt apparmor:unconfined \
+	--security-opt seccomp=unconfined \
+	--security-opt apparmor=unconfined \
 	--group-add kvm \
 	--device /dev/kvm \
 	--device /dev/fuse \
@@ -20,7 +23,16 @@ DOCKER_RUN_OPTS = \
 	--interactive \
 	--tty
 
-# docker commands
+# Only meaningful for podman: map the invoking host user to the same UID
+# inside the container's user namespace. Has no effect on docker. This is
+# in addition to, not a replacement for, the @USERID@/@KVMGID@ template
+# substitution below, which is still needed for the baked-in "elbe" user
+# and its kvm-elbe group membership.
+ifeq ($(ENGINE),podman)
+RUN_OPTS += --userns=keep-id
+endif
+
+# container commands
 build:
 	test -c /dev/kvm  || ( echo "/dev/kvm not found" && false )
 	test -c /dev/fuse || ( echo "/dev/fuse not found" && false )
@@ -28,7 +40,7 @@ build:
 	sed -e "s#@KVMGID@#$(KVMGID)#g" \
 	    -e "s#@USERID@#$(UID)#g" \
 	    Containerfile.in > Containerfile
-	docker build --build-arg http_proxy=$(http_proxy) \
+	$(ENGINE) build --build-arg http_proxy=$(http_proxy) \
 	             --build-arg https_proxy=$(https_proxy) \
 	             --build-arg no_proxy=$(no_proxy) \
 	             --no-cache \
@@ -37,34 +49,34 @@ build:
 	rm Containerfile
 
 start-devel:
-	docker ps | grep $(CONTAINERNAME)$$ || \
-	docker run --name $(CONTAINERNAME) \
+	$(ENGINE) ps | grep $(CONTAINERNAME)$$ || \
+	$(ENGINE) run --name $(CONTAINERNAME) \
 		-e http_proxy=$(http_proxy) \
 		-e https_proxy=$(https_proxy) \
 		-e no_proxy=$(no_proxy) \
 		-v $(realpath ../../.):/var/cache/elbe/devel -w /var/cache/elbe/devel \
-		$(DOCKER_RUN_OPTS) \
+		$(RUN_OPTS) \
 		$(IMAGENAME)
 
 start:
-	docker ps | grep $(CONTAINERNAME)$$ || \
-	docker run --name $(CONTAINERNAME) \
+	$(ENGINE) ps | grep $(CONTAINERNAME)$$ || \
+	$(ENGINE) run --name $(CONTAINERNAME) \
 		-e http_proxy=$(http_proxy) \
 		-e https_proxy=$(https_proxy) \
 		-e no_proxy=$(no_proxy) \
-		$(DOCKER_RUN_OPTS) \
+		$(RUN_OPTS) \
 		$(IMAGENAME)
 
 stop:
-	-docker stop $(CONTAINERNAME)
+	-$(ENGINE) stop $(CONTAINERNAME)
 
 stoprm: stop
-	-docker rm $(CONTAINERNAME)
+	-$(ENGINE) rm $(CONTAINERNAME)
 
 clean: stoprm
-	-docker rmi $(IMAGENAME)
+	-$(ENGINE) rmi $(IMAGENAME)
 
 connect: start
-	docker exec -tiu $(UID) $(CONTAINERNAME) /bin/bash
+	$(ENGINE) exec -tiu $(UID) $(CONTAINERNAME) /bin/bash
 
 .PHONY: build start stop stoprm clean connect
