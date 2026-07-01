@@ -62,7 +62,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args):
         raise with_cli_details(e, 133, textwrap.dedent(f"""
             elbe control wait_busy Failed
 
-            The project will not be deleted from the initvm.
+            The project will not be deleted.
             The files, that have been built, can be downloaded using:
             {prog} control get_files --output "{args.outdir}" "{prjdir}"
 
@@ -85,7 +85,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args):
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
             print('', file=sys.stderr)
-            print('The project will not be deleted from the initvm.',
+            print('The project will not be deleted.',
                   file=sys.stderr)
             print('The files, that have been built, can be downloaded using:',
                   file=sys.stderr)
@@ -169,7 +169,7 @@ def extract_cdrom(cdrom):
     if not tmp.isfile('source.xml'):
         raise CliError(140, textwrap.dedent("""
             Iso image does not contain a source.xml file.
-            This is not supported by 'elbe initvm'."""))
+            This is not supported."""))
 
     try:
         exml = ElbeXML(tmp.fname('source.xml'))
@@ -202,13 +202,13 @@ def add_submit_arguments(f):
 
     f = add_argument('--keep-files', action='store_true',
                      dest='keep_files', default=False,
-                     help="don't delete elbe project files in initvm")(f)
+                     help="don't delete elbe project files after build")(f)
 
     f = add_argument('--writeproject', dest='writeproject', default=None,
                      help='write project name to file')(f)
 
     f = add_argument('--build-sdk', dest='build_sdk', action='store_true', default=False,
-                     help="Also make 'initvm submit' build an SDK.")(f)
+                     help='Also build an SDK.')(f)
 
     f = add_argument('--base-image', dest='base_image',
                      help='Use a base image instead of debootstrap (experimental)')(f)
