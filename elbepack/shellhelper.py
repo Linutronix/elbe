@@ -10,6 +10,7 @@ import shlex
 import subprocess
 
 from elbepack.log import async_logging_ctx
+from elbepack.unshare import run_in_chroot
 
 
 """
@@ -151,17 +152,18 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     subprocess.CalledProcessError: ...
     >>> cleanup()
     """
-
-    new_env = {'LANG': 'C',
-               'LANGUAGE': 'C',
-               'LC_ALL': 'C'}
-    if env_add:
-        new_env.update(env_add)
-
     if _is_shell_cmd(cmd):
-        do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
+        cmd = ['/bin/sh', '-c', cmd]
     else:
-        do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
+        cmd = list(cmd)
+
+    def _do_cmd_in_chroot():
+        do(cmd, **kwargs)
+
+    try:
+        run_in_chroot(directory, _do_cmd_in_chroot, env_add=env_add)
+    except OSError as e:
+        raise subprocess.CalledProcessError(1, cmd) from e
 
 
 def env_add(d):
