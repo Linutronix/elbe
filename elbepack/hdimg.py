@@ -9,6 +9,7 @@ import os
 import pathlib
 import shlex
 import subprocess
+import tempfile
 from pathlib import Path
 
 import parted
@@ -303,19 +304,31 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     grub.add_fs_entry(entry)
 
-    with entry.losetup() as loopdev:
-        filesystem_tree = os.path.join(target, 'filesystems', entry.id) + '/.'
-        needs_cp = entry.mkfs(loopdev, filesystem_tree)
+    filesystem_tree = os.path.join(target, 'filesystems', entry.id) + '/.'
 
-        _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
+    part_image = tempfile.NamedTemporaryFile(dir=target, delete=False)
+    try:
+        part_image_name = part_image.name
+        part_image.close()
+        do(['truncate', '-s', str(entry.size), part_image_name])
 
-        mount_path = Path(target, 'imagemnt')
+        needs_cp = entry.mkfs(part_image_name, filesystem_tree)
 
-        if entry.fs_path_commands or needs_cp:
-            with mount(loopdev, mount_path, options=entry.options, force_writable=True):
-                _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-                if needs_cp:
-                    do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
+        if needs_cp or entry.fs_path_commands or entry.fs_device_commands:
+            with losetup(part_image_name) as loopdev:
+                _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
+
+                mount_path = Path(target, 'imagemnt')
+                if entry.fs_path_commands or needs_cp:
+                    with mount(loopdev, mount_path, options=entry.options, force_writable=True):
+                        _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
+                        if needs_cp:
+                            do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
+
+        dd({'if': part_image_name, 'of': entry.filename, 'bs': 512,
+            'seek': entry.offset // 512, 'conv': 'notrunc'})
+    finally:
+        os.unlink(part_image_name)
 
     return ppart
 
