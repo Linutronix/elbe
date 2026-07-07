@@ -15,6 +15,7 @@ from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 from elbepack.treeutils import strip_leading_whitespace_from_lines
+from elbepack.unshare import run_unshared
 
 
 def create_apt_prefs(xml, rfs):
@@ -290,7 +291,7 @@ class BuildEnv:
             cmd, keyring = self._strapcmd(arch, suite, cross, mmdebstrap)
             if keyring and self.xml.has('project/mirror/cdrom'):
                 self.convert_asc_to_gpg('/cdrom/targetrepo/repo.pub', '/elbe.keyring')
-            do(cmd)
+            run_unshared(do, cmd)
 
             if cross and not mmdebstrap:
                 ui = '/usr/share/elbe/qemu-elbe/' + self.xml.defs['userinterpr']
