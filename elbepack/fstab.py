@@ -4,10 +4,7 @@
 # SPDX-FileCopyrightText: 2015 Matthias Buehler <matthias.buehler@de.trumpf.com>
 
 import os
-import subprocess
-import time
 
-from elbepack.imgutils import losetup
 from elbepack.shellhelper import do
 
 
@@ -94,19 +91,6 @@ class hdpart:
         self.filename = disk.device.path
         self.partnum = ppart.number
         self.number = f'{disk.type}{ppart.number}'
-
-    def losetup(self):
-        while True:
-            try:
-                return losetup(self.filename, [
-                    '--offset', str(self.offset),
-                    '--sizelimit', str(self.size),
-                ])
-            except subprocess.CalledProcessError as e:
-                if e.returncode != 1:
-                    raise
-                do('sync')
-                time.sleep(1)
 
 
 class fstabentry(hdpart):
