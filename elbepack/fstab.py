@@ -156,6 +156,14 @@ class fstabentry(hdpart):
             return ['-l', self.label]
         return []
 
+    @staticmethod
+    def _vfat_populate(target, filesystem_tree):
+        src_dir = filesystem_tree.removesuffix('.')
+        entries = sorted(os.listdir(src_dir))
+        if entries:
+            do(['mcopy', '-sm', '-i', target,
+                *(os.path.join(src_dir, e) for e in entries), '::'])
+
     def mkfs(self, target, filesystem_tree):
         mkfs_dict = {
             'squashfs': 'mksquashfs',
@@ -170,6 +178,7 @@ class fstabentry(hdpart):
         }
         mkfs_fs_copy_extra_cmd_dict = {
             'f2fs': ['sload.f2fs', '-f', filesystem_tree, target],
+            'vfat': self._vfat_populate,
         }
 
         mkfs_supports_fs_copy = self.fstype in mkfs_fs_copy_argument_dict or \
@@ -180,6 +189,10 @@ class fstabentry(hdpart):
         do([mkfs, *self.mkfsopts, *self._get_label_opt(), *mkfs_fs_copy_argument])
 
         if self.fstype in mkfs_fs_copy_extra_cmd_dict:
-            do(mkfs_fs_copy_extra_cmd_dict[self.fstype])
+            extra_cmd = mkfs_fs_copy_extra_cmd_dict[self.fstype]
+            if callable(extra_cmd):
+                extra_cmd(target, filesystem_tree)
+            else:
+                do(extra_cmd)
 
         return not mkfs_supports_fs_copy
