@@ -157,6 +157,8 @@ class fstabentry(hdpart):
         return []
 
     def mkfs(self, target, filesystem_tree):
+        mkfs_dict = {
+        }
         mkfs_fs_copy_argument_dict = {
             'ext2': ['-d', filesystem_tree, target],
             'ext3': ['-d', filesystem_tree, target],
@@ -172,8 +174,9 @@ class fstabentry(hdpart):
         mkfs_supports_fs_copy = self.fstype in mkfs_fs_copy_argument_dict or \
             self.fstype in mkfs_fs_copy_extra_cmd_dict
 
+        mkfs = mkfs_dict.get(self.fstype, f'mkfs.{self.fstype}')
         mkfs_fs_copy_argument = mkfs_fs_copy_argument_dict.get(self.fstype, [target])
-        do([f'mkfs.{self.fstype}', *self.mkfsopts, *self._get_label_opt(), *mkfs_fs_copy_argument])
+        do([mkfs, *self.mkfsopts, *self._get_label_opt(), *mkfs_fs_copy_argument])
 
         if self.fstype in mkfs_fs_copy_extra_cmd_dict:
             do(mkfs_fs_copy_extra_cmd_dict[self.fstype])
