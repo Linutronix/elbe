@@ -2,72 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2014, 2017-2018 Linutronix GmbH
 
-import importlib
-import os
 import pathlib
-import struct
 import subprocess
 import tempfile
 import textwrap
 
-import pytest
-
-
-@pytest.fixture
-def elbevalidate():
-    for image in pathlib.Path('/boot').glob('vmlinuz-*'):
-        if not os.access(image, os.R_OK):
-            pytest.skip(f'Kernel image {image} is not readable')
-
-    try:
-        return importlib.import_module('elbevalidate', package=__name__)
-    except ModuleNotFoundError as e:
-        if e.name == 'guestfs':
-            pytest.skip(f'module {e.name} not found')
-        else:
-            raise
-
-
-def _round_to(n, g):
-    return n + (g - (n % g))
-
-
-def _make_disk(path, parts):
-    """ Create a basic MBR partition table. """
-
-    if len(parts) > 4:
-        raise ValueError(parts)
-
-    data_offset = 2 * 1024 * 1024  # 2MiB
-
-    header = bytearray(512)
-    current_data = data_offset
-
-    for i, part in enumerate(parts):
-        partbytes = bytearray(16)
-
-        rounded_size = _round_to(len(part), 512)
-
-        partbytes[0x04] = 0x83
-        partbytes[0x08:0x0C] = struct.pack('<I', current_data // 512)
-        partbytes[0x0C:0x10] = struct.pack('<I', rounded_size // 512)
-
-        part_start = 0x01BE + 16 * i
-        header[part_start:part_start + 16] = partbytes
-
-        current_data += rounded_size
-
-    header[0x01FE] = 0x55
-    header[0x01FF] = 0xAA
-
-    with path.open('wb') as f:
-        f.write(header)
-        f.write(b'\x00' * (data_offset - len(header)))
-
-        for part in parts:
-            rounded_size = _round_to(len(part), 512)
-            f.write(part)
-            f.write(bytearray(rounded_size - len(part)))
+from elbepack.tests.test_helpers import make_disk
 
 
 def _make_partition(path):
@@ -109,7 +49,7 @@ def test_elbevalidate(elbevalidate, tmp_path):
     disk_file = tmp_path / 'disk.img'
     part1 = _make_partition(part1_dir)
     part2 = _make_partition(part2_dir)
-    _make_disk(disk_file, [part1, part2])
+    make_disk(disk_file, [part1, part2])
 
     with elbevalidate.Image.from_file(disk_file) as image:
 
