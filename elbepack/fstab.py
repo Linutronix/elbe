@@ -158,6 +158,7 @@ class fstabentry(hdpart):
 
     def mkfs(self, target, filesystem_tree):
         mkfs_dict = {
+            'squashfs': 'mksquashfs',
         }
         mkfs_fs_copy_argument_dict = {
             'ext2': ['-d', filesystem_tree, target],
@@ -166,6 +167,7 @@ class fstabentry(hdpart):
             'btrfs': ['-r', filesystem_tree, target],
             'xfs': ['-p', filesystem_tree, target],
             'erofs': [target, filesystem_tree],
+            'squashfs': [filesystem_tree, target, '-noappend'],
         }
         mkfs_fs_copy_extra_cmd_dict = {
             'f2fs': ['sload.f2fs', '-f', filesystem_tree, target],

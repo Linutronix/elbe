@@ -2066,6 +2066,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
       <enumeration value="devtmpfs" />
       <enumeration value="swap" />
       <enumeration value="erofs" />
+      <enumeration value="squashfs" />
     </restriction>
   </simpleType>
 
