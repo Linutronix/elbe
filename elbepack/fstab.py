@@ -163,6 +163,7 @@ class fstabentry(hdpart):
             'ext4': ['-d', filesystem_tree, target],
             'btrfs': ['-r', filesystem_tree, target],
             'xfs': ['-p', filesystem_tree, target],
+            'erofs': [target, filesystem_tree],
         }
         mkfs_fs_copy_extra_cmd_dict = {
             'f2fs': ['sload.f2fs', '-f', filesystem_tree, target],
