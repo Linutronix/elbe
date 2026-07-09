@@ -37,8 +37,6 @@ SPDX-FileCopyrightText: Linutronix GmbH
 
 	</project>
 
-	<archivedir>simple-validation-image-archive1</archivedir>
-
 	<target>
                 <hostname>validation-image</hostname>
                 <package>
