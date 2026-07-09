@@ -157,3 +157,18 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
         'libgpio1-dbgsym_3.0.0_amd64.deb\n'
         'libgpio1_3.0.0_amd64.deb\n'
     )
+
+
+@pytest.mark.slow
+def test_base_extended_build(initvm, tmp_path):
+    tests_dir = pathlib.Path('tests') / 'base-extended' / 'simple-validation'
+    base_xml_path = tests_dir / 'image-base.xml'
+    extended_xml_path = tests_dir / 'image-extended.xml'
+    base_build = tmp_path / 'base-build'
+    base_build_image = base_build / 'base-rootfs.tgz'
+    extended_build = tmp_path / 'extended-build'
+
+    initvm('submit', '--output', base_build, '--skip-build-bin', '--skip-build-sources',
+           base_xml_path)
+    initvm('submit', '--output', extended_build, '--skip-build-bin', '--skip-build-sources',
+           '--base-image', base_build_image, extended_xml_path)
