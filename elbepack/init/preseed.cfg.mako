@@ -43,6 +43,12 @@ d-i partman/choose_partition select Finish partitioning and write changes to dis
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
 d-i partman-basicfilesystems/no_swap boolean false
+d-i partman-basicfilesystems/choose_label string gpt
+d-i partman-basicfilesystems/default_label string gpt
+d-i partman-partitioning/choose_label string gpt
+d-i partman-partitioning/default_label string gpt
+d-i partman/choose_label string gpt
+d-i partman/default_label string gpt
 
 d-i base-installer/install-recommends boolean false
 
