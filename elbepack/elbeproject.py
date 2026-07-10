@@ -188,9 +188,6 @@ class ElbeProject:
         self.sysrootenv = None
         do(['rm', '-rf', self.sysrootpath])
 
-        # same for host_sysroot instance recreate it in any case
-        self.host_sysrootenv = None
-
     def build_chroottarball(self):
         do(['tar', 'cJf', self.builddir + '/chroot.tar.xz',
             '--exclude=./tmp/*', '--exclude=./dev/*',
@@ -339,20 +336,19 @@ class ElbeProject:
         do(['rm', '-rf', hostsysrootpath])
         do(['mkdir', hostsysrootpath])
 
-        self.host_sysrootenv = BuildEnv(self.xml,
-                                        hostsysrootpath,
-                                        clean=True,
-                                        arch='amd64',
-                                        hostsysroot=True)
+        host_sysrootenv = BuildEnv(self.xml,
+                                   hostsysrootpath,
+                                   clean=True,
+                                   arch='amd64',
+                                   hostsysroot=True)
         # Import keyring
-        self.host_sysrootenv.import_keys()
+        host_sysrootenv.import_keys()
         logging.info('Keys imported')
 
-        with self.host_sysrootenv:
+        with host_sysrootenv:
 
             try:
-                cache = self.get_rpcaptcache(env=self.host_sysrootenv,
-                                             norecommend=True)
+                cache = self.get_rpcaptcache(env=host_sysrootenv, norecommend=True)
                 cache.update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
@@ -373,7 +369,7 @@ class ElbeProject:
                 logging.exception('Commiting changes failed')
                 raise AptCacheCommitError(str(e))
 
-            self.gen_licenses('sysroot-host', self.host_sysrootenv,
+            self.gen_licenses('sysroot-host', host_sysrootenv,
                               [p.name for p in cache.get_installed_pkgs()])
 
         # This is just a sysroot, some directories
@@ -381,18 +377,18 @@ class ElbeProject:
         #
         # This can move into finetuning in the
         # second implementation step.
-        self.host_sysrootenv.rfs.rmtree('/boot')
-        self.host_sysrootenv.rfs.rmtree('/dev')
-        self.host_sysrootenv.rfs.rmtree('/etc')
-        self.host_sysrootenv.rfs.rmtree('/home')
-        self.host_sysrootenv.rfs.rmtree('/media')
-        self.host_sysrootenv.rfs.rmtree('/mnt')
-        self.host_sysrootenv.rfs.rmtree('/proc')
-        self.host_sysrootenv.rfs.rmtree('/root')
-        self.host_sysrootenv.rfs.rmtree('/run')
-        self.host_sysrootenv.rfs.rmtree('/sys')
-        self.host_sysrootenv.rfs.rmtree('/tmp')
-        self.host_sysrootenv.rfs.rmtree('/var')
+        host_sysrootenv.rfs.rmtree('/boot')
+        host_sysrootenv.rfs.rmtree('/dev')
+        host_sysrootenv.rfs.rmtree('/etc')
+        host_sysrootenv.rfs.rmtree('/home')
+        host_sysrootenv.rfs.rmtree('/media')
+        host_sysrootenv.rfs.rmtree('/mnt')
+        host_sysrootenv.rfs.rmtree('/proc')
+        host_sysrootenv.rfs.rmtree('/root')
+        host_sysrootenv.rfs.rmtree('/run')
+        host_sysrootenv.rfs.rmtree('/sys')
+        host_sysrootenv.rfs.rmtree('/tmp')
+        host_sysrootenv.rfs.rmtree('/var')
 
     def build_sdk(self):
         triplet = self.xml.defs['triplet']
