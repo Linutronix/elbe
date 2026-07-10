@@ -24,6 +24,7 @@ from elbepack.aptprogress import (
     ElbeOpProgress,
 )
 from elbepack.log import async_logging
+from elbepack.unshare import unshare_inplace
 
 
 class MyMan(BaseManager):
@@ -48,11 +49,16 @@ class MyMan(BaseManager):
         sys.__stdout__ = sys.stdout  # type: ignore
         sys.__stderr__ = sys.stderr  # type: ignore
 
+    @staticmethod
+    def _init_worker(w):
+        unshare_inplace()
+        MyMan.redirect_outputs(w)
+
     def start(self):
         """Redirect outputs of the process to an async logging thread"""
         alog = async_logging()
         self.log_finalizer = Finalize(self, alog.shutdown)
-        super().start(MyMan.redirect_outputs, [alog.write_fd])
+        super().start(MyMan._init_worker, [alog.write_fd])
 
 
 class InChRootObject:
