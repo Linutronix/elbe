@@ -4,6 +4,7 @@
 
 import base64
 import errno
+import json
 import logging
 import os
 import shlex
@@ -17,7 +18,7 @@ from gpg.constants import PROTOCOL_OpenPGP
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
-from elbepack.shellhelper import chroot, do
+from elbepack.shellhelper import ELBE_LOGGING, chroot, do, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
@@ -64,7 +65,7 @@ class ImageFinetuningAction(FinetuningAction):
         raise NotImplementedError(
             f'<{self.tag}> may only be used in <image-finetuning>')
 
-    def execute_img(self, _buildenv, _target, _builddir, _loop_dev):
+    def execute_img(self, _buildenv, _target, _builddir, *, device=None, image=None):
         raise NotImplementedError('execute_img() not implemented')
 
 
@@ -303,12 +304,14 @@ class RawCmdAction(FinetuningAction):
 @_register_action('command')
 class CmdAction(ImageFinetuningAction):
 
-    def execute_img(self, _buildenv, _target, builddir, loop_dev):
+    def execute_img(self, _buildenv, _target, builddir, *, device=None, image=None):
+        if device is None:
+            raise ValueError('CmdAction requires a device')
 
         script = strip_leading_whitespace_from_lines(self.node.et.text)
 
         mnt = os.path.join(builddir, 'imagemnt')
-        dev = f"{loop_dev}p{self.node.et.attrib['part']}"
+        dev = f"{device}p{self.node.et.attrib['part']}"
 
         if self.node.bool_attr('nomount'):
             do(['/bin/sh'], input=script.encode('ascii'),
@@ -450,8 +453,33 @@ class RmArtifactAction(FinetuningAction):
                 f"Artifact {self.node.et.text} doesn't exist")
 
 
+def _get_partition_info(image_path, part_nr):
+    result = run(['sfdisk', '--dump', '--json', image_path],
+                 stdout=subprocess.PIPE, stderr=ELBE_LOGGING)
+
+    data = json.loads(result.stdout.decode('ascii'))
+
+    partitiontable = data.get('partitiontable', {})
+    partitions = partitiontable.get('partitions', [])
+
+    try:
+        # Partition numbers of loop devices are 1-indexed, i.e. /dev/loop0p1
+        # is the first partition of /dev/loop0. So keep the same interface
+        # when accessing the index in the array.
+        idx = int(part_nr) - 1
+    except (ValueError, TypeError):
+        raise FinetuningException(f'Invalid partition number: {part_nr}')
+
+    if idx < 0 or idx >= len(partitions):
+        raise FinetuningException(f'Partition {part_nr} not found in image {image_path}')
+
+    part = partitions[idx]
+    return part.get('start', 0), part.get('size', 0), partitiontable.get('sectorsize', 512)
+
+
 @_register_action('losetup')
 class LosetupAction(FinetuningAction):
+    needs_loop_device = ('copy_from_partition', 'copy_to_partition', 'partition-command')
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<losetup> may only be '
@@ -461,10 +489,17 @@ class LosetupAction(FinetuningAction):
         imgname = self.node.et.attrib['img']
         imgpath = os.path.join(builddir, imgname)
 
-        with losetup(imgpath) as loop_dev:
+        needs_loop = any(child.tag in self.needs_loop_device for child in self.node)
+
+        if needs_loop:
+            with losetup(imgpath) as loop_dev:
+                for i in self.node:
+                    action = _action_for_node(i)
+                    action.execute_img(buildenv, target, builddir, device=loop_dev)
+        else:
             for i in self.node:
                 action = _action_for_node(i)
-                action.execute_img(buildenv, target, builddir, loop_dev)
+                action.execute_img(buildenv, target, builddir, image=imgpath)
 
 
 @_register_action('img_convert')
@@ -519,11 +554,18 @@ class ExtractPartitionAction(ImageFinetuningAction):
         raise NotImplementedError('<extract_partition> may only be '
                                   'used in <losetup>')
 
-    def execute_img(self, _buildenv, target, builddir, loop_dev):
+    def execute_img(self, _buildenv, target, builddir, *, device=None, image=None):
         part_nr = self.node.et.attrib['part']
         imgname = os.path.join(builddir, self.node.et.text)
 
-        do(['dd', f'if={loop_dev}p{part_nr}', f'of={imgname}'])
+        if device is not None:
+            do(['dd', f'if={device}p{part_nr}', f'of={imgname}'])
+        elif image is not None:
+            start_sector, size_sectors, sectorsize = _get_partition_info(image, part_nr)
+            do(['dd', f'if={image}', f'of={imgname}',
+                f'bs={sectorsize}', f'skip={start_sector}', f'count={size_sectors}'])
+        else:
+            raise ValueError('Must pass either device or image')
 
         target.images.append(self.node.et.text)
         target.image_packers[self.node.et.text] = default_packer
@@ -536,14 +578,17 @@ class CopyFromPartition(ImageFinetuningAction):
         raise NotImplementedError('<copy_from_partition> may only be '
                                   'used in <losetup>')
 
-    def execute_img(self, _buildenv, target, builddir, loop_dev):
+    def execute_img(self, _buildenv, target, builddir, *, device=None, image=None):
+        if device is None:
+            raise ValueError('CopyFromPartition requires a device')
+
         part_nr = self.node.et.attrib['part']
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
-        device = f'{loop_dev}p{part_nr}'
+        device_with_partition = f'{device}p{part_nr}'
 
-        with mount(device, img_mnt):
+        with mount(device_with_partition, img_mnt):
             mnt_fs = Filesystem(img_mnt)
             fname = mnt_fs.glob(self.node.et.text)
 
@@ -569,14 +614,17 @@ class CopyToPartition(ImageFinetuningAction):
         raise NotImplementedError('<copy_to_partition> may only be '
                                   'used in <losetup>')
 
-    def execute_img(self, _buildenv, _target, builddir, loop_dev):
+    def execute_img(self, _buildenv, _target, builddir, *, device=None, image=None):
+        if device is None:
+            raise ValueError('CopyToPartition requires a device')
+
         part_nr = self.node.et.attrib['part']
         aname = self.node.et.attrib['artifact']
 
         img_mnt = os.path.join(builddir, 'imagemnt')
-        device = f'{loop_dev}p{part_nr}'
+        device_with_partition = f'{device}p{part_nr}'
 
-        with mount(device, img_mnt):
+        with mount(device_with_partition, img_mnt):
             mnt_fs = Filesystem(img_mnt)
             fname = mnt_fs.fname(self.node.et.text)
             do(['cp', '-av', os.path.join(builddir, aname), fname])
@@ -589,11 +637,18 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         raise NotImplementedError('<set_partition_type> may only be '
                                   'used in <losetup>')
 
-    def execute_img(self, _buildenv, _target, _builddir, loop_dev):
+    def execute_img(self, _buildenv, _target, _builddir, *, device=None, image=None):
         part_nr = self.node.et.attrib['part']
         part_type = self.node.et.attrib['type']
 
-        do(['sfdisk', '--lock', '--part-type', loop_dev, part_nr, part_type])
+        if device is not None:
+            source = device
+        elif image is not None:
+            source = image
+        else:
+            raise ValueError('Must pass either device or image')
+
+        do(['sfdisk', '--lock', '--part-type', source, part_nr, part_type])
 
 
 @_register_action('rm_apt_source')
