@@ -69,6 +69,9 @@ OPTIONS
 --qemu
    Use QEMU directly instead of libvirt.
 
+--base-image <base-image-file>
+   Use a base image instead of debootstrap as the starting point for a rootfilesystem (experimental).
+
 XML OPTIONS
 ===========
 
