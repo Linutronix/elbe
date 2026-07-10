@@ -185,7 +185,6 @@ class ElbeProject:
         # don't create sysroot instance, it should be built from scratch
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
-        self.sysrootenv = None
         do(['rm', '-rf', self.sysrootpath])
 
     def build_chroottarball(self):
@@ -254,18 +253,16 @@ class ElbeProject:
         do(['rm', '-rf', self.sysrootpath])
         do(['mkdir', self.sysrootpath])
 
-        self.sysrootenv = BuildEnv(self.xml,
-                                   self.sysrootpath,
-                                   clean=True)
+        sysrootenv = BuildEnv(self.xml, self.sysrootpath, clean=True)
         # Import keyring
-        self.sysrootenv.import_keys()
+        sysrootenv.import_keys()
         logging.info('Keys imported')
 
         self.xml.add_target_package('libc-bin')
         self.xml.add_target_package('libc6-dbg')
         self.xml.add_target_package('gdbserver')
 
-        self.install_packages(self.sysrootenv, buildenv=False)
+        self.install_packages(sysrootenv, buildenv=False)
 
         # ignore packages from debootstrap
         tpkgs = self.xml.get_target_packages()
@@ -276,9 +273,9 @@ class ElbeProject:
             ignore_dev_pkgs = [p.et.text for p in self.xml.node(
                 'target/pkg-blacklist/sysroot')]
 
-        with self.sysrootenv:
+        with sysrootenv:
             try:
-                cache = self.get_rpcaptcache(env=self.sysrootenv)
+                cache = self.get_rpcaptcache(env=sysrootenv)
                 cache.update()
             except Exception as e:
                 raise AptCacheUpdateError(e)
@@ -294,17 +291,17 @@ class ElbeProject:
                 logging.exception('Commiting changes failed')
                 raise AptCacheCommitError(str(e))
 
-            self.gen_licenses('sysroot-target', self.sysrootenv,
+            self.gen_licenses('sysroot-target', sysrootenv,
                               [p.name for p in cache.get_installed_pkgs()])
 
         try:
-            self.sysrootenv.rfs.dump_elbeversion(self.xml)
+            sysrootenv.rfs.dump_elbeversion(self.xml)
         except IOError:
             logging.exception('Dump elbeversion into sysroot failed')
 
         sysrootfilelist = os.path.join(self.builddir, 'sysroot-filelist')
 
-        with self.sysrootenv.rfs:
+        with sysrootenv.rfs:
             chroot(self.sysrootpath, ['/usr/bin/symlinks', '-cr', '/usr/lib'])
             chroot(self.sysrootpath, ['/usr/bin/symlinks', '-cr', '/usr/lib64'])
 
@@ -946,7 +943,6 @@ class ElbeProject:
         # don't create sysroot instance, it should be built from scratch
         # each time, because the pkglist including the -dev packages is
         # tracked nowhere.
-        self.sysrootenv = None
         do(['rm', '-rf', self.sysrootpath])
 
         self.xml = newxml
