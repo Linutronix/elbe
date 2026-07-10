@@ -36,7 +36,7 @@ d-i partman-auto/expert_recipe string buildenv :: \
 %if swap != 0:
   ${swap} ${swap} ${swap} linux-swap $primary{ } method{ swap } format{ } . \
 %endif
-256 1000000 -1 ext3 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext3 } mountpoint{ / } .
+256 1000000 -1 ext4 $primary{ } $bootable{ } method{ format } format{ } use_filesystem{ } filesystem{ ext4 } mountpoint{ / } .
 d-i partman/partitioning/confirm_write_new_label boolean true
 d-i partman/confirm_write_new_label boolean true
 d-i partman/choose_partition select Finish partitioning and write changes to disk
