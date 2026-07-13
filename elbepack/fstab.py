@@ -165,7 +165,6 @@ class fstabentry(hdpart):
             'ext3': ['-d', filesystem_tree, target],
             'ext4': ['-d', filesystem_tree, target],
             'btrfs': ['-r', filesystem_tree, target],
-            'xfs': ['-p', filesystem_tree, target],
             'erofs': [target, filesystem_tree],
             'squashfs': [filesystem_tree, target, '-noappend'],
         }
