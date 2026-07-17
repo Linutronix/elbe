@@ -6,10 +6,16 @@ import os
 import pathlib
 import shutil
 import subprocess
+import warnings
 
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
-from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
+
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore',
+                            message=r'builtin type [Ss]wig\w+ has no __module__ attribute',
+                            category=DeprecationWarning)
+    from gpg import core
+    from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
+    from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
 
 from elbepack.shellhelper import env_add
 
