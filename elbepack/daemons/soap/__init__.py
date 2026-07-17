@@ -32,10 +32,19 @@ class EsoapApp(Application):
         self.pm.stop()
 
 
+class StopableWsgiApplication(WsgiApplication):
+    def __init__(self, app):
+        self._app = app
+        super().__init__(app)
+
+    def stop(self):
+        self._app.stop()
+
+
 def get_app():
 
     app = EsoapApp([ESoap], 'soap',
                    in_protocol=Soap11(validator='lxml'),
                    out_protocol=Soap11())
 
-    return WsgiApplication(app)
+    return StopableWsgiApplication(app)
