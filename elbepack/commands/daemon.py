@@ -41,6 +41,10 @@ class _ElbeWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
         pass  # Noop
 
 
+class _ReusePortWSGIServer(wsgiref.simple_server.WSGIServer):
+    allow_reuse_address = True
+
+
 def get_daemonlist():
     return [x for _, x, _ in iter_modules(elbepack.daemons.__path__)]
 
@@ -92,6 +96,7 @@ def run_command(argv):
 
         with wsgiref.simple_server.make_server(
                 args.host, args.port, dispatcher,
+                server_class=_ReusePortWSGIServer,
                 handler_class=_ElbeWSGIRequestHandler,
         ) as httpd:
             _sd_notify(b'READY=1\n'
