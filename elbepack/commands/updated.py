@@ -7,9 +7,12 @@ import argparse
 import os
 import signal
 import sys
+import warnings
 from wsgiref.simple_server import make_server
 
-from spyne.protocol.soap import Soap11
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore', "'cgi' is deprecated", DeprecationWarning)
+    from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
 from elbepack.config import add_argument_soaptimeout
