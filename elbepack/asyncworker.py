@@ -58,6 +58,9 @@ class BuildSysrootJob(AsyncWorkerJob):
 
 
 class BuildSDKJob(AsyncWorkerJob):
+    def __init__(self, project, exclude_initvm_pkgs=False):
+        super().__init__(project)
+        self.exclude_initvm_pkgs = exclude_initvm_pkgs
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -70,7 +73,7 @@ class BuildSDKJob(AsyncWorkerJob):
         success = self.build_failed
         try:
             logging.info('Build SDK started')
-            self.project.build_sdk()
+            self.project.build_sdk(exclude_initvm_pkgs=self.exclude_initvm_pkgs)
         except Exception:
             logging.exception('Build SDK Failed')
         else:
@@ -143,12 +146,14 @@ class BuildChrootTarJob(AsyncWorkerJob):
 
 
 class BuildJob(AsyncWorkerJob):
-    def __init__(self, project, build_bin, build_src, skip_pbuilder, base_image_path):
+    def __init__(self, project, build_bin, build_src, skip_pbuilder,
+                 base_image_path, exclude_initvm_pkgs=False):
         super().__init__(project)
         self.build_bin = build_bin
         self.build_src = build_src
         self.skip_pbuilder = skip_pbuilder
         self.base_image_path = base_image_path
+        self.exclude_initvm_pkgs = exclude_initvm_pkgs
 
     def enqueue(self, queue, db):
         db.set_busy(self.project.builddir,
@@ -166,7 +171,8 @@ class BuildJob(AsyncWorkerJob):
                                build_bin=self.build_bin,
                                build_sources=self.build_src,
                                skip_pbuild=self.skip_pbuilder,
-                               base_image_path=self.base_image_path)
+                               base_image_path=self.base_image_path,
+                               exclude_initvm_pkgs=self.exclude_initvm_pkgs)
         except (DebootstrapException, AptCacheCommitError, AptCacheUpdateError) as e:
             if isinstance(e, DebootstrapException):
                 err = 'Debootstrap failed to install the base rootfilesystem.'

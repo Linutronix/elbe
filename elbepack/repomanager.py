@@ -77,6 +77,8 @@ class RepoBase:
             self.attrs = [repo_attr]
         elif init_attr is not None:
             self.attrs = [init_attr]
+        else:
+            self.attrs = []
 
         self.origin = origin
         self.description = description
@@ -86,10 +88,16 @@ class RepoBase:
         # if repo exists retrive the keyid otherwise
         # generate a new key and generate repository config
         if self.volume.is_dir():
-            repo_conf = self.volume.joinpath('conf', 'distributions').read_text()
-            for lic in repo_conf.splitlines():
-                if lic.startswith('SignWith'):
-                    self.keyid = lic.split()[1]
+            conf_dist = self.volume.joinpath('conf', 'distributions')
+            if conf_dist.is_file():
+                repo_conf = conf_dist.read_text()
+                for lic in repo_conf.splitlines():
+                    if lic.startswith('SignWith'):
+                        self.keyid = lic.split()[1]
+            else:
+                # Directory exists but no repo config, so treat as new repository
+                self.keyid = generate_elbe_internal_key()
+                self.gen_repo_conf()
         else:
             self.keyid = generate_elbe_internal_key()
             self.gen_repo_conf()
@@ -360,9 +368,12 @@ class CdromInitRepo(RepoBase):
     def __init__(self, init_codename, path,
                  mirror='http://deb.debian.org/debian'):
 
-        init_attrs = RepoAttributes(
-            init_codename, 'amd64', [
-                'main', 'main/debian-installer'], mirror)
+        if init_codename is not None:
+            init_attrs = RepoAttributes(
+                init_codename, 'amd64', [
+                    'main', 'main/debian-installer'], mirror)
+        else:
+            init_attrs = None
 
         super().__init__(path, None, init_attrs, 'Elbe', 'Elbe InitVM Cdrom Repo')
 

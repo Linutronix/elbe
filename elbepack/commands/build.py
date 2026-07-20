@@ -19,6 +19,8 @@ from elbepack.localbuildaction import local_build_with_repodir_and_dl_result
          '(default is a timestamped directory in the current working directory)')
 @add_argument('input', metavar='<xmlfile> | <isoimage>')
 def _build(args):
+    args.exclude_initvm_pkgs = True
+
     if args.build_dir is None:
         args.build_dir = os.path.abspath(
             'elbe-build-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))

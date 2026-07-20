@@ -127,7 +127,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
         print('Upload finished')
 
     control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                          uploaded_base_image_path)
+                          uploaded_base_image_path, args.exclude_initvm_pkgs)
 
     print('Build started, waiting till it finishes')
 
@@ -318,6 +318,10 @@ def _create(args):
 @_add_initvm_from_args_arguments
 @add_submit_arguments
 @add_output_argument
+@add_argument(
+    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
+    default=False,
+    help='Exclude initvm packages from CDROM generation')
 @add_argument('input', metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)

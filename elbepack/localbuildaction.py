@@ -74,7 +74,7 @@ def _local_build_and_dl_result(xmlfile, cdrom, base_image, args):
             print('Copy finished')
 
         pm.build_project(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                         uploaded_base_image_path)
+                         uploaded_base_image_path, args.exclude_initvm_pkgs)
 
         print('Build started, waiting till it finishes')
 
@@ -93,7 +93,7 @@ def _local_build_and_dl_result(xmlfile, cdrom, base_image, args):
         print('')
 
         if args.build_sdk:
-            pm.build_sdk(prjdir)
+            pm.build_sdk(prjdir, args.exclude_initvm_pkgs)
 
             print('SDK Build started, waiting till it finishes')
 
