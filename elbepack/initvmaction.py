@@ -181,6 +181,10 @@ def _create(args):
 
 @_add_initvm_from_args_arguments
 @add_submit_arguments
+@add_argument(
+    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
+    default=False,
+    help='Exclude initvm packages from CDROM generation')
 @add_argument('input', metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)

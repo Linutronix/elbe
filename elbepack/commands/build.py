@@ -58,6 +58,10 @@ def _start_local_daemon(host, port):
          'is not reachable yet; fail instead. Has no effect if --host is '
          'not a loopback address, since a local daemon is never started '
          'in that case regardless of this flag.')
+@add_argument(
+    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
+    default=True,
+    help='Exclude initvm packages from CDROM generation (default for build command)')
 @add_argument('input', metavar='<xmlfile> | <isoimage>')
 def _build(args):
     if args.outdir is None:

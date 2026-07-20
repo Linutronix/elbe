@@ -51,7 +51,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args):
         print('Upload finished')
 
     control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                          uploaded_base_image_path)
+                          uploaded_base_image_path, args.exclude_initvm_pkgs)
 
     print('Build started, waiting till it finishes')
 
