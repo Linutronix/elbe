@@ -17,6 +17,26 @@ from elbepack.shellhelper import do
 from elbepack.version import elbe_version
 
 
+def read_apt_sources(apt_root=None):
+    apt_root = pathlib.Path(apt_root or '/etc/apt')
+    source_parts = []
+
+    main_sources = apt_root / 'sources.list'
+    if main_sources.exists():
+        source_parts.append(main_sources.read_text())
+
+    sources_dir = apt_root / 'sources.list.d'
+    if sources_dir.exists():
+        for path in sorted(sources_dir.glob('*.list')):
+            if path.is_file():
+                source_parts.append(path.read_text())
+        for path in sorted(sources_dir.glob('*.sources')):
+            if path.is_file():
+                source_parts.append(path.read_text())
+
+    return '\n'.join(part for part in source_parts if part).strip()
+
+
 def get_initvm_pkglist():
     cache = Cache()
     cache.open()
@@ -33,7 +53,7 @@ def dump_fullpkgs(xml, rfs, cache):
         xml.append_full_pkg(p)
 
     sources_list = xml.xml.ensure_child('sources_list')
-    slist = pathlib.Path('/etc/apt/sources.list').read_text()
+    slist = read_apt_sources()
     sources_list.set_text(slist)
 
     try:
@@ -60,7 +80,7 @@ def dump_initvmpkgs(xml):
         xml.append_initvm_pkg(p)
 
     sources_list = xml.xml.ensure_child('initvm_sources_list')
-    slist = pathlib.Path('/etc/apt/sources.list').read_text()
+    slist = read_apt_sources()
     sources_list.set_text(slist)
 
     try:
@@ -174,7 +194,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
                 datetime.now().strftime('%Y%m%d-%H%M%S'),
                 str(elbe_version))
 
-    slist = rfs.read_file('etc/apt/sources.list')
+    slist = read_apt_sources(apt_root=rfs.path + '/etc/apt')
     report.info('')
     report.info('Apt Sources dump')
     report.info('----------------')
