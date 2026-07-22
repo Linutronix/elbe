@@ -16,7 +16,7 @@ import parted
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.imgutils import dd, losetup, mount
+from elbepack.imgutils import dd, fuse2fs, losetup, mount
 from elbepack.shellhelper import chroot, do
 
 
@@ -147,34 +147,37 @@ class grubinstaller_base:
     def add_fs_entry(self, entry):
         self.fs[entry.mountpoint] = entry
 
-    def install(self, target, user_args):
+    def install(self, target, user_args, part_images):
         pass
 
 
 class grubinstaller202(grubinstaller_base):
 
-    def install(self, target, user_args):
+    def install(self, target, user_args, part_images):
         if '/' not in self.fs:
             return
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
+        diskimage = self.fs['/'].filename
         with contextlib.ExitStack() as stack:
             try:
-                loopdev = stack.enter_context(losetup(self.fs['/'].filename))
-
                 for entry in self.fs.depthlist():
                     stack.enter_context(
-                        mount(f'{loopdev}p{entry.partnum}',
-                              imagemntfs.fname(entry.mountpoint),
-                              options=entry.options, force_writable=True))
+                        fuse2fs(part_images[entry.mountpoint],
+                                imagemntfs.fname(entry.mountpoint)))
 
                 for bindmnt in ['/dev', '/proc', '/sys']:
                     stack.enter_context(
                         mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
+                imagemntfs.mkdir_p(target)
+                stack.callback(os.removedirs, imagemntfs.fname(target))
+                stack.enter_context(
+                    mount(target, imagemntfs.fname(target), bind=True))
+
                 imagemntfs.mkdir_p('boot/grub')
-                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {loopdev}\n')
+                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {diskimage}\n')
                 stack.callback(imagemntfs.remove, 'boot/grub/device.map')
 
                 chroot(imagemnt, ['update-grub2'])
@@ -182,7 +185,7 @@ class grubinstaller202(grubinstaller_base):
                 if 'efi' in self.fw_type:
                     grub_tgt = next(t for t in self.fw_type if t.endswith('-efi'))
                     chroot(imagemnt, ['grub-install', *user_args, '--target', grub_tgt,
-                                      '--removable', '--no-floppy', loopdev])
+                                      '--removable', '--no-floppy', diskimage])
                 if 'shimfix' in self.fw_type:
                     # grub-install is heavily dependent on the running system having
                     # a BIOS or EFI.  The initvm is BIOS-based, so fix the resulting
@@ -193,7 +196,7 @@ class grubinstaller202(grubinstaller_base):
                     do(['cp', signed, imagemnt + '/boot/efi/EFI/debian/' + signed.stem])
                 if not self.fw_type or 'bios' in self.fw_type:
                     chroot(imagemnt, ['grub-install', *user_args, '--target', 'i386-pc',
-                                      '--no-floppy', loopdev])
+                                      '--no-floppy', diskimage])
 
             except subprocess.CalledProcessError as E:
                 logging.error('Fail installing grub device: %s', E)
@@ -201,16 +204,15 @@ class grubinstaller202(grubinstaller_base):
 
 class grubinstaller97(grubinstaller_base):
 
-    def install(self, target, user_args):
+    def install(self, target, user_args, part_images):
         if '/' not in self.fs:
             return
 
         imagemnt = os.path.join(target, 'imagemnt')
         imagemntfs = Filesystem(imagemnt)
+        diskimage = self.fs['/'].filename
         with contextlib.ExitStack() as stack:
             try:
-                loopdev = stack.enter_context(losetup(self.fs['/'].filename))
-
                 bootentry = 0
 
                 for entry in self.fs.depthlist():
@@ -218,9 +220,8 @@ class grubinstaller97(grubinstaller_base):
                         bootentry_label = entry.label
                         bootentry = int(entry.partnum)
                     stack.enter_context(
-                        mount(f'{loopdev}p{entry.partnum}',
-                              imagemntfs.fname(entry.mountpoint),
-                              options=entry.options, force_writable=True))
+                        fuse2fs(part_images[entry.mountpoint],
+                                imagemntfs.fname(entry.mountpoint)))
 
                 if not bootentry:
                     bootentry_label = entry.label
@@ -230,8 +231,13 @@ class grubinstaller97(grubinstaller_base):
                     stack.enter_context(
                         mount(bindmnt, imagemntfs.fname(bindmnt), bind=True))
 
+                imagemntfs.mkdir_p(target)
+                stack.callback(os.removedirs, imagemntfs.fname(target))
+                stack.enter_context(
+                    mount(target, imagemntfs.fname(target), bind=True))
+
                 imagemntfs.mkdir_p('boot/grub')
-                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {loopdev}\n')
+                imagemntfs.write_file('boot/grub/device.map', 0o644, f'(hd0) {diskimage}\n')
                 stack.callback(imagemntfs.remove, 'boot/grub/device.map')
 
                 # Replace groot and kopt because else they will be given
@@ -243,7 +249,7 @@ class grubinstaller97(grubinstaller_base):
 
                 chroot(imagemnt, ['update-grub'])
 
-                chroot(imagemnt, ['grub-install', *user_args, '--no-floppy', loopdev])
+                chroot(imagemnt, ['grub-install', *user_args, '--no-floppy', diskimage])
 
             except subprocess.CalledProcessError as E:
                 logging.error('Fail installing grub device: %s', E)
@@ -304,33 +310,39 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
     grub.add_fs_entry(entry)
 
+    return ppart
+
+
+def build_label_image(entry, target):
     filesystem_tree = os.path.join(target, 'filesystems', entry.id) + '/.'
 
     part_image = tempfile.NamedTemporaryFile(dir=target, delete=False)
+    part_image_name = part_image.name
+    part_image.close()
+    do(['truncate', '-s', str(entry.size), part_image_name])
+
+    needs_cp = entry.mkfs(part_image_name, filesystem_tree)
+
+    if needs_cp or entry.fs_path_commands or entry.fs_device_commands:
+        with losetup(part_image_name) as loopdev:
+            _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
+
+            mount_path = Path(target, 'imagemnt')
+            if entry.fs_path_commands or needs_cp:
+                with mount(loopdev, mount_path, options=entry.options, force_writable=True):
+                    _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
+                    if needs_cp:
+                        do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
+
+    return part_image_name
+
+
+def finish_label_image(entry, part_image_name):
     try:
-        part_image_name = part_image.name
-        part_image.close()
-        do(['truncate', '-s', str(entry.size), part_image_name])
-
-        needs_cp = entry.mkfs(part_image_name, filesystem_tree)
-
-        if needs_cp or entry.fs_path_commands or entry.fs_device_commands:
-            with losetup(part_image_name) as loopdev:
-                _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))
-
-                mount_path = Path(target, 'imagemnt')
-                if entry.fs_path_commands or needs_cp:
-                    with mount(loopdev, mount_path, options=entry.options, force_writable=True):
-                        _execute_fs_commands(entry.fs_path_commands, dict(path=mount_path))
-                        if needs_cp:
-                            do(['cp', '-a', filesystem_tree, str(mount_path) + '/'])
-
         dd({'if': part_image_name, 'of': entry.filename, 'bs': 512,
             'seek': entry.offset // 512, 'conv': 'notrunc'})
     finally:
         os.unlink(part_image_name)
-
-    return ppart
 
 
 def _execute_fs_commands(commands, replacements):
@@ -450,8 +462,14 @@ def do_image_hd(hd, fslabel, target, grub_version, grub_fw_type):
 
     disk.commit()
 
+    entries = grub.fs.depthlist()
+    part_images = {entry.mountpoint: build_label_image(entry, target) for entry in entries}
+
     if hd.has('grub-install') and grub_version:
-        grub.install(target, shlex.split(hd.text('grub-install')))
+        grub.install(target, shlex.split(hd.text('grub-install')), part_images)
+
+    for entry in entries:
+        finish_label_image(entry, part_images[entry.mountpoint])
 
     return hd.text('name')
 
