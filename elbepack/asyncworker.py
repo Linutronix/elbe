@@ -299,6 +299,7 @@ class AsyncWorker(Thread):
         while True:
             job = self.queue.get()
             if job is None:
+                self.queue.task_done()
                 break
 
             os.chdir('/')
