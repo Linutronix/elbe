@@ -273,9 +273,15 @@ class ElbeXML:
         for k, v in hashes.items():
             pak.et.set(k, v)
 
-        pak.et.set('release-origin', aptpkg.origin.origin)
-        pak.et.set('release-name', aptpkg.origin.codename)
-        pak.et.set('uri', aptpkg.origin.uri)
+        if aptpkg.origin is not None:
+            if aptpkg.origin.origin is not None:
+                pak.et.set('release-origin', aptpkg.origin.origin)
+
+            if aptpkg.origin.codename is not None:
+                pak.et.set('release-name', aptpkg.origin.codename)
+
+            if aptpkg.origin.uri is not None:
+                pak.et.set('uri', aptpkg.origin.uri)
 
         if aptpkg.source is not None:
             pak.et.set('source-name', aptpkg.source.name)

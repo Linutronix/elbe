@@ -1,0 +1,6 @@
+.git
+.mypy_cache
+.pytest_cache
+*.deb
+*.buildinfo
+*.changes

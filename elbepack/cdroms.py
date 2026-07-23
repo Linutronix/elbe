@@ -39,7 +39,8 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
 def mk_source_cdrom(components, codename,
                     init_codename, target,
                     cdrom_size=CDROM_SIZE, xml=None,
-                    mirror='http://deb.debian.org/debian'):
+                    mirror='http://deb.debian.org/debian',
+                    exclude_initvm_pkgs=False):
 
     os.makedirs('/var/cache/elbe/sources', exist_ok=True)
 
@@ -89,12 +90,15 @@ def mk_source_cdrom(components, codename,
     # with the bin repo, because the src cdrom can be split
     # into multiple cdroms
 
-    for dirpath, _, filenames in os.walk('/var/cache/elbe/sources'):
-        for filename in filenames:
-            if not filename.endswith('.dsc'):
-                continue
+    if not exclude_initvm_pkgs:
+        for dirpath, _, filenames in os.walk('/var/cache/elbe/sources'):
+            for filename in filenames:
+                if not filename.endswith('.dsc'):
+                    continue
 
-            repos['main'].include_init_dsc(os.path.join(dirpath, filename), 'initvm')
+                repos['main'].include_init_dsc(os.path.join(dirpath, filename), 'initvm')
+    else:
+        logging.info('Skipping initvm source packages as requested by --exclude-initvm-pkgs')
 
     for repo in repos.values():
         repo.finalize()
@@ -127,7 +131,7 @@ def mk_source_cdrom(components, codename,
             options=options)) for component, repo in repos.items()]
 
 
-def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
+def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_initvm_pkgs=False):
 
     rfs.mkdir_p('/var/cache/elbe/binaries/added')
     rfs.mkdir_p('/var/cache/elbe/binaries/main')
@@ -143,18 +147,22 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # initvm repo has been built upon initvm creation
     # just copy it. the repo __init__() afterwards will
     # not touch the repo config, nor generate a new key.
-    try:
-        do(f'cp -av /var/cache/elbe/initvm-bin-repo "{repo_path}"')
-    except subprocess.CalledProcessError:
-        # When /var/cache/elbe/initvm-bin-repo has not been created
-        # (because the initvm install was an old version or somthing,
-        #  log an error, and continue with an empty directory.
-        logging.exception('/var/cache/elbe/initvm-bin-repo does not exist\n'
-                          'The generated CDROM will not contain initvm pkgs\n'
-                          'This happened because the initvm was probably\n'
-                          'generated with --skip-build-bin')
-
+    if exclude_initvm_pkgs:
+        logging.info('Skipping initvm packages as requested by --exclude-initvm-pkgs')
         do(f'mkdir -p "{repo_path}"')
+    else:
+        try:
+            do(f'cp -av /var/cache/elbe/initvm-bin-repo "{repo_path}"')
+        except subprocess.CalledProcessError:
+            # When /var/cache/elbe/initvm-bin-repo has not been created
+            # (because the initvm install was an old version or somthing,
+            #  log an error, and continue with an empty directory.
+            logging.exception('/var/cache/elbe/initvm-bin-repo does not exist\n'
+                              'The generated CDROM will not contain initvm pkgs\n'
+                              'This happened because the initvm was probably\n'
+                              'generated with --skip-build-bin')
+
+            do(f'mkdir -p "{repo_path}"')
 
     repo = CdromInitRepo(init_codename, repo_path, mirror)
 
@@ -214,10 +222,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     xml.xml.write(repo_path / 'source.xml')
 
     # copy initvm-cdrom.gz and vmlinuz
-    copyfile('/var/cache/elbe/installer/initrd-cdrom.gz',
-             repo_path / 'initrd-cdrom.gz')
-    copyfile('/var/cache/elbe/installer/vmlinuz',
-             repo_path / 'vmlinuz')
+    if not exclude_initvm_pkgs:
+        copyfile('/var/cache/elbe/installer/initrd-cdrom.gz',
+                 repo_path / 'initrd-cdrom.gz')
+        copyfile('/var/cache/elbe/installer/vmlinuz',
+                 repo_path / 'vmlinuz')
 
     target_repo_path.joinpath('.aptignr').touch()
 

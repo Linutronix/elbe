@@ -45,6 +45,15 @@ def losetup(dev, extra_args=[]):
         do(['losetup', '--detach', loopdev], check=False)
 
 
+@contextlib.contextmanager
+def fuse2fs(image, target):
+    do(['fuse2fs', '-o', 'rw,fakeroot', image, target])
+    try:
+        yield target
+    finally:
+        do(['umount', target], check=False)
+
+
 class _Mount:
     # This is not using contextlib.contextmanager as it will be pass to our
     # RPCAPTCache which uses the pickle serialization.
