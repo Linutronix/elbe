@@ -72,6 +72,9 @@ OPTIONS
 --base-image <base-image-file>
    Use a base image instead of debootstrap as the starting point for a rootfilesystem (experimental).
 
+--size <size>
+   Disk size of the new initvm.
+
 XML OPTIONS
 ===========
 

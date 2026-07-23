@@ -21,7 +21,7 @@ from elbepack.xmldefaults import ElbeDefaults
 def create_initvm(name, xmlfile, directory, *,
                   sshport, soapport,
                   buildtype=None, skip_validation=False, cdrom=None, fail_on_warning=False,
-                  build_bin=True, build_sources=True):
+                  build_bin=True, build_sources=True, size=None):
     if not skip_validation:
         validation = validate_xml(xmlfile)
         if validation:
@@ -65,6 +65,7 @@ def create_initvm(name, xmlfile, directory, *,
          'defs': defs,
          'directory': directory,
          'fail_on_warning': fail_on_warning,
+         'imgsize': size or prj.text('size', default=defs, key='size'),
          'initvm_domain': name,
          'xml': xml,
          'prj': prj,

@@ -15,7 +15,7 @@ import elbepack.initvm
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.filesystem import TmpdirFilesystem
+from elbepack.filesystem import TmpdirFilesystem, size_to_int
 from elbepack.init import create_initvm
 from elbepack.repodir import Repodir, RepodirError
 from elbepack.soapclient import ElbeSoapClient
@@ -294,6 +294,7 @@ def _add_submit_arguments(f):
               dest='fail_on_warning', default=False,
               help=argparse.SUPPRESS)
 @_add_submit_arguments
+@add_argument('--size', help='Disk size', type=size_to_int)
 @add_argument('input', nargs='?', metavar='<xmlfile> | <isoimage>')
 def _create(args):
     # Upgrade from older versions which used tmux
@@ -349,6 +350,7 @@ def _create(args):
             build_bin=args.build_bin,
             build_sources=args.build_sources,
             fail_on_warning=args.fail_on_warning,
+            size=args.size,
         )
 
     initvm = _initvm_from_args(args)

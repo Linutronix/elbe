@@ -34,7 +34,6 @@ CDROM_TYPE?=ide
 <%
 import string
 img = prj.text('img', default=defs, key='img')
-imgsize = prj.text('size', default=defs, key='size')
 nicmac = prj.text('buildimage/NIC/MAC', default=defs, key='nicmac')
 target_num = 1
 
