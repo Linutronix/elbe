@@ -41,12 +41,12 @@ OPTIONS
    ISO image of Binary cdrom.
 
 --skip-download
-   After the build has finished, the generated Files are downloaded from
+   After the build has finished, the generated files are downloaded from
    the initvm to the host. This step is skipped, when this option is
    specified.
 
 --output <dir>
-   Directoryname where the generated and downloaded Files should be
+   Directory name where the generated and downloaded files should be
    saved. The default is to generate a directory with a timestamp in the
    current working directory.
 
@@ -57,7 +57,7 @@ OPTIONS
    Skip building source CDROM.
 
 --keep-files
-   Don’t delete elbe project files after a build in the initvm use *elbe
+   Don’t delete elbe project files after a build in the initvm. Use *elbe
    control list_projects* to get a list of available projects
 
 --writeproject <file>
@@ -75,10 +75,14 @@ OPTIONS
 XML OPTIONS
 ===========
 
---variant <variant>
-   comma separated list of variants
+These options are passed through to an implicit invocation of
+*elbe preprocess*, which is run on the given xmlfile before the build.
 
---proxy <proxy>
+-v <variants>, --variants <variants>
+   comma separated list of variants; enable only tags with empty or
+   given variant.
+
+-p <proxy>, --proxy <proxy>
    add proxy to mirrors
 
 COMMANDS
