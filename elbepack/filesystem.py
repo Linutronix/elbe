@@ -24,7 +24,7 @@ def size_to_int(size):
     elif size.endswith('MB'):
         unit = 1000 * 1000
         s = size[:-2]
-    if size.endswith('G'):
+    elif size.endswith('G'):
         unit = 1000 * 1000 * 1000
         s = size[:-1]
     elif size.endswith('GiB'):
@@ -33,7 +33,7 @@ def size_to_int(size):
     elif size.endswith('GB'):
         unit = 1000 * 1000 * 1000
         s = size[:-2]
-    if size.endswith('k'):
+    elif size.endswith('k'):
         unit = 1000
         s = size[:-1]
     elif size.endswith('kiB'):
@@ -42,6 +42,8 @@ def size_to_int(size):
     elif size.endswith('kB'):
         unit = 1000
         s = size[:-2]
+    else:
+        raise ValueError(f'Unhandled size {size}')
 
     return int(s) * unit
 
