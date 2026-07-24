@@ -21,6 +21,7 @@ from elbepack.asyncworker import (
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.log import read_loggingQ
 from elbepack.paths import DEFAULT_CACHE_DIRS
+from elbepack.rootcheck import check_rootful_requirements
 from elbepack.uuid7 import uuid7
 
 
@@ -113,6 +114,7 @@ class ProjectManager:
             base_image_path,
             exclude_initvm_pkgs):
         ep = self.open_project(builddir, allow_busy=False)
+        check_rootful_requirements(ep.xml.xml)
         self.worker.enqueue(BuildJob(ep, build_bin, build_src,
                                      skip_pbuilder, base_image_path, exclude_initvm_pkgs))
 
