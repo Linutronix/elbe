@@ -479,7 +479,7 @@ def _get_partition_info(image_path, part_nr):
 
 @_register_action('losetup')
 class LosetupAction(FinetuningAction):
-    needs_loop_device = ('copy_from_partition', 'copy_to_partition', 'partition-command')
+    needs_loop_device = ('copy_from_partition', 'copy_to_partition', 'command')
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('<losetup> may only be '
