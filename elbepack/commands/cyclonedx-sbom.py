@@ -160,8 +160,8 @@ def run_command(argv):
 
     formulation_components = []
     for p in itertools.chain(
-        source_file.node('debootstrappkgs'),
-        source_file.node('initvmpkgs'),
+        source_file.node('debootstrappkgs') or [],
+        source_file.node('initvmpkgs') or [],
     ):
         # Duplicates are disallowed by the schema
         c = _component_from_apt_pkg(XMLPackage(p), chroot_lics)
