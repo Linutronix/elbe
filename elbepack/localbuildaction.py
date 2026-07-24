@@ -10,6 +10,7 @@ import time
 from elbepack.buildsubmitaction import ProjectBackend, build_with_repodir_and_dl_result
 from elbepack.cli import CliError
 from elbepack.projectmanager import ProjectManager
+from elbepack.rootcheck import check_rootful_requirements
 
 
 class LocalProjectBackend(ProjectBackend):
@@ -19,6 +20,9 @@ class LocalProjectBackend(ProjectBackend):
 
     def stop(self):
         self.pm.stop()
+
+    def check_preprocessed_xml(self, xmlfile, cdrom):
+        check_rootful_requirements(xmlfile, cdrom)
 
     def create_project(self, xmlfile):
         return self.pm.create_project(xmlfile)

@@ -142,6 +142,9 @@ class ProjectBackend(abc.ABC):
     def stop(self):
         pass
 
+    def check_preprocessed_xml(self, xmlfile, cdrom):
+        pass
+
     @abc.abstractmethod
     def create_project(self, xmlfile):
         ...
@@ -202,6 +205,7 @@ def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args, 
 def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_base=None):
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
+        backend.check_preprocessed_xml(xmlfile, cdrom)
         prjdir = backend.create_project(xmlfile)
 
     if args.writeproject:
