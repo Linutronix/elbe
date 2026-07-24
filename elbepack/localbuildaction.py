@@ -9,9 +9,9 @@ import textwrap
 import time
 
 from elbepack.cli import CliError, with_cli_details
-from elbepack.loopcheck import check_loop_mount_requirements
 from elbepack.projectmanager import ProjectManager
 from elbepack.repodir import Repodir, RepodirError
+from elbepack.rootcheck import check_rootful_requirements
 from elbepack.xmlpreprocess import preprocess_file
 
 prog = os.path.basename(sys.argv[0])
@@ -23,7 +23,8 @@ def local_build_with_repodir_and_dl_result(xmlfile, cdrom, base_image, args):
     preprocess_xmlfile = os.path.join(args.build_dir, fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            _local_build_and_dl_result(preprocess_xmlfile, cdrom, base_image, args)
+            _local_build_and_dl_result(preprocess_xmlfile, cdrom, base_image, args,
+                                       xmlfile_base=xmlfile)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
 
@@ -48,12 +49,13 @@ def _wait_busy(pm, prjdir):
         raise CliError(191, f'Project build was not successful, current status: {prj.status}')
 
 
-def _local_build_and_dl_result(xmlfile, cdrom, base_image, args):
+def _local_build_and_dl_result(xmlfile, cdrom, base_image, args, xmlfile_base=None):
     cache_dir = os.path.join(args.build_dir, 'cache')
     pm = ProjectManager(cache_dir)
     try:
         with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
-                             soapport=args.soapport) as xmlfile:
+                             soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
+            check_rootful_requirements(xmlfile)
             prjdir = pm.create_project(xmlfile)
 
         if args.writeproject:

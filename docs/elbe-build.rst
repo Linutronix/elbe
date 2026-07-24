@@ -110,6 +110,62 @@ ready-to-use build environment for this.
                   /work/tests/base-extended/simple-validation/image-base-trixie.xml \
                   --build-dir /work/build
 
+
+Rootful Containers
+==================
+
+Some project XML features make *elbe build* create a Linux loop device
+to loop-mount a disk or partition image:
+
+-  ``<grub-install>`` inside a ``<msdoshd>``/``<gpthd>`` target image
+-  ``<fs-finetuning>`` (or the ``<tune2fs>``) inside a
+   partition's ``<fs>``
+-  a ``<losetup>`` project-finetuning action containing
+   ``copy_from_partition``, ``copy_to_partition``, or ``command``
+
+Creating a loop device requires access to */dev/loop-control*, which
+is a host-kernel-wide privilege. Additionally, ``CAP_SYS_ADMIN`` must be
+enabled in the **initial user namespace** (not in a namespace created
+via ``unshare``), which means **rootless containers cannot create loop
+devices**.
+
+Also, some XMLs might require mknod which is also not possible
+in rootless containers.
+
+If the project XML uses one of the features above, *elbe build*
+checks the requirements upfront and aborts immediately.
+
+If your XML needs these features, either:
+
+-  build via *elbe initvm submit* instead, which runs inside a full
+   virtual machine with real root privileges, or
+
+-  run the container with elevated privileges (i.e. no rootless container).
+   Add the following to the *podman run*/*docker run* invocation and run with
+   elevated privileges (e.g. via ``pkexec`` (PolicyKit)).
+
+   ::
+
+      --cap-add SYS_ADMIN --cap-add MKNOD --device-cgroup-rule='b *:* rmw' \
+            --security-opt apparmor=unconfined
+
+   Note that since this is now a rootful container and it there are much more
+   options for security vulnerabilities to manifest. Also, the networking might
+   be differently set up, so you might need to add ``--network slirp4netns``
+   (or ``--network host`` if ``slirp4netns`` is not installed).
+
+   All together, the command would look like this:
+
+   ::
+
+      pkexec podman run --rm \
+            -v $(pwd):/work:Z \
+            --cap-add SYS_ADMIN --cap-add MKNOD --device-cgroup-rule='b *:* rmw' \
+            --security-opt apparmor=unconfined \
+            --network slirp4netns \
+            elbe-buildenv-image \
+            elbe build /work/myimage.xml --build-dir /work/build
+
 SEE ALSO
 ========
 
