@@ -9,7 +9,7 @@ import itertools
 import json
 import os
 import sys
-import urllib
+import urllib.parse
 
 from elbepack.aptpkgutils import XMLPackage
 from elbepack.commands.parselicence import LicenseType, extract_licenses_from_report
