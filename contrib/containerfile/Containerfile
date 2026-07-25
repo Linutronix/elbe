@@ -11,7 +11,8 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
-        elbe-archive-keyring
+        elbe-archive-keyring \
+        tini
 
 RUN echo 'deb [signed-by=/usr/share/keyrings/elbe-archive-keyring.gpg] http://debian.linutronix.de/elbe bullseye main' \
         > /etc/apt/sources.list.d/elbe.list && \
@@ -29,3 +30,9 @@ VOLUME [ "/build" ]
 
 USER root
 WORKDIR /build
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Use tini for reaping child processes.
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]

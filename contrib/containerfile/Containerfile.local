@@ -27,7 +27,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-        ca-certificates
+        ca-certificates \
+        tini
 
 COPY --from=builder /out/*.deb /tmp/local-debs/
 RUN apt-get update -y && apt-get upgrade -y
@@ -50,3 +51,9 @@ VOLUME [ "/build" ]
 
 USER root
 WORKDIR /build
+
+COPY contrib/containerfile/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Use tini for reaping child processes.
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
