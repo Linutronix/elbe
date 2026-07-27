@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2025 Linutronix GmbH
 
+import contextlib
 import os
 import warnings
 
@@ -152,6 +153,57 @@ def test_file_base64(target):
     </file>
     """)
     assert target.read_file('foo') == 'bar\n'
+
+
+@pytest.mark.parametrize(('tag', 'attrs', 'needs_loop'), [
+    ('command', 'part="1" nomount="true"', True),
+    ('command', 'part="1" nomount="false"', True),
+    ('copy_from_partition', 'part="1" artifact="out"', True),
+    ('copy_to_partition', 'part="1" artifact="out"', True),
+    ('extract_partition', 'part="1"', False),
+    ('set_partition_type', 'part="1" type="83"', False),
+])
+def test_losetup_children_loop_device_usage(target, monkeypatch, tmpdir, tag, attrs, needs_loop):
+    losetup_calls = []
+
+    @contextlib.contextmanager
+    def fake_losetup(imgpath):
+        losetup_calls.append(imgpath)
+        yield '/dev/loop0'
+
+    monkeypatch.setattr(elbepack.finetuning, 'losetup', fake_losetup)
+
+    execute_img_calls = []
+
+    def fake_execute_img(self, _buildenv, _target, _builddir, *, device=None, image=None):
+        execute_img_calls.append((device, image))
+
+    action_cls = elbepack.finetuning._actions[tag]
+    monkeypatch.setattr(action_cls, 'execute_img', fake_execute_img)
+
+    builddir = str(tmpdir)
+    imgname = 'test.img'
+    open(os.path.join(builddir, imgname), 'w').close()
+
+    node = elbepack.treeutils.etree(None, string="""
+        <losetup img="{img}">
+            <{tag} {attrs}>content</{tag}>
+        </losetup>
+    """.format(img=imgname, tag=tag, attrs=attrs)).root
+    action = elbepack.finetuning._action_for_node(node)
+    action.execute_prj(None, target, builddir)
+
+    assert len(execute_img_calls) == 1
+    device, image = execute_img_calls[0]
+
+    if needs_loop:
+        assert losetup_calls == [os.path.join(builddir, imgname)]
+        assert device == '/dev/loop0'
+        assert image is None
+    else:
+        assert losetup_calls == []
+        assert device is None
+        assert image == os.path.join(builddir, imgname)
 
 
 def test_file_append(target):
