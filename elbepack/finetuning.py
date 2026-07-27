@@ -22,10 +22,10 @@ with warnings.catch_warnings():
 
 from elbepack.egpg import TARGET_GNUPG_HOME
 from elbepack.filesystem import Filesystem
-from elbepack.imgutils import losetup, mount
+from elbepack.imgutils import losetup
 from elbepack.packers import default_packer, packers
 from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
-from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, run
+from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, mount, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
