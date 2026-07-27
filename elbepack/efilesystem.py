@@ -17,7 +17,7 @@ from elbepack.filesystem import Filesystem
 from elbepack.fstab import fstabentry
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import chroot, do, mount
+from elbepack.shellhelper import bind_mount_pseudo_filesystems, chroot, do
 from elbepack.version import elbe_version
 
 
@@ -368,16 +368,6 @@ class ChRootFilesystem(ElbeFilesystem):
             for excursion in excursions
         ]
 
-        if self.path != '/':
-            self._exitstack.enter_context(
-                    mount(None, self.fname('/proc'), type='proc', log_output=False))
-            self._exitstack.enter_context(
-                    mount(None, self.fname('/sys'), type='sysfs', log_output=False))
-            self._exitstack.enter_context(
-                    mount('/dev', self.fname('/dev'), bind=True, log_output=False))
-            self._exitstack.enter_context(
-                    mount('/dev/pts', self.fname('/dev/pts'), bind=True, log_output=False))
-
         return self
 
     def __exit__(self, typ, value, traceback):
@@ -392,6 +382,16 @@ class ChRootFilesystem(ElbeFilesystem):
                 excursion_context.end()
                 return
 
+    def _switch_to_chroot(self):
+        os.chdir(self.path)
+        if self.path != '/':
+            os.chroot(self)
+
+    def _switch_to_real_root(self):
+        os.fchdir(self.cwd)
+        if self.path != '/':
+            os.chroot('.')
+
     def enter_chroot(self):
         assert not self.inchroot
 
@@ -399,24 +399,33 @@ class ChRootFilesystem(ElbeFilesystem):
         os.environ['LANGUAGE'] = 'C'
         os.environ['LC_ALL'] = 'C'
 
-        os.chdir(self.path)
+        self._switch_to_chroot()
         self.inchroot = True
-
-        if self.path == '/':
-            return
-
-        os.chroot(self)
 
     def leave_chroot(self):
         assert self.inchroot
 
-        os.fchdir(self.cwd)
-
+        self._switch_to_real_root()
         self.inchroot = False
+
+    @contextlib.contextmanager
+    def mount_pseudo_filesystems(self):
+        assert self.inchroot
+
         if self.path == '/':
+            yield
             return
 
-        os.chroot('.')
+        self._switch_to_real_root()
+        try:
+            with bind_mount_pseudo_filesystems(self.path):
+                self._switch_to_chroot()
+                try:
+                    yield
+                finally:
+                    self._switch_to_real_root()
+        finally:
+            self._switch_to_chroot()
 
 
 class TargetFs(ChRootFilesystem):
