@@ -290,7 +290,7 @@ def _test_rfs_partition(build_dir, img, part):
         assert sources_list_d.is_dir()
         assert len(list(sources_list_d.iterdir())) == 0
 
-        assert root.joinpath('etc', 'shadow').read_text().startswith('root:!invalid:')
+        assert root.joinpath('etc', 'shadow').read_text().startswith('root:$6$')
 
         getty_service = root.joinpath('etc', 'systemd', 'system', 'getty.target.wants',
                                       'serial-getty@ttyS0.service')
