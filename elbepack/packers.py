@@ -120,4 +120,4 @@ def find_packed_image(directory, image):
         packed_filename = packer.packed_filename(image)
         img_name = directory / packed_filename
         if img_name.exists():
-            return img_name
+            return img_name.absolute()
