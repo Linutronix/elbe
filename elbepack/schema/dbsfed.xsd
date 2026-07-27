@@ -567,10 +567,10 @@ SPDX-FileCopyrightText: Linutronix GmbH
         Describes a sequence of check to be done on images.
       </documentation>
     </annotation>
-    <choice>
-      <element name="check" type="rfs:check-img" />
-      <element name="check-script" type="rfs:check-script" />
-    </choice>
+    <all>
+      <element name="check" type="rfs:check-img" minOccurs="0" />
+      <element name="check-script" type="rfs:check-script" minOccurs="0" />
+    </all>
     <attributeGroup ref="xml:specialAttrs"/>
   </complexType>
 
