@@ -15,10 +15,9 @@ import time
 
 from elbepack.filesystem import Filesystem
 from elbepack.fstab import fstabentry
-from elbepack.imgutils import mount
 from elbepack.licencexml import copyright_xml
 from elbepack.packers import default_packer
-from elbepack.shellhelper import chroot, do
+from elbepack.shellhelper import chroot, do, mount
 from elbepack.version import elbe_version
 
 

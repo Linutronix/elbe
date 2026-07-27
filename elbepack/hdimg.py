@@ -16,8 +16,8 @@ import parted
 
 from elbepack.filesystem import Filesystem, size_to_int
 from elbepack.fstab import fstabentry, hdpart, mountpoint_dict
-from elbepack.imgutils import dd, losetup, mount
-from elbepack.shellhelper import chroot, do
+from elbepack.imgutils import dd, losetup
+from elbepack.shellhelper import chroot, do, mount
 
 
 def mkfs_mtd(mtd, fslabel, target):

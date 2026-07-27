@@ -17,12 +17,12 @@ from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
 from elbepack.egpg import INITVM_GNUPG_HOME
 from elbepack.elbexml import ElbeXML, ValidationError
-from elbepack.imgutils import mount
 from elbepack.log import elbe_logging
 from elbepack.paths import (
     BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_SRC_REPO_DIR, SOURCES_DIR,
 )
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
+from elbepack.shellhelper import mount
 
 
 def run_command(argv):
