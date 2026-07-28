@@ -13,6 +13,9 @@ from apt.package import FetchError
 from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
+from elbepack.paths import (
+    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INSTALLER_DIR, SOURCES_DIR,
+)
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import do
@@ -28,7 +31,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
     try:
         dsc = cache.download_source(pkg,
                                     version,
-                                    '/var/cache/elbe/sources')
+                                    SOURCES_DIR)
         repo.includedsc(dsc, components=component, force=True)
     except ValueError as e:
         logging.exception("No sources for package '%s': %s", pkg_id, str(e))
@@ -41,8 +44,8 @@ def mk_source_cdrom(components, codename,
                     cdrom_size=CDROM_SIZE, xml=None,
                     mirror='http://deb.debian.org/debian'):
 
-    os.makedirs('/var/cache/elbe/sources', exist_ok=True)
-    make_writable_by_apt('/var/cache/elbe/sources')
+    os.makedirs(SOURCES_DIR, exist_ok=True)
+    make_writable_by_apt(SOURCES_DIR)
 
     forbidden_packages = []
     if xml is not None and xml.has('target/pkg-list'):
@@ -64,8 +67,8 @@ def mk_source_cdrom(components, codename,
                                                                include_built_using=False):
             forbidden_src_packages.add(name)
 
-        rfs.mkdir_p('/var/cache/elbe/sources')
-        make_writable_by_apt(rfs.fname('/var/cache/elbe/sources'), passwd_root=rfs)
+        rfs.mkdir_p(SOURCES_DIR)
+        make_writable_by_apt(rfs.fname(SOURCES_DIR), passwd_root=rfs)
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
                             cdrom_size, mirror)
@@ -91,7 +94,7 @@ def mk_source_cdrom(components, codename,
     # with the bin repo, because the src cdrom can be split
     # into multiple cdroms
 
-    for dirpath, _, filenames in os.walk('/var/cache/elbe/sources'):
+    for dirpath, _, filenames in os.walk(SOURCES_DIR):
         for filename in filenames:
             if not filename.endswith('.dsc'):
                 continue
@@ -131,10 +134,10 @@ def mk_source_cdrom(components, codename,
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
 
-    rfs.mkdir_p('/var/cache/elbe/binaries/added')
-    make_writable_by_apt(rfs.fname('/var/cache/elbe/binaries/added'), passwd_root=rfs)
-    rfs.mkdir_p('/var/cache/elbe/binaries/main')
-    make_writable_by_apt(rfs.fname('/var/cache/elbe/binaries/main'), passwd_root=rfs)
+    rfs.mkdir_p(BINARIES_ADDED_DIR)
+    make_writable_by_apt(rfs.fname(BINARIES_ADDED_DIR), passwd_root=rfs)
+    rfs.mkdir_p(BINARIES_MAIN_DIR)
+    make_writable_by_apt(rfs.fname(BINARIES_MAIN_DIR), passwd_root=rfs)
 
     if xml is not None:
         mirror = xml.get_primary_mirror(rfs.fname('cdrom'))
@@ -148,15 +151,16 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     # just copy it. the repo __init__() afterwards will
     # not touch the repo config, nor generate a new key.
     try:
-        do(f'cp -av /var/cache/elbe/initvm-bin-repo "{repo_path}"')
+        do(f'cp -av {INITVM_BIN_REPO_DIR} "{repo_path}"')
     except subprocess.CalledProcessError:
-        # When /var/cache/elbe/initvm-bin-repo has not been created
+        # When INITVM_BIN_REPO_DIR has not been created
         # (because the initvm install was an old version or somthing,
         #  log an error, and continue with an empty directory.
-        logging.exception('/var/cache/elbe/initvm-bin-repo does not exist\n'
+        logging.exception('%s does not exist\n'
                           'The generated CDROM will not contain initvm pkgs\n'
                           'This happened because the initvm was probably\n'
-                          'generated with --skip-build-bin')
+                          'generated with --skip-build-bin',
+                          INITVM_BIN_REPO_DIR)
 
         do(f'mkdir -p "{repo_path}"')
 
@@ -172,7 +176,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
             pkg_id = f'{pkg.name}-{pkg.installed_version}'
             try:
                 deb = cache.download_binary(pkg.name,
-                                            '/var/cache/elbe/binaries/main',
+                                            BINARIES_MAIN_DIR,
                                             pkg.installed_version)
                 target_repo.includedeb(deb, 'main', prio=pkg.installed_prio)
             except ValueError:
@@ -188,7 +192,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
         pkg_id = f'{pkg.name}-{pkg.installed_version}'
         try:
             deb = cache.download_binary(pkg.name,
-                                        '/var/cache/elbe/binaries/added',
+                                        BINARIES_ADDED_DIR,
                                         pkg.installed_version)
             target_repo.includedeb(deb, 'added', pkg.name, prio=pkg.installed_prio, force=True)
         except KeyError as ke:
@@ -218,9 +222,9 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     xml.xml.write(repo_path / 'source.xml')
 
     # copy initvm-cdrom.gz and vmlinuz
-    copyfile('/var/cache/elbe/installer/initrd-cdrom.gz',
+    copyfile(os.path.join(INSTALLER_DIR, 'initrd-cdrom.gz'),
              repo_path / 'initrd-cdrom.gz')
-    copyfile('/var/cache/elbe/installer/vmlinuz',
+    copyfile(os.path.join(INSTALLER_DIR, 'vmlinuz'),
              repo_path / 'vmlinuz')
 
     target_repo_path.joinpath('.aptignr').touch()

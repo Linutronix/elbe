@@ -23,6 +23,7 @@ with warnings.catch_warnings():
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
+from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
 from elbepack.shellhelper import ELBE_LOGGING, chroot, do, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
@@ -405,14 +406,14 @@ class UpdatedAction(FinetuningAction):
                     logging.exception('Package %s-%s missing name or version',
                                       pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
-                       target.path + '/var/cache/elbe/repos/base')
+                       target.path + REPOS_BASE_DIR)
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
             r.includedeb(d, 'main')
         r.finalize()
 
         slist = target.path + '/etc/apt/sources.list.d/base.list'
-        slist_txt = 'deb [trusted=yes] file:///var/cache/elbe/repos/base '
+        slist_txt = f'deb [trusted=yes] file://{REPOS_BASE_DIR} '
         slist_txt += target.xml.text('/project/suite')
         slist_txt += ' main'
 
@@ -422,7 +423,7 @@ class UpdatedAction(FinetuningAction):
         rmtree(buildenv.rfs.path + '/tmp/pkgs')
 
         # allow downgrades by default
-        target.touch_file('/var/cache/elbe/.downgrade_allowed')
+        target.touch_file(DOWNGRADE_ALLOWED_FILE)
 
 
 @_register_action('artifact')

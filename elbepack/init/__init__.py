@@ -10,6 +10,7 @@ import subprocess
 
 import elbepack.init
 from elbepack.debinstaller import NoKinitrdException, copy_kinitrd
+from elbepack.paths import DEVEL_ELBE, SOURCE_XML
 from elbepack.shellhelper import do
 from elbepack.templates import get_initvm_preseed, write_template
 from elbepack.treeutils import etree
@@ -57,7 +58,7 @@ def create_initvm(name, xmlfile, directory, *,
                                            'http://10.0.2.2:')
     elbe_exe = '/usr/bin/elbe'
     if is_devel:
-        elbe_exe = '/var/cache/elbe/devel/elbe'
+        elbe_exe = DEVEL_ELBE
     prj = xml.node('/initvm')
 
     d = {
@@ -213,4 +214,4 @@ def create_initvm(name, xmlfile, directory, *,
               mode='x', opener=create_as_exec) as f:
 
         f.write(f'in-target {elbe_exe} '
-                f'fetch_initvm_pkgs {buildrepo_opts} {cdrom_opts} /var/cache/elbe/source.xml')
+                f'fetch_initvm_pkgs {buildrepo_opts} {cdrom_opts} {SOURCE_XML}')

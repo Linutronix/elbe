@@ -18,6 +18,9 @@ from elbepack.dump import get_initvm_pkglist
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.imgutils import mount
 from elbepack.log import elbe_logging
+from elbepack.paths import (
+    BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_SRC_REPO_DIR, SOURCES_DIR,
+)
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
 
 
@@ -26,11 +29,11 @@ def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe fetch_initvm_pkgs')
 
     aparser.add_argument('-b', '--binrepo', dest='binrepo',
-                         default='/var/cache/elbe/initvm-bin-repo',
+                         default=INITVM_BIN_REPO_DIR,
                          help='directory where the bin repo should reside')
 
     aparser.add_argument('-s', '--srcrepo', dest='srcrepo',
-                         default='/var/cache/elbe/initvm-src-repo',
+                         default=INITVM_SRC_REPO_DIR,
                          help='directory where the src repo should reside')
 
     aparser.add_argument('--skip-validation', action='store_true',
@@ -44,11 +47,11 @@ def run_command(argv):
                          help='cdrom device, in case it has to be mounted')
 
     aparser.add_argument('--apt-archive', dest='archive',
-                         default='/var/cache/elbe/binaries/main',
+                         default=BINARIES_MAIN_DIR,
                          help='path where binary packages are downloaded to.')
 
     aparser.add_argument('--src-archive', dest='srcarchive',
-                         default='/var/cache/elbe/sources',
+                         default=SOURCES_DIR,
                          help='path where src packages are downloaded to.')
 
     aparser.add_argument('--skip-build-sources', action='store_false',

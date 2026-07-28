@@ -30,6 +30,7 @@ from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
 from elbepack.log import validation
+from elbepack.paths import SOURCE_XML
 from elbepack.pbuilder import (
     pbuilder_get_debootstrap_key_path,
     pbuilder_write_apt_conf,
@@ -972,20 +973,19 @@ class ElbeProject:
                      str(elbe_version))
 
     def copy_initvmnode(self):
-        source_path = '/var/cache/elbe/source.xml'
         try:
-            initxml = ElbeXML(source_path,
+            initxml = ElbeXML(SOURCE_XML,
                               skip_validate=self.skip_validate)
             self.xml.get_initvmnode_from(initxml)
         except ValidationError:
             logging.exception('%s validation failed.  '
-                              'Will not copy initvm node', source_path)
+                              'Will not copy initvm node', SOURCE_XML)
         except IOError:
             logging.exception('%s not available.  '
-                              'Can not copy initvm node', source_path)
+                              'Can not copy initvm node', SOURCE_XML)
         except NoInitvmNode:
             logging.exception('%s is available.  But it does not '
-                              'contain an initvm node', source_path)
+                              'contain an initvm node', SOURCE_XML)
 
     def install_packages(self, target, buildenv=False):
 

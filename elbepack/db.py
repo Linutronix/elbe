@@ -28,6 +28,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML
+from elbepack.paths import DB_PATH
 
 
 Base = declarative_base()
@@ -86,8 +87,8 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
 class ElbeDB:
 
-    db_path = '/var/cache/elbe'
-    db_location = 'sqlite:///' + db_path + '/elbe.db'
+    db_path = DB_PATH
+    db_location = 'sqlite:///' + DB_PATH + '/elbe.db'
 
     def __init__(self):
         engine = create_engine(self.__class__.db_location,

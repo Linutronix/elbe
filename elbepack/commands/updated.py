@@ -16,6 +16,7 @@ with warnings.catch_warnings():
 from spyne.server.wsgi import WsgiApplication
 
 from elbepack.config import add_argument_soaptimeout
+from elbepack.paths import REPOS_DIR, UPDATES_DIR
 from elbepack.updated import UpdateApplication, UpdateService, UpdateStatus
 from elbepack.updated_monitors import FileMonitor
 
@@ -39,11 +40,11 @@ def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe updated')
 
     aparser.add_argument('--directory', dest='update_dir',
-                         help='monitor dir (default is /var/cache/elbe/updates)',
+                         help=f'monitor dir (default is {UPDATES_DIR})',
                          metavar='FILE')
 
     aparser.add_argument('--repocache', dest='repo_dir',
-                         help='monitor dir (default is /var/cache/elbe/repos)',
+                         help=f'monitor dir (default is {REPOS_DIR})',
                          metavar='FILE')
 
     aparser.add_argument('--host', dest='host', default='',
@@ -72,12 +73,12 @@ def run_command(argv):
     status.verbose = args.verbose
 
     if not args.update_dir:
-        update_dir = '/var/cache/elbe/updates'
+        update_dir = UPDATES_DIR
     else:
         update_dir = args.update_dir
 
     if not args.repo_dir:
-        status.repo_dir = '/var/cache/elbe/repos'
+        status.repo_dir = REPOS_DIR
     else:
         status.repo_dir = args.repo_dir
 
