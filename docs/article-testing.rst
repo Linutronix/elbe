@@ -40,19 +40,18 @@ relevant slow tests, for example::
 
    See :doc:`elbe-initvm`  for more information about ``elbe initvm`` command.
 
-Important: what to do if you see weird out of memory errors
------------------------------------------------------------
+Location of temporary test output
+---------------------------------
 
-By default, pytest sets up output in ``/tmp``. This includes any ELBE images
-and other build artifacts, which can run up to many gigabytes in size,
-especially after consecutive pytest invocations which keep several last
-outputs for inspection. The problem comes when /tmp is mounted not into
-a real disk space, but using tmpfs in RAM (for example, Debian and
-Fedora do it): writing into /tmp directly consumes RAM, and when it’s
-exhausted, OOM mechanisms of the host distribution will kick in and
-terminate processes in a vain attempt to recover memory.
+pytest's output includes ELBE images and other build artifacts, which can
+run up to many gigabytes in size. To avoid exhausting the RAM on systems
+where the default temporary directory (usually ``/tmp``) is a tmpfs ,
+the test suite uses ``/var/tmp`` in that case.
+If ``/var/tmp`` is not a writable directory either, pytest aborts with an
+error.
 
-To redirect output to somewhere else, use the ``--basetemp`` option::
+To use a different location, set ``TMPDIR`` or pass the ``--basetemp``
+option::
 
   $ pytest --basetemp=$HOME/elbe-tests/
 
