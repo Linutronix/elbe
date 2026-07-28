@@ -63,9 +63,11 @@ class RepoBase:
             repo_attr,
             origin,
             description,
+            gnupg_home,
             maxsize=None):
 
         self.vol_path = path
+        self.gnupg_home = gnupg_home
         self.volume_count = 0
 
         self.init_attr = init_attr
@@ -96,11 +98,14 @@ class RepoBase:
                         self.keyid = lic.split()[1]
             else:
                 # Directory exists but no repo config, so treat as new repository
-                self.keyid = generate_elbe_internal_key()
+                self.keyid = generate_elbe_internal_key(self.gnupg_home)
                 self.gen_repo_conf()
         else:
-            self.keyid = generate_elbe_internal_key()
+            self.keyid = generate_elbe_internal_key(self.gnupg_home)
             self.gen_repo_conf()
+
+    def _reprepro(self, args):
+        do(['reprepro', *args], env_add={'GNUPGHOME': self.gnupg_home})
 
     def get_volume_path(self, volume):
         if self.maxsize:
@@ -168,20 +173,17 @@ class RepoBase:
 
                 fp.write('\n')
 
-        export_key(self.keyid, self.volume / 'repo.pub')
+        export_key(self.keyid, self.volume / 'repo.pub', self.gnupg_home)
 
         if need_update:
-            do(['reprepro', '--export=force', '--basedir', self.volume, 'update'],
-               env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            self._reprepro(['--export=force', '--basedir', self.volume, 'update'])
         else:
             for att in self.attrs:
-                do(['reprepro', '--basedir', self.volume, 'export', att.codename],
-                   env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+                self._reprepro(['--basedir', self.volume, 'export', att.codename])
 
     def finalize(self):
         for att in self.attrs:
-            do(['reprepro', '--basedir', self.volume, 'export', att.codename],
-               env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+            self._reprepro(['--basedir', self.volume, 'export', att.codename])
 
     def _includedeb(self, path, codename, components=None, prio=None):
         if self.maxsize:
@@ -202,7 +204,7 @@ class RepoBase:
                 components = [components]
             global_opt.extend(['--component', '|'.join(components)])
 
-        do(['reprepro', *global_opt, 'includedeb', codename, path])
+        self._reprepro([*global_opt, 'includedeb', codename, path])
 
     def includedeb(self, path, components=None, pkgname=None, force=False, prio=None):
         # pkgname needs only to be specified if force is enabled
@@ -240,7 +242,7 @@ class RepoBase:
                 components = [components]
             global_opt.extend(['--component', '|'.join(components)])
 
-        do(['reprepro', *global_opt, 'include', codename, path])
+        self._reprepro([*global_opt, 'include', codename, path])
 
     def _removedeb(self, pkgname, codename, components=None):
 
@@ -252,8 +254,7 @@ class RepoBase:
                 components = [components]
             global_opt.extend(['--component', '|'.join(components)])
 
-        do(['reprepro', *global_opt, 'remove', codename, pkgname],
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        self._reprepro([*global_opt, 'remove', codename, pkgname])
 
     def removedeb(self, pkgname, components=None):
         self._removedeb(pkgname, self.repo_attr.codename, components)
@@ -262,8 +263,7 @@ class RepoBase:
 
         global_opt = ['--basedir', self.volume]
 
-        do(['reprepro', *global_opt, 'removesrc', codename, srcname],
-           env_add={'GNUPGHOME': '/var/cache/elbe/gnupg'})
+        self._reprepro([*global_opt, 'removesrc', codename, srcname])
 
     def removesrc(self, path):
         with open(path) as fp:
@@ -305,7 +305,7 @@ class RepoBase:
                 components = [components]
             global_opt.extend(['--component', '|'.join(components)])
 
-        do(['reprepro', *global_opt, 'includedsc', codename, path])
+        self._reprepro([*global_opt, 'includedsc', codename, path])
 
     def includedsc(self, path, components=None, force=False):
         try:
@@ -353,7 +353,7 @@ class RepoBase:
 
 
 class UpdateRepo(RepoBase):
-    def __init__(self, xml, path):
+    def __init__(self, xml, path, gnupg_home):
         self.xml = xml
 
         arch = xml.text('project/arch', key='arch')
@@ -361,11 +361,11 @@ class UpdateRepo(RepoBase):
 
         repo_attrs = RepoAttributes(codename, arch, 'main')
 
-        super().__init__(path, None, repo_attrs, 'Update', 'Update')
+        super().__init__(path, None, repo_attrs, 'Update', 'Update', gnupg_home)
 
 
 class CdromInitRepo(RepoBase):
-    def __init__(self, init_codename, path,
+    def __init__(self, init_codename, path, gnupg_home,
                  mirror='http://deb.debian.org/debian'):
 
         if init_codename is not None:
@@ -375,7 +375,7 @@ class CdromInitRepo(RepoBase):
         else:
             init_attrs = None
 
-        super().__init__(path, None, init_attrs, 'Elbe', 'Elbe InitVM Cdrom Repo')
+        super().__init__(path, None, init_attrs, 'Elbe', 'Elbe InitVM Cdrom Repo', gnupg_home)
 
 
 class CdromBinRepo(RepoBase):
@@ -385,6 +385,7 @@ class CdromBinRepo(RepoBase):
             codename,
             init_codename,
             path,
+            gnupg_home,
             mirror='http://deb.debian.org/debian'):
 
         repo_attrs = RepoAttributes(codename, arch, ['main', 'added'], mirror)
@@ -395,11 +396,12 @@ class CdromBinRepo(RepoBase):
         else:
             init_attrs = None
 
-        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Binary Cdrom Repo')
+        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Binary Cdrom Repo',
+                         gnupg_home)
 
 
 class CdromSrcRepo(RepoBase):
-    def __init__(self, codename, init_codename, path, maxsize,
+    def __init__(self, codename, init_codename, path, maxsize, gnupg_home,
                  mirror='http://deb.debian.org/debian'):
 
         repo_attrs = RepoAttributes(codename,
@@ -419,16 +421,18 @@ class CdromSrcRepo(RepoBase):
         else:
             init_attrs = None
 
-        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Source Cdrom Repo', maxsize)
+        super().__init__(path, init_attrs, repo_attrs, 'Elbe', 'Elbe Source Cdrom Repo',
+                         gnupg_home, maxsize)
 
 
 class ToolchainRepo(RepoBase):
-    def __init__(self, arch, codename, path):
+    def __init__(self, arch, codename, path, gnupg_home):
         repo_attrs = RepoAttributes(codename, arch, 'main')
-        super().__init__(path, None, repo_attrs, 'toolchain', 'Toolchain binary packages Repo')
+        super().__init__(path, None, repo_attrs, 'toolchain', 'Toolchain binary packages Repo',
+                         gnupg_home)
 
 
 class ProjectRepo(RepoBase):
-    def __init__(self, arch, codename, path):
+    def __init__(self, arch, codename, path, gnupg_home):
         repo_attrs = RepoAttributes(codename, [arch, 'amd64', 'source'], 'main')
-        super().__init__(path, None, repo_attrs, 'Local', 'Self build packages Repo')
+        super().__init__(path, None, repo_attrs, 'Local', 'Self build packages Repo', gnupg_home)

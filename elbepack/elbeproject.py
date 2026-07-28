@@ -165,7 +165,8 @@ class ElbeProject:
             self.name = self.xml.text('project/name')
 
         self.repo = ProjectRepo(self.arch, self.codename,
-                                os.path.join(self.builddir, 'repo'))
+                                os.path.join(self.builddir, 'repo'),
+                                os.path.join(self.builddir, 'gnupg'))
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
@@ -658,7 +659,7 @@ class ElbeProject:
 
         # Elbe report
         cache = self.get_rpcaptcache()
-        tgt_pkgs = elbe_report(self.xml, self.buildenv, cache, self.targetfs)
+        tgt_pkgs = elbe_report(self.xml, self.buildenv, cache, self.targetfs, self.builddir)
 
         # chroot' licenses
         self.gen_licenses('chroot', self.buildenv,

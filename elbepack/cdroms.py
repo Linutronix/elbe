@@ -14,7 +14,8 @@ from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
 from elbepack.paths import (
-    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INSTALLER_DIR, SOURCES_DIR,
+    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_GNUPG_HOME,
+    INSTALLER_DIR, SOURCES_DIR,
 )
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -57,6 +58,8 @@ def mk_source_cdrom(components, codename,
             except KeyError:
                 pass
 
+    gnupg_home = os.path.join(target, 'gnupg')
+
     repos = {}
 
     for component in components.keys():
@@ -72,7 +75,7 @@ def mk_source_cdrom(components, codename,
         make_writable_by_apt(rfs.fname(SOURCES_DIR), passwd_root=rfs)
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
-                            cdrom_size, mirror)
+                            cdrom_size, gnupg_home, mirror)
         repos[component] = repo
         for pkg, version in pkg_lst:
             add_source_pkg(repo, component,
@@ -148,6 +151,8 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
     else:
         mirror = 'http://deb.debian.org/debian'
 
+    gnupg_home = os.path.join(target, 'gnupg')
+
     repo_path = pathlib.Path(target, 'binrepo')
     target_repo_path = repo_path / 'targetrepo'
 
@@ -172,10 +177,10 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
 
             do(f'mkdir -p "{repo_path}"')
 
-    repo = CdromInitRepo(init_codename, repo_path, mirror)
+    repo = CdromInitRepo(init_codename, repo_path, INITVM_GNUPG_HOME, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
-                               target_repo_path, mirror)
+                               target_repo_path, gnupg_home, mirror)
 
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)
