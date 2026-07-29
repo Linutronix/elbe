@@ -314,6 +314,8 @@ def create_label(disk, part, ppart, fslabel, target, grub):
 
         needs_cp = entry.mkfs(part_image_name, filesystem_tree)
 
+        _execute_fs_commands(entry.fs_file_commands, dict(file=part_image_name))
+
         if needs_cp or entry.fs_path_commands or entry.fs_device_commands:
             with losetup(part_image_name) as loopdev:
                 _execute_fs_commands(entry.fs_device_commands, dict(device=loopdev))

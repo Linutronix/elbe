@@ -1797,6 +1797,17 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="file-command" type="rfs:string" minOccurs="0">
+        <annotation>
+          <documentation>
+            execute the defined command in /bin/sh. The command is being executed directly
+            after the filesystem was created, before it is mounted. The placeholder {file}
+            is pointing to the plain filesystem image file. Unlike device-command, this
+            never requires a loop device, so it is safe to use in rootless builds -- only
+            use it for commands that work against a regular file (e.g. veritysetup format).
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 

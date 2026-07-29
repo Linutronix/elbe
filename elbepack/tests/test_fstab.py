@@ -28,6 +28,28 @@ def _entry(fstype):
     return fstabentry(None, etree(None, string=xml).root)
 
 
+def test_fs_finetuning_commands_are_parsed_by_kind():
+    xml = """
+    <partition>
+      <source>/dev/mmcblk0p1</source>
+      <label>testfs</label>
+      <mountpoint>/</mountpoint>
+      <fs>
+        <type>ext4</type>
+        <fs-finetuning>
+          <device-command>mkswap {device}</device-command>
+          <path-command>echo hi &gt; {path}/hi</path-command>
+          <file-command>veritysetup format {file} hash.img</file-command>
+        </fs-finetuning>
+      </fs>
+    </partition>
+    """
+    entry = fstabentry(None, etree(None, string=xml).root)
+    assert entry.fs_device_commands == ['mkswap {device}']
+    assert entry.fs_path_commands == ['echo hi > {path}/hi']
+    assert entry.fs_file_commands == ['veritysetup format {file} hash.img']
+
+
 FSTYPES_NEEDING_PRESIZED_TARGET = {
     'ext2', 'ext3', 'ext4', 'btrfs', 'f2fs', 'vfat',
 }

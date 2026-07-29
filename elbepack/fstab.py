@@ -115,11 +115,14 @@ class fstabentry(hdpart):
 
             self.fs_device_commands = []
             self.fs_path_commands = []
+            self.fs_file_commands = []
             for command in entry.node('fs/fs-finetuning') or []:
                 if command.tag == 'device-command':
                     self.fs_device_commands.append(command.text('.'))
                 elif command.tag == 'path-command':
                     self.fs_path_commands.append(command.text('.'))
+                elif command.tag == 'file-command':
+                    self.fs_file_commands.append(command.text('.'))
 
         self.id = str(fsid)
 
