@@ -10,10 +10,15 @@ import os
 import shlex
 import subprocess
 import textwrap
+import warnings
 from shutil import rmtree
 
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore',
+                            message=r'builtin type [Ss]wig\w+ has no __module__ attribute',
+                            category=DeprecationWarning)
+    from gpg import core
+    from gpg.constants import PROTOCOL_OpenPGP
 
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount

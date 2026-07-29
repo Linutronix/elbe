@@ -8,11 +8,16 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import warnings
 from shutil import copyfile
 from urllib.request import urlopen
 
-from gpg import core
-from gpg.constants import PROTOCOL_OpenPGP
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore',
+                            message=r'builtin type [Ss]wig\w+ has no __module__ attribute',
+                            category=DeprecationWarning)
+    from gpg import core
+    from gpg.constants import PROTOCOL_OpenPGP
 
 from elbepack.egpg import OverallStatus, check_signature, unarmor_openpgp_keyring
 from elbepack.filesystem import TmpdirFilesystem
