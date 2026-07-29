@@ -2427,6 +2427,17 @@ SPDX-FileCopyrightText: Linutronix GmbH
           </documentation>
         </annotation>
       </element>
+      <element name="insert_partition" type="rfs:insert_partition" minOccurs="0">
+        <annotation>
+          <documentation>
+            Write a file into a partition. This is the counterpart of
+            extract_partition. Unlike extract_partition/copy_to_partition,
+            this never requires a loop device: if no other action in the
+            same losetup block needs one, the file is written directly
+            into the partition's location inside the disk image file.
+          </documentation>
+        </annotation>
+      </element>
     </choice>
   </group>
 
@@ -2444,6 +2455,28 @@ SPDX-FileCopyrightText: Linutronix GmbH
           <annotation>
             <documentation>
               The partition of the rfs image in integer that needs to be extracted.
+            </documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="insert_partition">
+    <annotation>
+      <documentation>
+        Describe the partition to write to (nr) and the source filename.
+        The value of the tag describes the filename (relative to the
+        builddir) whose content is written into the partition, starting
+        at its first sector.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="rfs:string">
+        <attribute name="part" type="integer" use="required">
+          <annotation>
+            <documentation>
+              The partition of the rfs image in integer that the file is written into.
             </documentation>
           </annotation>
         </attribute>

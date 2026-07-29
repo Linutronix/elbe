@@ -16,6 +16,7 @@ with warnings.catch_warnings():
 import elbepack.filesystem
 import elbepack.finetuning
 import elbepack.treeutils
+from elbepack.tests.test_helpers import make_disk
 
 
 def requires_root(f):
@@ -164,3 +165,67 @@ def test_file_append(target):
     <file encoding="plain" dst="foo" append="true">baz</file>
     """)
     assert target.read_file('foo') == 'barbaz'
+
+
+class _FakeImageTarget:
+    def __init__(self):
+        self.images = []
+        self.image_packers = {}
+
+
+def finetune_img(builddir, xml, **kwargs):
+    node = elbepack.treeutils.etree(None, string=xml).root
+    action = elbepack.finetuning._action_for_node(node)
+    action.execute_img(None, _FakeImageTarget(), builddir, **kwargs)
+
+
+def test_insert_partition_roundtrip_with_extract_partition(tmp_path):
+    part1 = b'A' * 1000
+    part2 = bytes(2000)
+    disk = tmp_path / 'disk.img'
+    make_disk(disk, [part1, part2])
+
+    payload = b'INSERTED-PAYLOAD-DATA' * 10
+    (tmp_path / 'payload.bin').write_bytes(payload)
+
+    finetune_img(
+        str(tmp_path),
+        '<insert_partition part="2">payload.bin</insert_partition>',
+        image=str(disk),
+    )
+    finetune_img(
+        str(tmp_path),
+        '<extract_partition part="2">extracted.bin</extract_partition>',
+        image=str(disk),
+    )
+
+    extracted = (tmp_path / 'extracted.bin').read_bytes()
+    assert extracted == payload + bytes(len(extracted) - len(payload))
+
+    # partition 1 must be untouched
+    part1_offset = 2 * 1024 * 1024
+    assert disk.read_bytes()[part1_offset:part1_offset + len(part1)] == part1
+
+
+def test_insert_partition_writes_at_correct_offset(tmp_path):
+    part1 = b'A' * 1000
+    part2 = bytes(2000)
+    disk = tmp_path / 'disk.img'
+    make_disk(disk, [part1, part2])
+
+    payload = b'X' * 100
+    (tmp_path / 'payload.bin').write_bytes(payload)
+
+    finetune_img(
+        str(tmp_path),
+        '<insert_partition part="2">payload.bin</insert_partition>',
+        image=str(disk),
+    )
+
+    start_sector, _size_sectors, sectorsize = elbepack.finetuning._get_partition_info(
+        str(disk), '2')
+    offset = start_sector * sectorsize
+
+    data = disk.read_bytes()
+    assert data[offset:offset + len(payload)] == payload
+    assert data[offset - 1:offset] == b'\x00'

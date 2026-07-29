@@ -186,3 +186,8 @@ def env_add(d):
     env = os.environ.copy()
     env.update(d)
     return env
+
+
+def get_env_with_sbin():
+    sbin_dirs = ['/sbin', '/usr/sbin', '/usr/local/sbin']
+    return {'PATH': os.pathsep.join([os.environ.get('PATH', ''), *sbin_dirs])}

@@ -24,7 +24,7 @@ from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup, mount
 from elbepack.packers import default_packer, packers
 from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
-from elbepack.shellhelper import ELBE_LOGGING, chroot, do, run
+from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
@@ -461,7 +461,8 @@ class RmArtifactAction(FinetuningAction):
 
 def _get_partition_info(image_path, part_nr):
     result = run(['sfdisk', '--dump', '--json', image_path],
-                 stdout=subprocess.PIPE, stderr=ELBE_LOGGING)
+                 stdout=subprocess.PIPE, stderr=ELBE_LOGGING,
+                 env=env_add(get_env_with_sbin()))
 
     data = json.loads(result.stdout.decode('ascii'))
 
@@ -577,6 +578,27 @@ class ExtractPartitionAction(ImageFinetuningAction):
         target.image_packers[self.node.et.text] = default_packer
 
 
+@_register_action('insert_partition')
+class InsertPartitionAction(ImageFinetuningAction):
+
+    def execute(self, _buildenv, _target):
+        raise NotImplementedError('<insert_partition> may only be '
+                                  'used in <losetup>')
+
+    def execute_img(self, _buildenv, _target, builddir, *, device=None, image=None):
+        part_nr = self.node.et.attrib['part']
+        srcname = os.path.join(builddir, self.node.et.text)
+
+        if device is not None:
+            do(['dd', f'if={srcname}', f'of={device}p{part_nr}'])
+        elif image is not None:
+            start_sector, _size_sectors, sectorsize = _get_partition_info(image, part_nr)
+            do(['dd', f'if={srcname}', f'of={image}',
+                f'bs={sectorsize}', f'seek={start_sector}', 'conv=notrunc'])
+        else:
+            raise ValueError('Must pass either device or image')
+
+
 @_register_action('copy_from_partition')
 class CopyFromPartition(ImageFinetuningAction):
 
@@ -654,7 +676,8 @@ class SetPartitionTypeAction(ImageFinetuningAction):
         else:
             raise ValueError('Must pass either device or image')
 
-        do(['sfdisk', '--lock', '--part-type', source, part_nr, part_type])
+        do(['sfdisk', '--lock', '--part-type', source, part_nr, part_type],
+           env_add=get_env_with_sbin())
 
 
 @_register_action('rm_apt_source')

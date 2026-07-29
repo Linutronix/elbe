@@ -5,13 +5,7 @@
 
 import os
 
-from elbepack.shellhelper import do
-
-
-def _get_env_with_sbin():
-    sbin_dirs = ['/sbin', '/usr/sbin', '/usr/local/sbin']
-    env = {'PATH': os.pathsep.join([os.environ.get('PATH', ''), *sbin_dirs])}
-    return env
+from elbepack.shellhelper import do, get_env_with_sbin
 
 
 def get_mtdnum(xml, label):
@@ -156,7 +150,7 @@ class fstabentry(hdpart):
         if entries:
             do(['mcopy', '-sm', '-i', target,
                 *(os.path.join(src_dir, e) for e in entries), '::'],
-               env_add=_get_env_with_sbin())
+               env_add=get_env_with_sbin())
 
     def mkfs(self, target, filesystem_tree):
         mkfs_dict = {
@@ -181,13 +175,13 @@ class fstabentry(hdpart):
         mkfs = mkfs_dict.get(self.fstype, f'mkfs.{self.fstype}')
         mkfs_fs_copy_argument = mkfs_fs_copy_argument_dict.get(self.fstype, [target])
         do([mkfs, *self.mkfsopts, *self._get_label_opt(), *mkfs_fs_copy_argument],
-           env_add=_get_env_with_sbin())
+           env_add=get_env_with_sbin())
 
         if self.fstype in mkfs_fs_copy_extra_cmd_dict:
             extra_cmd = mkfs_fs_copy_extra_cmd_dict[self.fstype]
             if callable(extra_cmd):
                 extra_cmd(target, filesystem_tree)
             else:
-                do(extra_cmd, env_add=_get_env_with_sbin())
+                do(extra_cmd, env_add=get_env_with_sbin())
 
         return not mkfs_supports_fs_copy
