@@ -90,9 +90,11 @@ def test_validation_txt(build_dir):
 
 
 def test_elbe_report_txt(build_dir):
+    has_local_gpio_package = image_parameters(build_dir)['has-local-gpio']
+
     elbe_report = build_dir.joinpath('elbe-report.txt').read_text()
 
-    assert elbe_report.startswith('ELBE Report for Project simple-validation-image')
+    assert elbe_report.startswith('ELBE Report for Project {}'.format(project_name(build_dir)))
 
     assert textwrap.dedent("""
         Apt Sources dump
@@ -127,7 +129,7 @@ def test_elbe_report_txt(build_dir):
         -----------------------
     """) in elbe_report
 
-    assert textwrap.dedent("""
+    local_gpio_package_text = textwrap.dedent("""
         Installed Packages List
         -----------------------
 
@@ -140,7 +142,22 @@ def test_elbe_report_txt(build_dir):
         ~~~~~~
 
         |adduser|
-    """.rstrip()) in elbe_report
+    """.rstrip())
+
+    no_local_gpio_package_text = textwrap.dedent("""
+        Installed Packages List
+        -----------------------
+
+        Debian
+        ~~~~~~
+
+        |adduser|
+    """.rstrip())
+
+    if has_local_gpio_package:
+        assert local_gpio_package_text in elbe_report
+    else:
+        assert no_local_gpio_package_text in elbe_report
 
     assert textwrap.dedent("""
         File List
