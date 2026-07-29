@@ -175,7 +175,8 @@ def test_elbe_log_txt(build_dir):
     assert log.startswith('[INFO]Build started\n')
 
     assert 'I: Extracting util-linux...' in log
-    assert '[CMD] cat /etc/hosts | cat -n > /etc/hosts4' in log
+    if image_parameters(build_dir)['has-finetuning']:
+        assert '[CMD] cat /etc/hosts | cat -n > /etc/hosts4' in log
 
     assert log.endswith('[INFO]Build finished successfully\n')
 
