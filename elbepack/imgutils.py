@@ -28,7 +28,8 @@ def _wait_on_udev_for_device_and_partitions(device):
         ]
 
     # All partitions need to be mentioned explicitly.
-    subprocess.check_call(['udevadm', 'wait', device, *partitions])
+    subprocess.run(['udevadm', 'wait', device, *partitions],
+                   check=True, timeout=30)
 
 
 @contextlib.contextmanager
