@@ -28,6 +28,22 @@ def _mknod_from_sysfs(device_name):
         os.chmod(devpath, 0o660)
 
 
+def _symlink_by_uuid_from_blkid(device_name):
+    devpath = f'/dev/{device_name}'
+    blkid = subprocess.run(
+        ['blkid', '-s', 'UUID', '-o', 'value', devpath],
+        stdout=subprocess.PIPE, check=False,
+    )
+    uuid = blkid.stdout.decode('ascii').strip()
+    if blkid.returncode != 0 or not uuid:
+        return
+
+    by_uuid_dir = pathlib.Path('/dev/disk/by-uuid')
+    by_uuid_dir.mkdir(parents=True, exist_ok=True)
+    with contextlib.suppress(FileExistsError):
+        (by_uuid_dir / uuid).symlink_to(devpath)
+
+
 def _wait_on_udev_for_device_and_partitions(device):
     # The callers expect the udev symlinks of the loop device and its
     # partitions to be present.
@@ -48,6 +64,7 @@ def _wait_on_udev_for_device_and_partitions(device):
     if not _udev_available():
         for name in (device_name, *partition_names):
             _mknod_from_sysfs(name)
+            _symlink_by_uuid_from_blkid(name)
         return
 
     # All partitions need to be mentioned explicitly.
