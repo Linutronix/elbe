@@ -4,10 +4,28 @@
 
 import contextlib
 import fcntl
+import os
 import pathlib
+import stat
 import subprocess
 
 from elbepack.shellhelper import ELBE_LOGGING, do, run
+
+
+def _udev_available():
+    return pathlib.Path('/run/udev/control').is_socket()
+
+
+def _mknod_from_sysfs(device_name):
+    devpath = f'/dev/{device_name}'
+    if os.path.exists(devpath):
+        return
+
+    dev_attr = pathlib.Path('/sys/class/block', device_name, 'dev').read_text().strip()
+    major, minor = (int(x) for x in dev_attr.split(':'))
+    with contextlib.suppress(FileExistsError):
+        os.mknod(devpath, mode=0o660 | stat.S_IFBLK, device=os.makedev(major, minor))
+        os.chmod(devpath, 0o660)
 
 
 def _wait_on_udev_for_device_and_partitions(device):
@@ -21,13 +39,19 @@ def _wait_on_udev_for_device_and_partitions(device):
         # However udev processing triggers a rescan of the partitions, removing
         # the entries for a short time. Prevent udev from doing so while we iterate.
         fcntl.flock(f, fcntl.LOCK_EX)
-        partitions = [
-            '/dev/' + entry.name
+        partition_names = [
+            entry.name
             for entry in pathlib.Path('/sys/class/block', device_name).iterdir()
             if entry.name.startswith(device_name)
         ]
 
+    if not _udev_available():
+        for name in (device_name, *partition_names):
+            _mknod_from_sysfs(name)
+        return
+
     # All partitions need to be mentioned explicitly.
+    partitions = ['/dev/' + name for name in partition_names]
     subprocess.run(['udevadm', 'wait', device, *partitions],
                    check=True, timeout=30)
 
