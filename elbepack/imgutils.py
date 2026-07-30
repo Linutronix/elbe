@@ -10,6 +10,10 @@ import subprocess
 from elbepack.shellhelper import ELBE_LOGGING, do, run
 
 
+def _udev_available():
+    return pathlib.Path('/run/udev/control').is_socket()
+
+
 def _wait_on_udev_for_device_and_partitions(device):
     # The callers expect the udev symlinks of the loop device and its
     # partitions to be present.
@@ -26,6 +30,9 @@ def _wait_on_udev_for_device_and_partitions(device):
             for entry in pathlib.Path('/sys/class/block', device_name).iterdir()
             if entry.name.startswith(device_name)
         ]
+
+    if not _udev_available():
+        return
 
     # All partitions need to be mentioned explicitly.
     subprocess.run(['udevadm', 'wait', device, *partitions],
