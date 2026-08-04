@@ -14,25 +14,11 @@ import pathlib
 
 class _PurePath:
     """
-    Reference to a path inside an block device.
+    Reference to a path inside a block device or a tarball.
     API is the same as of pathlib.
 
     Pure variant that only provides path-manipulation methods.
     """
-
-    def __init__(self, *pathsegments, device, guestfs, root=None):
-        self.device = device
-        self.root = root or self
-        self._p = pathlib.PurePosixPath(*pathsegments)
-        self._guestfs = guestfs
-
-    def _create_from_posixpath(self, p):
-        return type(self)(
-                p,
-                device=self.device,
-                guestfs=self._guestfs,
-                root=self.root,
-        )
 
     def joinpath(self, *pathsegments):
         return self._create_from_posixpath(self._p.joinpath(*pathsegments))
@@ -116,6 +102,20 @@ class Path(_PurePath):
 
     For documentation see :py:mod:`pathlib`.
     """
+
+    def __init__(self, *pathsegments, device, guestfs, root=None):
+        self.device = device
+        self.root = root or self
+        self._p = pathlib.PurePosixPath(*pathsegments)
+        self._guestfs = guestfs
+
+    def _create_from_posixpath(self, p):
+        return type(self)(
+                p,
+                device=self.device,
+                guestfs=self._guestfs,
+                root=self.root,
+        )
 
     def iterdir(self):
         with _guestfs_ctx():
