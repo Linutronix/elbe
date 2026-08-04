@@ -231,6 +231,69 @@ def _test_grub(img, root, root_uuid):
     assert b'GRUB' in img.read_at(512, 0)  # GRUB in MBR
 
 
+def _test_rootfs(build_dir, root):
+    assert root.joinpath('etc', 'hostname').read_text() == 'validation-image'
+    assert root.joinpath('etc', 'mailname').read_text() == 'validation-image.elbe-ci'
+    assert not root.joinpath('etc', 'resolv.conf').exists()
+    assert root.joinpath('etc', 'machine-id').is_file()
+    assert root.joinpath('etc', 'machine-id').stat().st_size == 0
+    assert root.joinpath('etc', 'fstab').read_text().strip() == textwrap.dedent("""
+    LABEL=rfs / ext4 defaults 0 0
+    """).strip()
+    assert root.joinpath('etc', 'os-release').read_text().strip() == textwrap.dedent("""
+        PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+        NAME="Debian GNU/Linux"
+        VERSION_ID="12"
+        VERSION="12 (bookworm)"
+        VERSION_CODENAME=bookworm
+        ID=debian
+        HOME_URL="https://www.debian.org/"
+        SUPPORT_URL="https://www.debian.org/support"
+        BUG_REPORT_URL="https://bugs.debian.org/"
+    """).strip()
+    assert root.joinpath('etc', 'apt', 'sources.list').read_text() in [
+        # With and without source CDROM
+        'deb-src [] http://deb.debian.org/debian bookworm main\n'
+        'deb [arch=amd64] http://deb.debian.org/debian bookworm main',
+
+        'deb [arch=amd64] http://deb.debian.org/debian bookworm main',
+    ]
+
+    assert root.joinpath('etc', 'apt', 'trusted.gpg.d',
+                         'elbe-xml-primary-key.gpg').read_bytes() == (
+        b'\x983\x04c\xce\xb9S\x16\t+\x06\x01\x04\x01\xdaG\x0f\x01\x01\x07@w\xb6t\xb2\xbc.\x86P'
+        b'z$\xa1dq\xfe\x07S\x84\x92K\xfc\\E\xfc\x04Al\xebr\xb7\xfa\x00J\xb4IDebian Stable Rele'
+        b'ase Key (12/bookworm) <debian-release@lists.debian.org>\x88\x96\x04\x13\x16\x08\x00>'
+        b'\x16!\x04Md\xfe\xc1\x19\xc2\x02\x90g\xd6\xe7\x91\xf8\xd2X[\x87\x83\xd4\x81\x05\x02c'
+        b'\xce\xb9S\x02\x1b\x03\x05\t\x0f\t\x9c\x00\x05\x0b\t\x08\x07\x02\x06\x15\n\t\x08\x0b'
+        b'\x02\x04\x16\x02\x03\x01\x02\x1e\x01\x02\x17\x80\x00\n\t\x10\xf8\xd2X[\x87\x83\xd4'
+        b'\x81J\x0c\x01\x00\xffj\xa5\xe3\xb9\xcf[9\x9b\x80\xf8\xcft\xdc\xa8:5\xc1\xec\xfa\x0c'
+        b'\xdc\x9a\xdb\xb4\x16Z\x81\xbf\xe2\x80l\x01\x00\x847\xc6t\xd05\xda\x80\xf1\xdb\xc2'
+        b"\xbb\xecck}\x04+\x13\xf8\xf8'J\x7f[\x8a\x86\xf0_\xb6\xc3\x0e"
+    )
+
+    sources_list_d = root.joinpath('etc', 'apt', 'sources.list.d')
+    assert sources_list_d.is_dir()
+    assert len(list(sources_list_d.iterdir())) == 0
+
+    assert root.joinpath('etc', 'shadow').read_text().startswith('root:$6$')
+
+    getty_service = root.joinpath('etc', 'systemd', 'system', 'getty.target.wants',
+                                  'serial-getty@ttyS0.service')
+    assert getty_service.is_symlink()
+    assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
+
+    assert root.joinpath('usr', 'bin', 'unzip').is_file()
+    assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.1.so.3.0.0').is_file()
+
+    assert not root.joinpath('var', 'cache', 'elbe').exists()
+
+    _test_generated_elbe_files(build_dir, root)
+    _test_finetuning(root)
+    _test_archive(root)
+    _test_excursions(root)
+
+
 def _test_rfs_partition(build_dir, img, part):
     assert part.number == 1
     assert part.start == 1 * 1024 * 1024
@@ -246,66 +309,7 @@ def _test_rfs_partition(build_dir, img, part):
         statvfs = elbevalidate.statvfs(root)
         assert statvfs.f_bfree * statvfs.f_bsize > 100 * 1024 * 1024
 
-        assert root.joinpath('etc', 'hostname').read_text() == 'validation-image'
-        assert root.joinpath('etc', 'mailname').read_text() == 'validation-image.elbe-ci'
-        assert not root.joinpath('etc', 'resolv.conf').exists()
-        assert root.joinpath('etc', 'machine-id').is_file()
-        assert root.joinpath('etc', 'machine-id').stat().st_size == 0
-        assert root.joinpath('etc', 'fstab').read_text().strip() == textwrap.dedent("""
-        LABEL=rfs / ext4 defaults 0 0
-        """).strip()
-        assert root.joinpath('etc', 'os-release').read_text().strip() == textwrap.dedent("""
-            PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
-            NAME="Debian GNU/Linux"
-            VERSION_ID="12"
-            VERSION="12 (bookworm)"
-            VERSION_CODENAME=bookworm
-            ID=debian
-            HOME_URL="https://www.debian.org/"
-            SUPPORT_URL="https://www.debian.org/support"
-            BUG_REPORT_URL="https://bugs.debian.org/"
-        """).strip()
-        assert root.joinpath('etc', 'apt', 'sources.list').read_text() in [
-            # With and without source CDROM
-            'deb-src [] http://deb.debian.org/debian bookworm main\n'
-            'deb [arch=amd64] http://deb.debian.org/debian bookworm main',
-
-            'deb [arch=amd64] http://deb.debian.org/debian bookworm main',
-        ]
-
-        assert root.joinpath('etc', 'apt', 'trusted.gpg.d',
-                             'elbe-xml-primary-key.gpg').read_bytes() == (
-            b'\x983\x04c\xce\xb9S\x16\t+\x06\x01\x04\x01\xdaG\x0f\x01\x01\x07@w\xb6t\xb2\xbc.\x86P'
-            b'z$\xa1dq\xfe\x07S\x84\x92K\xfc\\E\xfc\x04Al\xebr\xb7\xfa\x00J\xb4IDebian Stable Rele'
-            b'ase Key (12/bookworm) <debian-release@lists.debian.org>\x88\x96\x04\x13\x16\x08\x00>'
-            b'\x16!\x04Md\xfe\xc1\x19\xc2\x02\x90g\xd6\xe7\x91\xf8\xd2X[\x87\x83\xd4\x81\x05\x02c'
-            b'\xce\xb9S\x02\x1b\x03\x05\t\x0f\t\x9c\x00\x05\x0b\t\x08\x07\x02\x06\x15\n\t\x08\x0b'
-            b'\x02\x04\x16\x02\x03\x01\x02\x1e\x01\x02\x17\x80\x00\n\t\x10\xf8\xd2X[\x87\x83\xd4'
-            b'\x81J\x0c\x01\x00\xffj\xa5\xe3\xb9\xcf[9\x9b\x80\xf8\xcft\xdc\xa8:5\xc1\xec\xfa\x0c'
-            b'\xdc\x9a\xdb\xb4\x16Z\x81\xbf\xe2\x80l\x01\x00\x847\xc6t\xd05\xda\x80\xf1\xdb\xc2'
-            b"\xbb\xecck}\x04+\x13\xf8\xf8'J\x7f[\x8a\x86\xf0_\xb6\xc3\x0e"
-        )
-
-        sources_list_d = root.joinpath('etc', 'apt', 'sources.list.d')
-        assert sources_list_d.is_dir()
-        assert len(list(sources_list_d.iterdir())) == 0
-
-        assert root.joinpath('etc', 'shadow').read_text().startswith('root:$6$')
-
-        getty_service = root.joinpath('etc', 'systemd', 'system', 'getty.target.wants',
-                                      'serial-getty@ttyS0.service')
-        assert getty_service.is_symlink()
-        assert str(getty_service.readlink()) == '/lib/systemd/system/serial-getty@.service'
-
-        assert root.joinpath('usr', 'bin', 'unzip').is_file()
-        assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.1.so.3.0.0').is_file()
-
-        assert not root.joinpath('var', 'cache', 'elbe').exists()
-
-        _test_generated_elbe_files(build_dir, root)
-        _test_finetuning(root)
-        _test_archive(root)
-        _test_excursions(root)
+        _test_rootfs(build_dir, root)
         _test_grub(img, root, blkid['UUID'])
 
 
