@@ -29,7 +29,7 @@ import typing
 import guestfs
 
 from elbevalidate.constants import GPTPartitionType, PartitionLabel
-from elbevalidate.path import Path as ImagePath
+from elbevalidate.path import ImagePath
 
 
 class BlockDevice(abc.ABC):

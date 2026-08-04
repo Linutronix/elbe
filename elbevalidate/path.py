@@ -96,7 +96,7 @@ def _guestfs_ctx():
         raise
 
 
-class Path(_PurePath):
+class ImagePath(_PurePath):
     """
     Reference to a path inside a :py:class:`elbevalidate.BlockDevice`.
 
