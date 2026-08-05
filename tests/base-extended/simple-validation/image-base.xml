@@ -8,7 +8,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		    xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 
 	<project>
-		<name>simple-validation-image</name>
+		<name>simple-validation-base-image</name>
 		<version>1.0</version>
 		<suite>bookworm</suite>
 		<buildtype>amd64</buildtype>
@@ -37,8 +37,11 @@ SPDX-FileCopyrightText: Linutronix GmbH
 
 	</project>
 
+        <archivedir>../../simple-validation-image-archive1</archivedir>
+
 	<target>
                 <hostname>validation-image</hostname>
+                <domain>elbe-ci</domain>
                 <package>
                         <base-image>
                                 <name>base-rootfs.tgz</name>
@@ -52,4 +55,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		</pkg-list>
 
 	</target>
+        <check-image-list>
+                <check-script location="../../simple-validation-image-test.py" />
+        </check-image-list>
 </ns0:RootFileSystem>
