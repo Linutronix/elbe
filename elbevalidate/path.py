@@ -220,3 +220,52 @@ class ImagePath(Path):
             stat['files'], stat['ffree'], stat['favail'],
             stat['fsid'], stat['flag'], stat['namemax'],
         ])
+
+
+class TarballPath(Path):
+    """
+    Reference to a path inside a :py:class:`tarfile.TarFile`.
+
+    For documentation see :py:mod:`pathlib`.
+    """
+    def __init__(self, *pathsegments, tar):
+        self.tar = tar
+        self._p = pathlib.PurePosixPath(*pathsegments)
+
+    def _create_from_posixpath(self, p):
+        return type(self)(
+                p,
+                tar=self.tar,
+        )
+
+    def _info(self):
+        return self.tar.getmember('.' + self._path)
+
+    def read_bytes(self):
+        return self.tar.extractfile('.' + self._path).read()
+
+    def exists(self):
+        return ('.' + self._path) in self.tar.getnames()
+
+    def is_file(self):
+        return self._info().isfile()
+
+    def stat(self):
+        info = self._info()
+        return os.stat_result((
+            info.mode, 0, 0, 0, info.uid, info.gid, info.size, info.mtime, info.mtime, info.mtime))
+
+    def is_dir(self):
+        return self._info().isdir()
+
+    def iterdir(self):
+        dir = '.' + self._path
+        for entry in self.tar.getnames():
+            if os.path.dirname(entry) == dir:
+                yield self._create_from_posixpath(entry)
+
+    def is_symlink(self):
+        return self._info().issym()
+
+    def readlink(self):
+        return self._info().linkname
