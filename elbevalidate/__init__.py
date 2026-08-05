@@ -24,12 +24,13 @@ import contextlib
 import dataclasses
 import functools
 import os
+import tarfile
 import typing
 
 import guestfs
 
 from elbevalidate.constants import GPTPartitionType, PartitionLabel
-from elbevalidate.path import ImagePath
+from elbevalidate.path import ImagePath, TarPath
 
 
 class BlockDevice(abc.ABC):
@@ -226,6 +227,22 @@ class Image(BlockDevice):
     def read_at(self, count: int, offset: int) -> bytes:
         """ Read count bytes at offset. """
         return self._gfs.pread_device(self._gfs_blockdev, count=count, offset=offset)
+
+
+class Tar:
+    def __init__(self, tar):
+        self._tar = tar
+
+    @classmethod
+    @contextlib.contextmanager
+    def from_file(cls, path) -> collections.abc.Generator['Image', None, None]:
+        """ Construct an :py:class:`Tarball` from a local file. """
+        with tarfile.open(path) as tar:
+            yield cls(tar)
+
+    @contextlib.contextmanager
+    def files(self):
+        yield TarPath(tar=self._tar)
 
 
 # This is a module-level API in the stdlib, so we do the same here.
