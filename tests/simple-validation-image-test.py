@@ -245,6 +245,15 @@ def _test_finetuning(root):
     assert root.joinpath('etc', 'hosts').stat().st_ino == \
            root.joinpath('etc', 'hosts6').stat().st_ino
 
+    # <command>cp /usr/sbin/policy-rc.d /usr/sbin/policy-rc.d.copy</command>
+    copy = root.joinpath('usr', 'sbin', 'policy-rc.d.copy')
+    assert copy.exists()
+    assert copy.stat().st_mode & 0o777 == 0o755
+    assert copy.read_text().strip() == textwrap.dedent("""
+    #!/bin/sh
+    exit 101
+    """).strip()
+
 
 def _test_archive(root):
     archive_file = root.joinpath('opt', 'archive-file')
@@ -257,14 +266,6 @@ def _test_archive(root):
 
 def _test_excursions(root):
     assert not root.joinpath('usr', 'sbin', 'policy-rc.d').exists()
-
-    copy = root.joinpath('usr', 'sbin', 'policy-rc.d.copy')
-    assert copy.exists()
-    assert copy.stat().st_mode & 0o777 == 0o755
-    assert copy.read_text().strip() == textwrap.dedent("""
-    #!/bin/sh
-    exit 101
-    """).strip()
 
 
 def _test_grub(img, root, root_uuid):
