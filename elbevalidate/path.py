@@ -71,6 +71,24 @@ class _PurePath:
         return self._p.stem
 
 
+class Path(_PurePath):
+    def open(self, mode='r', buffering=-1,
+             encoding=None, errors=None, newline=None):
+        buf = io.BytesIO(self.read_bytes())
+
+        if mode in ('', 'r'):
+            return io.TextIOWrapper(buf, encoding=encoding,
+                                    errors=errors, newline=newline)
+        elif mode in ('b', 'rb'):
+            return buf
+        else:
+            raise ValueError(f'Invalid mode {mode}')
+
+    def read_text(self, encoding=None, errors=None):
+        with self.open(encoding=encoding, errors=errors) as f:
+            return f.read()
+
+
 @contextlib.contextmanager
 def _guestfs_ctx():
     """
@@ -96,7 +114,7 @@ def _guestfs_ctx():
         raise
 
 
-class ImagePath(_PurePath):
+class ImagePath(Path):
     """
     Reference to a path inside a :py:class:`elbevalidate.BlockDevice`.
 
@@ -125,22 +143,6 @@ class ImagePath(_PurePath):
     def read_bytes(self):
         with _guestfs_ctx():
             return self._guestfs.read_file(self._path)
-
-    def open(self, mode='r', buffering=-1,
-             encoding=None, errors=None, newline=None):
-        buf = io.BytesIO(self.read_bytes())
-
-        if mode in ('', 'r'):
-            return io.TextIOWrapper(buf, encoding=encoding,
-                                    errors=errors, newline=newline)
-        elif mode in ('b', 'rb'):
-            return buf
-        else:
-            raise ValueError(f'Invalid mode {mode}')
-
-    def read_text(self, encoding=None, errors=None):
-        with self.open(encoding=encoding, errors=errors) as f:
-            return f.read()
 
     @staticmethod
     def _convert_stat(gstat):
