@@ -27,6 +27,13 @@ def build_dir(request):
     return pathlib.Path(bd)
 
 
+@pytest.fixture
+def project_name(request, build_dir):
+    from elbepack.treeutils import etree
+    xml = etree(build_dir / 'source.xml')
+    return xml.text('project/name')
+
+
 def pytest_report_header(config):
     bd = _elbe_build_dir(config)
     if bd is None:
