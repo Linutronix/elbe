@@ -159,7 +159,7 @@ def elbe_logging(*args, **kwargs):
 
 
 def open_logging(**targets):
-    root.setLevel(logging.DEBUG)
+    root.setLevel(logging.INFO)
 
     handlers = []
 
