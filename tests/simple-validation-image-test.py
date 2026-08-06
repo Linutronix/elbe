@@ -11,8 +11,28 @@ import tempfile
 import textwrap
 import unittest
 
+from elbepack.treeutils import etree
+
 import elbevalidate
 import elbevalidate.pytest
+
+image_parameters_dict = {
+                   'simple-validation-image':
+                   {'base-image': False, 'has-local-gpio': True, 'has-finetuning': True},
+                   'simple-validation-base-image':
+                   {'base-image': True, 'has-local-gpio': False, 'has-finetuning': False},
+                   'simple-validation-extended-image':
+                   {'base-image': False, 'has-local-gpio': False, 'has-finetuning': False},
+                   }
+
+
+def project_name(build_dir):
+    xml = etree(build_dir / 'source.xml')
+    return xml.text('project/name')
+
+
+def image_parameters(build_dir):
+    return image_parameters_dict[project_name(build_dir)]
 
 
 def test_build_directory_contents(build_dir):
