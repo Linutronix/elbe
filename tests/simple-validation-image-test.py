@@ -36,6 +36,11 @@ def image_parameters(build_dir):
 
 
 def test_build_directory_contents(build_dir):
+    if image_parameters(build_dir)['base-image']:
+        extra_files = ['base-rootfs.tgz']
+    else:
+        extra_files = ['sda.img']
+
     created_files = list([p.name for p in build_dir.iterdir()])
     for f in [
             'elbe-report.txt',
@@ -44,10 +49,9 @@ def test_build_directory_contents(build_dir):
             'licence-target.txt',
             'licence-target.xml',
             'log.txt',
-            'sda.img',
             'source.xml',
             'validation.txt',
-            ]:
+            ] + extra_files:
 
         assert f in created_files
 
