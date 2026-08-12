@@ -235,7 +235,7 @@ class Tar:
 
     @classmethod
     @contextlib.contextmanager
-    def from_file(cls, path) -> collections.abc.Generator['Image', None, None]:
+    def from_file(cls, path) -> collections.abc.Generator['Tar', None, None]:
         """ Construct an :py:class:`Tarball` from a local file. """
         with tarfile.open(path) as tar:
             yield cls(tar)
