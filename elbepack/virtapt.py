@@ -99,7 +99,7 @@ class VirtApt:
         mirror = self.xml.node('project/mirror')
         if mirror and mirror.has('primary_host') and mirror.has('primary_key'):
             key = strip_leading_whitespace_from_lines(mirror.text('primary_key'))
-            self.add_key(unarmor_openpgp_keyring(key), 'elbe-virtapt-primary-key.gpg')
+            self._add_key(unarmor_openpgp_keyring(key), 'elbe-virtapt-primary-key.gpg')
 
         if self.xml.has('project/mirror/url-list'):
             # Should we use self.xml.prj.has("noauth")???
