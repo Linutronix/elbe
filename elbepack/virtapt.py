@@ -44,8 +44,6 @@ class VirtApt:
         apt_pkg.config.set('Acquire::http::Proxy::127.0.0.1', 'DIRECT')
         apt_pkg.config.set('APT::Install-Recommends', '0')
         apt_pkg.config.set('Dir::Etc', self.basefs.fname('/'))
-        apt_pkg.config.set('Dir::Etc::Trusted',
-                           self.basefs.fname('/etc/apt/trusted.gpg'))
         apt_pkg.config.set('Dir::Etc::TrustedParts',
                            self.basefs.fname('/etc/apt/trusted.gpg.d'))
         apt_pkg.config.set('APT::Cache-Limit', '0')
@@ -125,17 +123,14 @@ class VirtApt:
         self.basefs.touch_file('state/status')
 
     def _setup_gpg(self):
-        ring_path = self.basefs.fname('etc/apt/trusted.gpg')
         if not os.path.isdir('/etc/apt/trusted.gpg.d'):
             print("/etc/apt/trusted.gpg.d doesn't exist")
             print('apt-get install debian-archive-keyring may '
                   'fix this problem')
             sys.exit(204)
 
-        if os.path.exists('/etc/apt/trusted.gpg'):
-            shutil.copyfile('/etc/apt/trusted.gpg', ring_path)
-
-        shutil.copytree('/etc/apt/trusted.gpg.d', ring_path + '.d', dirs_exist_ok=True)
+        shutil.copytree('/etc/apt/trusted.gpg.d',
+                        self.basefs.fname('etc/apt/trusted.gpg.d'), dirs_exist_ok=True)
 
     def mark_install(self, pkgname):
         self.depcache.mark_install(self.cache[pkgname])
