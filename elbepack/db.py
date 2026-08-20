@@ -7,7 +7,7 @@ import errno
 import glob
 import os
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from shutil import copyfile, rmtree
 from threading import Thread
 
@@ -146,7 +146,7 @@ class ElbeDB:
 
             p.name = xml.text('project/name')
             p.version = xml.text('project/version')
-            p.edit = datetime.utcnow()
+            p.edit = datetime.now(timezone.utc)
             if p.status == 'empty_project' or p.status == 'build_failed':
                 p.status = 'needs_build'
             elif p.status == 'build_done':
@@ -497,7 +497,7 @@ class Project (Base):  # type: ignore
     version = Column(String)
     xml = Column(String)
     status = Column(String)
-    edit = Column(DateTime, default=datetime.utcnow)
+    edit = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     files = relationship('ProjectFile', backref='project')
 
 
