@@ -22,6 +22,14 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line('markers', 'slow: mark test as slow to run')
 
+    # spyne's SixMetaPathImporter is appended to sys.meta_path and thus
+    # related warnings be repeatedly triggered by subsequent imports
+    # For pytest that can only realiably be suppressed by explicitly adding
+    # it to it's warnings filter context manager.
+    config.addinivalue_line(
+        'filterwarnings', 'ignore:_SixMetaPathImporter:ImportWarning',
+    )
+
     # Make sure the setting is also propagated through run_elbe.
     warnings = config.getini('filterwarnings')
     if warnings:
