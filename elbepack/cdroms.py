@@ -10,7 +10,7 @@ from shutil import copyfile
 
 from apt.package import FetchError
 
-from elbepack.aptpkgutils import XMLPackage
+from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
@@ -42,6 +42,7 @@ def mk_source_cdrom(components, codename,
                     mirror='http://deb.debian.org/debian'):
 
     os.makedirs('/var/cache/elbe/sources', exist_ok=True)
+    make_writable_by_apt('/var/cache/elbe/sources')
 
     forbidden_packages = []
     if xml is not None and xml.has('target/pkg-list'):
@@ -64,6 +65,7 @@ def mk_source_cdrom(components, codename,
             forbidden_src_packages.add(name)
 
         rfs.mkdir_p('/var/cache/elbe/sources')
+        make_writable_by_apt(rfs.fname('/var/cache/elbe/sources'), passwd_root=rfs)
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
                             cdrom_size, mirror)
@@ -130,7 +132,9 @@ def mk_source_cdrom(components, codename,
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
 
     rfs.mkdir_p('/var/cache/elbe/binaries/added')
+    make_writable_by_apt(rfs.fname('/var/cache/elbe/binaries/added'), passwd_root=rfs)
     rfs.mkdir_p('/var/cache/elbe/binaries/main')
+    make_writable_by_apt(rfs.fname('/var/cache/elbe/binaries/main'), passwd_root=rfs)
 
     if xml is not None:
         mirror = xml.get_primary_mirror(rfs.fname('cdrom'))

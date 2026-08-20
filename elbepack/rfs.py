@@ -10,6 +10,7 @@ import sys
 import tarfile
 from urllib.parse import urlsplit
 
+from elbepack.aptpkgutils import make_writable_by_apt
 from elbepack.efilesystem import ChRootFilesystem, dpkg_architecture
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.shellhelper import chroot, do
@@ -358,6 +359,9 @@ class BuildEnv:
         preseed_txt = preseed_to_text(preseed)
         with self.rfs:
             chroot(self.rfs, ['debconf-set-selections'], input=preseed_txt.encode('ascii'))
+
+        self.rfs.mkdir_p('var/cache/apt/archives/partial')
+        make_writable_by_apt(self.rfs.fname('var/cache/apt/archives/partial'), passwd_root=self.rfs)
 
     def seed_etc(self):
         if self.xml.has('target/passwd_hashed'):

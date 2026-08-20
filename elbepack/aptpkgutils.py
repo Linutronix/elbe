@@ -121,6 +121,25 @@ def pkgsource(pkg):
     return source
 
 
+def _passwd_uid(root, username):
+    passwd = os.path.join(root, 'etc', 'passwd')
+    with open(passwd) as f:
+        for line in f:
+            fields = line.split(':')
+            if fields[0] == username:
+                return int(fields[2])
+
+    raise LookupError(f"'{username}' user not found in {passwd}")
+
+
+def make_writable_by_apt(path, *, passwd_root='/'):
+    if os.geteuid() != 0:
+        return
+
+    os.chown(path, _passwd_uid(passwd_root, '_apt'), 0)
+    os.chmod(path, 0o700)
+
+
 def fetch_source(name, version, destdir, progress=None):
     import apt
     import apt_pkg
