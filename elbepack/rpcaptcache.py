@@ -5,11 +5,17 @@
 import os
 import sys
 import time
+import warnings
 from multiprocessing.managers import BaseManager
 from multiprocessing.util import Finalize
 
 from apt import Cache
 
+try:
+    from apt_pkg import Warning as AptWarning  # type: ignore[attr-defined]
+except ImportError:
+    # python3-apt < 2.7.3 (e.g. Debian bookworm) does not export apt_pkg.Warning
+    AptWarning = Warning
 from apt_pkg import config
 
 from elbepack.aptpkgutils import (
@@ -68,6 +74,10 @@ class RPCAPTCache(InChRootObject):
     def __init__(self, rfs, arch, norecommend=False, noauth=True):
 
         super().__init__(rfs)
+        warnings.filterwarnings(
+            'ignore',
+            message=r'^W:Download is performed unsandboxed as root',
+            category=AptWarning)
 
         config.set('APT::Architecture', arch)
         if norecommend:
