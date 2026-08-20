@@ -72,6 +72,7 @@ setup(name='elbe',
       install_requires=['lxml',
                         'Mako',
                         'passlib',
+                        'pexpect',
                         'pycdlib',
                         'python-debian',
                         'suds-community']
