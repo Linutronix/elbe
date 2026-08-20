@@ -106,7 +106,7 @@ class ebase:
         return eiter(iter(self.et))
 
     def has(self, path):
-        return not self.et.find(path) is None
+        return not self.et.find('./' + path) is None
 
     def set_text(self, text):
         self.et.text = text
