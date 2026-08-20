@@ -13,6 +13,7 @@ import apt
 
 import apt_pkg
 
+from elbepack.aptpkgutils import make_writable_by_apt
 from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.filesystem import TmpdirFilesystem
 from elbepack.rfs import create_apt_prefs
@@ -113,12 +114,15 @@ class VirtApt:
                                   f'elbe-virtapt-raw-key{i}.gpg')
 
     def _initialize_dirs(self):
+        os.chmod(self.basefs.path, 0o711)
         self.basefs.mkdir_p('cache/archives/partial')
+        make_writable_by_apt(self.basefs.fname('cache/archives/partial'))
         self.basefs.mkdir_p('etc/apt/preferences.d')
         self.basefs.mkdir_p('etc/apt/trusted.gpg.d')
         self.basefs.mkdir_p('db')
         self.basefs.mkdir_p('log')
         self.basefs.mkdir_p('state/lists/partial')
+        make_writable_by_apt(self.basefs.fname('state/lists/partial'))
         self.basefs.mkdir_p('tmp')
         self.basefs.touch_file('state/status')
 
