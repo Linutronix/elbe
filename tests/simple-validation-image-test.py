@@ -174,15 +174,16 @@ def _test_finetuning(root):
     assert root.joinpath('etc', 'hosts3').is_symlink()
     assert root.joinpath('etc', 'hosts3').readlink() == root.joinpath('etc', 'hosts')
 
-    # <adduser groups="nogroup,staff" shell="/bin/sh" uid="2000"
-    #          home="/home/nottestuser" system="true" create_home="true" create_group="true">
+    # <addgroup gid="2001" system="false">testgroup</addgroup>
+    # <adduser groups="nogroup,staff" shell="/bin/sh" uid="2000" gid="2001"
+    #          home="/home/nottestuser" system="true" create_home="true" create_group="false">
     #   testuser
     # </adduser>
-    assert '\ntestuser:x:2000:997::/home/nottestuser:/bin/sh\n' in \
-        root.joinpath('etc', 'passwd').read_text()
 
-    # <addgroup gid="2001" system="false">testgroup</addgroup>
     assert '\ntestgroup:x:2001:\n' in root.joinpath('etc', 'group').read_text()
+
+    assert '\ntestuser:x:2000:2001::/home/nottestuser:/bin/sh\n' in \
+        root.joinpath('etc', 'passwd').read_text()
 
     # <file dst="/testfile" encoding="plain" owner="nobody" group="nogroup" mode="640">
     # 	Some cöntent wíth spe©ial characters
