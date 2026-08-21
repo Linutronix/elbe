@@ -22,6 +22,10 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line('markers', 'slow: mark test as slow to run')
 
+    config.addinivalue_line(
+        'filterwarnings', 'ignore:_SixMetaPathImporter:ImportWarning',
+    )
+
     # Make sure the setting is also propagated through run_elbe.
     warnings = config.getini('filterwarnings')
     if warnings:
