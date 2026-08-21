@@ -143,9 +143,9 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
 
     assert _prjrepo_list_packages(uuid) == (
         'gpiotest_1.0_amd64.deb\n'
-        'libgpio-dev_3.0.0_amd64.deb\n'
-        'libgpio1-dbgsym_3.0.0_amd64.deb\n'
-        'libgpio1_3.0.0_amd64.deb\n'
+        'libgpio-dev_3.0.1_amd64.deb\n'
+        'libgpio3-dbgsym_3.0.1_amd64.deb\n'
+        'libgpio3_3.0.1_amd64.deb\n'
     )
 
     run_elbe_subcommand(['prjrepo', 'upload_pkg', uuid, here / 'equivs-dummy_1.0_all.deb'])
@@ -153,9 +153,9 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
     assert _prjrepo_list_packages(uuid) == (
         'equivs-dummy_1.0_all.deb\n'
         'gpiotest_1.0_amd64.deb\n'
-        'libgpio-dev_3.0.0_amd64.deb\n'
-        'libgpio1-dbgsym_3.0.0_amd64.deb\n'
-        'libgpio1_3.0.0_amd64.deb\n'
+        'libgpio-dev_3.0.1_amd64.deb\n'
+        'libgpio3-dbgsym_3.0.1_amd64.deb\n'
+        'libgpio3_3.0.1_amd64.deb\n'
     )
 
 
