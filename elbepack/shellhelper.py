@@ -135,6 +135,24 @@ def do(cmd, /, *, env_add=None, **kwargs):
         **kwargs)
 
 
+_FALLBACK_PATH = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+
+def _target_path(directory):
+    try:
+        login_defs = open(os.path.join(directory, 'etc/login.defs'))
+    except FileNotFoundError:
+        return _FALLBACK_PATH
+
+    with login_defs:
+        for line in login_defs:
+            fields = line.split(maxsplit=1)
+            if len(fields) == 2 and fields[0] == 'ENV_SUPATH' and fields[1].startswith('PATH='):
+                return fields[1].removeprefix('PATH=')
+
+    return _FALLBACK_PATH
+
+
 def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     """chroot() - Wrapper around do().
 
@@ -154,7 +172,8 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
 
     new_env = {'LANG': 'C',
                'LANGUAGE': 'C',
-               'LC_ALL': 'C'}
+               'LC_ALL': 'C',
+               'PATH': _target_path(directory)}
     if env_add:
         new_env.update(env_add)
 
