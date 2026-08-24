@@ -280,7 +280,7 @@ class TarPath(Path):
         return self._info().issym()
 
     def readlink(self):
-        return self._info().linkname
+        return self._create_from_posixpath(self._info().linkname)
 
     def is_char_device(self):
         return self._info().ischr()
