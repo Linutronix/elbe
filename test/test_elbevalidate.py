@@ -140,5 +140,8 @@ def test_tarbpallpath(elbevalidate, tmp_path):
             dir3 = root / 'dir3'
             assert not dir3.exists()
 
+            assert root / 'dir1' == root / 'dir1'
+            assert (root / 'dir1').parent == root
+
             _check_dir(dir1)
             _check_dir(dir2)

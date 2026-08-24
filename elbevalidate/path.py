@@ -228,14 +228,16 @@ class TarPath(Path):
 
     For documentation see :py:mod:`pathlib`.
     """
-    def __init__(self, *pathsegments, tar):
+    def __init__(self, *pathsegments, tar, root=None):
         self.tar = tar
         self._p = pathlib.PurePosixPath(*pathsegments)
+        self.root = root or self
 
     def _create_from_posixpath(self, p):
         return type(self)(
                 p,
                 tar=self.tar,
+                root=self.root,
         )
 
     def _info(self):
