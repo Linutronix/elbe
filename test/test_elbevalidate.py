@@ -112,7 +112,7 @@ def test_tarbpallpath(elbevalidate, tmp_path):
         assert not test_link.is_file()
         assert not test_link.is_dir()
         assert test_link.is_symlink()
-        assert test_link.readlink() == 'test-file'
+        assert str(test_link.readlink()) == 'test-file'
 
     tarball = tmp_path / 'test-tarball.tar'
 
