@@ -12,7 +12,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>bookworm</suite>
+		<suite>trixie</suite>
 	</project>
 	<target>
 		<hostname>lx64</hostname>

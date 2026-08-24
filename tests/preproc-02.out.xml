@@ -5,7 +5,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xi="http://www.w3.org/2003/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 
 	<project>
-		<name xml:base="xinclude/simple.xml">simple-armhf-with-grub-tighten</name><version xml:base="xinclude/simple.xml">1.0</version><suite xml:base="xinclude/simple.xml">buster</suite><buildtype xml:base="xinclude/simple.xml">armhf</buildtype><description xml:base="xinclude/simple.xml">
+		<name xml:base="xinclude/simple.xml">simple-armhf-with-grub-tighten</name><version xml:base="xinclude/simple.xml">1.0</version><suite xml:base="xinclude/simple.xml">trixie</suite><buildtype xml:base="xinclude/simple.xml">armhf</buildtype><description xml:base="xinclude/simple.xml">
 			Testing armhf
 		</description><mirror xml:base="xinclude/simple.xml">
 			<primary_host>deb.debian.org</primary_host>
@@ -14,7 +14,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 		</mirror>
 	</project>
 	<target>
-		<hostname xml:base="xinclude/simple.xml">armhf-buster</hostname><domain xml:base="xinclude/simple.xml">elbe-ci</domain><passwd_hashed xml:base="xinclude/simple.xml">$6$9Qq25BkNNlhJir0v$4OHpMS5BqY2fLY2g2wzp8TIjKNmmSHNSFjAM84gIU0rZesJY45bg1uoyq08KI8ZIg/BXTCUPOwuWSNDtSCE7X/</passwd_hashed><console xml:base="xinclude/simple.xml">ttyS0,115200</console><images xml:base="xinclude/simple.xml">
+		<hostname xml:base="xinclude/simple.xml">armhf-trixie</hostname><domain xml:base="xinclude/simple.xml">elbe-ci</domain><passwd_hashed xml:base="xinclude/simple.xml">$6$9Qq25BkNNlhJir0v$4OHpMS5BqY2fLY2g2wzp8TIjKNmmSHNSFjAM84gIU0rZesJY45bg1uoyq08KI8ZIg/BXTCUPOwuWSNDtSCE7X/</passwd_hashed><console xml:base="xinclude/simple.xml">ttyS0,115200</console><images xml:base="xinclude/simple.xml">
 			<msdoshd>
 				<name>sda.img</name>
 				<size>2000MiB</size>

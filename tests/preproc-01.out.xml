@@ -7,7 +7,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	<project xml:base="xinclude/simple.xml">
 		<name>simple-armhf-with-grub-tighten</name>
 		<version>1.0</version>
-		<suite>buster</suite>
+		<suite>trixie</suite>
 		<buildtype>armhf</buildtype>
 
 		<description>
@@ -20,7 +20,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 		</mirror>
 	</project><target xml:base="xinclude/simple.xml">
-		<hostname>armhf-buster</hostname>
+		<hostname>armhf-trixie</hostname>
 		<domain>elbe-ci</domain>
 		<!-- <passwd>root</passwd> -->
 		<passwd_hashed>$6$9Qq25BkNNlhJir0v$4OHpMS5BqY2fLY2g2wzp8TIjKNmmSHNSFjAM84gIU0rZesJY45bg1uoyq08KI8ZIg/BXTCUPOwuWSNDtSCE7X/</passwd_hashed>

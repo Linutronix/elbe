@@ -17,16 +17,16 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_proto>http</primary_proto>
 			<url-list>
 				<url>
-					<binary>http://deb.debian.org/debian-security/ buster/updates main</binary>
-					<source>http://deb.debian.org/debian-security/ buster/updates main</source>
+					<binary>http://deb.debian.org/debian-security trixie-security main</binary>
+					<source>http://deb.debian.org/debian-security trixie-security main</source>
 				</url>
 			</url-list>
 		</mirror>
 
-		<suite>buster</suite>
+		<suite>trixie</suite>
 	</project>
 	<target>
-		<hostname>amd64-buster</hostname>
+		<hostname>amd64-trixie</hostname>
 		<domain>elbe-ci</domain>
 		<console>ttyO0,115200</console>
 		<debootstrap>
