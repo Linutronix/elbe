@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2024 Linutronix GmbH
 
+import dataclasses
 import pathlib
 import subprocess
 import sys
@@ -11,8 +12,26 @@ import tempfile
 import textwrap
 import unittest
 
+from elbepack.treeutils import etree
+
 import elbevalidate
 import elbevalidate.pytest
+
+
+@dataclasses.dataclass
+class ImageConfiguration:
+    name: str
+    disk_images: list
+    tar_images: list
+
+
+def get_image_configuration(build_dir):
+    xml = etree(build_dir / 'source.xml')
+    project_name = xml.text('project/name')
+    disk_image = xml.text('target/images/msdoshd/name', default=None)
+    tar_image = xml.text('target/package/base-image/name', default=None)
+    return ImageConfiguration(name=project_name, disk_images=[disk_image] if disk_image else [],
+                              tar_images=[tar_image] if tar_image else [])
 
 
 def test_build_directory_contents(build_dir):
