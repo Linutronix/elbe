@@ -10,7 +10,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 	<project>
 		<name>simple-arm64</name>
 		<version>1.0</version>
-		<suite>bullseye</suite>
+		<suite>trixie</suite>
 		<buildtype>aarch64</buildtype>
 
 		<description>

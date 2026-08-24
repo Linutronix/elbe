@@ -16,7 +16,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>bookworm</suite>
+		<suite>trixie</suite>
 	</project>
 	<target>
 		<hostname>rescue</hostname>
@@ -67,7 +67,7 @@ SPDX-FileCopyrightText: Linutronix GmbH
 			<mkdir>/usr/sbin</mkdir>
 			<mkdir>/etc/init.d</mkdir>
 			<!-- Complete Busybox installation -->
-			<raw_cmd>/bin/busybox --install -s</raw_cmd>
+			<raw_cmd>/usr/bin/busybox --install -s</raw_cmd>
 			<ln path="/sbin/init">/init</ln>
 			<!-- minimum device nodes (fallback) -->
 			<mknod opts="c 5 0">/dev/tty</mknod>
