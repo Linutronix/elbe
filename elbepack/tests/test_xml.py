@@ -160,15 +160,15 @@ def test_pbuilder_build(initvm, xml, tmp_path, request):
 
 
 @pytest.mark.slow
-def test_base_extended_build(initvm, tmp_path):
+def test_base_extended_build(simple_build, initvm, tmp_path):
     tests_dir = pathlib.Path('tests') / 'base-extended' / 'simple-validation'
-    base_xml_path = tests_dir / 'image-base.xml'
     extended_xml_path = tests_dir / 'image-extended.xml'
-    base_build = tmp_path / 'base-build'
-    base_build_image = base_build / 'base-rootfs.tgz'
+    base_build_image = simple_build / 'base-rootfs.tgz'
     extended_build = tmp_path / 'extended-build'
 
-    initvm('submit', '--output', base_build, '--skip-build-bin', '--skip-build-sources',
-           base_xml_path)
+    if not base_build_image.exists():
+        pytest.skip('No base image tarball was produced')
+
     initvm('submit', '--output', extended_build, '--skip-build-bin', '--skip-build-sources',
            '--base-image', base_build_image, extended_xml_path)
+    run_elbe_subcommand(['check-build', 'img', extended_build])
