@@ -326,11 +326,14 @@ def preprocess_passwd(xml):
 
 def xmlpreprocess(xml_input_file, xml_output_file, *,
                   sshport, soapport,
-                  variants=None, proxy=None, gzip=9):
+                  variants=None, proxy=None, gzip=9, xmlfile_base=None):
     """Preprocesses the input XML data to make sure the `output`
        can be validated against the current schema.
        `xml_input_file` is a path (str) to the input file.
        `xml_output_file` is a path (str) to the output file.
+       `xmlfile_base` is the path (str) that relative references inside the
+       XML (archivedir, check-script location, xinclude, ...) should be
+       resolved against. It defaults to `xml_input_file` itself.
     """
 
     # first convert variants to a set
@@ -343,10 +346,10 @@ def xmlpreprocess(xml_input_file, xml_output_file, *,
     schema = dbsfed_schema()
 
     try:
-        xml = etree.parse(xml_input_file, parser=parser)
+        xml = etree.parse(xml_input_file, parser=parser, base_url=xmlfile_base)
         xml.xinclude()
 
-        basedir = pathlib.Path(xml_input_file).parent
+        basedir = pathlib.Path(xml.getroot().base).parent
 
         # Variant management
         # check all nodes for variant field, and act accordingly.
@@ -442,8 +445,9 @@ def xmlpreprocess(xml_input_file, xml_output_file, *,
 
 
 @contextlib.contextmanager
-def preprocess_file(xmlfile, *, variants, sshport, soapport):
+def preprocess_file(xmlfile, *, variants, sshport, soapport, xmlfile_base=None):
     with tempfile.NamedTemporaryFile(suffix='elbe.xml') as preproc:
-        xmlpreprocess(xmlfile, preproc, variants=variants, sshport=sshport, soapport=soapport)
+        xmlpreprocess(xmlfile, preproc, variants=variants, sshport=sshport, soapport=soapport,
+                      xmlfile_base=xmlfile_base)
         preproc.seek(0)
         yield preproc.name

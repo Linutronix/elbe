@@ -95,15 +95,16 @@ def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args
     preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, base_image, args)
+            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, base_image, args,
+                                  xmlfile_base=xmlfile)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
 
 
-def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args):
+def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_base=None):
 
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
-                         soapport=args.soapport) as xmlfile:
+                         soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
 
         prjdir = control.service.new_project()
         control.set_xml(prjdir, xmlfile)
