@@ -279,3 +279,6 @@ class TarPath(Path):
 
     def readlink(self):
         return self._info().linkname
+
+    def is_char_device(self):
+        return self._info().ischr()
