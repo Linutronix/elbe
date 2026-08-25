@@ -428,6 +428,9 @@ class Filesystem:
 
         return mtime_index
 
+    def __fspath__(self):
+        return self.path
+
 
 class TmpdirFilesystem (Filesystem):
     def __init__(self, debug=False):

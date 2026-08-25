@@ -179,7 +179,7 @@ class LnAction(FinetuningAction):
     def execute(self, _buildenv, target):
         target_name = self.node.et.attrib['path']
         link_name = self.node.et.text
-        chroot(target.path, ['ln', '-sf', target_name, link_name])
+        chroot(target, ['ln', '-sf', target_name, link_name])
 
 
 @_register_action('buildenv_mv')
@@ -219,10 +219,10 @@ class AddUserAction(FinetuningAction):
             else:
                 options.append('-U')
 
-            chroot(target.path, ['/usr/sbin/useradd', *options, self.node.et.text])
+            chroot(target, ['/usr/sbin/useradd', *options, self.node.et.text])
 
             if 'passwd_hashed' in att:
-                chroot(target.path, ['chpasswd', '--encrypted'],
+                chroot(target, ['chpasswd', '--encrypted'],
                        input=f"{self.node.et.text}:{att['passwd_hashed']}".encode('ascii'))
 
 
@@ -238,7 +238,7 @@ class AddGroupAction(FinetuningAction):
                 options.extend(['-g', att['gid']])
             if self.node.bool_attr('system'):
                 options.append('-r')
-            chroot(target.path, ['/usr/sbin/groupadd', *options, self.node.et.text])
+            chroot(target, ['/usr/sbin/groupadd', *options, self.node.et.text])
 
 
 @_register_action('file')
@@ -289,13 +289,13 @@ class AddFileAction(FinetuningAction):
             target.write_file(dst, None, content)
 
         if owner is not None:
-            chroot(target.path, ['chown', owner, dst])
+            chroot(target, ['chown', owner, dst])
 
         if group is not None:
-            chroot(target.path, ['chgrp', group, dst])
+            chroot(target, ['chgrp', group, dst])
 
         if mode is not None:
-            chroot(target.path, ['chmod', mode, dst])
+            chroot(target, ['chmod', mode, dst])
 
 
 @_register_action('raw_cmd')
@@ -303,7 +303,7 @@ class RawCmdAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, shlex.split(self.node.et.text))
+            chroot(target, shlex.split(self.node.et.text))
 
 
 @_register_action('command')
@@ -330,7 +330,7 @@ class CmdAction(ImageFinetuningAction):
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, '/bin/sh', input=self.node.et.text.encode('ascii'),
+            chroot(target, '/bin/sh', input=self.node.et.text.encode('ascii'),
                    log_cmd=self.node.et.text)
 
 
@@ -339,7 +339,7 @@ class BuildenvCmdAction(FinetuningAction):
 
     def execute(self, buildenv, _target):
         with buildenv:
-            chroot(buildenv.path, '/bin/sh', input=self.node.et.text.encode('ascii'))
+            chroot(buildenv, '/bin/sh', input=self.node.et.text.encode('ascii'))
 
 
 @_register_action('purge')
@@ -347,7 +347,7 @@ class PurgeAction(FinetuningAction):
 
     def execute(self, _buildenv, target):
         with target:
-            chroot(target.path, f'dpkg --purge {self.node.et.text}')
+            chroot(target, f'dpkg --purge {self.node.et.text}')
 
 
 @_register_action('updated')

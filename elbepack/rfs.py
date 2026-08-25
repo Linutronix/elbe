@@ -301,16 +301,16 @@ class BuildEnv:
                 do(['cp', ui, self.rfs.fname('usr/bin')])
 
                 if self.xml.has('project/noauth'):
-                    chroot(self.rfs.path,
+                    chroot(self.rfs,
                            ['/debootstrap/debootstrap', '--no-check-gpg', '--second-stage'])
                 else:
-                    chroot(self.rfs.path,
+                    chroot(self.rfs,
                            ['/debootstrap/debootstrap', '--second-stage'])
 
             self._cleanup_bootstrap()
 
             if cross:
-                chroot(self.rfs.path, ['dpkg', '--configure', '-a'])
+                chroot(self.rfs, ['dpkg', '--configure', '-a'])
 
         except subprocess.CalledProcessError as e:
             cleanup = True
@@ -357,14 +357,14 @@ class BuildEnv:
         preseed = get_preseed(self.xml)
         preseed_txt = preseed_to_text(preseed)
         with self.rfs:
-            chroot(self.rfs.path, ['debconf-set-selections'], input=preseed_txt.encode('ascii'))
+            chroot(self.rfs, ['debconf-set-selections'], input=preseed_txt.encode('ascii'))
 
     def seed_etc(self):
         if self.xml.has('target/passwd_hashed'):
             passwd = self.xml.text('target/passwd_hashed')
         else:
             passwd = '!'
-        chroot(self.rfs.path, ['chpasswd', '--encrypted'], input=b'root:' + passwd.encode('ascii'))
+        chroot(self.rfs, ['chpasswd', '--encrypted'], input=b'root:' + passwd.encode('ascii'))
 
         hostname = self.xml.text('target/hostname')
         fqdn = hostname

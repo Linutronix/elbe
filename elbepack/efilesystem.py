@@ -168,7 +168,7 @@ def extract_target(src, xml, dst, cache):
                 ['--set-selections', dst.fname(psel)],
                 ['--purge', '-a']]
         for cmd in cmds:
-            chroot(dst.path, ['/usr/bin/dpkg', *cmd])
+            chroot(dst, ['/usr/bin/dpkg', *cmd])
 
 
 class ElbeFilesystem(Filesystem):
@@ -406,7 +406,7 @@ class ChRootFilesystem(ElbeFilesystem):
         if self.path == '/':
             return
 
-        os.chroot(self.path)
+        os.chroot(self)
 
     def leave_chroot(self):
         assert self.inchroot
