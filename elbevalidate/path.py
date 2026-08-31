@@ -245,6 +245,15 @@ class TarPath(Path):
             member = self.tar.getmember(self._path)
         except KeyError:
             member = self.tar.getmember('./' + self._path)
+
+        if member.islnk():
+            try:
+                member = self._create_from_posixpath(member.linkname)._info()
+            except KeyError as e:
+                raise KeyError(
+                    f'link {self._path!r} points to missing member {member.linkname!r}',
+                ) from e
+
         return member
 
     def read_bytes(self):

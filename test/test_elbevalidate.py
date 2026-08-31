@@ -146,3 +146,29 @@ def test_tarbpallpath(elbevalidate, tmp_path):
 
             _check_dir(dir1)
             _check_dir(dir2)
+
+
+def test_tar_hardlink(elbevalidate, tmp_path):
+    src_dir = tmp_path / 'src'
+    src_dir.mkdir()
+    src_dir.joinpath('a-original-file').write_text('Test content')
+    (src_dir / 'b-hardlinked-file').hardlink_to(src_dir / 'a-original-file')
+
+    tarball = tmp_path / 'test-hardlink.tar'
+    with tarfile.open(tarball, 'w') as tar:
+        tar.add(src_dir, arcname='.')
+
+    with tarfile.open(tarball) as tar:
+        member = tar.getmember('./b-hardlinked-file')
+        assert member.islnk()
+        # Demonstrates why TarPath.is_file() must resolve hard-links itself.
+        assert not member.isfile()
+
+    with elbevalidate.Tar.from_file(tarball) as tar:
+        with tar.files() as root:
+            hardlinked = root.joinpath('b-hardlinked-file')
+            assert hardlinked.exists()
+            assert hardlinked.is_file()
+            assert not hardlinked.is_dir()
+            assert not hardlinked.is_symlink()
+            assert hardlinked.read_bytes() == b'Test content'
