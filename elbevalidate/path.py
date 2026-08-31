@@ -245,6 +245,13 @@ class TarPath(Path):
             member = self.tar.getmember(self._path)
         except KeyError:
             member = self.tar.getmember('./' + self._path)
+
+        if member.islnk():
+            try:
+                member = self.tar.getmember(member.linkname)
+            except KeyError as e:
+                raise KeyError(member.linkname, self, 'link points to missing member') from e
+
         return member
 
     def read_bytes(self):
