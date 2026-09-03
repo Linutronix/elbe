@@ -264,8 +264,7 @@ def _test_finetuning(root, image_config):
     """).strip()
 
 
-def _test_archive(root):
-    archive_file = root.joinpath('opt', 'archive-file')
+def _test_archive(archive_file):
     assert archive_file.is_file()
 
     archive_file_stat = archive_file.stat()
@@ -362,12 +361,16 @@ def _test_rootfs(build_dir, root, image_config):
 
     assert root.joinpath('usr', 'bin', 'unzip').is_file()
     assert root.joinpath('usr', 'lib', 'x86_64-linux-gnu', 'libgpio-3.0.1.so.3.0.0').is_file()
+    if image_config.name == 'simple-validation-extended-image':
+        assert root.joinpath('usr', 'bin', 'wget').is_file()
 
     assert not root.joinpath('var', 'cache', 'elbe').exists()
 
     _test_generated_elbe_files(build_dir, root, image_config)
     _test_finetuning(root, image_config)
-    _test_archive(root)
+    _test_archive(root.joinpath('opt', 'archive-file'))
+    if image_config.name == 'simple-validation-extended-image':
+        _test_archive(root.joinpath('opt', 'archive-file-extended'))
     _test_excursions(root)
 
 
