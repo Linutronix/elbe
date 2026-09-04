@@ -20,11 +20,12 @@ with warnings.catch_warnings():
     from gpg import core
     from gpg.constants import PROTOCOL_OpenPGP
 
+from elbepack.egpg import TARGET_GNUPG_HOME
 from elbepack.filesystem import Filesystem
-from elbepack.imgutils import losetup, mount
+from elbepack.imgutils import losetup
 from elbepack.packers import default_packer, packers
 from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
-from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, run
+from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, mount, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
@@ -42,7 +43,8 @@ class FinetuningAction:
     def execute(self, _buildenv, _target):
         raise NotImplementedError('execute() not implemented')
 
-    def execute_prj(self, buildenv, target, _builddir):
+    def execute_prj(self, buildenv, target, builddir):
+        self.builddir = builddir
         self.execute(buildenv, target)
 
 
@@ -368,7 +370,7 @@ class UpdatedAction(FinetuningAction):
             ctx = core.Context()
             ctx.set_engine_info(PROTOCOL_OpenPGP,
                                 None,
-                                '/var/cache/elbe/gnupg')
+                                os.path.join(self.builddir, 'gnupg'))
             ctx.set_armor(True)
             ctx.op_export(fp, 0, gpgdata)
             gpgdata.seek(0, os.SEEK_SET)
@@ -378,10 +380,10 @@ class UpdatedAction(FinetuningAction):
             with open((target.path + '/pub.key'), 'wb') as tkey:
                 tkey.write(key)
 
-            target.mkdir_p('/var/cache/elbe/gnupg', mode=0o700)
+            target.mkdir_p(TARGET_GNUPG_HOME, mode=0o700)
             with target:
                 do(['gpg', '--import', target.path + '/pub.key'],
-                    env_add={'GNUPGHOME': f'{target.path}/var/cache/elbe/gnupg'})
+                    env_add={'GNUPGHOME': target.path + TARGET_GNUPG_HOME})
 
         logging.info('generate base repo')
 
@@ -406,7 +408,8 @@ class UpdatedAction(FinetuningAction):
                     logging.exception('Package %s-%s missing name or version',
                                       pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
-                       target.path + REPOS_BASE_DIR)
+                       target.path + REPOS_BASE_DIR,
+                       os.path.join(self.builddir, 'gnupg'))
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
             r.includedeb(d, 'main')
@@ -697,7 +700,7 @@ class RmAptSource(FinetuningAction):
             f.write('\n'.join(src_lst))
 
 
-def do_finetuning(xml, buildenv, target):
+def do_finetuning(xml, buildenv, target, builddir):
 
     if not xml.has('target/finetuning'):
         return
@@ -705,6 +708,7 @@ def do_finetuning(xml, buildenv, target):
     for i in xml.node('target/finetuning'):
         try:
             action = _action_for_node(i)
+            action.builddir = builddir
             action.execute(buildenv, target)
         except KeyError:
             logging.exception("Unimplemented finetuning action '%s'",

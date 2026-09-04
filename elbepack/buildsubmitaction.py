@@ -50,14 +50,16 @@ def extract_cdrom(cdrom):
     return tmp
 
 
+def add_output_argument(f):
+    return add_argument('--output', dest='outdir',
+                        type=os.path.abspath,
+                        help='directory where to save downloaded Files')(f)
+
+
 def add_submit_arguments(f):
     f = add_argument('--skip-download', action='store_true',
                      dest='skip_download', default=False,
                      help='Skip downloading generated Files')(f)
-
-    f = add_argument('--output', dest='outdir',
-                     type=os.path.abspath,
-                     help='directory where to save downloaded Files')(f)
 
     f = add_argument('--skip-build-bin', dest='build_bin', action='store_false', default=True,
                      help='Skip building Binary Repository CDROM, for exact Reproduction')(f)

@@ -14,7 +14,8 @@ from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
 from elbepack.paths import (
-    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INSTALLER_DIR, SOURCES_DIR,
+    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_GNUPG_HOME,
+    INSTALLER_DIR, SOURCES_DIR,
 )
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -42,7 +43,8 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
 def mk_source_cdrom(components, codename,
                     init_codename, target,
                     cdrom_size=CDROM_SIZE, xml=None,
-                    mirror='http://deb.debian.org/debian'):
+                    mirror='http://deb.debian.org/debian',
+                    exclude_initvm_pkgs=False):
 
     os.makedirs(SOURCES_DIR, exist_ok=True)
     make_writable_by_apt(SOURCES_DIR)
@@ -55,6 +57,8 @@ def mk_source_cdrom(components, codename,
                     forbidden_packages.append(i.text('.').strip())
             except KeyError:
                 pass
+
+    gnupg_home = os.path.join(target, 'gnupg')
 
     repos = {}
 
@@ -71,7 +75,7 @@ def mk_source_cdrom(components, codename,
         make_writable_by_apt(rfs.fname(SOURCES_DIR), passwd_root=rfs)
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
-                            cdrom_size, mirror)
+                            cdrom_size, gnupg_home, mirror)
         repos[component] = repo
         for pkg, version in pkg_lst:
             add_source_pkg(repo, component,
@@ -94,12 +98,15 @@ def mk_source_cdrom(components, codename,
     # with the bin repo, because the src cdrom can be split
     # into multiple cdroms
 
-    for dirpath, _, filenames in os.walk(SOURCES_DIR):
-        for filename in filenames:
-            if not filename.endswith('.dsc'):
-                continue
+    if not exclude_initvm_pkgs:
+        for dirpath, _, filenames in os.walk(SOURCES_DIR):
+            for filename in filenames:
+                if not filename.endswith('.dsc'):
+                    continue
 
-            repos['main'].include_init_dsc(os.path.join(dirpath, filename), 'initvm')
+                repos['main'].include_init_dsc(os.path.join(dirpath, filename), 'initvm')
+    else:
+        logging.info('Skipping initvm source packages as requested by --exclude-initvm-pkgs')
 
     for repo in repos.values():
         repo.finalize()
@@ -132,7 +139,7 @@ def mk_source_cdrom(components, codename,
             options=options)) for component, repo in repos.items()]
 
 
-def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
+def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_initvm_pkgs=False):
 
     rfs.mkdir_p(BINARIES_ADDED_DIR)
     make_writable_by_apt(rfs.fname(BINARIES_ADDED_DIR), passwd_root=rfs)
@@ -144,30 +151,36 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     else:
         mirror = 'http://deb.debian.org/debian'
 
+    gnupg_home = os.path.join(target, 'gnupg')
+
     repo_path = pathlib.Path(target, 'binrepo')
     target_repo_path = repo_path / 'targetrepo'
 
     # initvm repo has been built upon initvm creation
     # just copy it. the repo __init__() afterwards will
     # not touch the repo config, nor generate a new key.
-    try:
-        do(f'cp -av {INITVM_BIN_REPO_DIR} "{repo_path}"')
-    except subprocess.CalledProcessError:
-        # When INITVM_BIN_REPO_DIR has not been created
-        # (because the initvm install was an old version or somthing,
-        #  log an error, and continue with an empty directory.
-        logging.exception('%s does not exist\n'
-                          'The generated CDROM will not contain initvm pkgs\n'
-                          'This happened because the initvm was probably\n'
-                          'generated with --skip-build-bin',
-                          INITVM_BIN_REPO_DIR)
-
+    if exclude_initvm_pkgs:
+        logging.info('Skipping initvm packages as requested by --exclude-initvm-pkgs')
         do(f'mkdir -p "{repo_path}"')
+    else:
+        try:
+            do(f'cp -av {INITVM_BIN_REPO_DIR} "{repo_path}"')
+        except subprocess.CalledProcessError:
+            # When INITVM_BIN_REPO_DIR has not been created
+            # (because the initvm install was an old version or somthing,
+            #  log an error, and continue with an empty directory.
+            logging.exception('%s does not exist\n'
+                              'The generated CDROM will not contain initvm pkgs\n'
+                              'This happened because the initvm was probably\n'
+                              'generated with --skip-build-bin',
+                              INITVM_BIN_REPO_DIR)
 
-    repo = CdromInitRepo(init_codename, repo_path, mirror)
+            do(f'mkdir -p "{repo_path}"')
+
+    repo = CdromInitRepo(init_codename, repo_path, INITVM_GNUPG_HOME, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
-                               target_repo_path, mirror)
+                               target_repo_path, gnupg_home, mirror)
 
     if xml is not None:
         cache = get_rpcaptcache(rfs, arch)
@@ -222,10 +235,11 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target):
     xml.xml.write(repo_path / 'source.xml')
 
     # copy initvm-cdrom.gz and vmlinuz
-    copyfile(os.path.join(INSTALLER_DIR, 'initrd-cdrom.gz'),
-             repo_path / 'initrd-cdrom.gz')
-    copyfile(os.path.join(INSTALLER_DIR, 'vmlinuz'),
-             repo_path / 'vmlinuz')
+    if not exclude_initvm_pkgs:
+        copyfile(os.path.join(INSTALLER_DIR, 'initrd-cdrom.gz'),
+                 repo_path / 'initrd-cdrom.gz')
+        copyfile(os.path.join(INSTALLER_DIR, 'vmlinuz'),
+                 repo_path / 'vmlinuz')
 
     target_repo_path.joinpath('.aptignr').touch()
 

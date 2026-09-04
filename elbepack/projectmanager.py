@@ -108,10 +108,11 @@ class ProjectManager:
             build_bin,
             build_src,
             skip_pbuilder,
-            base_image_path):
+            base_image_path,
+            exclude_initvm_pkgs=False):
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildJob(ep, build_bin, build_src,
-                                     skip_pbuilder, base_image_path))
+                                     skip_pbuilder, base_image_path, exclude_initvm_pkgs))
 
     def update_pbuilder(self, builddir):
         ep = self.open_project(builddir, allow_busy=False)
@@ -153,9 +154,9 @@ class ProjectManager:
         ep = self.open_project(builddir, allow_busy=False)
         self.worker.enqueue(BuildSysrootJob(ep))
 
-    def build_sdk(self, builddir):
+    def build_sdk(self, builddir, exclude_initvm_pkgs=False):
         ep = self.open_project(builddir, allow_busy=False)
-        self.worker.enqueue(BuildSDKJob(ep))
+        self.worker.enqueue(BuildSDKJob(ep, exclude_initvm_pkgs))
 
     def build_cdroms(self, builddir, build_bin, build_src):
         ep = self.open_project(builddir, allow_busy=False)

@@ -162,10 +162,13 @@ class ESoap (ServiceBase):
     def build_cdroms(self, builddir, build_bin, build_src):
         self.app.pm.build_cdroms(builddir, build_bin, build_src)
 
-    @rpc(String, Boolean, Boolean, Boolean, String)
-    def build(self, builddir, build_bin, build_src, skip_pbuilder, base_image_path):
+    @rpc(String, Boolean, Boolean, Boolean, String, Boolean)
+    def build(self, builddir, build_bin, build_src, skip_pbuilder,
+              base_image_path, exclude_initvm_pkgs):
 
-        self.app.pm.build_project(builddir, build_bin, build_src, skip_pbuilder, base_image_path)
+        self.app.pm.build_project(builddir, build_bin, build_src,
+                                  skip_pbuilder, base_image_path,
+                                  exclude_initvm_pkgs)
 
     @rpc(String, Boolean, Boolean, String)
     def build_pbuilder(self, builddir, cross, noccache, ccachesize):

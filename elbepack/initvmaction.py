@@ -12,7 +12,7 @@ import time
 
 import elbepack
 import elbepack.initvm
-from elbepack.buildsubmitaction import add_submit_arguments, extract_cdrom
+from elbepack.buildsubmitaction import add_output_argument, add_submit_arguments, extract_cdrom
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
@@ -127,7 +127,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
         print('Upload finished')
 
     control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                          uploaded_base_image_path)
+                          uploaded_base_image_path, args.exclude_initvm_pkgs)
 
     print('Build started, waiting till it finishes')
 
@@ -228,6 +228,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
               help=argparse.SUPPRESS)
 @add_submit_arguments
 @add_argument('--size', help='Disk size', type=size_to_int)
+@add_output_argument
 @add_argument('input', nargs='?', metavar='<xmlfile> | <isoimage>')
 def _create(args):
     # Upgrade from older versions which used tmux
@@ -316,6 +317,11 @@ def _create(args):
 
 @_add_initvm_from_args_arguments
 @add_submit_arguments
+@add_output_argument
+@add_argument(
+    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
+    default=False,
+    help='Exclude initvm packages from CDROM generation')
 @add_argument('input', metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)
