@@ -9,6 +9,8 @@ import subprocess
 
 import pytest
 
+from elbepack.buildsubmitaction import extract_cdrom
+from elbepack.rootcheck import xml_needs_rootful
 from elbepack.tests.test_xml import (  # noqa: F401
     simple_build,
     test_base_extended_build,
@@ -16,6 +18,7 @@ from elbepack.tests.test_xml import (  # noqa: F401
     test_rebuild,
     test_simple_build,
 )
+from elbepack.treeutils import etree
 
 _IMAGE_NAME = 'elbe-buildenv-image'
 _REPO_ROOT = pathlib.Path(__file__).parent.parent.parent
@@ -32,27 +35,53 @@ def elbe_buildenv_image():
     return _IMAGE_NAME
 
 
-def _get_build_container_opts():
-    return [
-        '--cap-add', 'SYS_ADMIN',
-        '--cap-add', 'MKNOD',
-        '--device-cgroup-rule', 'b *:* rmw',
-        '--device', '/dev/loop-control',
-        '-v', '/dev:/dev',
-        '-v', '/run/udev:/run/udev:ro',
-        '--network', 'host',
-        '--security-opt', 'apparmor=unconfined',
-    ]
+def _get_build_container_opts(needs_rootful):
+    opts = []
+
+    if os.geteuid() == 0:
+        if needs_rootful:
+            opts.extend([
+                '--cap-add', 'SYS_ADMIN',
+                '--cap-add', 'MKNOD',
+                '--device-cgroup-rule', 'b *:* rmw',
+                '--device', '/dev/loop-control',
+                '-v', '/dev:/dev',
+                '-v', '/run/udev:/run/udev:ro'
+            ])
+        else:
+            opts.extend(['--userns', 'auto'])
+
+        opts.extend(['--network', 'host'])
+        opts.extend(['--security-opt', 'apparmor=unconfined'])
+
+    return opts
 
 
 def _run_build(elbe_buildenv_image, workdir, xml_name, build_args=(), base_image=None,
                source_dir=None):
-    """Run ELBE build in container, skipping if not running as root."""
-    if os.geteuid() != 0:
-        pytest.skip('Container build tests require root (e.g. `sudo pytest ...`)')
-
+    """Run ELBE build in container, skipping if loop devices are required but unavailable."""
     input_dir = workdir if source_dir is None else source_dir
     xml_path = input_dir / xml_name
+
+    cdrom = None
+    if xml_name.endswith('.iso'):
+        # rebuild-from-iso: extract source.xml for the rootful pre-check, the same
+        # way elbe build itself does internally for iso rebuilds.
+        extracted = extract_cdrom(xml_path)
+        rootcheck_xml = extracted.fname('source.xml')
+        cdrom = xml_path
+    else:
+        rootcheck_xml = xml_path
+
+    xml = etree(rootcheck_xml)
+    needs_rootful = bool(xml_needs_rootful(xml, cdrom))
+
+    extra_opts = _get_build_container_opts(needs_rootful)
+
+    if needs_rootful and os.geteuid() != 0:
+        pytest.skip(
+            'XML file requires rootful container. Rerun as root (e.g. `sudo pytest ...`)'
+        )
 
     mounts = []
     if source_dir is None:
@@ -69,7 +98,7 @@ def _run_build(elbe_buildenv_image, workdir, xml_name, build_args=(), base_image
         'podman', 'run', '--rm',
         *mounts,
         '-v', f'{workdir}:/work:Z,U',
-        *_get_build_container_opts(),
+        *extra_opts,
         elbe_buildenv_image,
         'elbe', 'build', xml_container_path, '--build-dir', '/work/build',
         *build_args,
