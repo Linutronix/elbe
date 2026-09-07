@@ -53,5 +53,8 @@ VOLUME [ "/build" ]
 USER root
 WORKDIR /build
 
+COPY contrib/containerfile/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Use tini for reaping child processes.
-ENTRYPOINT ["tini", "--"]
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
