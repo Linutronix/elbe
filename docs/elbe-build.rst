@@ -80,7 +80,7 @@ Container Usage
 Since the build command does not provide any isolation of the build
 environment itself, it is useful to encapsulate the build into a container.
 See :doc:`article-container` for how to prepare the container image and how
-to run builds in a rootful container.
+to run builds in a rootless or rootful container.
 
 
 SEE ALSO

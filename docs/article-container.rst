@@ -30,6 +30,24 @@ provides a ready-to-use build environment for this.
       $ make build-local
 
 
+Run Build in Rootless Container
+===============================
+
+For highest security and convenience, running build in a rootless Podman
+container is preferred. This, however, only enables a reduced feature set
+of ELBE as discussed in more detail in the next section.
+
+For scenarios where the reduced feature set is sufficient, a build command
+can be simply executed as a normal user with
+
+   ::
+
+      podman run --rm \
+            -v $(pwd):/work:Z \
+            elbe-buildenv-image \
+            elbe build /work/myimage.xml --build-dir /work/build
+
+
 Run Build in Rootful Container
 ==============================
 
