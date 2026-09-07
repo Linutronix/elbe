@@ -43,6 +43,7 @@ usr/lib/python3.*/*-packages/elbepack/shellhelper.py
 usr/lib/python3.*/*-packages/elbepack/spdx.py
 usr/lib/python3.*/*-packages/elbepack/templates.py
 usr/lib/python3.*/*-packages/elbepack/treeutils.py
+usr/lib/python3.*/*-packages/elbepack/userns.py
 usr/lib/python3.*/*-packages/elbepack/uuid7.py
 usr/lib/python3.*/*-packages/elbepack/validate.py
 usr/lib/python3.*/*-packages/elbepack/version.py

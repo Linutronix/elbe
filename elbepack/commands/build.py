@@ -8,6 +8,7 @@ from elbepack.buildsubmitaction import XmlOrIso, add_submit_arguments, build_dir
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.commands.preprocess import add_xmlpreprocess_passthrough_arguments
 from elbepack.localbuildaction import local_build_with_repodir_and_dl_result
+from elbepack.userns import ensure_mount_capability
 
 
 @add_submit_arguments
@@ -23,6 +24,8 @@ def _build(args):
 
 
 def run_command(argv):
+    ensure_mount_capability()
+
     aparser = argparse.ArgumentParser(prog='elbe build')
 
     add_xmlpreprocess_passthrough_arguments(aparser)
