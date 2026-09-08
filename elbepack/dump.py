@@ -183,7 +183,7 @@ def check_full_pkgs(pkgs, fullpkgs, cache):
         validation.info('No Errors found')
 
 
-def elbe_report(xml, buildenv, cache, targetfs):
+def elbe_report(xml, buildenv, cache, targetfs, builddir):
 
     rfs = buildenv.rfs
 
@@ -244,7 +244,7 @@ def elbe_report(xml, buildenv, cache, targetfs):
         mt_index_postarch = mt_index
 
     if xml.has('target/finetuning'):
-        do_finetuning(xml, buildenv, targetfs)
+        do_finetuning(xml, buildenv, targetfs, builddir)
         mt_index_post_fine = targetfs.mtime_snap()
     else:
         mt_index_post_fine = mt_index_postarch

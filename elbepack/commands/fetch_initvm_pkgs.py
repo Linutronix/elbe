@@ -15,6 +15,7 @@ from apt.package import FetchError
 from elbepack.aptpkgutils import fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
+from elbepack.egpg import INITVM_GNUPG_HOME
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.imgutils import mount
 from elbepack.log import elbe_logging
@@ -90,7 +91,7 @@ def run_command(argv):
 
         # Binary Repo
         #
-        repo = CdromInitRepo(init_codename, args.binrepo, mirror)
+        repo = CdromInitRepo(init_codename, args.binrepo, INITVM_GNUPG_HOME, mirror)
 
         os.makedirs(args.archive, exist_ok=True)
 
@@ -131,7 +132,8 @@ def run_command(argv):
 
         # Source Repo
         #
-        repo = CdromSrcRepo(init_codename, init_codename, args.srcrepo, 0, mirror)
+        repo = CdromSrcRepo(init_codename, init_codename, args.srcrepo, 0,
+                            INITVM_GNUPG_HOME, mirror)
         os.makedirs(args.srcarchive, exist_ok=True)
 
         # a cdrom build does not have sources

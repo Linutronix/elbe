@@ -17,6 +17,7 @@ with warnings.catch_warnings():
     from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
     from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
 
+from elbepack.paths import INITVM_GNUPG_HOME, TARGET_GNUPG_HOME  # noqa: F401
 from elbepack.shellhelper import env_add
 
 
@@ -148,7 +149,7 @@ def check_signature(ctx, signature):
     return status
 
 
-def unsign_file(fname):
+def unsign_file(fname, gnupg_home):
     # check for .gpg extension and create an output filename without it
     if len(fname) <= 4 or fname[len(fname) - 4:] != '.gpg':
         print('The input file needs a .gpg extension')
@@ -159,7 +160,7 @@ def unsign_file(fname):
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
-                        '/var/cache/elbe/gnupg')
+                        gnupg_home)
     ctx.set_armor(False)
 
     overall_status = OverallStatus()
@@ -190,14 +191,14 @@ def unsign_file(fname):
     return None
 
 
-def sign(infile, outfile, fingerprint):
+def sign(infile, outfile, fingerprint, gnupg_home):
 
     ctx = core.Context()
 
     try:
         ctx.set_engine_info(PROTOCOL_OpenPGP,
                             None,
-                            '/var/cache/elbe/gnupg')
+                            gnupg_home)
     except GPGMEError as E:
         print("Error: Can't set engine info - %s", E)
         return
@@ -232,16 +233,16 @@ def sign(infile, outfile, fingerprint):
                 fd.write(signature)
 
 
-def sign_file(fname, fingerprint):
+def sign_file(fname, fingerprint, gnupg_home):
     outfilename = fname + '.gpg'
-    sign(fname, outfilename, fingerprint)
+    sign(fname, outfilename, fingerprint, gnupg_home)
 
 
-def get_fingerprints():
+def get_fingerprints(gnupg_home):
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
-                        '/var/cache/elbe/gnupg')
+                        gnupg_home)
     keys = ctx.op_keylist_all(None, False)
     fingerprints = []
     for k in keys:
@@ -259,8 +260,8 @@ def get_fingerprints():
 EOT = 4294967295
 
 
-def generate_elbe_internal_key():
-    gpg_agent_conf = pathlib.Path('/var/cache/elbe/gnupg/gpg-agent.conf')
+def generate_elbe_internal_key(gnupg_home):
+    gpg_agent_conf = pathlib.Path(gnupg_home, 'gpg-agent.conf')
     gpg_agent_conf.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     gpg_agent_conf.write_text('allow-preset-passphrase\n'
                               f'default-cache-ttl {EOT}\n'
@@ -269,18 +270,18 @@ def generate_elbe_internal_key():
     ctx = core.Context()
     ctx.set_engine_info(PROTOCOL_OpenPGP,
                         None,
-                        '/var/cache/elbe/gnupg')
+                        gnupg_home)
     ctx.op_genkey(elbe_internal_key_param, None, None)
     key = ctx.op_genkey_result()
 
     return key.fpr
 
 
-def export_key(fingerprint, outfile):
+def export_key(fingerprint, outfile, gnupg_home):
     subprocess.run([
         '/usr/bin/gpg', '-a', '-o', outfile,
         '--export', fingerprint,
-    ], check=True, env=env_add({'GNUPGHOME': '/var/cache/elbe/gnupg'}))
+    ], check=True, env=env_add({'GNUPGHOME': gnupg_home}))
 
 
 def unarmor_openpgp_keyring(armored):
