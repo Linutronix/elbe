@@ -152,6 +152,76 @@ def _target_path(directory):
     return FALLBACK_PATH
 
 
+class _Mount:
+    # This is not using contextlib.contextmanager as it will be pass to our
+    # RPCAPTCache which uses the pickle serialization.
+    # The generator by contextlib.contextmanager is not compatible with pickle.
+    def __init__(self, device, target, *, bind=False, rbind=False, type=None, options=None,
+                 log_output=True, force_writable=False):
+        self.log_output = log_output
+        self.target = target
+
+        self.rbind = rbind
+
+        cmd = ['mount']
+        if bind:
+            cmd.append('--bind')
+        elif rbind:
+            cmd.append('--rbind')
+
+        if options is not None:
+            cmd.extend(['-o', options])
+
+        if force_writable:
+            cmd.append('--rw')
+
+        if type is not None:
+            cmd.extend(['-t', type])
+
+        if device is None:
+            device = 'none'
+
+        cmd.extend([device, target])
+
+        self.cmd = cmd
+
+    def _run_cmd(self, cmd, *args, **kwargs):
+        if self.log_output:
+            do(cmd, *args, **kwargs)
+        else:
+            subprocess.run(cmd, *args, **kwargs)
+
+    def __enter__(self):
+        self._run_cmd(self.cmd)
+        if self.rbind:
+            # Detach the bind-mounted subtree from the shared
+            # propagation group. Without this, unmounting it in
+            # __exit__ can propagate back and unmount the
+            # corresponding mounts at the source.
+            self._run_cmd(['mount', '--make-rprivate', self.target])
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        cmd = ['umount', '--lazy', self.target] if self.rbind else ['umount', self.target]
+        self._run_cmd(cmd, check=False)
+
+
+mount = _Mount
+
+
+@contextlib.contextmanager
+def bind_mount_pseudo_filesystems(directory):
+    if directory == '/':
+        yield
+        return
+
+    with contextlib.ExitStack() as stack:
+        for src in ['/proc', '/sys', '/dev']:
+            target = os.path.join(directory, src.lstrip('/'))
+            os.makedirs(target, exist_ok=True)
+            stack.enter_context(mount(src, target, rbind=True, log_output=False))
+        yield
+
+
 def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     """chroot() - Wrapper around do().
 
@@ -176,10 +246,11 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     if env_add:
         new_env.update(env_add)
 
-    if _is_shell_cmd(cmd):
-        do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
-    else:
-        do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
+    with bind_mount_pseudo_filesystems(directory):
+        if _is_shell_cmd(cmd):
+            do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
+        else:
+            do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
 def env_add(d):

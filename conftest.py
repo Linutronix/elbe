@@ -35,6 +35,9 @@ def pytest_configure(config):
     if warnings:
         os.environ.setdefault('PYTHONWARNINGS', ' '.join(warnings))
 
+    # use /var/tmp to avoid filling up the RAM with large build artifacts
+    os.environ.setdefault('TMPDIR', '/var/tmp')
+
 
 def pytest_collection_modifyitems(config, items):
     if config.getoption('--runslow'):

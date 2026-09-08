@@ -31,6 +31,7 @@ If you are new to ELBE, we recommend starting with the
 
    elbe
    elbe-add
+   elbe-build
    elbe-check_updates
    elbe-cyclonedx-sbom
    elbe-initvm

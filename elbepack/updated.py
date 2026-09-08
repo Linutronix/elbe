@@ -31,7 +31,7 @@ from elbepack.aptprogress import (
     ElbeInstallProgress,
     ElbeOpProgress,
 )
-from elbepack.egpg import unsign_file
+from elbepack.egpg import TARGET_GNUPG_HOME, unsign_file
 from elbepack.paths import (
     DOWNGRADE_ALLOWED_FILE, ELBE_CACHE_DIR, POST_SCRIPT, PRE_SCRIPT,
     UPDATE_STATE_FILE,
@@ -571,7 +571,7 @@ def handle_update_file(upd_file, status, remove=False):
         _, extension = os.path.splitext(upd_file)
 
         if extension == '.gpg':
-            fname = unsign_file(upd_file)
+            fname = unsign_file(upd_file, TARGET_GNUPG_HOME)
             if remove:
                 os.remove(upd_file)
             if fname:

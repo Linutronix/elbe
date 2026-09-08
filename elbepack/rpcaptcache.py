@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2018 Linutronix GmbH
 
+import functools
 import os
 import sys
 import time
@@ -60,6 +61,14 @@ class InChRootObject:
         self.rfs = rfs
         self.rfs.enter_chroot()
         self.finalizer = Finalize(self, self.rfs.leave_chroot, exitpriority=10)
+
+
+def _with_pseudo_filesystems(func):
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        with self.rfs.mount_pseudo_filesystems():
+            return func(self, *args, **kwargs)
+    return wrapper
 
 
 @MyMan.register('RPCAPTCache')
@@ -208,14 +217,17 @@ class RPCAPTCache(InChRootObject):
         p = self.cache[pkgname]
         p.mark_delete(purge=True)
 
+    @_with_pseudo_filesystems
     def update(self):
         self.cache.update(fetch_progress=ElbeAcquireProgress())
         self.cache.open(progress=ElbeOpProgress())
 
+    @_with_pseudo_filesystems
     def fetch_archives(self):
         print('Fetching packages...')
         self.cache.fetch_archives(ElbeAcquireProgress())
 
+    @_with_pseudo_filesystems
     def commit(self):
         os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
         os.environ['DEBONF_NONINTERACTIVE_SEEN'] = 'true'
@@ -268,6 +280,7 @@ class RPCAPTCache(InChRootObject):
     def get_corresponding_source_packages(self, pkg_lst=None, *, include_built_using=True):
         return get_corresponding_source_packages(self.cache, pkg_lst, include_built_using)
 
+    @_with_pseudo_filesystems
     def download_binary(self, pkgname, path, version=None):
         p = self.cache[pkgname]
         if version is None:
@@ -277,6 +290,7 @@ class RPCAPTCache(InChRootObject):
         rel_filename = pkgver.fetch_binary(path, ElbeAcquireProgress())
         return self.rfs.fname(rel_filename)
 
+    @_with_pseudo_filesystems
     def download_source(self, src_name, src_version, dest_dir):
         return self.rfs.fname(fetch_source(src_name, src_version, dest_dir, ElbeAcquireProgress()))
 

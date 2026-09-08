@@ -8,18 +8,24 @@ import os
 import subprocess
 import sys
 import textwrap
-import time
 
 import elbepack
 import elbepack.initvm
-from elbepack.buildsubmitaction import add_submit_arguments, extract_cdrom
-from elbepack.cli import CliError, add_argument, with_cli_details
+from elbepack.buildsubmitaction import (
+    ProjectBackend,
+    add_output_argument,
+    add_submit_arguments,
+    build_with_repodir_and_dl_result,
+    extract_cdrom,
+    resolve_input,
+    xml_or_iso_file,
+)
+from elbepack.cli import CliError, add_argument
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.init import create_initvm
 from elbepack.paths import DEVEL_DIR
-from elbepack.repodir import Repodir, RepodirError
 from elbepack.soapclient import ElbeSoapClient
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import preprocess_file
@@ -92,134 +98,62 @@ def _attach(args):
     _initvm_from_args(args).attach()
 
 
-def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args):
-    fname = f'elbe-repodir-{time.time_ns()}.xml'
-    preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
-    try:
-        with Repodir(xmlfile, preprocess_xmlfile):
-            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, base_image, args,
-                                  xmlfile_base=xmlfile)
-    except RepodirError as err:
-        raise with_cli_details(err, 127, 'elbe repodir failed')
+class SoapProjectBackend(ProjectBackend):
+    def __init__(self, control, outdir, exclude_initvm_pkgs=False):
+        self.control = control
+        self.outdir = outdir
+        self.exclude_initvm_pkgs = exclude_initvm_pkgs
 
+    def create_project(self, xmlfile):
+        prjdir = self.control.service.new_project()
+        self.control.set_xml(prjdir, xmlfile)
+        return prjdir
 
-def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_base=None):
+    def set_cdrom(self, prjdir, cdrom):
+        self.control.set_cdrom(prjdir, cdrom)
 
-    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
-                         soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
+    def set_base_image(self, prjdir, base_image):
+        return self.control.set_base_image(prjdir, base_image)
 
-        prjdir = control.service.new_project()
-        control.set_xml(prjdir, xmlfile)
+    def build(self, prjdir, build_bin, build_sources, has_cdrom, uploaded_base_image_path):
+        self.control.service.build(prjdir, build_bin, build_sources, has_cdrom,
+                                   uploaded_base_image_path, self.exclude_initvm_pkgs)
 
-    if args.writeproject:
-        with open(args.writeproject, 'w') as wpf:
-            wpf.write(prjdir)
+    def wait_busy(self, prjdir):
+        yield from self.control.wait_busy(prjdir)
 
-    if cdrom is not None:
-        print('Uploading CDROM. This might take a while')
-        control.set_cdrom(prjdir, cdrom)
-        print('Upload finished')
+    def build_sdk(self, prjdir):
+        self.control.service.build_sdk(prjdir)
 
-    uploaded_base_image_path = None
-    if base_image is not None:
-        print('Uploading base image. This might take a while')
-        uploaded_base_image_path = control.set_base_image(prjdir, base_image)
-        print('Upload finished')
+    def dump_file(self, prjdir, filename, dest):
+        for chunk in self.control.dump_file(prjdir, filename):
+            dest.write(chunk)
 
-    control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                          uploaded_base_image_path)
+    def get_files(self, prjdir, outdir):
+        return self.control.get_files(prjdir, outdir)
 
-    print('Build started, waiting till it finishes')
+    def del_project(self, prjdir):
+        self.control.service.del_project(prjdir)
 
-    try:
-        for msg in control.wait_busy(prjdir):
-            print(msg)
-    except Exception as e:
-        raise with_cli_details(e, 133, textwrap.dedent(f"""
-            elbe control wait_busy Failed
-
+    def recovery_hint(self, prjdir):
+        return textwrap.dedent(f"""
             The project will not be deleted from the initvm.
             The files, that have been built, can be downloaded using:
-            {prog} control get_files --output "{args.outdir}" "{prjdir}"
+            {prog} control get_files --output "{self.outdir}" "{prjdir}"
 
             The project can then be removed using:
-            {prog} control del_project "{prjdir}" """))
+            {prog} control del_project "{prjdir}\"""")
 
-    print('')
-    print('Build finished !')
-    print('')
+    def download_hint(self, prjdir):
+        return f'Get Files with: elbe control get_file "{prjdir}" <filename>'
 
-    if args.build_sdk:
-        control.service.build_sdk(prjdir)
 
-        print('SDK Build started, waiting till it finishes')
-
-        try:
-            for msg in control.wait_busy(prjdir):
-                print(msg)
-        except Exception:
-            print('elbe control wait_busy Failed, while waiting for the SDK',
-                  file=sys.stderr)
-            print('', file=sys.stderr)
-            print('The project will not be deleted from the initvm.',
-                  file=sys.stderr)
-            print('The files, that have been built, can be downloaded using:',
-                  file=sys.stderr)
-            print(
-                f'{prog} control get_files --output "{args.outdir}" '
-                f'"{prjdir}"',
-                file=sys.stderr)
-            print('', file=sys.stderr)
-            print('The project can then be removed using:',
-                  file=sys.stderr)
-            print(f'{prog} control del_project "{prjdir}"',
-                  file=sys.stderr)
-            print('', file=sys.stderr)
-            sys.exit(135)
-
-        print('')
-        print('SDK Build finished !')
-        print('')
-
-    try:
-        for chunk in control.dump_file(prjdir, 'validation.txt'):
-            sys.stdout.buffer.write(chunk)
-        sys.stdout.buffer.flush()
-    except Exception:
-        print(
-            'Project failed to generate validation.txt',
-            file=sys.stderr)
-        print('Getting log.txt', file=sys.stderr)
-        try:
-            for chunk in control.dump_file(prjdir, 'log.txt'):
-                sys.stdout.buffer.write(chunk)
-            sys.stdout.buffer.flush()
-        except Exception as e:
-            raise with_cli_details(e, 137, textwrap.dedent('Failed to dump log.txt'))
-        sys.exit(136)
-
-    if args.skip_download:
-        print('')
-        print('Listing available files:')
-        print('')
-        files = control.get_files(prjdir, None)
-        for file in files:
-            print(f'{file.name}\t{file.description}')
-
-        print('')
-        print(f'Get Files with: elbe control get_file "{prjdir}" <filename>')
-    else:
-        print('')
-        print('Getting generated Files')
-        print('')
-
-        print(f'Saving generated Files to {args.outdir}')
-
-        for file in control.get_files(prjdir, args.outdir):
-            print(f'{file.name}\t{file.description}')
-
-        if not args.keep_files:
-            control.service.del_project(prjdir)
+def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args, *,
+                                       exclude_initvm_pkgs=False):
+    backend = SoapProjectBackend(control, args.outdir, exclude_initvm_pkgs=exclude_initvm_pkgs)
+    build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args,
+                                     repodir_base=os.path.dirname(xmlfile),
+                                     xmlfile_base=xmlfile)
 
 
 @_add_initvm_from_args_arguments
@@ -228,7 +162,8 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
               help=argparse.SUPPRESS)
 @add_submit_arguments
 @add_argument('--size', help='Disk size', type=size_to_int)
-@add_argument('input', nargs='?', metavar='<xmlfile> | <isoimage>')
+@add_output_argument
+@add_argument('input', nargs='?', type=xml_or_iso_file, metavar='<xmlfile> | <isoimage>')
 def _create(args):
     # Upgrade from older versions which used tmux
     try:
@@ -257,14 +192,12 @@ def _create(args):
                 xmlfile = os.path.join(
                     elbepack.__path__[0], 'init/default-init.xml')
 
-        elif args.input.endswith('.iso'):
+        else:
             # We have an iso image, extract xml from there.
             tmp = extract_cdrom(args.input)
 
             xmlfile = tmp.fname('source.xml')
             cdrom = args.input
-        else:
-            args.parser.error('Unknown file ending (use either xml or iso)')
     else:
         # No xml File was specified, build the default elbe-init-with-ssh
         xmlfile = os.path.join(
@@ -316,27 +249,22 @@ def _create(args):
 
 @_add_initvm_from_args_arguments
 @add_submit_arguments
-@add_argument('input', metavar='<xmlfile> | <isoimage>')
+@add_output_argument
+@add_argument(
+    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
+    default=False,
+    help='Exclude initvm packages from CDROM generation')
+@add_argument('input', type=xml_or_iso_file, metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)
 
     initvm.ensure()
 
-    # Init cdrom to None, if we detect it, we set it
-    cdrom = None
+    resolved = resolve_input(args)
 
-    if args.input.endswith('.xml'):
-        # We have an xml file, use that for elbe init
-        xmlfile = args.input
-    elif args.input.endswith('.iso'):
-        # We have an iso image, extract xml from there.
-        tmp = extract_cdrom(args.input)
-        xmlfile = tmp.fname('source.xml')
-        cdrom = args.input
-    else:
-        args.parser.error('Unknown file ending (use either xml or iso)')
-
-    _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args.base_image, args)
+    _submit_with_repodir_and_dl_result(
+        initvm.control, resolved.xmlfile, resolved.cdrom, args.base_image, args,
+        exclude_initvm_pkgs=args.exclude_initvm_pkgs)
 
 
 @add_argument_sshport

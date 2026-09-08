@@ -10,6 +10,26 @@ import subprocess
 from elbepack.shellhelper import ELBE_LOGGING, do, run
 
 
+def _udev_available():
+    return pathlib.Path('/run/udev/control').is_socket()
+
+
+def _symlink_by_uuid_from_blkid(device_name):
+    devpath = f'/dev/{device_name}'
+    blkid = subprocess.run(
+        ['blkid', '-s', 'UUID', '-o', 'value', devpath],
+        stdout=subprocess.PIPE, check=False,
+    )
+    uuid = blkid.stdout.decode('ascii').strip()
+    if blkid.returncode != 0 or not uuid:
+        return
+
+    by_uuid_dir = pathlib.Path('/dev/disk/by-uuid')
+    by_uuid_dir.mkdir(parents=True, exist_ok=True)
+    with contextlib.suppress(FileExistsError):
+        (by_uuid_dir / uuid).symlink_to(devpath)
+
+
 def _wait_on_udev_for_device_and_partitions(device):
     # The callers expect the udev symlinks of the loop device and its
     # partitions to be present.
@@ -21,13 +41,19 @@ def _wait_on_udev_for_device_and_partitions(device):
         # However udev processing triggers a rescan of the partitions, removing
         # the entries for a short time. Prevent udev from doing so while we iterate.
         fcntl.flock(f, fcntl.LOCK_EX)
-        partitions = [
-            '/dev/' + entry.name
+        partition_names = [
+            entry.name
             for entry in pathlib.Path('/sys/class/block', device_name).iterdir()
             if entry.name.startswith(device_name)
         ]
 
+    if not _udev_available():
+        for name in (device_name, *partition_names):
+            _symlink_by_uuid_from_blkid(name)
+        return
+
     # All partitions need to be mentioned explicitly.
+    partitions = ['/dev/' + name for name in partition_names]
     subprocess.run(['udevadm', 'wait', device, *partitions],
                    check=True, timeout=30)
 
@@ -44,51 +70,6 @@ def losetup(dev, extra_args=[]):
         yield loopdev
     finally:
         do(['losetup', '--detach', loopdev], check=False)
-
-
-class _Mount:
-    # This is not using contextlib.contextmanager as it will be pass to our
-    # RPCAPTCache which uses the pickle serialization.
-    # The generator by contextlib.contextmanager is not compatible with pickle.
-    def __init__(self, device, target, *, bind=False, type=None, options=None, log_output=True,
-                 force_writable=False):
-        self.log_output = log_output
-        self.target = target
-
-        cmd = ['mount']
-        if bind:
-            cmd.append('--bind')
-
-        if options is not None:
-            cmd.extend(['-o', options])
-
-        if force_writable:
-            cmd.append('--rw')
-
-        if type is not None:
-            cmd.extend(['-t', type])
-
-        if device is None:
-            device = 'none'
-
-        cmd.extend([device, target])
-
-        self.cmd = cmd
-
-    def _run_cmd(self, cmd, *args, **kwargs):
-        if self.log_output:
-            do(cmd, *args, **kwargs)
-        else:
-            subprocess.run(cmd, *args, **kwargs)
-
-    def __enter__(self):
-        self._run_cmd(self.cmd)
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self._run_cmd(['umount', self.target], check=False)
-
-
-mount = _Mount
 
 
 def dd(args, /, **kwargs):

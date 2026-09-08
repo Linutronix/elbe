@@ -4,7 +4,7 @@
 
 import argparse
 
-from elbepack.egpg import sign_file
+from elbepack.egpg import INITVM_GNUPG_HOME, sign_file
 
 
 def run_command(argv):
@@ -14,4 +14,4 @@ def run_command(argv):
 
     args = parser.parse_args(argv)
 
-    sign_file(args.file, args.fingerprint)
+    sign_file(args.file, args.fingerprint, INITVM_GNUPG_HOME)

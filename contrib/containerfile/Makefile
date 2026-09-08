@@ -1,12 +1,9 @@
 # ELBE - Debian Based Embedded Rootfilesystem Builder
 # SPDX-License-Identifier: GPL-3.0-or-later
-# SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
-# SPDX-FileCopyrightText: 2018 Linutronix GmbH
+# SPDX-FileCopyrightText: 2026 Linutronix GmbH
 
-IMAGENAME ?= elbe-devel-image
-CONTAINERNAME ?= elbe-devel
-KVMGID ?= $(shell ls -n /dev/kvm | awk '{ print $$4 }')
-UID ?= $(shell id -u)
+IMAGENAME ?= elbe-buildenv-image
+CONTAINERNAME ?= elbe-buildenv
 
 # Container engine to use. Defaults to podman if installed, else docker.
 ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docker)
@@ -14,11 +11,6 @@ ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docke
 # Common container run options
 RUN_OPTS = \
 	--cap-add SYS_ADMIN \
-	--security-opt seccomp=unconfined \
-	--security-opt apparmor=unconfined \
-	--group-add kvm \
-	--device /dev/kvm \
-	--device /dev/fuse \
 	--rm \
 	--interactive \
 	--tty
@@ -32,51 +24,20 @@ ifeq ($(ENGINE),podman)
 RUN_OPTS += --userns=keep-id
 endif
 
-# container commands
 build:
-	test -c /dev/kvm  || ( echo "/dev/kvm not found" && false )
-	test -c /dev/fuse || ( echo "/dev/fuse not found" && false )
-	test -n "$(KVMGID)" || ( echo "detecting groupid of /dev/kvm failed" && false )
-	sed -e "s#@KVMGID@#$(KVMGID)#g" \
-	    -e "s#@USERID@#$(UID)#g" \
-	    Containerfile.in > Containerfile
 	$(ENGINE) build --build-arg http_proxy=$(http_proxy) \
 	             --build-arg https_proxy=$(https_proxy) \
 	             --build-arg no_proxy=$(no_proxy) \
-	             --no-cache \
-                     -f Containerfile \
+		     --network=slirp4netns \
 	             -t $(IMAGENAME) .
-	rm Containerfile
 
-start-devel:
-	$(ENGINE) ps | grep $(CONTAINERNAME)$$ || \
-	$(ENGINE) run --name $(CONTAINERNAME) \
-		-e http_proxy=$(http_proxy) \
-		-e https_proxy=$(https_proxy) \
-		-e no_proxy=$(no_proxy) \
-		-v $(realpath ../../.):/var/cache/elbe/devel -w /var/cache/elbe/devel \
-		$(RUN_OPTS) \
-		$(IMAGENAME)
+# Builds the elbe .deb packages from this checkout first
+build-local:
+	$(ENGINE) build --build-arg http_proxy=$(http_proxy) \
+	             --build-arg https_proxy=$(https_proxy) \
+	             --build-arg no_proxy=$(no_proxy) \
+		     --network=slirp4netns \
+	             -f Containerfile.local \
+	             -t $(IMAGENAME) ../..
 
-start:
-	$(ENGINE) ps | grep $(CONTAINERNAME)$$ || \
-	$(ENGINE) run --name $(CONTAINERNAME) \
-		-e http_proxy=$(http_proxy) \
-		-e https_proxy=$(https_proxy) \
-		-e no_proxy=$(no_proxy) \
-		$(RUN_OPTS) \
-		$(IMAGENAME)
-
-stop:
-	-$(ENGINE) stop $(CONTAINERNAME)
-
-stoprm: stop
-	-$(ENGINE) rm $(CONTAINERNAME)
-
-clean: stoprm
-	-$(ENGINE) rmi $(IMAGENAME)
-
-connect: start
-	$(ENGINE) exec -tiu $(UID) $(CONTAINERNAME) /bin/bash
-
-.PHONY: build start stop stoprm clean connect
+.PHONY: build build-local
