@@ -48,9 +48,15 @@ def create_apt_prefs(xml, rfs):
                        'package': package}
             pinned_origins.append(pinning)
 
+    pkgs = []
+    for path in ('/target/pkg-list', '/project/buildimage/pkg-list'):
+        node = xml.node(path)
+        if node is not None:
+            pkgs.extend(node)
+
     d = {'xml': xml,
          'prj': xml.node('/project'),
-         'pkgs': xml.node('/target/pkg-list'),
+         'pkgs': pkgs,
          'porgs': pinned_origins}
 
     write_pack_template(rfs.fname(filename), 'preferences.mako', d)
