@@ -39,7 +39,7 @@ from elbepack.pbuilder import (
     pbuilder_write_repo_hook,
 )
 from elbepack.repomanager import ProjectRepo
-from elbepack.rfs import BuildEnv
+from elbepack.rfs import BuildEnv, create_apt_prefs
 from elbepack.rpcaptcache import get_rpcaptcache
 from elbepack.shellhelper import chroot, do
 from elbepack.templates import write_pack_template
@@ -999,6 +999,9 @@ class ElbeProject:
             if release_gpg:
                 os.remove(release_gpg[0])
                 logging.info('Removed Release.gpg file!')
+
+        create_apt_prefs(self.xml, target.rfs, buildimage=buildenv)
+        self.drop_rpcaptcache(env=target)
 
         with target:
             # First update the apt cache
