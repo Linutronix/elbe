@@ -224,8 +224,8 @@ class RPCAPTCache(InChRootObject):
                           ElbeInstallProgress(fileno=sys.stdout.fileno()))
         self.cache.open(progress=ElbeOpProgress())
 
-    def get_dependencies(self, pkgname):
-        deps = getalldeps(self.cache, pkgname)
+    def get_dependencies(self, pkgname, blacklist):
+        deps = getalldeps(self.cache, pkgname, blacklist)
         return [APTPackage(self.cache[p]) for p in deps]
 
     def get_installed_pkgs(self, section='all'):
