@@ -89,7 +89,7 @@ variants, each of which runs ``elbe check-build <variant>``:
 
 .. literalinclude:: ../elbepack/tests/test_xml.py
    :language: python
-   :pyobject: test_simple_build
+   :pyobject: XmlBuildTests.test_simple_build
 
 What does ``elbe check-build`` do?
 --------------------------------------
