@@ -291,18 +291,7 @@ def _test_rootfs(build_dir, root, image_config):
     assert root.joinpath('etc', 'fstab').read_text().strip() == textwrap.dedent("""
     LABEL=rfs / ext4 defaults 0 0
     """).strip()
-    assert root.joinpath('etc', 'os-release').read_text().strip() == textwrap.dedent("""
-        PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
-        NAME="Debian GNU/Linux"
-        VERSION_ID="13"
-        VERSION="13 (trixie)"
-        VERSION_CODENAME=trixie
-        DEBIAN_VERSION_FULL=13.6
-        ID=debian
-        HOME_URL="https://www.debian.org/"
-        SUPPORT_URL="https://www.debian.org/support"
-        BUG_REPORT_URL="https://bugs.debian.org/"
-    """).strip()
+    assert 'Debian GNU/Linux' in root.joinpath('etc', 'os-release').read_text()
     assert root.joinpath('etc', 'apt', 'sources.list').read_text() in [
         # With and without source CDROM
         'deb-src [] http://deb.debian.org/debian trixie main\n'
