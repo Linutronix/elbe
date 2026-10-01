@@ -12,7 +12,7 @@ import time
 
 import elbepack
 import elbepack.initvm
-from elbepack.buildsubmitaction import add_submit_arguments, extract_cdrom
+from elbepack.buildsubmitaction import XmlOrIso, add_submit_arguments
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
@@ -228,7 +228,8 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
               help=argparse.SUPPRESS)
 @add_submit_arguments
 @add_argument('--size', help='Disk size', type=size_to_int)
-@add_argument('input', nargs='?', metavar='<xmlfile> | <isoimage>')
+@add_argument('input', nargs='?', type=XmlOrIso, default=XmlOrIso(),
+              metavar='<xmlfile> | <isoimage>')
 def _create(args):
     # Upgrade from older versions which used tmux
     try:
@@ -241,77 +242,63 @@ def _create(args):
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
 
-    # Init cdrom to None, if we detect it, we set it
-    cdrom = None
+    with args.input as resolved:
+        xmlfile = resolved.xmlfile
+        cdrom = resolved.cdrom
 
-    if args.input is not None:
-        if args.input.endswith('.xml'):
+        if xmlfile is None:
+            # No xml File was specified, build the default elbe-init-with-ssh
+            initxml = os.path.join(elbepack.__path__[0], 'init/default-init.xml')
+        elif cdrom is None:
             # We have an xml file, use that for elbe init
-            xmlfile = args.input
             try:
                 xml = etree(xmlfile)
             except ValidationError as e:
                 print(f'XML file is invalid: {e}')
             # Use default XML if no initvm was specified
-            if not xml.has('initvm'):
-                xmlfile = os.path.join(
-                    elbepack.__path__[0], 'init/default-init.xml')
-
-        elif args.input.endswith('.iso'):
-            # We have an iso image, extract xml from there.
-            tmp = extract_cdrom(args.input)
-
-            xmlfile = tmp.fname('source.xml')
-            cdrom = args.input
+            if xml.has('initvm'):
+                initxml = xmlfile
+            else:
+                initxml = os.path.join(elbepack.__path__[0], 'init/default-init.xml')
         else:
-            args.parser.error('Unknown file ending (use either xml or iso)')
-    else:
-        # No xml File was specified, build the default elbe-init-with-ssh
-        xmlfile = os.path.join(
-            elbepack.__path__[0],
-            'init/default-init.xml')
+            initxml = xmlfile
 
-    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
-                         soapport=args.soapport) as preproc:
-        create_initvm(
-            args.domain,
-            preproc,
-            args.directory,
-            sshport=args.sshport,
-            soapport=args.soapport,
-            cdrom=cdrom,
-            build_bin=args.build_bin,
-            build_sources=args.build_sources,
-            fail_on_warning=args.fail_on_warning,
-            size=args.size,
-        )
+        with preprocess_file(initxml, variants=args.variants, sshport=args.sshport,
+                             soapport=args.soapport) as preproc:
+            create_initvm(
+                args.domain,
+                preproc,
+                args.directory,
+                sshport=args.sshport,
+                soapport=args.soapport,
+                cdrom=cdrom,
+                build_bin=args.build_bin,
+                build_sources=args.build_sources,
+                fail_on_warning=args.fail_on_warning,
+                size=args.size,
+            )
 
-    initvm = _initvm_from_args(args)
+        initvm = _initvm_from_args(args)
 
-    initvm._build()
-    initvm.start()
-    initvm.ensure()
+        initvm._build()
+        initvm.start()
+        initvm.ensure()
 
-    if args.input is not None:
-        # If provided xml file has no initvm section xmlfile is set to a
-        # default initvm XML file. But we need the original file here.
-        if args.input.endswith('.xml'):
-            # Stop here if no project node was specified.
-            try:
-                x = etree(args.input)
-            except ValidationError as e:
-                print(f'XML file is invalid: {e}')
-                sys.exit(149)
-            if not x.has('project'):
-                print("elbe initvm ready: use 'elbe initvm submit "
-                      "myproject.xml' to build a project")
-                sys.exit(0)
+        if xmlfile is not None:
+            if cdrom is None:
+                # Stop here if no project node was specified.
+                try:
+                    x = etree(xmlfile)
+                except ValidationError as e:
+                    print(f'XML file is invalid: {e}')
+                    sys.exit(149)
+                if not x.has('project'):
+                    print("elbe initvm ready: use 'elbe initvm submit "
+                          "myproject.xml' to build a project")
+                    sys.exit(0)
 
-            xmlfile = args.input
-        elif cdrom is not None:
-            xmlfile = tmp.fname('source.xml')
-
-        _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args.base_image, args)
+            _submit_with_repodir_and_dl_result(
+                initvm.control, xmlfile, cdrom, args.base_image, args)
 
 
 @_add_initvm_from_args_arguments
@@ -320,27 +307,15 @@ def _create(args):
     '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
     default=False,
     help='Exclude initvm packages from CDROM generation')
-@add_argument('input', metavar='<xmlfile> | <isoimage>')
+@add_argument('input', type=XmlOrIso, metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)
 
     initvm.ensure()
 
-    # Init cdrom to None, if we detect it, we set it
-    cdrom = None
-
-    if args.input.endswith('.xml'):
-        # We have an xml file, use that for elbe init
-        xmlfile = args.input
-    elif args.input.endswith('.iso'):
-        # We have an iso image, extract xml from there.
-        tmp = extract_cdrom(args.input)
-        xmlfile = tmp.fname('source.xml')
-        cdrom = args.input
-    else:
-        args.parser.error('Unknown file ending (use either xml or iso)')
-
-    _submit_with_repodir_and_dl_result(initvm.control, xmlfile, cdrom, args.base_image, args)
+    with args.input as resolved:
+        _submit_with_repodir_and_dl_result(
+            initvm.control, resolved.xmlfile, resolved.cdrom, args.base_image, args)
 
 
 @add_argument_sshport
