@@ -3,30 +3,28 @@
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
-import abc
 import argparse
 import os
-import pathlib
 import subprocess
 import sys
 import textwrap
-import time
 
 import elbepack
 import elbepack.initvm
 from elbepack.buildsubmitaction import (
+    ProjectBackend,
     XmlOrIso,
     add_exclude_initvm_pkgs_argument,
     add_output_argument,
     add_submit_arguments,
+    build_with_repodir_and_dl_result
 )
-from elbepack.cli import CliError, add_argument, with_cli_details
+from elbepack.cli import CliError, add_argument
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.init import create_initvm
 from elbepack.paths import DEVEL_DIR
-from elbepack.repodir import Repodir, RepodirError
 from elbepack.soapclient import ElbeSoapClient
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import preprocess_file
@@ -99,63 +97,6 @@ def _attach(args):
     _initvm_from_args(args).attach()
 
 
-class ProjectBackend(abc.ABC):
-    outdir = None
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.stop()
-
-    def stop(self):
-        pass
-
-    @abc.abstractmethod
-    def create_project(self, xmlfile):
-        ...
-
-    @abc.abstractmethod
-    def set_cdrom(self, prjdir, cdrom):
-        ...
-
-    @abc.abstractmethod
-    def set_base_image(self, prjdir, base_image):
-        ...
-
-    @abc.abstractmethod
-    def build(self, prjdir, build_bin, build_sources, has_cdrom, uploaded_base_image_path):
-        ...
-
-    @abc.abstractmethod
-    def wait_busy(self, prjdir):
-        ...
-
-    @abc.abstractmethod
-    def build_sdk(self, prjdir):
-        ...
-
-    @abc.abstractmethod
-    def dump_file(self, prjdir, filename, dest):
-        ...
-
-    @abc.abstractmethod
-    def get_files(self, prjdir, outdir):
-        ...
-
-    @abc.abstractmethod
-    def del_project(self, prjdir):
-        ...
-
-    @abc.abstractmethod
-    def recovery_hint(self, prjdir):
-        ...
-
-    @abc.abstractmethod
-    def download_hint(self, prjdir):
-        ...
-
-
 class SoapProjectBackend(ProjectBackend):
     def __init__(self, control, outdir, exclude_initvm_pkgs):
         self.control = control
@@ -211,110 +152,6 @@ def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args
         build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args,
                                          repodir_base=xmlfile.parent,
                                          xmlfile_base=xmlfile)
-
-
-def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args, *,
-                                     repodir_base, xmlfile_base=None):
-    fname = f'elbe-repodir-{time.time_ns()}.xml'
-    preprocess_xmlfile = repodir_base / fname
-    try:
-        with Repodir(xmlfile, preprocess_xmlfile):
-            build_and_dl_result(backend, preprocess_xmlfile, cdrom, base_image, args,
-                                xmlfile_base=xmlfile_base)
-    except RepodirError as err:
-        raise with_cli_details(err, 127, 'elbe repodir failed')
-
-
-def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_base=None):
-    with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
-                         soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
-        prjdir = backend.create_project(xmlfile)
-
-    if args.writeproject:
-        args.writeproject.write_text(prjdir)
-
-    if cdrom is not None:
-        print('Copying CDROM into project. This might take a while')
-        backend.set_cdrom(prjdir, cdrom)
-        print('Copy finished')
-
-    uploaded_base_image_path = None
-    if base_image is not None:
-        print('Copying base image into project. This might take a while')
-        uploaded_base_image_path = backend.set_base_image(prjdir, base_image)
-        print('Copy finished')
-
-    backend.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                  uploaded_base_image_path)
-
-    print('Build started, waiting till it finishes')
-
-    try:
-        for msg in backend.wait_busy(prjdir):
-            print(msg)
-    except Exception as e:
-        raise with_cli_details(e, 133, textwrap.dedent("""
-            Build Failed
-            """) + backend.recovery_hint(prjdir))
-
-    print('')
-    print('Build finished !')
-    print('')
-
-    if args.build_sdk:
-        backend.build_sdk(prjdir)
-
-        print('SDK Build started, waiting till it finishes')
-
-        try:
-            for msg in backend.wait_busy(prjdir):
-                print(msg)
-        except Exception:
-            print('Waiting for the SDK build Failed', file=sys.stderr)
-            print('', file=sys.stderr)
-            print(backend.recovery_hint(prjdir), file=sys.stderr)
-            sys.exit(135)
-
-        print('')
-        print('SDK Build finished !')
-        print('')
-
-    try:
-        backend.dump_file(prjdir, 'validation.txt', sys.stdout.buffer)
-        sys.stdout.buffer.flush()
-    except Exception:
-        print(
-            'Project failed to generate validation.txt',
-            file=sys.stderr)
-        print('Getting log.txt', file=sys.stderr)
-        try:
-            backend.dump_file(prjdir, 'log.txt', sys.stdout.buffer)
-            sys.stdout.buffer.flush()
-        except Exception as e:
-            raise with_cli_details(e, 137, textwrap.dedent('Failed to dump log.txt'))
-        sys.exit(136)
-
-    if args.skip_download:
-        print('')
-        print('Listing available files:')
-        print('')
-        for file in backend.get_files(prjdir, None):
-            print(f'{file.name}\t{file.description}')
-
-        print('')
-        print(backend.download_hint(prjdir))
-    else:
-        print('')
-        print('Getting generated Files')
-        print('')
-
-        print(f'Saving generated Files to {backend.outdir}')
-
-        for file in backend.get_files(prjdir, backend.outdir):
-            print(f'{file.name}\t{file.description}')
-
-        if not args.keep_files:
-            backend.del_project(prjdir)
 
 
 @_add_initvm_from_args_arguments
