@@ -208,21 +208,24 @@ class SoapProjectBackend(ProjectBackend):
 
 def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args):
     with SoapProjectBackend(control, args.outdir, args.exclude_initvm_pkgs) as backend:
-        build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args)
+        build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args,
+                                         repodir_base=xmlfile.parent,
+                                         xmlfile_base=xmlfile)
 
 
-def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args):
+def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args, *,
+                                     repodir_base, xmlfile_base=None):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
-    preprocess_xmlfile = pathlib.Path(os.path.dirname(xmlfile)) / fname
+    preprocess_xmlfile = repodir_base / fname
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
             build_and_dl_result(backend, preprocess_xmlfile, cdrom, base_image, args,
-                                xmlfile_base=xmlfile)
+                                xmlfile_base=xmlfile_base)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
 
 
-def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, xmlfile_base=None):
+def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_base=None):
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
         prjdir = backend.create_project(xmlfile)
