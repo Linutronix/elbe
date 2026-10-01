@@ -6,6 +6,7 @@
 import abc
 import argparse
 import os
+import pathlib
 import subprocess
 import sys
 import textwrap
@@ -212,7 +213,7 @@ def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args
 
 def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
-    preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
+    preprocess_xmlfile = pathlib.Path(os.path.dirname(xmlfile)) / fname
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
             build_and_dl_result(backend, preprocess_xmlfile, cdrom, base_image, args,
@@ -227,8 +228,7 @@ def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, xmlfile_base=
         prjdir = backend.create_project(xmlfile)
 
     if args.writeproject:
-        with open(args.writeproject, 'w') as wpf:
-            wpf.write(prjdir)
+        args.writeproject.write_text(prjdir)
 
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')

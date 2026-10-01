@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2017 Linutronix GmbH
 
 import argparse
+import pathlib
 import subprocess
 
 from elbepack.cli import add_argument, add_arguments_from_decorated_function
@@ -13,7 +14,7 @@ from elbepack.soapclient import ElbeSoapClient
 from elbepack.xmlpreprocess import preprocess_file
 
 
-@add_argument('--writeproject', help='write project name to file')
+@add_argument('--writeproject', type=pathlib.Path, help='write project name to file')
 @add_argument('--ccache-size', dest='ccachesize', default='10G',
               help='set a limit for the compiler cache size '
                    '(should be a number followed by an optional '
@@ -38,9 +39,7 @@ def _create(control, args):
             control.set_xml(prjdir, preproc)
 
         if args.writeproject:
-            wpf = open(args.writeproject, 'w')
-            wpf.write(prjdir)
-            wpf.close()
+            args.writeproject.write_text(prjdir)
 
     elif args.project:
         prjdir = args.project
