@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2015-2018 Linutronix GmbH
 # SPDX-FileCopyrightText: 2015 Silvio Fricke <silvio.fricke@gmail.com>
 
+import abc
 import argparse
 import os
 import subprocess
@@ -97,24 +98,133 @@ def _attach(args):
     _initvm_from_args(args).attach()
 
 
+class ProjectBackend(abc.ABC):
+    outdir = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop()
+
+    def stop(self):
+        pass
+
+    @abc.abstractmethod
+    def create_project(self, xmlfile):
+        ...
+
+    @abc.abstractmethod
+    def set_cdrom(self, prjdir, cdrom):
+        ...
+
+    @abc.abstractmethod
+    def set_base_image(self, prjdir, base_image):
+        ...
+
+    @abc.abstractmethod
+    def build(self, prjdir, build_bin, build_sources, has_cdrom, uploaded_base_image_path):
+        ...
+
+    @abc.abstractmethod
+    def wait_busy(self, prjdir):
+        ...
+
+    @abc.abstractmethod
+    def build_sdk(self, prjdir):
+        ...
+
+    @abc.abstractmethod
+    def dump_file(self, prjdir, filename, dest):
+        ...
+
+    @abc.abstractmethod
+    def get_files(self, prjdir, outdir):
+        ...
+
+    @abc.abstractmethod
+    def del_project(self, prjdir):
+        ...
+
+    @abc.abstractmethod
+    def recovery_hint(self, prjdir):
+        ...
+
+    @abc.abstractmethod
+    def download_hint(self, prjdir):
+        ...
+
+
+class SoapProjectBackend(ProjectBackend):
+    def __init__(self, control, outdir, exclude_initvm_pkgs):
+        self.control = control
+        self.outdir = outdir
+        self.exclude_initvm_pkgs = exclude_initvm_pkgs
+
+    def create_project(self, xmlfile):
+        prjdir = self.control.service.new_project()
+        self.control.set_xml(prjdir, xmlfile)
+        return prjdir
+
+    def set_cdrom(self, prjdir, cdrom):
+        self.control.set_cdrom(prjdir, cdrom)
+
+    def set_base_image(self, prjdir, base_image):
+        return self.control.set_base_image(prjdir, base_image)
+
+    def build(self, prjdir, build_bin, build_sources, has_cdrom, uploaded_base_image_path):
+        self.control.service.build(prjdir, build_bin, build_sources, has_cdrom,
+                                   uploaded_base_image_path, self.exclude_initvm_pkgs)
+
+    def wait_busy(self, prjdir):
+        yield from self.control.wait_busy(prjdir)
+
+    def build_sdk(self, prjdir):
+        self.control.service.build_sdk(prjdir)
+
+    def dump_file(self, prjdir, filename, dest):
+        for chunk in self.control.dump_file(prjdir, filename):
+            dest.write(chunk)
+
+    def get_files(self, prjdir, outdir):
+        return self.control.get_files(prjdir, outdir)
+
+    def del_project(self, prjdir):
+        self.control.service.del_project(prjdir)
+
+    def recovery_hint(self, prjdir):
+        return textwrap.dedent(f"""
+            The project will not be deleted from the initvm.
+            The files, that have been built, can be downloaded using:
+            {prog} control get_files --output "{self.outdir}" "{prjdir}"
+
+            The project can then be removed using:
+            {prog} control del_project "{prjdir}\"""")
+
+    def download_hint(self, prjdir):
+        return f'Get Files with: elbe control get_file "{prjdir}" <filename>'
+
+
 def _submit_with_repodir_and_dl_result(control, xmlfile, cdrom, base_image, args):
+    with SoapProjectBackend(control, args.outdir, args.exclude_initvm_pkgs) as backend:
+        build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args)
+
+
+def build_with_repodir_and_dl_result(backend, xmlfile, cdrom, base_image, args):
     fname = f'elbe-repodir-{time.time_ns()}.xml'
     preprocess_xmlfile = os.path.join(os.path.dirname(xmlfile), fname)
     try:
         with Repodir(xmlfile, preprocess_xmlfile):
-            _submit_and_dl_result(control, preprocess_xmlfile, cdrom, base_image, args,
-                                  xmlfile_base=xmlfile)
+            build_and_dl_result(backend, preprocess_xmlfile, cdrom, base_image, args,
+                                xmlfile_base=xmlfile)
     except RepodirError as err:
         raise with_cli_details(err, 127, 'elbe repodir failed')
 
 
-def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_base=None):
-
+def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, xmlfile_base=None):
     with preprocess_file(xmlfile, variants=args.variants, sshport=args.sshport,
                          soapport=args.soapport, xmlfile_base=xmlfile_base) as xmlfile:
-
-        prjdir = control.service.new_project()
-        control.set_xml(prjdir, xmlfile)
+        prjdir = backend.create_project(xmlfile)
 
     if args.writeproject:
         with open(args.writeproject, 'w') as wpf:
@@ -122,64 +232,45 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
 
     if cdrom is not None:
         print('Uploading CDROM. This might take a while')
-        control.set_cdrom(prjdir, cdrom)
+        backend.set_cdrom(prjdir, cdrom)
         print('Upload finished')
 
     uploaded_base_image_path = None
     if base_image is not None:
         print('Uploading base image. This might take a while')
-        uploaded_base_image_path = control.set_base_image(prjdir, base_image)
+        uploaded_base_image_path = backend.set_base_image(prjdir, base_image)
         print('Upload finished')
 
-    control.service.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
-                          uploaded_base_image_path, args.exclude_initvm_pkgs)
+    backend.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
+                  uploaded_base_image_path)
 
     print('Build started, waiting till it finishes')
 
     try:
-        for msg in control.wait_busy(prjdir):
+        for msg in backend.wait_busy(prjdir):
             print(msg)
     except Exception as e:
-        raise with_cli_details(e, 133, textwrap.dedent(f"""
+        raise with_cli_details(e, 133, textwrap.dedent("""
             elbe control wait_busy Failed
-
-            The project will not be deleted from the initvm.
-            The files, that have been built, can be downloaded using:
-            {prog} control get_files --output "{args.outdir}" "{prjdir}"
-
-            The project can then be removed using:
-            {prog} control del_project "{prjdir}" """))
+            """) + backend.recovery_hint(prjdir))
 
     print('')
     print('Build finished !')
     print('')
 
     if args.build_sdk:
-        control.service.build_sdk(prjdir)
+        backend.build_sdk(prjdir)
 
         print('SDK Build started, waiting till it finishes')
 
         try:
-            for msg in control.wait_busy(prjdir):
+            for msg in backend.wait_busy(prjdir):
                 print(msg)
         except Exception:
             print('elbe control wait_busy Failed, while waiting for the SDK',
                   file=sys.stderr)
             print('', file=sys.stderr)
-            print('The project will not be deleted from the initvm.',
-                  file=sys.stderr)
-            print('The files, that have been built, can be downloaded using:',
-                  file=sys.stderr)
-            print(
-                f'{prog} control get_files --output "{args.outdir}" '
-                f'"{prjdir}"',
-                file=sys.stderr)
-            print('', file=sys.stderr)
-            print('The project can then be removed using:',
-                  file=sys.stderr)
-            print(f'{prog} control del_project "{prjdir}"',
-                  file=sys.stderr)
-            print('', file=sys.stderr)
+            print(backend.recovery_hint(prjdir), file=sys.stderr)
             sys.exit(135)
 
         print('')
@@ -187,8 +278,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
         print('')
 
     try:
-        for chunk in control.dump_file(prjdir, 'validation.txt'):
-            sys.stdout.buffer.write(chunk)
+        backend.dump_file(prjdir, 'validation.txt', sys.stdout.buffer)
         sys.stdout.buffer.flush()
     except Exception:
         print(
@@ -196,8 +286,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
             file=sys.stderr)
         print('Getting log.txt', file=sys.stderr)
         try:
-            for chunk in control.dump_file(prjdir, 'log.txt'):
-                sys.stdout.buffer.write(chunk)
+            backend.dump_file(prjdir, 'log.txt', sys.stdout.buffer)
             sys.stdout.buffer.flush()
         except Exception as e:
             raise with_cli_details(e, 137, textwrap.dedent('Failed to dump log.txt'))
@@ -207,24 +296,23 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
         print('')
         print('Listing available files:')
         print('')
-        files = control.get_files(prjdir, None)
-        for file in files:
+        for file in backend.get_files(prjdir, None):
             print(f'{file.name}\t{file.description}')
 
         print('')
-        print(f'Get Files with: elbe control get_file "{prjdir}" <filename>')
+        print(backend.download_hint(prjdir))
     else:
         print('')
         print('Getting generated Files')
         print('')
 
-        print(f'Saving generated Files to {args.outdir}')
+        print(f'Saving generated Files to {backend.outdir}')
 
-        for file in control.get_files(prjdir, args.outdir):
+        for file in backend.get_files(prjdir, backend.outdir):
             print(f'{file.name}\t{file.description}')
 
         if not args.keep_files:
-            control.service.del_project(prjdir)
+            backend.del_project(prjdir)
 
 
 @_add_initvm_from_args_arguments
