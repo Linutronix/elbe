@@ -114,7 +114,7 @@ def add_submit_arguments(f):
                      help="don't delete elbe project files after build")(f)
 
     f = add_argument('--writeproject', dest='writeproject', default=None,
-                     help='write project name to file')(f)
+                     type=pathlib.Path, help='write project name to file')(f)
 
     f = add_argument('--build-sdk', dest='build_sdk', action='store_true', default=False,
                      help='Also build an SDK.')(f)
