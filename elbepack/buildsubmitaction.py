@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2026 Linutronix GmbH
 
+import argparse
 import os
 import subprocess
 import sys
@@ -48,6 +49,32 @@ def extract_cdrom(cdrom):
     print(f'Image was generated using Elbe Version {exml.get_elbe_version()}')
 
     return tmp
+
+
+class XmlOrIso:
+    def __init__(self, path=None):
+        if path is not None and not path.endswith(('.xml', '.iso')):
+            raise argparse.ArgumentTypeError('Unknown file ending (use either xml or iso)')
+        self.path = path
+        self.xmlfile = None
+        self.cdrom = None
+        self._tmpdir = None
+
+    def __enter__(self):
+        if self.path is None:
+            pass
+        elif self.path.endswith('.iso'):
+            self._tmpdir = extract_cdrom(self.path)
+            self.xmlfile = pathlib.Path(self._tmpdir.fname('source.xml'))
+            self.cdrom = self.path
+        else:
+            self.xmlfile = pathlib.Path(self.path)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        if self._tmpdir is not None:
+            self._tmpdir.delete()
+        return False
 
 
 def add_submit_arguments(f):
