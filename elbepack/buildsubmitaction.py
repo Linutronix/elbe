@@ -3,7 +3,9 @@
 # SPDX-FileCopyrightText: 2026 Linutronix GmbH
 
 import argparse
+import datetime
 import os
+import pathlib
 import subprocess
 import sys
 import textwrap
@@ -77,14 +79,22 @@ class XmlOrIso:
         return False
 
 
+def build_dir_type(path=None):
+    if path is None:
+        path = 'elbe-build-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    return pathlib.Path(path).absolute()
+
+
+def add_output_argument(f):
+    return add_argument('--output', dest='outdir',
+                        type=build_dir_type,
+                        help='directory where to save downloaded Files')(f)
+
+
 def add_submit_arguments(f):
     f = add_argument('--skip-download', action='store_true',
                      dest='skip_download', default=False,
                      help='Skip downloading generated Files')(f)
-
-    f = add_argument('--output', dest='outdir',
-                     type=os.path.abspath,
-                     help='directory where to save downloaded Files')(f)
 
     f = add_argument('--skip-build-bin', dest='build_bin', action='store_false', default=True,
                      help='Skip building Binary Repository CDROM, for exact Reproduction')(f)

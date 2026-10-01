@@ -12,7 +12,11 @@ import time
 
 import elbepack
 import elbepack.initvm
-from elbepack.buildsubmitaction import XmlOrIso, add_submit_arguments
+from elbepack.buildsubmitaction import (
+    XmlOrIso,
+    add_output_argument,
+    add_submit_arguments,
+)
 from elbepack.cli import CliError, add_argument, with_cli_details
 from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
@@ -228,6 +232,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
               help=argparse.SUPPRESS)
 @add_submit_arguments
 @add_argument('--size', help='Disk size', type=size_to_int)
+@add_output_argument
 @add_argument('input', nargs='?', type=XmlOrIso, default=XmlOrIso(),
               metavar='<xmlfile> | <isoimage>')
 def _create(args):
@@ -303,6 +308,7 @@ def _create(args):
 
 @_add_initvm_from_args_arguments
 @add_submit_arguments
+@add_output_argument
 @add_argument(
     '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
     default=False,
