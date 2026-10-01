@@ -207,6 +207,20 @@ class _Mount:
 mount = _Mount
 
 
+@contextlib.contextmanager
+def bind_mount_pseudo_filesystems_from_host(target):
+    if target == '/':
+        yield
+        return
+
+    with contextlib.ExitStack() as stack:
+        for src in ['/proc', '/sys', '/dev']:
+            dst = os.path.join(target, src.lstrip('/'))
+            os.makedirs(dst, exist_ok=True)
+            stack.enter_context(mount(src, dst, rbind=True, log_output=False))
+        yield
+
+
 def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     """chroot() - Wrapper around do().
 
@@ -231,10 +245,11 @@ def chroot(directory, cmd, /, *, env_add=None, **kwargs):
     if env_add:
         new_env.update(env_add)
 
-    if _is_shell_cmd(cmd):
-        do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
-    else:
-        do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
+    with bind_mount_pseudo_filesystems_from_host(directory):
+        if _is_shell_cmd(cmd):
+            do(['/usr/sbin/chroot', directory, '/bin/sh', '-c', cmd], env_add=new_env, **kwargs)
+        else:
+            do(['/usr/sbin/chroot', directory] + cmd, env_add=new_env, **kwargs)
 
 
 def env_add(d):
