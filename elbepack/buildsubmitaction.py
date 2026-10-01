@@ -91,6 +91,12 @@ def add_output_argument(f):
                         help='directory where to save downloaded Files')(f)
 
 
+def add_exclude_initvm_pkgs_argument(f):
+    return add_argument('--exclude-initvm-pkgs', action='store_true',
+                        dest='exclude_initvm_pkgs', default=False,
+                        help='Exclude initvm packages from CDROM generation')(f)
+
+
 def add_submit_arguments(f):
     f = add_argument('--skip-download', action='store_true',
                      dest='skip_download', default=False,

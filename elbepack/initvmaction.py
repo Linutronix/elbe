@@ -14,6 +14,7 @@ import elbepack
 import elbepack.initvm
 from elbepack.buildsubmitaction import (
     XmlOrIso,
+    add_exclude_initvm_pkgs_argument,
     add_output_argument,
     add_submit_arguments,
 )
@@ -233,6 +234,7 @@ def _submit_and_dl_result(control, xmlfile, cdrom, base_image, args, xmlfile_bas
 @add_submit_arguments
 @add_argument('--size', help='Disk size', type=size_to_int)
 @add_output_argument
+@add_exclude_initvm_pkgs_argument
 @add_argument('input', nargs='?', type=XmlOrIso, default=XmlOrIso(),
               metavar='<xmlfile> | <isoimage>')
 def _create(args):
@@ -309,10 +311,7 @@ def _create(args):
 @_add_initvm_from_args_arguments
 @add_submit_arguments
 @add_output_argument
-@add_argument(
-    '--exclude-initvm-pkgs', action='store_true', dest='exclude_initvm_pkgs',
-    default=False,
-    help='Exclude initvm packages from CDROM generation')
+@add_exclude_initvm_pkgs_argument
 @add_argument('input', type=XmlOrIso, metavar='<xmlfile> | <isoimage>')
 def _submit(args):
     initvm = _initvm_from_args(args)
