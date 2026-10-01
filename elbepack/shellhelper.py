@@ -156,14 +156,25 @@ class _Mount:
     # This is not using contextlib.contextmanager as it will be pass to our
     # RPCAPTCache which uses the pickle serialization.
     # The generator by contextlib.contextmanager is not compatible with pickle.
-    def __init__(self, device, target, *, bind=False, type=None, options=(), log_output=True,
-                 force_writable=False):
+    def __init__(self, device, target, *, bind=False, rbind=False, type=None, options=(),
+                 log_output=True, force_writable=False):
         self.log_output = log_output
         self.target = target
+        self.rbind = rbind
+
+        # Detach the bind-mounted subtree from the shared
+        # propagation group. Without this, unmounting it in
+        # __exit__ can propagate back and unmount the
+        # corresponding mounts at the source.
+        options = list(options)
+        if rbind:
+            options.append('rprivate')
 
         cmd = ['mount']
         if bind:
             cmd.append('--bind')
+        elif rbind:
+            cmd.append('--rbind')
 
         if options:
             cmd.extend(['-o', ','.join(options)])
@@ -191,7 +202,11 @@ class _Mount:
         self._run_cmd(self.cmd)
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self._run_cmd(['umount', self.target], check=False)
+        cmd = ['umount']
+        if self.rbind:
+            cmd.append('--lazy')
+        cmd.append(self.target)
+        self._run_cmd(cmd, check=False)
 
 
 mount = _Mount
