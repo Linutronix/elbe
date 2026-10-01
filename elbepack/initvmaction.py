@@ -234,15 +234,15 @@ def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_ba
         args.writeproject.write_text(prjdir)
 
     if cdrom is not None:
-        print('Uploading CDROM. This might take a while')
+        print('Copying CDROM into project. This might take a while')
         backend.set_cdrom(prjdir, cdrom)
-        print('Upload finished')
+        print('Copy finished')
 
     uploaded_base_image_path = None
     if base_image is not None:
-        print('Uploading base image. This might take a while')
+        print('Copying base image into project. This might take a while')
         uploaded_base_image_path = backend.set_base_image(prjdir, base_image)
-        print('Upload finished')
+        print('Copy finished')
 
     backend.build(prjdir, args.build_bin, args.build_sources, bool(cdrom),
                   uploaded_base_image_path)
@@ -254,7 +254,7 @@ def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_ba
             print(msg)
     except Exception as e:
         raise with_cli_details(e, 133, textwrap.dedent("""
-            elbe control wait_busy Failed
+            Build Failed
             """) + backend.recovery_hint(prjdir))
 
     print('')
@@ -270,8 +270,7 @@ def build_and_dl_result(backend, xmlfile, cdrom, base_image, args, *, xmlfile_ba
             for msg in backend.wait_busy(prjdir):
                 print(msg)
         except Exception:
-            print('elbe control wait_busy Failed, while waiting for the SDK',
-                  file=sys.stderr)
+            print('Waiting for the SDK build Failed', file=sys.stderr)
             print('', file=sys.stderr)
             print(backend.recovery_hint(prjdir), file=sys.stderr)
             sys.exit(135)
