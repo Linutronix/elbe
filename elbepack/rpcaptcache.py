@@ -209,20 +209,23 @@ class RPCAPTCache(InChRootObject):
         p.mark_delete(purge=True)
 
     def update(self):
-        self.cache.update(fetch_progress=ElbeAcquireProgress())
-        self.cache.open(progress=ElbeOpProgress())
+        with self.rfs.mount_pseudo_filesystems():
+            self.cache.update(fetch_progress=ElbeAcquireProgress())
+            self.cache.open(progress=ElbeOpProgress())
 
     def fetch_archives(self):
-        print('Fetching packages...')
-        self.cache.fetch_archives(ElbeAcquireProgress())
+        with self.rfs.mount_pseudo_filesystems():
+            print('Fetching packages...')
+            self.cache.fetch_archives(ElbeAcquireProgress())
 
     def commit(self):
-        os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
-        os.environ['DEBONF_NONINTERACTIVE_SEEN'] = 'true'
-        print('Commiting changes ...')
-        self.cache.commit(ElbeAcquireProgress(),
-                          ElbeInstallProgress(fileno=sys.stdout.fileno()))
-        self.cache.open(progress=ElbeOpProgress())
+        with self.rfs.mount_pseudo_filesystems():
+            os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+            os.environ['DEBONF_NONINTERACTIVE_SEEN'] = 'true'
+            print('Commiting changes ...')
+            self.cache.commit(ElbeAcquireProgress(),
+                              ElbeInstallProgress(fileno=sys.stdout.fileno()))
+            self.cache.open(progress=ElbeOpProgress())
 
     def get_dependencies(self, pkgname):
         deps = getalldeps(self.cache, pkgname)
@@ -269,16 +272,19 @@ class RPCAPTCache(InChRootObject):
         return get_corresponding_source_packages(self.cache, pkg_lst, include_built_using)
 
     def download_binary(self, pkgname, path, version=None):
-        p = self.cache[pkgname]
-        if version is None:
-            pkgver = p.installed
-        else:
-            pkgver = p.versions[version]
-        rel_filename = pkgver.fetch_binary(path, ElbeAcquireProgress())
-        return self.rfs.fname(rel_filename)
+        with self.rfs.mount_pseudo_filesystems():
+            p = self.cache[pkgname]
+            if version is None:
+                pkgver = p.installed
+            else:
+                pkgver = p.versions[version]
+            rel_filename = pkgver.fetch_binary(path, ElbeAcquireProgress())
+            return self.rfs.fname(rel_filename)
 
     def download_source(self, src_name, src_version, dest_dir):
-        return self.rfs.fname(fetch_source(src_name, src_version, dest_dir, ElbeAcquireProgress()))
+        with self.rfs.mount_pseudo_filesystems():
+            return self.rfs.fname(
+                fetch_source(src_name, src_version, dest_dir, ElbeAcquireProgress()))
 
 
 def get_rpcaptcache(rfs, arch, norecommend=False, noauth=True):

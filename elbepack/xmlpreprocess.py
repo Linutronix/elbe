@@ -331,7 +331,7 @@ def xmlpreprocess(xml_input_file, xml_output_file, *,
        can be validated against the current schema.
        `xml_input_file` is a path (str) to the input file.
        `xml_output_file` is a path (str) to the output file.
-       `xmlfile_base` is the path (str) that relative references inside the
+       `xmlfile_base` is the path (str or Path) that relative references inside the
        XML (archivedir, check-script location, xinclude, ...) should be
        resolved against. It defaults to `xml_input_file` itself.
     """
@@ -346,7 +346,8 @@ def xmlpreprocess(xml_input_file, xml_output_file, *,
     schema = dbsfed_schema()
 
     try:
-        xml = etree.parse(xml_input_file, parser=parser, base_url=xmlfile_base)
+        base_url = None if xmlfile_base is None else str(xmlfile_base)
+        xml = etree.parse(xml_input_file, parser=parser, base_url=base_url)
         xml.xinclude()
 
         basedir = pathlib.Path(xml.getroot().base).parent
