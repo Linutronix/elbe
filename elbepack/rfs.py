@@ -18,8 +18,7 @@ from elbepack.templates import get_preseed, preseed_to_text, write_pack_template
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
-def create_apt_prefs(xml, rfs):
-
+def create_apt_prefs(xml, rfs, buildimage=False):
     filename = 'etc/apt/preferences'
 
     if rfs.lexists(filename):
@@ -48,9 +47,14 @@ def create_apt_prefs(xml, rfs):
                        'package': package}
             pinned_origins.append(pinning)
 
+    pkgs = []
+    node = xml.node('/project/buildimage/pkg-list' if buildimage else '/target/pkg-list')
+    if node is not None:
+        pkgs.extend(node)
+
     d = {'xml': xml,
          'prj': xml.node('/project'),
-         'pkgs': xml.node('/target/pkg-list'),
+         'pkgs': pkgs,
          'porgs': pinned_origins}
 
     write_pack_template(rfs.fname(filename), 'preferences.mako', d)
