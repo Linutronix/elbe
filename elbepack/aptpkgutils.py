@@ -67,16 +67,20 @@ def getdeps(pkg):
             yield d.name
 
 
-def getalldeps(c, pkgname):
-    retval = []
+def getalldeps(c, pkgname, blacklist=()):
+    retval = [pkgname]
     togo = [pkgname]
 
     while togo:
         pp = togo.pop()
+        if pp in blacklist:
+            continue
         pkg = c[pp]
 
         for p in getdeps(pkg.candidate):
             if p in retval:
+                continue
+            if p in blacklist:
                 continue
             if p not in c:
                 continue
