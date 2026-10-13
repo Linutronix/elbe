@@ -50,6 +50,39 @@ def test_fs_finetuning_commands_are_parsed_by_kind():
     assert entry.fs_file_commands == ['veritysetup format {file} hash.img']
 
 
+@pytest.mark.parametrize('options, compression', [
+    ('', []),
+    ('defaults', []),
+    ('compress=zstd', ['--compress', 'zstd']),
+    ('rw,compress=zstd:3,noatime', ['--compress', 'zstd:3']),
+    ('compress=zlib:9', ['--compress', 'zlib:9']),
+    ('compress=lzo', ['--compress', 'lzo']),
+    ('compress', ['--compress', 'zlib']),
+    ('compress-force', ['--compress', 'zlib']),
+    ('compress-force=zstd:5', ['--compress', 'zstd:5']),
+    ('compress=no', []),
+    ('compress=0', []),
+    ('compress-force=no', []),
+    ('compress=zstd,compress=no', []),
+    ('compress=zstd,compress-force=lzo', ['--compress', 'lzo']),
+    ('compress-force=lzo,compress=zstd:7', ['--compress', 'zstd:7']),
+])
+def test_btrfs_compression(options, compression):
+    entry = _entry('btrfs')
+    entry.options = options
+
+    assert entry._get_compress_opt() == compression
+
+
+@pytest.mark.parametrize('fstype', ['ext2', 'ext3', 'ext4'])
+@pytest.mark.parametrize('options', ['compress=zstd', ['compress=zstd'], []])
+def test_non_btrfs_ignores_compression(fstype, options):
+    entry = _entry(fstype)
+    entry.options = options
+
+    assert entry._get_compress_opt() == []
+
+
 FSTYPES_NEEDING_PRESIZED_TARGET = {
     'ext2', 'ext3', 'ext4', 'btrfs', 'f2fs', 'vfat',
 }
