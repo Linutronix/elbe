@@ -4,8 +4,10 @@
 
 import os
 import pathlib
+from tempfile import NamedTemporaryFile
 from urllib.request import urlopen
 
+from elbepack.egpg import unarmor_openpgp_keyring
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
 
@@ -177,8 +179,16 @@ def pbuilder_get_debootstrap_key_path(chrootpath, xml):
     # If we have a primary key for use with debootstrap, BuildEnv.debootstrap
     # will have added the key. We use the same key for the pbuilder
     # debootstrap options.
-    if get_debootstrap_key(xml):
-        return os.path.join(chrootpath, 'etc', 'apt', 'trusted.gpg.d', 'elbe-xml-primary-key.gpg')
+    key = get_debootstrap_key(xml)
+    if key is None:
+        return None
+
+    tmp_file = NamedTemporaryFile(delete=False)
+
+    tmp_file.write(unarmor_openpgp_keyring(key))
+    tmp_file.close()
+
+    return tmp_file.name
 
 
 def get_apt_keys(builddir, xml):
