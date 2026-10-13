@@ -143,6 +143,19 @@ class fstabentry(hdpart):
             return ['-l', self.label]
         return []
 
+    def _get_compress_opt(self) -> list[str]:
+        if self.fstype == 'btrfs':
+            compression = 'no'
+            options = self.options.split(',') if isinstance(self.options, str) else self.options
+            for option in options:
+                name, separator, value = option.partition('=')
+                if name in ('compress', 'compress-force'):
+                    compression = value if separator else 'zlib'
+
+            if compression not in ('no', '0'):
+                return ['--compress', compression]
+        return []
+
     @staticmethod
     def _vfat_populate(target, filesystem_tree):
         src_dir = filesystem_tree.removesuffix('.')
@@ -174,7 +187,8 @@ class fstabentry(hdpart):
 
         mkfs = mkfs_dict.get(self.fstype, f'mkfs.{self.fstype}')
         mkfs_fs_copy_argument = mkfs_fs_copy_argument_dict.get(self.fstype, [target])
-        do([mkfs, *self.mkfsopts, *self._get_label_opt(), *mkfs_fs_copy_argument],
+        do([mkfs, *self._get_compress_opt(), *self.mkfsopts,
+            *self._get_label_opt(), *mkfs_fs_copy_argument],
            env_add=get_env_with_sbin())
 
         if self.fstype in mkfs_fs_copy_extra_cmd_dict:
