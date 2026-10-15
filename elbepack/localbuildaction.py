@@ -4,6 +4,8 @@
 
 import pathlib
 import shutil
+import subprocess
+import tempfile
 import textwrap
 import time
 
@@ -15,11 +17,25 @@ from elbepack.projectmanager import ProjectManager
 
 class LocalProjectBackend(ProjectBackend):
     def __init__(self, cache_dir, outdir):
-        self.pm = ProjectManager(cache_dir, CacheDirs(cache_dir))
+        self._gnupg_tmpdir = tempfile.TemporaryDirectory(prefix='elbe-gnupg-')
+        self.pm = ProjectManager(
+            cache_dir, CacheDirs(cache_dir, gnupg_root=self._gnupg_tmpdir.name))
         self.outdir = outdir
 
     def stop(self):
         self.pm.stop()
+        self._cleanup_gnupg()
+
+    def _cleanup_gnupg(self):
+        root = pathlib.Path(self._gnupg_tmpdir.name)
+        for home in root.iterdir():
+            try:
+                subprocess.run(['gpgconf', '--homedir', str(home), '--kill', 'all'],
+                               check=False, stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL)
+            except FileNotFoundError:
+                break
+        self._gnupg_tmpdir.cleanup()
 
     def create_project(self, xmlfile):
         return self.pm.create_project(xmlfile)
