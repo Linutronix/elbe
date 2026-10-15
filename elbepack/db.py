@@ -478,7 +478,7 @@ class ElbeDB:
                                          'Pbuilder artifact')
 
     @classmethod
-    def init_db(cls, name, fullname, password, email):
+    def init_db(cls):
 
         if not os.path.exists(cls.db_path):
             try:
