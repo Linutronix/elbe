@@ -481,11 +481,7 @@ class ElbeDB:
     def init_db(cls):
 
         if not os.path.exists(cls.db_path):
-            try:
-                os.makedirs(cls.db_path)
-            except OSError as e:
-                print(str(e))
-                return
+            os.makedirs(cls.db_path)
 
         ElbeDB()
 
