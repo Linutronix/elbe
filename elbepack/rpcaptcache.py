@@ -80,6 +80,9 @@ class RPCAPTCache(InChRootObject):
         else:
             config.set('APT::Get::AllowUnauthenticated', '0')
 
+        for hook in ('DPkg::Pre-Invoke', 'DPkg::Pre-Install-Pkgs', 'DPkg::Post-Invoke'):
+            config.clear(hook)
+
         config.set('Acquire::Retries', '10')
         config.set('Acquire::Retries::Delay', 'true')
         config.set('Acquire::Retries::Delay::Maximum', '30')
