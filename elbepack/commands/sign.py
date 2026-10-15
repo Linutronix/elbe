@@ -4,7 +4,8 @@
 
 import argparse
 
-from elbepack.egpg import INITVM_GNUPG_HOME, sign_file
+from elbepack.egpg import sign_file
+from elbepack.paths import DEFAULT_CACHE_DIRS
 
 
 def run_command(argv):
@@ -14,4 +15,4 @@ def run_command(argv):
 
     args = parser.parse_args(argv)
 
-    sign_file(args.file, args.fingerprint, INITVM_GNUPG_HOME)
+    sign_file(args.file, args.fingerprint, DEFAULT_CACHE_DIRS.initvm_gnupg_home)

@@ -17,7 +17,7 @@ with warnings.catch_warnings():
     from gpg.constants import PROTOCOL_OpenPGP, sig, sigsum
     from gpg.errors import GPGMEError, InvalidSigners, KeyNotFound
 
-from elbepack.paths import INITVM_GNUPG_HOME, TARGET_GNUPG_HOME  # noqa: F401
+from elbepack.paths import TARGET_GNUPG_HOME  # noqa: F401
 from elbepack.shellhelper import env_add
 
 

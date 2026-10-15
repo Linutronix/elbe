@@ -20,6 +20,7 @@ from elbepack.asyncworker import (
 )
 from elbepack.db import ElbeDB, ElbeDBError
 from elbepack.log import read_loggingQ
+from elbepack.paths import DEFAULT_CACHE_DIRS
 from elbepack.uuid7 import uuid7
 
 
@@ -42,9 +43,9 @@ def _is_uuid(s):
 
 class ProjectManager:
 
-    def __init__(self, basepath):
+    def __init__(self, basepath, cache_dirs=DEFAULT_CACHE_DIRS):
         self.basepath = basepath    # Base path for new projects
-        self.db = ElbeDB()          # Database of projects and users
+        self.db = ElbeDB(cache_dirs)  # Database of projects and users
         self.worker = AsyncWorker(self.db)
 
     def stop(self):

@@ -2,20 +2,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2014-2026 Linutronix GmbH
 
-ELBE_CACHE_DIR = '/var/cache/elbe'
 
-INITVM_SOURCES_DIR = f'{ELBE_CACHE_DIR}/sources'
-INITVM_BINARIES_MAIN_DIR = f'{ELBE_CACHE_DIR}/binaries/main'
-INITVM_BIN_REPO_DIR = f'{ELBE_CACHE_DIR}/initvm-bin-repo'
-INITVM_GNUPG_HOME = f'{ELBE_CACHE_DIR}/gnupg'
-INITVM_SRC_REPO_DIR = f'{ELBE_CACHE_DIR}/initvm-src-repo'
-INSTALLER_DIR = f'{ELBE_CACHE_DIR}/installer'
-INSTALLER_VMLINUZ = f'{INSTALLER_DIR}/vmlinuz'
-INSTALLER_INITRD = f'{INSTALLER_DIR}/initrd-cdrom.gz'
-DEVEL_DIR = f'{ELBE_CACHE_DIR}/devel'
-DEVEL_ELBE = f'{DEVEL_DIR}/elbe'
-SOURCE_XML = f'{ELBE_CACHE_DIR}/source.xml'
-DB_PATH = ELBE_CACHE_DIR
+class CacheDirs:
+    def __init__(self, root='/var/cache/elbe'):
+        self.root = str(root)
+        self.db_dir = self.root
+        self.initvm_sources_dir = f'{self.root}/sources'
+        self.initvm_binaries_main_dir = f'{self.root}/binaries/main'
+        self.initvm_bin_repo_dir = f'{self.root}/initvm-bin-repo'
+        self.initvm_gnupg_home = f'{self.root}/gnupg'
+        self.initvm_src_repo_dir = f'{self.root}/initvm-src-repo'
+        self.installer_dir = f'{self.root}/installer'
+        self.devel_dir = f'{self.root}/devel'
+        self.devel_elbe = f'{self.devel_dir}/elbe'
+        self.source_xml = f'{self.root}/source.xml'
+
+
+DEFAULT_CACHE_DIRS = CacheDirs()
 
 # Paths on the deployed target system. Just happens to be the same
 # in the build system, but keep separate because there is no relation.
