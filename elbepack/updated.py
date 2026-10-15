@@ -33,8 +33,8 @@ from elbepack.aptprogress import (
 )
 from elbepack.egpg import TARGET_GNUPG_HOME, unsign_file
 from elbepack.paths import (
-    DOWNGRADE_ALLOWED_FILE, ELBE_CACHE_DIR, POST_SCRIPT, PRE_SCRIPT,
-    UPDATE_STATE_FILE,
+    TARGET_CACHE_DIR, TARGET_DOWNGRADE_ALLOWED_FILE, TARGET_POST_SCRIPT, TARGET_PRE_SCRIPT,
+    TARGET_UPDATE_STATE_FILE,
 )
 from elbepack.treeutils import etree
 
@@ -50,7 +50,7 @@ class UpdateStatus:
         self.nosign = False
         self.verbose = False
         self.repo_dir = ''
-        self.status_file = UPDATE_STATE_FILE
+        self.status_file = TARGET_UPDATE_STATE_FILE
         with rw_access_file(self.status_file, self) as f:
             f.write('ready')
             f.truncate()
@@ -348,16 +348,16 @@ def execute(cmd, status):
 
 
 def pre_sh(current_version, target_version, status):
-    if os.path.isfile(PRE_SCRIPT):
+    if os.path.isfile(TARGET_PRE_SCRIPT):
         execute(
-            [PRE_SCRIPT, current_version, target_version],
+            [TARGET_PRE_SCRIPT, current_version, target_version],
             status)
 
 
 def post_sh(current_version, target_version, status):
-    if os.path.isfile(POST_SCRIPT):
+    if os.path.isfile(TARGET_POST_SCRIPT):
         execute(
-            [POST_SCRIPT, current_version, target_version],
+            [TARGET_POST_SCRIPT, current_version, target_version],
             status)
 
 
@@ -384,7 +384,7 @@ def is_downgrade(target_version, current_version, base_version):
 
 
 def is_downgrade_allowed():
-    return os.path.isfile(DOWNGRADE_ALLOWED_FILE)
+    return os.path.isfile(TARGET_DOWNGRADE_ALLOWED_FILE)
 
 
 def reject_downgrade(status, new_xml_file):
@@ -482,16 +482,16 @@ def action_select(upd_file, status):
                 status.log(f'extraction failed: {sys.exc_info()[1]}')
                 return
 
-    with rw_access(ELBE_CACHE_DIR, status):
+    with rw_access(TARGET_CACHE_DIR, status):
         if os.path.isfile(prefix + '/' + 'pre.sh'):
             try:
-                copy(prefix + '/' + 'pre.sh', PRE_SCRIPT)
+                copy(prefix + '/' + 'pre.sh', TARGET_PRE_SCRIPT)
             except (OSError, IOError) as e:
                 status.log('presh-copy failed: ' + str(e))
 
         if os.path.isfile(prefix + '/' + 'post.sh'):
             try:
-                copy(prefix + '/' + 'post.sh', POST_SCRIPT)
+                copy(prefix + '/' + 'post.sh', TARGET_POST_SCRIPT)
             except (OSError, IOError) as e:
                 status.log('postsh-copy failed: ' + str(e))
 

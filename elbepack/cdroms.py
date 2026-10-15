@@ -14,8 +14,8 @@ from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
 from elbepack.paths import (
-    BINARIES_ADDED_DIR, BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_GNUPG_HOME,
-    INSTALLER_DIR, SOURCES_DIR,
+    INITVM_BIN_REPO_DIR, INITVM_GNUPG_HOME, INITVM_SOURCES_DIR, INSTALLER_DIR,
+    TARGET_BINARIES_ADDED_DIR, TARGET_BINARIES_MAIN_DIR, TARGET_SOURCES_DIR,
 )
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
 from elbepack.rpcaptcache import get_rpcaptcache
@@ -32,7 +32,7 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
     try:
         dsc = cache.download_source(pkg,
                                     version,
-                                    SOURCES_DIR)
+                                    TARGET_SOURCES_DIR)
         repo.includedsc(dsc, components=component, force=True)
     except ValueError as e:
         logging.exception("No sources for package '%s': %s", pkg_id, str(e))
@@ -46,8 +46,8 @@ def mk_source_cdrom(components, codename,
                     mirror='http://deb.debian.org/debian',
                     exclude_initvm_pkgs=False):
 
-    os.makedirs(SOURCES_DIR, exist_ok=True)
-    make_writable_by_apt(SOURCES_DIR)
+    os.makedirs(INITVM_SOURCES_DIR, exist_ok=True)
+    make_writable_by_apt(INITVM_SOURCES_DIR)
 
     forbidden_packages = []
     if xml is not None and xml.has('target/pkg-list'):
@@ -71,8 +71,8 @@ def mk_source_cdrom(components, codename,
                                                                include_built_using=False):
             forbidden_src_packages.add(name)
 
-        rfs.mkdir_p(SOURCES_DIR)
-        make_writable_by_apt(rfs.fname(SOURCES_DIR), passwd_root=rfs)
+        rfs.mkdir_p(TARGET_SOURCES_DIR)
+        make_writable_by_apt(rfs.fname(TARGET_SOURCES_DIR), passwd_root=rfs)
         repo = CdromSrcRepo(codename, init_codename,
                             os.path.join(target, f'srcrepo-{component}'),
                             cdrom_size, gnupg_home, mirror)
@@ -99,7 +99,7 @@ def mk_source_cdrom(components, codename,
     # into multiple cdroms
 
     if not exclude_initvm_pkgs:
-        for dirpath, _, filenames in os.walk(SOURCES_DIR):
+        for dirpath, _, filenames in os.walk(INITVM_SOURCES_DIR):
             for filename in filenames:
                 if not filename.endswith('.dsc'):
                     continue
@@ -141,10 +141,10 @@ def mk_source_cdrom(components, codename,
 
 def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_initvm_pkgs=False):
 
-    rfs.mkdir_p(BINARIES_ADDED_DIR)
-    make_writable_by_apt(rfs.fname(BINARIES_ADDED_DIR), passwd_root=rfs)
-    rfs.mkdir_p(BINARIES_MAIN_DIR)
-    make_writable_by_apt(rfs.fname(BINARIES_MAIN_DIR), passwd_root=rfs)
+    rfs.mkdir_p(TARGET_BINARIES_ADDED_DIR)
+    make_writable_by_apt(rfs.fname(TARGET_BINARIES_ADDED_DIR), passwd_root=rfs)
+    rfs.mkdir_p(TARGET_BINARIES_MAIN_DIR)
+    make_writable_by_apt(rfs.fname(TARGET_BINARIES_MAIN_DIR), passwd_root=rfs)
 
     if xml is not None:
         mirror = xml.get_primary_mirror(rfs.fname('cdrom'))
@@ -189,7 +189,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
             pkg_id = f'{pkg.name}-{pkg.installed_version}'
             try:
                 deb = cache.download_binary(pkg.name,
-                                            BINARIES_MAIN_DIR,
+                                            TARGET_BINARIES_MAIN_DIR,
                                             pkg.installed_version)
                 target_repo.includedeb(deb, 'main', prio=pkg.installed_prio)
             except ValueError:
@@ -205,7 +205,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
         pkg_id = f'{pkg.name}-{pkg.installed_version}'
         try:
             deb = cache.download_binary(pkg.name,
-                                        BINARIES_ADDED_DIR,
+                                        TARGET_BINARIES_ADDED_DIR,
                                         pkg.installed_version)
             target_repo.includedeb(deb, 'added', pkg.name, prio=pkg.installed_prio, force=True)
         except KeyError as ke:
