@@ -91,6 +91,8 @@ class ElbeDB:
     db_location = 'sqlite:///' + DB_PATH + '/elbe.db'
 
     def __init__(self):
+        os.makedirs(self.db_path, exist_ok=True)
+
         engine = create_engine(self.__class__.db_location,
                                connect_args={'timeout': 60})
         Base.metadata.create_all(engine)
@@ -479,9 +481,6 @@ class ElbeDB:
 
     @classmethod
     def init_db(cls):
-
-        if not os.path.exists(cls.db_path):
-            os.makedirs(cls.db_path)
 
         ElbeDB()
 
