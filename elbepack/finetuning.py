@@ -24,7 +24,7 @@ from elbepack.egpg import TARGET_GNUPG_HOME
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup
 from elbepack.packers import default_packer, packers
-from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
+from elbepack.paths import TARGET_DOWNGRADE_ALLOWED_FILE, TARGET_REPOS_BASE_DIR
 from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, mount, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
@@ -408,7 +408,7 @@ class UpdatedAction(FinetuningAction):
                     logging.exception('Package %s-%s missing name or version',
                                       pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
-                       target.path + REPOS_BASE_DIR,
+                       target.path + TARGET_REPOS_BASE_DIR,
                        os.path.join(self.builddir, 'gnupg'))
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
@@ -416,7 +416,7 @@ class UpdatedAction(FinetuningAction):
         r.finalize()
 
         slist = target.path + '/etc/apt/sources.list.d/base.list'
-        slist_txt = f'deb [trusted=yes] file://{REPOS_BASE_DIR} '
+        slist_txt = f'deb [trusted=yes] file://{TARGET_REPOS_BASE_DIR} '
         slist_txt += target.xml.text('/project/suite')
         slist_txt += ' main'
 
@@ -426,7 +426,7 @@ class UpdatedAction(FinetuningAction):
         rmtree(buildenv.rfs.path + '/tmp/pkgs')
 
         # allow downgrades by default
-        target.touch_file(DOWNGRADE_ALLOWED_FILE)
+        target.touch_file(TARGET_DOWNGRADE_ALLOWED_FILE)
 
 
 @_register_action('artifact')

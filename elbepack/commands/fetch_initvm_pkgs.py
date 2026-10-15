@@ -19,7 +19,7 @@ from elbepack.egpg import INITVM_GNUPG_HOME
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.log import elbe_logging
 from elbepack.paths import (
-    BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_SRC_REPO_DIR, SOURCES_DIR,
+    INITVM_BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_SOURCES_DIR, INITVM_SRC_REPO_DIR,
 )
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
 from elbepack.shellhelper import mount
@@ -48,11 +48,11 @@ def run_command(argv):
                          help='cdrom device, in case it has to be mounted')
 
     aparser.add_argument('--apt-archive', dest='archive',
-                         default=BINARIES_MAIN_DIR,
+                         default=INITVM_BINARIES_MAIN_DIR,
                          help='path where binary packages are downloaded to.')
 
     aparser.add_argument('--src-archive', dest='srcarchive',
-                         default=SOURCES_DIR,
+                         default=INITVM_SOURCES_DIR,
                          help='path where src packages are downloaded to.')
 
     aparser.add_argument('--skip-build-sources', action='store_false',
