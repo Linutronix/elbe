@@ -166,9 +166,10 @@ class ElbeProject:
         if not self.name:
             self.name = self.xml.text('project/name')
 
+        self.gnupg_home = self.cache_dirs.project_gnupg_home(self.builddir)
         self.repo = ProjectRepo(self.arch, self.codename,
                                 os.path.join(self.builddir, 'repo'),
-                                os.path.join(self.builddir, 'gnupg'))
+                                self.gnupg_home)
 
         # Create BuildEnv instance, if the chroot directory exists and
         # has an etc/elbe_version
@@ -712,7 +713,8 @@ class ElbeProject:
         do_prj_finetuning(self.xml,
                           self.buildenv,
                           self.targetfs,
-                          self.builddir)
+                          self.builddir,
+                          self.gnupg_home)
 
         self.targetfs.pack_images(self.builddir)
 
