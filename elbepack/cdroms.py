@@ -57,7 +57,7 @@ def mk_source_cdrom(components, codename,
             except KeyError:
                 pass
 
-    gnupg_home = os.path.join(target, 'gnupg')
+    gnupg_home = cache_dirs.project_gnupg_home(target)
 
     repos = {}
 
@@ -151,7 +151,7 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, cache_dirs,
     else:
         mirror = 'http://deb.debian.org/debian'
 
-    gnupg_home = os.path.join(target, 'gnupg')
+    gnupg_home = cache_dirs.project_gnupg_home(target)
 
     repo_path = pathlib.Path(target, 'binrepo')
     target_repo_path = repo_path / 'targetrepo'

@@ -4,18 +4,30 @@
 
 
 class CacheDirs:
-    def __init__(self, root='/var/cache/elbe'):
+    def __init__(self, root='/var/cache/elbe', gnupg_root=None):
         self.root = str(root)
         self.db_dir = self.root
         self.initvm_sources_dir = f'{self.root}/sources'
         self.initvm_binaries_main_dir = f'{self.root}/binaries/main'
         self.initvm_bin_repo_dir = f'{self.root}/initvm-bin-repo'
-        self.initvm_gnupg_home = f'{self.root}/gnupg'
+
+        if gnupg_root is not None:
+            self.gnupg_root = str(gnupg_root)
+            self.initvm_gnupg_home = f'{self.gnupg_root}/initvm'
+        else:
+            self.gnupg_root = None
+            self.initvm_gnupg_home = f'{self.root}/gnupg'
+
         self.initvm_src_repo_dir = f'{self.root}/initvm-src-repo'
         self.installer_dir = f'{self.root}/installer'
         self.devel_dir = f'{self.root}/devel'
         self.devel_elbe = f'{self.devel_dir}/elbe'
         self.source_xml = f'{self.root}/source.xml'
+
+    def project_gnupg_home(self, builddir):
+        if self.gnupg_root is not None:
+            return f'{self.gnupg_root}/project'
+        return f'{builddir}/gnupg'
 
 
 DEFAULT_CACHE_DIRS = CacheDirs()
