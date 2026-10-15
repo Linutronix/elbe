@@ -14,7 +14,6 @@ from elbepack.aptpkgutils import XMLPackage, make_writable_by_apt
 from elbepack.archivedir import archive_tmpfile
 from elbepack.isooptions import get_iso_options
 from elbepack.paths import (
-    INITVM_BIN_REPO_DIR, INITVM_GNUPG_HOME, INITVM_SOURCES_DIR, INSTALLER_DIR,
     TARGET_BINARIES_ADDED_DIR, TARGET_BINARIES_MAIN_DIR, TARGET_SOURCES_DIR,
 )
 from elbepack.repomanager import CdromBinRepo, CdromInitRepo, CdromSrcRepo
@@ -41,13 +40,13 @@ def add_source_pkg(repo, component, cache, pkg, version, forbid):
 
 
 def mk_source_cdrom(components, codename,
-                    init_codename, target,
+                    init_codename, target, cache_dirs,
                     cdrom_size=CDROM_SIZE, xml=None,
                     mirror='http://deb.debian.org/debian',
                     exclude_initvm_pkgs=False):
 
-    os.makedirs(INITVM_SOURCES_DIR, exist_ok=True)
-    make_writable_by_apt(INITVM_SOURCES_DIR)
+    os.makedirs(cache_dirs.initvm_sources_dir, exist_ok=True)
+    make_writable_by_apt(cache_dirs.initvm_sources_dir)
 
     forbidden_packages = []
     if xml is not None and xml.has('target/pkg-list'):
@@ -99,7 +98,7 @@ def mk_source_cdrom(components, codename,
     # into multiple cdroms
 
     if not exclude_initvm_pkgs:
-        for dirpath, _, filenames in os.walk(INITVM_SOURCES_DIR):
+        for dirpath, _, filenames in os.walk(cache_dirs.initvm_sources_dir):
             for filename in filenames:
                 if not filename.endswith('.dsc'):
                     continue
@@ -139,7 +138,8 @@ def mk_source_cdrom(components, codename,
             options=options)) for component, repo in repos.items()]
 
 
-def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_initvm_pkgs=False):
+def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, cache_dirs,
+                    exclude_initvm_pkgs=False):
 
     rfs.mkdir_p(TARGET_BINARIES_ADDED_DIR)
     make_writable_by_apt(rfs.fname(TARGET_BINARIES_ADDED_DIR), passwd_root=rfs)
@@ -164,20 +164,20 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
         do(f'mkdir -p "{repo_path}"')
     else:
         try:
-            do(f'cp -av {INITVM_BIN_REPO_DIR} "{repo_path}"')
+            do(f'cp -av {cache_dirs.initvm_bin_repo_dir} "{repo_path}"')
         except subprocess.CalledProcessError:
-            # When INITVM_BIN_REPO_DIR has not been created
+            # When the initvm binary repo has not been created
             # (because the initvm install was an old version or somthing,
             #  log an error, and continue with an empty directory.
             logging.exception('%s does not exist\n'
                               'The generated CDROM will not contain initvm pkgs\n'
                               'This happened because the initvm was probably\n'
                               'generated with --skip-build-bin',
-                              INITVM_BIN_REPO_DIR)
+                              cache_dirs.initvm_bin_repo_dir)
 
             do(f'mkdir -p "{repo_path}"')
 
-    repo = CdromInitRepo(init_codename, repo_path, INITVM_GNUPG_HOME, mirror)
+    repo = CdromInitRepo(init_codename, repo_path, cache_dirs.initvm_gnupg_home, mirror)
 
     target_repo = CdromBinRepo(arch, codename, None,
                                target_repo_path, gnupg_home, mirror)
@@ -236,9 +236,9 @@ def mk_binary_cdrom(rfs, arch, codename, init_codename, xml, target, exclude_ini
 
     # copy initvm-cdrom.gz and vmlinuz
     if not exclude_initvm_pkgs:
-        copyfile(os.path.join(INSTALLER_DIR, 'initrd-cdrom.gz'),
+        copyfile(os.path.join(cache_dirs.installer_dir, 'initrd-cdrom.gz'),
                  repo_path / 'initrd-cdrom.gz')
-        copyfile(os.path.join(INSTALLER_DIR, 'vmlinuz'),
+        copyfile(os.path.join(cache_dirs.installer_dir, 'vmlinuz'),
                  repo_path / 'vmlinuz')
 
     target_repo_path.joinpath('.aptignr').touch()

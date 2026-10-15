@@ -30,7 +30,7 @@ from elbepack.elbexml import ElbeXML, NoInitvmNode, ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.finetuning import do_prj_finetuning
 from elbepack.log import validation
-from elbepack.paths import SOURCE_XML
+from elbepack.paths import DEFAULT_CACHE_DIRS
 from elbepack.pbuilder import (
     pbuilder_get_debootstrap_key_path,
     pbuilder_write_apt_conf,
@@ -121,8 +121,10 @@ class ElbeProject:
             postbuild_file=None,
             presh_file=None,
             postsh_file=None,
-            savesh_file=None):
+            savesh_file=None,
+            cache_dirs=DEFAULT_CACHE_DIRS):
 
+        self.cache_dirs = cache_dirs
         self.builddir = os.path.abspath(str(builddir))
         self.chrootpath = os.path.join(self.builddir, 'chroot')
         self.targetpath = os.path.join(self.builddir, 'target')
@@ -505,6 +507,7 @@ class ElbeProject:
                                                     init_codename,
                                                     self.xml,
                                                     self.builddir,
+                                                    self.cache_dirs,
                                                     exclude_initvm_pkgs=exclude_initvm_pkgs)
             if build_sources:
                 if not cdrom_size and self.xml.has('src-cdrom/size'):
@@ -563,6 +566,7 @@ class ElbeProject:
                                                self.codename,
                                                init_codename,
                                                self.builddir,
+                                               self.cache_dirs,
                                                exclude_initvm_pkgs=exclude_initvm_pkgs,
                                                **kwargs):
                         self.repo_images += iso
@@ -981,19 +985,20 @@ class ElbeProject:
                      str(elbe_version))
 
     def copy_initvmnode(self):
+        source_xml = self.cache_dirs.source_xml
         try:
-            initxml = ElbeXML(SOURCE_XML,
+            initxml = ElbeXML(source_xml,
                               skip_validate=self.skip_validate)
             self.xml.get_initvmnode_from(initxml)
         except ValidationError:
             logging.exception('%s validation failed.  '
-                              'Will not copy initvm node', SOURCE_XML)
+                              'Will not copy initvm node', source_xml)
         except IOError:
             logging.exception('%s not available.  '
-                              'Can not copy initvm node', SOURCE_XML)
+                              'Can not copy initvm node', source_xml)
         except NoInitvmNode:
             logging.exception('%s is available.  But it does not '
-                              'contain an initvm node', SOURCE_XML)
+                              'contain an initvm node', source_xml)
 
     def install_packages(self, target, buildenv=False, exclude_initvm_pkgs=False):
 

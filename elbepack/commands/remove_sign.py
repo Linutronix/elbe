@@ -4,7 +4,8 @@
 
 import argparse
 
-from elbepack.egpg import INITVM_GNUPG_HOME, unsign_file
+from elbepack.egpg import unsign_file
+from elbepack.paths import DEFAULT_CACHE_DIRS
 
 
 def run_command(argv):
@@ -13,7 +14,7 @@ def run_command(argv):
 
     args = parser.parse_args(argv)
 
-    fname = unsign_file(args.file, INITVM_GNUPG_HOME)
+    fname = unsign_file(args.file, DEFAULT_CACHE_DIRS.initvm_gnupg_home)
     if fname:
         print(f'unsigned file: {fname}')
     else:
