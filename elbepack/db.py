@@ -93,11 +93,15 @@ class ElbeDB:
         db_path = pathlib.Path(cache_dirs.db_dir)
         db_path.mkdir(parents=True, exist_ok=True)
 
-        engine = create_engine(f'sqlite:///{db_path / "elbe.db"}',
-                               connect_args={'timeout': 60})
-        Base.metadata.create_all(engine)
-        smaker = sessionmaker(bind=engine)
+        self.engine = create_engine(f'sqlite:///{db_path / "elbe.db"}',
+                                    connect_args={'timeout': 60})
+        Base.metadata.create_all(self.engine)
+        smaker = sessionmaker(bind=self.engine)
         self.session = scoped_session(smaker)
+
+    def close(self):
+        self.session.remove()
+        self.engine.dispose()
 
     def list_projects(self):
         with session_scope(self.session) as s:
