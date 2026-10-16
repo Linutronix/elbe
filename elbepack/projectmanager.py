@@ -50,6 +50,7 @@ class ProjectManager:
 
     def stop(self):
         self.worker.stop()
+        self.db.close()
 
     def new_project(self):
         subdir = str(uuid7())
