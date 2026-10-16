@@ -8,12 +8,13 @@ from elbepack.cli import add_argument, add_arguments_from_decorated_function
 from elbepack.db import ElbeDB
 
 
+# The options are ignored and only kept for compatibility with existing callers.
 @add_argument('--name', default='root')
 @add_argument('--fullname', default='Admin')
 @add_argument('--password', default='foo')
 @add_argument('--email', default='root@localhost')
 def _init(args):
-    ElbeDB.init_db(args.name, args.fullname, args.password, args.email)
+    ElbeDB.init_db()
 
 
 def _list_projects(args):

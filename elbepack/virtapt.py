@@ -24,6 +24,7 @@ class VirtApt:
     def __init__(self, xml):
 
         self.xml = xml
+        self._saved_config = {}
 
         arch = xml.text('project/buildimage/arch', key='arch')
         suite = xml.text('project/suite')
@@ -40,30 +41,30 @@ class VirtApt:
         self._setup_gpg()
         self._import_keys()
 
-        apt_pkg.config.set('APT::Architecture', arch)
-        apt_pkg.config.set('APT::Architectures', arch)
-        apt_pkg.config.set('Acquire::http::Proxy::127.0.0.1', 'DIRECT')
-        apt_pkg.config.set('APT::Install-Recommends', '0')
-        apt_pkg.config.set('Dir::Etc', self.basefs.fname('/'))
-        apt_pkg.config.set('Dir::Etc::TrustedParts',
-                           self.basefs.fname('/etc/apt/trusted.gpg.d'))
-        apt_pkg.config.set('APT::Cache-Limit', '0')
-        apt_pkg.config.set('APT::Cache-Start', '32505856')
-        apt_pkg.config.set('APT::Cache-Grow', '2097152')
-        apt_pkg.config.set('Dir::State', self.basefs.fname('state'))
-        apt_pkg.config.set('Dir::State::status',
-                           self.basefs.fname('state/status'))
-        apt_pkg.config.set('Dir::Cache', self.basefs.fname('cache'))
-        apt_pkg.config.set('Dir::Cache::archives',
-                           self.basefs.fname('cache/archives'))
-        apt_pkg.config.set('Dir::Etc', self.basefs.fname('etc/apt'))
-        apt_pkg.config.set('Dir::Log', self.basefs.fname('log'))
+        self._set_config('APT::Architecture', arch)
+        self._set_config('APT::Architectures', arch)
+        self._set_config('Acquire::http::Proxy::127.0.0.1', 'DIRECT')
+        self._set_config('APT::Install-Recommends', '0')
+        self._set_config('Dir::Etc', self.basefs.fname('/'))
+        self._set_config('Dir::Etc::TrustedParts',
+                         self.basefs.fname('/etc/apt/trusted.gpg.d'))
+        self._set_config('APT::Cache-Limit', '0')
+        self._set_config('APT::Cache-Start', '32505856')
+        self._set_config('APT::Cache-Grow', '2097152')
+        self._set_config('Dir::State', self.basefs.fname('state'))
+        self._set_config('Dir::State::status',
+                         self.basefs.fname('state/status'))
+        self._set_config('Dir::Cache', self.basefs.fname('cache'))
+        self._set_config('Dir::Cache::archives',
+                         self.basefs.fname('cache/archives'))
+        self._set_config('Dir::Etc', self.basefs.fname('etc/apt'))
+        self._set_config('Dir::Log', self.basefs.fname('log'))
         if self.xml.has('project/noauth'):
-            apt_pkg.config.set('APT::Get::AllowUnauthenticated', '1')
-            apt_pkg.config.set('Acquire::AllowInsecureRepositories', '1')
+            self._set_config('APT::Get::AllowUnauthenticated', '1')
+            self._set_config('Acquire::AllowInsecureRepositories', '1')
         else:
-            apt_pkg.config.set('APT::Get::AllowUnauthenticated', '0')
-            apt_pkg.config.set('Acquire::AllowInsecureRepositories', '0')
+            self._set_config('APT::Get::AllowUnauthenticated', '0')
+            self._set_config('Acquire::AllowInsecureRepositories', '0')
 
         apt_pkg.init_system()
 
@@ -74,7 +75,7 @@ class VirtApt:
         self.cache = apt_pkg.Cache()
         self.cache.update(progress, self.source)
 
-        apt_pkg.config.set('APT::Default-Release', suite)
+        self._set_config('APT::Default-Release', suite)
 
         self.cache = apt_pkg.Cache()
         self.cache.update(progress, self.source)
@@ -180,5 +181,22 @@ class VirtApt:
 
         return d.destfile
 
+    def _set_config(self, key, value):
+        if key not in self._saved_config:
+            exists = apt_pkg.config.exists(key)
+            self._saved_config[key] = apt_pkg.config.find(key) if exists else None
+        apt_pkg.config.set(key, value)
+
+    def _restore_config(self):
+        for key, value in self._saved_config.items():
+            if value is None:
+                apt_pkg.config.clear(key)
+            else:
+                apt_pkg.config.set(key, value)
+        self._saved_config = {}
+
+        apt_pkg.init_system()
+
     def delete(self):
+        self._restore_config()
         self.basefs.delete()

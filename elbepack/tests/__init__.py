@@ -9,7 +9,7 @@ import pytest
 
 def xml_test_files(prefix):
     return [
-        file
+        file.absolute()
         for file
         in pathlib.Path('tests').iterdir()
         if file.name.startswith(prefix) and file.name.endswith('.xml')

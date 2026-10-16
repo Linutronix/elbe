@@ -24,7 +24,7 @@ from elbepack.config import add_argument_sshport, add_arguments_soapclient
 from elbepack.elbexml import ValidationError
 from elbepack.filesystem import size_to_int
 from elbepack.init import create_initvm
-from elbepack.paths import DEVEL_DIR
+from elbepack.paths import DEFAULT_CACHE_DIRS
 from elbepack.soapclient import ElbeSoapClient
 from elbepack.treeutils import etree
 from elbepack.xmlpreprocess import preprocess_file
@@ -262,7 +262,7 @@ def _sync(args):
         '--chown=root:root',
         f'{top_dir}/elbe',
         f'{top_dir}/elbepack',
-        f'root@localhost:{DEVEL_DIR}'
+        f'root@localhost:{DEFAULT_CACHE_DIRS.devel_dir}'
     ], check=True)
     subprocess.run([
         *ssh, '-n', 'root@localhost', 'systemctl', 'restart', 'python3-elbe-daemon',

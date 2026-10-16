@@ -24,7 +24,7 @@ from elbepack.egpg import TARGET_GNUPG_HOME
 from elbepack.filesystem import Filesystem
 from elbepack.imgutils import losetup
 from elbepack.packers import default_packer, packers
-from elbepack.paths import DOWNGRADE_ALLOWED_FILE, REPOS_BASE_DIR
+from elbepack.paths import TARGET_DOWNGRADE_ALLOWED_FILE, TARGET_REPOS_BASE_DIR
 from elbepack.shellhelper import ELBE_LOGGING, chroot, do, env_add, get_env_with_sbin, mount, run
 from elbepack.treeutils import strip_leading_whitespace_from_lines
 
@@ -37,14 +37,21 @@ class FinetuningAction:
 
     tag = None
 
+    _gnupg_home = None
+
     def __init__(self, node):
         self.node = node
 
     def execute(self, _buildenv, _target):
         raise NotImplementedError('execute() not implemented')
 
-    def execute_prj(self, buildenv, target, builddir):
+    @property
+    def gnupg_home(self):
+        return self._gnupg_home or os.path.join(self.builddir, 'gnupg')
+
+    def execute_prj(self, buildenv, target, builddir, gnupg_home=None):
         self.builddir = builddir
+        self._gnupg_home = gnupg_home
         self.execute(buildenv, target)
 
 
@@ -370,7 +377,7 @@ class UpdatedAction(FinetuningAction):
             ctx = core.Context()
             ctx.set_engine_info(PROTOCOL_OpenPGP,
                                 None,
-                                os.path.join(self.builddir, 'gnupg'))
+                                self.gnupg_home)
             ctx.set_armor(True)
             ctx.op_export(fp, 0, gpgdata)
             gpgdata.seek(0, os.SEEK_SET)
@@ -408,15 +415,15 @@ class UpdatedAction(FinetuningAction):
                     logging.exception('Package %s-%s missing name or version',
                                       pkg.name, pkg.installed_version)
         r = UpdateRepo(target.xml,
-                       target.path + REPOS_BASE_DIR,
-                       os.path.join(self.builddir, 'gnupg'))
+                       target.path + TARGET_REPOS_BASE_DIR,
+                       self.gnupg_home)
 
         for d in buildenv.rfs.glob('tmp/pkgs/*.deb'):
             r.includedeb(d, 'main')
         r.finalize()
 
         slist = target.path + '/etc/apt/sources.list.d/base.list'
-        slist_txt = f'deb [trusted=yes] file://{REPOS_BASE_DIR} '
+        slist_txt = f'deb [trusted=yes] file://{TARGET_REPOS_BASE_DIR} '
         slist_txt += target.xml.text('/project/suite')
         slist_txt += ' main'
 
@@ -426,7 +433,7 @@ class UpdatedAction(FinetuningAction):
         rmtree(buildenv.rfs.path + '/tmp/pkgs')
 
         # allow downgrades by default
-        target.touch_file(DOWNGRADE_ALLOWED_FILE)
+        target.touch_file(TARGET_DOWNGRADE_ALLOWED_FILE)
 
 
 @_register_action('artifact')
@@ -439,7 +446,7 @@ class ArtifactAction(FinetuningAction):
             logging.error("The specified artifact: '%s' doesn't exist",
                           self.node.et.text)
 
-    def execute_prj(self, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir, _gnupg_home=None):
         if os.path.isfile('../' + self.node.et.text):
             target.images.append(self.node.et.text)
         else:
@@ -454,7 +461,7 @@ class RmArtifactAction(FinetuningAction):
         raise NotImplementedError('<rm_artifact> may only be '
                                   'used in <project-finetuning>')
 
-    def execute_prj(self, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir, _gnupg_home=None):
         try:
             target.images.remove(self.node.et.text)
         except ValueError:
@@ -495,7 +502,7 @@ class LosetupAction(FinetuningAction):
         raise NotImplementedError('<losetup> may only be '
                                   'used in <project-finetuning>')
 
-    def execute_prj(self, buildenv, target, builddir):
+    def execute_prj(self, buildenv, target, builddir, _gnupg_home=None):
         imgname = self.node.et.attrib['img']
         imgpath = os.path.join(builddir, imgname)
 
@@ -519,7 +526,7 @@ class ImgConvertAction(FinetuningAction):
         raise NotImplementedError('<img_convert> may only be '
                                   'used in <project-finetuning>')
 
-    def execute_prj(self, _buildenv, target, builddir):
+    def execute_prj(self, _buildenv, target, builddir, _gnupg_home=None):
         src = self.node.et.text
         dst = self.node.et.attrib['dst']
         fmt = self.node.et.attrib['fmt']
@@ -550,7 +557,7 @@ class SetPackerAction(FinetuningAction):
         raise NotImplementedError('<set_packer> may only be '
                                   'used in <project-finetuning>')
 
-    def execute_prj(self, _buildenv, target, _builddir):
+    def execute_prj(self, _buildenv, target, _builddir, _gnupg_home=None):
         img = self.node.et.text
         packer = self.node.et.attrib['packer']
 
@@ -722,7 +729,7 @@ def do_finetuning(xml, buildenv, target, builddir):
             raise
 
 
-def do_prj_finetuning(xml, buildenv, target, builddir):
+def do_prj_finetuning(xml, buildenv, target, builddir, gnupg_home=None):
 
     if not xml.has('target/project-finetuning'):
         return
@@ -730,7 +737,7 @@ def do_prj_finetuning(xml, buildenv, target, builddir):
     for i in xml.node('target/project-finetuning'):
         try:
             action = _action_for_node(i)
-            action.execute_prj(buildenv, target, builddir)
+            action.execute_prj(buildenv, target, builddir, gnupg_home)
         except KeyError:
             logging.exception("Unimplemented Project Finetuning action '%s'",
                               i.et.tag)

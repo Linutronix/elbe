@@ -69,13 +69,13 @@ def test_fs_finetuning_commands_are_parsed_by_kind():
 ])
 def test_btrfs_compression(options, compression):
     entry = _entry('btrfs')
-    entry.options = options
+    entry.options = options.split(',')
 
     assert entry._get_compress_opt() == compression
 
 
 @pytest.mark.parametrize('fstype', ['ext2', 'ext3', 'ext4'])
-@pytest.mark.parametrize('options', ['compress=zstd', ['compress=zstd'], []])
+@pytest.mark.parametrize('options', [['compress=zstd'], []])
 def test_non_btrfs_ignores_compression(fstype, options):
     entry = _entry(fstype)
     entry.options = options

@@ -30,7 +30,9 @@ usr/lib/python3.*/*-packages/elbepack/initvm.py
 usr/lib/python3.*/*-packages/elbepack/initvmaction.py
 usr/lib/python3.*/*-packages/elbepack/isooptions.py
 usr/lib/python3.*/*-packages/elbepack/licencexml.py
+usr/lib/python3.*/*-packages/elbepack/localbuildaction.py
 usr/lib/python3.*/*-packages/elbepack/log.py
+usr/lib/python3.*/*-packages/elbepack/rootcheck.py
 usr/lib/python3.*/*-packages/elbepack/packers.py
 usr/lib/python3.*/*-packages/elbepack/paths.py
 usr/lib/python3.*/*-packages/elbepack/pkgutils.py
@@ -42,6 +44,7 @@ usr/lib/python3.*/*-packages/elbepack/shellhelper.py
 usr/lib/python3.*/*-packages/elbepack/spdx.py
 usr/lib/python3.*/*-packages/elbepack/templates.py
 usr/lib/python3.*/*-packages/elbepack/treeutils.py
+usr/lib/python3.*/*-packages/elbepack/userns.py
 usr/lib/python3.*/*-packages/elbepack/uuid7.py
 usr/lib/python3.*/*-packages/elbepack/validate.py
 usr/lib/python3.*/*-packages/elbepack/version.py

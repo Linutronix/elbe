@@ -16,7 +16,7 @@ with warnings.catch_warnings():
     from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
-from elbepack.paths import ELBE_CACHE_DIR
+from elbepack.paths import DEFAULT_CACHE_DIRS
 from elbepack.projectmanager import ProjectManager
 
 from .esoap import ESoap
@@ -27,7 +27,7 @@ logging.getLogger('spyne').setLevel(logging.INFO)
 class EsoapApp(Application):
     def __init__(self, *args, **kargs):
         super().__init__(*args, **kargs)
-        self.pm = ProjectManager(ELBE_CACHE_DIR)
+        self.pm = ProjectManager(DEFAULT_CACHE_DIRS.root)
 
     def stop(self):
         self.pm.stop()

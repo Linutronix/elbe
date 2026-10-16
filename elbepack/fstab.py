@@ -101,7 +101,7 @@ class fstabentry(hdpart):
             self.label = entry.text('label')
 
         self.mountpoint = entry.text('mountpoint')
-        self.options = entry.text('options', default='defaults')
+        self.options = entry.text('options', default='defaults').split(',')
         if entry.has('fs'):
             self.fstype = entry.text('fs/type')
             self.mkfsopts = entry.text('fs/mkfs', default='').split()
@@ -121,7 +121,7 @@ class fstabentry(hdpart):
         self.id = str(fsid)
 
     def get_str(self):
-        return (f'{self.source} {self.mountpoint} {self.fstype} {self.options} '
+        return (f'{self.source} {self.mountpoint} {self.fstype} {",".join(self.options)} '
                 f'0 {self.passno}\n')
 
     def mountdepth(self):
@@ -146,7 +146,7 @@ class fstabentry(hdpart):
     def _get_compress_opt(self) -> list[str]:
         if self.fstype == 'btrfs':
             compression = 'no'
-            for option in self.options.split(','):
+            for option in self.options:
                 name, separator, value = option.partition('=')
                 if name.strip() in ('compress', 'compress-force'):
                     compression = value.strip() if separator else 'zlib'

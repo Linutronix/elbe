@@ -6,6 +6,7 @@
 import errno
 import glob
 import os
+import pathlib
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from shutil import copyfile, rmtree
@@ -28,7 +29,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from elbepack.elbeproject import ElbeProject
 from elbepack.elbexml import ElbeXML
-from elbepack.paths import DB_PATH
+from elbepack.paths import DEFAULT_CACHE_DIRS
 
 
 Base = declarative_base()
@@ -87,15 +88,20 @@ def _update_project_file(s, builddir, name, mime_type, description):
 
 class ElbeDB:
 
-    db_path = DB_PATH
-    db_location = 'sqlite:///' + DB_PATH + '/elbe.db'
+    def __init__(self, cache_dirs=DEFAULT_CACHE_DIRS):
+        self.cache_dirs = cache_dirs
+        db_path = pathlib.Path(cache_dirs.db_dir)
+        db_path.mkdir(parents=True, exist_ok=True)
 
-    def __init__(self):
-        engine = create_engine(self.__class__.db_location,
-                               connect_args={'timeout': 60})
-        Base.metadata.create_all(engine)
-        smaker = sessionmaker(bind=engine)
+        self.engine = create_engine(f'sqlite:///{db_path / "elbe.db"}',
+                                    connect_args={'timeout': 60})
+        Base.metadata.create_all(self.engine)
+        smaker = sessionmaker(bind=self.engine)
         self.session = scoped_session(smaker)
+
+    def close(self):
+        self.session.remove()
+        self.engine.dispose()
 
     def list_projects(self):
         with session_scope(self.session) as s:
@@ -285,7 +291,8 @@ class ElbeDB:
                                    postbuild_file=postbuild_file,
                                    presh_file=presh_file,
                                    postsh_file=postsh_file,
-                                   savesh_file=savesh_file)
+                                   savesh_file=savesh_file,
+                                   cache_dirs=self.cache_dirs)
             except NoResultFound:
                 raise ElbeDBError(
                     f'project {builddir} is not registered in the database')
@@ -478,14 +485,7 @@ class ElbeDB:
                                          'Pbuilder artifact')
 
     @classmethod
-    def init_db(cls, name, fullname, password, email):
-
-        if not os.path.exists(cls.db_path):
-            try:
-                os.makedirs(cls.db_path)
-            except OSError as e:
-                print(str(e))
-                return
+    def init_db(cls):
 
         ElbeDB()
 

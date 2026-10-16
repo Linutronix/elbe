@@ -15,12 +15,9 @@ from apt.package import FetchError
 from elbepack.aptpkgutils import fetch_source, get_corresponding_source_packages
 from elbepack.aptprogress import ElbeAcquireProgress
 from elbepack.dump import get_initvm_pkglist
-from elbepack.egpg import INITVM_GNUPG_HOME
 from elbepack.elbexml import ElbeXML, ValidationError
 from elbepack.log import elbe_logging
-from elbepack.paths import (
-    BINARIES_MAIN_DIR, INITVM_BIN_REPO_DIR, INITVM_SRC_REPO_DIR, SOURCES_DIR,
-)
+from elbepack.paths import DEFAULT_CACHE_DIRS
 from elbepack.repomanager import CdromInitRepo, CdromSrcRepo
 from elbepack.shellhelper import mount
 
@@ -30,11 +27,11 @@ def run_command(argv):
     aparser = argparse.ArgumentParser(prog='elbe fetch_initvm_pkgs')
 
     aparser.add_argument('-b', '--binrepo', dest='binrepo',
-                         default=INITVM_BIN_REPO_DIR,
+                         default=DEFAULT_CACHE_DIRS.initvm_bin_repo_dir,
                          help='directory where the bin repo should reside')
 
     aparser.add_argument('-s', '--srcrepo', dest='srcrepo',
-                         default=INITVM_SRC_REPO_DIR,
+                         default=DEFAULT_CACHE_DIRS.initvm_src_repo_dir,
                          help='directory where the src repo should reside')
 
     aparser.add_argument('--skip-validation', action='store_true',
@@ -48,11 +45,11 @@ def run_command(argv):
                          help='cdrom device, in case it has to be mounted')
 
     aparser.add_argument('--apt-archive', dest='archive',
-                         default=BINARIES_MAIN_DIR,
+                         default=DEFAULT_CACHE_DIRS.initvm_binaries_main_dir,
                          help='path where binary packages are downloaded to.')
 
     aparser.add_argument('--src-archive', dest='srcarchive',
-                         default=SOURCES_DIR,
+                         default=DEFAULT_CACHE_DIRS.initvm_sources_dir,
                          help='path where src packages are downloaded to.')
 
     aparser.add_argument('--skip-build-sources', action='store_false',
@@ -91,7 +88,8 @@ def run_command(argv):
 
         # Binary Repo
         #
-        repo = CdromInitRepo(init_codename, args.binrepo, INITVM_GNUPG_HOME, mirror)
+        repo = CdromInitRepo(init_codename, args.binrepo,
+                             DEFAULT_CACHE_DIRS.initvm_gnupg_home, mirror)
 
         os.makedirs(args.archive, exist_ok=True)
 
@@ -133,7 +131,7 @@ def run_command(argv):
         # Source Repo
         #
         repo = CdromSrcRepo(init_codename, init_codename, args.srcrepo, 0,
-                            INITVM_GNUPG_HOME, mirror)
+                            DEFAULT_CACHE_DIRS.initvm_gnupg_home, mirror)
         os.makedirs(args.srcarchive, exist_ok=True)
 
         # a cdrom build does not have sources
